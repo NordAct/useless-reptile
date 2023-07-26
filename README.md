@@ -3,7 +3,7 @@ Feel free to learn something or point and laugh at my code... and hate me for ho
 ## Actual description
 
 This project is All Rights Reserved. It means you can't just take it and use 
-for whatever you want without my (Nord_Act) permission, especially assets.
+for whatever you want without my (Nord_Act aka NordAct) permission, especially assets.
 
 You are allowed:
 - Make monetized videos and streams with the mod 
