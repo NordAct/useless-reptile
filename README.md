@@ -13,4 +13,8 @@ You are allowed:
 - Partially use the code for your project from this one (by this I mean just don't rip off the
 whole thing, at least mind what you copy)
 
-This repository exists purely for visibility of the source code. Don't expect much action here
+This repository exists purely for visibility of the source code. Don't expect much action here.
+Support for the mod is manually provided on mod's Discord server (link below)
+
+## Links
+[Discord](https://discord.gg/JjYE4vEf3s) || [Modrinth](https://modrinth.com/mod/useless-reptile) || [Cursefortge](https://www.curseforge.com/minecraft/mc-mods/useless-reptile)
