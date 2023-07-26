@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [
+    "#c:ores",
+    "#minecraft:stone_ore_replaceables",
+    "#minecraft:deepslate_ore_replaceables",
+    "minecraft:dirt",
+    "minecraft:gravel"
+  ]
+}

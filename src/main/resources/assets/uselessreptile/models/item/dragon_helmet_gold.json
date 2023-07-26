@@ -1,0 +1,12 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "uselessreptile:item/armor/dragon/armor_gold_head"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [ 0, -0.4, 0 ],
+      "scale": [ 0.55, 0.55, 0.55 ]
+    }
+  }
+}

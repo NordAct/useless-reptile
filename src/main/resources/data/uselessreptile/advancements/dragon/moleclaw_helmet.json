@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "uselessreptile:moleclaw_helmet_gold"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.moleclaw_helmet"
+    },
+    "description": {
+      "translate": "advancement.uselessreptile.moleclaw_helmet.desc"
+    },
+    "frame": "task"
+  },
+  "parent": "uselessreptile:dragon/tame_moleclaw",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "tag": "uselessreptile:moleclaw_helmets"
+          }
+        ]
+      }
+    }
+  }
+}

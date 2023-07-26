@@ -1,0 +1,20 @@
+{
+  "variants": [
+    {
+      "name": "black",
+      "weight": 13
+    },
+    {
+      "name": "brown",
+      "weight": 13
+    },
+    {
+      "name": "grey",
+      "weight": 13
+    },
+    {
+      "name": "albino",
+      "weight": 1
+    }
+  ]
+}

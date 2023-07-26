@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "uselessreptile:moleclaw_spawn_egg"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.tame_moleclaw"
+    },
+    "description": {
+      "translate": "advancement.uselessreptile.tame_moleclaw.desc"
+    },
+    "frame": "task"
+  },
+  "parent": "uselessreptile:dragon/root",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "uselessreptile:moleclaw"
+        }
+      }
+    }
+  }
+}

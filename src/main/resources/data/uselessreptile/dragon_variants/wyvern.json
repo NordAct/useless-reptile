@@ -1,0 +1,12 @@
+{
+  "variants": [
+    {
+      "name": "green",
+      "weight": 1
+    },
+    {
+      "name": "brown",
+      "weight": 1
+    }
+  ]
+}

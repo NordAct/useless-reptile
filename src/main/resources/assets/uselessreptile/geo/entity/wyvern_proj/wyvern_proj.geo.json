@@ -1,0 +1,121 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 32,
+				"texture_height": 32,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 1.5,
+				"visible_bounds_offset": [0, 0.25, 0]
+			},
+			"bones": [
+				{
+					"name": "proj",
+					"pivot": [0, 2, 0],
+					"cubes": [
+						{
+							"origin": [-2, 0, -2],
+							"size": [4, 4, 4],
+							"pivot": [0, 2, 0],
+							"rotation": [0, 90, 0],
+							"uv": {
+								"north": {"uv": [18, 14], "uv_size": [4, 4]},
+								"east": {"uv": [14, 14], "uv_size": [4, 4]},
+								"south": {"uv": [26, 14], "uv_size": [4, 4]},
+								"west": {"uv": [22, 14], "uv_size": [4, 4]},
+								"up": {"uv": [18, 10], "uv_size": [4, 4]},
+								"down": {"uv": [22, 14], "uv_size": [4, -4]}
+							}
+						}
+					]
+				},
+				{
+					"name": "trail2",
+					"parent": "proj",
+					"pivot": [-2, 2, 2],
+					"cubes": [
+						{
+							"origin": [-2, 0, 2],
+							"size": [0, 4, 7],
+							"pivot": [-2, 2, 2],
+							"rotation": [0, 85, 0],
+							"uv": {
+								"north": {"uv": [7, 18], "uv_size": [0, 4]},
+								"east": {"uv": [0, 18], "uv_size": [7, 4]},
+								"south": {"uv": [14, 18], "uv_size": [0, 4]},
+								"west": {"uv": [7, 18], "uv_size": [-7, 4]},
+								"up": {"uv": [7, 11], "uv_size": [0, 7]},
+								"down": {"uv": [7, 18], "uv_size": [0, -7]}
+							}
+						}
+					]
+				},
+				{
+					"name": "trail",
+					"parent": "proj",
+					"pivot": [-2, 4, 0],
+					"cubes": [
+						{
+							"origin": [-4, 4, 0],
+							"size": [4, 0, 7],
+							"pivot": [-2, 4, 0],
+							"rotation": [5, 90, 0],
+							"uv": {
+								"north": {"uv": [7, 14], "uv_size": [4, 0]},
+								"east": {"uv": [0, 14], "uv_size": [7, 0]},
+								"south": {"uv": [18, 14], "uv_size": [4, 0]},
+								"west": {"uv": [11, 14], "uv_size": [7, 0]},
+								"up": {"uv": [7, 7], "uv_size": [4, 7]},
+								"down": {"uv": [7, 14], "uv_size": [4, -7]}
+							}
+						}
+					]
+				},
+				{
+					"name": "trail3",
+					"parent": "proj",
+					"pivot": [-2, 2, -2],
+					"cubes": [
+						{
+							"origin": [-2, 0, -2],
+							"size": [0, 4, 7],
+							"pivot": [-2, 2, -2],
+							"rotation": [0, 95, 0],
+							"uv": {
+								"north": {"uv": [7, 14], "uv_size": [0, 4]},
+								"east": {"uv": [7, 14], "uv_size": [-7, 4]},
+								"south": {"uv": [14, 14], "uv_size": [0, 4]},
+								"west": {"uv": [0, 14], "uv_size": [7, 4]},
+								"up": {"uv": [7, 7], "uv_size": [0, 7]},
+								"down": {"uv": [7, 14], "uv_size": [0, -7]}
+							}
+						}
+					]
+				},
+				{
+					"name": "trail4",
+					"parent": "proj",
+					"pivot": [-2, 0, 0],
+					"cubes": [
+						{
+							"origin": [-4, 0, 0],
+							"size": [4, 0, 7],
+							"pivot": [-2, 0, 0],
+							"rotation": [-5, 90, 0],
+							"uv": {
+								"north": {"uv": [7, 7], "uv_size": [4, 0]},
+								"east": {"uv": [0, 7], "uv_size": [7, 0]},
+								"south": {"uv": [18, 7], "uv_size": [4, 0]},
+								"west": {"uv": [11, 7], "uv_size": [7, 0]},
+								"up": {"uv": [7, 0], "uv_size": [4, 7]},
+								"down": {"uv": [7, 7], "uv_size": [4, -7]}
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

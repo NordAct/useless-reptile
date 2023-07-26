@@ -1,0 +1,62 @@
+{
+    "item.uselessreptile.wyvern_spawn_egg": "Bataklık Ejderi Çağırma Yumurtası",
+    "item.uselessreptile.wyvern_skin": "Bataklık Ejderi Derisi",
+    "item.minecraft.potion.effect.acid": "Asit Şişesi",
+    "item.minecraft.potion.effect.long_acid": "Asit Şişesi",
+    "item.minecraft.potion.effect.strong_acid": "Asit Şişesi",
+    "item.minecraft.splash_potion.effect.acid": "Patlayıcı Asit Şişesi",
+    "item.minecraft.splash_potion.effect.long_acid": "Patlayıcı Asit Şişesi",
+    "item.minecraft.splash_potion.effect.strong_acid": "Patlayıcı Asit Şişesi",
+    "item.minecraft.lingering_potion.effect.acid": "Asit Bulutu Şişesi",
+    "item.minecraft.lingering_potion.effect.long_acid": "Asit Bulutu Şişesi",
+    "item.minecraft.lingering_potion.effect.strong_acid": "Asit Bulutu Şişesi",
+    "item.minecraft.tipped_arrow.effect.acid": "Zehir Oku",
+    "item.minecraft.tipped_arrow.effect.long_acid": "Zehir Oku",
+    "item.minecraft.tipped_arrow.effect.strong_acid": "Zehir Oku",
+
+    "entity.uselessreptile.wyvern": "Bataklık Ejderi",
+    "entity.uselessreptile.moleclaw": "KöstebekPençe",
+
+    "key.category.uselessreptile": "İşe Yaramaz Sürüngen Ayarları",
+    "key.uselessreptile.rangeAttackKey": "Menzilli Saldırı",
+    "key.uselessreptile.meleeAttackKey": "Yakın Dövüş Saldırısı",
+    "key.uselessreptile.flyDownKey": "Aşağı Uç",
+    "key.uselessreptile.flyUpKey": "Yukarı Uç",
+
+    "subtitles.uselessreptile.wyvern.bite": "Bataklık Ejderi ısırdı",
+    "subtitles.uselessreptile.wyvern.hurt": "Bataklık Ejderi hasar aldı",
+    "subtitles.uselessreptile.wyvern.ambient": "Bataklık Ejderi hırlıyor",
+    "subtitles.uselessreptile.wyvern.death": "Bataklık Ejderi öldü",
+
+    "other.uselessreptile.none": "Yok",
+    "other.uselessreptile.sound_respond": "%1$s Şimdiki sese cevap verecek: %2$s",
+    "other.uselessreptile.name0": "MiyavPençe",
+    "other.uselessreptile.name1": "KEDİYİ YAP",
+    "other.uselessreptile.name2": "uwu",
+    "other.uselessreptile.name3": "https://youtu.be/fC7oUOUEEi4",
+    "other.uselessreptile.name4": "Cidden burada bir şey mi olmasını mı bekledin?",
+
+    "config.uselessreptile.title": "İşe Yaramaz Sürüngen Yapılandırması",
+    "config.uselessreptile.category.dragon" : "Ejderha Ayarları",
+    "config.uselessreptile.category.camera" : "Kamera Ayarları",
+    "config.uselessreptile.option.wyvernSpawnWeight": "Bataklık Ejderi Spawn Ağırlığı",
+    "config.uselessreptile.option.dragonCallbackDistanceMultiplier": "Boynuz Çalışması Uzaklığı Arttırıcı",
+    "config.uselessreptile.option.desiredCameraDistanceOffset": "Kamera Ofsetine Uzaklık",
+    "config.uselessreptile.option.cameraVerticalOffset": "Dikey Kamera Ofseti",
+    "config.uselessreptile.option.cameraHorizontalOffset": "Yatay Kamera Ofseti",
+    "config.uselessreptile.option.enableCameraOffset": "Kamera ofsetine izin ver",
+    "config.uselessreptile.option.enableCrosshair": "3. kişide nişangaha izin ver",
+    "config.uselessreptile.option.autoThirdPerson": "Otomatik olarak perspektif değiştir",
+    "config.uselessreptile.option.wyvernSpawnWeight.@Tooltip": "Bataklık Ejderinin dünyada ne kadar ortaya çıkmasından sorumlu.\nÇok fazla ya da çok az ortaya çıkıyorlarsa bu katsayıyı değiştirin.\nBunu 0'a ayarlamak ortaya çıkmalarını devre dışı bırakır.(0'dan az miktarlar çökmeye sebep olabilir.).\n\nNot: Bataklık Ejderleri Mangrov Bataklığı dışında sadece #c:swamp etiketine sahip olan biyomlarda doğar.",
+    "config.uselessreptile.option.dragonCallbackDistanceMultiplier.@Tooltip": "Ejderhanızın boynuz çağrısına ne kadar uzaktan cevap vereceğini belirler.\nDaha büyük arttırıcı daha fazla mesafe demektir.",
+    "config.uselessreptile.option.enableCameraOffset.@Tooltip": "3. kişide ejderhayı sürerken kamera ofsetini aktif eder.\nKapalı ise, ofsetler kullanılmayacak",
+    "config.uselessreptile.option.enableCrosshair.@Tooltip": "3. kişide Ejderhayı sürerken nişangahı aktif eder",
+    "config.uselessreptile.option.autoThirdPerson.@Tooltip": "Ejderhayı sürerken ve sürmezken otomatik olarak perspektif değiştirir",
+
+    "effect.uselessreptile.acid": "Asit",
+
+    "death.attack.acid": "%1$s eridi",
+    "death.attack.acid.player": "%1$s %2$s tarafından eritildi",
+
+    "config.uselessreptile.option.alternativeRiderRender": "Alternatif Binici Renderı"
+}

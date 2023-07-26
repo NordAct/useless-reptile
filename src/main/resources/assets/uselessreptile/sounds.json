@@ -1,0 +1,281 @@
+{
+  "dragon.woosh": {
+    "sounds": [
+      {
+        "name": "uselessreptile:common/woosh1"
+      },
+      {
+        "name": "uselessreptile:common/woosh2"
+      },
+      {
+        "name": "uselessreptile:common/woosh3"
+      },
+      {
+        "name": "uselessreptile:common/woosh4"
+      },
+      {
+        "name": "uselessreptile:common/woosh5"
+      },
+      {
+        "name": "uselessreptile:common/woosh6"
+      }
+    ]
+  },
+  "wyvern.step": {
+    "subtitle": "subtitles.block.generic.footsteps",
+    "sounds": [
+      {
+        "name": "uselessreptile:wyvern/step1"
+      },
+      {
+        "name": "uselessreptile:wyvern/step2"
+      },
+      {
+        "name": "uselessreptile:wyvern/step3"
+      },
+      {
+        "name": "uselessreptile:wyvern/step4"
+      },
+      {
+        "name": "uselessreptile:wyvern/step5"
+      }
+    ]
+  },
+  "wyvern.bite": {
+    "subtitle": "subtitles.uselessreptile.wyvern.bite",
+    "sounds": [
+      {
+        "name": "uselessreptile:wyvern/bite1"
+      },
+      {
+        "name": "uselessreptile:wyvern/bite2"
+      },
+      {
+        "name": "uselessreptile:wyvern/bite3"
+      }
+    ]
+  },
+  "wyvern.hurt": {
+    "subtitle": "subtitles.uselessreptile.wyvern.hurt",
+    "sounds": [
+      {
+        "name": "uselessreptile:wyvern/hit1"
+      },
+      {
+        "name": "uselessreptile:wyvern/hit2"
+      },
+      {
+        "name": "uselessreptile:wyvern/hit3"
+      }
+    ]
+  },
+  "wyvern.ambient": {
+    "subtitle": "subtitles.uselessreptile.wyvern.ambient",
+    "sounds": [
+      {
+        "name": "uselessreptile:wyvern/idle1"
+      },
+      {
+        "name": "uselessreptile:wyvern/idle2"
+      },
+      {
+        "name": "uselessreptile:wyvern/idle3"
+      },
+      {
+        "name": "uselessreptile:wyvern/idle4"
+      },
+      {
+        "name": "uselessreptile:wyvern/idle5"
+      }
+    ]
+  },
+  "wyvern.death": {
+    "subtitle": "subtitles.uselessreptile.wyvern.death",
+    "sounds": [
+      {
+        "name": "uselessreptile:wyvern/death1"
+      }
+    ]
+  },
+  "moleclaw.ambient": {
+    "subtitle": "subtitles.uselessreptile.moleclaw.ambient",
+    "sounds": [
+      {
+        "name": "uselessreptile:moleclaw/idle1"
+      },
+      {
+        "name": "uselessreptile:moleclaw/idle2"
+      },
+      {
+        "name": "uselessreptile:moleclaw/idle3"
+      },
+      {
+        "name": "uselessreptile:moleclaw/idle4"
+      }
+    ]
+  },
+  "moleclaw.hurt": {
+    "subtitle": "subtitles.uselessreptile.moleclaw.hurt",
+    "sounds": [
+      {
+        "name": "uselessreptile:moleclaw/hit1"
+      },
+      {
+        "name": "uselessreptile:moleclaw/hit2"
+      },
+      {
+        "name": "uselessreptile:moleclaw/hit3"
+      }
+    ]
+  },
+  "moleclaw.panicking": {
+    "subtitle": "subtitles.uselessreptile.moleclaw.panicking",
+    "sounds": [
+      {
+        "name": "uselessreptile:moleclaw/panic1"
+      },
+      {
+        "name": "uselessreptile:moleclaw/panic2"
+      },
+      {
+        "name": "uselessreptile:moleclaw/panic3"
+      }
+    ]
+  },
+  "moleclaw.death": {
+    "subtitle": "subtitles.uselessreptile.moleclaw.death",
+    "sounds": [
+      {
+        "name": "uselessreptile:moleclaw/death"
+      }
+    ]
+  },
+  "moleclaw.strong_attack": {
+    "subtitle": "subtitles.uselessreptile.moleclaw.strong_attack",
+    "sounds": [
+      {
+        "name": "uselessreptile:moleclaw/strong_attack"
+      }
+    ]
+  },
+  "moleclaw.attack": {
+    "subtitle": "subtitles.uselessreptile.moleclaw.attack",
+    "sounds": [
+      {
+        "name": "uselessreptile:moleclaw/attack"
+      }
+    ]
+  },
+  "acid.splash": {
+    "subtitle": "subtitles.uselessreptile.acid.splash",
+    "sounds": [
+      {
+        "name": "uselessreptile:common/acid_splash"
+      }
+    ]
+  },
+  "acid.burn": {
+    "subtitle": "subtitles.uselessreptile.acid.burn",
+    "sounds": [
+      {
+        "name": "uselessreptile:common/acid_burn1"
+      },
+      {
+        "name": "uselessreptile:common/acid_burn2"
+      },
+      {
+        "name": "uselessreptile:common/acid_burn3"
+      },
+      {
+        "name": "uselessreptile:common/acid_burn4"
+      },
+      {
+        "name": "uselessreptile:common/acid_burn5"
+      }
+    ]
+  },
+  "flute.target": {
+    "subtitle": "subtitles.uselessreptile.flute",
+    "sounds": [
+      {
+        "name": "uselessreptile:flute/target"
+      }
+    ]
+  },
+  "flute.gather": {
+    "subtitle": "subtitles.uselessreptile.flute",
+    "sounds": [
+      {
+        "name": "uselessreptile:flute/gather"
+      }
+    ]
+  },
+  "flute.call": {
+    "subtitle": "subtitles.uselessreptile.flute",
+    "sounds": [
+      {
+        "name": "uselessreptile:flute/call"
+      }
+    ]
+  },
+  "river_pikehorn.ambient": {
+    "subtitle": "subtitles.uselessreptile.river_pikehorn.ambient",
+    "sounds": [
+      {
+        "name": "uselessreptile:river_pikehorn/idle1",
+        "pitch" : 0.75
+      },
+      {
+        "name": "uselessreptile:river_pikehorn/idle2",
+        "pitch" : 0.75
+      },
+      {
+        "name": "uselessreptile:river_pikehorn/idle3",
+        "pitch" : 0.75
+      },
+      {
+        "name": "uselessreptile:river_pikehorn/idle4",
+        "pitch" : 0.75
+      }
+    ]
+  },
+  "river_pikehorn.attack": {
+    "subtitle": "subtitles.uselessreptile.river_pikehorn.attack",
+    "sounds": [
+      {
+        "name": "uselessreptile:river_pikehorn/attack1",
+        "pitch" : 0.75
+      },
+      {
+        "name": "uselessreptile:river_pikehorn/attack2",
+        "pitch" : 0.75
+      }
+    ]
+  },
+  "river_pikehorn.hurt": {
+    "subtitle": "subtitles.uselessreptile.river_pikehorn.hurt",
+    "sounds": [
+      {
+        "name": "uselessreptile:river_pikehorn/hit1",
+        "pitch" : 0.75
+      },
+      {
+        "name": "uselessreptile:river_pikehorn/hit2",
+        "pitch" : 0.75
+      },
+      {
+        "name": "uselessreptile:river_pikehorn/hit3",
+        "pitch" : 0.75
+      }
+    ]
+  },
+  "river_pikehorn.death": {
+    "subtitle": "subtitles.uselessreptile.river_pikehorn.death",
+    "sounds": [
+      {
+        "name": "uselessreptile:river_pikehorn/death",
+        "pitch" : 0.75
+      }
+    ]
+  }
+}

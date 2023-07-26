@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "id": "uselessreptile",
+  "version": "${version}",
+
+  "name": "Useless Reptile",
+  "description": "Adds dragons and dragon-like creatures to your world",
+  "authors": [
+    "Nord_Act"
+  ],
+  "contact": {
+    "homepage": "https://discord.gg/JjYE4vEf3s"
+  },
+
+  "license": "All Rights Reserved",
+  "icon": "assets/uselessreptile/icon.png",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "nordmods.uselessreptile.UselessReptile"
+    ],
+    "client": [
+      "nordmods.uselessreptile.client.UselessReptileClient"
+    ],
+    "modmenu": [
+      "nordmods.uselessreptile.integration.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "uselessreptile.mixins.json"
+  ],
+  "accessWidener" : "uselessreptile.accesswidener",
+  "depends": {
+    "fabricloader": "*",
+    "fabric-api": "*",
+    "java": ">=17",
+    "minecraft": "~1.20",
+    "geckolib": "*",
+    "yet_another_config_lib_v3": "*"
+  }
+}

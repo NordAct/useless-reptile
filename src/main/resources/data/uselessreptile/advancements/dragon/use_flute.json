@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "uselessreptile:flute"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.use_flute"
+    },
+    "description": {
+      "translate": "advancement.uselessreptile.use_flute.desc"
+    },
+    "frame": "task"
+  },
+  "parent": "uselessreptile:dragon/tame_pikehorn",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": [
+            "uselessreptile:flute"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "required": true,
+  "package": "nordmods.uselessreptile.common.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractBlockMixin"
+  ],
+  "client": [
+    "CameraMixin",
+    "EntityMixin",
+    "InGameHudMixin",
+    "LivingEntityMixin",
+    "LivingEntityRendererMixin",
+    "PlayerRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

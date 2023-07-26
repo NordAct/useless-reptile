@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "uselessreptile:wyvern_spawn_egg"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.tame_wyvern"
+    },
+    "description": {
+      "translate": "advancement.uselessreptile.tame_wyvern.desc"
+    },
+    "frame": "task"
+  },
+  "parent": "uselessreptile:dragon/root",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "uselessreptile:wyvern"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iii",
+    " L "
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:diamond"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "result": {
+    "item": "uselessreptile:dragon_tail_armor_diamond",
+    "count": 1
+  }
+}

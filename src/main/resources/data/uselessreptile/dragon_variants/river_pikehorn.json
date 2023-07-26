@@ -1,0 +1,36 @@
+{
+  "variants": [
+    {
+      "name": "blue",
+      "weight": 1
+    },
+    {
+      "name": "dark_blue",
+      "weight": 1
+    },
+    {
+      "name": "green",
+      "weight": 1
+    },
+    {
+      "name": "dark_green",
+      "weight": 1
+    },
+    {
+      "name": "purple",
+      "weight": 1
+    },
+    {
+      "name": "dark_purple",
+      "weight": 1
+    },
+    {
+      "name": "teal",
+      "weight": 1
+    },
+    {
+      "name": "dark_teal",
+      "weight": 1
+    }
+  ]
+}

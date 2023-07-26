@@ -1,0 +1,22 @@
+{
+  "display": {
+    "icon": {
+      "item": "uselessreptile:wyvern_skin"
+    },
+    "title": "Useless Reptile",
+    "description": {
+      "translate": "advancement.uselessreptile.root.desc"
+    },
+    "background": "minecraft:textures/block/dirt.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tick",
+      "conditions": {}
+    }
+  }
+}

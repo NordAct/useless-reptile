@@ -1,0 +1,17 @@
+{
+  "parent": "uselessreptile:item/flute/flute_call",
+  "overrides": [
+    {
+      "predicate": {
+        "mode": 0.5
+      },
+      "model": "uselessreptile:item/flute/flute_gather"
+    },
+    {
+      "predicate": {
+        "mode": 1
+      },
+      "model": "uselessreptile:item/flute/flute_target"
+    }
+  ]
+}

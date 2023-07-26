@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iLi"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:tinted_glass"
+    },
+    "L": {
+      "item": "uselessreptile:dragon_helmet_iron"
+    }
+  },
+  "result": {
+    "item": "uselessreptile:moleclaw_helmet_iron",
+    "count": 1
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "iLi",
+    "iii",
+    "LiL"
+  ],
+  "key": {
+    "i": {
+      "item": "minecraft:diamond"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "result": {
+    "item": "uselessreptile:dragon_chestplate_diamond",
+    "count": 1
+  }
+}
