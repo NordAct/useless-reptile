@@ -23,11 +23,11 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
-import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
@@ -50,6 +50,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     public boolean forceTargetInWater = false;
     private final int eatCooldown = 200;
     private int eatTimer = eatCooldown;
+    public final net.minecraft.entity.AnimationState blinkAnimation = new net.minecraft.entity.AnimationState();
+    public final net.minecraft.entity.AnimationState sitAnimation = new net.minecraft.entity.AnimationState();
 
     public RiverPikehornEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -100,7 +102,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
     private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
         event.getController().setAnimationSpeed(animSpeed);
-        if (getVehicle() instanceof PlayerEntity) return loopAnim("sit.head", event);
         if (isFlying()) {
             if (isMoving() || event.isMoving()) {
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
@@ -168,15 +169,16 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     @Override
     public void tick() {
         super.tick();
-        if (getVehicle() instanceof PlayerEntity player) {
-            setRotation(player.getHeadYaw(), player.getPitch());
-            //because I give no fuck how to prevent this thing from rendering twice while riding the dragon and can't be bothered to render it correctly while player not standing up
-            if (player.getVehicle() instanceof URRideableDragonEntity || player.isFallFlying() || player.isCrawling()) stopRiding();
-            if (player.isFallFlying()) startToFly();
-        }
-
         setHitboxModifiers(0.8f, 0.8f, 0);
         dropLootToOwner();
+        if (getVehicle() instanceof PlayerEntity player) {
+            float yaw = getHeadYaw();
+            float centerYaw =  MathHelper.wrapDegrees(yaw - player.bodyYaw);
+            float resultYaw = MathHelper.clamp(centerYaw, -90.0F, 90.0F);
+            float yawToApply = yaw + resultYaw - centerYaw;
+            setHeadYaw(yawToApply);
+        }
+
         if (getWorld().isClient()) {
             glideTimer--;
             shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
@@ -332,5 +334,10 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     @Override
     public double getHeightOffset() {
         return 0.275;
+    }
+
+    public void updateAnimations() {
+        sitAnimation.setRunning(true, age);
+        blinkAnimation.setRunning(true, age);
     }
 }

@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.data;
 
 import com.google.gson.*;
-import com.mojang.logging.LogUtils;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.Resource;
@@ -10,7 +9,6 @@ import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonHelper;
 import nordmods.uselessreptile.UselessReptile;
-import org.slf4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -20,11 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-//todo добавить условие спавна
-
 public class DragonVariantLoader {
-    private static final Logger LOGGER = LogUtils.getLogger();
-
     public static void init() {
         ResourceManagerHelper.get(ResourceType.SERVER_DATA).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
 
@@ -47,16 +41,37 @@ public class DragonVariantLoader {
                             JsonElement element = JsonParser.parseReader(bufferedReader);
                             JsonArray array = JsonHelper.getArray((JsonObject) element, "variants");
                             for (int i = 0; i < array.size(); i++) {
-                                String name = array.get(i).getAsJsonObject().get("name").getAsString();
-                                int weight = array.get(i).getAsJsonObject().get("weight").getAsInt();
-                                variants.add(new DragonVariant(name, weight));
+                                JsonObject input = array.get(i).getAsJsonObject();
+                                String name = input.get("name").getAsString();
+                                int weight = input.get("weight").getAsInt();
+
+                                DragonVariant.AllowedBiomes allowedBiomes = null;
+                                if (input.has("allowed_biomes")) {
+                                    JsonObject biomes = JsonHelper.getObject(input, "allowed_biomes");
+
+                                    List<String> biomesById = new ArrayList<>();
+                                    if (biomes.has("biome")) {
+                                        JsonArray tags = biomes.get("biome").getAsJsonArray();
+                                        for (int j = 0; j < tags.size(); j++) biomesById.add(tags.get(j).getAsString());
+                                    }
+
+                                    List<String> biomesByTag = new ArrayList<>();
+                                    if (biomes.has("tag")) {
+                                        JsonArray tags = biomes.get("tag").getAsJsonArray();
+                                        for (int j = 0; j < tags.size(); j++) biomesByTag.add(tags.get(j).getAsString());
+                                    }
+
+                                    allowedBiomes = new DragonVariant.AllowedBiomes(biomesById, biomesByTag);
+                                }
+
+                                variants.add(new DragonVariant(name, weight, allowedBiomes));
                             }
                         } catch (JsonIOException e) {
-                            LOGGER.error("Failed to read json " + id, e);
+                            UselessReptile.LOGGER.error("Failed to read json " + id, e);
                         }
 
                     } catch(Exception e) {
-                        LOGGER.error("Error occurred while loading resource json " + id, e);
+                        UselessReptile.LOGGER.error("Error occurred while loading resource json " + id, e);
                     }
 
                     DragonVariantHolder.add(dragon, variants);

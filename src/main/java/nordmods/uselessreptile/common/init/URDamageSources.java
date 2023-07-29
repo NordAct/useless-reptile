@@ -1,12 +1,10 @@
 package nordmods.uselessreptile.common.init;
 
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.world.World;
 
-public class URDamageSources extends DamageSource {
-    public URDamageSources(RegistryEntry<DamageType> type) {
-        super(type);
+public class URDamageSources {
+    public static DamageSource acid(World world) {
+        return new DamageSource(URDamageTypes.getEntryOf(URDamageTypes.ACID, world));
     }
-    public static final DamageSource ACID = new URDamageSources(URDamageTypes.ACID);
 }

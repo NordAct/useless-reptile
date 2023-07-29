@@ -13,9 +13,18 @@ import nordmods.uselessreptile.UselessReptile;
 
 public class URPotions extends Potions {
 
-    public static final Potion ACID = new Potion(new StatusEffectInstance(URStatusEffects.ACID, 200, 1));
-    public static final Potion LONG_ACID = new Potion(new StatusEffectInstance(URStatusEffects.ACID, 400, 1));
-    public static final Potion STRONG_ACID = new Potion(new StatusEffectInstance(URStatusEffects.ACID, 200, 3));
+    public static final Potion ACID = new Potion(new StatusEffectInstance(URStatusEffects.ACID, 200, 1)) {
+        @Override
+        public boolean hasInstantEffect() {return false;}
+    };
+    public static final Potion LONG_ACID = new Potion(new StatusEffectInstance(URStatusEffects.ACID, 400, 1)) {
+        @Override
+        public boolean hasInstantEffect() {return false;}
+    };
+    public static final Potion STRONG_ACID = new Potion(new StatusEffectInstance(URStatusEffects.ACID, 200, 3)) {
+        @Override
+        public boolean hasInstantEffect() {return false;}
+    };
 
     public static void init() {
         Registry.register(Registries.POTION, new Identifier(UselessReptile.MODID,"acid"), ACID);

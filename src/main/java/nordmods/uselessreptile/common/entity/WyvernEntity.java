@@ -16,10 +16,7 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
-import net.minecraft.item.Items;
+import net.minecraft.item.*;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -42,7 +39,7 @@ import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
-import nordmods.uselessreptile.common.network.URPacketManager;
+import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -270,9 +267,11 @@ public class WyvernEntity extends URRideableFlyingDragonEntity {
 
             if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwnerOrCreative(player)) {
                 Item bottle = itemStack.getItem();
+                ItemStack potion = PotionUtil.setPotion(new ItemStack(Items.POTION), URPotions.ACID);
                 player.incrementStat(Stats.USED.getOrCreateStat(bottle));
                 getWorld().playSound(player, player.getBlockPos(), SoundEvents.ITEM_BOTTLE_FILL, SoundCategory.NEUTRAL, 1.0F, 1.0F);
-                ItemUsage.exchangeStack(itemStack, player, PotionUtil.setPotion(new ItemStack(Items.POTION), URPotions.ACID));
+                if (itemStack.getCount() > 1) ItemUsage.exchangeStack(itemStack, player, potion);
+                else player.setStackInHand(hand, potion);
                 return ActionResult.SUCCESS;
             }
         }
@@ -315,7 +314,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity {
         attackType = random.nextInt(3)+1;
         if (getWorld() instanceof ServerWorld world)
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) AttackTypeSyncS2CPacket.send(player, this);
-        if (isFlying()) URPacketManager.playSound(this, URSounds.WYVERN_BITE, SoundCategory.HOSTILE, 1, 1, 3);
+        if (isFlying()) URPacketHelper.playSound(this, URSounds.WYVERN_BITE, SoundCategory.NEUTRAL, 1, 1, 3);
         if (target != null && !getPassengerList().contains(target)) {
             Box targetBox = target.getBoundingBox();
             if (doesCollide(targetBox, getAttackBox())) tryAttack(target);
@@ -324,7 +323,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity {
 
     public Box getAttackBox() {
         //сильно циферки не твикать, расчет положения хитбокса для ближней атаки
-
         Vec3d rotationVec = getRotationVec(1f);
         double modifier = isFlying() ? 1.5 : 3.5;
         double x = rotationVec.x * modifier;

@@ -34,10 +34,6 @@ public class WyvernEntityRenderer extends GeoEntityRenderer<WyvernEntity> {
     public void updateSaddle (WyvernEntity entity) {
         boolean hasRider = entity.hasControllingPassenger();
         boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).getItem() == Items.SADDLE;
-        //model.getBone("saddle_front").ifPresent(c -> c.setHidden(!hasSaddle));
-        //model.getBone("saddle_neck1").ifPresent(c -> c.setHidden(!hasSaddle));
-        //model.getBone("saddle_neck3").ifPresent(c -> c.setHidden(!hasSaddle));
-        //model.getBone("saddle_neck5").ifPresent(c -> c.setHidden(!hasSaddle));
         model.getBone("spikes_front").ifPresent(c -> c.setHidden(hasSaddle));
         model.getBone("ropes").ifPresent(c -> c.setHidden(!hasRider));
     }

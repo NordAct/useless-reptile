@@ -1,17 +1,15 @@
 package nordmods.uselessreptile;
 
+import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.common.data.DragonVariantLoader;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
-
-/*todo:
-        1) Сделать систему, при которой бы все возможные варианты дракона для спауна перечислялись в файле где-то в data
-        2) Запилить речного пикорога
-*/
+import org.slf4j.Logger;
 
 public class UselessReptile implements ModInitializer {
+    public static final Logger LOGGER = LogUtils.getLogger();
     public static final String MODID = "uselessreptile";
     public static final Identifier EMPTY_TEXTURE = new Identifier(UselessReptile.MODID, "textures/empty.png");
 

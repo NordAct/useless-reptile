@@ -1,5 +1,7 @@
 package nordmods.uselessreptile.common.entity;
 
+import com.mojang.authlib.GameProfile;
+import eu.pb4.common.protection.api.CommonProtection;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -86,8 +88,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
         setPersistent();
-        //MinecraftClient.getInstance().inGameHud.getChatHud().addMessage(Text.literal(
-        //        "("+ world.getBlockState(getBlockPos().down()).getBlock() +") Moleclaw spawned at pos: " + getPos()));
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
@@ -337,6 +337,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
             Box targetBox = mob.getBoundingBox();
             if (doesCollide(targetBox, getStrongAttackBox())) tryAttack(mob);
         }
+
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().allowDragonGriefing.canTamedBreak() : URConfig.getConfig().allowDragonGriefing.canUntamedBreak();
         boolean canBreakBlocks = shouldBreakBlocks && getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
         if (canBreakBlocks && !getWorld().isClient()) {
@@ -361,7 +362,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
                         if (hitResult.getType() == HitResult.Type.BLOCK) {
                             BlockPos blockPos = new BlockPos(hitResult.getBlockPos());
                             BlockState blockState = getWorld().getBlockState(blockPos);
-                            if (!blockState.isIn(URTags.DRAGON_UNBREAKABLE)) {
+
+                            PlayerEntity rider = canBeControlledByRider() ? (PlayerEntity) getControllingPassenger() : null;
+                            GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
+
+                            if (!blockState.isIn(URTags.DRAGON_UNBREAKABLE) && CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) {
                                 float hardness = blockState.getHardness(getWorld(), blockPos);
                                 float bonus = 1;
                                 if (hasStatusEffect(StatusEffects.STRENGTH))

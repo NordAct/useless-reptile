@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DragonVariantHolder {
-    private static Map<String, List<DragonVariant>> dragonVariants = new HashMap<>();
+    private static final Map<String, List<DragonVariant>> dragonVariants = new HashMap<>();
 
     public static List<DragonVariant> getVariants(String name) {
         return dragonVariants.get(name);

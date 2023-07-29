@@ -21,6 +21,9 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
@@ -29,6 +32,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
@@ -37,6 +41,7 @@ import net.minecraft.world.EntityView;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.EntityPositionSource;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
@@ -217,16 +222,76 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         setTamingProgress(baseTamingProgress);
 
         List<DragonVariant> variants = DragonVariantHolder.getVariants(dragonID);
-        int totalWeight = 0;
-        for (DragonVariant variant : variants) totalWeight += variant.weight();
-        int randomRoll = getRandom().nextInt(totalWeight);
-        int prevBound = 0;
+        int noRestrictionsWeight = 0;
+        int biomeSpecificWeight = 0;
+        RegistryEntry<Biome> biome = world.getBiome(getBlockPos());
         for (DragonVariant variant : variants) {
-            if (randomRoll >= prevBound && randomRoll < prevBound + variant.weight()) {
-                setVariant(variant.name());
-                break;
+            boolean alreadyCounted = false;
+            if (!variant.hasRestrictions()) noRestrictionsWeight += variant.weight();
+            else {
+                List<String> id = variant.allowedBiomes().hasBiomesByIdList() ? variant.allowedBiomes().biomesById() : List.of();
+                List<String> tags = variant.allowedBiomes().hasBiomesByTagList() ? variant.allowedBiomes().biomesByTag() : List.of();
+                for (String s : id) {
+                    Identifier name = new Identifier(s);
+                    if (biome.matchesId(name)) {
+                        biomeSpecificWeight += variant.weight();
+                        alreadyCounted = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyCounted) for (String tag : tags) {
+                    Identifier name = new Identifier(tag);
+                    if (biome.isIn(TagKey.of(RegistryKeys.BIOME, name))) {
+                        biomeSpecificWeight += variant.weight();
+                        break;
+                    }
+                }
             }
-            prevBound += variant.weight();
+        }
+        int totalWeight = noRestrictionsWeight + biomeSpecificWeight;
+
+        if (totalWeight <= 0) throw new RuntimeException("Failed to assign dragon variant due impossible total weight of all variants for " + this);
+
+        int roll = getRandom().nextInt(totalWeight);
+        int previousBound = 0;
+
+        for (DragonVariant variant : variants) {
+            if (!variant.hasRestrictions()) {
+                if (roll >= previousBound && roll < previousBound + variant.weight()) {
+                    setVariant(variant.name());
+                    break;
+                }
+                previousBound += variant.weight();
+            } else {
+                List<String> id = variant.allowedBiomes().hasBiomesByIdList() ? variant.allowedBiomes().biomesById() : List.of();
+                List<String> tags = variant.allowedBiomes().hasBiomesByTagList() ? variant.allowedBiomes().biomesByTag() : List.of();
+
+                boolean isIn = false;
+                for (String s : id) {
+                    Identifier name = new Identifier(s);
+                    if (biome.matchesId(name)) {
+                        isIn = true;
+                        break;
+                    }
+                }
+
+                if (!isIn) for (String tag : tags) {
+                    Identifier name = new Identifier(tag);
+                    if (biome.isIn(TagKey.of(RegistryKeys.BIOME, name))) {
+                        isIn = true;
+                        break;
+                    }
+                }
+
+                if (isIn) {
+                    if (roll >= previousBound && roll < previousBound + variant.weight()) {
+                        setVariant(variant.name());
+                        break;
+                    }
+                    previousBound += variant.weight();
+                }
+            }
         }
 
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
@@ -393,7 +458,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public void playSound(SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) getWorld().playSound(getX(), getY(),getZ(), sound, SoundCategory.HOSTILE, volume, pitch,true);
+        if (!isSilent()) getWorld().playSound(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
     }
 
     protected float getWidthModTransSpeed() {return (float) (0.22 * animSpeed);}

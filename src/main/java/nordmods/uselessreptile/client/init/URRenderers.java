@@ -2,7 +2,9 @@ package nordmods.uselessreptile.client.init;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
+import nordmods.uselessreptile.client.model.riverpikehornonhead.RiverPikehornOnHeadModel;
 import nordmods.uselessreptile.client.renderer.MoleclawEntityRenderer;
 import nordmods.uselessreptile.client.renderer.RiverPikehornEntityRenderer;
 import nordmods.uselessreptile.client.renderer.WyvernEntityRenderer;
@@ -17,5 +19,6 @@ public class URRenderers {
         EntityRendererRegistry.register(UREntities.MOLECLAW_ENTITY, MoleclawEntityRenderer::new);
         EntityRendererRegistry.register(UREntities.RIVER_PIKEHORN_ENTITY, RiverPikehornEntityRenderer::new);
 
+        EntityModelLayerRegistry.registerModelLayer(RiverPikehornOnHeadModel.PIKEHORN_ON_HEAD_LAYER, RiverPikehornOnHeadModel::getTexturedModelData);
     }
 }

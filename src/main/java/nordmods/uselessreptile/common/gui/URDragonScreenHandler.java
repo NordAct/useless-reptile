@@ -16,8 +16,8 @@ import org.jetbrains.annotations.Nullable;
 
 public abstract class URDragonScreenHandler extends ScreenHandler {
 
-    protected Inventory inventory;
-    protected StorageSize storageSize;
+    protected final Inventory inventory;
+    protected final StorageSize storageSize;
     public static final int maxStorageSize = 20;
 
     protected URDragonScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, Inventory inventory, StorageSize storageSize, boolean hasSaddle, boolean hasArmor, boolean hasBanner) {
@@ -120,7 +120,6 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
 
     @Override
     public ItemStack quickMove(PlayerEntity player, int invSlot) {
-        System.out.println(invSlot);
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
         if (slot != null && slot.hasStack()) {
