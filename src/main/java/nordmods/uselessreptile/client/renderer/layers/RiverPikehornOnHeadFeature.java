@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -18,16 +18,16 @@ import nordmods.uselessreptile.client.model.riverpikehornonhead.RiverPikehornOnH
 import nordmods.uselessreptile.client.renderer.RiverPikehornEntityRenderer;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
-public class RiverPikehornOnHeadFeature extends FeatureRenderer<ClientPlayerEntity, PlayerEntityModel<ClientPlayerEntity>> {
+public class RiverPikehornOnHeadFeature extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 
     private final RiverPikehornOnHeadModel model;
-    public RiverPikehornOnHeadFeature(FeatureRendererContext<ClientPlayerEntity, PlayerEntityModel<ClientPlayerEntity>> context, EntityModelLoader loader) {
+    public RiverPikehornOnHeadFeature(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context, EntityModelLoader loader) {
         super(context);
         model = new RiverPikehornOnHeadModel(loader.getModelPart(RiverPikehornOnHeadModel.PIKEHORN_ON_HEAD_LAYER));
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, ClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
+    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
         if (entity.getFirstPassenger() instanceof RiverPikehornEntity dragon) {
             if (dragon.isInvisible()) return;
             matrices.push();
@@ -50,7 +50,6 @@ public class RiverPikehornOnHeadFeature extends FeatureRenderer<ClientPlayerEnti
         float a = entityYaw % 360;
         float b = ownerYaw % 360;
         if (b < 0) b += 360;
-        MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.literal(entityYaw + ", " + ownerYaw + ", " + a +", " + b + ", " + (a - b)),false);
         return MathHelper.clamp(MathHelper.wrapDegrees(a - b), -45, 45);
     }
 }
