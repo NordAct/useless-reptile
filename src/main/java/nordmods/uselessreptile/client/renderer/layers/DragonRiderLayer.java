@@ -22,6 +22,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRenderLayer<T> {
@@ -32,23 +33,14 @@ public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRende
     protected final double defaultPitch;
     protected final List<String> ignore;
 
-    public DragonRiderLayer(GeoRenderer<T> entityRendererIn, float defaultOffsetX, float defaultOffsetY, float defaultOffsetZ, String starterBone, double defaultPitch, List<String> ignore) {
+    public DragonRiderLayer(GeoRenderer<T> entityRendererIn, float defaultOffsetX, float defaultOffsetY, float defaultOffsetZ, String starterBone, double defaultPitch, String[] ignore) {
         super(entityRendererIn);
         this.defaultOffsetX = defaultOffsetX;
         this.defaultOffsetY = defaultOffsetY;
         this.defaultOffsetZ = defaultOffsetZ;
         this.starterBone = starterBone;
         this.defaultPitch = defaultPitch;
-        this.ignore = ignore;
-    }
-    public DragonRiderLayer(GeoRenderer<T> entityRendererIn, float defaultOffsetX, float defaultOffsetY, float defaultOffsetZ, String starterBone, double defaultPitch) {
-        super(entityRendererIn);
-        this.defaultOffsetX = defaultOffsetX;
-        this.defaultOffsetY = defaultOffsetY;
-        this.defaultOffsetZ = defaultOffsetZ;
-        this.starterBone = starterBone;
-        this.defaultPitch = defaultPitch;
-        this.ignore = List.of();
+        this.ignore = Arrays.stream(ignore).toList();
     }
 
     @Override
@@ -85,12 +77,13 @@ public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRende
             Vec3d rotX = getRotationVector(MathHelper.wrapDegrees(rollDegrees), MathHelper.wrapDegrees(entity.getYaw(0.01F) - 90 + yawDegrees));
 
             Vec3d rotZ = getRotationVector(0, entity.getYaw(0.01F));
-            matrixStackIn.translate(-offsetZ * (float) rotZ.x + offsetX * (float) rotZ.z,
-                    -offsetY + 1.5f,
-                    -offsetZ * (float) rotZ.z - offsetX * (float) rotZ.x);
+            matrixStackIn.translate(0, 1.5f, 0);
             matrixStackIn.multiply(new Quaternionf().setAngleAxis(-pitch, rotX.x, rotX.y, rotX.z));
             matrixStackIn.multiply(new Quaternionf().setAngleAxis(-roll, rotZ.x, rotZ.y, rotZ.z));
             matrixStackIn.multiply(RotationAxis.POSITIVE_Y.rotation((float) yaw));
+            matrixStackIn.translate(-offsetZ * (float) rotZ.x + offsetX * (float) rotZ.z,
+                    -offsetY,
+                    -offsetZ * (float) rotZ.z - offsetX * (float) rotZ.x);
 
             renderEntity(passenger, partialTick, matrixStackIn, bufferSource, packedLight);
             URRideableDragonEntity.passengers.add(passenger.getUuid());

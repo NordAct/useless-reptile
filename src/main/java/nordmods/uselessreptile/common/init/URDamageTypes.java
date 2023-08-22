@@ -14,7 +14,4 @@ public class URDamageTypes {
     public static RegistryEntry<DamageType> getEntryOf(RegistryKey<DamageType> key, World world) {
         return world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).getEntry(key).orElseThrow();
     }
-
-    public static void init () {
-    }
 }

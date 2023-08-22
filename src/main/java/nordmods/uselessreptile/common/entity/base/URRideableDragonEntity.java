@@ -16,8 +16,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.client.init.URKeybinds;
+import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.KeyInputSyncS2CPacket;
-import nordmods.uselessreptile.common.network.PosS2CSyncPacket;
+import nordmods.uselessreptile.common.network.PosSyncS2CPacket;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -77,7 +78,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         if (isTamed() && isOwnerOrCreative(player) && !isInteractableItem(itemStack)) {
             if (!hasPassengers() && hasSaddle()) {
                 if (isSitting()) setIsSitting(false);
-                else if (!getWorld().isClient) player.startRiding(this);
+                else if (!getWorld().isClient()) player.startRiding(this);
                 return ActionResult.SUCCESS;
             }
         }
@@ -109,7 +110,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         if (getWorld() instanceof ServerWorld world && canBeControlledByRider())
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) {
                 KeyInputSyncS2CPacket.send(player, this);
-                PosS2CSyncPacket.send(player, this);
+                PosSyncS2CPacket.send(player, this);
             }
     }
 
@@ -133,5 +134,13 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     @Override
     public boolean canBeLeashedBy(PlayerEntity player) {
         return player.getAbilities().creativeMode && super.canBeLeashedBy(player);
+    }
+
+    @Override
+    public void openInventory(PlayerEntity player) {
+        if (!getWorld().isClient() && canBeControlledByRider() && isOwnerOrCreative(player)) {
+            GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+            player.openHandledScreen(this);
+        }
     }
 }

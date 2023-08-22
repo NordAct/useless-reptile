@@ -5,14 +5,13 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import nordmods.uselessreptile.client.model.RiverPikehornEntityModel;
-import nordmods.uselessreptile.client.renderer.layers.FishItemLayer;
+import nordmods.uselessreptile.client.renderer.layers.DragonMainHandItemLayer;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-public class RiverPikehornEntityRenderer extends GeoEntityRenderer<RiverPikehornEntity> {
+public class RiverPikehornEntityRenderer extends URDragonRenderer<RiverPikehornEntity> {
     public RiverPikehornEntityRenderer(EntityRendererFactory.Context renderManager) {
-        super(renderManager, new RiverPikehornEntityModel());
-        addRenderLayer(new FishItemLayer<>(this));
+        super(renderManager, new RiverPikehornEntityModel(), false);
+        addRenderLayer(new DragonMainHandItemLayer<>(this));
         shadowRadius = 0.4f;
     }
 

@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#uselessreptile:common_dragon_armor_iron",
+    "#uselessreptile:common_dragon_armor_gold",
+    "#uselessreptile:common_dragon_armor_diamond"
+  ]
+}

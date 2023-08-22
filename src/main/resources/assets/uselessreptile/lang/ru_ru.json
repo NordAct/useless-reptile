@@ -64,8 +64,13 @@
     "other.uselessreptile.flute_mode2": "Режим флейты: атака цели",
 
     "config.uselessreptile.title": "Useless Reptile - Конфигурация",
-    "config.uselessreptile.category.dragon" : "Настройки для драконов",
-    "config.uselessreptile.category.camera" : "Настройки камеры",
+    "config.uselessreptile.category.gameplay": "Геймплейные настройки",
+    "config.uselessreptile.category.client": "Клиентские настройки",
+    "config.uselessreptile.group.spawnWeight": "Шансы появления",
+    "config.uselessreptile.group.dragonBehaviour": "Поведение драконов",
+    "config.uselessreptile.group.camera": "Настройки камеры",
+    "config.uselessreptile.group.dragonAppearance": "Внешний вид драконов",
+
     "config.uselessreptile.option.wyvernSpawnWeight": "Шанс появления болотной виверны",
     "config.uselessreptile.option.moleclawSpawnWeight": "Шанс появления кротолапа",
     "config.uselessreptile.option.blockDropChance": "Шанс выпадения блоков",
@@ -80,7 +85,12 @@
     "config.uselessreptile.option.dragonHealthMultiplier": "Множитель здоровья дракона",
     "config.uselessreptile.option.dragonDamageMultiplier": "Множитель урона дракона",
     "config.uselessreptile.option.pikehornSpawnWeight": "Шанс появления речного пикорога",
+    "config.uselessreptile.option.disableEmissiveTextures": "Отключить светящиеся текстуры",
 
+    "config.uselessreptile.group.spawnWeight.@Tooltip": "Шансы появления для каждого дракона. Каждая настройка позволяет контролировать частоту появления для конкретного дракона. \nИзменение любого параметра потребует перезапуска игры",
+    "config.uselessreptile.group.dragonBehaviour.@Tooltip": "Настройки для изменения поведения драконов в игре",
+    "config.uselessreptile.group.camera.@Tooltip": "Настройки для камеры, когда вы находитесь верхом на драконе",
+    "config.uselessreptile.group.dragonAppearance.@Tooltip": "Настройки для изменения внешнего вида драконов",
     "config.uselessreptile.option.wyvernSpawnWeight.@Tooltip": "Отвечает за то, как часто болотные виверны появляются в мире.\nПри значении 0 перестанут появляться совсем \n§cЗначения ниже 0 могут привести к вылету игры",
     "config.uselessreptile.option.moleclawSpawnWeight.@Tooltip": "Отвечает за то, как часто кротолапы появляются в мире.\nПри значении 0 перестанут появляться совсем \n§cЗначения ниже 0 могут привести к вылету игры",
     "config.uselessreptile.option.blockDropChance.@Tooltip": "Определяет процент блоков, который будет выпадать после некоторых атак драконов, которые могут разрущать блоки",
@@ -92,6 +102,7 @@
     "config.uselessreptile.option.dragonHealthMultiplier.@Tooltip": "Умножает максимальное здоровье всех драконов",
     "config.uselessreptile.option.dragonDamageMultiplier.@Tooltip": "Умножает урон, наносимый атаками всех драконов\nМожет не применяться к некоторым атакам",
     "config.uselessreptile.option.pikehornSpawnWeight.@Tooltip": "Отвечает за то, как часто речные пикороги появляются в мире.\nПри значении 0 перестанут появляться совсем \n§cЗначения ниже 0 могут привести к вылету игры",
+    "config.uselessreptile.option.disableEmissiveTextures.@Tooltip": "Не позволяет светяшемуся слою на драконе отрисовываться",
 
     "effect.uselessreptile.acid": "Кислота",
 

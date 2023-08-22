@@ -52,6 +52,7 @@ import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
+import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -167,7 +168,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
-        event.getController().setAnimationSpeed(animSpeed);
+        event.getController().setAnimationSpeed(animationSpeed);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed()) {
             if (isPanicking()) return loopAnim("panic", event);
@@ -181,7 +182,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     private <A extends GeoEntity> PlayState turn(AnimationState<A> event) {
         byte turnState = getTurningState();
-        event.getController().setAnimationSpeed(animSpeed);
+        event.getController().setAnimationSpeed(animationSpeed);
         if (turnState == 1) return loopAnim("turn.left", event);
         if (turnState == 2) return loopAnim("turn.right", event);
         return loopAnim("turn.none", event);
@@ -230,7 +231,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         setMovementSpeed(speed * getSpeedMod());
 
         if (canBeControlledByRider()) {
-            LivingEntity rider = getControllingPassenger();
+            PlayerEntity rider = (PlayerEntity) getControllingPassenger();
 
             float f1 = MathHelper.clamp(rider.forwardSpeed, -forwardSpeed, forwardSpeed);
 
@@ -256,6 +257,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+        if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
         return MoleclawScreenHandler.createScreenHandler(syncId, inv, inventory);
     }
 

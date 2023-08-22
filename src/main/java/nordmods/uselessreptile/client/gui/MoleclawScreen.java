@@ -5,7 +5,6 @@ import net.minecraft.text.Text;
 import nordmods.uselessreptile.common.gui.MoleclawScreenHandler;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 
-
 public class MoleclawScreen extends URDragonScreen<MoleclawScreenHandler> {
 
     public MoleclawScreen(MoleclawScreenHandler handler, PlayerInventory inventory, Text title) {

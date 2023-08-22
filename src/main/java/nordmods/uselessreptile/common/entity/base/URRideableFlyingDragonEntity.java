@@ -25,6 +25,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     protected float pitchLimitAir = 90;
     protected float rotationSpeedAir = 180;
     private int pressedTimer;
+    protected float tiltProgress;
 
     protected URRideableFlyingDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -69,6 +70,12 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
         setFlying(tag.getBoolean("IsFlying"));
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        updateTiltProgress();
     }
 
     @Override
@@ -232,5 +239,22 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     protected float getOffGroundSpeed() {
         float movementSpeed = getMovementSpeed();
         return hasControllingPassenger() ? movementSpeed * 0.1f : movementSpeed *  0.14f;
+    }
+
+    private void updateTiltProgress() {
+        switch (getTiltState()) {
+            case 1 -> {
+                if (tiltProgress < transitionTicks) tiltProgress++;
+            }
+            case 2 -> {
+                if (tiltProgress > -transitionTicks) tiltProgress--;
+            }
+            default -> {
+                if (tiltProgress != 0) {
+                    if (tiltProgress > 0) tiltProgress--;
+                    else  tiltProgress++;
+                }
+            }
+        }
     }
 }

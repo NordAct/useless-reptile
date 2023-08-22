@@ -8,18 +8,22 @@ import nordmods.uselessreptile.client.network.*;
 
 @Environment(EnvType.CLIENT)
 public class UselessReptileClient implements ClientModInitializer {
-
     @Override
     public void onInitializeClient() {
+        URClientEvents.init();
         URModelPredicates.init();
         URRenderers.init();
         URKeybinds.init();
         URScreens.init();
+
         KeyInputPacket.init();
         KeyInputSyncPacket.init();
         LiftoffParticlesPacket.init();
         PosSyncPacket.init();
         AttackTypeSyncPacket.init();
-
+        GUIEntityToRenderPacket.init();
+        AttackPartOwnerPacket.init();
+        InteractPartOwnerPacket.init();
+        InstrumentSoundBoundMessagePacket.init();
     }
 }

@@ -10,9 +10,9 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 
-public class FishItemLayer<T extends URDragonEntity> extends BlockAndItemGeoLayer<T> {
+public class DragonMainHandItemLayer<T extends URDragonEntity> extends BlockAndItemGeoLayer<T> {
 
-    public FishItemLayer(GeoRenderer<T> renderer) {
+    public DragonMainHandItemLayer(GeoRenderer<T> renderer) {
         super(renderer);
     }
 

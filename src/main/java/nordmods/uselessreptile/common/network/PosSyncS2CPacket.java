@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 
-public class PosS2CSyncPacket {
+public class PosSyncS2CPacket {
     public static final Identifier POS_SYNC_PACKET = new Identifier(UselessReptile.MODID, "pos_sync_packet");
 
     public static void send(ServerPlayerEntity player, URRideableDragonEntity dragon) {

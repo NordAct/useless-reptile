@@ -61,9 +61,7 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
 
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
-        if (!getWorld().isClient) {
-            spawnEffectCloud();
-        }
+        if (!getWorld().isClient()) spawnEffectCloud();
         super.onBlockHit(blockHitResult);
         discard();
     }
@@ -72,7 +70,7 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         setDamage(2 * URConfig.getDamageMultiplier());
-        if (!getWorld().isClient) spawnEffectCloud();
+        if (!getWorld().isClient()) spawnEffectCloud();
         super.onEntityHit(entityHitResult);
         if (entityHitResult.getEntity() instanceof LivingEntity entity) entity.addStatusEffect(new StatusEffectInstance(URStatusEffects.ACID, 10, 1));
         discard();
@@ -102,9 +100,7 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
     @Override
     public void tick() {
         super.tick();
-        if (getWorld().isClient) {
-            spawnParticles(8);
-        }
+        if (getWorld().isClient()) spawnParticles(8);
         age();
     }
 

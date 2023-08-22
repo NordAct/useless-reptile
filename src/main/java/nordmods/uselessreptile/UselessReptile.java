@@ -5,6 +5,8 @@ import net.fabricmc.api.ModInitializer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.common.data.DragonVariantLoader;
 import nordmods.uselessreptile.common.init.*;
+import nordmods.uselessreptile.common.network.AttackPartOwnerC2SPacket;
+import nordmods.uselessreptile.common.network.InteractPartOwnerC2SPacket;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
 import org.slf4j.Logger;
 
@@ -17,6 +19,7 @@ public class UselessReptile implements ModInitializer {
     public void onInitialize() {
         DragonVariantLoader.init();
         URConfig.init();
+        UREvents.init();
         URSounds.init();
         UREntities.init();
         URItems.init();
@@ -24,6 +27,9 @@ public class UselessReptile implements ModInitializer {
         URStatusEffects.init();
         URPotions.init();
         URScreenHandlers.init();
+
         KeyInputC2SPacket.init();
+        AttackPartOwnerC2SPacket.init();
+        InteractPartOwnerC2SPacket.init();
     }
 }

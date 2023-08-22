@@ -1,9 +1,6 @@
 package nordmods.uselessreptile.common.init;
 
-import dev.isxander.yacl3.api.ConfigCategory;
-import dev.isxander.yacl3.api.Option;
-import dev.isxander.yacl3.api.OptionDescription;
-import dev.isxander.yacl3.api.YetAnotherConfigLib;
+import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.config.ConfigEntry;
 import dev.isxander.yacl3.config.GsonConfigInstance;
 import dev.isxander.yacl3.gui.controllers.TickBoxController;
@@ -27,7 +24,6 @@ public class URConfig {
     @ConfigEntry public int pikehornSpawnWeight = 1;
     @ConfigEntry public DragonGriefing allowDragonGriefing = DragonGriefing.ALL;
     @ConfigEntry public int blockDropChance = 100;
-    @ConfigEntry public boolean disableNamedTextures = false;
     @ConfigEntry public float dragonDamageMultiplier = 1;
     @ConfigEntry public float dragonHealthMultiplier = 1;
     @ConfigEntry public double cameraDistanceOffset = 2;
@@ -36,15 +32,36 @@ public class URConfig {
     @ConfigEntry public boolean enableCameraOffset = true;
     @ConfigEntry public boolean enableCrosshair = true;
     @ConfigEntry public boolean autoThirdPerson = true;
+    @ConfigEntry public boolean disableNamedTextures = false;
+    @ConfigEntry public boolean disableEmissiveTextures = false;
     public static Screen configScreen(Screen parentScreen) {
         return YetAnotherConfigLib.create(CONFIG, ((defaults, config, builder) -> {
             //category
-            ConfigCategory.Builder dragonCategory = ConfigCategory.createBuilder()
-                    .name(key("category.dragon"));
-            ConfigCategory.Builder cameraCategory = ConfigCategory.createBuilder()
-                    .name(key("category.camera"));
+            ConfigCategory.Builder gameplayCategory = ConfigCategory.createBuilder()
+                    .name(key("category.gameplay"));
+            ConfigCategory.Builder clientCategory = ConfigCategory.createBuilder()
+                    .name(key("category.client"));
 
-            //options - dragon
+            //group
+            OptionGroup.Builder spawnWeightGroup = OptionGroup.createBuilder()
+                    .name(key("group.spawnWeight"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("group.spawnWeight.@Tooltip")).build());
+            OptionGroup.Builder dragonBehaviourGroup = OptionGroup.createBuilder()
+                    .name(key("group.dragonBehaviour"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("group.dragonBehaviour.@Tooltip")).build());
+
+            OptionGroup.Builder cameraGroup = OptionGroup.createBuilder()
+                    .name(key("group.camera"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("group.camera.@Tooltip")).build());
+            OptionGroup.Builder dragonAppearanceGroup = OptionGroup.createBuilder()
+                    .name(key("group.dragonAppearance"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("group.dragonAppearance.@Tooltip")).build());
+
+            //options
             Option<Integer> wyvernSpawnWeight = Option.<Integer>createBuilder()
                     .name(key("option.wyvernSpawnWeight"))
                     .description(OptionDescription.createBuilder()
@@ -126,16 +143,17 @@ public class URConfig {
                     .customController(FloatFieldController::new)
                     .build();
 
-            dragonCategory.option(wyvernSpawnWeight);
-            dragonCategory.option(moleclawSpawnWeight);
-            dragonCategory.option(pikehornSpawnWeight);
-            dragonCategory.option(allowDragonGriefing);
-            dragonCategory.option(blockDropChance);
-            dragonCategory.option(disableNamedTextures);
-            dragonCategory.option(dragonDamageMultiplier);
-            dragonCategory.option(dragonHealthMultiplier);
+            spawnWeightGroup.option(wyvernSpawnWeight);
+            spawnWeightGroup.option(moleclawSpawnWeight);
+            spawnWeightGroup.option(pikehornSpawnWeight);
+            dragonBehaviourGroup.option(allowDragonGriefing);
+            dragonBehaviourGroup.option(blockDropChance);
+            dragonBehaviourGroup.option(dragonDamageMultiplier);
+            dragonBehaviourGroup.option(dragonHealthMultiplier);
 
-            //category - camera
+            gameplayCategory.group(spawnWeightGroup.build());
+            gameplayCategory.group(dragonBehaviourGroup.build());
+            
             Option<Double> cameraDistanceOffset = Option.<Double>createBuilder()
                     .name(key("option.cameraDistanceOffset"))
                     .binding(defaults.cameraDistanceOffset,
@@ -191,17 +209,33 @@ public class URConfig {
                     .customController(TickBoxController::new)
                     .build();
 
-            cameraCategory.option(cameraDistanceOffset);
-            cameraCategory.option(cameraVerticalOffset);
-            cameraCategory.option(cameraHorizontalOffset);
-            cameraCategory.option(enableCameraOffset);
-            cameraCategory.option(enableCrosshair);
-            cameraCategory.option(autoThirdPerson);
+            Option<Boolean> disableEmissiveTextures = Option.<Boolean>createBuilder()
+                    .name(key("option.disableEmissiveTextures"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.disableEmissiveTextures.@Tooltip")).build())
+                    .binding(defaults.disableEmissiveTextures,
+                            () -> config.disableEmissiveTextures,
+                            val -> config.disableEmissiveTextures = val)
+                    .customController(TickBoxController::new)
+                    .build();
+
+            cameraGroup.option(cameraDistanceOffset);
+            cameraGroup.option(cameraVerticalOffset);
+            cameraGroup.option(cameraHorizontalOffset);
+            cameraGroup.option(enableCameraOffset);
+            cameraGroup.option(enableCrosshair);
+            cameraGroup.option(autoThirdPerson);
+
+            dragonAppearanceGroup.option(disableNamedTextures);
+            dragonAppearanceGroup.option(disableEmissiveTextures);
+
+            clientCategory.group(cameraGroup.build());
+            clientCategory.group(dragonAppearanceGroup.build());
 
             return builder
                     .title(key("title"))
-                    .category(dragonCategory.build())
-                    .category(cameraCategory.build());
+                    .category(gameplayCategory.build())
+                    .category(clientCategory.build());
         })).generateScreen(parentScreen);
     }
 

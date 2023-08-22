@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.client.model;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -33,7 +34,7 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
 
     @Override
     public Identifier getTextureResource(T dragon){
-        if (dragon.getCustomName() != null && !URConfig.getConfig().disableNamedTextures) {
+        if (!URConfig.getConfig().disableNamedTextures && dragon.getCustomName() != null) {
             Identifier id = getCustomTexturePath(dragon);
             if (MinecraftClient.getInstance().getResourceManager().getResource(id).isPresent()) return id;
         }
@@ -54,8 +55,12 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
         return new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonName + "/" + name + ".png");
     }
 
+    @Override
+    public RenderLayer getRenderType(T animatable, Identifier texture) {
+        return RenderLayer.getEntityCutout(texture);
+    }
 
-    private static final Map<String, String> letters = new HashMap<String, String>();
+    private static final Map<String, String> letters = new HashMap<>();
     static {
         letters.put("а", "a");
         letters.put("б", "b");

@@ -1,41 +1,36 @@
 package nordmods.uselessreptile.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.hit.HitResult;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 
 public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     protected static final Identifier TEXTURE = new Identifier(UselessReptile.MODID,"textures/gui/dragon_inventory.png");
-    protected int mouseX;
-    protected int mouseY;
-    protected LivingEntity entity;
-    protected int i;
-    protected int j;
+    private int mouseX;
+    private int mouseY;
+    private final URDragonEntity entity;
+    private int i;
+    private int j;
     protected boolean hasArmor = false;
     protected boolean hasSaddle = false;
     protected boolean hasBanner = false;
+    public static int entityToRenderID;
     protected URDragonScreenHandler.StorageSize storageSize = URDragonScreenHandler.StorageSize.NONE;
 
     public URDragonScreen(T handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
         PlayerEntity player = inventory.player;
-        HitResult target = MinecraftClient.getInstance().crosshairTarget;
-        entity = target.getType() == HitResult.Type.ENTITY ? (LivingEntity) ((EntityHitResult) target).getEntity() : null;
-        if (entity == null && player.getVehicle() instanceof URRideableDragonEntity dragon) entity = dragon;
+        entity = (URDragonEntity) player.getWorld().getEntityById(entityToRenderID);
     }
 
     @Override
@@ -75,8 +70,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     protected void drawEntity(DrawContext context) {
-        if (entity != null)
-            InventoryScreen.drawEntity(context, i + 51, j + 68, 13, i + 51 - mouseX, j + 75 - 50 - mouseY, entity);
+        if (entity != null) InventoryScreen.drawEntity(context, i + 51, j + 68, 13, i + 51 - mouseX, j + 75 - 50 - mouseY, entity);
     }
 
     protected void drawStorage(DrawContext context) {

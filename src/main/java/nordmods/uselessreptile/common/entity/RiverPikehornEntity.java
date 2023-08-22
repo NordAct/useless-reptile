@@ -65,7 +65,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         baseAccelerationDuration = 100;
         rotationSpeedGround = 10;
         rotationSpeedAir = 10;
-        canSwim = true;
+        canNavigateInFluids = true;
         regenFromFood = 3;
         dragonID = "river_pikehorn";
         inventory = new SimpleInventory(0);
@@ -101,7 +101,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         return loopAnim("blink", event);
     }
     private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
-        event.getController().setAnimationSpeed(animSpeed);
+        event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isMoving() || event.isMoving()) {
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
@@ -109,7 +109,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
                 if (isGliding() || shouldGlide) return loopAnim("fly.glide", event);
                 return loopAnim("fly.straight", event);
             }
-            event.getController().setAnimationSpeed(Math.max(animSpeed, 1));
+            event.getController().setAnimationSpeed(Math.max(animationSpeed, 1));
             return loopAnim("fly.idle", event);
         }
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
@@ -121,7 +121,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     private <A extends GeoEntity> PlayState turn(AnimationState<A> event) {
         byte turnState = getTurningState();
-        event.getController().setAnimationSpeed(animSpeed);
+        event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) return loopAnim("turn.fly.left", event);
             if (turnState == 2) return loopAnim("turn.fly.right", event);
@@ -169,7 +169,10 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     @Override
     public void tick() {
         super.tick();
-        setHitboxModifiers(0.8f, 0.8f, 0);
+        if (getVehicle() instanceof PlayerEntity) setHitboxModifiers(0.7f, 0.6f, 0);
+        else if (isFlying() && isMoving()) setHitboxModifiers(0.6f, 1f, 0);
+        else setHitboxModifiers(0.8f, 0.8f, 0);
+
         dropLootToOwner();
         if (getVehicle() instanceof PlayerEntity player) {
             float yaw = getHeadYaw();

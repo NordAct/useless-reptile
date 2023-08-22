@@ -17,7 +17,10 @@ import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.*;
+import net.minecraft.item.BannerItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.potion.PotionUtil;
@@ -25,10 +28,10 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -49,7 +52,9 @@ import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.uselessreptile.common.data.DragonVariant;
 import nordmods.uselessreptile.common.data.DragonVariantHolder;
+import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
+import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -65,10 +70,10 @@ import java.util.function.BiConsumer;
 
 public abstract class URDragonEntity extends TameableEntity implements GeoEntity, NamedScreenHandlerFactory {
     public int attackType = 1;
-    protected double animSpeed = 1;
+    protected double animationSpeed = 1;
     protected float rotationProgress;
-    protected float heightMod = 0;
-    protected float widthMod = 0;
+    protected float heightMod = 1;
+    protected float widthMod = 1;
     protected final int transitionTicks = 10;
     protected int baseSecondaryAttackCooldown = 20;
     protected int basePrimaryAttackCooldown = 20;
@@ -80,7 +85,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected int baseTamingProgress = 1;
     protected int eatFromInventoryTimer = 20;
     protected float regenFromFood = 0;
-    protected boolean canSwim = false;
+    protected boolean canNavigateInFluids = false;
     protected Item favoriteFood = Items.STRUCTURE_VOID;
     protected String dragonID;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
@@ -99,7 +104,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         dataTracker.startTracking(MOVING_BACKWARDS, false);
         dataTracker.startTracking(IS_SITTING, false);
         dataTracker.startTracking(DANCING, false);
-        dataTracker.startTracking(TURNING_STATE, (byte)0);//1 - влево, 2 - вправо, 0 - прямо
+        dataTracker.startTracking(TURNING_STATE, (byte)0);//1 - left, 2 - right, 0 - straight
         dataTracker.startTracking(TAMING_PROGRESS, 1);
         dataTracker.startTracking(SPEED_MODIFIER, 1f);
         dataTracker.startTracking(MOUNTED_OFFSET, 0.35f);
@@ -222,19 +227,18 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         setTamingProgress(baseTamingProgress);
 
         List<DragonVariant> variants = DragonVariantHolder.getVariants(dragonID);
-        int noRestrictionsWeight = 0;
-        int biomeSpecificWeight = 0;
+        int totalWeight = 0;
         RegistryEntry<Biome> biome = world.getBiome(getBlockPos());
         for (DragonVariant variant : variants) {
             boolean alreadyCounted = false;
-            if (!variant.hasRestrictions()) noRestrictionsWeight += variant.weight();
+            if (!variant.hasRestrictions()) totalWeight += variant.weight();
             else {
                 List<String> id = variant.allowedBiomes().hasBiomesByIdList() ? variant.allowedBiomes().biomesById() : List.of();
                 List<String> tags = variant.allowedBiomes().hasBiomesByTagList() ? variant.allowedBiomes().biomesByTag() : List.of();
                 for (String s : id) {
                     Identifier name = new Identifier(s);
                     if (biome.matchesId(name)) {
-                        biomeSpecificWeight += variant.weight();
+                        totalWeight += variant.weight();
                         alreadyCounted = true;
                         break;
                     }
@@ -243,13 +247,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 if (!alreadyCounted) for (String tag : tags) {
                     Identifier name = new Identifier(tag);
                     if (biome.isIn(TagKey.of(RegistryKeys.BIOME, name))) {
-                        biomeSpecificWeight += variant.weight();
+                        totalWeight += variant.weight();
                         break;
                     }
                 }
             }
         }
-        int totalWeight = noRestrictionsWeight + biomeSpecificWeight;
 
         if (totalWeight <= 0) throw new RuntimeException("Failed to assign dragon variant due impossible total weight of all variants for " + this);
 
@@ -305,7 +308,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     @Override
     public EntityView method_48926() {
-        return null;
+        return getWorld();
     }
 
     protected class JukeboxEventListener implements GameEventListener {
@@ -362,13 +365,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     }
 
-    @Nullable
-    @Override
-    public LivingEntity getOwner() {
-        UUID uUID = this.getOwnerUuid();
-        return uUID == null ? null : getWorld().getPlayerByUuid(uUID);
-    }
-
     protected void updateEquipment() {}
 
     @Override
@@ -400,7 +396,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                     //we make the copy cuz else for some fucking reason minecraft will subtract effect time from potion itself too
                     //делаем копию т.к. иначе по какой-то ебейшей причине кубач будет убавлять время действия эффектов самого зелья также
                     for (StatusEffectInstance effect : PotionUtil.getPotionEffects(itemStack)) addStatusEffect(new StatusEffectInstance(effect));
-                    ItemUsage.exchangeStack(itemStack, player, new ItemStack(Items.GLASS_BOTTLE, 1));
+                    if (!player.isCreative()) player.setStackInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
                     return ActionResult.SUCCESS;
                 }
             }
@@ -409,15 +405,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 String sound = getInstrument(itemStack);
                 if (!getBoundedInstrumentSound().equals(sound)) setBoundedInstrumentSound(sound);
                 else setBoundedInstrumentSound("");
-                //Дано: тег "namespace:key". Выход: "instrument.namespace.key (ака ключ перевода)"
+                //Takes instrument tag "namespace:key" and converts it into "instrument.namespace.key" aka translation key if sound is bounded
                 Text instrumentSound = Text.translatable(getBoundedInstrumentSound().isEmpty() ?
                         "other.uselessreptile.none" : getInstrumentSoundKey(getBoundedInstrumentSound()));
-                if (getWorld().isClient()) {
-                    MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.translatable
-                            ("other.uselessreptile.sound_respond", getName(), instrumentSound), false);
-                    playSound(SoundEvents.BLOCK_COMPARATOR_CLICK, 0.2f, 2);
-                }
-                return  ActionResult.SUCCESS;
+                if (player instanceof ServerPlayerEntity serverPlayer) InstrumentSoundBoundMessageS2CPacket.send(serverPlayer, this, instrumentSound);
+                return ActionResult.SUCCESS;
             }
 
             if ((itemStack.isOf(Items.STICK) || isInstrument(itemStack)) && player.isSneaking()) {
@@ -451,48 +443,47 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return itemStack.getNbt().getString("instrument");
     }
 
-    //Без постоянной смены поз не работает смена хитбокса
-    protected void poseSwitch() {
-        if (getPose() != EntityPose.SWIMMING) setPose(EntityPose.SWIMMING);
-        else setPose(EntityPose.FALL_FLYING);
-    }
-
     public void playSound(SoundEvent sound, float volume, float pitch) {
         if (!isSilent()) getWorld().playSound(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
     }
 
-    protected float getWidthModTransSpeed() {return (float) (0.22 * animSpeed);}
-    protected float getHeightModTransSpeed() {return (float) (0.3 * animSpeed);}
-    protected float getMountedOffsetTransSpeed() {return (float) (0.125 * animSpeed);}
+    public float getWidthModTransSpeed() {
+        return (float) (0.22 * animationSpeed);
+    }
+    public float getHeightModTransSpeed() {
+        return (float) (0.3 * animationSpeed);
+    }
+    public float getMountedOffsetTransSpeed() {
+        return (float) (0.125 * animationSpeed);
+    }
 
-    protected void setRotation(LivingEntity rider) {
+    protected void setRotation(PlayerEntity rider) {
         float currentYaw = getYaw() % 360;
         float destinationYaw = rider.getYaw() % 360;
         //т.к. у игрока поворот измеряется от -180 до 180, а у других энтити от 0 до 360, то приведенная ниже дичь необходима
         if (destinationYaw < 0) destinationYaw += 360;
         float yawDiff = currentYaw - destinationYaw;
+
         if (yawDiff != 0) {
             if (yawDiff > 180) yawDiff -= 360;
             else if (yawDiff < -180) yawDiff +=360;
             if (yawDiff < -getRotationSpeed()) {
                 currentYaw += getRotationSpeed();
-                if (getTurningState() != 2) rotationProgress = 0;
-                else if (rotationProgress < transitionTicks) rotationProgress++;
                 setTurningState((byte)2);
             }
             else if (yawDiff > getRotationSpeed()) {
                 currentYaw -= getRotationSpeed();
-                if (getTurningState() != 1) rotationProgress = 0;
-                else if (rotationProgress < transitionTicks) rotationProgress++;
                 setTurningState((byte)1);
             }
             else {
                 currentYaw = destinationYaw;
-                if (rotationProgress != 0) rotationProgress--;
             }
-        } else setTurningState((byte)0);
-        setYaw(currentYaw);
+        } else {
+            setTurningState((byte)0);
+        }
+
         prevYaw = getYaw();
+        setYaw(currentYaw);
         setRotation(getYaw(), getPitch());
         bodyYaw = getYaw();
         headYaw = bodyYaw;
@@ -530,14 +521,19 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         this.heightMod = heightMod;
         this.widthMod = widthMod;
+        calculateDimensions();
     }
 
     public float getRotationSpeed() {
         return rotationSpeedGround * calcSpeedMod();
     }
-    public float getPitchLimit() {return pitchLimitGround;}
+    public float getPitchLimit() {
+        return pitchLimitGround;
+    }
 
-    public float getMaxAccelerationDuration() {return baseAccelerationDuration * calcSpeedMod();}
+    public float getMaxAccelerationDuration() {
+        return baseAccelerationDuration * calcSpeedMod();
+    }
 
     protected float calcCooldownMod() {
         float mod = 1;
@@ -551,15 +547,20 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return (float) (getMovementSpeed() / baseSpeed);
     }
 
-    public int getMaxSecondaryAttackCooldown() {return (int) (baseSecondaryAttackCooldown * calcCooldownMod());}
-    public int getMaxPrimaryAttackCooldown() {return  (int) (basePrimaryAttackCooldown * calcCooldownMod());}
+    public int getMaxSecondaryAttackCooldown() {
+        return (int) (baseSecondaryAttackCooldown * calcCooldownMod());
+    }
+    public int getMaxPrimaryAttackCooldown() {
+        return  (int) (basePrimaryAttackCooldown * calcCooldownMod());
+    }
 
     @Override
     public void tick() {
         super.tick();
         updateEquipment();
-        poseSwitch();
-        animSpeed = calcSpeedMod();
+        updateRotationProgress();
+        if (this instanceof MultipartDragon dragon) dragon.updateChildParts();
+        animationSpeed = calcSpeedMod();
         setStepHeight(1);
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
@@ -569,7 +570,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected boolean isOwnerOrCreative(PlayerEntity player) {return isOwner(player) || player.isCreative();}
 
     protected void updateArmorBonus(int armorBonus) {
-        if (!getWorld().isClient) {
+        if (!getWorld().isClient()) {
             getAttributeInstance(EntityAttributes.GENERIC_ARMOR).removeModifier(DRAGON_ARMOR_BONUS_ID);
             if (armorBonus != 0) {
                 getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addTemporaryModifier(new EntityAttributeModifier(DRAGON_ARMOR_BONUS_ID, "Dragon armor bonus", armorBonus, EntityAttributeModifier.Operation.ADDITION));
@@ -662,21 +663,40 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return inventory.getStack(slot);
     }
 
-    public boolean canSwim() {
-        return canSwim;
+    public boolean canNavigateInFluids() {
+        return canNavigateInFluids;
     }
 
     public boolean hasTargetInWater() {
-        return getTarget() != null && getTarget().isInsideWaterOrBubbleColumn() && canSwim;
+        return getTarget() != null && getTarget().isInsideWaterOrBubbleColumn() && canNavigateInFluids;
     }
 
     @Override
     protected boolean shouldSwimInFluids() {
-        return !canSwim;
+        return !canNavigateInFluids;
     }
 
     @Override
     public int getMaxLookYawChange() {
         return (int) getRotationSpeed();
+    }
+
+    public String getDragonID() {return dragonID;}
+
+    private void updateRotationProgress() {
+        switch (getTurningState()) {
+            case 1 -> {
+                if (rotationProgress < transitionTicks) rotationProgress++;
+            }
+            case 2 -> {
+                if (rotationProgress > -transitionTicks) rotationProgress--;
+            }
+            default -> {
+                if (rotationProgress != 0) {
+                    if (rotationProgress > 0) rotationProgress--;
+                    else  rotationProgress++;
+                }
+            }
+        }
     }
 }

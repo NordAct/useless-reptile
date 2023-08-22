@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.renderer.layers;
+package nordmods.uselessreptile.client.renderer.player;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -11,7 +11,6 @@ import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.EntityModelLoader;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.client.model.riverpikehornonhead.RiverPikehornOnHeadModel;

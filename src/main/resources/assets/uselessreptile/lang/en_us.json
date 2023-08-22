@@ -66,8 +66,13 @@
     "other.uselessreptile.flute_mode2": "Flute mode: Attack Target",
 
     "config.uselessreptile.title": "Useless Reptile Configuration",
-    "config.uselessreptile.category.dragon" : "Dragon Options",
-    "config.uselessreptile.category.camera" : "Camera Settings",
+    "config.uselessreptile.category.gameplay" : "Gameplay Options",
+    "config.uselessreptile.category.client" : "Client Options",
+    "config.uselessreptile.group.spawnWeight" : "Spawn Weights",
+    "config.uselessreptile.group.dragonBehaviour" : "Dragon Behaviour",
+    "config.uselessreptile.group.camera" : "Camera Settings",
+    "config.uselessreptile.group.dragonAppearance" : "Dragon Appearance",
+
     "config.uselessreptile.option.wyvernSpawnWeight": "Swamp Wyvern Spawn Weight",
     "config.uselessreptile.option.moleclawSpawnWeight": "Moleclaw Spawn Weight",
     "config.uselessreptile.option.blockDropChance": "Block Drop Chance",
@@ -82,7 +87,12 @@
     "config.uselessreptile.option.dragonHealthMultiplier": "Dragon Health Multiplier",
     "config.uselessreptile.option.dragonDamageMultiplier": "Dragon Damage Multiplier",
     "config.uselessreptile.option.pikehornSpawnWeight": "River Pikehorn Spawn Weight",
+    "config.uselessreptile.option.disableEmissiveTextures": "Disable Emissive Textures",
 
+    "config.uselessreptile.group.spawnWeight.@Tooltip" : "Spawn weights for each dragon. Each option allows you to control frequency of appearing of specific dragon. \nChanging any of those values requires game restart",
+    "config.uselessreptile.group.dragonBehaviour.@Tooltip" : "Options for changing behavior of dragons in game",
+    "config.uselessreptile.group.camera.@Tooltip" : "Settings for camera when you riding the dragon",
+    "config.uselessreptile.group.dragonAppearance.@Tooltip" : "Options to change how dragons look",
     "config.uselessreptile.option.wyvernSpawnWeight.@Tooltip": "Responsible for how often Swamp Wyverns spawn in the world.\nSetting this to 0 will disable spawning \n§cValues lower than 0 may cause crash",
     "config.uselessreptile.option.moleclawSpawnWeight.@Tooltip": "Responsible for how often Moleclaw spawn in the world.\nSetting this to 0 will disable spawning \n§cValues lower than 0 may cause crash",
     "config.uselessreptile.option.blockDropChance.@Tooltip": "Defines percentage of blocks that will be dropped after some of block-breaking dragon attacks",
@@ -94,6 +104,7 @@
     "config.uselessreptile.option.dragonHealthMultiplier.@Tooltip": "Multiplies maximum health of all dragons",
     "config.uselessreptile.option.dragonDamageMultiplier.@Tooltip": "Multiplies attack damage of all dragons\nMay not apply to some attacks",
     "config.uselessreptile.option.pikehornSpawnWeight.@Tooltip": "Responsible for how often River Pikehorn spawn in the world.\nSetting this to 0 will disable spawning \n§cValues lower than 0 may cause crash",
+    "config.uselessreptile.option.disableEmissiveTextures.@Tooltip": "Prevents rendering of glowing layer on dragon",
 
     "effect.uselessreptile.acid": "Acid",
 
