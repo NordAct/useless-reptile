@@ -24,6 +24,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
@@ -335,8 +336,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
-    public double getHeightOffset() {
-        return 0.275;
+    public Vec3d getPassengerRidingPos(Entity passenger) {
+        return super.getPassengerRidingPos(passenger).add(0, 0.275, 0);
     }
 
     public void updateAnimations() {

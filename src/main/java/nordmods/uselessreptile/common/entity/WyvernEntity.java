@@ -224,14 +224,14 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             dWidth = 2.95f;
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
                 dHeight = 1f;
-                dMountedOffset = 0.6f;
+                dMountedOffset = 0.75f;
             } else {
                 dHeight = 2.95f;
-                dMountedOffset = 2.1f;
+                dMountedOffset = 2.3f;
             }
         } else {
             dHeight = 2.95f;
-            dMountedOffset = 2.1f;
+            dMountedOffset = 2.3f;
             dWidth = 1.8f;
         }
         setHitboxModifiers(dHeight, dWidth, dMountedOffset);

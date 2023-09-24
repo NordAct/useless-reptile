@@ -36,8 +36,8 @@ public class AcidStatusEffect extends StatusEffect {
     }
 
     @Override
-    public void onApplied(LivingEntity entity, AttributeContainer attributes, int amplifier) {
-        super.onApplied(entity, attributes, amplifier);
+    public void onApplied(LivingEntity entity, int amplifier) {
+        super.onApplied(entity, amplifier);
         URPacketHelper.playSound(entity, URSounds.ACID_SPLASH, SoundCategory.AMBIENT, 1 ,1, 1);
     }
 }

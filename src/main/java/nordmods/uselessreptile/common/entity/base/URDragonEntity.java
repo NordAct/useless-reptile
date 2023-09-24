@@ -56,6 +56,7 @@ import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.Animation;
@@ -616,8 +617,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    public double getMountedHeightOffset() {
-        return getMountedOffset();
+    protected Vector3f getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
+        return new Vector3f(0.0F, getMountedOffset(), 0.0F);
     }
 
     @Override
