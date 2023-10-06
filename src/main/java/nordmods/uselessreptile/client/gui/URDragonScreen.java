@@ -50,7 +50,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context, mouseX, mouseY, delta);
+        renderBackground(context);
         this.mouseX = mouseX;
         this.mouseY = mouseY;
         super.render(context, mouseX, mouseY, delta);
@@ -70,8 +70,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     protected void drawEntity(DrawContext context) {
-        //if (entity != null) InventoryScreen.drawEntity(context, i + 51, j + 68, 13, i + 51 - mouseX, j + 75 - 50 - mouseY, entity);
-        if (entity != null) InventoryScreen.drawEntity(context, i + 26, j + 18, i + 78, j + 70, 13, 0.25F, this.mouseX, this.mouseY, this.entity);
+        if (entity != null) InventoryScreen.drawEntity(context, i + 51, j + 68, 13, i + 51 - mouseX, j + 75 - 50 - mouseY, entity);
     }
 
     protected void drawStorage(DrawContext context) {

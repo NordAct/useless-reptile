@@ -538,8 +538,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    protected Vector3f getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
-        return new Vector3f(0.0F, getMountedOffset(), 0.0F);
+    public double getMountedHeightOffset() {
+        return getMountedOffset();
     }
 
     @Override

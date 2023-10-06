@@ -336,8 +336,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
-    public Vec3d getPassengerRidingPos(Entity passenger) {
-        return super.getPassengerRidingPos(passenger).add(0, 0.275, 0);
+    public double getHeightOffset() {
+        return 0.275;
     }
 
     public void updateAnimations() {
