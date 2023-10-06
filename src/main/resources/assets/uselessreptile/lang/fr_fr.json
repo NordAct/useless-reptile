@@ -66,7 +66,7 @@
     "config.uselessreptile.title": "Configuration de Useless Reptile",
     "config.uselessreptile.category.gameplay": "Options de jeu",
     "config.uselessreptile.category.client": "Options du client",
-    "config.uselessreptile.group.spawnWeight": "Poids d'apparition",
+    "config.uselessreptile.group.spawnWeight": "Taux d'apparition",
     "config.uselessreptile.group.dragonBehaviour": "Comportement des dragons",
     "config.uselessreptile.group.camera": "Paramètres de caméra",
     "config.uselessreptile.group.dragonAppearance": "Apparence des dragons",
@@ -87,9 +87,9 @@
     "config.uselessreptile.option.pikehornSpawnWeight": "Taux d'apparition de Narval fluvial",
     "config.uselessreptile.option.disableEmissiveTextures": "Désactiver les textures brillantes",
 
-    "config.uselessreptile.group.spawnWeight.@Tooltip": "Poids d'apparition pour chaque dragon. Chaque option permet de contrôler la fréquence d'apparition d'un dragon spécifique. \nChanger ces valeurs nécessite de redémarrer le jeu",
-    "config.uselessreptile.group.dragonBehaviour.@Tooltip": "Options pour changer le comportement des dragons dans le jeu",
-    "config.uselessreptile.group.camera.@Tooltip": "Paramètres de la caméra lorsque chevauchant un dragon",
+    "config.uselessreptile.group.spawnWeight.@Tooltip": "Taux d'apparition pour chaque dragon. Chaque option permet de contrôler la fréquence d'apparition d'un dragon spécifique. \nChanger ces valeurs nécessite de redémarrer le jeu",
+    "config.uselessreptile.group.dragonBehaviour.@Tooltip": "Options concernant le comportement des dragons",
+    "config.uselessreptile.group.camera.@Tooltip": "Options de champs de vision à dos de dragon",
     "config.uselessreptile.group.dragonAppearance.@Tooltip": "Options pour l'apparence des dragons",
     "config.uselessreptile.option.wyvernSpawnWeight.@Tooltip": "Désigne la fréquence d'apparition des Wyvernes des marais.\nMettre à 0 empêchera toute apparition \n§cLes valeurs inférieures à 0 peuvent entraîner des crashs",
     "config.uselessreptile.option.moleclawSpawnWeight.@Tooltip": "Désigne la fréquence d'apparition des Moleclaw.\nMettre à 0 empêchera toute apparition \n§cLes valeurs inférieures à 0 peuvent entraîner des crashs",
@@ -102,7 +102,7 @@
     "config.uselessreptile.option.dragonHealthMultiplier.@Tooltip": "Décuple la vie des dragons",
     "config.uselessreptile.option.dragonDamageMultiplier.@Tooltip": "Décuple les dégâts de tous les dragons\nCertaines attaques peuvent ignorer cet effet",
     "config.uselessreptile.option.pikehornSpawnWeight.@Tooltip": "Désigne la fréquence d'apparition des Narval fluvial.\nMettre à 0 empêchera toute apparition \n§cLes valeurs inférieures à 0 peuvent entraîner des crashs",
-    "config.uselessreptile.option.disableEmissiveTextures.@Tooltip": "Empêche le rendu de textures brillantes sur le dragon",
+    "config.uselessreptile.option.disableEmissiveTextures.@Tooltip": "Empêche le rendu de textures brillantes sur les dragons",
 
     "effect.uselessreptile.acid": "Acide",
 

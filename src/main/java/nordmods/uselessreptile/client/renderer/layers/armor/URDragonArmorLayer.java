@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.client.renderer.layers.armor;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
@@ -10,6 +9,7 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -39,7 +39,7 @@ public abstract class URDragonArmorLayer<T extends URDragonEntity> extends GeoRe
             RenderLayer cameo;
 
             Identifier id = getTexturePath(armor);
-            cameo = MinecraftClient.getInstance().getResourceManager().getResource(id).isPresent() ?
+            cameo = ResourceUtil.doesExist(id) ?
                     RenderLayer.getEntityTranslucent(id) : RenderLayer.getTranslucent();
 
             matrixStackIn.push();

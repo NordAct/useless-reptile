@@ -17,12 +17,12 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 public class DragonSaddleLayer <T extends URRideableDragonEntity> extends GeoRenderLayer<T> {
 
-    private static Identifier SADDLE;
+    private final Identifier saddle;
 
     public DragonSaddleLayer(GeoRenderer<T> entityRendererIn) {
         super(entityRendererIn);
-        String dragonName = ((URDragonModel<T>)getGeoModel()).dragonName;
-        SADDLE = new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonName +"/saddle.png");
+        String dragonName = ((URDragonModel<T>)getGeoModel()).dragonID;
+        saddle = new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonName +"/saddle.png");
     }
 
     @Override
@@ -31,7 +31,7 @@ public class DragonSaddleLayer <T extends URRideableDragonEntity> extends GeoRen
                        int packedLight, int packedOverlay) {
         if (entity.getEquippedStack(EquipmentSlot.FEET).getItem() != Items.SADDLE) return;
         super.render(matrixStackIn, entity, bakedModel, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-        RenderLayer cameo = RenderLayer.getEntityCutout(SADDLE);
+        RenderLayer cameo = RenderLayer.getEntityCutout(saddle);
 
         matrixStackIn.push();
         getRenderer().reRender(getDefaultBakedModel(entity), matrixStackIn, bufferSource, entity, cameo,

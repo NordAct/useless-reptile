@@ -1,1 +1,3 @@
-accessWidener	v1 named
+accessWidener	v2 named
+accessible class net/minecraft/client/resource/ResourceReloadLogger$ReloadState
+accessible field net/minecraft/client/resource/ResourceReloadLogger$ReloadState finished Z

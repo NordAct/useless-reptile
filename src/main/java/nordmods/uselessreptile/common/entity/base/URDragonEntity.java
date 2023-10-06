@@ -24,9 +24,6 @@ import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.potion.PotionUtil;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -35,7 +32,6 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
@@ -44,14 +40,12 @@ import net.minecraft.world.EntityView;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
 import net.minecraft.world.event.EntityPositionSource;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
-import nordmods.uselessreptile.common.data.DragonVariant;
-import nordmods.uselessreptile.common.data.DragonVariantHolder;
+import nordmods.uselessreptile.common.util.dragonVariant.DragonVariantUtil;
 import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
@@ -65,7 +59,6 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
@@ -224,80 +217,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
         entityData = new PassiveData(false);
-
         setTamingProgress(baseTamingProgress);
-
-        List<DragonVariant> variants = DragonVariantHolder.getVariants(dragonID);
-        int totalWeight = 0;
-        RegistryEntry<Biome> biome = world.getBiome(getBlockPos());
-        for (DragonVariant variant : variants) {
-            boolean alreadyCounted = false;
-            if (!variant.hasRestrictions()) totalWeight += variant.weight();
-            else {
-                List<String> id = variant.allowedBiomes().hasBiomesByIdList() ? variant.allowedBiomes().biomesById() : List.of();
-                List<String> tags = variant.allowedBiomes().hasBiomesByTagList() ? variant.allowedBiomes().biomesByTag() : List.of();
-                for (String s : id) {
-                    Identifier name = new Identifier(s);
-                    if (biome.matchesId(name)) {
-                        totalWeight += variant.weight();
-                        alreadyCounted = true;
-                        break;
-                    }
-                }
-
-                if (!alreadyCounted) for (String tag : tags) {
-                    Identifier name = new Identifier(tag);
-                    if (biome.isIn(TagKey.of(RegistryKeys.BIOME, name))) {
-                        totalWeight += variant.weight();
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (totalWeight <= 0) throw new RuntimeException("Failed to assign dragon variant due impossible total weight of all variants for " + this);
-
-        int roll = getRandom().nextInt(totalWeight);
-        int previousBound = 0;
-
-        for (DragonVariant variant : variants) {
-            if (!variant.hasRestrictions()) {
-                if (roll >= previousBound && roll < previousBound + variant.weight()) {
-                    setVariant(variant.name());
-                    break;
-                }
-                previousBound += variant.weight();
-            } else {
-                List<String> id = variant.allowedBiomes().hasBiomesByIdList() ? variant.allowedBiomes().biomesById() : List.of();
-                List<String> tags = variant.allowedBiomes().hasBiomesByTagList() ? variant.allowedBiomes().biomesByTag() : List.of();
-
-                boolean isIn = false;
-                for (String s : id) {
-                    Identifier name = new Identifier(s);
-                    if (biome.matchesId(name)) {
-                        isIn = true;
-                        break;
-                    }
-                }
-
-                if (!isIn) for (String tag : tags) {
-                    Identifier name = new Identifier(tag);
-                    if (biome.isIn(TagKey.of(RegistryKeys.BIOME, name))) {
-                        isIn = true;
-                        break;
-                    }
-                }
-
-                if (isIn) {
-                    if (roll >= previousBound && roll < previousBound + variant.weight()) {
-                        setVariant(variant.name());
-                        break;
-                    }
-                    previousBound += variant.weight();
-                }
-            }
-        }
-
+        DragonVariantUtil.assignVariant(world, this);
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 

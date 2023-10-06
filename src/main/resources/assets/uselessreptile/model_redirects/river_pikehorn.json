@@ -1,0 +1,36 @@
+{
+  "redirects": [
+    {
+      "name": "blue",
+      "nametag_accessible": false
+    },
+    {
+      "name": "dark_blue",
+      "nametag_accessible": false
+    },
+    {
+      "name": "green",
+      "nametag_accessible": false
+    },
+    {
+      "name": "dark_green",
+      "nametag_accessible": false
+    },
+    {
+      "name": "purple",
+      "nametag_accessible": false
+    },
+    {
+      "name": "dark_purple",
+      "nametag_accessible": false
+    },
+    {
+      "name": "teal",
+      "nametag_accessible": false
+    },
+    {
+      "name": "dark_teal",
+      "nametag_accessible": false
+    }
+  ]
+}

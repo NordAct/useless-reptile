@@ -1,58 +1,79 @@
 package nordmods.uselessreptile.client.model;
 
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.client.util.modelRedirect.ModelRedirectUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URConfig;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedEntityGeoModel<T> {
-
-    public final String dragonName;
+    public final String dragonID;
     public final String defaultVariant;
 
-    protected URDragonModel(String dragonName, String defaultVariant) {
-        super(new Identifier(UselessReptile.MODID, dragonName + "/" + dragonName));
-        this.dragonName = dragonName;
+    protected URDragonModel(String dragon, String defaultVariant) {
+        super(new Identifier(UselessReptile.MODID, dragon + "/" + dragon));
+        dragonID = dragon;
         this.defaultVariant = defaultVariant;
     }
 
     @Override
     public Identifier getAnimationResource(T dragon) {
-        return new Identifier(UselessReptile.MODID, "animations/" + dragonName + ".animation.json");
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation();
+
+        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
+            Identifier id = ModelRedirectUtil.getCustomAnimationPath(dragon, dragonID);
+            if (ResourceUtil.doesExist(id)) return id;
+        }
+
+        Identifier id = ModelRedirectUtil.getVariantAnimationPath(dragon, dragonID);
+        if (ResourceUtil.doesExist(id)) return id;
+
+        return getDefaultAnimation();
     }
 
     @Override
     public Identifier getModelResource(T dragon) {
-        return new Identifier(UselessReptile.MODID, "geo/"+ dragonName +".geo.json");
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel();
+
+        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
+            Identifier id = ModelRedirectUtil.getCustomModelPath(dragon, dragonID);
+            if (ResourceUtil.doesExist(id)) return id;
+        }
+
+        Identifier id = ModelRedirectUtil.getVariantModelPath(dragon, dragonID);
+        if (ResourceUtil.doesExist(id)) return id;
+
+        return getDefaultModel();
     }
 
     @Override
     public Identifier getTextureResource(T dragon){
-        if (!URConfig.getConfig().disableNamedTextures && dragon.getCustomName() != null) {
-            Identifier id = getCustomTexturePath(dragon);
-            if (MinecraftClient.getInstance().getResourceManager().getResource(id).isPresent()) return id;
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture();
+
+        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
+            Identifier id = ModelRedirectUtil.getCustomTexturePath(dragon, dragonID);
+            if (ResourceUtil.doesExist(id)) return id;
         }
-        Identifier id = new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonName + "/" + dragon.getVariant() + ".png");
-        if (MinecraftClient.getInstance().getResourceManager().getResource(id).isPresent()) return id;
-        return getDefaultVariant();
+
+        Identifier id = ModelRedirectUtil.getVariantTexturePath(dragon.getVariant(), dragonID);
+        if (ResourceUtil.doesExist(id)) return id;
+
+        return getDefaultTexture();
     }
 
-    protected Identifier getDefaultVariant(){
-        return new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonName + "/" + defaultVariant + ".png");
+    protected final Identifier getDefaultTexture() {
+        return new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonID + "/" + defaultVariant + ".png");
     }
 
-    protected Identifier getCustomTexturePath(T dragon) {
-        String name = dragon.getName().getString().toLowerCase();
-        name = name.replace(" ", "_");
-        name = replaceCyrillic(name);
-        if (!name.matches("^[a-zA-Z0-9_]+$")) name = "";
-        return new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonName + "/" + name + ".png");
+    protected final Identifier getDefaultAnimation() {
+        return new Identifier(UselessReptile.MODID, "animations/entity/" + dragonID + "/" + dragonID + ".animation.json");
+    }
+
+    protected final Identifier getDefaultModel() {
+        return new Identifier(UselessReptile.MODID, "geo/entity/" + dragonID + "/" + dragonID + ".geo.json");
     }
 
     @Override
@@ -60,49 +81,4 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
         return RenderLayer.getEntityCutout(texture);
     }
 
-    private static final Map<String, String> letters = new HashMap<>();
-    static {
-        letters.put("а", "a");
-        letters.put("б", "b");
-        letters.put("в", "v");
-        letters.put("г", "g");
-        letters.put("д", "d");
-        letters.put("е", "e");
-        letters.put("ё", "yo");
-        letters.put("ж", "zh");
-        letters.put("з", "z");
-        letters.put("и", "i");
-        letters.put("й", "j");
-        letters.put("к", "k");
-        letters.put("л", "l");
-        letters.put("м", "m");
-        letters.put("н", "n");
-        letters.put("о", "o");
-        letters.put("п", "p");
-        letters.put("р", "r");
-        letters.put("с", "s");
-        letters.put("т", "t");
-        letters.put("у", "u");
-        letters.put("ф", "f");
-        letters.put("х", "h");
-        letters.put("ц", "c");
-        letters.put("ч", "ch");
-        letters.put("ш", "sh");
-        letters.put("щ", "shch");
-        letters.put("ь", "");
-        letters.put("ы", "y");
-        letters.put("ъ", "");
-        letters.put("э", "e");
-        letters.put("ю", "yu");
-        letters.put("я", "ya");
-    }
-
-    public static String replaceCyrillic(String text) {
-        StringBuilder sb = new StringBuilder(text.length());
-        for (int i = 0; i < text.length(); i++) {
-            String l = text.substring(i, i+1);
-            sb.append(letters.getOrDefault(l, l));
-        }
-        return sb.toString();
-    }
 }

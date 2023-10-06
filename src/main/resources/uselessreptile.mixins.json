@@ -15,7 +15,8 @@
     "client.InGameHudMixin",
     "client.LivingEntityMixin",
     "client.LivingEntityRendererMixin",
-    "client.PlayerRendererMixin"
+    "client.PlayerRendererMixin",
+    "client.ResourceReloadLoggerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

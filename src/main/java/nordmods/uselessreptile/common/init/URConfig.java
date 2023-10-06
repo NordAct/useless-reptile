@@ -1,8 +1,9 @@
 package nordmods.uselessreptile.common.init;
 
 import dev.isxander.yacl3.api.*;
-import dev.isxander.yacl3.config.ConfigEntry;
-import dev.isxander.yacl3.config.GsonConfigInstance;
+import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
+import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import dev.isxander.yacl3.gui.controllers.TickBoxController;
 import dev.isxander.yacl3.gui.controllers.cycling.EnumController;
 import dev.isxander.yacl3.gui.controllers.slider.DoubleSliderController;
@@ -12,33 +13,56 @@ import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import nordmods.uselessreptile.UselessReptile;
 
-import java.nio.file.Path;
+import java.lang.Boolean;
 
 public class URConfig {
-    private static final Path CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("uselessreptile.json");
-    private static final GsonConfigInstance<URConfig> CONFIG = GsonConfigInstance.createBuilder(URConfig.class).setPath(CONFIG_PATH).build();
+    private static final ConfigClassHandler<URConfig> CONFIG = ConfigClassHandler.createBuilder(URConfig.class)
+            .id(new Identifier(UselessReptile.MODID, "config"))
+            .serializer(config -> GsonConfigSerializerBuilder.create(config)
+                    .setPath(FabricLoader.getInstance().getConfigDir().resolve("uselessreptile.json"))
+                    .setJson5(false)
+                    .build())
+            .build();
 
-    @ConfigEntry public int wyvernSpawnWeight = 3;
-    @ConfigEntry public int moleclawSpawnWeight = 500;
-    @ConfigEntry public int pikehornSpawnWeight = 1;
-    @ConfigEntry public DragonGriefing allowDragonGriefing = DragonGriefing.ALL;
-    @ConfigEntry public int blockDropChance = 100;
-    @ConfigEntry public float dragonDamageMultiplier = 1;
-    @ConfigEntry public float dragonHealthMultiplier = 1;
-    @ConfigEntry public double cameraDistanceOffset = 2;
-    @ConfigEntry public double cameraVerticalOffset = 0;
-    @ConfigEntry public double cameraHorizontalOffset = -1.5;
-    @ConfigEntry public boolean enableCameraOffset = true;
-    @ConfigEntry public boolean enableCrosshair = true;
-    @ConfigEntry public boolean autoThirdPerson = true;
-    @ConfigEntry public boolean disableNamedTextures = false;
-    @ConfigEntry public boolean disableEmissiveTextures = false;
+    @SerialEntry
+    public int wyvernSpawnWeight = 3;
+    @SerialEntry
+    public int moleclawSpawnWeight = 500;
+    @SerialEntry
+    public int pikehornSpawnWeight = 1;
+    @SerialEntry
+    public DragonGriefing allowDragonGriefing = DragonGriefing.ALL;
+    @SerialEntry
+    public int blockDropChance = 100;
+    @SerialEntry
+    public float dragonDamageMultiplier = 1;
+    @SerialEntry
+    public float dragonHealthMultiplier = 1;
+    @SerialEntry
+    public double cameraDistanceOffset = 2;
+    @SerialEntry
+    public double cameraVerticalOffset = 0;
+    @SerialEntry
+    public double cameraHorizontalOffset = -1.5;
+    @SerialEntry
+    public boolean enableCameraOffset = true;
+    @SerialEntry
+    public boolean enableCrosshair = true;
+    @SerialEntry
+    public boolean autoThirdPerson = true;
+    @SerialEntry
+    public boolean disableNamedEntityModels = false;
+    @SerialEntry
+    public boolean disableEmissiveTextures = false;
     public static Screen configScreen(Screen parentScreen) {
         return YetAnotherConfigLib.create(CONFIG, ((defaults, config, builder) -> {
             //category
             ConfigCategory.Builder gameplayCategory = ConfigCategory.createBuilder()
                     .name(key("category.gameplay"));
+
             ConfigCategory.Builder clientCategory = ConfigCategory.createBuilder()
                     .name(key("category.client"));
 
@@ -47,6 +71,7 @@ public class URConfig {
                     .name(key("group.spawnWeight"))
                     .description(OptionDescription.createBuilder()
                             .text(key("group.spawnWeight.@Tooltip")).build());
+
             OptionGroup.Builder dragonBehaviourGroup = OptionGroup.createBuilder()
                     .name(key("group.dragonBehaviour"))
                     .description(OptionDescription.createBuilder()
@@ -56,6 +81,7 @@ public class URConfig {
                     .name(key("group.camera"))
                     .description(OptionDescription.createBuilder()
                             .text(key("group.camera.@Tooltip")).build());
+
             OptionGroup.Builder dragonAppearanceGroup = OptionGroup.createBuilder()
                     .name(key("group.dragonAppearance"))
                     .description(OptionDescription.createBuilder()
@@ -92,7 +118,6 @@ public class URConfig {
                     .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
                     .build();
 
-
             Option<DragonGriefing> allowDragonGriefing = Option.<DragonGriefing>createBuilder()
                     .name(key("option.allowDragonGriefing"))
                     .description(OptionDescription.createBuilder()
@@ -113,13 +138,13 @@ public class URConfig {
                     .customController(opt -> new IntegerSliderController(opt, 0, 100, 1))
                     .build();
 
-            Option<Boolean> disableNamedTextures = Option.<Boolean>createBuilder()
-                    .name(key("option.disableNamedTextures"))
+            Option<java.lang.Boolean> disableNamedTextures = Option.<java.lang.Boolean>createBuilder()
+                    .name(key("option.disableNamedEntityModels"))
                     .description(OptionDescription.createBuilder()
-                            .text(key("option.disableNamedTextures.@Tooltip")).build())
-                    .binding(defaults.disableNamedTextures,
-                            () -> config.disableNamedTextures,
-                            val -> config.disableNamedTextures = val)
+                            .text(key("option.disableNamedEntityModels.@Tooltip")).build())
+                    .binding(defaults.disableNamedEntityModels,
+                            () -> config.disableNamedEntityModels,
+                            val -> config.disableNamedEntityModels = val)
                     .customController(TickBoxController::new)
                     .build();
 
@@ -146,6 +171,7 @@ public class URConfig {
             spawnWeightGroup.option(wyvernSpawnWeight);
             spawnWeightGroup.option(moleclawSpawnWeight);
             spawnWeightGroup.option(pikehornSpawnWeight);
+
             dragonBehaviourGroup.option(allowDragonGriefing);
             dragonBehaviourGroup.option(blockDropChance);
             dragonBehaviourGroup.option(dragonDamageMultiplier);
@@ -153,7 +179,7 @@ public class URConfig {
 
             gameplayCategory.group(spawnWeightGroup.build());
             gameplayCategory.group(dragonBehaviourGroup.build());
-            
+
             Option<Double> cameraDistanceOffset = Option.<Double>createBuilder()
                     .name(key("option.cameraDistanceOffset"))
                     .binding(defaults.cameraDistanceOffset,
@@ -179,7 +205,7 @@ public class URConfig {
                     .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
                     .build();
 
-            Option<Boolean> enableCameraOffset = Option.<Boolean>createBuilder()
+            Option<java.lang.Boolean> enableCameraOffset = Option.<java.lang.Boolean>createBuilder()
                     .name(key("option.enableCameraOffset"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.enableCameraOffset.@Tooltip")).build())
@@ -189,7 +215,7 @@ public class URConfig {
                     .customController(TickBoxController::new)
                     .build();
 
-            Option<Boolean> enableCrosshair = Option.<Boolean>createBuilder()
+            Option<java.lang.Boolean> enableCrosshair = Option.<java.lang.Boolean>createBuilder()
                     .name(key("option.enableCrosshair"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.enableCrosshair.@Tooltip")).build())
@@ -199,7 +225,7 @@ public class URConfig {
                     .customController(TickBoxController::new)
                     .build();
 
-            Option<Boolean> autoThirdPerson = Option.<Boolean>createBuilder()
+            Option<java.lang.Boolean> autoThirdPerson = Option.<java.lang.Boolean>createBuilder()
                     .name(key("option.autoThirdPerson"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.autoThirdPerson.@Tooltip")).build())
@@ -209,7 +235,7 @@ public class URConfig {
                     .customController(TickBoxController::new)
                     .build();
 
-            Option<Boolean> disableEmissiveTextures = Option.<Boolean>createBuilder()
+            Option<java.lang.Boolean> disableEmissiveTextures = Option.<Boolean>createBuilder()
                     .name(key("option.disableEmissiveTextures"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.disableEmissiveTextures.@Tooltip")).build())
@@ -240,7 +266,7 @@ public class URConfig {
     }
 
     public static URConfig getConfig() {
-        return CONFIG.getConfig();
+        return CONFIG.instance();
     }
     public static float getHealthMultiplier() {
         return URConfig.getConfig().dragonHealthMultiplier;
