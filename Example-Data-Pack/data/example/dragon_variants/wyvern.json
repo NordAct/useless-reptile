@@ -1,0 +1,32 @@
+{
+  "variants": [
+    {
+      "name": "barren_brown",
+      "weight": 1,
+      "allowed_biomes": {
+        "tag": [
+          "c:mesa",
+          "c:desert",
+          "c:savanna"
+        ]
+      },
+      "altitude": {
+        "min": 80
+      }
+    },
+    {
+      "name": "barren_orange",
+      "weight": 1,
+      "allowed_biomes": {
+        "tag": [
+          "c:mesa",
+          "c:desert",
+          "c:savanna"
+        ]
+      },
+      "altitude": {
+        "max": 80
+      }
+    }
+  ]
+}

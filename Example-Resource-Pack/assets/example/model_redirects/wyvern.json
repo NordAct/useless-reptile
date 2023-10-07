@@ -1,0 +1,15 @@
+{
+	"redirects":[
+		{
+			"name": "barren_orange",
+			"model": "barren.geo.json",
+			"animation": "barren.animation.json"
+		},
+		{
+			"name": "barren_brown",
+			"model": "barren.geo.json",
+			"animation": "barren.animation.json",
+			"nametag_accessible": false
+		}
+	]
+}

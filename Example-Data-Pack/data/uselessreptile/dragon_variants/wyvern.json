@@ -1,0 +1,26 @@
+{
+  "variants": [
+    {
+      "name": "green",
+      "weight": 1,
+      "banned_biomes": {
+        "tag": [
+          "c:mesa",
+          "c:desert",
+          "c:savanna"
+        ]
+      }
+    },
+    {
+      "name": "brown",
+      "weight": 1,
+      "banned_biomes": {
+        "tag": [
+          "c:mesa",
+          "c:desert",
+          "c:savanna"
+        ]
+      }
+    }
+  ]
+}
