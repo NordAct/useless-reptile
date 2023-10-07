@@ -109,6 +109,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         else setSpeedMod(1f);
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedMod());
+        airStrafingSpeed = getOffGroundSpeed();
 
         if (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle()) setFlying(false);
         setNoGravity(isFlying());

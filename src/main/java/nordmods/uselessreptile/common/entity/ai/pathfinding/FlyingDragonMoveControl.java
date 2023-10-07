@@ -16,7 +16,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
     }
 
     public void tick() {
-        if (entity.hasControllingPassenger() || entity.hasVehicle()) return;
+        if (entity.hasPrimaryPassenger() || entity.hasVehicle()) return;
 
         double diffX = targetX - entity.getX();
         double diffY = targetY - entity.getY();
@@ -52,7 +52,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
             float speed;
             if (entity.isFlying() && !swimming) {
                 speed = (float) entity.getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) * accelerationModifier;
-                if (entity.isTouchingWater() || entity.getRecentDamageSource() == entity.getDamageSources().lava()) entity.getJumpControl().setActive();
+                if (entity.isTouchingWater() || entity.getRecentDamageSource() == entity.getRecentDamageSource()) entity.getJumpControl().setActive();
             } else speed = (float) entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             entity.setMovementSpeed(speed * entity.getSpeedMod());
 

@@ -11,8 +11,8 @@ public class AttackPartOwnerC2SPacket {
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(ATTACK_PART_OWNER_PACKET, (server, player, handler, buffer, sender) -> {
-            URDragonEntity entity = (URDragonEntity) player.getServerWorld().getEntityById(buffer.readInt());
-            PlayerEntity playerEntity = (PlayerEntity) player.getServerWorld().getEntityById(buffer.readInt());
+            URDragonEntity entity = (URDragonEntity) player.getWorld().getEntityById(buffer.readInt());
+            PlayerEntity playerEntity = (PlayerEntity) player.getWorld().getEntityById(buffer.readInt());
 
             if (entity != null && playerEntity != null) playerEntity.attack(entity);
         });

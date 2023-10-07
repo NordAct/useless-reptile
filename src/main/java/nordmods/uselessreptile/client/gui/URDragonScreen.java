@@ -1,10 +1,10 @@
 package nordmods.uselessreptile.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
@@ -34,22 +34,22 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
+    protected void drawBackground(MatrixStack context, float delta, int mouseX, int mouseY) {
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         i = (width - backgroundWidth) / 2;
         j = (height - backgroundHeight) / 2;
-        context.drawTexture(TEXTURE, i, j, 0, 0, backgroundWidth, backgroundHeight);
+        drawTexture(context, i, j, 0, 0, backgroundWidth, backgroundHeight);
         drawSaddle(context);
-        drawBanner(context);
+        //drawBanner(context);
         drawArmor(context);
         drawStorage(context);
-        drawEntity(context);
+        drawEntity();
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(MatrixStack context, int mouseX, int mouseY, float delta) {
         renderBackground(context);
         this.mouseX = mouseX;
         this.mouseY = mouseY;
@@ -57,29 +57,29 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         drawMouseoverTooltip(context, mouseX, mouseY);
     }
 
-    protected void drawSaddle(DrawContext context) {
-        if (hasSaddle) context.drawTexture(TEXTURE, i + 7, j + 35 - 18, 0, backgroundHeight + 54, 18, 18); //saddle
+    protected void drawSaddle(MatrixStack context) {
+        if (hasSaddle) drawTexture(context, i + 7, j + 35 - 18, 0, backgroundHeight + 54, 18, 18); //saddle
     }
 
-    protected void drawArmor(DrawContext context) {
+    protected void drawArmor(MatrixStack context) {
         if (hasArmor) {
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54, 18, 18); //head
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54, 18, 18); //body
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54, 18, 18); //tail
+            drawTexture(context, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54, 18, 18); //head
+            drawTexture(context, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54, 18, 18); //body
+            drawTexture(context, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54, 18, 18); //tail
         }
     }
 
-    protected void drawEntity(DrawContext context) {
-        if (entity != null) InventoryScreen.drawEntity(context, i + 51, j + 68, 13, i + 51 - mouseX, j + 75 - 50 - mouseY, entity);
+    protected void drawEntity() {
+        if (entity != null) InventoryScreen.drawEntity(i + 51, j + 68, 13, i + 51 - mouseX, j + 75 - 50 - mouseY, entity);
     }
 
-    protected void drawStorage(DrawContext context) {
+    protected void drawStorage(MatrixStack context) {
         int size = storageSize.getSize()/3;
         int offset = hasArmor ? 1 : 0;
-        context.drawTexture(TEXTURE, i + 79 + 18 * offset, j + 17, 0, this.backgroundHeight, size * 18, 54);
+        drawTexture(context, i + 79 + 18 * offset, j + 17, 0, this.backgroundHeight, size * 18, 54);
     }
 
-    protected void drawBanner(DrawContext context) {
-        if (hasBanner) context.drawTexture(TEXTURE, i + 7, j + 35, 18 * 4, backgroundHeight + 54, 18, 18); //banner
-    }
+    //protected void drawBanner(MatrixStack context) {
+    //    if (hasBanner) drawTexture(context, i + 7, j + 35, 18 * 4, backgroundHeight + 54, 18, 18); //banner
+    //}
 }

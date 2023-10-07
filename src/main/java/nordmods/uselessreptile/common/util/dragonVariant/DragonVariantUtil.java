@@ -1,11 +1,12 @@
 package nordmods.uselessreptile.common.util.dragonVariant;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.TagKey;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.biome.Biome;
 import nordmods.uselessreptile.UselessReptile;
@@ -59,7 +60,7 @@ public class DragonVariantUtil {
 
         if (!isIn) for (String tag : tags) {
             Identifier name = new Identifier(tag);
-            if (biome.isIn(TagKey.of(RegistryKeys.BIOME, name))) {
+            if (biome.isIn(TagKey.of(Registry.BIOME_KEY, name))) {
                 isIn = true;
                 break;
             }

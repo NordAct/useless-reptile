@@ -5,7 +5,7 @@ import net.minecraft.entity.ai.pathing.BirdNavigation;
 import net.minecraft.entity.ai.pathing.BirdPathNodeMaker;
 import net.minecraft.entity.ai.pathing.LandPathNodeMaker;
 import net.minecraft.entity.ai.pathing.PathNodeType;
-import net.minecraft.registry.tag.FluidTags;
+import net.minecraft.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -26,7 +26,7 @@ public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> ext
 
     @Override
     public void tick() {
-        if (entity.hasControllingPassenger() || entity.hasVehicle()) return;
+        if (entity.hasPrimaryPassenger() || entity.hasVehicle()) return;
 
         BlockPos target = getTargetPos();
         boolean isFullBlock = entity.getSteppingBlockState().isFullCube(entity.getWorld(), entity.getSteppingPos());
@@ -74,7 +74,7 @@ public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> ext
 
         boolean bl = d < (double)nodeReachProximity && f < (double)nodeReachProximity &&  yDiff < 1.0D && yDiff > -5.0D;
 
-        if (bl || canJumpToNext(currentPath.getNode(index).type) && shouldJumpToNextNode(vec3d)) {
+        if (bl || entity.canJumpToNextPathNode(currentPath.getNode(index).type) && shouldJumpToNextNode(vec3d)) {
             currentPath.next();
             jumpCount = 0;
         }

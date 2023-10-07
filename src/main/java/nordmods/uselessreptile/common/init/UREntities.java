@@ -6,9 +6,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
@@ -34,7 +33,7 @@ public class UREntities {
     }
 
     private static <T extends Entity> EntityType<T> register(String id, FabricEntityTypeBuilder<T> builder) {
-        return Registry.register(Registries.ENTITY_TYPE, new Identifier(UselessReptile.MODID, id), builder.build());
+        return Registry.register(Registry.ENTITY_TYPE, new Identifier(UselessReptile.MODID, id), builder.build());
     }
 
     private static <T extends Entity> FabricEntityTypeBuilder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon) {

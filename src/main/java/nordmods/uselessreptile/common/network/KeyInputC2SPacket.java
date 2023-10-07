@@ -17,7 +17,7 @@ public class KeyInputC2SPacket {
             boolean isSecondaryAttackPressed = buffer.readBoolean();
             boolean isPrimaryAttackPressed = buffer.readBoolean();
             boolean isDownPressed = buffer.readBoolean();
-            LivingEntity entity = (LivingEntity) player.getServerWorld().getEntityById(buffer.readInt());
+            LivingEntity entity = (LivingEntity) player.getWorld().getEntityById(buffer.readInt());
             if (entity instanceof URRideableDragonEntity dragon) {
                 dragon.isSecondaryAttackPressed = isSecondaryAttackPressed;
                 dragon.isPrimaryAttackPressed = isPrimaryAttackPressed;

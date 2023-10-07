@@ -13,10 +13,20 @@ group = project.maven_group
 repositories {
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url "https://maven.terraformersmc.com/releases/" }
-    maven { url 'https://maven.isxander.dev/releases' }
     maven { url "https://maven.nucleoid.xyz/" }
-    maven { url 'https://maven.quiltmc.org/repository/release'} //because YACL
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots'} //because YACL
+    repositories {
+        exclusiveContent {
+            forRepository {
+                maven {
+                    name = "Modrinth"
+                    url = "https://api.modrinth.com/maven"
+                }
+            }
+            filter {
+                includeGroup "maven.modrinth"
+            }
+        }
+    }
 }
 
 dependencies {
@@ -26,7 +36,7 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolib_version}"
-    modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}"
+    modImplementation "maven.modrinth:yacl:2.2.0-for-1.19.2"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
 }

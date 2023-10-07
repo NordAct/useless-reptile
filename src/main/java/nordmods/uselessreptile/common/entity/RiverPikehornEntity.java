@@ -15,16 +15,15 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.tag.ItemTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
@@ -35,12 +34,12 @@ import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.items.FluteItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
 
 public class RiverPikehornEntity extends URFlyingDragonEntity {
 
@@ -88,20 +87,23 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
+    public void registerControllers(AnimationData animationData) {
         AnimationController<RiverPikehornEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
         AnimationController<RiverPikehornEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
         AnimationController<RiverPikehornEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<RiverPikehornEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
-        main.setSoundKeyframeHandler(this::soundListenerMain);
-        attack.setSoundKeyframeHandler(this::soundListenerAttack);
-        animationData.add(main, turn, attack, eye);
+        main.registerSoundListener(this::soundListenerMain);
+        attack.registerSoundListener(this::soundListenerAttack);
+        animationData.addAnimationController(main);
+        animationData.addAnimationController(turn);
+        animationData.addAnimationController(attack);
+        animationData.addAnimationController(eye);
     }
 
-    private <A extends GeoEntity> PlayState eye(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState eye(AnimationEvent<A> event) {
         return loopAnim("blink", event);
     }
-    private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState main(AnimationEvent<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isMoving() || event.isMoving()) {
@@ -120,7 +122,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turn(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState turn(AnimationEvent<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
@@ -132,24 +134,24 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attack(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState attack(AnimationEvent<A> event) {
         event.getController().setAnimationSpeed(calcCooldownMod());
         if (isPrimaryAttack()) return playAnim( "attack" + attackType, event);
         return playAnim("attack.none", event);
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends IAnimatable> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
+            switch (event.sound) {
                 case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 1, 1.2F);
                 case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 0.7f, 1.2f);
                 case "step" -> playSound(SoundEvents.ENTITY_CHICKEN_STEP, 0.5f, 0.8f);
             }
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends IAnimatable> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            if (event.getKeyframeData().getSound().equals("attack")) playSound(URSounds.PIKEHORN_ATTACK, 1, 1);
+            if (event.sound.equals("attack")) playSound(URSounds.PIKEHORN_ATTACK, 1, 1);
     }
 
     @Override
@@ -341,7 +343,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     public void updateAnimations() {
-        sitAnimation.setRunning(true, age);
-        blinkAnimation.setRunning(true, age);
+        sitAnimation.startIfNotRunning(age);
+        blinkAnimation.startIfNotRunning(age);
     }
 }

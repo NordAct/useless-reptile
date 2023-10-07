@@ -10,15 +10,14 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
+import net.minecraft.network.Packet;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 public class URDragonPart extends Entity{
     public final URDragonEntity owner;
@@ -65,11 +64,6 @@ public class URDragonPart extends Entity{
     }
 
     @Override
-    public boolean canBeHitByProjectile() {
-        return !getWorld().isClient() && super.canBeHitByProjectile() && owner.canBeHitByProjectile();
-    }
-
-    @Override
     public boolean damage(DamageSource source, float amount) {
         if (isInvulnerableTo(source)) return false;
         return owner.damage(source, amount * damageMultiplier);
@@ -89,7 +83,7 @@ public class URDragonPart extends Entity{
     }
 
     @Override
-    public Packet<ClientPlayPacketListener> createSpawnPacket() {
+    public Packet<?> createSpawnPacket() {
         throw new UnsupportedOperationException();
     }
 
@@ -164,8 +158,8 @@ public class URDragonPart extends Entity{
         lastRenderZ = vec3ds.z;
     }
 
-    public void setRelativePos(Vector3f vector3f) {
-        setRelativePos(vector3f.x, vector3f.y, vector3f.z);
+    public void setRelativePos(Vec3f vector3f) {
+        setRelativePos(vector3f.getX(), vector3f.getY(), vector3f.getZ());
     }
 
     public void setRelativePos(Vec3d vec3d) {

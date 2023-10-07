@@ -17,16 +17,16 @@ import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 
-public class WyvernProjectileEntity extends PersistentProjectileEntity implements GeoEntity {
+public class WyvernProjectileEntity extends PersistentProjectileEntity implements IAnimatable {
 
     private int life;
     private final int color = 10085398;
@@ -115,18 +115,15 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar animatableManager) {
-        animatableManager.add(new AnimationController<>(this, "contr", 0, animationEvent -> {
-            animationEvent.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
+    public void registerControllers(AnimationData animationData) {
+        animationData.addAnimationController(new AnimationController<>(this, "contr", 0, animationEvent -> {
+            animationEvent.getController().setAnimation(new AnimationBuilder().loop("idle"));
             return PlayState.CONTINUE;
         }));
     }
 
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
-    }
-
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    public AnimationFactory getFactory() {return this.factory;}
 }
 

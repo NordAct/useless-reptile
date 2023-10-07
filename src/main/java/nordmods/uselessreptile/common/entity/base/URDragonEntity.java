@@ -45,24 +45,22 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
-import nordmods.uselessreptile.common.util.dragonVariant.DragonVariantUtil;
 import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
+import nordmods.uselessreptile.common.util.dragonVariant.DragonVariantUtil;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationFactory;
+import software.bernie.geckolib3.util.GeckoLibUtil;
 
 import java.util.UUID;
 import java.util.function.BiConsumer;
 
-public abstract class URDragonEntity extends TameableEntity implements GeoEntity, NamedScreenHandlerFactory {
+public abstract class URDragonEntity extends TameableEntity implements IAnimatable, NamedScreenHandlerFactory {
     public int attackType = 1;
     protected double animationSpeed = 1;
     protected float rotationProgress;
@@ -228,11 +226,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return null;
     }
 
-    @Override
-    public EntityView method_48926() {
-        return getWorld();
-    }
-
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -246,18 +239,20 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         public int getRange() {return this.range;}
 
+
         @Override
-        public boolean listen(ServerWorld world, GameEvent event, GameEvent.Emitter emitter, Vec3d emitterPos) {
+        public boolean listen(ServerWorld world, GameEvent.Message event) {
+            Vec3d emitterPos = event.getEmitterPos();
             Vec3i vec3i;
             if (emitterPos != null) vec3i = new Vec3i((int) emitterPos.x, (int) emitterPos.y, (int) emitterPos.z);
             else return false;
 
             boolean isJukebox = false;
             if (URDragonEntity.this.jukeboxPos != null) isJukebox = world.getBlockState(URDragonEntity.this.jukeboxPos).isOf(Blocks.JUKEBOX);
-            if (event == GameEvent.JUKEBOX_PLAY) {
+            if (event.getEvent() == GameEvent.JUKEBOX_PLAY) {
                 URDragonEntity.this.updateJukeboxPos(new BlockPos(vec3i), true);
                 return true;
-            } else if (event == GameEvent.JUKEBOX_STOP_PLAY || !isJukebox) {
+            } else if (event.getEvent() == GameEvent.JUKEBOX_STOP_PLAY || !isJukebox) {
                 URDragonEntity.this.updateJukeboxPos(new BlockPos(vec3i), false);
                 return true;
             } else {
@@ -483,7 +478,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         updateRotationProgress();
         if (this instanceof MultipartDragon dragon) dragon.updateChildParts();
         animationSpeed = calcSpeedMod();
-        setStepHeight(1);
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
         if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
@@ -501,20 +495,18 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState loopAnim(String anim, software.bernie.geckolib.core.animation.AnimationState<A> event) {
-        event.getController().setAnimation(RawAnimation.begin().thenLoop(anim)); return PlayState.CONTINUE;
+    protected <A extends IAnimatable> PlayState loopAnim(String anim, AnimationEvent<A> event) {
+        event.getController().setAnimation(new AnimationBuilder().loop(anim)); return PlayState.CONTINUE;
     }
 
     @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState playAnim(String anim, AnimationState<A> event) {
-        event.getController().setAnimation(RawAnimation.begin().then(anim, Animation.LoopType.PLAY_ONCE)); return PlayState.CONTINUE;
+    protected <A extends IAnimatable> PlayState playAnim(String anim, AnimationEvent<A> event) {
+        event.getController().setAnimation(new AnimationBuilder().playOnce(anim)); return PlayState.CONTINUE;
     }
 
-
+    private final AnimationFactory factory = GeckoLibUtil.createFactory(this);
     @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {return cache;}
-
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    public AnimationFactory getFactory() {return this.factory;}
 
     public boolean doesCollide(Box box1, Box box2) {
         VoxelShape voxelShape = VoxelShapes.cuboid(box1);

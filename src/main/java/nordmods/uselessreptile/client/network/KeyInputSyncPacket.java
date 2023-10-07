@@ -16,7 +16,7 @@ public class KeyInputSyncPacket {
             boolean isDownPressed = buffer.readBoolean();
             URRideableDragonEntity dragon = client.world != null ? (URRideableDragonEntity) client.world.getEntityById(buffer.readInt()) : null;
             client.execute(() ->{
-                if (dragon != null && dragon.getControllingPassenger() != client.player) {
+                if (dragon != null && dragon.getPrimaryPassenger() != client.player) {
                     dragon.isSecondaryAttackPressed = isMeleeAttackPressed;
                     dragon.isPrimaryAttackPressed =isRangeAttackPressed;
 

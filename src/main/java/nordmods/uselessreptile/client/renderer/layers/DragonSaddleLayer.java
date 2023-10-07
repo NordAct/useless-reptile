@@ -2,41 +2,36 @@ package nordmods.uselessreptile.client.renderer.layers;
 
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.model.URDragonModel;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
+import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
-public class DragonSaddleLayer <T extends URRideableDragonEntity> extends GeoRenderLayer<T> {
+public class DragonSaddleLayer <T extends URRideableDragonEntity> extends GeoLayerRenderer<T> {
 
-    private final Identifier saddle;
 
-    public DragonSaddleLayer(GeoRenderer<T> entityRendererIn) {
+    public DragonSaddleLayer(IGeoRenderer<T> entityRendererIn) {
         super(entityRendererIn);
-        String dragonName = ((URDragonModel<T>)getGeoModel()).dragonID;
-        saddle = new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonName +"/saddle.png");
     }
 
     @Override
-    public void render(MatrixStack matrixStackIn, T entity, BakedGeoModel bakedModel, RenderLayer renderType,
-                       VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick,
-                       int packedLight, int packedOverlay) {
+    public void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
+                       T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
+                       float netHeadYaw, float headPitch) {
         if (entity.getEquippedStack(EquipmentSlot.FEET).getItem() != Items.SADDLE) return;
-        super.render(matrixStackIn, entity, bakedModel, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-        RenderLayer cameo = RenderLayer.getEntityCutout(saddle);
+        GeoModel model = getEntityModel().getModel(getEntityModel().getModelResource(entity));
+        RenderLayer cameo = RenderLayer.getEntityCutout(new Identifier(UselessReptile.MODID, "textures/entity/"+ entity.getDragonID() +"/saddle.png"));
 
         matrixStackIn.push();
-        getRenderer().reRender(getDefaultBakedModel(entity), matrixStackIn, bufferSource, entity, cameo,
-                bufferSource.getBuffer(cameo), partialTick, packedLight, OverlayTexture.DEFAULT_UV,
-                1, 1, 1, 1);
+        getRenderer().render(getEntityModel().getModel(getEntityModel().getModelResource(entity)),entity, partialTicks, cameo,
+                matrixStackIn, bufferIn, bufferIn.getBuffer(cameo), packedLightIn, OverlayTexture.DEFAULT_UV, 1f, 1f,
+                1f, 1f);
         matrixStackIn.pop();
     }
 }

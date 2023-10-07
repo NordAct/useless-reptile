@@ -31,7 +31,7 @@ public class MoleclawNavigation extends MobNavigation {
 
         boolean bl = d < (double)this.nodeReachProximity && f < (double)this.nodeReachProximity &&  yDiff < 1.0D && yDiff > -5.0D;
 
-        if (bl || this.canJumpToNext(this.currentPath.getNode(index).type) && this.shouldJumpToNextNode(vec3d)) {
+        if (bl || entity.canJumpToNextPathNode(this.currentPath.getNode(index).type) && this.shouldJumpToNextNode(vec3d)) {
             this.currentPath.next();
         }
 

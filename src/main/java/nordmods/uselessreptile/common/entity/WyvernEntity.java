@@ -33,6 +33,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern.WyvernAttackGoal;
@@ -48,13 +49,12 @@ import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
 
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartDragon {
     private int ticksUntilHeal = 400;
@@ -115,37 +115,40 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
+    public void registerControllers(AnimationData animationData) {
         AnimationController<WyvernEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
         AnimationController<WyvernEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
         AnimationController<WyvernEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<WyvernEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
-        main.setSoundKeyframeHandler(this::soundListenerMain);
-        attack.setSoundKeyframeHandler(this::soundListenerAttack);
-        animationData.add(main, turn, attack, eye);
+        main.registerSoundListener(this::soundListenerMain);
+        attack.registerSoundListener(this::soundListenerAttack);
+        animationData.addAnimationController(main);
+        animationData.addAnimationController(turn);
+        animationData.addAnimationController(attack);
+        animationData.addAnimationController(eye);
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends IAnimatable> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
+            switch (event.sound) {
                 case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.7F);
                 case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
                 case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
             }
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends IAnimatable> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
+            switch (event.sound) {
                 case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
                 case "bite" ->  playSound(URSounds.WYVERN_BITE, 1, 1);
             }
     }
 
-    private <A extends GeoEntity> PlayState eye(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState eye(AnimationEvent<A> event) {
         return loopAnim("blink", event);
     }
-    private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState main(AnimationEvent<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isSecondaryAttack()) {
@@ -170,7 +173,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turn(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState turn(AnimationEvent<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
@@ -182,7 +185,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attack(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState attack(AnimationEvent<A> event) {
         event.getController().setAnimationSpeed(calcCooldownMod());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + attackType, event);
         if (isPrimaryAttack()) {
@@ -347,15 +350,15 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public float getJumpBoostVelocityModifier() {
+    public double getJumpBoostVelocityModifier() {
         float jumpBoost = hasStatusEffect(StatusEffects.JUMP_BOOST) ? (0.1F * (float) (getStatusEffect(StatusEffects.JUMP_BOOST).getAmplifier() + 1)) : 0.0f;
         return 0.2f + jumpBoost;
     }
 
     @Override
     protected float getJumpVelocity() {
-        if (hasControllingPassenger()) super.getJumpVelocity();
-        return 0.42F * this.getJumpVelocityMultiplier() + this.getJumpBoostVelocityModifier()/2;
+        if (hasPrimaryPassenger()) super.getJumpVelocity();
+        return (float) (0.42F * this.getJumpVelocityMultiplier() + this.getJumpBoostVelocityModifier()/2);
     }
 
     @Override
@@ -389,13 +392,13 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         Vec2f wingLeftScale;
         Vec2f wingRightScale;
 
-        Vector3f wingLeftPos;
-        Vector3f wingRightPos;
-        Vector3f neckPos;
-        Vector3f headPos;
-        Vector3f tail1Pos;
-        Vector3f tail2Pos;
-        Vector3f tail3Pos;
+        Vec3f wingLeftPos;
+        Vec3f wingRightPos;
+        Vec3f neckPos;
+        Vec3f headPos;
+        Vec3f tail1Pos;
+        Vec3f tail2Pos;
+        Vec3f tail3Pos;
 
         float yawOffset = rotationProgress / transitionTicks;
         float pitchOffset = tiltProgress / transitionTicks;
@@ -403,62 +406,62 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
                 if (getTiltState() == 2) {
-                    wingLeftPos = new Vector3f(wingLeft.getWidth() + 0.5f, 0, -0.5f);
+                    wingLeftPos = new Vec3f(wingLeft.getWidth() + 0.5f, 0, -0.5f);
                     wingLeftScale = new Vec2f(1, 1.5f);
 
-                    wingRightPos = new Vector3f(-wingRight.getWidth() - 0.5f, 0, -0.5f);
+                    wingRightPos = new Vec3f(-wingRight.getWidth() - 0.5f, 0, -0.5f);
                     wingRightScale = new Vec2f(1, 1.5f);
                 } else {
-                    wingLeftPos = new Vector3f(wingLeft.getWidth(), 0, -0.5f);
+                    wingLeftPos = new Vec3f(wingLeft.getWidth(), 0, -0.5f);
                     wingLeftScale = new Vec2f(1, 2.5f);
 
-                    wingRightPos = new Vector3f(-wingRight.getWidth(), 0, -0.5f);
+                    wingRightPos = new Vec3f(-wingRight.getWidth(), 0, -0.5f);
                     wingRightScale = new Vec2f(1, 2.5f);
                 }
-                neckPos = new Vector3f(yawOffset * 0.5f, pitchOffset * 1, 1.75f);
-                headPos = new Vector3f(yawOffset * 1.25f, pitchOffset * 1.5f, 2.75f - Math.abs(yawOffset) * 0.5f);
-                tail1Pos = new Vector3f(yawOffset * 0.5f, -pitchOffset * 0.25f, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, -pitchOffset * 0.625f, -3 + Math.abs(yawOffset) * 0.5f);
-                tail3Pos = new Vector3f(yawOffset * 2f, -pitchOffset * 1 , -4 + Math.abs(yawOffset) * 1);
+                neckPos = new Vec3f(yawOffset * 0.5f, pitchOffset * 1, 1.75f);
+                headPos = new Vec3f(yawOffset * 1.25f, pitchOffset * 1.5f, 2.75f - Math.abs(yawOffset) * 0.5f);
+                tail1Pos = new Vec3f(yawOffset * 0.5f, -pitchOffset * 0.25f, -2);
+                tail2Pos = new Vec3f(yawOffset * 1.25f, -pitchOffset * 0.625f, -3 + Math.abs(yawOffset) * 0.5f);
+                tail3Pos = new Vec3f(yawOffset * 2f, -pitchOffset * 1 , -4 + Math.abs(yawOffset) * 1);
             } else {
-                wingLeftPos = new Vector3f(wingLeft.getWidth(), 0, -0.5f);
+                wingLeftPos = new Vec3f(wingLeft.getWidth(), 0, -0.5f);
                 wingLeftScale = new Vec2f(getHeight(), 3);
 
-                wingRightPos = new Vector3f(-wingRight.getWidth(), 0, -0.5f);
+                wingRightPos = new Vec3f(-wingRight.getWidth(), 0, -0.5f);
                 wingRightScale = new Vec2f(getHeight(), 3);
 
-                neckPos = new Vector3f(0, getHeight(), 1);
-                headPos = new Vector3f(yawOffset,  getHeight() + 0.1f, 1.9f);
-                tail1Pos = new Vector3f(yawOffset * 0.5f, getHeight() - 2, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, getHeight() - 2.5f, -2.6f + Math.abs(yawOffset) * 0.5f);
-                tail3Pos = new Vector3f(yawOffset * 2f, getHeight() - 3.2f , -3.2f + Math.abs(yawOffset) * 1);
+                neckPos = new Vec3f(0, getHeight(), 1);
+                headPos = new Vec3f(yawOffset,  getHeight() + 0.1f, 1.9f);
+                tail1Pos = new Vec3f(yawOffset * 0.5f, getHeight() - 2, -2);
+                tail2Pos = new Vec3f(yawOffset * 1.25f, getHeight() - 2.5f, -2.6f + Math.abs(yawOffset) * 0.5f);
+                tail3Pos = new Vec3f(yawOffset * 2f, getHeight() - 3.2f , -3.2f + Math.abs(yawOffset) * 1);
             }
         } else {
             if (getIsSitting()) {
-                wingLeftPos = new Vector3f(getWidth() / 1.5f, 0, 0);
+                wingLeftPos = new Vec3f(getWidth() / 1.5f, 0, 0);
                 wingLeftScale = new Vec2f(1.5f, getWidth());
 
-                wingRightPos = new Vector3f(-getWidth() / 1.5f, 0, 0);
+                wingRightPos = new Vec3f(-getWidth() / 1.5f, 0, 0);
                 wingRightScale = new Vec2f(1.5f, getWidth());
 
-                neckPos = new Vector3f(0, getHeight(), 1f);
-                headPos = new Vector3f(0,  getHeight() - 0.25f, 0.5f);
-                tail1Pos = new Vector3f(0, 0.3f, -getWidth() + 0.4f);
-                tail2Pos = new Vector3f(0, 0.2f, -getWidth() - 0.6f);
-                tail3Pos = new Vector3f(0, 0.1f , -getWidth() - 1.6f);
+                neckPos = new Vec3f(0, getHeight(), 1f);
+                headPos = new Vec3f(0,  getHeight() - 0.25f, 0.5f);
+                tail1Pos = new Vec3f(0, 0.3f, -getWidth() + 0.4f);
+                tail2Pos = new Vec3f(0, 0.2f, -getWidth() - 0.6f);
+                tail3Pos = new Vec3f(0, 0.1f , -getWidth() - 1.6f);
 
             } else {
-                wingLeftPos = new Vector3f(getWidth() / 2, 0.5f, 0);
+                wingLeftPos = new Vec3f(getWidth() / 2, 0.5f, 0);
                 wingLeftScale = new Vec2f(getHeight() - 1, getWidth() * 0.75f);
 
-                wingRightPos = new Vector3f(-getWidth() / 2, 0.5f, 0);
+                wingRightPos = new Vec3f(-getWidth() / 2, 0.5f, 0);
                 wingRightScale = new Vec2f(getHeight() - 1, getWidth() * 0.75f);
 
-                neckPos = new Vector3f(0, getHeight(), 1);
-                headPos = new Vector3f(yawOffset,  getHeight() + 0.1f, 1.9f);
-                tail1Pos = new Vector3f(yawOffset * 0.25f, getHeight() - 1.5f, -getWidth() + 0.4f);
-                tail2Pos = new Vector3f(yawOffset * 0.75f, getHeight() - 2f,  -getWidth() - 0.6f);
-                tail3Pos = new Vector3f(yawOffset * 1.45f, getHeight() - 2.75f , -getWidth() - 1.2f);
+                neckPos = new Vec3f(0, getHeight(), 1);
+                headPos = new Vec3f(yawOffset,  getHeight() + 0.1f, 1.9f);
+                tail1Pos = new Vec3f(yawOffset * 0.25f, getHeight() - 1.5f, -getWidth() + 0.4f);
+                tail2Pos = new Vec3f(yawOffset * 0.75f, getHeight() - 2f,  -getWidth() - 0.6f);
+                tail3Pos = new Vec3f(yawOffset * 1.45f, getHeight() - 2.75f , -getWidth() - 1.2f);
             }
         }
 

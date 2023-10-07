@@ -72,16 +72,16 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
             });
         }
 
-        if (hasBanner) {
-            this.addSlot(new Slot(inventory, 4, 8, 18*2) {
-                public boolean canInsert(ItemStack stack) {
-                    return stack.getItem() instanceof BannerItem && !this.hasStack();
-                }
-                public int getMaxItemCount() {
-                    return 1;
-                }
-            });
-        }
+        //if (hasBanner) {
+        //    this.addSlot(new Slot(inventory, 4, 8, 18*2) {
+        //        public boolean canInsert(ItemStack stack) {
+        //            return stack.getItem() instanceof BannerItem && !this.hasStack();
+        //        }
+        //        public int getMaxItemCount() {
+        //            return 1;
+        //        }
+        //    });
+        //}
 
         //dragon storage
         int size = storageSize.getSize();
@@ -108,8 +108,8 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
-        super.onClosed(player);
+    public void close(PlayerEntity player) {
+        super.close(player);
         this.inventory.onClose(player);
     }
 
@@ -120,7 +120,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
 
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int invSlot) {
+    public ItemStack transferSlot(PlayerEntity player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(invSlot);
         if (slot != null && slot.hasStack()) {
@@ -132,9 +132,6 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
                 for (int i = 0; i < maxStorageSize; i++)
                     if (!this.insertItem(originalStack, i, this.inventory.size(), false)) return ItemStack.EMPTY;
             }
-
-            if (originalStack.isEmpty()) slot.setStack(ItemStack.EMPTY);
-            else slot.markDirty();
         }
 
         return newStack;

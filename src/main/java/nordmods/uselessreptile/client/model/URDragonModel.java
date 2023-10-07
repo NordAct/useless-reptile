@@ -1,20 +1,18 @@
 package nordmods.uselessreptile.client.model;
 
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.modelRedirect.ModelRedirectUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URConfig;
-import software.bernie.geckolib.model.DefaultedEntityGeoModel;
+import software.bernie.geckolib3.model.AnimatedGeoModel;
 
-public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedEntityGeoModel<T> {
+public abstract class URDragonModel<T extends URDragonEntity> extends AnimatedGeoModel<T> {
     public final String dragonID;
     public final String defaultVariant;
 
     protected URDragonModel(String dragon, String defaultVariant) {
-        super(new Identifier(UselessReptile.MODID, dragon + "/" + dragon));
         dragonID = dragon;
         this.defaultVariant = defaultVariant;
     }
@@ -74,11 +72,6 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
 
     protected final Identifier getDefaultModel() {
         return new Identifier(UselessReptile.MODID, "geo/entity/" + dragonID + "/" + dragonID + ".geo.json");
-    }
-
-    @Override
-    public RenderLayer getRenderType(T animatable, Identifier texture) {
-        return RenderLayer.getEntityCutout(texture);
     }
 
 }

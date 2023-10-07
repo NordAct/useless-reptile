@@ -10,7 +10,7 @@ public class WyvernScreen extends URDragonScreen<WyvernScreenHandler> {
         super(handler, inventory, title);
         hasArmor = false;
         hasSaddle = true;
-        hasBanner = true;
+        //hasBanner = true;
         storageSize = URDragonScreenHandler.StorageSize.SMALL;
     }
 }

@@ -42,7 +42,7 @@ public class RiverPikehornOnHeadFeature extends FeatureRenderer<AbstractClientPl
         EntityRenderDispatcher manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
         render = (RiverPikehornEntityRenderer) manager.getRenderer(dragon);
 
-        return render.getGeoModel().getTextureResource(dragon);
+        return render.getGeoModelProvider().getTextureResource(dragon);
     }
 
     private float yaw(float entityYaw, float ownerYaw) {

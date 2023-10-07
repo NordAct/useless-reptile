@@ -23,12 +23,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.tag.BlockTags;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
@@ -54,12 +54,12 @@ import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.PlayState;
+import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
+import software.bernie.geckolib3.core.manager.AnimationData;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -139,35 +139,38 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
+    public void registerControllers(AnimationData animationData) {
         AnimationController<MoleclawEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
         AnimationController<MoleclawEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
         AnimationController<MoleclawEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<MoleclawEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
-        main.setSoundKeyframeHandler(this::soundListenerMain);
-        attack.setSoundKeyframeHandler(this::soundListenerAttack);
-        animationData.add(main, turn, attack, eye);
+        main.registerSoundListener(this::soundListenerMain);
+        attack.registerSoundListener(this::soundListenerAttack);
+        animationData.addAnimationController(main);
+        animationData.addAnimationController(turn);
+        animationData.addAnimationController(attack);
+        animationData.addAnimationController(eye);
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends IAnimatable> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            if (event.getKeyframeData().getSound().equals("step"))
+            if (event.sound.equals("step"))
                 playSound(getStepSound(getBlockPos(), getWorld().getBlockState(getBlockPos())), 1, 1);
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    private <ENTITY extends IAnimatable> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
+            switch (event.sound) {
                 case "attack_strong" -> playSound(URSounds.MOLECLAW_STRONG_ATTACK, 1, 1F);
                 case "attack" -> playSound(URSounds.MOLECLAW_ATTACK, 1, 1);
             }
     }
 
-    private <A extends GeoEntity> PlayState eye(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState eye(AnimationEvent<A> event) {
         return loopAnim("blink", event);
     }
 
-    private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState main(AnimationEvent<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed()) {
@@ -180,7 +183,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turn(AnimationState<A> event) {
+    private <A extends IAnimatable> PlayState turn(AnimationEvent<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
         if (turnState == 1) return loopAnim("turn.left", event);
@@ -188,7 +191,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attack(AnimationState<A> event){
+    private <A extends IAnimatable> PlayState attack(AnimationEvent<A> event){
         event.getController().setAnimationSpeed(calcCooldownMod());
         if (isSecondaryAttack()) return playAnim( "attack.normal" + attackType, event);
         if (isPrimaryAttack()) {
@@ -231,7 +234,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         setMovementSpeed(speed * getSpeedMod());
 
         if (canBeControlledByRider()) {
-            PlayerEntity rider = (PlayerEntity) getControllingPassenger();
+            PlayerEntity rider = (PlayerEntity) getPrimaryPassenger();
 
             float f1 = MathHelper.clamp(rider.forwardSpeed, -forwardSpeed, forwardSpeed);
 
@@ -365,7 +368,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
                             BlockPos blockPos = new BlockPos(hitResult.getBlockPos());
                             BlockState blockState = getWorld().getBlockState(blockPos);
 
-                            PlayerEntity rider = canBeControlledByRider() ? (PlayerEntity) getControllingPassenger() : null;
+                            PlayerEntity rider = canBeControlledByRider() ? (PlayerEntity) getPrimaryPassenger() : null;
                             GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
 
                             if (!blockState.isIn(URTags.DRAGON_UNBREAKABLE) && CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) {

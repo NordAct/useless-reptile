@@ -88,12 +88,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         else setSpeedMod(1f);
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedMod());
+        airStrafingSpeed = getOffGroundSpeed();
 
         if (isOnGround()) setFlying(false);
         setNoGravity(isFlying());
 
         if (canBeControlledByRider()) {
-            LivingEntity rider = getControllingPassenger();
+            LivingEntity rider = getPrimaryPassenger();
             if (rider instanceof PlayerEntity player) super.travel(getControlledMovementInput(player, player.getVelocity()));
         } else {
             byte turnState = 0;
@@ -115,7 +116,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         }
     }
 
-    @Override
     protected Vec3d getControlledMovementInput(PlayerEntity rider, Vec3d movementInput) {
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
 
@@ -204,7 +204,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
 
     @Override
-    public boolean isFlappingWings() {return isFlying();}
+    public boolean hasWings() {return isFlying();}
 
     public void startToFly() {
         jump();
@@ -238,7 +238,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     protected float getOffGroundSpeed() {
         float movementSpeed = getMovementSpeed();
-        return hasControllingPassenger() ? movementSpeed * 0.1f : movementSpeed *  0.14f;
+        return hasPrimaryPassenger() ? movementSpeed * 0.1f : movementSpeed *  0.14f;
     }
 
     private void updateTiltProgress() {

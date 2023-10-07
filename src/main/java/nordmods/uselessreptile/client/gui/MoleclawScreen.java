@@ -11,7 +11,7 @@ public class MoleclawScreen extends URDragonScreen<MoleclawScreenHandler> {
         super(handler, inventory, title);
         hasArmor = true;
         hasSaddle = true;
-        hasBanner = true;
+        //hasBanner = true;
         storageSize = URDragonScreenHandler.StorageSize.LARGE;
     }
 }

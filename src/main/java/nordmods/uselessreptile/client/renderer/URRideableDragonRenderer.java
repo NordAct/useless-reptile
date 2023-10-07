@@ -6,7 +6,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import nordmods.uselessreptile.client.renderer.layers.DragonRiderLayer;
 import nordmods.uselessreptile.client.renderer.layers.DragonSaddleLayer;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib3.model.AnimatedGeoModel;
 
 public abstract class URRideableDragonRenderer<T extends URRideableDragonEntity> extends URDragonRenderer<T> {
     protected final float riderOffsetX;
@@ -15,7 +15,7 @@ public abstract class URRideableDragonRenderer<T extends URRideableDragonEntity>
     protected final double defaultRiderPitch;
     protected final String[] ignoredBones;
     protected final String riderBone;
-    public URRideableDragonRenderer(EntityRendererFactory.Context renderManager, GeoModel<T> model, boolean hasBanner, boolean separatedSaddleLayer, float riderOffsetX, float riderOffsetY, float riderOffsetZ, double defaultRiderPitch, String[] ignoredBones, String riderBone) {
+    public URRideableDragonRenderer(EntityRendererFactory.Context renderManager, AnimatedGeoModel<T> model, boolean hasBanner, boolean separatedSaddleLayer, float riderOffsetX, float riderOffsetY, float riderOffsetZ, double defaultRiderPitch, String[] ignoredBones, String riderBone) {
         super(renderManager, model, hasBanner);
         this.riderOffsetX = riderOffsetX;
         this.riderOffsetY = riderOffsetY;
@@ -23,8 +23,8 @@ public abstract class URRideableDragonRenderer<T extends URRideableDragonEntity>
         this.defaultRiderPitch = defaultRiderPitch;
         this.ignoredBones = ignoredBones;
         this.riderBone = riderBone;
-        addRenderLayer(new DragonRiderLayer<>(this, this.riderOffsetX, this.riderOffsetY, this.riderOffsetZ, this.riderBone, this.defaultRiderPitch, this.ignoredBones));
-        if (separatedSaddleLayer) addRenderLayer(new DragonSaddleLayer<>(this));
+        addLayer(new DragonRiderLayer<>(this, this.riderOffsetX, this.riderOffsetY, this.riderOffsetZ, this.riderBone, this.defaultRiderPitch, this.ignoredBones));
+        if (separatedSaddleLayer) addLayer(new DragonSaddleLayer<>(this));
     }
 
     @Override

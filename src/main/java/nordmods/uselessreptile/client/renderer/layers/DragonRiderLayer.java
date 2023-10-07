@@ -2,8 +2,6 @@ package nordmods.uselessreptile.client.renderer.layers;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -13,19 +11,19 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Quaternion;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3f;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import org.joml.Quaternionf;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import software.bernie.geckolib3.geo.render.built.GeoBone;
+import software.bernie.geckolib3.geo.render.built.GeoModel;
+import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
+import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
 
 import java.util.Arrays;
 import java.util.List;
 
-public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRenderLayer<T> {
+public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoLayerRenderer<T> {
     protected final float defaultOffsetX;
     protected final float defaultOffsetY;
     protected final float defaultOffsetZ;
@@ -33,7 +31,7 @@ public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRende
     protected final double defaultPitch;
     protected final List<String> ignore;
 
-    public DragonRiderLayer(GeoRenderer<T> entityRendererIn, float defaultOffsetX, float defaultOffsetY, float defaultOffsetZ, String starterBone, double defaultPitch, String[] ignore) {
+    public DragonRiderLayer(IGeoRenderer<T> entityRendererIn, float defaultOffsetX, float defaultOffsetY, float defaultOffsetZ, String starterBone, double defaultPitch, String[] ignore) {
         super(entityRendererIn);
         this.defaultOffsetX = defaultOffsetX;
         this.defaultOffsetY = defaultOffsetY;
@@ -44,12 +42,14 @@ public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRende
     }
 
     @Override
-    public void render(MatrixStack matrixStackIn, T entity, BakedGeoModel model, RenderLayer renderType,
-                       VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick,
-                       int packedLight, int packedOverlay) {
+    public void render(MatrixStack matrixStackIn, VertexConsumerProvider bufferIn, int packedLightIn,
+                       T entity, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks,
+                       float netHeadYaw, float headPitch) {
         matrixStackIn.push();
         LivingEntity passenger = getPassenger(entity);
         if (passenger != null) {
+            float passengerYaw = (float) Math.toRadians(entity.getBodyYaw() + 180);
+            GeoModel model = getEntityModel().getModel(getEntityModel().getModelResource(entity));
             URRideableDragonEntity.passengers.remove(passenger.getUuid());
             float offsetX = defaultOffsetX;
             float offsetY = defaultOffsetY;
@@ -61,12 +61,12 @@ public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRende
                 GeoBone bone = model.getBone(starterBone).get();
                 while (bone != null) {
                     if (!ignore.contains(bone.getName())) {
-                        pitch += bone.getRotX();
-                        roll += bone.getRotZ();
-                        yaw += bone.getRotY();
-                        offsetX += bone.getPosX() * 0.0625f;
-                        offsetY -= bone.getModelPosition().y * 0.0625f;
-                        offsetZ += bone.getPosZ() * 0.0625f;
+                        pitch += Math.toRadians(bone.getRotationX());
+                        roll += Math.toRadians(bone.getRotationZ());
+                        yaw += Math.toRadians(bone.getRotationY());
+                        offsetX += bone.getPositionX();
+                        offsetY -= bone.getLocalPosition().y;
+                        offsetZ += bone.getPositionZ();
                     }
                     bone = bone.getParent();
                 }
@@ -78,14 +78,13 @@ public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRende
 
             Vec3d rotZ = getRotationVector(0, entity.getYaw(0.01F));
             matrixStackIn.translate(0, 1.5f, 0);
-            matrixStackIn.multiply(new Quaternionf().setAngleAxis(-pitch, rotX.x, rotX.y, rotX.z));
-            matrixStackIn.multiply(new Quaternionf().setAngleAxis(-roll, rotZ.x, rotZ.y, rotZ.z));
-            matrixStackIn.multiply(RotationAxis.POSITIVE_Y.rotation((float) yaw));
-            matrixStackIn.translate(-offsetZ * (float) rotZ.x + offsetX * (float) rotZ.z,
-                    -offsetY,
+            matrixStackIn.multiply(new Quaternion(new Vec3f(rotX), (float) -pitch, false));
+            matrixStackIn.multiply(new Quaternion(new Vec3f(rotZ), (float) -roll, false));
+            matrixStackIn.multiply(new Quaternion(Vec3f.POSITIVE_Y, yawDegrees + passengerYaw, false));
+            matrixStackIn.translate(-offsetZ * (float) rotZ.x + offsetX * (float) rotZ.z, -offsetY,
                     -offsetZ * (float) rotZ.z - offsetX * (float) rotZ.x);
 
-            renderEntity(passenger, partialTick, matrixStackIn, bufferSource, packedLight);
+            renderEntity(passenger, partialTicks, matrixStackIn, bufferIn, packedLightIn);
             URRideableDragonEntity.passengers.add(passenger.getUuid());
         }
         matrixStackIn.pop();
@@ -121,6 +120,6 @@ public class DragonRiderLayer<T extends URRideableDragonEntity> extends GeoRende
     }
 
     protected LivingEntity getPassenger(T entity) {
-        return entity.getControllingPassenger();
+        return entity.getPrimaryPassenger();
     }
 }

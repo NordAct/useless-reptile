@@ -35,8 +35,8 @@
     "fabricloader": "*",
     "fabric-api": "*",
     "java": ">=17",
-    "minecraft": "~1.20",
-    "geckolib": "*",
-    "yet_another_config_lib_v3": ">=3.2.0"
+    "minecraft": "~1.19",
+    "geckolib3": "*",
+    "yet-another-config-lib": "2.2.0-for-1.19.2"
   }
 }

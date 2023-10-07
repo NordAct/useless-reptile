@@ -1,19 +1,13 @@
 package nordmods.uselessreptile.common.init;
 
+import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.SpawnEggItem;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.items.FluteItem;
@@ -37,7 +31,28 @@ public class URItems {
     public static final Item RIVER_PIKEHORN_SPAWN_EGG = new SpawnEggItem(UREntities.RIVER_PIKEHORN_ENTITY,2910895, 1457243, new Item.Settings());
     public static final FluteItem FLUTE = new FluteItem(new FabricItemSettings().maxCount(1));
 
-    public static final RegistryKey<ItemGroup> UR_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(UselessReptile.MODID, "item_group"));
+    public static final ItemGroup UR_ITEM_GROUP = FabricItemGroupBuilder.create(new Identifier(UselessReptile.MODID, "item_group"))
+            .icon(WYVERN_SKIN::getDefaultStack)
+            .appendItems(c -> {
+                c.add(WYVERN_SPAWN_EGG.getDefaultStack());
+                c.add(MOLECLAW_SPAWN_EGG.getDefaultStack());
+                c.add(RIVER_PIKEHORN_SPAWN_EGG.getDefaultStack());
+                c.add(MOLECLAW_HELMET_IRON.getDefaultStack());
+                c.add(MOLECLAW_HELMET_GOLD.getDefaultStack());
+                c.add(MOLECLAW_HELMET_DIAMOND.getDefaultStack());
+                c.add(DRAGON_HELMET_IRON.getDefaultStack());
+                c.add(DRAGON_CHESTPLATE_IRON.getDefaultStack());
+                c.add(DRAGON_TAIL_ARMOR_IRON.getDefaultStack());
+                c.add(DRAGON_HELMET_GOLD.getDefaultStack());
+                c.add(DRAGON_CHESTPLATE_GOLD.getDefaultStack());
+                c.add(DRAGON_TAIL_ARMOR_GOLD.getDefaultStack());
+                c.add(DRAGON_HELMET_DIAMOND.getDefaultStack());
+                c.add(DRAGON_CHESTPLATE_DIAMOND.getDefaultStack());
+                c.add(DRAGON_TAIL_ARMOR_DIAMOND.getDefaultStack());
+                c.add(WYVERN_SKIN.getDefaultStack());
+                c.add(FLUTE.getDefaultStack());
+            })
+            .build();
 
     public static void init(){
         register(WYVERN_SKIN, "wyvern_skin");
@@ -57,35 +72,10 @@ public class URItems {
         register(RIVER_PIKEHORN_SPAWN_EGG, "river_pikehorn_spawn_egg");
         register(WYVERN_SPAWN_EGG, "wyvern_spawn_egg");
         register(FLUTE, "flute");
-
-        Registry.register(Registries.ITEM_GROUP, UR_ITEM_GROUP, FabricItemGroup.builder()
-                .icon(() -> new ItemStack(WYVERN_SKIN))
-                .displayName(Text.translatable("itemGroup.uselessreptile.item_group"))
-                .build());
-
-        ItemGroupEvents.modifyEntriesEvent(UR_ITEM_GROUP).register(c ->{
-            c.add(WYVERN_SPAWN_EGG);
-            c.add(MOLECLAW_SPAWN_EGG);
-            c.add(RIVER_PIKEHORN_SPAWN_EGG);
-            c.add(MOLECLAW_HELMET_IRON);
-            c.add(MOLECLAW_HELMET_GOLD);
-            c.add(MOLECLAW_HELMET_DIAMOND);
-            c.add(DRAGON_HELMET_IRON);
-            c.add(DRAGON_CHESTPLATE_IRON);
-            c.add(DRAGON_TAIL_ARMOR_IRON);
-            c.add(DRAGON_HELMET_GOLD);
-            c.add(DRAGON_CHESTPLATE_GOLD);
-            c.add(DRAGON_TAIL_ARMOR_GOLD);
-            c.add(DRAGON_HELMET_DIAMOND);
-            c.add(DRAGON_CHESTPLATE_DIAMOND);
-            c.add(DRAGON_TAIL_ARMOR_DIAMOND);
-            c.add(WYVERN_SKIN);
-            c.add(FLUTE);
-        });
     }
 
     private static void register(Item item, String id) {
-        Registry.register(Registries.ITEM, new Identifier(UselessReptile.MODID, id), item);
+        Registry.register(Registry.ITEM, new Identifier(UselessReptile.MODID, id), item);
     }
 }
 

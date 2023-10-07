@@ -31,6 +31,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
     protected URRideableDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
+        stepHeight = 1;
     }
 
     @Override
@@ -64,12 +65,12 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public boolean isSprintPressed() {return dataTracker.get(SPRINT_PRESSED);}
 
     @Override
-    public LivingEntity getControllingPassenger() {
+    public LivingEntity getPrimaryPassenger() {
         return getPassengerList().isEmpty() ? null : (LivingEntity) getPassengerList().get(0);
     }
 
     public boolean canBeControlledByRider() {
-        return getControllingPassenger() instanceof PlayerEntity;
+        return getPrimaryPassenger() instanceof PlayerEntity;
     }
 
     @Override
@@ -94,7 +95,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     @Override
     public void tick() {
         super.tick();
-        if (getWorld().isClient() && getControllingPassenger() == MinecraftClient.getInstance().player) {
+        if (getWorld().isClient() && getPrimaryPassenger() == MinecraftClient.getInstance().player) {
             boolean isSprintPressed = MinecraftClient.getInstance().options.sprintKey.isPressed();
             boolean isMoveForwardPressed = MinecraftClient.getInstance().options.forwardKey.isPressed();
             boolean isJumpPressed = MinecraftClient.getInstance().options.jumpKey.isPressed();
@@ -105,12 +106,12 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
             isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
         }
-        if (getControllingPassenger() == null) updateInputs(false, false, false, false, false);
+        if (getPrimaryPassenger() == null) updateInputs(false, false, false, false, false);
 
         if (getWorld() instanceof ServerWorld world && canBeControlledByRider())
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) {
                 KeyInputSyncS2CPacket.send(player, this);
-                PosSyncS2CPacket.send(player, this);
+                //PosSyncS2CPacket.send(player, this);
             }
     }
 
