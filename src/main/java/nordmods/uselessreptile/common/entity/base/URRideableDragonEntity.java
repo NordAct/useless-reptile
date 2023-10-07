@@ -111,7 +111,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         if (getWorld() instanceof ServerWorld world && canBeControlledByRider())
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) {
                 KeyInputSyncS2CPacket.send(player, this);
-                //PosSyncS2CPacket.send(player, this);
+                PosSyncS2CPacket.send(player, this);
             }
     }
 
