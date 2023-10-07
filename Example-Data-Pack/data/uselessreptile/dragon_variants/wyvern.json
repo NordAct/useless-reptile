@@ -1,4 +1,9 @@
 {
+  "comment1": "Overwriting default variants so they won't appear in the same biomes as badlands variant",
+  "comment2": "DON'T OVERWRITE main file unless you know what are you doing",
+  "comment3": "If you wish to just add new variant without much complications, add those under different namespace",
+  "comment4": "Comments do nothing btw, you can yeet them",
+
   "variants": [
     {
       "name": "green",
