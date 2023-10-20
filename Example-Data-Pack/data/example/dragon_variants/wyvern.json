@@ -1,0 +1,42 @@
+{
+  "comment1": "Example of how to add new variants to the pool",
+  "comment2": "Name represents variant name (yay), weight defines frequency of spawning (spawn chance = variant weight/total weight for spot). Both fields are mandatory",
+  "comment3": "allowed_biomes acts as whitelist. All biomes defined by either tag or biome id will be defined as only valid places to spawn. Optional",
+  "comment4": "to add biomes by tag just do \"tag\": [namespace:biome_tag, namespace:another_biome_tag]",
+  "comment5": "to add biomes by biome id do \"biome\": [namespace:biome, namespace:another_biome]",
+  "comment6": "To prevent variant from spawning in certain biomes do the same, but under banned_biomes instead allowed_biomes. Optional",
+  "comment7": "altitude represents Y coordinate range on which variant can spawn. By default it's from -1000 to 1000. Optional",
+  "comment8": "min declares minimum Y, max declares maximum Y",
+  "comment9": "Comments do nothing btw, you can yeet them",
+
+  "variants": [
+    {
+      "name": "barren_brown",
+      "weight": 1,
+      "allowed_biomes": {
+        "tag": [
+          "c:mesa",
+          "c:desert",
+          "c:savanna"
+        ]
+      },
+      "altitude": {
+        "min": 80
+      }
+    },
+    {
+      "name": "barren_orange",
+      "weight": 1,
+      "allowed_biomes": {
+        "tag": [
+          "c:mesa",
+          "c:desert",
+          "c:savanna"
+        ]
+      },
+      "altitude": {
+        "max": 80
+      }
+    }
+  ]
+}
