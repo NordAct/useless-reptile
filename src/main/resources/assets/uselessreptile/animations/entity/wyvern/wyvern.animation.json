@@ -1557,6 +1557,14 @@
 					"rotation": {
 						"vector": [-4, 0, 0]
 					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
 				}
 			},
 			"sound_effects": {
@@ -2526,6 +2534,14 @@
 					"position": {
 						"vector": [0, 1.5, 1]
 					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
 				}
 			},
 			"sound_effects": {
@@ -2996,6 +3012,14 @@
 					"position": {
 						"vector": [0, 1.5, 1]
 					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
 				}
 			},
 			"sound_effects": {
@@ -3366,6 +3390,14 @@
 					},
 					"scale": {
 						"vector": [1, 1.1, 1]
+					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
 					}
 				}
 			},
@@ -4335,6 +4367,14 @@
 					},
 					"position": {
 						"vector": [0, 0.5, 0]
+					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
 					}
 				}
 			},
@@ -5320,6 +5360,14 @@
 				"ropes": {
 					"rotation": {
 						"vector": [-17.5, 0, 0]
+					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
 					}
 				}
 			},
@@ -6313,6 +6361,14 @@
 					},
 					"position": {
 						"vector": [0, 1, 0]
+					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
 					}
 				}
 			},
@@ -7605,6 +7661,14 @@
 					"position": {
 						"vector": [0, 1, 0]
 					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
 				}
 			},
 			"sound_effects": {
@@ -8118,6 +8182,14 @@
 				"ropes": {
 					"rotation": {
 						"vector": [-7.5, 0, 0]
+					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
 					}
 				}
 			}
@@ -9177,6 +9249,14 @@
 							"vector": [-7.5, 0, 0]
 						}
 					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
 				}
 			},
 			"sound_effects": {
@@ -9750,6 +9830,14 @@
 				"feet_finger4_right": {
 					"rotation": {
 						"vector": [5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
 					},
 					"position": {
 						"vector": [0, 0, 0]
@@ -10915,6 +11003,14 @@
 							"vector": [0, 0, 0],
 							"easing": "easeInOutSine"
 						}
+					},
+					"position": {
+						"vector": [0, 0, 0]
+					}
+				},
+				"rider": {
+					"rotation": {
+						"vector": [0, 0, 0]
 					},
 					"position": {
 						"vector": [0, 0, 0]

@@ -1,29 +1,19 @@
-package nordmods.uselessreptile.client.renderer;
+package nordmods.uselessreptile.client.renderer.base;
 
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
-import nordmods.uselessreptile.client.renderer.layers.DragonRiderLayer;
 import nordmods.uselessreptile.client.renderer.layers.DragonSaddleLayer;
+import nordmods.uselessreptile.client.renderer.layers.DragonPassengerLayer;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import software.bernie.geckolib.model.GeoModel;
 
 public abstract class URRideableDragonRenderer<T extends URRideableDragonEntity> extends URDragonRenderer<T> {
-    protected final float riderOffsetX;
-    protected final float riderOffsetY;
-    protected final float riderOffsetZ;
-    protected final double defaultRiderPitch;
-    protected final String[] ignoredBones;
     protected final String riderBone;
-    public URRideableDragonRenderer(EntityRendererFactory.Context renderManager, GeoModel<T> model, boolean hasBanner, boolean hasArmor, boolean separatedSaddleLayer, float riderOffsetX, float riderOffsetY, float riderOffsetZ, double defaultRiderPitch, String[] ignoredBones, String riderBone) {
+    public URRideableDragonRenderer(EntityRendererFactory.Context renderManager, GeoModel<T> model, boolean hasBanner, boolean hasArmor, boolean separatedSaddleLayer, String riderBone) {
         super(renderManager, model, hasBanner, hasArmor);
-        this.riderOffsetX = riderOffsetX;
-        this.riderOffsetY = riderOffsetY;
-        this.riderOffsetZ = riderOffsetZ;
-        this.defaultRiderPitch = defaultRiderPitch;
-        this.ignoredBones = ignoredBones;
         this.riderBone = riderBone;
-        addRenderLayer(new DragonRiderLayer<>(this, this.riderOffsetX, this.riderOffsetY, this.riderOffsetZ, this.riderBone, this.defaultRiderPitch, this.ignoredBones));
+        addRenderLayer(new DragonPassengerLayer<>(this, riderBone));
         if (separatedSaddleLayer) addRenderLayer(new DragonSaddleLayer<>(this));
     }
 

@@ -114,6 +114,10 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             }
     }
 
+    @Override
+    protected void updateEquipment() {
+        updateSaddle();
+    }
 
     protected void updateSaddle() {
         if (isTamed() && inventory != null) {

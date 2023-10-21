@@ -1,18 +1,39 @@
 package nordmods.uselessreptile.common.entity;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsage;
 import net.minecraft.item.Items;
+import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.stat.Stats;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
+import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
+import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
+import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
+import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -23,19 +44,21 @@ import software.bernie.geckolib.core.object.PlayState;
 
 /*
 TODO:
-    1) Седло
-    2) Анимации атак и сами атаки (земля: укус и дыхание, воздух: шоковая волна и дыхание)
-    3) Шоковая волна - отражает все снаряды (мб предотвращает обновления всех редстоун компонентов)
-    4) Спавн во время шторма (появление в небе)
-    5) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
-    6) Приручение по ударам трезубца (точнее его молний)
-    7) Звуки
-    8) Перетащить систему вариантов из IoB Variant Loader
-    9) Возможность переключать управление поворотом дракона на полностью через камеру, частично через камеру и полностью через клавиатуру
-    10) Возможность настроить оффсеты камеры для каждого вида драконов отдельно
-    11) Заменить dragonID на метод, который бы брал ID из идентификатора (+)
-    12) Дыхание - атака лучом буквально, который заканчивается на определенном расстоянии
-    14) Вынести мультипарт отдельно от мода
+    Дракон:
+    1) Анимации атак и сами атаки (земля: укус и дыхание, воздух: шоковая волна и дыхание)
+    2) Шоковая волна - отражает все снаряды (мб предотвращает обновления всех редстоун компонентов)
+    3) Спавн во время шторма (появление в небе)
+    4) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
+    5) Приручение по ударам трезубца (точнее его молний)
+    6) Звуки
+    7) Дыхание - атака лучом буквально, который заканчивается на определенном расстоянии
+    ---------------------
+    8) Поправить повороты крыльев
+    ---------------------
+    Прочее:
+    1) Возможность переключать управление поворотом дракона на полностью через камеру, частично через камеру и полностью через клавиатуру
+    2) Возможность настроить оффсеты камеры для каждого вида драконов отдельно
+    3) Вынести мультипарт отдельно от мода
 */
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity {
@@ -43,21 +66,25 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         super(entityType, world);
         experiencePoints = 20;
 
-        //baseSecondaryAttackCooldown = 30;
-        //basePrimaryAttackCooldown = 80;
+        baseSecondaryAttackCooldown = 30;
+        basePrimaryAttackCooldown = 30;
         baseAccelerationDuration = 600;
         baseTamingProgress = 3;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         rotationSpeedGround = 6;
         rotationSpeedAir = 3;
-        favoriteFood = Items.CHICKEN;
+        //favoriteFood = Items.CHICKEN;
         regenFromFood = 4;
     }
 
     @Nullable
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity player) {
+    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
+        if (!getWorld().isClient()) {
+            GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+            return LightningChaserScreenHandler.createScreenHandler(syncId, inv, inventory);
+        }
         return null;
     }
 
@@ -116,9 +143,13 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     private <A extends GeoEntity> PlayState turn(AnimationState<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
-        if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
-            if (turnState == 1) return loopAnim("turn.fly.left", event);
-            if (turnState == 2) return loopAnim("turn.fly.right", event);
+        if (isFlying()) {
+            if ((isMoving() || event.isMoving()) && !isMovingBackwards()) {
+                if (turnState == 1) return loopAnim("turn.fly.left", event);
+                if (turnState == 2) return loopAnim("turn.fly.right", event);
+            }
+            if (turnState == 1) return loopAnim("turn.fly.idle.left", event);
+            if (turnState == 2) return loopAnim("turn.fly.idle.right", event);
         }
         if (turnState == 1) return loopAnim("turn.left", event);
         if (turnState == 2) return loopAnim("turn.right", event);
@@ -129,7 +160,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         event.getController().setAnimationSpeed(calcCooldownMod());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + attackType, event);
         if (isPrimaryAttack()) {
-            if (isFlying() && (isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
+            if (isFlying()) {
+                if ((isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
+                return playAnim("attack.fly.idle.range", event);
+            }
             return playAnim("attack.range", event);
         }
         return playAnim("attack.none", event);
@@ -138,12 +172,100 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     public static DefaultAttributeContainer.Builder createLightningChaserAttributes() {
         return TameableEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 45.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
                 .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.7)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0 * URConfig.getDamageMultiplier())
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
                 .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 6.0)
                 .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3)
                 .add(EntityAttributes.GENERIC_ARMOR, 6);
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        float dHeight;
+        float dWidth;
+        float dMountedOffset;
+        dWidth = 2.95f;
+        if (isFlying()) {
+            if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
+                dHeight = 1f;
+                dMountedOffset = 0.75f;
+            } else {
+                dHeight = 2.95f;
+                dMountedOffset = 2.3f;
+            }
+        } else {
+            dHeight = 2.95f;
+            dMountedOffset = 2.3f;
+        }
+        setHitboxModifiers(dHeight, dWidth, dMountedOffset);
+
+        if (canBeControlledByRider()) {
+            if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
+                if (isFlying()) shockwave();
+                else {
+                    LivingEntity target = getWorld().getClosestEntity(LivingEntity.class, TargetPredicate.DEFAULT, this, getX(), getY(), getZ(), getAttackBox());
+                    meleeAttack(target);
+                }
+            }
+            if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) shoot();
+        }
+    }
+
+    public void shoot() {
+    }
+
+    public void shockwave() {
+    }
+
+    public void meleeAttack(LivingEntity target) {
+        setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
+        attackType = random.nextInt(3)+1;
+        if (getWorld() instanceof ServerWorld world)
+            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) AttackTypeSyncS2CPacket.send(player, this);
+        if (target != null && !getPassengerList().contains(target)) {
+            Box targetBox = target.getBoundingBox();
+            if (doesCollide(targetBox, getAttackBox())) tryAttack(target);
+        }
+    }
+
+    @Override
+    public int getMaxSecondaryAttackCooldown() {
+        return (int) (isFlying() ? baseSecondaryAttackCooldown * calcCooldownMod() * 10 : baseSecondaryAttackCooldown * calcCooldownMod());
+    }
+
+    @Override
+    protected void updateEquipment() {
+        updateBanner();
+    }
+
+    public ActionResult interactMob(PlayerEntity player, Hand hand) {
+        ItemStack itemStack = player.getStackInHand(hand);
+
+        if (isFavoriteFood(itemStack) && !isTamed()) {
+            eat(player, hand, itemStack);
+            if (random.nextInt(3) == 0) setTamingProgress((byte) (getTamingProgress() - 2));
+            else setTamingProgress((byte) (getTamingProgress() - 1));
+            if (player.isCreative()) setTamingProgress((byte) 0);
+            if (getTamingProgress() <= 0) {
+                setOwner(player);
+                getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
+            } else {
+                getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
+            }
+            setPersistent();
+            return ActionResult.SUCCESS;
+        }
+
+        if (isTamed()) {
+            if (player.isSneaking() && itemStack.isEmpty() && isOwnerOrCreative(player)) {
+                player.openHandledScreen(this);
+                return ActionResult.SUCCESS;
+            }
+        }
+        return super.interactMob(player, hand);
     }
 }

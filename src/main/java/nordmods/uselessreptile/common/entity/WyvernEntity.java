@@ -366,7 +366,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     protected void updateEquipment() {
-        updateSaddle();
         updateBanner();
     }
 

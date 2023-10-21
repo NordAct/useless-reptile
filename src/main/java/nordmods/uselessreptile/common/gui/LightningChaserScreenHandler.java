@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.gui;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.init.URScreenHandlers;
 
 public class LightningChaserScreenHandler extends URDragonScreenHandler{
@@ -12,5 +13,9 @@ public class LightningChaserScreenHandler extends URDragonScreenHandler{
 
     public LightningChaserScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(maxStorageSize));
+    }
+
+    public static LightningChaserScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
+        return new LightningChaserScreenHandler(syncId, playerInventory, inventory);
     }
 }

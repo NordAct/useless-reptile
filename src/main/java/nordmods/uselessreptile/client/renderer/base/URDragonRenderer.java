@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.renderer;
+package nordmods.uselessreptile.client.renderer.base;
 
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import nordmods.uselessreptile.client.renderer.layers.BannerLayer;
