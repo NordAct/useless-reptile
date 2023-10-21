@@ -1,0 +1,32 @@
+{
+  "variants": [
+    {
+      "name": "blue",
+      "weight": 1,
+      "allowed_biomes": {
+        "tag": [
+          "c:ocean"
+        ]
+      }
+    },
+    {
+      "name": "brown",
+      "weight": 1,
+      "allowed_biomes": {
+        "tag": [
+          "c:climate_dry"
+        ]
+      }
+    },
+    {
+      "name": "grey",
+      "weight": 1,
+      "banned_biomes": {
+        "tag": [
+          "c:climate_dry",
+          "c:ocean"
+        ]
+      }
+    }
+  ]
+}

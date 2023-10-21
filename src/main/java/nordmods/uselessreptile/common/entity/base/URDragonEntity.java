@@ -81,7 +81,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected float regenFromFood = 0;
     protected boolean canNavigateInFluids = false;
     protected Item favoriteFood = Items.STRUCTURE_VOID;
-    protected String dragonID;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
             (new EntityPositionSource
                     (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.getRange()));
@@ -603,7 +602,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return (int) getRotationSpeed();
     }
 
-    public String getDragonID() {return dragonID;}
+    public String getDragonID() {
+        return EntityType.getId(getType()).getPath();
+    }
 
     private void updateRotationProgress() {
         switch (getTurningState()) {

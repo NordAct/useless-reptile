@@ -15,8 +15,8 @@ public abstract class URRideableDragonRenderer<T extends URRideableDragonEntity>
     protected final double defaultRiderPitch;
     protected final String[] ignoredBones;
     protected final String riderBone;
-    public URRideableDragonRenderer(EntityRendererFactory.Context renderManager, GeoModel<T> model, boolean hasBanner, boolean separatedSaddleLayer, float riderOffsetX, float riderOffsetY, float riderOffsetZ, double defaultRiderPitch, String[] ignoredBones, String riderBone) {
-        super(renderManager, model, hasBanner);
+    public URRideableDragonRenderer(EntityRendererFactory.Context renderManager, GeoModel<T> model, boolean hasBanner, boolean hasArmor, boolean separatedSaddleLayer, float riderOffsetX, float riderOffsetY, float riderOffsetZ, double defaultRiderPitch, String[] ignoredBones, String riderBone) {
+        super(renderManager, model, hasBanner, hasArmor);
         this.riderOffsetX = riderOffsetX;
         this.riderOffsetY = riderOffsetY;
         this.riderOffsetZ = riderOffsetZ;

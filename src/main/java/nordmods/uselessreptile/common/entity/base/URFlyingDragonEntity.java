@@ -23,6 +23,9 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     protected final int maxInAirTimer = 600;
     protected float pitchLimitAir = 90;
     protected float rotationSpeedAir = 180;
+    protected float tiltProgress;
+    protected boolean shouldGlide;
+    private int glideTimer = 100;
 
     protected URFlyingDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -100,6 +103,18 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
+    public void tick() {
+        super.tick();
+        updateTiltProgress();
+
+        if (getWorld().isClient()) {
+            glideTimer--;
+            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
+            if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
+        }
+    }
+
+    @Override
     public void travel(Vec3d movementInput) {
         if (!isAlive()) return;
 
@@ -139,5 +154,22 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     protected float getOffGroundSpeed() {
         return getMovementSpeed() *  0.14f;
+    }
+
+    private void updateTiltProgress() {
+        switch (getTiltState()) {
+            case 1 -> {
+                if (tiltProgress < transitionTicks) tiltProgress++;
+            }
+            case 2 -> {
+                if (tiltProgress > -transitionTicks) tiltProgress--;
+            }
+            default -> {
+                if (tiltProgress != 0) {
+                    if (tiltProgress > 0) tiltProgress--;
+                    else  tiltProgress++;
+                }
+            }
+        }
     }
 }

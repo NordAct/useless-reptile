@@ -68,7 +68,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         rotationSpeedAir = 10;
         canNavigateInFluids = true;
         regenFromFood = 3;
-        dragonID = "river_pikehorn";
         inventory = new SimpleInventory(0);
     }
 

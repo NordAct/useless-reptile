@@ -10,10 +10,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.entity.MoleclawEntity;
-import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
-import nordmods.uselessreptile.common.entity.WyvernEntity;
-import nordmods.uselessreptile.common.entity.WyvernProjectileEntity;
+import nordmods.uselessreptile.common.entity.*;
 
 
 public class UREntities {
@@ -26,11 +23,16 @@ public class UREntities {
             register("moleclaw", getBuilder(SpawnGroup.CREATURE, MoleclawEntity::new, MoleclawEntity.defaultWidth, MoleclawEntity.defaultHeight));
     public static final EntityType<RiverPikehornEntity> RIVER_PIKEHORN_ENTITY =
             register("river_pikehorn", getBuilder(SpawnGroup.CREATURE, RiverPikehornEntity::new, 1, 1));
+    public static final EntityType<LightningChaserEntity> LIGHTNING_CHASER_ENTITY =
+            register("lightning_chaser", getBuilder(SpawnGroup.CREATURE, LightningChaserEntity::new, 1, 1));
+
 
     public static void init(){
         FabricDefaultAttributeRegistry.register(WYVERN_ENTITY, WyvernEntity.createWyvernAttributes());
         FabricDefaultAttributeRegistry.register(MOLECLAW_ENTITY, MoleclawEntity.createMoleclawAttributes());
         FabricDefaultAttributeRegistry.register(RIVER_PIKEHORN_ENTITY, RiverPikehornEntity.createPikehornAttributes());
+        FabricDefaultAttributeRegistry.register(LIGHTNING_CHASER_ENTITY, LightningChaserEntity.createLightningChaserAttributes());
+
     }
 
     private static <T extends Entity> EntityType<T> register(String id, FabricEntityTypeBuilder<T> builder) {

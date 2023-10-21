@@ -1,0 +1,25 @@
+{
+  "display": {
+    "icon": {
+      "item": "uselessreptile:lightning_chaser_spawn_egg"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.tame_lightning_chaser"
+    },
+    "description": {
+      "translate": "advancement.uselessreptile.tame_lightning_chaser.desc"
+    },
+    "frame": "task"
+  },
+  "parent": "uselessreptile:dragon/root",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:tame_animal",
+      "conditions": {
+        "entity": {
+          "type": "uselessreptile:lightning_chaser"
+        }
+      }
+    }
+  }
+}

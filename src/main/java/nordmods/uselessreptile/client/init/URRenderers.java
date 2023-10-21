@@ -5,10 +5,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import nordmods.uselessreptile.client.model.riverpikehornonhead.RiverPikehornOnHeadModel;
-import nordmods.uselessreptile.client.renderer.MoleclawEntityRenderer;
-import nordmods.uselessreptile.client.renderer.RiverPikehornEntityRenderer;
-import nordmods.uselessreptile.client.renderer.WyvernEntityRenderer;
-import nordmods.uselessreptile.client.renderer.WyvernProjectileEntityRenderer;
+import nordmods.uselessreptile.client.renderer.*;
 import nordmods.uselessreptile.common.init.UREntities;
 
 @Environment(EnvType.CLIENT)
@@ -18,6 +15,7 @@ public class URRenderers {
         EntityRendererRegistry.register(UREntities.WYVERN_PROJECTILE_ENTITY, WyvernProjectileEntityRenderer::new);
         EntityRendererRegistry.register(UREntities.MOLECLAW_ENTITY, MoleclawEntityRenderer::new);
         EntityRendererRegistry.register(UREntities.RIVER_PIKEHORN_ENTITY, RiverPikehornEntityRenderer::new);
+        EntityRendererRegistry.register(UREntities.LIGHTNING_CHASER_ENTITY, LightningChaserEntityRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(RiverPikehornOnHeadModel.PIKEHORN_ON_HEAD_LAYER, RiverPikehornOnHeadModel::getTexturedModelData);
     }

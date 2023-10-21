@@ -26,6 +26,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     protected float rotationSpeedAir = 180;
     private int pressedTimer;
     protected float tiltProgress;
+    protected boolean shouldGlide;
+    private int glideTimer = 100;
 
     protected URRideableFlyingDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -76,6 +78,12 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public void tick() {
         super.tick();
         updateTiltProgress();
+
+        if (getWorld().isClient()) {
+            glideTimer--;
+            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
+            if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
+        }
     }
 
     @Override

@@ -86,8 +86,7 @@ public class DragonVariantUtil {
     }
 
     public static List<DragonVariant> getVariants(URDragonEntity entity) {
-        Identifier id = EntityType.getId(entity.getType());
-        return DragonVariantUtil.getVariants(id.getPath());
+        return DragonVariantUtil.getVariants(entity.getDragonID());
     }
 
     public static void assignVariantFromList(URDragonEntity entity, List<DragonVariant> variants) {

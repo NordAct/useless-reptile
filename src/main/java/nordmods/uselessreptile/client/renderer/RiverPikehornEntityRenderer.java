@@ -10,7 +10,7 @@ import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
 public class RiverPikehornEntityRenderer extends URDragonRenderer<RiverPikehornEntity> {
     public RiverPikehornEntityRenderer(EntityRendererFactory.Context renderManager) {
-        super(renderManager, new RiverPikehornEntityModel(), false);
+        super(renderManager, new RiverPikehornEntityModel(), false, false);
         addRenderLayer(new DragonMainHandItemLayer<>(this));
         shadowRadius = 0.4f;
     }

@@ -23,7 +23,7 @@ public abstract class WorldMixin {
     }
 
     @Inject(method = "getEntitiesByType(Lnet/minecraft/util/TypeFilter;Lnet/minecraft/util/math/Box;Ljava/util/function/Predicate;)Ljava/util/List;", at = @At("TAIL"))
-    private <T extends Entity> void getDragonParts(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir) {
+    private <T extends Entity> void getDragonPartsByType(TypeFilter<Entity, T> filter, Box box, Predicate<? super T> predicate, CallbackInfoReturnable<List<T>> cir) {
         for (URDragonPart part : DragonPartsHolder.getParts()) {
             T type = filter.downcast(part);
             if (type != null && part.getBoundingBox().intersects(box) && predicate.test(type)) cir.getReturnValue().add(type);

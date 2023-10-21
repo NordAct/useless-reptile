@@ -83,7 +83,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
         baseTamingProgress = 64;
         favoriteFood = Items.BEETROOT;
         regenFromFood = 2;
-        dragonID = "moleclaw";
     }
 
     @Override

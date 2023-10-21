@@ -8,7 +8,7 @@ import nordmods.uselessreptile.common.entity.WyvernEntity;
 
 public class WyvernEntityRenderer extends URRideableDragonRenderer<WyvernEntity> {
     public WyvernEntityRenderer(EntityRendererFactory.Context renderManager) {
-        super(renderManager, new WyvernEntityModel(), true, true,
+        super(renderManager, new WyvernEntityModel(), true, false, true,
                 0, 2.85f, -0.05f, 0, new String[]{"dragon"}, "front");
         shadowRadius = 1.5f;
     }
