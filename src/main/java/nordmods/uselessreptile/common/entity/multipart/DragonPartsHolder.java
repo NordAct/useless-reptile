@@ -1,12 +1,11 @@
 package nordmods.uselessreptile.common.entity.multipart;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DragonPartsHolder {
-    public static final Int2ObjectMap<URDragonPart> URDragonParts = new Int2ObjectOpenHashMap<>();
+    public static final Map<Integer, URDragonPart> URDragonParts = new HashMap<>();
     public static Collection<URDragonPart> getParts() {
         return URDragonParts.values();
     }

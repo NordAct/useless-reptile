@@ -79,6 +79,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         pitchLimitAir = 20;
         rotationSpeedGround = 8;
         rotationSpeedAir = 4;
+        verticalSpeed = 0.3f;
         favoriteFood = Items.CHICKEN;
         regenFromFood = 4;
     }
@@ -366,6 +367,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     protected void updateEquipment() {
+        super.updateEquipment();
         updateBanner();
     }
 

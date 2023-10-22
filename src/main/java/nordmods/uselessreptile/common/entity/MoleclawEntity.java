@@ -263,7 +263,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     protected void updateEquipment() {
-        updateSaddle();
+        super.updateEquipment();
         updateBanner();
 
         int armorBonus = 0;
@@ -317,12 +317,12 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return super.interactMob(player, hand);
     }
 
-    @Override
-    public void openInventory(PlayerEntity player) {
-        if (!getWorld().isClient() && canBeControlledByRider() && isOwnerOrCreative(player)) {
-            player.openHandledScreen(this);
-        }
-    }
+    //@Override
+    //public void openInventory(PlayerEntity player) {
+    //    if (!getWorld().isClient() && canBeControlledByRider() && isOwnerOrCreative(player)) {
+    //        player.openHandledScreen(this);
+    //    }
+    //}
 
     public void meleeAttack() {
         List<Entity> targets = getWorld().getOtherEntities(this, getNormalAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));

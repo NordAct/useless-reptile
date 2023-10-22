@@ -43,7 +43,7 @@ public class DragonPassengerLayer<T extends URRideableDragonEntity> extends GeoR
             URRideableDragonEntity.passengers.remove(passenger.getUuid());
 
             matrixStackIn.translate(0, -0.5f, 0);
-            matrixStackIn.multiply(RotationAxis.POSITIVE_Y.rotation((float) Math.toRadians(entity.getYaw() + 180)));
+            matrixStackIn.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(entity.getYaw() - 180));
             RenderUtils.translateToPivotPoint(matrixStackIn, bone);
             renderEntity(passenger, partialTick, matrixStackIn, bufferSource, packedLight);
             buffer = bufferSource.getBuffer(renderType);

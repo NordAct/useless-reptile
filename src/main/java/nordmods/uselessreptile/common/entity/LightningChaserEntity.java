@@ -3,10 +3,14 @@ package nordmods.uselessreptile.common.entity;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageSources;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -31,6 +35,7 @@ import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
@@ -46,14 +51,13 @@ import software.bernie.geckolib.core.object.PlayState;
 TODO:
     Дракон:
     1) Анимации атак и сами атаки (земля: укус и дыхание, воздух: шоковая волна и дыхание)
-    2) Шоковая волна - отражает все снаряды (мб предотвращает обновления всех редстоун компонентов)
+    2) Шоковая волна - отражает все снаряды (мб предотвращает обновления всех редстоун компонентов) / отталкивает от себя ВСЕХ сущностей и накладывает эффект (сделать кастомный эффект шока с дебафами на скорость атаки и перемещения)
     3) Спавн во время шторма (появление в небе)
     4) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
     5) Приручение по ударам трезубца (точнее его молний)
     6) Звуки
-    7) Дыхание - атака лучом буквально, который заканчивается на определенном расстоянии
+    7) Дыхание - атака лучом буквально, который заканчивается на определенном расстоянии. При ударе об блоки они разлетаются
     ---------------------
-    8) Поправить повороты крыльев
     ---------------------
     Прочее:
     1) Возможность переключать управление поворотом дракона на полностью через камеру, частично через камеру и полностью через клавиатуру
@@ -68,12 +72,13 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
 
         baseSecondaryAttackCooldown = 30;
         basePrimaryAttackCooldown = 30;
-        baseAccelerationDuration = 600;
+        baseAccelerationDuration = 800;
         baseTamingProgress = 3;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         rotationSpeedGround = 6;
         rotationSpeedAir = 3;
+        verticalSpeed = 0.4f;
         //favoriteFood = Items.CHICKEN;
         regenFromFood = 4;
     }
@@ -102,7 +107,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
             switch (event.getKeyframeData().getSound()) {
-                case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.7F);
+                case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.6F);
                 case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
                 case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
             }
@@ -173,12 +178,18 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         return TameableEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 45.0 * URConfig.getHealthMultiplier())
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.7)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.8)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0 * URConfig.getDamageMultiplier())
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
                 .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 6.0)
                 .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3)
                 .add(EntityAttributes.GENERIC_ARMOR, 6);
+    }
+
+    @Override
+    public boolean isInvulnerableTo(DamageSource damageSource) {
+        if (damageSource.getTypeRegistryEntry() == DamageTypes.LIGHTNING_BOLT) return true;
+        else return super.isInvulnerableTo(damageSource);
     }
 
     @Override
@@ -213,14 +224,18 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
             }
             if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) shoot();
         }
-    }
+        //todo бафы во время шторма
+        if (getWorld().getLevelProperties().isThundering()) {
 
+        }
+    }
+    //todo
     public void shoot() {
     }
-
+    //todo
     public void shockwave() {
     }
-
+    //todo
     public void meleeAttack(LivingEntity target) {
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
         attackType = random.nextInt(3)+1;
@@ -239,7 +254,29 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
 
     @Override
     protected void updateEquipment() {
+        super.updateEquipment();
         updateBanner();
+
+        int armorBonus = 0;
+
+        ItemStack head = inventory.getStack(1);
+        ItemStack body = inventory.getStack(2);
+        ItemStack tail = inventory.getStack(3);
+
+        if (head.getItem() instanceof DragonArmorItem helmet) {
+            equipStack(EquipmentSlot.HEAD, head);
+            armorBonus += helmet.getArmorBonus();
+        }
+        if (body.getItem() instanceof DragonArmorItem chestplate) {
+            equipStack(EquipmentSlot.CHEST, body);
+            armorBonus += chestplate.getArmorBonus();
+        }
+        if (tail.getItem() instanceof DragonArmorItem tailArmor) {
+            equipStack(EquipmentSlot.LEGS, tail);
+            armorBonus += tailArmor.getArmorBonus();
+        }
+
+        updateArmorBonus(armorBonus);
     }
 
     public ActionResult interactMob(PlayerEntity player, Hand hand) {

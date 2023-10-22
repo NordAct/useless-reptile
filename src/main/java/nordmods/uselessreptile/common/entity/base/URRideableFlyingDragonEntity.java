@@ -24,6 +24,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     protected final int maxInAirTimer = 600;
     protected float pitchLimitAir = 90;
     protected float rotationSpeedAir = 180;
+    protected float verticalSpeed;
     private int pressedTimer;
     protected float tiltProgress;
     protected boolean shouldGlide;
@@ -126,7 +127,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     protected Vec3d getControlledMovementInput(PlayerEntity rider, Vec3d movementInput) {
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
-
+        //The acceleration logic. Looks like a mess, but it's still understandable I guess
         int accelerationDuration = getAccelerationDuration();
         if (accelerationDuration < 0) accelerationDuration = 0;
         float accelerationModifier = (float) accelerationDuration / getMaxAccelerationDuration();
@@ -174,14 +175,14 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             setGliding(accelerationModifier > 1);
 
             if (isJumpPressed()) {
-                verticalSpeed = 0.3F;
+                verticalSpeed = this.verticalSpeed;
                 setTiltState((byte) 1);
                 setGliding(false);
                 if (!isMovingBackwards() && isMoving() && getPitch() > -getPitchLimit() && !isDownPressed())
                     setPitch(getPitch() - pitchSpeed);
             }
             if (isDownPressed()) {
-                verticalSpeed = -0.4F;
+                verticalSpeed = -this.verticalSpeed * 1.3f;
                 setTiltState((byte) 2);
                 if (!isMovingBackwards() && isMoving() && getPitch() < getPitchLimit())
                     setPitch(getPitch() + pitchSpeed);
@@ -189,10 +190,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             float currentVerticalSpeed = (float) getVelocity().getY();
             if (!(isJumpPressed() || isDownPressed())) {
                 if (getPitch() != 0) {
-                    if (getPitch() < 0 && getPitch() < -pitchSpeed)
-                        setPitch(getPitch() + pitchSpeed);
-                    if (getPitch() > 0 && getPitch() > pitchSpeed)
-                        setPitch(getPitch() - pitchSpeed);
+                    if (getPitch() < 0 && getPitch() < -pitchSpeed) setPitch(getPitch() + pitchSpeed);
+                    if (getPitch() > 0 && getPitch() > pitchSpeed) setPitch(getPitch() - pitchSpeed);
                     if (getPitch() < pitchSpeed && getPitch() > -pitchSpeed) setPitch(0);
                 }
                 if (currentVerticalSpeed != 0) verticalSpeed = currentVerticalSpeed * -0.5F;

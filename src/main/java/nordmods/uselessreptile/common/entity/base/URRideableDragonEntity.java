@@ -116,6 +116,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
     @Override
     protected void updateEquipment() {
+        super.updateEquipment();
         updateSaddle();
     }
 
