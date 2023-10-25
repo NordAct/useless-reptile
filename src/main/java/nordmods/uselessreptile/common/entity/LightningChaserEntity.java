@@ -18,6 +18,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsage;
 import net.minecraft.item.Items;
+import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -27,7 +30,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.Box;
+import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
@@ -46,6 +49,9 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 TODO:
@@ -66,6 +72,8 @@ TODO:
 */
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity {
+    private float currentRadius = 10;
+    private final float maxRadius = 10;
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         experiencePoints = 20;
@@ -216,7 +224,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
 
         if (canBeControlledByRider()) {
             if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
-                if (isFlying()) shockwave();
+                if (isFlying()) shockwave(getPos());
                 else {
                     LivingEntity target = getWorld().getClosestEntity(LivingEntity.class, TargetPredicate.DEFAULT, this, getX(), getY(), getZ(), getAttackBox());
                     meleeAttack(target);
@@ -233,7 +241,15 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     public void shoot() {
     }
     //todo
-    public void shockwave() {
+    public int shockwave(Vec3d pos) {
+        int affected = 0;
+        //List<BlockPos> affectedPos = new ArrayList<>();
+        if (getWorld() instanceof ServerWorld serverWorld) for (int dy = (int) (-currentRadius); dy <= (int) (currentRadius); dy++) {
+            float dr = (float) Math.sqrt(Math.abs(-currentRadius * currentRadius - Math.abs(dy)));
+            particleCircle(ParticleTypes.WITCH, (int) (currentRadius - Math.abs(dy)) * 10, pos.add(0, dy, 0), currentRadius - Math.abs(dy), serverWorld);
+        }
+
+        return affected;
     }
     //todo
     public void meleeAttack(LivingEntity target) {
@@ -247,10 +263,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         }
     }
 
-    @Override
-    public int getMaxSecondaryAttackCooldown() {
-        return (int) (isFlying() ? baseSecondaryAttackCooldown * calcCooldownMod() * 10 : baseSecondaryAttackCooldown * calcCooldownMod());
-    }
+    //@Override
+    //public int getMaxSecondaryAttackCooldown() {
+    //    return (int) (isFlying() ? baseSecondaryAttackCooldown * calcCooldownMod() * 10 : baseSecondaryAttackCooldown * calcCooldownMod());
+    //}
 
     @Override
     protected void updateEquipment() {
@@ -304,5 +320,27 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
             }
         }
         return super.interactMob(player, hand);
+    }
+
+    public static void particleCircle(ParticleEffect particle, int amount, Vec3d pos, float radius, World world) {
+        float turnSpeed = 2 * MathHelper.PI / amount;
+        float turn = 0;
+        for (int i = 0; i <= amount; i++) {
+            Vec3d rot = getRotationVector(turn);
+            ParticleS2CPacket packet = new ParticleS2CPacket(particle, true,
+                    pos.getX() + rot.x * radius, pos.getY() + 2, pos.getZ() + rot.z * radius,
+                    0, 0, 0,
+                    0, 1);
+            world.getServer().getPlayerManager().sendToAll(packet);
+            turn += turnSpeed;
+        }
+    }
+
+    public static Vec3d getRotationVector(float yaw) {
+        float g = -yaw;
+        float h = MathHelper.cos(g);
+        float i = MathHelper.sin(g);
+        float j = MathHelper.cos(0);
+        return new Vec3d(i * j, 0, h * j);
     }
 }
