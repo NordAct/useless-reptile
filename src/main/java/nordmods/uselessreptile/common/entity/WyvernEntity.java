@@ -39,6 +39,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern.WyvernAttackGo
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.entity.multipart.URDragonPart;
+import nordmods.uselessreptile.common.entity.special.WyvernProjectileEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URPotions;

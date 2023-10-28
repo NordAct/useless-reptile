@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity;
+package nordmods.uselessreptile.common.entity.special;
 
 
 import net.minecraft.entity.AreaEffectCloudEntity;

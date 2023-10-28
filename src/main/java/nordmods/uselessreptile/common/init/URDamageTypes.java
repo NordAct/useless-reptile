@@ -9,9 +9,5 @@ import net.minecraft.world.World;
 import nordmods.uselessreptile.UselessReptile;
 
 public class URDamageTypes {
-    public static final RegistryKey<DamageType> ACID = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(UselessReptile.MODID, "acid")) ;
-
-    public static RegistryEntry<DamageType> getEntryOf(RegistryKey<DamageType> key, World world) {
-        return world.getRegistryManager().get(RegistryKeys.DAMAGE_TYPE).getEntry(key).orElseThrow();
-    }
+    public static final RegistryKey<DamageType> ACID = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, new Identifier(UselessReptile.MODID, "acid"));
 }

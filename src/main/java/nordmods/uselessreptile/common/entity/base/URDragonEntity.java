@@ -45,6 +45,7 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
+import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.util.dragonVariant.DragonVariantUtil;
 import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
@@ -460,6 +461,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         float mod = 1;
         if (hasStatusEffect(StatusEffects.SLOWNESS)) mod *= 1 + 0.1 * (getStatusEffect(StatusEffects.SLOWNESS).getAmplifier() + 1);
         if (hasStatusEffect(StatusEffects.SPEED)) mod *= 1 - 0.1 * MathHelper.clamp(getStatusEffect(StatusEffects.SPEED).getAmplifier() + 1, 1, 9);
+        if (hasStatusEffect(URStatusEffects.SHOCK)) mod /= 2;
         return mod;
     }
 

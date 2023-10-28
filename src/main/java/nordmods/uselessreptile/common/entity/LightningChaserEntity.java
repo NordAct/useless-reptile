@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.common.entity;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -9,39 +10,32 @@ import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageSources;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsage;
-import net.minecraft.item.Items;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.potion.PotionUtil;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
-import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
-import nordmods.uselessreptile.common.init.URPotions;
+import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
-import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -50,8 +44,7 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
 /*
 TODO:
@@ -72,8 +65,6 @@ TODO:
 */
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity {
-    private float currentRadius = 10;
-    private final float maxRadius = 10;
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         experiencePoints = 20;
@@ -196,7 +187,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
-        if (damageSource.getTypeRegistryEntry() == DamageTypes.LIGHTNING_BOLT) return true;
+        if (Objects.equals(damageSource.getTypeRegistryEntry(), DamageTypes.LIGHTNING_BOLT)) return true;
         else return super.isInvulnerableTo(damageSource);
     }
 
@@ -224,7 +215,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
 
         if (canBeControlledByRider()) {
             if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
-                if (isFlying()) shockwave(getPos());
+                if (isFlying()) shockwave();
                 else {
                     LivingEntity target = getWorld().getClosestEntity(LivingEntity.class, TargetPredicate.DEFAULT, this, getX(), getY(), getZ(), getAttackBox());
                     meleeAttack(target);
@@ -240,17 +231,18 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     //todo
     public void shoot() {
     }
-    //todo
-    public int shockwave(Vec3d pos) {
-        int affected = 0;
-        //List<BlockPos> affectedPos = new ArrayList<>();
-        if (getWorld() instanceof ServerWorld serverWorld) for (int dy = (int) (-currentRadius); dy <= (int) (currentRadius); dy++) {
-            float dr = (float) Math.sqrt(Math.abs(-currentRadius * currentRadius - Math.abs(dy)));
-            particleCircle(ParticleTypes.WITCH, (int) (currentRadius - Math.abs(dy)) * 10, pos.add(0, dy, 0), currentRadius - Math.abs(dy), serverWorld);
-        }
 
-        return affected;
+    public void shockwave() {
+        setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
+        ShockwaveSphereEntity shockwaveSphereEntity =
+                new ShockwaveSphereEntity(UREntities.SHOCKWAVE_SPHERE_ENTITY, getWorld());
+        shockwaveSphereEntity.setOwner(this);
+        shockwaveSphereEntity.setPosition(getPos().add(0, 2.95f, 0));
+        shockwaveSphereEntity.setVelocity(Vec3d.ZERO);
+        shockwaveSphereEntity.setNoGravity(true);
+        getWorld().spawnEntity(shockwaveSphereEntity);
     }
+
     //todo
     public void meleeAttack(LivingEntity target) {
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
@@ -263,10 +255,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         }
     }
 
-    //@Override
-    //public int getMaxSecondaryAttackCooldown() {
-    //    return (int) (isFlying() ? baseSecondaryAttackCooldown * calcCooldownMod() * 10 : baseSecondaryAttackCooldown * calcCooldownMod());
-    //}
+    @Override
+    public int getMaxSecondaryAttackCooldown() {
+        return (int) (isFlying() ? baseSecondaryAttackCooldown * calcCooldownMod()  : baseSecondaryAttackCooldown * calcCooldownMod());
+    }
 
     @Override
     protected void updateEquipment() {
@@ -320,27 +312,5 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
             }
         }
         return super.interactMob(player, hand);
-    }
-
-    public static void particleCircle(ParticleEffect particle, int amount, Vec3d pos, float radius, World world) {
-        float turnSpeed = 2 * MathHelper.PI / amount;
-        float turn = 0;
-        for (int i = 0; i <= amount; i++) {
-            Vec3d rot = getRotationVector(turn);
-            ParticleS2CPacket packet = new ParticleS2CPacket(particle, true,
-                    pos.getX() + rot.x * radius, pos.getY() + 2, pos.getZ() + rot.z * radius,
-                    0, 0, 0,
-                    0, 1);
-            world.getServer().getPlayerManager().sendToAll(packet);
-            turn += turnSpeed;
-        }
-    }
-
-    public static Vec3d getRotationVector(float yaw) {
-        float g = -yaw;
-        float h = MathHelper.cos(g);
-        float i = MathHelper.sin(g);
-        float j = MathHelper.cos(0);
-        return new Vec3d(i * j, 0, h * j);
     }
 }

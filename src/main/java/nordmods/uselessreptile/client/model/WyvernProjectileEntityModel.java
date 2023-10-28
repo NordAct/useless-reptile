@@ -2,7 +2,7 @@ package nordmods.uselessreptile.client.model;
 
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.entity.WyvernProjectileEntity;
+import nordmods.uselessreptile.common.entity.special.WyvernProjectileEntity;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 

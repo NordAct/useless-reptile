@@ -12,10 +12,12 @@ import nordmods.uselessreptile.common.init.UREntities;
 public class URRenderers {
     public static void init() {
         EntityRendererRegistry.register(UREntities.WYVERN_ENTITY, WyvernEntityRenderer::new);
-        EntityRendererRegistry.register(UREntities.WYVERN_PROJECTILE_ENTITY, WyvernProjectileEntityRenderer::new);
         EntityRendererRegistry.register(UREntities.MOLECLAW_ENTITY, MoleclawEntityRenderer::new);
         EntityRendererRegistry.register(UREntities.RIVER_PIKEHORN_ENTITY, RiverPikehornEntityRenderer::new);
         EntityRendererRegistry.register(UREntities.LIGHTNING_CHASER_ENTITY, LightningChaserEntityRenderer::new);
+
+        EntityRendererRegistry.register(UREntities.WYVERN_PROJECTILE_ENTITY, WyvernProjectileEntityRenderer::new);
+        EntityRendererRegistry.register(UREntities.SHOCKWAVE_SPHERE_ENTITY, ShockwaveSphereEntityRenderer::new);
 
         EntityModelLayerRegistry.registerModelLayer(RiverPikehornOnHeadModel.PIKEHORN_ON_HEAD_LAYER, RiverPikehornOnHeadModel::getTexturedModelData);
     }
