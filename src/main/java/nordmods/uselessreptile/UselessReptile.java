@@ -2,8 +2,7 @@ package nordmods.uselessreptile;
 
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.util.Identifier;
-import nordmods.uselessreptile.common.util.dragonVariant.DragonVariantLoader;
+import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantLoader;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.AttackPartOwnerC2SPacket;
 import nordmods.uselessreptile.common.network.InteractPartOwnerC2SPacket;

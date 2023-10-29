@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.util.modelRedirect;
+package nordmods.uselessreptile.client.util.model_redirect;
 
 import com.google.gson.*;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;

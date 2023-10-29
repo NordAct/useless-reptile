@@ -46,7 +46,7 @@ import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.uselessreptile.common.init.URStatusEffects;
-import nordmods.uselessreptile.common.util.dragonVariant.DragonVariantUtil;
+import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;

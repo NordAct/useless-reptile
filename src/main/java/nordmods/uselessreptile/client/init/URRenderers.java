@@ -4,7 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
-import nordmods.uselessreptile.client.model.riverpikehornonhead.RiverPikehornOnHeadModel;
+import nordmods.uselessreptile.client.model.river_pikehorn_on_head.RiverPikehornOnHeadModel;
 import nordmods.uselessreptile.client.renderer.*;
 import nordmods.uselessreptile.common.init.UREntities;
 

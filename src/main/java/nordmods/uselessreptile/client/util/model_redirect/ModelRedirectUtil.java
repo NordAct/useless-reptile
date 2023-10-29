@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.util.modelRedirect;
+package nordmods.uselessreptile.client.util.model_redirect;
 
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.ResourceUtil;

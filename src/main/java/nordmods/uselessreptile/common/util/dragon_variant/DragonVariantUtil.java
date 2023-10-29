@@ -1,6 +1,5 @@
-package nordmods.uselessreptile.common.util.dragonVariant;
+package nordmods.uselessreptile.common.util.dragon_variant;
 
-import net.minecraft.entity.EntityType;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.TagKey;

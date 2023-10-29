@@ -4,7 +4,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.client.util.modelRedirect.ModelRedirectUtil;
+import nordmods.uselessreptile.client.util.model_redirect.ModelRedirectUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URConfig;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;

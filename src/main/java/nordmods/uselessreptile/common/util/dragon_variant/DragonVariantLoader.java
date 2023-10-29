@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.util.dragonVariant;
+package nordmods.uselessreptile.common.util.dragon_variant;
 
 import com.google.gson.*;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;

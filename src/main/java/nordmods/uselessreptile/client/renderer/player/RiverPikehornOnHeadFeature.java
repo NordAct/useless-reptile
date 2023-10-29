@@ -13,7 +13,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import nordmods.uselessreptile.client.model.riverpikehornonhead.RiverPikehornOnHeadModel;
+import nordmods.uselessreptile.client.model.river_pikehorn_on_head.RiverPikehornOnHeadModel;
 import nordmods.uselessreptile.client.renderer.RiverPikehornEntityRenderer;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 

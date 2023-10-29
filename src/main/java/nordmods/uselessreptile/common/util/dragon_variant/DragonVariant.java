@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.util.dragonVariant;
+package nordmods.uselessreptile.common.util.dragon_variant;
 
 import org.jetbrains.annotations.Nullable;
 
