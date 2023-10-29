@@ -26,9 +26,9 @@ public class UREntities {
     public static final EntityType<LightningChaserEntity> LIGHTNING_CHASER_ENTITY =
             register("lightning_chaser", getBuilder(SpawnGroup.CREATURE, LightningChaserEntity::new, 1, 1));
     public static final EntityType<WyvernProjectileEntity> WYVERN_PROJECTILE_ENTITY =
-            register("wyvern_projectile", getBuilder(SpawnGroup.MISC, WyvernProjectileEntity::new, 0.5f, 0.5f, true));
+            register("wyvern_projectile", getBuilder(SpawnGroup.MISC, WyvernProjectileEntity::new, 0.5f, 0.5f, true, false));
     public static final EntityType<ShockwaveSphereEntity> SHOCKWAVE_SPHERE_ENTITY =
-            register("shockwave_sphere", getBuilder(SpawnGroup.MISC, ShockwaveSphereEntity::new, 1, 1, false));
+            register("shockwave_sphere", getBuilder(SpawnGroup.MISC, ShockwaveSphereEntity::new, 1, 1, false, true));
 
 
     public static void init(){
@@ -42,13 +42,15 @@ public class UREntities {
         return Registry.register(Registries.ENTITY_TYPE, new Identifier(UselessReptile.MODID, id), builder.build());
     }
 
-    private static <T extends Entity> FabricEntityTypeBuilder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon) {
+    private static <T extends Entity> FabricEntityTypeBuilder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon, boolean fireImmune) {
         FabricEntityTypeBuilder<T> builder = FabricEntityTypeBuilder.create(spawnGroup, entity).dimensions(EntityDimensions.changing(width, height));
-        return disableSummon ? builder.disableSummon() : builder;
+        if (disableSummon) builder.disableSummon();
+        if (fireImmune) builder.fireImmune();
+        return builder;
     }
 
     private static <T extends Entity> FabricEntityTypeBuilder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height) {
-        return getBuilder(spawnGroup, entity, width, height, false);
+        return getBuilder(spawnGroup, entity, width, height, false, false);
     }
 }
 
