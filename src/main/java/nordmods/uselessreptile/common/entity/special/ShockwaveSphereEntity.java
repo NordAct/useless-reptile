@@ -6,7 +6,6 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -52,7 +51,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
                 onEntityHit(entityHitResult);
             }
-            getSphereDots(SPHERE_ROWS, getEyePos(), currentRadius);
+            getSphereDots(SPHERE_ROWS, currentRadius);
 
             currentRadius += radiusChangeSpeed;
             prevAffected.clear();
@@ -77,7 +76,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
         target.addVelocity(vec3d.normalize().multiply(power * currentRadius / vec3d.length()));
         if (target instanceof LivingEntity livingEntity) {
             livingEntity.addStatusEffect(new StatusEffectInstance(URStatusEffects.SHOCK, 100, 0, false, false), owner);
-            livingEntity.damage(getDamageSources().lightningBolt(), 5);
+            livingEntity.damage(getDamageSources().create(DamageTypes.LIGHTNING_BOLT, owner), 5);
         }
         
         affected.add(target);
@@ -88,7 +87,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
         return super.getDimensions(pose).scaled(currentRadius*2, currentRadius*2);
     }
 
-    private void getSphereDots(int rows, Vec3d pos, float radius) {
+    private void getSphereDots(int rows, float radius) {
         if (!getWorld().isClient()) return;
         sphereDots.clear();
         float dPitch = 180f / rows;
@@ -98,7 +97,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
         for (int j = 0; j <= rows; j++) {
             for (int i = 0; i <= rows; i++) {
                 Vec3d rot = getRotationVector(pitch, yaw);
-                sphereDots.add(new Vec3d(pos.getX() + rot.x * radius, pos.getY() + rot.y * radius, pos.getZ() + rot.z * radius));
+                sphereDots.add(new Vec3d(rot.x * radius, rot.y * radius + currentRadius, rot.z * radius));
                 yaw += dYaw;
             }
             pitch += dPitch;

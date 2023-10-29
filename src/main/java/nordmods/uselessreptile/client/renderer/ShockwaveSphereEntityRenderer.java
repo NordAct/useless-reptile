@@ -13,7 +13,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity> {
-    private float prevA = 1f;
+    private float prevAlpha = 1f;
 
     public ShockwaveSphereEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
@@ -30,39 +30,20 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
         matrixStack.push();
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucent(getTexture(entity)));
         if (entity.sphereDots.size() > 0) {
-            float a = MathHelper.clamp(1f - entity.getCurrentRadius()/entity.maxRadius, 0f, 1f);
-            a = MathHelper.lerp(tickDelta, prevA, a);
+            float alpha = MathHelper.clamp(1f - entity.getCurrentRadius()/entity.maxRadius, 0f, 1f);
+            alpha = MathHelper.lerp(tickDelta, prevAlpha, alpha);
             for (int j = 0; j < ShockwaveSphereEntity.SPHERE_ROWS; j++) {
                 for (int i = 0; i < entity.sphereDots.size()/ShockwaveSphereEntity.SPHERE_ROWS - 1; i++) {
-                    //outside
-                    Vector3f v0 = getRelativePos(entity.sphereDots.get(1 + (i + 1) * ShockwaveSphereEntity.SPHERE_ROWS + j), entity.getPos());
-                    Vector3f v1 = getRelativePos(entity.sphereDots.get(0 + (i + 1) * ShockwaveSphereEntity.SPHERE_ROWS + j), entity.getPos());
-                    Vector3f v2 = getRelativePos(entity.sphereDots.get(0 + i * ShockwaveSphereEntity.SPHERE_ROWS + j), entity.getPos());
-                    Vector3f v3 = getRelativePos(entity.sphereDots.get(1 + i * ShockwaveSphereEntity.SPHERE_ROWS + j), entity.getPos());
-                    renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), vertexConsumer, 1f, 1f, 1f, a, v0, v1, v2, v3);
-                    //inside
-                    //Vector3f v4 = getRelativePos(entity.sphereDots.get(1 + i * ShockwaveSphereEntity.SPHERE_ROWS + j), entity.getPos());
-                    //Vector3f v5 = getRelativePos(entity.sphereDots.get(0 + i * ShockwaveSphereEntity.SPHERE_ROWS + j), entity.getPos());
-                    //Vector3f v6 = getRelativePos(entity.sphereDots.get(0 + (i + 1) * ShockwaveSphereEntity.SPHERE_ROWS + j), entity.getPos());
-                    //Vector3f v7 = getRelativePos(entity.sphereDots.get(1 + (i + 1) * ShockwaveSphereEntity.SPHERE_ROWS + j), entity.getPos());
-                    //renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), vertexConsumer, v4, v5, v6, v7);
+                    Vector3f v0 = getRelativePos(entity.sphereDots.get(1 + (i + 1) * ShockwaveSphereEntity.SPHERE_ROWS + j));
+                    Vector3f v1 = getRelativePos(entity.sphereDots.get(0 + (i + 1) * ShockwaveSphereEntity.SPHERE_ROWS + j));
+                    Vector3f v2 = getRelativePos(entity.sphereDots.get(0 + i * ShockwaveSphereEntity.SPHERE_ROWS + j));
+                    Vector3f v3 = getRelativePos(entity.sphereDots.get(1 + i * ShockwaveSphereEntity.SPHERE_ROWS + j));
+                    renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), vertexConsumer, 1f, 1f, 1f, alpha, v0, v1, v2, v3);
                 }
             }
-            prevA = a;
+            prevAlpha = alpha;
         }
         matrixStack.pop();
-    }
-
-    private static void renderQuad(
-            Matrix4f positionMatrix,
-            Matrix3f normalMatrix,
-            VertexConsumer vertices,
-            Vector3f v0,
-            Vector3f v1,
-            Vector3f v2,
-            Vector3f v3
-    ) {
-        renderQuad(positionMatrix, normalMatrix, vertices, 1, 1, 1, 1, v0, v1, v2, v3);
     }
 
     private static void renderQuad(
@@ -84,8 +65,8 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .next();
-        vertices.vertex(positionMatrix, v1.x, v1.y, v1.z) //01
-                .color(r, g, b, a).texture(0, 1)
+        vertices.vertex(positionMatrix, v1.x, v1.y, v1.z) //10
+                .color(r, g, b, a).texture(1, 0)
                 .overlay(OverlayTexture.DEFAULT_UV)
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
@@ -96,15 +77,15 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .next();
-        vertices.vertex(positionMatrix, v3.x, v3.y, v3.z) //10
-                .color(r, g, b, a).texture(1, 0)
+        vertices.vertex(positionMatrix, v3.x, v3.y, v3.z) //01
+                .color(r, g, b, a).texture(0, 1)
                 .overlay(OverlayTexture.DEFAULT_UV)
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .next();
     }
 
-    private static Vector3f getRelativePos (Vec3d vec3d, Vec3d pos) {
-        return new Vector3f((float) (vec3d.x - pos.x), (float) (vec3d.y - pos.y), (float) (vec3d.z - pos.z));
+    private static Vector3f getRelativePos (Vec3d vec3d) {
+        return new Vector3f((float) vec3d.x, (float) vec3d.y, (float) vec3d.z);
     }
 }
