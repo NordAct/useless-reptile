@@ -22,6 +22,8 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
     public final float power;
     private final List<Entity> affected = new ArrayList<>();
     private final List<Entity> prevAffected = new ArrayList<>();
+    public final List<Vec3d> sphereDots = new ArrayList<>();
+    public static final int SPHERE_ROWS = 16;
 
     public ShockwaveSphereEntity(EntityType<? extends ProjectileEntity> entityType, World world, float maxRadius, float radiusChangeSpeed, float power) {
         super(entityType, world);
@@ -50,7 +52,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
                 onEntityHit(entityHitResult);
             }
-            particleSphere(ParticleTypes.ELECTRIC_SPARK, (int) (50 * currentRadius/maxRadius), (int) (50 * currentRadius/maxRadius), getEyePos(), currentRadius, getWorld());
+            getSphereDots(SPHERE_ROWS, getEyePos(), currentRadius);
 
             currentRadius += radiusChangeSpeed;
             prevAffected.clear();
@@ -86,23 +88,26 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
         return super.getDimensions(pose).scaled(currentRadius*2, currentRadius*2);
     }
 
-    public void particleSphere(ParticleEffect particle, int rowsHorizontal, int rowsVertical, Vec3d pos, float radius, World world) {
-        if (!world.isClient()) return;
-        float dPitch = 180f / rowsVertical;
+    private void getSphereDots(int rows, Vec3d pos, float radius) {
+        if (!getWorld().isClient()) return;
+        sphereDots.clear();
+        float dPitch = 180f / rows;
+        float dYaw = 360f / rows;
         float yaw = 0;
         float pitch = -90;
-        for (int j = 0; j <= rowsVertical; j++) {
-            int particleAmount = (int) (rowsHorizontal - (rowsHorizontal * Math.abs(pitch/90f)) + 1);
-            for (int i = 0; i <= particleAmount; i++) {
-                float dYaw = 360f / particleAmount;
+        for (int j = 0; j <= rows; j++) {
+            for (int i = 0; i <= rows; i++) {
                 Vec3d rot = getRotationVector(pitch, yaw);
-                world.addParticle(particle,
-                        pos.getX() + rot.x * radius, pos.getY() + rot.y * radius, pos.getZ() + rot.z * radius,
-                        0, 0, 0);
+                sphereDots.add(new Vec3d(pos.getX() + rot.x * radius, pos.getY() + rot.y * radius, pos.getZ() + rot.z * radius));
                 yaw += dYaw;
             }
             pitch += dPitch;
         }
+    }
+
+    private void particleSphere(ParticleEffect particle) {
+        if (!getWorld().isClient()) return;
+        for (Vec3d dot : sphereDots) getWorld().addParticle(particle, dot.getX() , dot.getY(), dot.getZ(), 0, 0, 0);
     }
 
     @Override

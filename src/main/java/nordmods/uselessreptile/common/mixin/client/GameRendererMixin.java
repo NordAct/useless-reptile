@@ -39,7 +39,7 @@ public abstract class GameRendererMixin {
         int height = context.getScaledWindowHeight();
 
         context.getMatrices().push();
-        float scale = 2f - MathHelper.lerp(tickDelta, prevStrength, strength);
+        float scale = MathHelper.clamp(1.5f - MathHelper.lerp(tickDelta, prevStrength, strength), 1f, 2f);
         context.getMatrices().translate(width/2f, height/2f, 0f);
         context.getMatrices().scale(scale, scale, scale);
         context.getMatrices().translate(-width/2f, -height/2f, 0f);
