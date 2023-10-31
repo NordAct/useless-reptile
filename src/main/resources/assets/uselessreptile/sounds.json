@@ -277,5 +277,42 @@
         "pitch" : 0.75
       }
     ]
+  },
+  "shockwave" : {
+    "subtitle": "subtitles.uselessreptile.shockwave",
+    "sounds": [
+      {
+        "name": "uselessreptile:common/shockwave1",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "uselessreptile:common/shockwave2",
+        "attenuation_distance": 64
+      },
+      {
+        "name": "uselessreptile:common/shockwave3",
+        "attenuation_distance": 64
+      }
+    ]
+  },
+  "shockwave.hit" : {
+    "subtitle": "subtitles.uselessreptile.shockwave.hit",
+    "sounds": [
+      {
+        "name": "uselessreptile:common/shockwave_hit1"
+      },
+      {
+        "name": "uselessreptile:common/shockwave_hit2"
+      },
+      {
+        "name": "uselessreptile:common/shockwave_hit3"
+      },
+      {
+        "name": "uselessreptile:common/shockwave_hit4"
+      },
+      {
+        "name": "uselessreptile:common/shockwave_hit5"
+      }
+    ]
   }
 }

@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.entity;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -15,14 +14,10 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
-import net.minecraft.particle.ParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
@@ -65,6 +60,8 @@ TODO:
 */
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity {
+    private int shockwaveDelay = -1;
+
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         experiencePoints = 20;
@@ -109,6 +106,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
                 case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.6F);
                 case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
                 case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
+                //case "shockwave" -> ;
+                case "flap_heavy" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.5F);
             }
     }
 
@@ -126,6 +125,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
+            if (isSecondaryAttack()) {
+                event.getController().setAnimationSpeed(calcCooldownMod());
+                return loopAnim("fly.shockwave", event);
+            }
             if (isMoving() || event.isMoving()) {
                 if (isMovingBackwards()) return loopAnim("fly.back", event);
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
@@ -213,9 +216,18 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         }
         setHitboxModifiers(dHeight, dWidth, dMountedOffset);
 
+        if (isFlying()) secondaryAttackDuration = 30;
+        else secondaryAttackDuration = 20;
+
+        if (shockwaveDelay == 0) {
+            shockwave();
+            shockwaveDelay--;
+        }
+        if (shockwaveDelay > -1) shockwaveDelay--;
+
         if (canBeControlledByRider()) {
             if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
-                if (isFlying()) shockwave();
+                if (isFlying()) triggerShockwave();
                 else {
                     LivingEntity target = getWorld().getClosestEntity(LivingEntity.class, TargetPredicate.DEFAULT, this, getX(), getY(), getZ(), getAttackBox());
                     meleeAttack(target);
@@ -233,7 +245,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     }
 
     public void shockwave() {
-        setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
         ShockwaveSphereEntity shockwaveSphereEntity =
                 new ShockwaveSphereEntity(UREntities.SHOCKWAVE_SPHERE_ENTITY, getWorld());
         shockwaveSphereEntity.setOwner(this);
@@ -241,6 +252,11 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         shockwaveSphereEntity.setVelocity(Vec3d.ZERO);
         shockwaveSphereEntity.setNoGravity(true);
         getWorld().spawnEntity(shockwaveSphereEntity);
+    }
+
+    public void triggerShockwave() {
+        setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
+        shockwaveDelay = transitionTicks;
     }
 
     //todo

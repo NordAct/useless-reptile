@@ -28,9 +28,15 @@ public class URSounds {
     public static final SoundEvent PIKEHORN_AMBIENT = register("river_pikehorn.ambient");
     public static final SoundEvent PIKEHORN_HURT = register("river_pikehorn.hurt");
     public static final SoundEvent PIKEHORN_DEATH = register("river_pikehorn.death");
+    public static final SoundEvent SHOCKWAVE_HIT = register("shockwave.hit");
+    public static final SoundEvent SHOCKWAVE = register("shockwave", 64);
 
     private static SoundEvent register(String id) {
         return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(new Identifier(UselessReptile.MODID, id)));
+    }
+
+    private static SoundEvent register(String id, float distance) {
+        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(new Identifier(UselessReptile.MODID, id), distance));
     }
 
     @SuppressWarnings("EmptyMethod")

@@ -33,6 +33,7 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
         if (entity.sphereDots.size() > 0) {
             float alpha = MathHelper.clamp(1f - entity.getCurrentRadius()/entity.maxRadius, 0f, 1f);
             alpha = MathHelper.lerp(tickDelta, prevAlpha, alpha);
+
             for (int j = 0; j < ShockwaveSphereEntity.SPHERE_ROWS; j++) { //vertical segment
                 float minU = (float) (j / (double) ShockwaveSphereEntity.SPHERE_ROWS);
                 float maxU = (float) ((j + 1.0) / (double) ShockwaveSphereEntity.SPHERE_ROWS);
