@@ -190,7 +190,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
 
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
-        if (Objects.equals(damageSource.getTypeRegistryEntry(), DamageTypes.LIGHTNING_BOLT)) return true;
+        if (damageSource.isOf(DamageTypes.LIGHTNING_BOLT)) return true;
         else return super.isInvulnerableTo(damageSource);
     }
 

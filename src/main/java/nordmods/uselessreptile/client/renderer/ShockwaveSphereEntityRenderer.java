@@ -6,16 +6,15 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-//todo: fix UV
 public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity> {
     private float prevAlpha = 1f;
+    private static final int SPHERE_ROWS = 16;
 
     public ShockwaveSphereEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
@@ -29,68 +28,85 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
     @Override
     public void render(ShockwaveSphereEntity entity, float yaw, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumers, int light) {
         matrixStack.push();
+
+        float alpha = MathHelper.clamp(1f - entity.getCurrentRadius() / entity.maxRadius, 0f, 1f);
+        alpha = MathHelper.lerp(tickDelta, prevAlpha, alpha);
+
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(getTexture(entity), true));
-        if (entity.sphereDots.size() > 0) {
-            float alpha = MathHelper.clamp(1f - entity.getCurrentRadius()/entity.maxRadius, 0f, 1f);
-            alpha = MathHelper.lerp(tickDelta, prevAlpha, alpha);
+        matrixStack.translate(0, entity.getCurrentRadius(), 0);
+        renderSphere(entity, matrixStack, vertexConsumer, alpha);
 
-            for (int j = 0; j < ShockwaveSphereEntity.SPHERE_ROWS; j++) { //vertical segment
-                float minU = (float) (j / (double) ShockwaveSphereEntity.SPHERE_ROWS);
-                float maxU = (float) ((j + 1.0) / (double) ShockwaveSphereEntity.SPHERE_ROWS);
-
-                int rows = entity.sphereDots.size() / ShockwaveSphereEntity.SPHERE_ROWS - 1;
-                for (int i = 0; i < rows; i++) { //horizontal segment
-                    float minV =  (float) (i / (double) rows);
-                    float maxV = (float) ((i + 1.0) / (double) rows);
-
-                    Vector3f v0 = fromVec3d(entity.sphereDots.get(1 + (i + 1) * ShockwaveSphereEntity.SPHERE_ROWS + j));
-                    Vector3f v1 = fromVec3d(entity.sphereDots.get(0 + (i + 1) * ShockwaveSphereEntity.SPHERE_ROWS + j));
-                    Vector3f v2 = fromVec3d(entity.sphereDots.get(0 + i * ShockwaveSphereEntity.SPHERE_ROWS + j));
-                    Vector3f v3 = fromVec3d(entity.sphereDots.get(1 + i * ShockwaveSphereEntity.SPHERE_ROWS + j));
-                    renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), vertexConsumer,
-                            v0, v1, v2, v3,
-                            1f, 1f, 1f, alpha,
-                            minU, maxU, minV, maxV);
-                }
-            }
-            prevAlpha = alpha;
-        }
+        prevAlpha = alpha;
         matrixStack.pop();
     }
 
-    private static void renderQuad(
+    private void renderQuad(
             Matrix4f positionMatrix, Matrix3f normalMatrix, VertexConsumer vertices,
             Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3,
-            float r, float g, float b, float a,
+            float a,
             float minU, float maxU, float minV, float maxV
     ) {
         vertices.vertex(positionMatrix, v0.x, v0.y, v0.z) //00
-                .color(r, g, b, a).texture(minU, maxV)
+                .color(1, 1, 1, a).texture(minU, minV)
                 .overlay(OverlayTexture.DEFAULT_UV)
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .next();
         vertices.vertex(positionMatrix, v1.x, v1.y, v1.z) //10
-                .color(r, g, b, a).texture(maxU, maxV)
+                .color(1, 1, 1, a).texture(maxU, minV)
                 .overlay(OverlayTexture.DEFAULT_UV)
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .next();
         vertices.vertex(positionMatrix, v2.x, v2.y, v2.z) //11
-                .color(r, g, b, a).texture(maxU, minV)
+                .color(1, 1, 1, a).texture(maxU, maxV)
                 .overlay(OverlayTexture.DEFAULT_UV)
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .next();
         vertices.vertex(positionMatrix, v3.x, v3.y, v3.z) //01
-                .color(r, g, b, a).texture(minU, minV)
+                .color(1, 1, 1, a).texture(minU, maxV)
                 .overlay(OverlayTexture.DEFAULT_UV)
                 .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
                 .next();
     }
 
-    private static Vector3f fromVec3d(Vec3d vec3d) {
-        return new Vector3f((float) vec3d.x, (float) vec3d.y, (float) vec3d.z);
+    private void renderSphere(ShockwaveSphereEntity entity, MatrixStack matrixStack, VertexConsumer vertexConsumer, float alpha) {
+        float dPhi = (float) (-Math.PI / SPHERE_ROWS);
+        float dTheta = (float) (-2 * Math.PI / SPHERE_ROWS);
+
+        for (int i = 0; i < SPHERE_ROWS; i++) {
+            float minV = i / (float) SPHERE_ROWS;
+            float maxV = (i + 1f) / (float) SPHERE_ROWS;
+
+            float minPhi = i * dPhi;
+            float maxPhi = (i + 1) * dPhi;
+
+            for (int j = 0; j < SPHERE_ROWS; j++) {
+                float minU =  j / (float) SPHERE_ROWS;
+                float maxU = (j + 1) / (float) SPHERE_ROWS;
+
+                float minTheta = j * dTheta;
+                float maxTheta = (j + 1) * dTheta;
+
+                float radius = entity.getCurrentRadius();
+
+                Vector3f v0 = getSphereDot(minPhi, minTheta, radius);
+                Vector3f v1 = getSphereDot(minPhi, maxTheta, radius);
+                Vector3f v2 = getSphereDot(maxPhi, maxTheta, radius);
+                Vector3f v3 = getSphereDot(maxPhi, minTheta, radius);
+
+                renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), vertexConsumer,
+                        v0, v1, v2, v3, alpha, minU, maxU, minV, maxV);
+            }
+        }
+    }
+
+    private Vector3f getSphereDot(float phi, float theta, float radius) {
+        float x = (float) (Math.sin(phi) * Math.cos(theta));
+        float y = (float) Math.cos(phi);
+        float z = (float) (Math.sin(phi) * Math.sin(theta));
+        return new Vector3f(x, y, z).mul(radius);
     }
 }
