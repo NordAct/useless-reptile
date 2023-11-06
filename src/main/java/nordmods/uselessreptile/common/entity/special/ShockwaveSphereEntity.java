@@ -9,6 +9,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraft.world.explosion.Explosion;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 
@@ -64,16 +65,18 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity target = entityHitResult.getEntity();
+        float exposure = Explosion.getExposure(getEyePos(), target);
 
-        target.playSound(URSounds.SHOCKWAVE_HIT, 1, 1);
-        Vec3d vec3d = target.getPos().subtract(getEyePos());
-        double lengthMod = currentRadius / vec3d.length();
-        target.addVelocity(vec3d.normalize().multiply(power * lengthMod));
-        if (target instanceof LivingEntity livingEntity) {
-            livingEntity.addStatusEffect(new StatusEffectInstance(URStatusEffects.SHOCK, (int) (100 * MathHelper.clamp(lengthMod, 1, 2)), 0, false, false), getOwner());
-            livingEntity.damage(getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (2.5 * MathHelper.clamp(lengthMod, 1, 2)));
+        if (exposure > 0) {
+            target.playSound(URSounds.SHOCKWAVE_HIT, 1, 1 / exposure);
+            Vec3d vec3d = target.getPos().subtract(getEyePos());
+            double lengthMod = currentRadius / vec3d.length();
+            target.addVelocity(vec3d.normalize().multiply(power * lengthMod * exposure));
+            if (target instanceof LivingEntity livingEntity) {
+                livingEntity.addStatusEffect(new StatusEffectInstance(URStatusEffects.SHOCK, (int) (100 * MathHelper.clamp(lengthMod, 1, 2) * exposure), 0, false, false), getOwner());
+                livingEntity.damage(getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (2.5 * MathHelper.clamp(lengthMod, 1, 2)));
+            }
         }
-        
         affected.add(target);
     }
 

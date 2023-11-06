@@ -245,8 +245,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     }
 
     public void shockwave() {
-        ShockwaveSphereEntity shockwaveSphereEntity =
-                new ShockwaveSphereEntity(UREntities.SHOCKWAVE_SPHERE_ENTITY, getWorld());
+        ShockwaveSphereEntity shockwaveSphereEntity = new ShockwaveSphereEntity(UREntities.SHOCKWAVE_SPHERE_ENTITY, getWorld());
         shockwaveSphereEntity.setOwner(this);
         shockwaveSphereEntity.setPosition(getPos().add(0, 2.95f, 0));
         shockwaveSphereEntity.setVelocity(Vec3d.ZERO);
