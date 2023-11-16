@@ -35,11 +35,12 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.world.World;
+import nordmods.primitive_multipart_entities.common.entity.EntityPart;
+import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
-import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
-import nordmods.uselessreptile.common.entity.multipart.URDragonPart;
+import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URPotions;
@@ -56,7 +57,7 @@ import software.bernie.geckolib3.core.event.SoundKeyframeEvent;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 
-public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartDragon {
+public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int ticksUntilHeal = 400;
     private int glideTimer = 100;
     private boolean shouldGlide;
@@ -257,6 +258,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
+
+        updateChildParts();
     }
 
     @Override
@@ -383,11 +386,10 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public URDragonPart[] getParts() {
+    public EntityPart[] getParts() {
         return parts;
     }
 
-    @Override
     public void updateChildParts() {
         Vec2f wingLeftScale;
         Vec2f wingRightScale;
