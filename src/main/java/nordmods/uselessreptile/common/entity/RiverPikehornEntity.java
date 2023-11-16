@@ -135,7 +135,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     private <A extends IAnimatable> PlayState attack(AnimationEvent<A> event) {
-        event.getController().setAnimationSpeed(calcCooldownMod());
+        event.getController().setAnimationSpeed(1/calcCooldownMod());
         if (isPrimaryAttack()) return playAnim( "attack" + attackType, event);
         return playAnim("attack.none", event);
     }

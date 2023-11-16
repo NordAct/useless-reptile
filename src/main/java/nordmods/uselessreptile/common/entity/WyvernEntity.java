@@ -153,7 +153,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isSecondaryAttack()) {
-                event.getController().setAnimationSpeed(calcCooldownMod());
+                event.getController().setAnimationSpeed(1/calcCooldownMod());
                 return loopAnim("fly.attack", event);
             }
             if (isMoving() || event.isMoving()) {
@@ -187,7 +187,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     private <A extends IAnimatable> PlayState attack(AnimationEvent<A> event) {
-        event.getController().setAnimationSpeed(calcCooldownMod());
+        event.getController().setAnimationSpeed(1/calcCooldownMod());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + attackType, event);
         if (isPrimaryAttack()) {
             if (isFlying() && (isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
