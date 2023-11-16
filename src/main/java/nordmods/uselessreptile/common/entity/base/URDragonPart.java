@@ -7,16 +7,8 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 public class URDragonPart extends EntityPart {
     public final URDragonEntity owner;
