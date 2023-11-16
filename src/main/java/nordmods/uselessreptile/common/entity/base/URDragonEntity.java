@@ -46,7 +46,6 @@ import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.uselessreptile.common.util.dragonVariant.DragonVariantUtil;
-import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
 import org.jetbrains.annotations.Nullable;
@@ -481,7 +480,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         super.tick();
         updateEquipment();
         updateRotationProgress();
-        if (this instanceof MultipartDragon dragon) dragon.updateChildParts();
         animationSpeed = calcSpeedMod();
         setStepHeight(1);
 
