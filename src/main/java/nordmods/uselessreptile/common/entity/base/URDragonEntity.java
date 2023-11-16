@@ -45,7 +45,6 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
-import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
 import nordmods.uselessreptile.common.util.dragonVariant.DragonVariantUtil;
@@ -476,7 +475,6 @@ public abstract class URDragonEntity extends TameableEntity implements IAnimatab
         super.tick();
         updateEquipment();
         updateRotationProgress();
-        if (this instanceof MultipartDragon dragon) dragon.updateChildParts();
         animationSpeed = calcSpeedMod();
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);

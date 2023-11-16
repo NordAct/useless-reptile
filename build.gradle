@@ -27,6 +27,7 @@ repositories {
             }
         }
     }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -39,6 +40,7 @@ dependencies {
     modImplementation "maven.modrinth:yacl:2.2.0-for-1.19.2"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
+    modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
 }
 
 processResources {
