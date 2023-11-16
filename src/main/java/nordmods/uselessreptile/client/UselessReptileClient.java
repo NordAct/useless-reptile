@@ -12,7 +12,6 @@ public class UselessReptileClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         ModelRedirectLoader.init();
-        URClientEvents.init();
         URModelPredicates.init();
         URRenderers.init();
         URKeybinds.init();
@@ -24,8 +23,6 @@ public class UselessReptileClient implements ClientModInitializer {
         PosSyncPacket.init();
         AttackTypeSyncPacket.init();
         GUIEntityToRenderPacket.init();
-        AttackPartOwnerPacket.init();
-        InteractPartOwnerPacket.init();
         InstrumentSoundBoundMessagePacket.init();
     }
 }

@@ -3,15 +3,11 @@
   "package": "nordmods.uselessreptile.common.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "common.AbstractBlockMixin",
-    "common.ServerWorldMixin",
-    "common.ThreadedAnvilChunkStorageMixin",
-    "common.WorldMixin"
+    "common.AbstractBlockMixin"
   ],
   "client": [
     "client.CameraMixin",
     "client.EntityMixin",
-    "client.EntityRenderDispathcerMixin",
     "client.InGameHudMixin",
     "client.LivingEntityMixin",
     "client.LivingEntityRendererMixin",

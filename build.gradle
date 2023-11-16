@@ -11,12 +11,14 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
+    mavenCentral()
     maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven { url 'https://maven.isxander.dev/releases' }
     maven { url "https://maven.nucleoid.xyz/" }
     maven { url 'https://maven.quiltmc.org/repository/release'} //because YACL
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots'} //because YACL
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
@@ -29,6 +31,7 @@ dependencies {
     modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
+    modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
 }
 
 processResources {
