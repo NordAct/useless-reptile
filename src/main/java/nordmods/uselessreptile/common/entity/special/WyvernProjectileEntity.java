@@ -13,6 +13,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
+import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
@@ -66,6 +67,11 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
         discard();
     }
 
+    @Override
+    protected boolean canHit(Entity entity) {
+        if (entity instanceof EntityPart entityPart && entityPart.owner == getOwner()) return false;
+        return super.canHit(entity);
+    }
 
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {

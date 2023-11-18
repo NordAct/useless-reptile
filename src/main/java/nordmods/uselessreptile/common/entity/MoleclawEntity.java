@@ -78,8 +78,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
         pitchLimitGround = 50;
         rotationSpeedGround = 6;
-        basePrimaryAttackCooldown = 100;
-        baseSecondaryAttackCooldown = 50;
+        basePrimaryAttackCooldown = 60;
+        baseSecondaryAttackCooldown = 30;
         baseTamingProgress = 64;
         favoriteFood = Items.BEETROOT;
         regenFromFood = 2;
@@ -129,8 +129,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
     public static DefaultAttributeContainer.Builder createMoleclawAttributes() {
         return TameableEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0 * URConfig.getDamageMultiplier())
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0 * URConfig.getDamageMultiplier())
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
                 .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 4.0)
                 .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5)
@@ -169,7 +169,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
-        if (event.isMoving() || isMoveForwardPressed()) {
+        if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
             if (isPanicking()) return loopAnim("panic", event);
             return loopAnim("walk", event);
         }
@@ -188,7 +188,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     private <A extends GeoEntity> PlayState attack(AnimationState<A> event){
-        event.getController().setAnimationSpeed(calcCooldownMod());
+        event.getController().setAnimationSpeed(1/calcCooldownMod());
         if (isSecondaryAttack()) return playAnim( "attack.normal" + attackType, event);
         if (isPrimaryAttack()) {
             if (isPanicking()) return playAnim( "attack.strong.panic", event);

@@ -34,12 +34,12 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import nordmods.primitive_multipart_entities.common.entity.EntityPart;
+import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
-import nordmods.uselessreptile.common.entity.multipart.MultipartDragon;
-import nordmods.uselessreptile.common.entity.multipart.URDragonPart;
-import nordmods.uselessreptile.common.entity.special.WyvernProjectileEntity;
+import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URPotions;
@@ -57,8 +57,10 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
 
-public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartDragon {
+public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int ticksUntilHeal = 400;
+    private int glideTimer = 100;
+    private boolean shouldGlide;
     private final URDragonPart wingLeft = new URDragonPart(this);
     private final URDragonPart wingRight = new URDragonPart(this);
     private final URDragonPart neck = new URDragonPart(this);
@@ -80,9 +82,9 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         pitchLimitAir = 20;
         rotationSpeedGround = 8;
         rotationSpeedAir = 4;
-        verticalSpeed = 0.3f;
         favoriteFood = Items.CHICKEN;
         regenFromFood = 4;
+        dragonID = "wyvern";
     }
 
     @Override
@@ -148,7 +150,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isSecondaryAttack()) {
-                event.getController().setAnimationSpeed(calcCooldownMod());
+                event.getController().setAnimationSpeed(1/calcCooldownMod());
                 return loopAnim("fly.attack", event);
             }
             if (isMoving() || event.isMoving()) {
@@ -182,7 +184,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     private <A extends GeoEntity> PlayState attack(AnimationState<A> event) {
-        event.getController().setAnimationSpeed(calcCooldownMod());
+        event.getController().setAnimationSpeed(1/calcCooldownMod());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + attackType, event);
         if (isPrimaryAttack()) {
             if (isFlying() && (isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
@@ -247,6 +249,14 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             heal(1);
             ticksUntilHeal = 400;
         } else ticksUntilHeal--;
+
+        if (getWorld().isClient()) {
+            glideTimer--;
+            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
+            if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
+        }
+
+        updateChildParts();
     }
 
     @Override
@@ -368,16 +378,15 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     protected void updateEquipment() {
-        super.updateEquipment();
+        updateSaddle();
         updateBanner();
     }
 
     @Override
-    public URDragonPart[] getParts() {
+    public EntityPart[] getParts() {
         return parts;
     }
 
-    @Override
     public void updateChildParts() {
         Vec2f wingLeftScale;
         Vec2f wingRightScale;
