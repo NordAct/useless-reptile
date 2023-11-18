@@ -40,6 +40,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
+import nordmods.uselessreptile.common.entity.special.WyvernProjectileEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URPotions;
@@ -84,7 +85,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         rotationSpeedAir = 4;
         favoriteFood = Items.CHICKEN;
         regenFromFood = 4;
-        dragonID = "wyvern";
     }
 
     @Override
