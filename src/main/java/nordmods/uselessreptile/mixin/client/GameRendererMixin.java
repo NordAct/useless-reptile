@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.mixin.client;
+package nordmods.uselessreptile.mixin.client;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;

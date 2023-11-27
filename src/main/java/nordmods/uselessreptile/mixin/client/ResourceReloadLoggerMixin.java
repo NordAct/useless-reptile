@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.mixin.client;
+package nordmods.uselessreptile.mixin.client;
 
 import net.minecraft.client.resource.ResourceReloadLogger;
 import net.minecraft.resource.ResourcePack;

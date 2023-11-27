@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.mixin.common;
+package nordmods.uselessreptile.mixin.common;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;
