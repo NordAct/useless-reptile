@@ -10,6 +10,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
+import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 
@@ -36,6 +37,10 @@ public class ShockwaveSphereEntity extends ProjectileEntity {
 
     public ShockwaveSphereEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
         this(entityType, world, 20, 0.4f, 1);
+    }
+
+    public ShockwaveSphereEntity(World world) {
+        this(UREntities.SHOCKWAVE_SPHERE_ENTITY, world);
     }
 
     @Override

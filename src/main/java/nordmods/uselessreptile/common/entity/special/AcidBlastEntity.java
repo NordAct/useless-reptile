@@ -27,18 +27,18 @@ import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 
-public class WyvernProjectileEntity extends PersistentProjectileEntity implements GeoEntity {
+public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEntity {
 
     private int life;
     private final int color = 10085398;
 
-    public WyvernProjectileEntity(EntityType<? extends WyvernProjectileEntity> entityType, World world) {
+    public AcidBlastEntity(EntityType<? extends AcidBlastEntity> entityType, World world) {
         super(entityType, world);
         pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
     }
 
-    public WyvernProjectileEntity(World world, LivingEntity owner) {
-        super(UREntities.WYVERN_PROJECTILE_ENTITY, owner, world);
+    public AcidBlastEntity(World world, LivingEntity owner) {
+        super(UREntities.ACID_BLAST_ENTITY, owner, world);
         setOwner(owner);
     }
 
@@ -78,7 +78,7 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
         setDamage(2 * URConfig.getDamageMultiplier());
         if (!getWorld().isClient()) spawnEffectCloud();
         super.onEntityHit(entityHitResult);
-        if (entityHitResult.getEntity() instanceof LivingEntity entity) entity.addStatusEffect(new StatusEffectInstance(URStatusEffects.ACID, 10, 1));
+        if (entityHitResult.getEntity() instanceof LivingEntity entity) entity.addStatusEffect(new StatusEffectInstance(URStatusEffects.ACID, 60, 1));
         discard();
 
     }
@@ -93,7 +93,7 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
         areaEffectCloudEntity.setRadius(1.0f);
         areaEffectCloudEntity.setDuration(20);
         areaEffectCloudEntity.setRadiusGrowth(0.1f);
-        areaEffectCloudEntity.addEffect(new StatusEffectInstance(URStatusEffects.ACID, 10, 1));
+        areaEffectCloudEntity.addEffect(new StatusEffectInstance(URStatusEffects.ACID, 30, 1));
         areaEffectCloudEntity.setSilent(true);
         getWorld().spawnEntity(areaEffectCloudEntity);
     }
@@ -114,7 +114,7 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
         int i = color;
         double d = (double)(i >> 16 & 0xFF) / 255.0;
         double e = (double)(i >> 8 & 0xFF) / 255.0;
-        double f = (double)(i >> 0 & 0xFF) / 255.0;
+        double f = (double)(i & 0xFF) / 255.0;
         for (int j = 0; j < amount; ++j) {
             getWorld().addParticle(ParticleTypes.ENTITY_EFFECT, getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), d, e, f);
         }

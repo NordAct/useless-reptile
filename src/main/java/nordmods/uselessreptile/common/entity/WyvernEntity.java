@@ -40,7 +40,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
-import nordmods.uselessreptile.common.entity.special.WyvernProjectileEntity;
+import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URPotions;
@@ -318,7 +318,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             yaw *= progress;
         }
         for (int i = 0; i < 5; ++i) {
-            WyvernProjectileEntity projectileEntity = new WyvernProjectileEntity(getWorld(), this);
+            AcidBlastEntity projectileEntity = new AcidBlastEntity(getWorld(), this);
             projectileEntity.setPosition(head.getX(), head.getY(), head.getZ());
             projectileEntity.setVelocity(this, getPitch(), getYaw() - yaw, 0.5f, 3.0f, 5.0f);
             getWorld().spawnEntity(projectileEntity);

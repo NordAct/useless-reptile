@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.renderer;
+package nordmods.uselessreptile.client.renderer.special;
 
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.EntityRenderer;
@@ -22,7 +22,7 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
 
     @Override
     public Identifier getTexture(ShockwaveSphereEntity entity) {
-        return new Identifier(UselessReptile.MODID, "textures/misc/shockwave.png");
+        return new Identifier(UselessReptile.MODID, "textures/entity/shockwave_sphere/shockwave.png");
     }
 
     @Override

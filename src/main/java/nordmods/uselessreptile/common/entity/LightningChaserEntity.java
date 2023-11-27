@@ -45,7 +45,6 @@ import java.util.Objects;
 TODO:
     Дракон:
     1) Анимации атак и сами атаки (земля: укус и дыхание, воздух: шоковая волна и дыхание)
-    2) Шоковая волна - отражает все снаряды (мб предотвращает обновления всех редстоун компонентов) / отталкивает от себя ВСЕХ сущностей и накладывает эффект (сделать кастомный эффект шока с дебафами на скорость атаки и перемещения)
     3) Спавн во время шторма (появление в небе)
     4) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
     5) Приручение по ударам трезубца (точнее его молний)
@@ -56,7 +55,7 @@ TODO:
     Прочее:
     1) Возможность переключать управление поворотом дракона на полностью через камеру, частично через камеру и полностью через клавиатуру
     2) Возможность настроить оффсеты камеры для каждого вида драконов отдельно
-    3) Вынести мультипарт отдельно от мода
+    3) Вынести статы драконов в дарапаки
 */
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity {
@@ -245,7 +244,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     }
 
     public void shockwave() {
-        ShockwaveSphereEntity shockwaveSphereEntity = new ShockwaveSphereEntity(UREntities.SHOCKWAVE_SPHERE_ENTITY, getWorld());
+        ShockwaveSphereEntity shockwaveSphereEntity = new ShockwaveSphereEntity(getWorld());
         shockwaveSphereEntity.setOwner(this);
         shockwaveSphereEntity.setPosition(getPos().add(0, 2.95f, 0));
         shockwaveSphereEntity.setVelocity(Vec3d.ZERO);
@@ -272,7 +271,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
 
     @Override
     public int getMaxSecondaryAttackCooldown() {
-        return (int) (isFlying() ? baseSecondaryAttackCooldown * calcCooldownMod()  : baseSecondaryAttackCooldown * calcCooldownMod());
+        return isFlying() ? super.getMaxSecondaryAttackCooldown() * 4 : super.getMaxSecondaryAttackCooldown();
     }
 
     @Override

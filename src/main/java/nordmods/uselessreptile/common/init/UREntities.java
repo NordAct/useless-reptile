@@ -11,8 +11,9 @@ import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.*;
+import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
-import nordmods.uselessreptile.common.entity.special.WyvernProjectileEntity;
+import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 
 
 public class UREntities {
@@ -25,10 +26,12 @@ public class UREntities {
             register("river_pikehorn", getBuilder(SpawnGroup.CREATURE, RiverPikehornEntity::new, 1, 1));
     public static final EntityType<LightningChaserEntity> LIGHTNING_CHASER_ENTITY =
             register("lightning_chaser", getBuilder(SpawnGroup.CREATURE, LightningChaserEntity::new, 1, 1));
-    public static final EntityType<WyvernProjectileEntity> WYVERN_PROJECTILE_ENTITY =
-            register("wyvern_projectile", getBuilder(SpawnGroup.MISC, WyvernProjectileEntity::new, 0.5f, 0.5f, true, false));
+    public static final EntityType<AcidBlastEntity> ACID_BLAST_ENTITY =
+            register("acid_blast", getBuilder(SpawnGroup.MISC, AcidBlastEntity::new, 0.5f, 0.5f, true, false));
     public static final EntityType<ShockwaveSphereEntity> SHOCKWAVE_SPHERE_ENTITY =
             register("shockwave_sphere", getBuilder(SpawnGroup.MISC, ShockwaveSphereEntity::new, 1, 1, false, true));
+    public static final EntityType<LightningBreathEntity> LIGHTNING_BREATH_ENTITY =
+            register("lightning_breath", getBuilder(SpawnGroup.MISC, LightningBreathEntity::new, 1f, 1f, true, false));
 
 
     public static void init(){
