@@ -1,10 +1,7 @@
 package nordmods.uselessreptile.common.entity;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.entity.EntityStatuses;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -22,7 +19,9 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
+import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
@@ -73,7 +72,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         pitchLimitAir = 20;
         rotationSpeedGround = 6;
         rotationSpeedAir = 3;
-        verticalSpeed = 0.4f;
+        verticalSpeed = 0.3f;
         //favoriteFood = Items.CHICKEN;
         regenFromFood = 4;
     }
@@ -105,7 +104,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
                 case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.6F);
                 case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
                 case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
-                //case "shockwave" -> ;
                 case "flap_heavy" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.5F);
             }
     }
@@ -241,6 +239,23 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     }
     //todo
     public void shoot() {
+        setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
+        Vec3d rot = getRotationVector();
+        for (int i = 1; i <= 20; i++) {
+            LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(getWorld());
+            lightningBreathEntity.setPosition(getPos().add(rot.multiply(i)));
+            lightningBreathEntity.setVelocity(Vec3d.ZERO);
+            lightningBreathEntity.setOwner(this);
+            getWorld().spawnEntity(lightningBreathEntity);
+
+            boolean collides = !getWorld().isBlockSpaceEmpty(lightningBreathEntity, lightningBreathEntity.getBoundingBox()) ||
+                    !getWorld().getOtherEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
+                        LivingEntity owner = getOwner();
+                        if (entity instanceof Tameable tameable && tameable.getOwner() == owner) return false;
+                        return entity instanceof LivingEntity;
+                    }).isEmpty();
+            if (collides) break;
+        }
     }
 
     public void shockwave() {

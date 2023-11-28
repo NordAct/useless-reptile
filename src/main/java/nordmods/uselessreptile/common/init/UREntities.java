@@ -29,9 +29,9 @@ public class UREntities {
     public static final EntityType<AcidBlastEntity> ACID_BLAST_ENTITY =
             register("acid_blast", getBuilder(SpawnGroup.MISC, AcidBlastEntity::new, 0.5f, 0.5f, true, false));
     public static final EntityType<ShockwaveSphereEntity> SHOCKWAVE_SPHERE_ENTITY =
-            register("shockwave_sphere", getBuilder(SpawnGroup.MISC, ShockwaveSphereEntity::new, 1, 1, false, true));
+            register("shockwave_sphere", getBuilder(SpawnGroup.MISC, ShockwaveSphereEntity::new, 1, 1, true, true));
     public static final EntityType<LightningBreathEntity> LIGHTNING_BREATH_ENTITY =
-            register("lightning_breath", getBuilder(SpawnGroup.MISC, LightningBreathEntity::new, 1f, 1f, true, false));
+            register("lightning_breath", getBuilder(SpawnGroup.MISC, LightningBreathEntity::new, 1f, 1f, false, true));
 
 
     public static void init(){
