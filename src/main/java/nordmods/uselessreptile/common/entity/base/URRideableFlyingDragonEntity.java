@@ -157,12 +157,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             if (isSprintPressed()) setSprinting(true);
             if (isMovingBackwards() && (isMoveBackPressed() || isMoveBackPressed())) setSprinting(false);
             setRotation(rider);
+            //todo исправить прыжок
             if (isJumpPressed()) pressedTimer++;
-            if (!isJumpPressed() && pressedTimer <= 5 && pressedTimer != 0) {
+            if (!isJumpPressed() && pressedTimer <= 10 && pressedTimer != 0) {
                 if (isOnGround()) jump();
                 pressedTimer = 0;
             }
-            if (isJumpPressed() && pressedTimer > 5) {
+            if (isJumpPressed() && pressedTimer > 10) {
                 startToFly();
                 pressedTimer = 0;
             }

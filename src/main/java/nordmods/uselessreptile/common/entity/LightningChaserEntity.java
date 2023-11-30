@@ -17,15 +17,14 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
-import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
@@ -37,8 +36,6 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
-
-import java.util.Objects;
 
 /*
 TODO:
@@ -161,7 +158,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     }
 
     private <A extends GeoEntity> PlayState attack(AnimationState<A> event) {
-        event.getController().setAnimationSpeed(calcCooldownMod());
+        event.getController().setAnimationSpeed(1/calcCooldownMod());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + attackType, event);
         if (isPrimaryAttack()) {
             if (isFlying()) {

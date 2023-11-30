@@ -18663,7 +18663,6 @@
 			}
 		},
 		"attack.melee1": {
-			"loop": true,
 			"animation_length": 1,
 			"bones": {
 				"Aneck1": {
@@ -18909,7 +18908,6 @@
 			}
 		},
 		"attack.melee2": {
-			"loop": true,
 			"animation_length": 1,
 			"bones": {
 				"Aneck1": {
@@ -19155,7 +19153,6 @@
 			}
 		},
 		"attack.melee3": {
-			"loop": true,
 			"animation_length": 1,
 			"bones": {
 				"Aneck1": {
@@ -19393,7 +19390,6 @@
 			}
 		},
 		"attack.range": {
-			"loop": true,
 			"animation_length": 1,
 			"bones": {
 				"Aneck1": {
@@ -19631,7 +19627,6 @@
 			}
 		},
 		"attack.range.fly": {
-			"loop": true,
 			"animation_length": 1,
 			"bones": {
 				"Aneck1": {
@@ -19865,7 +19860,6 @@
 			}
 		},
 		"attack.range.fly.idle": {
-			"loop": true,
 			"animation_length": 1,
 			"bones": {
 				"Aneck1": {
