@@ -5,19 +5,19 @@ import net.minecraft.entity.AreaEffectCloudEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import nordmods.uselessreptile.common.init.URConfig;
-import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URSounds;
-import nordmods.uselessreptile.common.init.URStatusEffects;
+import nordmods.uselessreptile.common.init.*;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -26,38 +26,25 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-
-public class WyvernProjectileEntity extends PersistentProjectileEntity implements GeoEntity {
+public class WyvernProjectileEntity extends ProjectileEntity implements GeoEntity {
 
     private int life;
     private final int color = 10085398;
 
     public WyvernProjectileEntity(EntityType<? extends WyvernProjectileEntity> entityType, World world) {
         super(entityType, world);
-        pickupType = PersistentProjectileEntity.PickupPermission.DISALLOWED;
     }
 
     public WyvernProjectileEntity(World world, LivingEntity owner) {
-        super(UREntities.WYVERN_PROJECTILE_ENTITY, owner, world);
+        super(UREntities.WYVERN_PROJECTILE_ENTITY, world);
         setOwner(owner);
     }
 
-    @Override
-    protected ItemStack asItemStack() {
-        return null;
-    }
-
-    @Override
     protected void age() {
         ++life;
         if (life >= 100) {
             discard();
         }
-    }
-
-    @Override
-    protected SoundEvent getHitSound() {
-        return URSounds.ACID_SPLASH;
     }
 
     @Override
@@ -74,11 +61,19 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
     }
 
     @Override
+    public void playSound(SoundEvent sound, float volume, float pitch) {
+        if (!isSilent()) getWorld().playSound(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
+    }
+
+    @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
-        setDamage(2 * URConfig.getDamageMultiplier());
-        if (!getWorld().isClient()) spawnEffectCloud();
+        if (getWorld().isClient()) return;
+        Entity target = entityHitResult.getEntity();
+        target.damage(new DamageSource(URDamageSources.acid(getWorld()).getTypeRegistryEntry(), getOwner()),2 * URConfig.getDamageMultiplier());
+        spawnEffectCloud();
+        playSound(URSounds.ACID_SPLASH, 1, 1);
         super.onEntityHit(entityHitResult);
-        if (entityHitResult.getEntity() instanceof LivingEntity entity) entity.addStatusEffect(new StatusEffectInstance(URStatusEffects.ACID, 10, 1));
+        if (target instanceof LivingEntity entity) entity.addStatusEffect(new StatusEffectInstance(URStatusEffects.ACID, 10, 1));
         discard();
 
     }
@@ -101,6 +96,11 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
     @Override
     public boolean hasNoGravity() {
         return true;
+    }
+
+    @Override
+    protected void initDataTracker() {
+
     }
 
     @Override
