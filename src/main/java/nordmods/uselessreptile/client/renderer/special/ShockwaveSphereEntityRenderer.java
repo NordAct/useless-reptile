@@ -7,6 +7,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -46,30 +47,10 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
             float a,
             float minU, float maxU, float minV, float maxV
     ) {
-        vertices.vertex(positionMatrix, v0.x, v0.y, v0.z) //00
-                .color(1, 1, 1, a).texture(minU, minV)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
-                .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
-                .next();
-        vertices.vertex(positionMatrix, v1.x, v1.y, v1.z) //10
-                .color(1, 1, 1, a).texture(maxU, minV)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
-                .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
-                .next();
-        vertices.vertex(positionMatrix, v2.x, v2.y, v2.z) //11
-                .color(1, 1, 1, a).texture(maxU, maxV)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
-                .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
-                .next();
-        vertices.vertex(positionMatrix, v3.x, v3.y, v3.z) //01
-                .color(1, 1, 1, a).texture(minU, maxV)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(LightmapTextureManager.MAX_LIGHT_COORDINATE)
-                .normal(normalMatrix, 0.0F, 1.0F, 0.0F)
-                .next();
+        RenderUtil.renderQuad(positionMatrix, normalMatrix, vertices,
+                v0, v1 ,v2 ,v3,
+                a, 1, 1, 1,LightmapTextureManager.MAX_LIGHT_COORDINATE,
+                minU, maxU, minV, maxV);
     }
 
     private void renderSphere(ShockwaveSphereEntity entity, MatrixStack matrixStack, VertexConsumer vertexConsumer, float alpha) {
