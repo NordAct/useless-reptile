@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.model;
+package nordmods.uselessreptile.client.model.special;
 
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;

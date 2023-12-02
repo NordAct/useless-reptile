@@ -29,6 +29,7 @@ import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
+import nordmods.uselessreptile.common.network.SyncLightningBeamRotationsS2CPacket;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -36,6 +37,9 @@ import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 TODO:
@@ -162,8 +166,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + attackType, event);
         if (isPrimaryAttack()) {
             if (isFlying()) {
-                if ((isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
-                return playAnim("attack.fly.idle.range", event);
+                if ((isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
+                return playAnim("attack.range.fly.idle", event);
             }
             return playAnim("attack.range", event);
         }
@@ -238,21 +242,35 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
     public void shoot() {
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
         Vec3d rot = getRotationVector();
-        for (int i = 1; i <= 20; i++) {
-            LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(getWorld());
+        ArrayList<Integer> ids = new ArrayList<>();
+        LightningBreathEntity firstSegment = null;
+        for (int i = 1; i <= LightningBreathEntity.MAX_LENGTH; i++) {
+            LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(getWorld(), this);
             lightningBreathEntity.setPosition(getPos().add(rot.multiply(i)));
             lightningBreathEntity.setVelocity(Vec3d.ZERO);
-            lightningBreathEntity.setOwner(this);
             getWorld().spawnEntity(lightningBreathEntity);
+            if (i == 1) firstSegment = lightningBreathEntity;
+
+            ids.add(lightningBreathEntity.getId());
 
             boolean collides = !getWorld().isBlockSpaceEmpty(lightningBreathEntity, lightningBreathEntity.getBoundingBox()) ||
                     !getWorld().getOtherEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
                         LivingEntity owner = getOwner();
                         if (entity instanceof Tameable tameable && tameable.getOwner() == owner) return false;
+                        if (getControllingPassenger() == entity) return false;
                         return entity instanceof LivingEntity;
                     }).isEmpty();
             if (collides) break;
         }
+
+        firstSegment.setBeamLength(ids.size());
+
+        int[] array = new int[ids.size()];
+        for (int i = 0; i < ids.size(); i++) array[i] = ids.get(i);
+
+        if (getWorld() instanceof ServerWorld world)
+            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos()))
+                SyncLightningBeamRotationsS2CPacket.send(player, array, getPitch(), getYaw());
     }
 
     public void shockwave() {

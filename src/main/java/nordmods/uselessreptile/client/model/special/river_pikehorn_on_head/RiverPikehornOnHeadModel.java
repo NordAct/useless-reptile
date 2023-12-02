@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.model.river_pikehorn_on_head;
+package nordmods.uselessreptile.client.model.special.river_pikehorn_on_head;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
@@ -11,7 +11,7 @@ import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
 public class RiverPikehornOnHeadModel extends SinglePartEntityModel<RiverPikehornEntity> {
     private final ModelPart Tdragon;
-    public static final EntityModelLayer PIKEHORN_ON_HEAD_LAYER = new EntityModelLayer(new Identifier(UselessReptile.MODID, "river_pikehorn"), "dragon");
+    public static final EntityModelLayer PIKEHORN_ON_HEAD_MODEL = new EntityModelLayer(new Identifier(UselessReptile.MODID, "river_pikehorn"), "dragon");
 
     public RiverPikehornOnHeadModel(ModelPart root) {
         this.Tdragon = root.getChild("Tdragon");

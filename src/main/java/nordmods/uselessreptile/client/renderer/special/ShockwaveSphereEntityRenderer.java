@@ -41,18 +41,6 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
         matrixStack.pop();
     }
 
-    private void renderQuad(
-            Matrix4f positionMatrix, Matrix3f normalMatrix, VertexConsumer vertices,
-            Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3,
-            float a,
-            float minU, float maxU, float minV, float maxV
-    ) {
-        RenderUtil.renderQuad(positionMatrix, normalMatrix, vertices,
-                v0, v1 ,v2 ,v3,
-                a, 1, 1, 1,LightmapTextureManager.MAX_LIGHT_COORDINATE,
-                minU, maxU, minV, maxV);
-    }
-
     private void renderSphere(ShockwaveSphereEntity entity, MatrixStack matrixStack, VertexConsumer vertexConsumer, float alpha) {
         float dPhi = (float) (-Math.PI / SPHERE_ROWS);
         float dTheta = (float) (-2 * Math.PI / SPHERE_ROWS);
@@ -78,8 +66,10 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
                 Vector3f v2 = getSphereDot(maxPhi, maxTheta, radius);
                 Vector3f v3 = getSphereDot(maxPhi, minTheta, radius);
 
-                renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), vertexConsumer,
-                        v0, v1, v2, v3, alpha, minU, maxU, minV, maxV);
+                RenderUtil.renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), vertexConsumer,
+                        v0, v1 ,v2 ,v3,
+                        alpha, 1, 1, 1,LightmapTextureManager.MAX_LIGHT_COORDINATE,
+                        minU, maxU, minV, maxV);
             }
         }
     }

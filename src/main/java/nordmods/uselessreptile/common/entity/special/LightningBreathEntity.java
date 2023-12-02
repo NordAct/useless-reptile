@@ -8,6 +8,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
@@ -28,19 +31,31 @@ import java.util.List;
 public class LightningBreathEntity extends ProjectileEntity {
     private boolean spawnSoundPlayed = false;
     private int age;
+    public final int maxAge = 10;
+    public static final int MAX_LENGTH = 30; //default model has only 30 parts
 
-    public LightningBreathEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
+    public LightningBreathEntity(EntityType<? extends ProjectileEntity> entityType, World world, Entity owner) {
         super(entityType, world);
         age = 0;
+        setOwner(owner);
     }
 
-    public LightningBreathEntity(World world) {
-        this(UREntities.LIGHTNING_BREATH_ENTITY, world);
+    public LightningBreathEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
+        this(entityType, world, null);
     }
+
+    public LightningBreathEntity(World world, Entity owner) {
+        this(UREntities.LIGHTNING_BREATH_ENTITY, world, owner);
+    }
+
+    public static final TrackedData<Integer> BEAM_LENGTH = DataTracker.registerData(LightningBreathEntity.class, TrackedDataHandlerRegistry.INTEGER);
+
+    public void setBeamLength(int state) {dataTracker.set(BEAM_LENGTH, state);}
+    public int getBeamLength() {return dataTracker.get(BEAM_LENGTH);}
 
     @Override
     protected void initDataTracker() {
-
+        dataTracker.startTracking(BEAM_LENGTH, 0);
     }
 
     @Override
@@ -55,7 +70,7 @@ public class LightningBreathEntity extends ProjectileEntity {
     public void tick() {
         super.tick();
         tryPlaySpawnSound();
-        if (++age <= 20) {
+        if (++age <= maxAge) {
             List<Entity> targets = getWorld().getOtherEntities(this, getBoundingBox(), this::canTarget);
             for (Entity target : targets) {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
@@ -115,5 +130,9 @@ public class LightningBreathEntity extends ProjectileEntity {
     @Override
     public boolean shouldSave() {
         return false;
+    }
+
+    public int getAge() {
+        return age;
     }
 }

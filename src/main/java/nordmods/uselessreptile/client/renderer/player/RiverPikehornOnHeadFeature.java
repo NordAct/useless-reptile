@@ -13,7 +13,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import nordmods.uselessreptile.client.model.river_pikehorn_on_head.RiverPikehornOnHeadModel;
+import nordmods.uselessreptile.client.model.special.river_pikehorn_on_head.RiverPikehornOnHeadModel;
 import nordmods.uselessreptile.client.renderer.RiverPikehornEntityRenderer;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
@@ -22,7 +22,7 @@ public class RiverPikehornOnHeadFeature extends FeatureRenderer<AbstractClientPl
     private final RiverPikehornOnHeadModel model;
     public RiverPikehornOnHeadFeature(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context, EntityModelLoader loader) {
         super(context);
-        model = new RiverPikehornOnHeadModel(loader.getModelPart(RiverPikehornOnHeadModel.PIKEHORN_ON_HEAD_LAYER));
+        model = new RiverPikehornOnHeadModel(loader.getModelPart(RiverPikehornOnHeadModel.PIKEHORN_ON_HEAD_MODEL));
     }
 
     @Override
