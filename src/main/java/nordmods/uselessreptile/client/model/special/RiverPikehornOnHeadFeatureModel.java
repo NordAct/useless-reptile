@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.model.special.river_pikehorn_on_head;
+package nordmods.uselessreptile.client.model.special;
 
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
@@ -9,11 +9,11 @@ import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
-public class RiverPikehornOnHeadModel extends SinglePartEntityModel<RiverPikehornEntity> {
+public class RiverPikehornOnHeadFeatureModel extends SinglePartEntityModel<RiverPikehornEntity> {
     private final ModelPart Tdragon;
     public static final EntityModelLayer PIKEHORN_ON_HEAD_MODEL = new EntityModelLayer(new Identifier(UselessReptile.MODID, "river_pikehorn"), "dragon");
 
-    public RiverPikehornOnHeadModel(ModelPart root) {
+    public RiverPikehornOnHeadFeatureModel(ModelPart root) {
         this.Tdragon = root.getChild("Tdragon");
     }
     public static TexturedModelData getTexturedModelData() {
@@ -99,8 +99,8 @@ public class RiverPikehornOnHeadModel extends SinglePartEntityModel<RiverPikehor
         getPart().traverse().forEach(ModelPart::resetTransform);
         entity.updateAnimations();
         setHeadAngle(netHeadYaw, headPitch);
-        updateAnimation(entity.sitAnimation, RiverPikehornOnHeadAnimations.SIT_HEAD, ageInTicks);
-        updateAnimation(entity.blinkAnimation, RiverPikehornOnHeadAnimations.BLINK, ageInTicks);
+        updateAnimation(entity.sitAnimation, RiverPikehornOnHeadFeatureAnimations.SIT_HEAD, ageInTicks);
+        updateAnimation(entity.blinkAnimation, RiverPikehornOnHeadFeatureAnimations.BLINK, ageInTicks);
     }
 
     @Override

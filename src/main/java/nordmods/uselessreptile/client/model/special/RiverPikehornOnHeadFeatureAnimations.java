@@ -1,11 +1,11 @@
-package nordmods.uselessreptile.client.model.special.river_pikehorn_on_head;
+package nordmods.uselessreptile.client.model.special;
 
 import net.minecraft.client.render.entity.animation.Animation;
 import net.minecraft.client.render.entity.animation.AnimationHelper;
 import net.minecraft.client.render.entity.animation.Keyframe;
 import net.minecraft.client.render.entity.animation.Transformation;
 
-public class RiverPikehornOnHeadAnimations {
+public class RiverPikehornOnHeadFeatureAnimations {
 
     public static final Animation SIT_HEAD = Animation.Builder.create(8f).looping()
             .addBoneAnimation("dragon",

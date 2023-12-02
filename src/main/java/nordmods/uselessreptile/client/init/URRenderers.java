@@ -5,7 +5,7 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import nordmods.uselessreptile.client.model.special.LightningBreathEntityModel;
-import nordmods.uselessreptile.client.model.special.river_pikehorn_on_head.RiverPikehornOnHeadModel;
+import nordmods.uselessreptile.client.model.special.RiverPikehornOnHeadFeatureModel;
 import nordmods.uselessreptile.client.renderer.*;
 import nordmods.uselessreptile.client.renderer.special.LightningBreathEntityRenderer;
 import nordmods.uselessreptile.client.renderer.special.ShockwaveSphereEntityRenderer;
@@ -24,7 +24,7 @@ public class URRenderers {
         EntityRendererRegistry.register(UREntities.SHOCKWAVE_SPHERE_ENTITY, ShockwaveSphereEntityRenderer::new);
         EntityRendererRegistry.register(UREntities.LIGHTNING_BREATH_ENTITY, LightningBreathEntityRenderer::new);
 
-        EntityModelLayerRegistry.registerModelLayer(RiverPikehornOnHeadModel.PIKEHORN_ON_HEAD_MODEL, RiverPikehornOnHeadModel::getTexturedModelData);
+        EntityModelLayerRegistry.registerModelLayer(RiverPikehornOnHeadFeatureModel.PIKEHORN_ON_HEAD_MODEL, RiverPikehornOnHeadFeatureModel::getTexturedModelData);
         EntityModelLayerRegistry.registerModelLayer(LightningBreathEntityModel.LIGHTNING_BREATH_MODEL, LightningBreathEntityModel::getTexturedModelData);
     }
 }

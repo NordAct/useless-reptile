@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.renderer.player;
+package nordmods.uselessreptile.client.renderer.special;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.AbstractClientPlayerEntity;
@@ -13,16 +13,16 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import nordmods.uselessreptile.client.model.special.river_pikehorn_on_head.RiverPikehornOnHeadModel;
+import nordmods.uselessreptile.client.model.special.RiverPikehornOnHeadFeatureModel;
 import nordmods.uselessreptile.client.renderer.RiverPikehornEntityRenderer;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
-public class RiverPikehornOnHeadFeature extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+public class RiverPikehornOnHeadFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
 
-    private final RiverPikehornOnHeadModel model;
-    public RiverPikehornOnHeadFeature(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context, EntityModelLoader loader) {
+    private final RiverPikehornOnHeadFeatureModel model;
+    public RiverPikehornOnHeadFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context, EntityModelLoader loader) {
         super(context);
-        model = new RiverPikehornOnHeadModel(loader.getModelPart(RiverPikehornOnHeadModel.PIKEHORN_ON_HEAD_MODEL));
+        model = new RiverPikehornOnHeadFeatureModel(loader.getModelPart(RiverPikehornOnHeadFeatureModel.PIKEHORN_ON_HEAD_MODEL));
     }
 
     @Override
