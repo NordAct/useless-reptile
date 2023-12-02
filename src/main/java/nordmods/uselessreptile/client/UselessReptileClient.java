@@ -24,6 +24,6 @@ public class UselessReptileClient implements ClientModInitializer {
         AttackTypeSyncPacket.init();
         GUIEntityToRenderPacket.init();
         InstrumentSoundBoundMessagePacket.init();
-        SyncLightningBeamRotationsPacket.init();
+        SyncLightningBreathRotationsPacket.init();
     }
 }

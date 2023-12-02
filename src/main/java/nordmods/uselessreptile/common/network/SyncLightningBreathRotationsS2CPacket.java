@@ -7,7 +7,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 
-public class SyncLightningBeamRotationsS2CPacket {
+public class SyncLightningBreathRotationsS2CPacket {
     public static final Identifier SYNC_LIGHTNING_BEAM_ROTATIONS_PACKET = new Identifier(UselessReptile.MODID, "sync_lightning_beam_rotations_packet");
 
     public static void send(ServerPlayerEntity player, int[] beamIDs, float pitch, float yaw) {

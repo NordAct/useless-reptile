@@ -29,7 +29,7 @@ import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
-import nordmods.uselessreptile.common.network.SyncLightningBeamRotationsS2CPacket;
+import nordmods.uselessreptile.common.network.SyncLightningBreathRotationsS2CPacket;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animation.AnimatableManager;
@@ -39,7 +39,6 @@ import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /*
 TODO:
@@ -270,7 +269,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity {
 
         if (getWorld() instanceof ServerWorld world)
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos()))
-                SyncLightningBeamRotationsS2CPacket.send(player, array, getPitch(), getYaw());
+                SyncLightningBreathRotationsS2CPacket.send(player, array, getPitch(), getYaw());
     }
 
     public void shockwave() {

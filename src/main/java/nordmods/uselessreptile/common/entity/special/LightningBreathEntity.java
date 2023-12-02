@@ -112,7 +112,7 @@ public class LightningBreathEntity extends ProjectileEntity {
 
     private void tryPlaySpawnSound() {
         if (!spawnSoundPlayed) {
-            playSound(URSounds.SHOCKWAVE, 1, 1);
+            playSound(URSounds.SHOCKWAVE, 0.25f, 1);
             spawnSoundPlayed = true;
         }
     }
