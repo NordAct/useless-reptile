@@ -108,8 +108,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             byte turnState = 0;
             float rotationSpeed = getRotationSpeed();
             float yawDiff = bodyYaw - headYaw;
-            turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff < 0 ? 2 : turnState;
-            turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff > 0 ? 1 : turnState;
+            if ((Math.abs(yawDiff)) > rotationSpeed) {
+                turnState = yawDiff < 0 ? 2 : turnState;
+                turnState = yawDiff > 0 ? 1 : turnState;
+            }
             setTurningState(turnState);
 
             if (isFlying()) {

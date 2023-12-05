@@ -61,7 +61,6 @@ import software.bernie.geckolib.core.object.PlayState;
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int ticksUntilHeal = 400;
     private int glideTimer = 100;
-    private boolean shouldGlide;
     private final URDragonPart wingLeft = new URDragonPart(this);
     private final URDragonPart wingRight = new URDragonPart(this);
     private final URDragonPart neck = new URDragonPart(this);
@@ -250,12 +249,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             heal(1);
             ticksUntilHeal = 400;
         } else ticksUntilHeal--;
-
-        if (getWorld().isClient()) {
-            glideTimer--;
-            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
-            if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
-        }
 
         updateChildParts();
     }
