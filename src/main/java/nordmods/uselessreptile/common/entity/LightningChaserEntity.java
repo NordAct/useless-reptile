@@ -48,12 +48,10 @@ import java.util.ArrayList;
 /*
 TODO:
     Дракон:
-    1) Анимации атак и сами атаки (земля: укус и дыхание, воздух: шоковая волна и дыхание)
     3) Спавн во время шторма (появление в небе)
     4) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
     5) Приручение по ударам трезубца (точнее его молний)
     6) Звуки
-    7) Дыхание - атака лучом буквально, который заканчивается на определенном расстоянии. При ударе об блоки они разлетаются
     ---------------------
     ---------------------
     Прочее:
@@ -403,73 +401,119 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
                 if (getTiltState() == 2) {
-                    wing1LeftPos = new Vector3f(wing1Left.getWidth() + 0.5f, 0, -0.5f);
+                    wing1LeftPos = new Vector3f(wing1Left.getWidth() + 0.5f, 0, 0.5f);
                     wing1LeftScale = new Vec2f(1, 1.5f);
 
-                    wing1RightPos = new Vector3f(-wing1Right.getWidth() - 0.5f, 0, -0.5f);
+                    wing2LeftPos = new Vector3f(wing1Left.getWidth() + 0.5f, 0, -0.5f);
+                    wing2LeftScale = new Vec2f(1, 1.5f);
+
+                    wing1RightPos = new Vector3f(-wing1Right.getWidth() - 0.5f, 0, 0.5f);
                     wing1RightScale = new Vec2f(1, 1.5f);
+
+                    wing2RightPos = new Vector3f(-wing1Right.getWidth() - 0.5f, 0, -0.5f);
+                    wing2RightScale = new Vec2f(1, 1.5f);
                 } else {
-                    wing1LeftPos = new Vector3f(wing1Left.getWidth(), 0, -0.5f);
+                    wing1LeftPos = new Vector3f(wing1Left.getWidth(), 0, 0);
                     wing1LeftScale = new Vec2f(1, 2.5f);
 
-                    wing1RightPos = new Vector3f(-wing1Right.getWidth(), 0, -0.5f);
-                    wing1RightScale = new Vec2f(1, 2.5f);
-                }
-                neck1Pos = new Vector3f(yawOffset * 0.5f, pitchOffset * 1, 1.75f);
-                headPos = new Vector3f(yawOffset * 1.25f, pitchOffset * 1.5f, 2.75f - Math.abs(yawOffset) * 0.5f);
-                tail1Pos = new Vector3f(yawOffset * 0.5f, -pitchOffset * 0.25f, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, -pitchOffset * 0.625f, -3 + Math.abs(yawOffset) * 0.5f);
-                tail3Pos = new Vector3f(yawOffset * 2f, -pitchOffset * 1 , -4 + Math.abs(yawOffset) * 1);
-            } else {
-                wing1LeftPos = new Vector3f(wing1Left.getWidth(), 0, -0.5f);
-                wing1LeftScale = new Vec2f(getHeight(), 3);
+                    wing2LeftPos = new Vector3f(wing1Left.getWidth() * 2, 0, 0);
+                    wing2LeftScale = new Vec2f(1, 2.5f);
 
-                wing1RightPos = new Vector3f(-wing1Right.getWidth(), 0, -0.5f);
-                wing1RightScale = new Vec2f(getHeight(), 3);
+                    wing1RightPos = new Vector3f(-wing1Right.getWidth(), 0, 0);
+                    wing1RightScale = new Vec2f(1, 2.5f);
+
+                    wing2RightPos = new Vector3f(-wing1Right.getWidth() * 2, 0, 0);
+                    wing2RightScale = new Vec2f(1, 2.5f);
+                }
+                neck1Pos = new Vector3f(yawOffset * 0.25f, pitchOffset * 0.75f, 2f);
+                neck2Pos = new Vector3f(yawOffset * 0.75f, pitchOffset * 1, 2.75f - Math.abs(yawOffset) * 0.25f);
+                headPos = new Vector3f(yawOffset * 1.5f, pitchOffset * 1.25f, 3.5f - Math.abs(yawOffset) * 0.5f);
+
+                tail1Pos = new Vector3f(yawOffset * 0.25f, -pitchOffset * 1, -2);
+                tail2Pos = new Vector3f(yawOffset * 0.5f, -pitchOffset * 1.25f, -3);
+                tail3Pos = new Vector3f(yawOffset * 1.25f, -pitchOffset * 1.5f , -4 + Math.abs(yawOffset) * 0.25f);
+            } else {
+                wing1LeftPos = new Vector3f(wing1Left.getWidth(), getHeight()/4, -0.5f);
+                wing1LeftScale = new Vec2f(getHeight()/2, 3);
+
+                wing2LeftPos = new Vector3f(wing1Left.getWidth() * 1.75f, getHeight()/4, -1);
+                wing2LeftScale = new Vec2f(getHeight()/2, 2);
+
+                wing1RightPos = new Vector3f(-wing1Right.getWidth(), getHeight()/4, -0.5f);
+                wing1RightScale = new Vec2f(getHeight()/2, 3);
+
+                wing2RightPos = new Vector3f(-wing1Right.getWidth() * 1.75f, getHeight()/4, -1);
+                wing2RightScale = new Vec2f(getHeight()/2, 2);
 
                 neck1Pos = new Vector3f(0, getHeight(), 1);
-                headPos = new Vector3f(yawOffset,  getHeight() + 0.1f, 1.9f);
-                tail1Pos = new Vector3f(yawOffset * 0.5f, getHeight() - 2, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, getHeight() - 2.5f, -2.6f + Math.abs(yawOffset) * 0.5f);
-                tail3Pos = new Vector3f(yawOffset * 2f, getHeight() - 3.2f , -3.2f + Math.abs(yawOffset) * 1);
+                neck2Pos = new Vector3f(yawOffset * 0.5f, getHeight(), 1.5f);
+                headPos = new Vector3f(yawOffset,  getHeight() + 0.1f, 2f);
+
+                tail1Pos = new Vector3f(yawOffset * 0.5f, getHeight() - 3.5f, -2);
+                tail2Pos = new Vector3f(yawOffset * 1.25f, getHeight() - 4.5f, -2.25f);
+                tail3Pos = new Vector3f(yawOffset * 2f, getHeight() - 5.5f , -2.5f);
             }
         } else {
             if (getIsSitting()) {
-                wing1LeftPos = new Vector3f(getWidth() / 1.5f, 0, 0);
-                wing1LeftScale = new Vec2f(1.5f, getWidth());
+                wing1LeftPos = new Vector3f(getWidth() / 2, 0, 0.5f);
+                wing1LeftScale = new Vec2f(getHeight() - 1, getWidth() / 2f);
 
-                wing1RightPos = new Vector3f(-getWidth() / 1.5f, 0, 0);
-                wing1RightScale = new Vec2f(1.5f, getWidth());
+                wing2LeftPos = new Vector3f(getWidth() / 2 + 0.25f, 0.75f, -0.5f);
+                wing2LeftScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
 
-                neck1Pos = new Vector3f(0, getHeight(), 1f);
-                headPos = new Vector3f(0,  getHeight() - 0.25f, 0.5f);
-                tail1Pos = new Vector3f(0, 0.3f, -getWidth() + 0.4f);
-                tail2Pos = new Vector3f(0, 0.2f, -getWidth() - 0.6f);
-                tail3Pos = new Vector3f(0, 0.1f , -getWidth() - 1.6f);
+                wing1RightPos = new Vector3f(-getWidth() / 2, 0, 0.5f);
+                wing1RightScale = new Vec2f(getHeight() - 1, getWidth() / 2f);
+
+                wing2RightPos = new Vector3f(-getWidth() / 2 - 0.25f, 0.75f, -0.5f);
+                wing2RightScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
+
+                neck1Pos = new Vector3f(0, getHeight() - 0.5f, 1);
+                neck2Pos = new Vector3f(yawOffset * 0.4f, getHeight() - 0.2f, 1.5f);
+                headPos = new Vector3f(yawOffset * 0.8f,  getHeight() + 0.1f, 2f);
+
+                tail1Pos = new Vector3f(0, 0.3f, -getWidth() + 0.8f);
+                tail2Pos = new Vector3f(0, 0.35f, -getWidth() - 0.2f);
+                tail3Pos = new Vector3f(0, 0.4f , -getWidth() - 1.2f);
 
             } else {
-                wing1LeftPos = new Vector3f(getWidth() / 2, 0.5f, 0);
-                wing1LeftScale = new Vec2f(getHeight() - 1, getWidth() * 0.75f);
+                wing1LeftPos = new Vector3f(getWidth() / 2, 0, 0.5f);
+                wing1LeftScale = new Vec2f(getHeight() - 1, getWidth() / 2f);
 
-                wing1RightPos = new Vector3f(-getWidth() / 2, 0.5f, 0);
-                wing1RightScale = new Vec2f(getHeight() - 1, getWidth() * 0.75f);
+                wing2LeftPos = new Vector3f(getWidth() / 2 + 0.25f, 0.75f, -0.5f);
+                wing2LeftScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
 
-                neck1Pos = new Vector3f(0, getHeight(), 1);
-                headPos = new Vector3f(yawOffset,  getHeight() + 0.1f, 1.9f);
-                tail1Pos = new Vector3f(yawOffset * 0.25f, getHeight() - 1.5f, -getWidth() + 0.4f);
-                tail2Pos = new Vector3f(yawOffset * 0.75f, getHeight() - 2f,  -getWidth() - 0.6f);
-                tail3Pos = new Vector3f(yawOffset * 1.45f, getHeight() - 2.75f , -getWidth() - 1.2f);
+                wing1RightPos = new Vector3f(-getWidth() / 2, 0, 0.5f);
+                wing1RightScale = new Vec2f(getHeight() - 1, getWidth() / 2f);
+
+                wing2RightPos = new Vector3f(-getWidth() / 2 - 0.25f, 0.75f, -0.5f);
+                wing2RightScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
+
+                neck1Pos = new Vector3f(0, getHeight() - 1f, 1);
+                neck2Pos = new Vector3f(yawOffset * 0.4f, getHeight() - 0.75f, 1.5f);
+                headPos = new Vector3f(yawOffset * 0.8f,  getHeight() - 0.4f, 2f);
+
+                tail1Pos = new Vector3f(yawOffset * 0.2f, getHeight() - 1.5f, -getWidth() + 0.9f);
+                tail2Pos = new Vector3f(yawOffset * 0.4f, getHeight() - 0.8f,  -getWidth() + 0.2f);
+                tail3Pos = new Vector3f(yawOffset * 0.8f, getHeight() - 0.5f , -getWidth() - 0.7f);
             }
         }
 
         wing1Left.setRelativePos(wing1LeftPos);
         wing1Left.setScale(wing1LeftScale);
 
+        wing2Left.setRelativePos(wing2LeftPos);
+        wing2Left.setScale(wing2LeftScale);
+
         wing1Right.setRelativePos(wing1RightPos);
         wing1Right.setScale(wing1RightScale);
 
+        wing2Right.setRelativePos(wing2RightPos);
+        wing2Right.setScale(wing2RightScale);
+
         head.setRelativePos(headPos);
         neck1.setRelativePos(neck1Pos);
+        neck2.setRelativePos(neck2Pos);
+
         tail1.setRelativePos(tail1Pos);
         tail2.setRelativePos(tail2Pos);
         tail3.setRelativePos(tail3Pos);
