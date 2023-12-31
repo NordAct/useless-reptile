@@ -5,7 +5,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.entity.projectile.PersistentProjectileEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -22,17 +23,17 @@ import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class AcidBlastEntity extends ProjectileEntity implements GeoEntity {
+public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEntity {
 
     private int life;
     private final int color = 10085398;
 
     public AcidBlastEntity(EntityType<? extends AcidBlastEntity> entityType, World world) {
-        super(entityType, world);
+        super(entityType, world, ItemStack.EMPTY);
     }
 
     public AcidBlastEntity(World world, LivingEntity owner) {
-        super(UREntities.ACID_BLAST_ENTITY, world);
+        super(UREntities.ACID_BLAST_ENTITY, world, ItemStack.EMPTY);
         setOwner(owner);
     }
 
@@ -92,11 +93,6 @@ public class AcidBlastEntity extends ProjectileEntity implements GeoEntity {
     @Override
     public boolean hasNoGravity() {
         return true;
-    }
-
-    @Override
-    protected void initDataTracker() {
-
     }
 
     @Override

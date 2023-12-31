@@ -32,14 +32,13 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern.WyvernAttackGoal;
-import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
+import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
@@ -332,10 +331,9 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public Box getAttackBox() {
-        Vec3d rotationVec = getRotationVector(0, getYaw());
         double modifier = isFlying() ? getWidthMod() / 2 : (getWidthMod() + 0.1);
-        double x = rotationVec.x * modifier;
-        double z = rotationVec.z * modifier;
+        double x = -Math.sin(Math.toRadians(getYaw())) * modifier;
+        double z = Math.cos(Math.toRadians(getYaw())) * modifier;
         double y = isFlying() ? -2 : 0;
         return new Box(getPos().getX() + x - getWidthMod() / 1.5, getPos().getY() + y, getPos().getZ() + z - getWidthMod() / 1.5,
                 getPos().getX() + x + getWidthMod() / 1.5, getPos().getY() + getHeight() + 1, getPos().getZ() + z + getWidthMod() / 1.5);

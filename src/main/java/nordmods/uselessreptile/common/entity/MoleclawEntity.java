@@ -365,11 +365,9 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public Box getSecondaryAttackBox() {
-        Vec3d rotYaw = getRotationVector(0, getYaw());
-        Vec3d rotPitch = getRotationVector(getPitch(), 0);
-        double x = rotYaw.x * 2;
-        double y = rotPitch.y;
-        double z = rotYaw.z * 2;
+        double x = -Math.sin(Math.toRadians(getYaw())) * 2;
+        double y = -Math.sin(Math.toRadians(getPitch()));
+        double z = Math.cos(Math.toRadians(getYaw())) * 2;
         return new Box(getPos().getX() + x - 1.25, getPos().getY() + y, getPos().getZ() + z - 1.25,
                 getPos().getX() + x + 1.25, getPos().getY() + getHeight() + 1 + y, getPos().getZ() + z + 1.25);
     }
