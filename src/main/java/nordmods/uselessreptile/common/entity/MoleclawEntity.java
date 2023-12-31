@@ -31,19 +31,17 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
-import nordmods.uselessreptile.common.entity.ai.pathfinding.MoleclawNavigation;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
+import nordmods.uselessreptile.common.entity.ai.pathfinding.MoleclawNavigation;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.gui.MoleclawScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
@@ -63,7 +61,6 @@ import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
 public class MoleclawEntity extends URRideableDragonEntity {
     public int attackDelay = 0;
