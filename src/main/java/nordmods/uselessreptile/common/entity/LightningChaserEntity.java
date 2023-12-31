@@ -315,6 +315,12 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
+    public Box getAttackBox() {
+        Vec3d rotationVec = getRotationVec(1f).multiply(2);
+        return getBoundingBox().offset(rotationVec);
+    }
+
+    @Override
     public int getMaxSecondaryAttackCooldown() {
         return isFlying() ? super.getMaxSecondaryAttackCooldown() * 4 : super.getMaxSecondaryAttackCooldown();
     }

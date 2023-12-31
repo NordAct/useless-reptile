@@ -60,7 +60,6 @@ import software.bernie.geckolib.core.object.PlayState;
 
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int ticksUntilHeal = 400;
-    private int glideTimer = 100;
     private final URDragonPart wingLeft = new URDragonPart(this);
     private final URDragonPart wingRight = new URDragonPart(this);
     private final URDragonPart neck = new URDragonPart(this);
@@ -331,8 +330,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         }
     }
 
+    @Override
     public Box getAttackBox() {
-        //сильно циферки не твикать, расчет положения хитбокса для ближней атаки
         Vec3d rotationVec = getRotationVec(1f);
         double modifier = isFlying() ? 1.5 : 3.5;
         double x = rotationVec.x * modifier;
