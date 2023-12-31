@@ -63,6 +63,7 @@ import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class MoleclawEntity extends URRideableDragonEntity {
     public int attackDelay = 0;
@@ -317,86 +318,63 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return super.interactMob(player, hand);
     }
 
-    //@Override
-    //public void openInventory(PlayerEntity player) {
-    //    if (!getWorld().isClient() && canBeControlledByRider() && isOwnerOrCreative(player)) {
-    //        player.openHandledScreen(this);
-    //    }
-    //}
-
     public void meleeAttack() {
-        List<Entity> targets = getWorld().getOtherEntities(this, getNormalAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        List<Entity> targets = getWorld().getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob: targets) {
             Box targetBox = mob.getBoundingBox();
-            if (doesCollide(targetBox, getNormalAttackBox())) tryAttack(mob);
+            if (doesCollide(targetBox, getAttackBox())) tryAttack(mob);
         }
     }
 
     public void strongAttack() {
-        List<Entity> targets = getWorld().getOtherEntities(this, getStrongAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        List<Entity> targets = getWorld().getOtherEntities(this, getSecondaryAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob : targets) {
             Box targetBox = mob.getBoundingBox();
-            if (doesCollide(targetBox, getStrongAttackBox())) tryAttack(mob);
+            if (doesCollide(targetBox, getSecondaryAttackBox())) tryAttack(mob);
         }
 
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().allowDragonGriefing.canTamedBreak() : URConfig.getConfig().allowDragonGriefing.canUntamedBreak();
         boolean canBreakBlocks = shouldBreakBlocks && getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
         if (getWorld().isClient() || !canBreakBlocks) return;
 
-        Vec3d rotationVec = getRotationVec(1);
-        Box box = getBoundingBox();
-        double minX = box.minX;
-        double maxX = box.maxX;
-        double minY = box.minY;
-        double maxY = box.maxY;
-        double minZ = box.minZ;
-        double maxZ = box.maxZ;
-        for (double x = minX; x <= maxX; x++)
-            for (double y = minY + 1; y <= maxY + 2; y++)
-                for (double z = minZ; z <= maxZ; z++) {
-                    Vec3d start = new Vec3d(x, y, z);
-                    Vec3d end = rotationVec.multiply(2.5).add(new Vec3d(x, y, z));
-                    BlockHitResult hitResult = getWorld().raycast(new RaycastContext(start,
-                            end,
-                            RaycastContext.ShapeType.COLLIDER,
-                            RaycastContext.FluidHandling.NONE,
-                            this));
-                    if (hitResult.getType() == HitResult.Type.BLOCK) {
-                        BlockPos blockPos = new BlockPos(hitResult.getBlockPos());
-                        BlockState blockState = getWorld().getBlockState(blockPos);
-                        PlayerEntity rider = canBeControlledByRider() ? (PlayerEntity) getControllingPassenger() : null;
-                        GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
-                        if (blockState.isIn(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) continue;
-                        float hardness = blockState.getHardness(getWorld(), blockPos);
-                        float bonus = 1;
-                        if (hasStatusEffect(StatusEffects.STRENGTH))
-                            bonus += (getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1) * 0.1;
-                        if (hasStatusEffect(StatusEffects.WEAKNESS))
-                            bonus -= (getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1) * 0.1;
-                        if (!blockState.isAir() && hardness >= 0 && hardness < 3 * bonus) {
-                            boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
-                            getWorld().breakBlock(blockPos, shouldDrop, this);
-                        }
-                    }
-                }
+        Box box = getSecondaryAttackBox();
+        Iterable<BlockPos> blocks = BlockPos.iterate((int) box.minX, (int) box.minY, (int) box.minZ, (int) box.maxX, (int) box.maxY, (int) box.maxZ);
+        for (BlockPos blockPos : blocks) {
+            BlockState blockState = getWorld().getBlockState(blockPos);
+            PlayerEntity rider = canBeControlledByRider() ? (PlayerEntity) getControllingPassenger() : null;
+            GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
+            if (blockState.isIn(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) continue;
+            float hardness = blockState.getHardness(getWorld(), blockPos);
+            float bonus = 1;
+            if (hasStatusEffect(StatusEffects.STRENGTH))
+                bonus += (getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1) * 0.1;
+            if (hasStatusEffect(StatusEffects.WEAKNESS))
+                bonus -= (getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1) * 0.1;
+            if (!blockState.isAir() && hardness >= 0 && hardness < 3 * bonus) {
+                boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
+                getWorld().breakBlock(blockPos, shouldDrop, this);
+            }
+        }
     }
 
-    public Box getNormalAttackBox() {
+    @Override
+    public Box getAttackBox() {
         Vec3d rotationVec = getRotationVector(0, getYaw());
         double x = rotationVec.x * 2;
         double z = rotationVec.z * 2;
-        return new Box(getBlockPos().getX() + x - 1.5, getBlockPos().getY(), getBlockPos().getZ() + z - 1.5,
-                getBlockPos().getX() + x + 1.5, getBlockPos().getY() + getHeight(), getBlockPos().getZ() + z + 1.5);
+        return new Box(getPos().getX() + x - 1.5, getPos().getY(), getPos().getZ() + z - 1.5,
+                getPos().getX() + x + 1.5, getPos().getY() + getHeight(), getPos().getZ() + z + 1.5);
     }
 
-    public Box getStrongAttackBox() {
-        Vec3d rotationVec = getRotationVec(1f);
-        double mod = getWidthMod()/2;
-        double x = rotationVec.x * mod;
-        double y = rotationVec.y >= 0 ? rotationVec.y : rotationVec.y * 2;
-        double z = rotationVec.z * mod;
-        return new Box(getBlockPos().getX() + x - 1.25, getBlockPos().getY() + y, getBlockPos().getZ() + z - 1.25,
-                getBlockPos().getX() + x + 1.25, getBlockPos().getY() + getHeight() + 1 + y, getBlockPos().getZ() + z + 1.25);
+    @Override
+    public Box getSecondaryAttackBox() {
+        Vec3d rotYaw = getRotationVector(0, getYaw());
+        Vec3d rotPitch = getRotationVector(getPitch(), 0);
+        double x = rotYaw.x * 2;
+        double y = rotPitch.y;
+        double z = rotYaw.z * 2;
+        return new Box(getPos().getX() + x - 1.25, getPos().getY() + y, getPos().getZ() + z - 1.25,
+                getPos().getX() + x + 1.25, getPos().getY() + getHeight() + 1 + y, getPos().getZ() + z + 1.25);
     }
 
     public void tryPanic() {

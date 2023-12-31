@@ -8,6 +8,7 @@
   "client": [
     "client.CameraMixin",
     "client.EntityMixin",
+    "client.EntityRenderDispathcerMixin",
     "client.GameRendererMixin",
     "client.InGameHudMixin",
     "client.LivingEntityMixin",

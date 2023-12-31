@@ -622,4 +622,15 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             }
         }
     }
+
+    //making public for sake of debug render
+    @Override
+    public Box getAttackBox() {
+        return super.getAttackBox();
+    }
+
+
+    public Box getSecondaryAttackBox() {
+        return null;
+    }
 }

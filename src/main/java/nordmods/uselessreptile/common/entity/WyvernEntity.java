@@ -332,14 +332,13 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public Box getAttackBox() {
-        Vec3d rotationVec = getRotationVec(1f);
-        double modifier = isFlying() ? 1.5 : 3.5;
+        Vec3d rotationVec = getRotationVector(0, getYaw());
+        double modifier = isFlying() ? getWidthMod() / 2 : (getWidthMod() + 0.1);
         double x = rotationVec.x * modifier;
         double z = rotationVec.z * modifier;
         double y = isFlying() ? -2 : 0;
-        double yTop = isMoving() && !isMovingBackwards() ? 2 : 0;
-        return new Box(getBlockPos().getX() + x - 2, getBlockPos().getY() + y, getBlockPos().getZ() + z - 2,
-                getBlockPos().getX() + x + 2, getBlockPos().getY() + getHeight() + yTop, getBlockPos().getZ() + z + 2);
+        return new Box(getPos().getX() + x - getWidthMod() / 1.5, getPos().getY() + y, getPos().getZ() + z - getWidthMod() / 1.5,
+                getPos().getX() + x + getWidthMod() / 1.5, getPos().getY() + getHeight() + 1, getPos().getZ() + z + getWidthMod() / 1.5);
     }
 
     @Override

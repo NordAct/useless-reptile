@@ -61,7 +61,7 @@ public class MoleclawAttackGoal extends Goal {
         float yawChange = entity.getRotationSpeed();
         entity.lookAtEntity(target, yawChange, entity.getPitchLimit());
         entity.getNavigation().startMovingTo(target, 1);
-        boolean doesCollide = entity.doesCollide(entity.getNormalAttackBox(), target.getBoundingBox());
+        boolean doesCollide = entity.doesCollide(entity.getAttackBox(), target.getBoundingBox());
 
         if (!entity.isMoving()) notMovingTimer++;
         else notMovingTimer = 0;
