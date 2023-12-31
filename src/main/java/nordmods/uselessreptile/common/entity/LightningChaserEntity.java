@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -51,7 +52,6 @@ TODO:
     3) Спавн во время шторма (появление в небе)
     4) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
     5) Приручение по ударам трезубца (точнее его молний)
-    6) Звуки
     ---------------------
     ---------------------
     Прочее:
@@ -117,7 +117,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             switch (event.getKeyframeData().getSound()) {
                 case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.6F);
                 case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
-                case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
+                case "step" -> playSound(URSounds.LIGHTNING_CHASER_STEP, 1, 1);
                 case "flap_heavy" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.5F);
             }
     }
@@ -126,7 +126,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         if (getWorld().isClient())
             switch (event.getKeyframeData().getSound()) {
                 case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
-                case "bite" ->  playSound(URSounds.WYVERN_BITE, 1, 1);
+                case "bite" -> playSound(URSounds.LIGHTNING_CHASER_BITE, 1, 1);
             }
     }
 
@@ -197,6 +197,21 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 6.0)
                 .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3)
                 .add(EntityAttributes.GENERIC_ARMOR, 6);
+    }
+
+    @Override
+    protected SoundEvent getAmbientSound() {
+        return URSounds.LIGHTNING_CHASER_AMBIENT;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return URSounds.LIGHTNING_CHASER_HURT;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return URSounds.LIGHTNING_CHASER_DEATH;
     }
 
     @Override

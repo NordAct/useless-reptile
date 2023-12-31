@@ -42,7 +42,7 @@
     ]
   },
   "wyvern.bite": {
-    "subtitle": "subtitles.uselessreptile.wyvern.bite",
+    "subtitle": "subtitles.uselessreptile.dragon.bite",
     "sounds": [
       {
         "name": "uselessreptile:wyvern/bite1"
@@ -312,6 +312,79 @@
       },
       {
         "name": "uselessreptile:common/shockwave_hit5"
+      }
+    ]
+  },
+  "lightning_chaser.death": {
+    "subtitle": "subtitles.uselessreptile.lightning_chaser.death",
+    "sounds": [
+      {
+        "name": "uselessreptile:lightning_chaser/death"
+      }
+    ]
+  },
+  "lightning_chaser.step": {
+    "subtitle": "subtitles.block.generic.footsteps",
+    "sounds": [
+      {
+        "name": "uselessreptile:lightning_chaser/step1"
+      },
+      {
+        "name": "uselessreptile:lightning_chaser/step2"
+      }
+    ]
+  },
+  "lightning_chaser.bite": {
+    "subtitle": "subtitles.uselessreptile.dragon.bite",
+    "sounds": [
+      {
+        "name": "uselessreptile:lightning_chaser/bite1"
+      },
+      {
+        "name": "uselessreptile:lightning_chaser/bite2"
+      },
+      {
+        "name": "uselessreptile:lightning_chaser/bite3"
+      }
+    ]
+  },
+  "lightning_chaser.hurt": {
+    "subtitle": "subtitles.uselessreptile.lightning_chaser.hurt",
+    "sounds": [
+      {
+        "name": "uselessreptile:lightning_chaser/hit1"
+      },
+      {
+        "name": "uselessreptile:lightning_chaser/hit2"
+      }
+    ]
+  },
+  "lightning_chaser.ambient": {
+    "subtitle": "subtitles.uselessreptile.lightning_chaser.ambient",
+    "sounds": [
+      {
+        "name": "uselessreptile:lightning_chaser/idle1"
+      },
+      {
+        "name": "uselessreptile:lightning_chaser/idle2"
+      }
+    ]
+  },
+  "lightning_chaser.appearance": {
+    "subtitle": "subtitles.uselessreptile.lightning_chaser.roar",
+    "sounds": [
+      {
+        "name": "uselessreptile:lightning_chaser/appearance",
+        "attenuation_distance": 128
+      }
+    ]
+  },
+  "lightning_chaser.accept_challenge": {
+    "subtitle": "subtitles.uselessreptile.lightning_chaser.roar",
+    "sounds": [
+      {
+        "name": "uselessreptile:lightning_chaser/accept_challenge",
+        "attenuation_distance": 256
       }
     ]
   }

@@ -30,6 +30,13 @@ public class URSounds {
     public static final SoundEvent PIKEHORN_DEATH = register("river_pikehorn.death");
     public static final SoundEvent SHOCKWAVE_HIT = register("shockwave.hit");
     public static final SoundEvent SHOCKWAVE = register("shockwave", 64);
+    public static final SoundEvent LIGHTNING_CHASER_ACCEPT_CHALLENGE = register("lightning_chaser.accept_challenge", 128);
+    public static final SoundEvent LIGHTNING_CHASER_APPEARANCE = register("lightning_chaser.appearance", 128);
+    public static final SoundEvent LIGHTNING_CHASER_STEP = register("lightning_chaser.step");
+    public static final SoundEvent LIGHTNING_CHASER_BITE = register("lightning_chaser.bite");
+    public static final SoundEvent LIGHTNING_CHASER_HURT = register("lightning_chaser.hurt");
+    public static final SoundEvent LIGHTNING_CHASER_AMBIENT = register("lightning_chaser.ambient");
+    public static final SoundEvent LIGHTNING_CHASER_DEATH = register("lightning_chaser.death");
 
     private static SoundEvent register(String id) {
         return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(new Identifier(UselessReptile.MODID, id)));
