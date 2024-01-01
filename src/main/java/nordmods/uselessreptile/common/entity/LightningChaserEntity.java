@@ -7,10 +7,17 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -62,6 +69,7 @@ TODO:
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int shockwaveDelay = -1;
+    private int surrenderTimer = 6000;
     private final URDragonPart wing1Left = new URDragonPart(this);
     private final URDragonPart wing1Right = new URDragonPart(this);
     private final URDragonPart wing2Left = new URDragonPart(this);
@@ -87,7 +95,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         rotationSpeedGround = 6;
         rotationSpeedAir = 3;
         verticalSpeed = 0.3f;
-        //favoriteFood = Items.CHICKEN;
         regenFromFood = 4;
     }
 
@@ -151,6 +158,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             event.getController().setAnimationSpeed(Math.max(animationSpeed, 1));
             return loopAnim("fly.idle", event);
         }
+        if (hasSurrendered()) return loopAnim("surrender", event);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
         event.getController().setAnimationSpeed(1);
@@ -197,6 +205,39 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 6.0)
                 .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3)
                 .add(EntityAttributes.GENERIC_ARMOR, 6);
+    }
+
+    @Override
+    protected void initDataTracker() {
+        super.initDataTracker();
+        dataTracker.startTracking(SURRENDERED, false);
+    }
+    public static final TrackedData<Boolean> SURRENDERED = DataTracker.registerData(LightningChaserEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public boolean hasSurrendered() {return dataTracker.get(SURRENDERED);}
+    public void setSurrendered(boolean state) {
+        dataTracker.set(SURRENDERED, state);
+        setIsSitting(state);
+    }
+
+    @Override
+    public void writeCustomDataToNbt(NbtCompound tag) {
+        super.writeCustomDataToNbt(tag);
+
+        if (!isTamed()) {
+            tag.putInt("SurrenderTimer", surrenderTimer);
+            tag.putBoolean("HasSurrendered", hasSurrendered());
+        }
+    }
+
+    @Override
+    public void readCustomDataFromNbt(NbtCompound tag) {
+        super.readCustomDataFromNbt(tag);
+        dataTracker.set(VARIANT, tag.getString("Variant"));
+
+        if (!isTamed()) {
+            surrenderTimer = tag.getInt("SurrenderTimer");
+            setSurrendered(tag.getBoolean("HasSurrendered"));
+        }
     }
 
     @Override
@@ -306,7 +347,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public void shockwave() {
         ShockwaveSphereEntity shockwaveSphereEntity = new ShockwaveSphereEntity(getWorld());
         shockwaveSphereEntity.setOwner(this);
-        shockwaveSphereEntity.setPosition(getPos().add(0, 2.95f, 0));
+        shockwaveSphereEntity.setPosition(getPos().add(0, getHeightMod(), 0));
         shockwaveSphereEntity.setVelocity(Vec3d.ZERO);
         shockwaveSphereEntity.setNoGravity(true);
         getWorld().spawnEntity(shockwaveSphereEntity);
@@ -370,17 +411,18 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (isFavoriteFood(itemStack) && !isTamed()) {
+        //todo remove this
+        if (isTamingItem(itemStack) && !isTamed()) {
             eat(player, hand, itemStack);
-            if (random.nextInt(3) == 0) setTamingProgress((byte) (getTamingProgress() - 2));
-            else setTamingProgress((byte) (getTamingProgress() - 1));
-            if (player.isCreative()) setTamingProgress((byte) 0);
-            if (getTamingProgress() <= 0) {
-                setOwner(player);
-                getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
-            } else {
-                getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
-            }
+            setSurrendered(true);
+            setPersistent();
+            return ActionResult.SUCCESS;
+        }
+
+        if (hasSurrendered() && !isTamed()) {
+            setOwner(player);
+            setSurrendered(false);
+            getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
             setPersistent();
             return ActionResult.SUCCESS;
         }
@@ -392,6 +434,12 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             }
         }
         return super.interactMob(player, hand);
+    }
+
+    @Override
+    public boolean isFavoriteFood(ItemStack itemStack){
+        Item item = itemStack.getItem();
+        return item.isFood() && item.getFoodComponent().isMeat();
     }
 
     @Override

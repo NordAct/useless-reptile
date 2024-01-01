@@ -566,8 +566,13 @@
 					]
 				},
 				{
-					"name": "jaw",
+					"name": "Ajaw",
 					"parent": "head",
+					"pivot": [0, 26.7, -59]
+				},
+				{
+					"name": "jaw",
+					"parent": "Ajaw",
 					"pivot": [0, 26.7, -59],
 					"cubes": [
 						{
@@ -948,10 +953,10 @@
 				{
 					"name": "rider",
 					"parent": "saddle_front",
-					"pivot": [0, 33.7, -1.5],
+					"pivot": [0, 33.8, -1.5],
 					"rotation": [-2.5, 0, 0],
 					"cubes": [
-						{"origin": [-1, 32.70095, -2.45638], "size": [2, 2, 2], "uv": [504, 508]}
+						{"origin": [-1, 32.80095, -2.45638], "size": [2, 2, 2], "uv": [504, 508]}
 					]
 				},
 				{

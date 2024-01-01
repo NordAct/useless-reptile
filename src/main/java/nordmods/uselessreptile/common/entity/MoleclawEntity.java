@@ -79,7 +79,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
         basePrimaryAttackCooldown = 60;
         baseSecondaryAttackCooldown = 30;
         baseTamingProgress = 64;
-        favoriteFood = Items.BEETROOT;
         regenFromFood = 2;
     }
 
@@ -291,7 +290,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (isFavoriteFood(itemStack) && !isTamed()) {
+        if (isTamingItem(itemStack) && !isTamed()) {
             eat(player, hand, itemStack);
             if (random.nextInt(3) == 0) setTamingProgress((byte) (getTamingProgress() - 2));
             else setTamingProgress((byte) (getTamingProgress() - 1));
@@ -457,4 +456,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         } else panicSoundDelay = 2;
     }
 
+    public boolean isFavoriteFood(ItemStack itemStack){
+        return itemStack.isOf(Items.BEETROOT);
+    }
 }

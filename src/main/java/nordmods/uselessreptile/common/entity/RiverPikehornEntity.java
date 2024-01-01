@@ -250,7 +250,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (itemStack.isOf(Items.TROPICAL_FISH_BUCKET) && !isTamed()) {
+        if (isTamingItem(itemStack) && !isTamed()) {
             if (!player.isCreative()) player.setStackInHand(hand, new ItemStack(Items.WATER_BUCKET));
             setOwner(player);
             getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
@@ -332,6 +332,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     @Override
     public boolean isFavoriteFood(ItemStack itemStack) {
         return itemStack.isIn(ItemTags.FISHES);
+    }
+
+    @Override
+    public boolean isTamingItem(ItemStack itemStack) {
+        return itemStack.isOf(Items.TROPICAL_FISH_BUCKET);
     }
 
     @Override

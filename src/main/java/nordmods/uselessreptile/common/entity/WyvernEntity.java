@@ -81,7 +81,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         rotationSpeedGround = 8;
         rotationSpeedAir = 4;
         verticalSpeed = 0.4f;
-        favoriteFood = Items.CHICKEN;
         regenFromFood = 4;
     }
 
@@ -255,7 +254,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (isFavoriteFood(itemStack) && !isTamed()) {
+        if (isTamingItem(itemStack) && !isTamed()) {
             eat(player, hand, itemStack);
             if (random.nextInt(3) == 0) setTamingProgress((byte) (getTamingProgress() - 2));
             else setTamingProgress((byte) (getTamingProgress() - 1));
@@ -370,6 +369,11 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     protected void updateEquipment() {
         updateSaddle();
         updateBanner();
+    }
+
+    @Override
+    public boolean isFavoriteFood(ItemStack itemStack){
+        return itemStack.isOf(Items.CHICKEN);
     }
 
     @Override

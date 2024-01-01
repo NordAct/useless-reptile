@@ -80,13 +80,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected int eatFromInventoryTimer = 20;
     protected float regenFromFood = 0;
     protected boolean canNavigateInFluids = false;
-    protected Item favoriteFood = Items.STRUCTURE_VOID;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
             (new EntityPositionSource
                     (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.getRange()));
     protected @Nullable BlockPos jukeboxPos;
     protected final UUID DRAGON_ARMOR_BONUS_ID = UUID.fromString("c9e68951-e06e-4f5d-8aeb-cf3a09c2638e");
     protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
+
     protected URDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -200,10 +200,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         dataTracker.set(VARIANT, tag.getString("Variant"));
 
         if (!isTamed()) setTamingProgress(tag.getByte("TamingProgress"));
-        else {
-            setIsSitting(tag.getBoolean("Sitting"));
-            setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound"));
-        }
+        else setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound"));
+
+        setIsSitting(tag.getBoolean("Sitting"));
         if (tag.contains("Inventory")) {
             final NbtList inv = tag.getList("Inventory", 10);
             inventory = new SimpleInventory(inv.size());
@@ -563,7 +562,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public boolean isFavoriteFood(ItemStack itemStack){
-        return itemStack.isOf(favoriteFood);
+        return false;
+    }
+
+    public boolean isTamingItem(ItemStack itemStack){
+        return isFavoriteFood(itemStack);
     }
 
     public float getHealthRegenFromFood() {
