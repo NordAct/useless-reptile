@@ -75,7 +75,7 @@
 				{
 					"name": "rider",
 					"parent": "saddle_front",
-					"pivot": [0, 48.5, -3]
+					"pivot": [0, 48.75, -1]
 				},
 				{
 					"name": "wing_left",

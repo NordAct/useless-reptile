@@ -1382,7 +1382,7 @@
 				{
 					"name": "rider",
 					"parent": "body_front",
-					"pivot": [0, 40, -12],
+					"pivot": [0, 40.25, -9.825],
 					"rotation": [25, 0, 0]
 				}
 			]
