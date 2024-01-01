@@ -208,7 +208,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     @Override
     public boolean canHaveStatusEffect(StatusEffectInstance effect) {
         StatusEffect type = effect.getEffectType();
-        return !(type == URStatusEffects.ACID || type == StatusEffects.POISON);
+        return !(type == URStatusEffects.ACID || type == StatusEffects.POISON || type == StatusEffects.HUNGER);
     }
 
     @Override

@@ -18,7 +18,6 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.BannerItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
@@ -29,6 +28,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -45,10 +45,10 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
-import nordmods.uselessreptile.common.init.URStatusEffects;
-import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
+import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
+import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantUtil;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -297,7 +297,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         ItemStack itemStack = player.getStackInHand(hand);
         if (isTamed()) {
             if (isFavoriteFood(itemStack) && getHealth() != getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH)) {
-                eat(player, hand, itemStack);
+                eatFood(getWorld(), itemStack);
                 heal(regenFromFood);
                 return ActionResult.SUCCESS;
             }
@@ -317,6 +317,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                     //делаем копию т.к. иначе по какой-то ебейшей причине кубач будет убавлять время действия эффектов самого зелья также
                     for (StatusEffectInstance effect : PotionUtil.getPotionEffects(itemStack)) addStatusEffect(new StatusEffectInstance(effect));
                     if (!player.isCreative()) player.setStackInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
+                    playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1, 1);
                     return ActionResult.SUCCESS;
                 }
             }
