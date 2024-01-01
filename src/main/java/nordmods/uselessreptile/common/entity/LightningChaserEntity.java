@@ -13,11 +13,9 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -69,6 +67,7 @@ TODO:
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int shockwaveDelay = -1;
+    private int shootDelay = -1;
     private int surrenderTimer = 6000;
     private final URDragonPart wing1Left = new URDragonPart(this);
     private final URDragonPart wing1Right = new URDragonPart(this);
@@ -132,7 +131,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
             switch (event.getKeyframeData().getSound()) {
-                case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
+                //case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
                 case "bite" -> playSound(URSounds.LIGHTNING_CHASER_BITE, 1, 1);
             }
     }
@@ -292,6 +291,12 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         }
         if (shockwaveDelay > -1) shockwaveDelay--;
 
+        if (shootDelay == 0) {
+            shoot();
+            shootDelay--;
+        }
+        if (shootDelay > -1) shootDelay--;
+
         if (canBeControlledByRider()) {
             if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
                 if (isFlying()) triggerShockwave();
@@ -300,7 +305,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                     meleeAttack(target);
                 }
             }
-            if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) shoot();
+            if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) triggerShoot();
         }
         //todo бафы во время шторма
         if (getWorld().getLevelProperties().isThundering()) {
@@ -309,15 +314,21 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         updateChildParts();
     }
-    //todo
-    public void shoot() {
+
+    public void triggerShoot() {
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
+        shootDelay = 7;
+    }
+
+    public void shoot() {
         Vec3d rot = getRotationVector();
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreathEntity firstSegment = null;
+        float progress = rotationProgress / transitionTicks;
+
         for (int i = 1; i <= LightningBreathEntity.MAX_LENGTH; i++) {
             LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(getWorld(), this);
-            lightningBreathEntity.setPosition(getPos().add(rot.multiply(i)));
+            lightningBreathEntity.setPosition(head.getPos().add(rot.multiply(i)).add(0,  isFlying() ? -0.1 : -0.75, 0));
             lightningBreathEntity.setVelocity(Vec3d.ZERO);
             getWorld().spawnEntity(lightningBreathEntity);
             if (i == 1) firstSegment = lightningBreathEntity;
@@ -341,7 +352,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         if (getWorld() instanceof ServerWorld world)
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos()))
-                SyncLightningBreathRotationsS2CPacket.send(player, array, getPitch(), getYaw());
+                SyncLightningBreathRotationsS2CPacket.send(player, array, getPitch(), getYaw() - 45 * progress);
     }
 
     public void shockwave() {
@@ -536,9 +547,15 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 wing2RightPos = new Vector3f(-getWidth() / 2 - 0.25f, 0.75f, -0.5f);
                 wing2RightScale = new Vec2f(getHeight() - 1.5f, getWidth() / 2f);
 
-                neck1Pos = new Vector3f(0, getHeight() - 0.5f, 1);
-                neck2Pos = new Vector3f(yawOffset * 0.4f, getHeight() - 0.2f, 1.5f);
-                headPos = new Vector3f(yawOffset * 0.8f,  getHeight() + 0.1f, 2f);
+                if (hasSurrendered()) {
+                    neck1Pos = new Vector3f(0, 1.6f, 1);
+                    neck2Pos = new Vector3f(yawOffset * 0.4f, 1.3f, 1.7f);
+                    headPos = new Vector3f(yawOffset * 0.8f,  0.5f, 2.4f);
+                } else {
+                    neck1Pos = new Vector3f(0, getHeight() - 0.5f, 1);
+                    neck2Pos = new Vector3f(yawOffset * 0.4f, getHeight() - 0.2f, 1.5f);
+                    headPos = new Vector3f(yawOffset * 0.8f, getHeight() + 0.1f, 2f);
+                }
 
                 tail1Pos = new Vector3f(0, 0.3f, -getWidth() + 0.8f);
                 tail2Pos = new Vector3f(0, 0.35f, -getWidth() - 0.2f);
