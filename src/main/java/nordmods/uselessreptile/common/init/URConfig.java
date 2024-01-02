@@ -68,6 +68,7 @@ public class URConfig {
     public static Screen configScreen(Screen parentScreen) {
         return YetAnotherConfigLib.create(CONFIG, ((defaults, config, builder) -> {
             URClientConfig clientConfig = URClientConfig.getConfig();
+            URClientConfig clientDefaults = URClientConfig.getDefaults();
 
             //category
             ConfigCategory.Builder gameplayCategory = ConfigCategory.createBuilder()
@@ -299,7 +300,7 @@ public class URConfig {
 
             Option<Double> cameraDistanceOffset = Option.<Double>createBuilder()
                     .name(key("option.cameraDistanceOffset"))
-                    .binding(2d,
+                    .binding(clientDefaults.cameraDistanceOffset,
                             () -> clientConfig.cameraDistanceOffset,
                             val -> clientConfig.cameraDistanceOffset = val)
                     .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
@@ -307,7 +308,7 @@ public class URConfig {
 
             Option<Double> cameraVerticalOffset = Option.<Double>createBuilder()
                     .name(key("option.cameraVerticalOffset"))
-                    .binding(0d,
+                    .binding(clientDefaults.cameraVerticalOffset,
                             () -> clientConfig.cameraVerticalOffset,
                             val -> clientConfig.cameraVerticalOffset = val)
                     .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
@@ -315,7 +316,7 @@ public class URConfig {
 
             Option<Double> cameraHorizontalOffset = Option.<Double>createBuilder()
                     .name(key("option.cameraHorizontalOffset"))
-                    .binding(-1.5,
+                    .binding(clientDefaults.cameraHorizontalOffset,
                             () -> clientConfig.cameraHorizontalOffset,
                             val -> clientConfig.cameraHorizontalOffset = val)
                     .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
@@ -325,7 +326,7 @@ public class URConfig {
                     .name(key("option.enableCameraOffset"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.enableCameraOffset.@Tooltip")).build())
-                    .binding(true,
+                    .binding(clientDefaults.enableCameraOffset,
                             () -> clientConfig.enableCameraOffset,
                             val -> clientConfig.enableCameraOffset = val)
                     .customController(TickBoxController::new)
@@ -335,7 +336,7 @@ public class URConfig {
                     .name(key("option.enableCrosshair"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.enableCrosshair.@Tooltip")).build())
-                    .binding(true,
+                    .binding(clientConfig.enableCrosshair,
                             () -> clientConfig.enableCrosshair,
                             val -> clientConfig.enableCrosshair = val)
                     .customController(TickBoxController::new)
@@ -345,7 +346,7 @@ public class URConfig {
                     .name(key("option.autoThirdPerson"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.autoThirdPerson.@Tooltip")).build())
-                    .binding(true,
+                    .binding(clientDefaults.autoThirdPerson,
                             () -> clientConfig.autoThirdPerson,
                             val -> clientConfig.autoThirdPerson = val)
                     .customController(TickBoxController::new)
@@ -355,7 +356,7 @@ public class URConfig {
                     .name(key("option.disableNamedEntityModels"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.disableNamedEntityModels.@Tooltip")).build())
-                    .binding(false,
+                    .binding(clientDefaults.disableNamedEntityModels,
                             () -> clientConfig.disableNamedEntityModels,
                             val -> clientConfig.disableNamedEntityModels = val)
                     .customController(TickBoxController::new)
@@ -365,7 +366,7 @@ public class URConfig {
                     .name(key("option.disableEmissiveTextures"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.disableEmissiveTextures.@Tooltip")).build())
-                    .binding(false,
+                    .binding(clientDefaults.disableEmissiveTextures,
                             () -> clientConfig.disableEmissiveTextures,
                             val -> clientConfig.disableEmissiveTextures = val)
                     .customController(TickBoxController::new)
@@ -375,7 +376,7 @@ public class URConfig {
                     .name(key("option.attackBoxesInDebug"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.attackBoxesInDebug.@Tooltip")).build())
-                    .binding(false,
+                    .binding(clientDefaults.attackBoxesInDebug,
                             () -> clientConfig.attackBoxesInDebug,
                             val -> clientConfig.attackBoxesInDebug = val)
                     .customController(TickBoxController::new)

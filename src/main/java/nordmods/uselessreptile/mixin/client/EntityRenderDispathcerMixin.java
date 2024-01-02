@@ -6,6 +6,7 @@ import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
+import nordmods.uselessreptile.client.init.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,6 +18,8 @@ public abstract class EntityRenderDispathcerMixin {
 
     @Inject(method = "renderHitbox", at = @At("HEAD"))
     private static void renderAttackBoxes(MatrixStack matrices, VertexConsumer vertices, Entity entity, float tickDelta, CallbackInfo ci){
+        if (!URClientConfig.getConfig().attackBoxesInDebug) return;
+
         if (entity instanceof URDragonEntity dragon) {
             double x = -MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX());
             double y = -MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY());

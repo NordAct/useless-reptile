@@ -43,6 +43,10 @@ public class URClientConfig {
         CONFIG.load();
     }
 
+    public static URClientConfig getDefaults() {
+        return CONFIG.defaults();
+    }
+
     public static void save() {
         CONFIG.save();
     }
