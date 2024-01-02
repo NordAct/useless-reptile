@@ -11,6 +11,7 @@ import nordmods.uselessreptile.client.util.model_redirect.ModelRedirectLoader;
 public class UselessReptileClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
+        URClientConfig.init();
         ModelRedirectLoader.init();
         URModelPredicates.init();
         URRenderers.init();

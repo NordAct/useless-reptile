@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.entity.Entity;
+import nordmods.uselessreptile.client.init.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.init.URConfig;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class EntityMixin {
     @Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At("TAIL"))
     private void setThirdPersonPerspective(Entity entity, boolean force, CallbackInfoReturnable<Boolean> cir) {
-        if (!URConfig.getConfig().autoThirdPerson) return;
+        if (!URClientConfig.getConfig().autoThirdPerson) return;
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return;
 

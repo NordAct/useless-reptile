@@ -15,6 +15,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.init.URClientConfig;
 
 import java.lang.Boolean;
 
@@ -22,18 +23,40 @@ public class URConfig {
     private static final ConfigClassHandler<URConfig> CONFIG = ConfigClassHandler.createBuilder(URConfig.class)
             .id(new Identifier(UselessReptile.MODID, "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
-                    .setPath(FabricLoader.getInstance().getConfigDir().resolve("uselessreptile.json"))
-                    .setJson5(false)
+                    .setPath(FabricLoader.getInstance().getConfigDir().resolve("uselessreptile.json5"))
+                    .setJson5(true)
                     .build())
             .build();
 
-    @SerialEntry
+    //COMMON
+    @SerialEntry(comment = "SPAWN WEIGHT AND CHANCES")
     public int wyvernSpawnWeight = 3;
     @SerialEntry
     public int moleclawSpawnWeight = 500;
     @SerialEntry
     public int pikehornSpawnWeight = 1;
     @SerialEntry
+    public int lightningChaserSpawnWeight = 0;
+    @SerialEntry(comment = "Defines a chance of Lightning Chaser spawning near player during thunderstorms each 30 seconds")
+    public int lightningChaserThunderstormSpawnChance = 10;
+    @SerialEntry(comment = "GROUP SIZES")
+    public int wyvernMinGroupSize = 1;
+    @SerialEntry
+    public int wyvernMaxGroupSize = 1;
+    @SerialEntry
+    public int moleclawMinGroupSize = 1;
+    @SerialEntry
+    public int moleclawMaxGroupSize = 1;
+    @SerialEntry
+    public int pikehornMinGroupSize = 2;
+    @SerialEntry
+    public int pikehornMaxGroupSize = 6;
+    @SerialEntry
+    public int lightningChaserMinGroupSize = 1;
+    @SerialEntry
+    public int lightningChaserMaxGroupSize = 1;
+
+    @SerialEntry(comment = "BEHAVIOUR")
     public DragonGriefing allowDragonGriefing = DragonGriefing.ALL;
     @SerialEntry
     public int blockDropChance = 100;
@@ -41,24 +64,11 @@ public class URConfig {
     public float dragonDamageMultiplier = 1;
     @SerialEntry
     public float dragonHealthMultiplier = 1;
-    @SerialEntry
-    public double cameraDistanceOffset = 2;
-    @SerialEntry
-    public double cameraVerticalOffset = 0;
-    @SerialEntry
-    public double cameraHorizontalOffset = -1.5;
-    @SerialEntry
-    public boolean enableCameraOffset = true;
-    @SerialEntry
-    public boolean enableCrosshair = true;
-    @SerialEntry
-    public boolean autoThirdPerson = true;
-    @SerialEntry
-    public boolean disableNamedEntityModels = false;
-    @SerialEntry
-    public boolean disableEmissiveTextures = false;
+
     public static Screen configScreen(Screen parentScreen) {
         return YetAnotherConfigLib.create(CONFIG, ((defaults, config, builder) -> {
+            URClientConfig clientConfig = URClientConfig.getConfig();
+
             //category
             ConfigCategory.Builder gameplayCategory = ConfigCategory.createBuilder()
                     .name(key("category.gameplay"));
@@ -71,6 +81,11 @@ public class URConfig {
                     .name(key("group.spawnWeight"))
                     .description(OptionDescription.createBuilder()
                             .text(key("group.spawnWeight.@Tooltip")).build());
+
+            OptionGroup.Builder groupSizeGroup = OptionGroup.createBuilder()
+                    .name(key("group.groupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("group.groupSize.@Tooltip")).build());
 
             OptionGroup.Builder dragonBehaviourGroup = OptionGroup.createBuilder()
                     .name(key("group.dragonBehaviour"))
@@ -117,6 +132,105 @@ public class URConfig {
                             val -> config.pikehornSpawnWeight = val)
                     .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
                     .build();
+            Option<Integer> lightningChaserSpawnWeight = Option.<Integer>createBuilder()
+                    .name(key("option.lightningChaserSpawnWeight"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.lightningChaserSpawnWeight.@Tooltip")).build())
+                    .binding(defaults.lightningChaserSpawnWeight,
+                            () -> config.lightningChaserSpawnWeight,
+                            val -> config.lightningChaserSpawnWeight = val)
+                    .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
+                    .build();
+
+            Option<Integer> lightningChaserThunderstormSpawnChance = Option.<Integer>createBuilder()
+                    .name(key("option.lightningChaserThunderstormSpawnChance"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.lightningChaserThunderstormSpawnChance.@Tooltip")).build())
+                    .binding(defaults.lightningChaserThunderstormSpawnChance,
+                            () -> config.lightningChaserThunderstormSpawnChance,
+                            val -> config.lightningChaserThunderstormSpawnChance = val)
+                    .customController(opt -> new IntegerSliderController(opt, 0, 100, 1))
+                    .build();
+
+            Option<Integer> wyvernMinGroupSize = Option.<Integer>createBuilder()
+                    .name(key("option.wyvernMinGroupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.wyvernMinGroupSize.@Tooltip")).build())
+                    .binding(defaults.wyvernMinGroupSize,
+                            () -> config.wyvernMinGroupSize,
+                            val -> config.wyvernMinGroupSize = val)
+                    .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                    .build();
+
+            Option<Integer> wyvernMaxGroupSize = Option.<Integer>createBuilder()
+                    .name(key("option.wyvernMaxGroupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.wyvernMaxGroupSize.@Tooltip")).build())
+                    .binding(defaults.wyvernMaxGroupSize,
+                            () -> config.wyvernMaxGroupSize,
+                            val -> config.wyvernMaxGroupSize = val)
+                    .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                    .build();
+
+            Option<Integer> moleclawMinGroupSize = Option.<Integer>createBuilder()
+                    .name(key("option.moleclawMinGroupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.moleclawMinGroupSize.@Tooltip")).build())
+                    .binding(defaults.moleclawMinGroupSize,
+                            () -> config.moleclawMinGroupSize,
+                            val -> config.moleclawMinGroupSize = val)
+                    .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                    .build();
+
+            Option<Integer> moleclawMaxGroupSize = Option.<Integer>createBuilder()
+                    .name(key("option.moleclawMaxGroupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.moleclawMaxGroupSize.@Tooltip")).build())
+                    .binding(defaults.moleclawMaxGroupSize,
+                            () -> config.moleclawMaxGroupSize,
+                            val -> config.moleclawMaxGroupSize = val)
+                    .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                    .build();
+
+            Option<Integer> pikehornMinGroupSize = Option.<Integer>createBuilder()
+                    .name(key("option.pikehornMinGroupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.pikehornMinGroupSize.@Tooltip")).build())
+                    .binding(defaults.pikehornMinGroupSize,
+                            () -> config.pikehornMinGroupSize,
+                            val -> config.pikehornMinGroupSize = val)
+                    .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                    .build();
+
+            Option<Integer> pikehornMaxGroupSize = Option.<Integer>createBuilder()
+                    .name(key("option.pikehornMaxGroupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.pikehornMaxGroupSize.@Tooltip")).build())
+                    .binding(defaults.pikehornMaxGroupSize,
+                            () -> config.pikehornMaxGroupSize,
+                            val -> config.pikehornMaxGroupSize = val)
+                    .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                    .build();
+
+            Option<Integer> lightningChaserMinGroupSize = Option.<Integer>createBuilder()
+                    .name(key("option.lightningChaserMinGroupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.lightningChaserMinGroupSize.@Tooltip")).build())
+                    .binding(defaults.lightningChaserMinGroupSize,
+                            () -> config.lightningChaserMinGroupSize,
+                            val -> config.lightningChaserMinGroupSize = val)
+                    .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                    .build();
+
+            Option<Integer> lightningChaserMaxGroupSize = Option.<Integer>createBuilder()
+                    .name(key("option.lightningChaserMaxGroupSize"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.lightningChaserMaxGroupSize.@Tooltip")).build())
+                    .binding(defaults.lightningChaserMaxGroupSize,
+                            () -> config.lightningChaserMaxGroupSize,
+                            val -> config.lightningChaserMaxGroupSize = val)
+                    .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                    .build();
 
             Option<DragonGriefing> allowDragonGriefing = Option.<DragonGriefing>createBuilder()
                     .name(key("option.allowDragonGriefing"))
@@ -138,15 +252,6 @@ public class URConfig {
                     .customController(opt -> new IntegerSliderController(opt, 0, 100, 1))
                     .build();
 
-            Option<java.lang.Boolean> disableNamedTextures = Option.<java.lang.Boolean>createBuilder()
-                    .name(key("option.disableNamedEntityModels"))
-                    .description(OptionDescription.createBuilder()
-                            .text(key("option.disableNamedEntityModels.@Tooltip")).build())
-                    .binding(defaults.disableNamedEntityModels,
-                            () -> config.disableNamedEntityModels,
-                            val -> config.disableNamedEntityModels = val)
-                    .customController(TickBoxController::new)
-                    .build();
 
             Option<Float> dragonDamageMultiplier = Option.<Float>createBuilder()
                     .name(key("option.dragonDamageMultiplier"))
@@ -171,6 +276,17 @@ public class URConfig {
             spawnWeightGroup.option(wyvernSpawnWeight);
             spawnWeightGroup.option(moleclawSpawnWeight);
             spawnWeightGroup.option(pikehornSpawnWeight);
+            spawnWeightGroup.option(lightningChaserSpawnWeight);
+            spawnWeightGroup.option(lightningChaserThunderstormSpawnChance);
+
+            groupSizeGroup.option(wyvernMinGroupSize);
+            groupSizeGroup.option(wyvernMaxGroupSize);
+            groupSizeGroup.option(moleclawMinGroupSize);
+            groupSizeGroup.option(moleclawMaxGroupSize);
+            groupSizeGroup.option(pikehornMinGroupSize);
+            groupSizeGroup.option(pikehornMaxGroupSize);
+            groupSizeGroup.option(lightningChaserMinGroupSize);
+            groupSizeGroup.option(lightningChaserMaxGroupSize);
 
             dragonBehaviourGroup.option(allowDragonGriefing);
             dragonBehaviourGroup.option(blockDropChance);
@@ -178,30 +294,30 @@ public class URConfig {
             dragonBehaviourGroup.option(dragonHealthMultiplier);
 
             gameplayCategory.group(spawnWeightGroup.build());
+            gameplayCategory.group(groupSizeGroup.build());
             gameplayCategory.group(dragonBehaviourGroup.build());
 
             Option<Double> cameraDistanceOffset = Option.<Double>createBuilder()
                     .name(key("option.cameraDistanceOffset"))
-                    .binding(defaults.cameraDistanceOffset,
-                            () -> config.cameraDistanceOffset,
-                            val -> config.cameraDistanceOffset = val)
+                    .binding(2d,
+                            () -> clientConfig.cameraDistanceOffset,
+                            val -> clientConfig.cameraDistanceOffset = val)
                     .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
                     .build();
 
             Option<Double> cameraVerticalOffset = Option.<Double>createBuilder()
                     .name(key("option.cameraVerticalOffset"))
-                    .binding(
-                            defaults.cameraVerticalOffset,
-                            () -> config.cameraVerticalOffset,
-                            val -> config.cameraVerticalOffset = val)
+                    .binding(0d,
+                            () -> clientConfig.cameraVerticalOffset,
+                            val -> clientConfig.cameraVerticalOffset = val)
                     .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
                     .build();
 
             Option<Double> cameraHorizontalOffset = Option.<Double>createBuilder()
                     .name(key("option.cameraHorizontalOffset"))
-                    .binding(defaults.cameraHorizontalOffset,
-                            () -> config.cameraHorizontalOffset,
-                            val -> config.cameraHorizontalOffset = val)
+                    .binding(-1.5,
+                            () -> clientConfig.cameraHorizontalOffset,
+                            val -> clientConfig.cameraHorizontalOffset = val)
                     .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
                     .build();
 
@@ -209,9 +325,9 @@ public class URConfig {
                     .name(key("option.enableCameraOffset"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.enableCameraOffset.@Tooltip")).build())
-                    .binding(defaults.enableCameraOffset,
-                            () -> config.enableCameraOffset,
-                            val -> config.enableCameraOffset = val)
+                    .binding(true,
+                            () -> clientConfig.enableCameraOffset,
+                            val -> clientConfig.enableCameraOffset = val)
                     .customController(TickBoxController::new)
                     .build();
 
@@ -219,9 +335,9 @@ public class URConfig {
                     .name(key("option.enableCrosshair"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.enableCrosshair.@Tooltip")).build())
-                    .binding(defaults.enableCrosshair,
-                            () -> config.enableCrosshair,
-                            val -> config.enableCrosshair = val)
+                    .binding(true,
+                            () -> clientConfig.enableCrosshair,
+                            val -> clientConfig.enableCrosshair = val)
                     .customController(TickBoxController::new)
                     .build();
 
@@ -229,9 +345,19 @@ public class URConfig {
                     .name(key("option.autoThirdPerson"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.autoThirdPerson.@Tooltip")).build())
-                    .binding(defaults.autoThirdPerson,
-                            () -> config.autoThirdPerson,
-                            val -> config.autoThirdPerson = val)
+                    .binding(true,
+                            () -> clientConfig.autoThirdPerson,
+                            val -> clientConfig.autoThirdPerson = val)
+                    .customController(TickBoxController::new)
+                    .build();
+
+            Option<java.lang.Boolean> disableNamedTextures = Option.<java.lang.Boolean>createBuilder()
+                    .name(key("option.disableNamedEntityModels"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.disableNamedEntityModels.@Tooltip")).build())
+                    .binding(false,
+                            () -> clientConfig.disableNamedEntityModels,
+                            val -> clientConfig.disableNamedEntityModels = val)
                     .customController(TickBoxController::new)
                     .build();
 
@@ -239,9 +365,19 @@ public class URConfig {
                     .name(key("option.disableEmissiveTextures"))
                     .description(OptionDescription.createBuilder()
                             .text(key("option.disableEmissiveTextures.@Tooltip")).build())
-                    .binding(defaults.disableEmissiveTextures,
-                            () -> config.disableEmissiveTextures,
-                            val -> config.disableEmissiveTextures = val)
+                    .binding(false,
+                            () -> clientConfig.disableEmissiveTextures,
+                            val -> clientConfig.disableEmissiveTextures = val)
+                    .customController(TickBoxController::new)
+                    .build();
+
+            Option<java.lang.Boolean> attackBoxesInDebug = Option.<Boolean>createBuilder()
+                    .name(key("option.attackBoxesInDebug"))
+                    .description(OptionDescription.createBuilder()
+                            .text(key("option.attackBoxesInDebug.@Tooltip")).build())
+                    .binding(false,
+                            () -> clientConfig.attackBoxesInDebug,
+                            val -> clientConfig.attackBoxesInDebug = val)
                     .customController(TickBoxController::new)
                     .build();
 
@@ -254,6 +390,7 @@ public class URConfig {
 
             dragonAppearanceGroup.option(disableNamedTextures);
             dragonAppearanceGroup.option(disableEmissiveTextures);
+            dragonAppearanceGroup.option(attackBoxesInDebug);
 
             clientCategory.group(cameraGroup.build());
             clientCategory.group(dragonAppearanceGroup.build());

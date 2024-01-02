@@ -19,7 +19,7 @@ public class URSpawns {
                 SpawnGroup.CREATURE,
                 UREntities.WYVERN_ENTITY,
                 URConfig.getConfig().wyvernSpawnWeight,
-                1, 1);
+                URConfig.getConfig().wyvernMinGroupSize, URConfig.getConfig().wyvernMaxGroupSize);
 
         BiomeModifications.addSpawn(BiomeSelectors
                         .tag(URTags.MOLECLAW_SPAWN_WHITELIST)
@@ -27,7 +27,7 @@ public class URSpawns {
                 SpawnGroup.AMBIENT,
                 UREntities.MOLECLAW_ENTITY,
                 URConfig.getConfig().moleclawSpawnWeight,
-                1, 1);
+                URConfig.getConfig().moleclawMinGroupSize, URConfig.getConfig().moleclawMaxGroupSize);
 
         BiomeModifications.addSpawn(BiomeSelectors
                         .tag(URTags.RIVER_PIKEHORN_SPAWN_WHITELIST)
@@ -35,16 +35,15 @@ public class URSpawns {
                 SpawnGroup.CREATURE,
                 UREntities.RIVER_PIKEHORN_ENTITY,
                 URConfig.getConfig().pikehornSpawnWeight,
-                2, 6);
+                URConfig.getConfig().pikehornMinGroupSize, URConfig.getConfig().pikehornMaxGroupSize);
 
-        //todo
         BiomeModifications.addSpawn(BiomeSelectors
                         .tag(URTags.LIGHTNING_CHASER_SPAWN_WHITELIST)
                         .and(BiomeSelectors.tag(URTags.LIGHTNING_CHASER_SPAWN_BLACKLIST).negate()),
                 SpawnGroup.CREATURE,
                 UREntities.LIGHTNING_CHASER_ENTITY,
-                10000,
-                1, 1);
+                URConfig.getConfig().lightningChaserSpawnWeight,
+                URConfig.getConfig().lightningChaserMinGroupSize, URConfig.getConfig().lightningChaserMaxGroupSize);
 
         SpawnRestriction.register(UREntities.WYVERN_ENTITY, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, WyvernEntity::canMobSpawn);
         SpawnRestriction.register(UREntities.MOLECLAW_ENTITY, SpawnRestriction.Location.NO_RESTRICTIONS, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, MoleclawEntity::canMoleclawSpawn);

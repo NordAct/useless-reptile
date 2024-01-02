@@ -3,6 +3,7 @@ package nordmods.uselessreptile.client.model;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.init.URClientConfig;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.model_redirect.ModelRedirectUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -23,7 +24,7 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
     public Identifier getAnimationResource(T dragon) {
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation();
 
-        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
+        if (!URClientConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
             Identifier id = ModelRedirectUtil.getCustomAnimationPath(dragon, dragonID);
             if (ResourceUtil.doesExist(id)) return id;
         }
@@ -38,7 +39,7 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
     public Identifier getModelResource(T dragon) {
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel();
 
-        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
+        if (!URClientConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
             Identifier id = ModelRedirectUtil.getCustomModelPath(dragon, dragonID);
             if (ResourceUtil.doesExist(id)) return id;
         }
@@ -53,7 +54,7 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
     public Identifier getTextureResource(T dragon){
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture();
 
-        if (!URConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
+        if (!URClientConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
             Identifier id = ModelRedirectUtil.getCustomTexturePath(dragon, dragonID);
             if (ResourceUtil.doesExist(id)) return id;
         }

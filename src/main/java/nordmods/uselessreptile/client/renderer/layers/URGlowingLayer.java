@@ -6,6 +6,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import nordmods.uselessreptile.client.init.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URConfig;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -21,7 +22,7 @@ public class URGlowingLayer <T extends URDragonEntity> extends AutoGlowingGeoLay
     public void render(MatrixStack matrixStackIn, T entity, BakedGeoModel model, RenderLayer renderType,
                        VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick,
                        int packedLight, int packedOverlay) {
-        if (!URConfig.getConfig().disableEmissiveTextures && MinecraftClient.getInstance().getResourceManager().getResource(getGlowingMask(getTextureResource(getRenderer().getAnimatable()))).isPresent())
+        if (!URClientConfig.getConfig().disableEmissiveTextures && MinecraftClient.getInstance().getResourceManager().getResource(getGlowingMask(getTextureResource(getRenderer().getAnimatable()))).isPresent())
             super.render(matrixStackIn, entity, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
     }
 

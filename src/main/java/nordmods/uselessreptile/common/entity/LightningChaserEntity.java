@@ -334,7 +334,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         }
 
         if (!isTamed()) {
-            if (getTamingProgress() <= 0 && getHealth() / getMaxHealth() < 0.3){
+            if (getTamingProgress() <= 0 && getHealth() / getMaxHealth() < 0.3) {
                 setInAirTimer(getMaxInAirTimer());
                 setTarget(null);
                 setSurrendered(true);
