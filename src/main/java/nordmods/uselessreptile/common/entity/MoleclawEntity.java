@@ -240,12 +240,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
             super.travel(new Vec3d(0, movementInput.y, f1));
         } else {
-            byte turnState = 0;
-            float rotationSpeed = getRotationSpeed();
-            float yawDiff = bodyYaw - headYaw;
-            turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff < 0 ? 2 : turnState;
-            turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff > 0 ? 1 : turnState;
-            setTurningState(turnState);
             super.travel(movementInput);
         }
     }
@@ -367,7 +361,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         double x = -Math.sin(Math.toRadians(getYaw())) * 2;
         double y = -Math.sin(Math.toRadians(getPitch()));
         double z = Math.cos(Math.toRadians(getYaw())) * 2;
-        return new Box(getPos().getX() + x - 1.25, getPos().getY() + y - 0.5, getPos().getZ() + z - 1.25,
+        return new Box(getPos().getX() + x - 1.25, getPos().getY() + y + 0.5, getPos().getZ() + z - 1.25,
                 getPos().getX() + x + 1.25, getPos().getY() + getHeight() + 1 + y, getPos().getZ() + z + 1.25);
     }
 

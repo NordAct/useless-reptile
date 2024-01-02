@@ -22,7 +22,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         double diffY = targetY - entity.getY();
         double diffZ = targetZ - entity.getZ();
         double distanceSquared = diffX * diffX + diffY * diffY + diffZ * diffZ;
-        float destinationRot = (float)(MathHelper.atan2(diffZ, diffX) * 57.2957763671875D) - 90.0F;
+        float destinationYaw = (float)(MathHelper.atan2(diffZ, diffX) * 57.2957763671875D) - 90.0F;
         boolean swimming = entity.isTouchingWater() && entity.canNavigateInFluids();
 
         if (Double.isNaN(entity.getVelocity().y)) entity.setVelocity(entity.getVelocity().x, 0, entity.getVelocity().z);
@@ -47,7 +47,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
             if (accelerationDuration < entity.getMaxAccelerationDuration()) accelerationDuration++;
             if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration--;
 
-            entity.setYaw(wrapDegrees(entity.getYaw(), destinationRot, entity.getRotationSpeed()));
+            entity.setRotation(destinationYaw, entity.getPitch());
 
             float speed;
             if (entity.isFlying() && !swimming) {

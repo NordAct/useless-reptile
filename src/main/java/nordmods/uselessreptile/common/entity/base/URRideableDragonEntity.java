@@ -148,4 +148,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             player.openHandledScreen(this);
         }
     }
+
+    protected void setRotation(PlayerEntity rider) {
+        setRotation(rider.getYaw(), rider.getPitch());
+    }
+
 }

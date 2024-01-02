@@ -105,15 +105,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             LivingEntity rider = getControllingPassenger();
             if (rider instanceof PlayerEntity player) super.travel(getControlledMovementInput(player, player.getVelocity()));
         } else {
-            byte turnState = 0;
-            float rotationSpeed = getRotationSpeed();
-            float yawDiff = bodyYaw - headYaw;
-            if ((Math.abs(yawDiff)) > rotationSpeed) {
-                turnState = yawDiff < 0 ? 2 : turnState;
-                turnState = yawDiff > 0 ? 1 : turnState;
-            }
-            setTurningState(turnState);
-
             if (isFlying()) {
                 setPitch( MathHelper.clamp(getPitch(), -getPitchLimit(), getPitchLimit()));
                 if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);

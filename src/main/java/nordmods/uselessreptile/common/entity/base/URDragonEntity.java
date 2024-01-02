@@ -32,6 +32,7 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Util;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
@@ -378,16 +379,18 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return (float) (0.125 * animationSpeed);
     }
 
-    protected void setRotation(PlayerEntity rider) {
+    @Override
+    public void setRotation(float yaw, float pitch) {
         float currentYaw = getYaw() % 360;
-        float destinationYaw = rider.getYaw() % 360;
+        float destinationYaw = yaw % 360;
         //т.к. у игрока поворот измеряется от -180 до 180, а у других энтити от 0 до 360, то приведенная ниже дичь необходима
+        //due player having rotation from -180 to 180 while all other entities have it from 0 to 360, this check is necessary
         if (destinationYaw < 0) destinationYaw += 360;
         float yawDiff = currentYaw - destinationYaw;
-
         if (yawDiff != 0) {
             if (yawDiff > 180) yawDiff -= 360;
             else if (yawDiff < -180) yawDiff +=360;
+
             if (yawDiff < -getRotationSpeed()) {
                 currentYaw += getRotationSpeed();
                 setTurningState((byte)2);
@@ -396,18 +399,14 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 currentYaw -= getRotationSpeed();
                 setTurningState((byte)1);
             }
-            else {
-                currentYaw = destinationYaw;
-            }
+            else currentYaw = destinationYaw;
+
         } else {
             setTurningState((byte)0);
         }
-
-        prevYaw = getYaw();
-        setYaw(currentYaw);
-        setRotation(getYaw(), getPitch());
-        bodyYaw = getYaw();
-        headYaw = bodyYaw;
+        prevYaw = bodyYaw = getYaw();
+        super.setRotation(currentYaw, pitch);
+        headYaw = currentYaw;
     }
 
     protected void setHitboxModifiers(float destinationHeight, float destinationWidth, float destinationMountedOffset) {

@@ -128,12 +128,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         if (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle()) setFlying(false);
         setNoGravity(isFlying());
 
-        byte turnState = 0;
-        float rotationSpeed = getRotationSpeed();
-        float yawDiff = bodyYaw - headYaw;
-        turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff < 0 ? 2 : turnState;
-        turnState = (Math.abs(yawDiff)) > rotationSpeed && yawDiff > 0 ? 1 : turnState;
-        setTurningState(turnState);
         if (isFlying()) {
             setPitch( MathHelper.clamp(getPitch(), -getPitchLimit(), getPitchLimit()));
             if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
