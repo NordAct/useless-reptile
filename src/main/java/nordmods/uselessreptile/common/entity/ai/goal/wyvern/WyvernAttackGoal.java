@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.ai.goal.swamp_wyvern;
+package nordmods.uselessreptile.common.entity.ai.goal.wyvern;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
