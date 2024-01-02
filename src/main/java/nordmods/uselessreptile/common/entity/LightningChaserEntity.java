@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
@@ -50,6 +51,7 @@ import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 /*
 TODO:
@@ -69,6 +71,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private int shockwaveDelay = -1;
     private int shootDelay = -1;
     private int surrenderTimer = 6000;
+    private static final UUID STORM_SPEED_BONUS = UUID.fromString("978d5bd2-71b5-4e50-8439-7c1dfa3b5089");
+    private static final UUID STORM_FLYING_SPEED_BONUS = UUID.fromString("bc035ebb-3950-4001-b205-61bb4aa012f8");
+    private static final UUID STORM_ARMOR_BONUS = UUID.fromString("88a1b075-ba20-436b-89ae-a564acecf338");
     private final URDragonPart wing1Left = new URDragonPart(this);
     private final URDragonPart wing1Right = new URDragonPart(this);
     private final URDragonPart wing2Left = new URDragonPart(this);
@@ -131,7 +136,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
         if (getWorld().isClient())
             switch (event.getKeyframeData().getSound()) {
-                //case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
                 case "bite" -> playSound(URSounds.LIGHTNING_CHASER_BITE, 1, 1);
             }
     }
@@ -216,6 +220,11 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public void setSurrendered(boolean state) {
         dataTracker.set(SURRENDERED, state);
         setIsSitting(state);
+    }
+
+    @Override
+    public float getMaxAccelerationDuration() {
+        return baseAccelerationDuration * calcSpeedMod() / (getWorld().isThundering() ? 1.5f : 1f);
     }
 
     @Override
@@ -307,9 +316,19 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             }
             if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) triggerShoot();
         }
-        //todo бафы во время шторма
-        if (getWorld().getLevelProperties().isThundering()) {
 
+        if (!getWorld().isClient()) {
+            getAttributeInstance(EntityAttributes.GENERIC_ARMOR).removeModifier(STORM_ARMOR_BONUS);
+            getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED).removeModifier(STORM_FLYING_SPEED_BONUS);
+            getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(STORM_SPEED_BONUS);
+            if (getWorld().getLevelProperties().isThundering()) {
+                getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_ARMOR_BONUS, "Storm bonus", 4, EntityAttributeModifier.Operation.ADDITION));
+                getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED)
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_FLYING_SPEED_BONUS, "Storm bonus", 0.2, EntityAttributeModifier.Operation.ADDITION));
+                getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_SPEED_BONUS, "Storm bonus", 0.05, EntityAttributeModifier.Operation.ADDITION));
+            }
         }
 
         updateChildParts();

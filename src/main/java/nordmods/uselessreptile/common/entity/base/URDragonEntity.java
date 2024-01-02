@@ -84,7 +84,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             (new EntityPositionSource
                     (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.getRange()));
     protected @Nullable BlockPos jukeboxPos;
-    protected final UUID DRAGON_ARMOR_BONUS_ID = UUID.fromString("c9e68951-e06e-4f5d-8aeb-cf3a09c2638e");
+    private static final UUID DRAGON_ARMOR_BONUS_ID = UUID.fromString("c9e68951-e06e-4f5d-8aeb-cf3a09c2638e");
     protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
 
     protected URDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {

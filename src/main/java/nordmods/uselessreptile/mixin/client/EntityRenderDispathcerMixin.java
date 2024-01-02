@@ -23,8 +23,9 @@ public abstract class EntityRenderDispathcerMixin {
             double z = -MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ());
 
             matrices.push();
-            WorldRenderer.drawBox(matrices, vertices,
-                    dragon.getAttackBox().offset(x, y, z), 1.0F, 0.0F, 0.5F, 1.0F);
+            if (dragon.getAttackBox() != null)
+                WorldRenderer.drawBox(matrices, vertices,
+                        dragon.getAttackBox().offset(x, y, z), 1.0F, 0.0F, 0.5F, 1.0F);
             if (dragon.getSecondaryAttackBox() != null)
                 WorldRenderer.drawBox(matrices, vertices,
                         dragon.getSecondaryAttackBox().offset(x, y, z), 1.0F, 0.0F, 1.0F, 1.0F);
