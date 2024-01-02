@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 //I really shouldn't have done this... But idk for a better way to split configs and keep Mod Menu compat
 @Mixin(YACLScreen.class)
-public class YACLScreenMixin {
+public abstract class YACLScreenMixin {
     @Shadow private boolean pendingChanges;
     @Shadow @Final public TabManager tabManager;
 
@@ -22,7 +22,7 @@ public class YACLScreenMixin {
         //a weird way to filter out specifically UR configs
         if (tabManager.getCurrentTab() instanceof YACLScreen.CategoryTab categoryTab
                 && categoryTab.getTitle().getContent() instanceof TranslatableTextContent content
-                && content.getKey().equals("config.uselessreptile.category")) {
+                && content.getKey().contains("config.uselessreptile.category")) {
             URClientConfig.save();
             pendingChanges = false;
             categoryTab.updateButtons();
