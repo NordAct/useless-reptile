@@ -11,6 +11,8 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -58,7 +60,6 @@ TODO:
     Дракон:
     3) Спавн во время шторма (появление в небе)
     4) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
-    5) Приручение по ударам трезубца (точнее его молний)
     ---------------------
     ---------------------
     Прочее:
@@ -71,6 +72,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private int shockwaveDelay = -1;
     private int shootDelay = -1;
     private int surrenderTimer = 6000;
+    private boolean shouldBailOut = false;
     private static final UUID STORM_SPEED_BONUS = UUID.fromString("978d5bd2-71b5-4e50-8439-7c1dfa3b5089");
     private static final UUID STORM_FLYING_SPEED_BONUS = UUID.fromString("bc035ebb-3950-4001-b205-61bb4aa012f8");
     private static final UUID STORM_ARMOR_BONUS = UUID.fromString("88a1b075-ba20-436b-89ae-a564acecf338");
@@ -93,7 +95,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         baseSecondaryAttackCooldown = 30;
         basePrimaryAttackCooldown = 30;
         baseAccelerationDuration = 800;
-        baseTamingProgress = 3;
+        baseTamingProgress = 5;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         rotationSpeedGround = 6;
@@ -323,15 +325,42 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).removeModifier(STORM_SPEED_BONUS);
             if (getWorld().getLevelProperties().isThundering()) {
                 getAttributeInstance(EntityAttributes.GENERIC_ARMOR)
-                        .addTemporaryModifier(new EntityAttributeModifier(STORM_ARMOR_BONUS, "Storm bonus", 4, EntityAttributeModifier.Operation.ADDITION));
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_ARMOR_BONUS, "Thunderstorm bonus", 4, EntityAttributeModifier.Operation.ADDITION));
                 getAttributeInstance(EntityAttributes.GENERIC_FLYING_SPEED)
-                        .addTemporaryModifier(new EntityAttributeModifier(STORM_FLYING_SPEED_BONUS, "Storm bonus", 0.2, EntityAttributeModifier.Operation.ADDITION));
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_FLYING_SPEED_BONUS, "Thunderstorm bonus", 0.2, EntityAttributeModifier.Operation.ADDITION));
                 getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)
-                        .addTemporaryModifier(new EntityAttributeModifier(STORM_SPEED_BONUS, "Storm bonus", 0.05, EntityAttributeModifier.Operation.ADDITION));
+                        .addTemporaryModifier(new EntityAttributeModifier(STORM_SPEED_BONUS, "Thunderstorm bonus", 0.05, EntityAttributeModifier.Operation.ADDITION));
             }
         }
 
+        if (!isTamed()) {
+            if (getTamingProgress() <= 0 && getHealth() / getMaxHealth() < 0.3){
+                setInAirTimer(getMaxInAirTimer());
+                setTarget(null);
+                setSurrendered(true);
+            }
+
+            if (hasSurrendered() && surrenderTimer > 0) {
+                surrenderTimer--;
+                if (surrenderTimer % 200 == 0) heal(2);
+            } else {
+                setSurrendered(false);
+                shouldBailOut = true;
+            }
+            setIsSitting(hasSurrendered());
+        }
+
         updateChildParts();
+    }
+
+    @Override
+    public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
+        if (lightning.getChanneler() != null && getTamingProgress() > 0) setTamingProgress(getTamingProgress() - 1);
+        addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 400, 3));
+        addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 400, 1));
+        addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 400, 1));
+        addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 400, 0));
+        lightning.discard();
     }
 
     public void triggerShoot() {
@@ -441,15 +470,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        //todo remove this
-        if (isTamingItem(itemStack) && !isTamed()) {
-            eat(player, hand, itemStack);
-            setSurrendered(true);
-            setPersistent();
-            return ActionResult.SUCCESS;
-        }
-
-        if (hasSurrendered() && !isTamed()) {
+        if ((hasSurrendered() || player.isCreative() && isTamingItem(itemStack)) && !isTamed()) {
             setOwner(player);
             setSurrendered(false);
             getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
