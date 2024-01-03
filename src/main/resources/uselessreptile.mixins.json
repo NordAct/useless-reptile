@@ -3,7 +3,8 @@
   "package": "nordmods.uselessreptile.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "common.AbstractBlockMixin"
+    "common.AbstractBlockMixin",
+    "common.ServerWorldMixin"
   ],
   "client": [
     "client.CameraMixin",

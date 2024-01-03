@@ -26,18 +26,23 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.LocalDifficulty;
+import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
+import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRoamAroundGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
 import nordmods.uselessreptile.common.init.URConfig;
+import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
@@ -58,7 +63,6 @@ import java.util.UUID;
 /*
 TODO:
     Дракон:
-    3) Спавн во время шторма (появление в небе)
     4) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
     ---------------------
     ---------------------
@@ -71,8 +75,10 @@ TODO:
 public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int shockwaveDelay = -1;
     private int shootDelay = -1;
-    private int surrenderTimer = 6000;
+    private int bailOutTimer = 6000;
     private boolean shouldBailOut = false;
+    private boolean isChallenger = false;
+    public BlockPos roamingSpot;
     private static final UUID STORM_SPEED_BONUS = UUID.fromString("978d5bd2-71b5-4e50-8439-7c1dfa3b5089");
     private static final UUID STORM_FLYING_SPEED_BONUS = UUID.fromString("bc035ebb-3950-4001-b205-61bb4aa012f8");
     private static final UUID STORM_ARMOR_BONUS = UUID.fromString("88a1b075-ba20-436b-89ae-a564acecf338");
@@ -102,6 +108,21 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         rotationSpeedAir = 3;
         verticalSpeed = 0.3f;
         regenFromFood = 4;
+    }
+
+    public LightningChaserEntity(World world) {
+        this(UREntities.LIGHTNING_CHASER_ENTITY, world);
+    }
+
+    @Override
+    protected void initGoals() {
+        goalSelector.add(1, new LightningChaserRoamAroundGoal(this));
+    }
+
+    @Override
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+        if (spawnReason == SpawnReason.EVENT) isChallenger = true;
+        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
     @Nullable
@@ -234,8 +255,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         super.writeCustomDataToNbt(tag);
 
         if (!isTamed()) {
-            tag.putInt("SurrenderTimer", surrenderTimer);
+            tag.putInt("BailOutTimer", bailOutTimer);
             tag.putBoolean("HasSurrendered", hasSurrendered());
+            tag.putBoolean("BailingOut", shouldBailOut);
+            tag.putBoolean("IsChallenger", isChallenger);
         }
     }
 
@@ -245,8 +268,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         dataTracker.set(VARIANT, tag.getString("Variant"));
 
         if (!isTamed()) {
-            surrenderTimer = tag.getInt("SurrenderTimer");
+            bailOutTimer = tag.getInt("BailOutTimer");
             setSurrendered(tag.getBoolean("HasSurrendered"));
+            shouldBailOut = tag.getBoolean("BailingOut");
+            isChallenger = tag.getBoolean("IsChallenger");
         }
     }
 
@@ -333,20 +358,25 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             }
         }
 
-        if (!isTamed()) {
+        if (!isTamed() && !shouldBailOut) {
             if (getTamingProgress() <= 0 && getHealth() / getMaxHealth() < 0.3) {
+                setHealth(getMaxHealth() * 0.3f);
                 setInAirTimer(getMaxInAirTimer());
                 setTarget(null);
                 setSurrendered(true);
+                if (isChallenger) bailOutTimer = 6000;
             }
 
-            if (hasSurrendered() && surrenderTimer > 0) {
-                surrenderTimer--;
-                if (surrenderTimer % 200 == 0) heal(2);
-            } else {
-                setSurrendered(false);
-                shouldBailOut = true;
-            }
+            if (hasSurrendered()) if (age % 200 == 0) heal(2);
+
+            if (isChallenger) {
+                if (bailOutTimer > 0) bailOutTimer--;
+                else {
+                    setSurrendered(false);
+                    shouldBailOut = true;
+                }
+            } else if (getHealth() / getMaxHealth() > 0.5) setSurrendered(false);
+
             setIsSitting(hasSurrendered());
         }
 
@@ -491,6 +521,14 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public boolean isFavoriteFood(ItemStack itemStack){
         Item item = itemStack.getItem();
         return item.isFood() && item.getFoodComponent().isMeat();
+    }
+
+    public boolean getShouldBailOut() {
+        return shouldBailOut;
+    }
+
+    public boolean isChallenger() {
+        return isChallenger;
     }
 
     @Override

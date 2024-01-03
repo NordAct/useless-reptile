@@ -26,7 +26,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         boolean swimming = entity.isTouchingWater() && entity.canNavigateInFluids();
 
         if (Double.isNaN(entity.getVelocity().y)) entity.setVelocity(entity.getVelocity().x, 0, entity.getVelocity().z);
-        int accelerationDuration = (int) MathHelper.clamp(entity.getAccelerationDuration() * 1.5, 0, entity.getMaxAccelerationDuration());
+        int accelerationDuration = entity.getAccelerationDuration();
         if (accelerationDuration < 0) accelerationDuration = 0;
         float accelerationModifier = (float)accelerationDuration/entity.getMaxAccelerationDuration();
         if (accelerationModifier > 1.5) accelerationModifier = 1.5f;

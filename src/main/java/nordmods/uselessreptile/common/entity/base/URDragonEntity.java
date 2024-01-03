@@ -46,7 +46,6 @@ import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.uselessreptile.common.entity.ai.pathfinding.DragonNavigation;
-import nordmods.uselessreptile.common.entity.ai.pathfinding.MoleclawNavigation;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
@@ -524,6 +523,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
+    }
+
+    @Override
+    public SoundCategory getSoundCategory() {
+        return SoundCategory.NEUTRAL;
     }
 
     public boolean isTargetFriendly(LivingEntity target) {

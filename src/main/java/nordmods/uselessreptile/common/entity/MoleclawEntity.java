@@ -197,7 +197,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
     @Override
     public void tick() {
         super.tick();
-        setHitboxModifiers(1, 1, 2.5f);
+        if (!getIsSitting()) setHitboxModifiers(1, 1, 2.5f);
+        else setHitboxModifiers(0.75f, 1f, 2.5f);
         tryPanic();
 
         if (canBeControlledByRider()) {

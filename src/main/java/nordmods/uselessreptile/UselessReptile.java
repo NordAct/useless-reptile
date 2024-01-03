@@ -22,6 +22,7 @@ public class UselessReptile implements ModInitializer {
         URStatusEffects.init();
         URPotions.init();
         URScreenHandlers.init();
+        UREvents.init();
 
         KeyInputC2SPacket.init();
     }

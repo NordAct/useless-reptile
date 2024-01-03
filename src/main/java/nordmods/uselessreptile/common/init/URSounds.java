@@ -31,7 +31,7 @@ public class URSounds {
     public static final SoundEvent SHOCKWAVE_HIT = register("shockwave.hit");
     public static final SoundEvent SHOCKWAVE = register("shockwave", 64);
     public static final SoundEvent LIGHTNING_CHASER_ACCEPT_CHALLENGE = register("lightning_chaser.accept_challenge", 128);
-    public static final SoundEvent LIGHTNING_CHASER_APPEARANCE = register("lightning_chaser.appearance", 128);
+    public static final SoundEvent LIGHTNING_CHASER_APPEARANCE = register("lightning_chaser.appearance", 256);
     public static final SoundEvent LIGHTNING_CHASER_STEP = register("lightning_chaser.step");
     public static final SoundEvent LIGHTNING_CHASER_BITE = register("lightning_chaser.bite");
     public static final SoundEvent LIGHTNING_CHASER_HURT = register("lightning_chaser.hurt");
