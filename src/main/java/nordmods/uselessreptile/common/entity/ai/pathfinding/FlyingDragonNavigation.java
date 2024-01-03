@@ -72,7 +72,7 @@ public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> ext
         double yDiff = nodePos.getY() - entity.getY();
         double f = Math.abs(entity.getZ() - nodePos.getZ());
 
-        boolean bl = d < (double)nodeReachProximity && f < (double)nodeReachProximity &&  yDiff < 1.0D && yDiff > -5.0D;
+        boolean bl = d < (double)nodeReachProximity && f < (double)nodeReachProximity &&  yDiff <= entity.getStepHeight() && yDiff > -5.0D;
 
         if (bl || canJumpToNext(currentPath.getNode(index).type) && shouldJumpToNextNode(vec3d)) {
             currentPath.next();
@@ -82,7 +82,7 @@ public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> ext
         checkTimeouts(vec3d);
     }
 
-    private boolean shouldJumpToNextNode(Vec3d currentPos) {
+    protected boolean shouldJumpToNextNode(Vec3d currentPos) {
         if (currentPath.getCurrentNodeIndex() + 1 >= currentPath.getLength()) return false;
         Vec3d vec3d = Vec3d.ofBottomCenter(currentPath.getCurrentNodePos());
         if (!currentPos.isInRange(vec3d, MathHelper.clamp(entity.getWidth(), 0, 2))) return false;
@@ -93,14 +93,14 @@ public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> ext
         return vec3d3.dotProduct(vec3d4) > 0.0D;
     }
 
-    private void startToFly(boolean shouldFly) {
+    protected void startToFly(boolean shouldFly) {
         if (shouldFly){
             entity.addVelocity(0, 0.1, 0);
             entity.startToFly();
         } else jumpCount++;
     }
 
-    private void moveOrStop(BlockPos target) {
+    protected void moveOrStop(BlockPos target) {
         double distance = entity.squaredDistanceTo(target.getX(), target.getY(), target.getZ());
         nodeReachProximity = (float) Math.sqrt(entity.getRotationSpeed() * entity.getWidth());
         entity.getMoveControl().moveTo(target.getX(), target.getY(), target.getZ(), 1);

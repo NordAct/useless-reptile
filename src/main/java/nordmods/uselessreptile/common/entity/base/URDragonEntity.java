@@ -32,7 +32,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Util;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
@@ -46,6 +45,8 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
+import nordmods.uselessreptile.common.entity.ai.pathfinding.DragonNavigation;
+import nordmods.uselessreptile.common.entity.ai.pathfinding.MoleclawNavigation;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
@@ -90,6 +91,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     protected URDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
+        navigation = new DragonNavigation(this, world);
     }
 
     @Override
