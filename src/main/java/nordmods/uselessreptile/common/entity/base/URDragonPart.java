@@ -8,6 +8,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3f;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 
 public class URDragonPart extends EntityPart {
@@ -92,5 +93,9 @@ public class URDragonPart extends EntityPart {
 
     public void setRelativePos(double x, double y, double z) {
         setRelativePos(x, y, z, 0, owner.getYaw());
+    }
+
+    public void setRelativePos(Vec3f vector3f) {
+        setRelativePos(vector3f.getX(), vector3f.getY(), vector3f.getZ());
     }
 }
