@@ -2,7 +2,7 @@
 	"comment1": "Name represents name of the variant or name of the entity",
 	"comment2": "model and animation fields represent file names located in assets/uelessreptile/geo/entity/*dragon ID*/ and assets/uelessreptile/animations/entity/*dragon ID*/ respectively",
 	"comment3": "*dragon ID* represents path part in entity's ID. I.e. for Swamp Wyvern dragon ID would be wyvern, for Moleclaw - moleclaw, for River Pikehorn - river_pikehorn",
-	"comment4": "It's not necessary to declare both name and model fields. In fact, you can declare neither of them",
+	"comment4": "It's not necessary to declare both animation and model fields. In fact, you can declare neither of them",
 	"comment5": "If you wish to make certain variant inaccessible via nametag just add \"nametag_accessible\": false (like in barren_brown)",
 	"comment6": "Redirect declarations can be added under any namespace. And you better to not use uselessreptile namespace for them unless you want to overwrite default ones",
 	"comment7": "Full path to redirect file would look something like this: assets/yournamespace/model_redirect/*dragon ID*.json",
