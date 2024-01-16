@@ -97,11 +97,6 @@ public class WyvernProjectileEntity extends PersistentProjectileEntity implement
     }
 
     @Override
-    protected void initDataTracker() {
-
-    }
-
-    @Override
     public void tick() {
         super.tick();
         if (getWorld().isClient()) spawnParticles(8);
