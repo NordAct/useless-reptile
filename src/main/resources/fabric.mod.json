@@ -32,11 +32,11 @@
   ],
   "accessWidener" : "uselessreptile.accesswidener",
   "depends": {
-    "fabricloader": "*",
+    "fabricloader": ">=0.15",
     "fabric-api": "*",
     "java": ">=17",
-    "minecraft": "~1.20",
+    "minecraft": "1.20.2",
     "geckolib": "*",
-    "yet_another_config_lib_v3": ">=3.2.0"
+    "yet_another_config_lib_v3": ">=3.2.1"
   }
 }
