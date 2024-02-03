@@ -2,9 +2,11 @@ name: Build with Gradle
 
 on:
   push:
-    branches: [1.20.2]
+    branches:
+      - '*'
   pull_request:
-    branches: [1.20.2]
+    branches:
+      - '*'
 jobs:
   build:
     runs-on: ubuntu-latest
