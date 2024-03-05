@@ -3,7 +3,7 @@ package nordmods.uselessreptile.client.model;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.init.URClientConfig;
+import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.model_redirect.ModelRedirectUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;

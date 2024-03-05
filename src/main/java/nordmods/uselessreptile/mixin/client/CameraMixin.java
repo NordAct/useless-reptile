@@ -2,7 +2,7 @@ package nordmods.uselessreptile.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
-import nordmods.uselessreptile.client.init.URClientConfig;
+import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

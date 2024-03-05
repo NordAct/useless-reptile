@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.entity;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -29,7 +28,6 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
@@ -37,13 +35,13 @@ import net.minecraft.util.math.Vec2f;
 import net.minecraft.world.World;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
-import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
@@ -104,14 +102,14 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     public static DefaultAttributeContainer.Builder createWyvernAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 35.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.7)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0 * URConfig.getDamageMultiplier())
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 2.0)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3)
-                .add(EntityAttributes.GENERIC_ARMOR, 4);
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, getAttributeConfig().wyvernDamage * getAttributeConfig().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, getAttributeConfig().wyvernKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, getAttributeConfig().wyvernHealth * getAttributeConfig().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, getAttributeConfig().wyvernArmor * getAttributeConfig().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, getAttributeConfig().wyvernArmorToughness * getAttributeConfig().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, getAttributeConfig().wyvernGroundSpeed * getAttributeConfig().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, getAttributeConfig().wyvernFlyingSpeed * getAttributeConfig().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 
     @Override

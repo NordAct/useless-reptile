@@ -26,10 +26,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
-import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.items.FluteItem;
@@ -221,10 +221,13 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     public static DefaultAttributeContainer.Builder createPikehornAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 14.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.2)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.8)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3.0 * URConfig.getDamageMultiplier())
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, getAttributeConfig().pikehornDamage * getAttributeConfig().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, getAttributeConfig().pikehornKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, getAttributeConfig().pikehornHealth * getAttributeConfig().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, getAttributeConfig().pikehornArmor * getAttributeConfig().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, getAttributeConfig().pikehornArmorToughness * getAttributeConfig().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, getAttributeConfig().pikehornGroundSpeed * getAttributeConfig().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, getAttributeConfig().pikehornFlyingSpeed * getAttributeConfig().dragonFlyingSpeedMultiplier)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 

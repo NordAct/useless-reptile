@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.biome.v1.BiomeSelectors;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.world.Heightmap;
+import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;

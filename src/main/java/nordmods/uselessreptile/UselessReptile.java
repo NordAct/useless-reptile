@@ -2,6 +2,8 @@ package nordmods.uselessreptile;
 
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
+import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantLoader;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
@@ -15,6 +17,7 @@ public class UselessReptile implements ModInitializer {
     public void onInitialize() {
         DragonVariantLoader.init();
         URConfig.init();
+        URMobAttributesConfig.init();
         URSounds.init();
         UREntities.init();
         URItems.init();

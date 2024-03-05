@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.init;
+package nordmods.uselessreptile.client.config;
 
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
@@ -9,7 +9,7 @@ import nordmods.uselessreptile.UselessReptile;
 
 public class URClientConfig {
     public static final ConfigClassHandler<URClientConfig> CONFIG = ConfigClassHandler.createBuilder(URClientConfig.class)
-            .id(new Identifier(UselessReptile.MODID, "config"))
+            .id(new Identifier(UselessReptile.MODID, "config_client"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("uselessreptile_client.json5"))
                     .setJson5(true)
@@ -41,9 +41,5 @@ public class URClientConfig {
 
     public static void init() {
         CONFIG.load();
-    }
-
-    public static URClientConfig getDefaults() {
-        return CONFIG.defaults();
     }
 }

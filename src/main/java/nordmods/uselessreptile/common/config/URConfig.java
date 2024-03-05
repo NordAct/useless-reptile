@@ -1,10 +1,9 @@
-package nordmods.uselessreptile.common.init;
+package nordmods.uselessreptile.common.config;
 
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 
@@ -49,22 +48,10 @@ public class URConfig {
     public DragonGriefing allowDragonGriefing = DragonGriefing.ALL;
     @SerialEntry
     public int blockDropChance = 100;
-    @SerialEntry
-    public float dragonDamageMultiplier = 1;
-    @SerialEntry
-    public float dragonHealthMultiplier = 1;
 
     public static URConfig getConfig() {
         return CONFIG.instance();
     }
-    public static float getHealthMultiplier() {
-        return URConfig.getConfig().dragonHealthMultiplier;
-    }
-
-    public static float getDamageMultiplier() {
-        return URConfig.getConfig().dragonDamageMultiplier;
-    }
-
 
     public enum DragonGriefing {
         ALL(true, true),

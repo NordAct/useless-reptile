@@ -35,13 +35,13 @@ import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRoamAroundGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
-import nordmods.uselessreptile.common.init.URConfig;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
@@ -223,14 +223,14 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     public static DefaultAttributeContainer.Builder createLightningChaserAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 45.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.8)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0 * URConfig.getDamageMultiplier())
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 6.0)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.3)
-                .add(EntityAttributes.GENERIC_ARMOR, 6);
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, getAttributeConfig().lightningChaserDamage * getAttributeConfig().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, getAttributeConfig().lightningChaserKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, getAttributeConfig().lightningChaserHealth * getAttributeConfig().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, getAttributeConfig().lightningChaserArmor * getAttributeConfig().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, getAttributeConfig().lightningChaserArmorToughness * getAttributeConfig().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, getAttributeConfig().lightningChaserGroundSpeed * getAttributeConfig().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, getAttributeConfig().lightningChaserFlyingSpeed * getAttributeConfig().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 
     @Override

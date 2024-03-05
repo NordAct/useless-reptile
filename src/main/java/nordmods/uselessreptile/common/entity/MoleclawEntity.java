@@ -37,6 +37,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
@@ -44,7 +45,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTar
 import nordmods.uselessreptile.common.entity.ai.pathfinding.MoleclawNavigation;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.gui.MoleclawScreenHandler;
-import nordmods.uselessreptile.common.init.URConfig;
+import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
@@ -125,13 +126,14 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     public static DefaultAttributeContainer.Builder createMoleclawAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 50.0 * URConfig.getHealthMultiplier())
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 8.0 * URConfig.getDamageMultiplier())
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, 4.0)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, 0.5)
-                .add(EntityAttributes.GENERIC_ARMOR, 8);
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, getAttributeConfig().moleclawDamage * getAttributeConfig().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, getAttributeConfig().moleclawKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, getAttributeConfig().moleclawHealth * getAttributeConfig().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, getAttributeConfig().moleclawArmor * getAttributeConfig().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, getAttributeConfig().moleclawArmorToughness * getAttributeConfig().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, getAttributeConfig().moleclawGroundSpeed * getAttributeConfig().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
+
     }
 
     @Override

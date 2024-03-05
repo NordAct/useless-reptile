@@ -21,7 +21,7 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import nordmods.uselessreptile.common.init.URConfig;
+import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;

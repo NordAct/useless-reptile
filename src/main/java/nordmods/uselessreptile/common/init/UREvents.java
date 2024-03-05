@@ -5,6 +5,7 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.Heightmap;
+import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.LightningChaserSpawnTimer;
