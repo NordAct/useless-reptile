@@ -15,8 +15,7 @@
     "client.LivingEntityMixin",
     "client.LivingEntityRendererMixin",
     "client.PlayerRendererMixin",
-    "client.ResourceReloadLoggerMixin",
-    "client.YACLScreenMixin"
+    "client.ResourceReloadLoggerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

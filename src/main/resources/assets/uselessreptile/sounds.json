@@ -370,11 +370,19 @@
       }
     ]
   },
-  "lightning_chaser.appearance": {
+  "lightning_chaser.distant_roar": {
     "subtitle": "subtitles.uselessreptile.lightning_chaser.roar",
     "sounds": [
       {
-        "name": "uselessreptile:lightning_chaser/appearance",
+        "name": "uselessreptile:lightning_chaser/roar1",
+        "attenuation_distance": 256
+      },
+      {
+        "name": "uselessreptile:lightning_chaser/roar2",
+        "attenuation_distance": 256
+      },
+      {
+        "name": "uselessreptile:lightning_chaser/roar3",
         "attenuation_distance": 256
       }
     ]
@@ -385,6 +393,15 @@
       {
         "name": "uselessreptile:lightning_chaser/accept_challenge",
         "attenuation_distance": 128
+      }
+    ]
+  },
+  "lightning_chaser.surrender": {
+    "subtitle": "subtitles.uselessreptile.lightning_chaser.roar",
+    "sounds": [
+      {
+        "name": "uselessreptile:lightning_chaser/surrender",
+        "attenuation_distance": 32
       }
     ]
   }

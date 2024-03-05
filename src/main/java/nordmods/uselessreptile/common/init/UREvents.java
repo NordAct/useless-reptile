@@ -34,7 +34,7 @@ public class UREvents {
                                 lightningChaser.roamingSpot = new BlockPos(pos.getX(),
                                         world.getTopY(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ()),
                                         pos.getZ());
-                                URPacketHelper.playSound(lightningChaser, URSounds.LIGHTNING_CHASER_APPEARANCE, lightningChaser.getSoundCategory(), 1, 1, 1);
+                                URPacketHelper.playSound(lightningChaser, URSounds.LIGHTNING_CHASER_DISTANT_ROAR, lightningChaser.getSoundCategory(), 1, 1, 1);
                             }
                             break;
                         }

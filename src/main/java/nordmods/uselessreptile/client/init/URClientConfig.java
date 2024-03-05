@@ -8,7 +8,7 @@ import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 
 public class URClientConfig {
-    private static final ConfigClassHandler<URClientConfig> CONFIG = ConfigClassHandler.createBuilder(URClientConfig.class)
+    public static final ConfigClassHandler<URClientConfig> CONFIG = ConfigClassHandler.createBuilder(URClientConfig.class)
             .id(new Identifier(UselessReptile.MODID, "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("uselessreptile_client.json5"))
@@ -45,9 +45,5 @@ public class URClientConfig {
 
     public static URClientConfig getDefaults() {
         return CONFIG.defaults();
-    }
-
-    public static void save() {
-        CONFIG.save();
     }
 }

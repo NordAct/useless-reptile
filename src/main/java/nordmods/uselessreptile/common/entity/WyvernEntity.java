@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.common.entity;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -28,6 +29,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
@@ -144,6 +146,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return loopAnim("blink", event);
     }
     private <A extends GeoEntity> PlayState main(AnimationState<A> event) {
+        //MinecraftClient.getInstance().inGameHud.setOverlayMessage(Text.literal(event.getController().getAnimationState().toString()), false);
+        if (event.getController().hasAnimationFinished()) event.getController().forceAnimationReset();
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isSecondaryAttack()) {
