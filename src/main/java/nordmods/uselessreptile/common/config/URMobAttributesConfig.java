@@ -36,7 +36,7 @@ public class URMobAttributesConfig {
             + "\nhealth: [1;1024]"
             + "\narmor: [0;30]"
             + "\narmor toughness: [0;20]"
-            + "\nground and fly speed: [0;1024]"
+            + "\nground and flying speed: [0;1024]"
             + "\nSWAMP WYVERN ATTRIBUTES ")
     public float wyvernDamage = 6.0f;
     @SerialEntry
