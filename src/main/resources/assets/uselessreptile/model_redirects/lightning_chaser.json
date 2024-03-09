@@ -11,6 +11,10 @@
     {
       "name": "brown",
       "nametag_accessible": false
+    },
+    {
+      "name": "purple",
+      "nametag_accessible": false
     }
   ]
 }
