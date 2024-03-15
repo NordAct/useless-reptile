@@ -10,11 +10,11 @@ import software.bernie.geckolib.model.GeoModel;
 
 public abstract class URRideableDragonRenderer<T extends URRideableDragonEntity> extends URDragonRenderer<T> {
     protected final String riderBone;
-    public URRideableDragonRenderer(EntityRendererFactory.Context renderManager, GeoModel<T> model, boolean hasBanner, boolean hasArmor, boolean separatedSaddleLayer, String riderBone) {
+    public URRideableDragonRenderer(EntityRendererFactory.Context renderManager, GeoModel<T> model, boolean hasBanner, boolean hasArmor, String riderBone) {
         super(renderManager, model, hasBanner, hasArmor);
         this.riderBone = riderBone;
         addRenderLayer(new DragonPassengerLayer<>(this, riderBone));
-        if (separatedSaddleLayer) addRenderLayer(new DragonSaddleLayer<>(this));
+        addRenderLayer(new DragonSaddleLayer<>(this));
     }
 
     @Override

@@ -9,7 +9,7 @@ import nordmods.uselessreptile.common.entity.MoleclawEntity;
 
 public class MoleclawEntityRenderer extends URRideableDragonRenderer<MoleclawEntity> {
     public MoleclawEntityRenderer(EntityRendererFactory.Context renderManager) {
-        super(renderManager, new MoleclawEntityModel(), true, true,false, "rider");
+        super(renderManager, new MoleclawEntityModel(), true, true, "rider");
         shadowRadius = 1.25f;
     }
 

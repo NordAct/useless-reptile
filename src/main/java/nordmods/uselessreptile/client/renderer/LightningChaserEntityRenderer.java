@@ -9,7 +9,7 @@ import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 
 public class LightningChaserEntityRenderer extends URRideableDragonRenderer<LightningChaserEntity> {
     public LightningChaserEntityRenderer(EntityRendererFactory.Context renderManager) {
-        super(renderManager, new LightningChaserEntityModel(), true, true, true, "rider");
+        super(renderManager, new LightningChaserEntityModel(), true, true, "rider");
         shadowRadius = 1.5f;
     }
 
