@@ -81,6 +81,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         baseSecondaryAttackCooldown = 30;
         baseTamingProgress = 64;
         regenFromFood = 2;
+        ticksUntilHeal = 400;
     }
 
     @Override

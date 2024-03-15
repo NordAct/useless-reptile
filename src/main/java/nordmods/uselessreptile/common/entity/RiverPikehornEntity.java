@@ -69,6 +69,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         canNavigateInFluids = true;
         regenFromFood = 3;
         inventory = new SimpleInventory(0);
+        ticksUntilHeal = 400;
     }
 
     @Override

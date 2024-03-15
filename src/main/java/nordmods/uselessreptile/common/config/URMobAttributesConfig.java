@@ -42,7 +42,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float wyvernKnockback = 0.3f;
     @SerialEntry
-    public float wyvernHealth = 35.0f;
+    public float wyvernHealth = 50.0f;
     @SerialEntry
     public float wyvernArmor = 4.0f;
     @SerialEntry
@@ -57,7 +57,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float moleclawKnockback = 0.5f;
     @SerialEntry
-    public float moleclawHealth = 50.0f;
+    public float moleclawHealth = 80.0f;
     @SerialEntry
     public float moleclawArmor = 8.0f;
     @SerialEntry
@@ -70,7 +70,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float pikehornKnockback = 0f;
     @SerialEntry
-    public float pikehornHealth = 14.0f;
+    public float pikehornHealth = 20.0f;
     @SerialEntry
     public float pikehornArmor = 0f;
     @SerialEntry
@@ -85,7 +85,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float lightningChaserKnockback = 0.3f;
     @SerialEntry
-    public float lightningChaserHealth = 45.0f;
+    public float lightningChaserHealth = 70.0f;
     @SerialEntry
     public float lightningChaserArmor = 6f;
     @SerialEntry

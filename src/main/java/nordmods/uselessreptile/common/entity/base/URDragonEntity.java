@@ -85,6 +85,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected int eatFromInventoryTimer = 20;
     protected float regenFromFood = 0;
     protected boolean canNavigateInFluids = false;
+    protected int ticksUntilHeal = -1;
+    private int healTimer = 0;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
             (new EntityPositionSource
                     (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.getRange()));
@@ -511,6 +513,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
         if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
+
+        if (ticksUntilHeal > -1 && --healTimer <= 0) {
+            heal(1);
+            healTimer = getTicksUntilHeal();
+        }
     }
 
     protected boolean isOwnerOrCreative(PlayerEntity player) {return isOwner(player) || player.isCreative();}
@@ -669,6 +676,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     protected static URMobAttributesConfig getAttributeConfig() {
         return URMobAttributesConfig.getConfig();
+    }
+
+    protected int getTicksUntilHeal() {
+        return ticksUntilHeal;
     }
 
     @Environment(EnvType.CLIENT)

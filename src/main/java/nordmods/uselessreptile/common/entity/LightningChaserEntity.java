@@ -60,18 +60,6 @@ import software.bernie.geckolib.core.object.PlayState;
 import java.util.ArrayList;
 import java.util.UUID;
 
-/*
-TODO:
-    Дракон:
-    4) Механика вызова на бой (ебнуть по мобу с трезубца с каналом)
-    ---------------------
-    ---------------------
-    Прочее:
-    1) Возможность переключать управление поворотом дракона на полностью через камеру, частично через камеру и полностью через клавиатуру
-    2) Возможность настроить оффсеты камеры для каждого вида драконов отдельно
-    3) Вынести статы драконов в дарапаки
-*/
-
 public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int shockwaveDelay = -1;
     private int shootDelay = -1;
@@ -108,6 +96,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         rotationSpeedAir = 3;
         verticalSpeed = 0.3f;
         regenFromFood = 4;
+        ticksUntilHeal = 500;
     }
 
     public LightningChaserEntity(World world) {
@@ -447,7 +436,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         shockwaveDelay = TRANSITION_TICKS;
     }
 
-    //todo
     public void meleeAttack(LivingEntity target) {
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
         attackType = random.nextInt(3)+1;
@@ -468,6 +456,11 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     @Override
     public int getMaxSecondaryAttackCooldown() {
         return isFlying() ? super.getMaxSecondaryAttackCooldown() * 4 : super.getMaxSecondaryAttackCooldown();
+    }
+
+    @Override
+    protected int getTicksUntilHeal() {
+        return getWorld().isThundering() ? (int) (super.getTicksUntilHeal() * 0.5) : super.getTicksUntilHeal();
     }
 
     @Override

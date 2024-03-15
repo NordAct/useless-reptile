@@ -58,7 +58,7 @@ import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
 
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
-    private int ticksUntilHeal = 400;
+
     private final URDragonPart wingLeft = new URDragonPart(this);
     private final URDragonPart wingRight = new URDragonPart(this);
     private final URDragonPart neck = new URDragonPart(this);
@@ -82,6 +82,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         rotationSpeedAir = 4;
         verticalSpeed = 0.4f;
         regenFromFood = 4;
+        ticksUntilHeal = 200;
     }
 
     @Override
@@ -243,11 +244,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             }
             if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) shoot();
         }
-
-        if (ticksUntilHeal <= 0){
-            heal(1);
-            ticksUntilHeal = 400;
-        } else ticksUntilHeal--;
 
         updateChildParts();
     }
