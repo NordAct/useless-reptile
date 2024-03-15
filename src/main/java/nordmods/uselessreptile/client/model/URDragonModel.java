@@ -20,60 +20,127 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
     }
 
     @Override
-    public Identifier getAnimationResource(T dragon) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation();
-
-        if (!URClientConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
-            Identifier id = ModelRedirectUtil.getCustomAnimationPath(dragon, dragonID);
-            if (ResourceUtil.doesExist(id)) return id;
+    public Identifier getAnimationResource(T entity) {
+        if (!ResourceUtil.isResourceReloadFinished) {
+            setAnimationLocationCache(entity,null);
+            return getDefaultAnimation();
         }
 
-        Identifier id = ModelRedirectUtil.getVariantAnimationPath(dragon, dragonID);
-        if (ResourceUtil.doesExist(id)) return id;
+        if (getAnimationLocationCache(entity) != null) return getAnimationLocationCache(entity);
 
+        Identifier id;
+        if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
+            id = ModelRedirectUtil.getCustomAnimationPath(entity, getDragonFolder());
+            if (ResourceUtil.doesExist(id)) {
+                setAnimationLocationCache(entity, id);
+                return id;
+            }
+        }
+
+        id = ModelRedirectUtil.getVariantAnimationPath(entity, getDragonFolder());
+        if (ResourceUtil.doesExist(id)) {
+            setAnimationLocationCache(entity, id);
+            return id;
+        }
+
+        setAnimationLocationCache(entity, getDefaultAnimation());
         return getDefaultAnimation();
     }
 
     @Override
-    public Identifier getModelResource(T dragon) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel();
-
-        if (!URClientConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
-            Identifier id = ModelRedirectUtil.getCustomModelPath(dragon, dragonID);
-            if (ResourceUtil.doesExist(id)) return id;
+    public Identifier getModelResource(T entity) {
+        if (!ResourceUtil.isResourceReloadFinished) {
+            setModelLocationCache(entity,null);
+            return getDefaultModel();
         }
 
-        Identifier id = ModelRedirectUtil.getVariantModelPath(dragon, dragonID);
-        if (ResourceUtil.doesExist(id)) return id;
+        if (getModelLocationCache(entity) != null) return getModelLocationCache(entity);
 
+        Identifier id;
+        if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
+            id = ModelRedirectUtil.getCustomModelPath(entity, getDragonFolder());
+            if (ResourceUtil.doesExist(id)) {
+                setModelLocationCache(entity, id);
+                return id;
+            }
+        }
+
+        id = ModelRedirectUtil.getVariantModelPath(entity, getDragonFolder());
+        if (ResourceUtil.doesExist(id)) {
+            setModelLocationCache(entity, id);
+            return id;
+        }
+
+        setModelLocationCache(entity,getDefaultModel());
         return getDefaultModel();
     }
 
     @Override
-    public Identifier getTextureResource(T dragon){
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture();
-
-        if (!URClientConfig.getConfig().disableNamedEntityModels && dragon.getCustomName() != null) {
-            Identifier id = ModelRedirectUtil.getCustomTexturePath(dragon, dragonID);
-            if (ResourceUtil.doesExist(id)) return id;
+    public Identifier getTextureResource(T entity){
+        if (!ResourceUtil.isResourceReloadFinished) {
+            setTextureLocationCache(entity, null);
+            return getDefaultTexture();
         }
 
-        Identifier id = ModelRedirectUtil.getVariantTexturePath(dragon.getVariant(), dragonID);
-        if (ResourceUtil.doesExist(id)) return id;
+        if (getTextureLocationCache(entity) != null) return getTextureLocationCache(entity);
 
+        Identifier id;
+        if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
+            id = ModelRedirectUtil.getCustomTexturePath(entity, getDragonFolder());
+            if (ResourceUtil.doesExist(id)) {
+                setTextureLocationCache(entity, id);
+                return id;
+            }
+        }
+
+        id = ModelRedirectUtil.getVariantTexturePath(entity.getVariant(), getDragonFolder());
+        if (ResourceUtil.doesExist(id)) {
+            setTextureLocationCache(entity, id);
+            return id;
+        }
+
+        setTextureLocationCache(entity, getDefaultTexture());
         return getDefaultTexture();
     }
 
     protected final Identifier getDefaultTexture() {
-        return new Identifier(UselessReptile.MODID, "textures/entity/"+ dragonID + "/" + defaultVariant + ".png");
+        return new Identifier(UselessReptile.MODID, "textures/entity/"+ getDragonFolder() + "/" + defaultVariant + ".png");
     }
 
     protected final Identifier getDefaultAnimation() {
-        return new Identifier(UselessReptile.MODID, "animations/entity/" + dragonID + "/" + dragonID + ".animation.json");
+        return new Identifier(UselessReptile.MODID, "animations/entity/" + getDragonFolder() + "/" + getDragonFolder() + ".animation.json");
     }
 
     protected final Identifier getDefaultModel() {
-        return new Identifier(UselessReptile.MODID, "geo/entity/" + dragonID + "/" + dragonID + ".geo.json");
+        return new Identifier(UselessReptile.MODID, "geo/entity/" + getDragonFolder() + "/" + getDragonFolder() + ".geo.json");
+    }
+
+    public String getDragonFolder() {
+        return dragonID;
+    }
+
+    public Identifier getModelLocationCache(T entity) {
+        return entity.getModelLocationCache();
+    }
+
+    public Identifier getAnimationLocationCache(T entity) {
+        return entity.getAnimationLocationCache();
+    }
+
+    public Identifier getTextureLocationCache(T entity) {
+        return entity.getTextureLocationCache();
+    }
+
+    public void setModelLocationCache(T entity, Identifier state) {
+        entity.setModelLocationCache(state);
+    }
+
+    public void setAnimationLocationCache(T entity, Identifier state) {
+        entity.setAnimationLocationCache(state);
+    }
+
+    public void setTextureLocationCache(T entity, Identifier state) {
+        entity.setTextureLocationCache(state);
     }
 
     @Override

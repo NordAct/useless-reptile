@@ -28,7 +28,7 @@ public final class ModelRedirectUtil {
     public static String getModel(String dragon, String name, boolean viaNameTag) {
        if (dragonModelRedirects.containsKey(dragon) && dragonModelRedirects.get(dragon).containsKey(name)) {
            ModelRedirect modelRedirect = dragonModelRedirects.get(dragon).get(name);
-           return modelRedirect.animation() == null || (!modelRedirect.nameTagAccessible() && viaNameTag) ?
+           return modelRedirect.animation() == null || (!modelRedirect.nametagAccessible() && viaNameTag) ?
                    ".json" : modelRedirect.model();
        }
        else return ".json";
@@ -49,7 +49,7 @@ public final class ModelRedirectUtil {
     public static String getAnimation(String dragon, String name, boolean viaNameTag) {
         if (dragonModelRedirects.containsKey(dragon) && dragonModelRedirects.get(dragon).containsKey(name)) {
             ModelRedirect modelRedirect = dragonModelRedirects.get(dragon).get(name);
-            return modelRedirect.animation() == null || (!modelRedirect.nameTagAccessible() && viaNameTag) ?
+            return modelRedirect.animation() == null || (!modelRedirect.nametagAccessible() && viaNameTag) ?
                     ".json" : modelRedirect.animation();
         }
         else return ".json";
@@ -59,13 +59,34 @@ public final class ModelRedirectUtil {
         String name = ResourceUtil.parseName(dragon);
         if (dragonModelRedirects.containsKey(id) && dragonModelRedirects.get(id).containsKey(name)) {
             ModelRedirect modelRedirect = dragonModelRedirects.get(id).get(name);
-            if (!modelRedirect.nameTagAccessible()) name = "";
+            if (!modelRedirect.nametagAccessible()) name = "";
         }
         return new Identifier(UselessReptile.MODID, "textures/entity/"+ id + "/" + name +".png");
     }
 
     public static Identifier getVariantTexturePath(String variant, String id) {
         return new Identifier(UselessReptile.MODID, "textures/entity/"+ id + "/" + variant + ".png");
+    }
+
+    public static Identifier getCustomSaddlePath(URDragonEntity dragon, String dragonID) {
+        String saddle = ModelRedirectUtil.getSaddle(dragonID, (dragon).getVariant(), true);
+        return new Identifier(UselessReptile.MODID,
+                "textures/entity/" + dragonID + "/" + saddle);
+    }
+
+    public static Identifier getVariantSaddlePath(URDragonEntity dragon, String dragonID) {
+        String saddle = ModelRedirectUtil.getSaddle(dragonID, (dragon).getVariant(), false);
+        return new Identifier(UselessReptile.MODID,
+                "textures/entity/" + dragonID + "/" + saddle);
+    }
+
+    public static String getSaddle(String dragon, String name, boolean viaNameTag) {
+        if (dragonModelRedirects.containsKey(dragon) && dragonModelRedirects.get(dragon).containsKey(name)) {
+            ModelRedirect modelRedirect = dragonModelRedirects.get(dragon).get(name);
+            return modelRedirect.saddle() == null || (!modelRedirect.nametagAccessible() && viaNameTag) ?
+                    ".png" : modelRedirect.saddle();
+        }
+        else return ".png";
     }
 
     public static synchronized void add(String dragon, Map<String, ModelRedirect> redirects) {

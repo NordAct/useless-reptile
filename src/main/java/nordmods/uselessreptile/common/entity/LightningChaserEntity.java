@@ -137,8 +137,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<LightningChaserEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
-        AnimationController<LightningChaserEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
+        AnimationController<LightningChaserEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::main);
+        AnimationController<LightningChaserEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turn);
         AnimationController<LightningChaserEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<LightningChaserEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
         main.setSoundKeyframeHandler(this::soundListenerMain);
@@ -402,7 +402,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         Vec3d rot = getRotationVector();
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreathEntity firstSegment = null;
-        float progress = rotationProgress / transitionTicks;
+        float progress = rotationProgress / TRANSITION_TICKS;
 
         for (int i = 1; i <= LightningBreathEntity.MAX_LENGTH; i++) {
             LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(getWorld(), this);
@@ -444,7 +444,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     public void triggerShockwave() {
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
-        shockwaveDelay = transitionTicks;
+        shockwaveDelay = TRANSITION_TICKS;
     }
 
     //todo
@@ -553,8 +553,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         Vector3f tail2Pos;
         Vector3f tail3Pos;
 
-        float yawOffset = rotationProgress / transitionTicks;
-        float pitchOffset = tiltProgress / transitionTicks;
+        float yawOffset = rotationProgress / TRANSITION_TICKS;
+        float pitchOffset = tiltProgress / TRANSITION_TICKS;
 
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {

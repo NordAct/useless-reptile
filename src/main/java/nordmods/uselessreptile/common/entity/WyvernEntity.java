@@ -114,8 +114,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<WyvernEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
-        AnimationController<WyvernEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
+        AnimationController<WyvernEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::main);
+        AnimationController<WyvernEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turn);
         AnimationController<WyvernEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<WyvernEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
         main.setSoundKeyframeHandler(this::soundListenerMain);
@@ -303,7 +303,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     public void shoot() {
         if (getWorld().isClient()) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        float progress = rotationProgress / transitionTicks;
+        float progress = rotationProgress / TRANSITION_TICKS;
         float yaw = 0;
         boolean check = isFlying() && isMoving() && !isMovingBackwards();
         if (canBeControlledByRider()) {
@@ -395,8 +395,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         Vector3f tail2Pos;
         Vector3f tail3Pos;
 
-        float yawOffset = rotationProgress / transitionTicks;
-        float pitchOffset = tiltProgress / transitionTicks;
+        float yawOffset = rotationProgress / TRANSITION_TICKS;
+        float pitchOffset = tiltProgress / TRANSITION_TICKS;
 
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {

@@ -245,10 +245,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     private void updateTiltProgress() {
         switch (getTiltState()) {
             case 1 -> {
-                if (tiltProgress < transitionTicks) tiltProgress++;
+                if (tiltProgress < TRANSITION_TICKS) tiltProgress++;
             }
             case 2 -> {
-                if (tiltProgress > -transitionTicks) tiltProgress--;
+                if (tiltProgress > -TRANSITION_TICKS) tiltProgress--;
             }
             default -> {
                 if (tiltProgress != 0) {

@@ -46,9 +46,10 @@ public class ModelRedirectLoader {
 
                                 String model = input.has("model") ? input.get("model").getAsString() : null;
                                 String animation = input.has("animation") ? input.get("animation").getAsString() : null;
+                                String saddle = input.has("saddle") ? input.get("saddle").getAsString() : null;
                                 boolean nameTagAccessible = input.has("nametag_accessible") ? input.get("nametag_accessible").getAsBoolean() : true;
 
-                                if (!map.containsKey(name)) map.put(name, new ModelRedirect(model, animation, nameTagAccessible));
+                                if (!map.containsKey(name)) map.put(name, new ModelRedirect(model, animation, saddle    , nameTagAccessible));
                             }
                         } catch (JsonIOException e) {
                             UselessReptile.LOGGER.error("Failed to read json " + id, e);

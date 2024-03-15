@@ -138,8 +138,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<MoleclawEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
-        AnimationController<MoleclawEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
+        AnimationController<MoleclawEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::main);
+        AnimationController<MoleclawEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turn);
         AnimationController<MoleclawEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<MoleclawEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
         main.setSoundKeyframeHandler(this::soundListenerMain);
@@ -206,7 +206,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         if (canBeControlledByRider()) {
             if (attackDelay > 0) {
                 attackDelay++;
-                if (attackDelay > transitionTicks + 1) {
+                if (attackDelay > TRANSITION_TICKS + 1) {
                     if (isPrimaryAttack()) strongAttack();
                     if (isSecondaryAttack()) meleeAttack();
                     attackDelay = 0;

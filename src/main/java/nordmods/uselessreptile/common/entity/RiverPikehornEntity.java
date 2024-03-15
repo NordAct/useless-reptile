@@ -88,8 +88,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<RiverPikehornEntity> main = new AnimationController<>(this, "main", transitionTicks, this::main);
-        AnimationController<RiverPikehornEntity> turn = new AnimationController<>(this, "turn", transitionTicks, this::turn);
+        AnimationController<RiverPikehornEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::main);
+        AnimationController<RiverPikehornEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turn);
         AnimationController<RiverPikehornEntity> attack = new AnimationController<>(this, "attack", 0, this::attack);
         AnimationController<RiverPikehornEntity> eye = new AnimationController<>(this, "eye", 0, this::eye);
         main.setSoundKeyframeHandler(this::soundListenerMain);
