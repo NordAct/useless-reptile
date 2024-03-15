@@ -18,6 +18,7 @@ public class URMobAttributesConfig {
 
     @SerialEntry(comment = "GLOBAL MULTIPLIERS")
     public float dragonDamageMultiplier = 1;
+    @SerialEntry
     public float dragonKnockbackMultiplier = 1;
     @SerialEntry
     public float dragonHealthMultiplier = 1;
