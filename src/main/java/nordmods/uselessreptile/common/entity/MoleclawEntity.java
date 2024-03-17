@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity;
 
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
+import net.fabricmc.fabric.api.mininglevel.v1.MiningLevelManager;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
@@ -14,6 +15,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.TameableEntity;
@@ -22,7 +24,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -61,7 +62,6 @@ import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.core.object.PlayState;
 
 import java.util.List;
-import java.util.function.Predicate;
 
 public class MoleclawEntity extends URRideableDragonEntity {
     public int attackDelay = 0;
@@ -84,19 +84,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
         ticksUntilHeal = 400;
     }
 
-    @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
-        setPersistent();
-        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
-    }
-
-    public static boolean canMoleclawSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        if (world.getChunk(pos).getInhabitedTime() > 3000) return false;
-        if (pos.getY() < -2) return false;
-        if (world.getLightLevel(LightType.SKY, pos) > 4) return false;
-        Box box =  new Box(pos.getX() - 16, pos.getY() - 16, pos.getZ() - 16,pos.getX() + 16, pos.getY() + 16, pos.getZ() + 16);
-        if (!world.getEntitiesByClass(MoleclawEntity.class, box, Predicate.not(TameableEntity::isTamed)).isEmpty()) return false;
-        return canMobSpawn(type, world, spawnReason, pos, random) && world.getBlockState(pos.down()).isIn(URTags.ALLOWS_MOLECLAW_SPAWN);
+    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        if (!(world instanceof ServerWorldAccess serverWorldAccess)) return false;
+        if (world.getChunk(pos).getInhabitedTime() > 12000) return false;
+        if (!HostileEntity.isSpawnDark(serverWorldAccess, pos, random)) return false;
+        return world.getBlockState(pos.down()).isIn(URTags.MOLECLAW_SPAWNABLE_ON);
     }
 
     @Override
@@ -338,13 +330,13 @@ public class MoleclawEntity extends URRideableDragonEntity {
             PlayerEntity rider = canBeControlledByRider() ? (PlayerEntity) getControllingPassenger() : null;
             GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
             if (blockState.isIn(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) continue;
-            float hardness = blockState.getHardness(getWorld(), blockPos);
-            float bonus = 1;
-            if (hasStatusEffect(StatusEffects.STRENGTH))
-                bonus += (getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1) * 0.1;
-            if (hasStatusEffect(StatusEffects.WEAKNESS))
-                bonus -= (getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1) * 0.1;
-            if (!blockState.isAir() && hardness >= 0 && hardness < 3 * bonus) {
+
+            float miningLevel = MiningLevelManager.getRequiredMiningLevel(blockState);
+            float maxMiningLevel = 0;
+            if (hasStatusEffect(StatusEffects.STRENGTH)) maxMiningLevel += getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1;
+            if (hasStatusEffect(StatusEffects.WEAKNESS)) maxMiningLevel -= getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1;
+
+            if (!blockState.isAir() && miningLevel <= maxMiningLevel) {
                 boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
                 getWorld().breakBlock(blockPos, shouldDrop, this);
             }
@@ -442,6 +434,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
     @Override
     protected SoundEvent getAmbientSound() {
         return URSounds.MOLECLAW_AMBIENT;
+    }
+
+    @Override
+    public float getPathfindingFavor(BlockPos pos, WorldView world) {
+        return -world.getPhototaxisFavor(pos);
     }
 
     private void playPanicSound() {

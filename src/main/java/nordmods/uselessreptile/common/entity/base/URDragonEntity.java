@@ -39,10 +39,7 @@ import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
-import net.minecraft.world.EntityView;
-import net.minecraft.world.LocalDifficulty;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.World;
+import net.minecraft.world.*;
 import net.minecraft.world.event.EntityPositionSource;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
@@ -245,6 +242,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         entityData = new PassiveData(false);
         setTamingProgress(baseTamingProgress);
         DragonVariantUtil.assignVariant(world, this);
+
+        addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 10000));
+
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 
@@ -520,6 +520,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         }
     }
 
+    @Override
+    public boolean canImmediatelyDespawn(double distanceSquared) {
+        return !this.isTamed() && this.age > 2400;
+    }
+
     protected boolean isOwnerOrCreative(PlayerEntity player) {return isOwner(player) || player.isCreative();}
 
     protected void updateArmorBonus(int armorBonus) {
@@ -680,6 +685,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     protected int getTicksUntilHeal() {
         return ticksUntilHeal;
+    }
+
+    //I give no fuck how this happened to be so important for spawning
+    @Override
+    public float getPathfindingFavor(BlockPos pos, WorldView world) {
+        return 0;
     }
 
     @Environment(EnvType.CLIENT)

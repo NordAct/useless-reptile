@@ -25,6 +25,9 @@
     ],
     "modmenu": [
       "nordmods.uselessreptile.integration.ModMenuIntegration"
+    ],
+    "preLaunch": [
+      "nordmods.uselessreptile.UselessReptile"
     ]
   },
   "mixins": [

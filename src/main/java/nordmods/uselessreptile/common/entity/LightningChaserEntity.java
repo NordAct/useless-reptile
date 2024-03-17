@@ -13,6 +13,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -30,9 +31,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.LocalDifficulty;
 import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
@@ -44,6 +47,7 @@ import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
@@ -112,6 +116,11 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
         if (spawnReason == SpawnReason.EVENT) isChallenger = true;
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+    }
+
+    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        BlockPos blockPos = pos.down();
+        return spawnReason == SpawnReason.SPAWNER || world.getBlockState(blockPos).isIn(URTags.LIGHTNING_CHASER_SPAWNABLE_ON);
     }
 
     @Nullable
@@ -495,9 +504,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         if ((hasSurrendered() || player.isCreative() && isTamingItem(itemStack)) && !isTamed()) {
             setOwner(player);
+            setPersistent();
             setSurrendered(false);
             getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
-            setPersistent();
             return ActionResult.SUCCESS;
         }
 

@@ -41,6 +41,8 @@ dependencies {
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
     modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
+
+    modImplementation("maven.modrinth:carpet:1.4.128")
 }
 
 processResources {

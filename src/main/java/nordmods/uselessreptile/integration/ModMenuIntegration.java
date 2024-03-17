@@ -12,10 +12,16 @@ import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.registry.Registries;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Language;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
+import nordmods.uselessreptile.common.util.URSpawnGroup;
 
 @Environment(EnvType.CLIENT)
 public class ModMenuIntegration implements ModMenuApi {
@@ -37,6 +43,21 @@ public class ModMenuIntegration implements ModMenuApi {
     private static Text key(String id) {
         return Text.translatable("config.uselessreptile." + id);
     }
+    private static Text requiresRestart() {
+        return Text.translatable("config.uselessreptile.requires_restart.@Tooltip").formatted(Formatting.RED);
+    }
+
+    private static Text spawnGroupTooltip(SpawnGroup spawnGroup) {
+        String entries = "";
+        Language language = Language.getInstance();
+        for (EntityType<?> entityType : Registries.ENTITY_TYPE.stream().filter(entityType -> entityType.getSpawnGroup() == spawnGroup).toList()) {
+            String entry = language.get(entityType.getTranslationKey());
+            entries = entries.concat(entry).concat(", ");
+        }
+        entries = entries.substring(0, entries.length() - 2);
+
+        return Text.translatable("config.uselessreptile.option.spawnGroupCapacity.@Tooltip", entries);
+    }
 
     private static void saveAll() {
         URClientConfig.CONFIG.save();
@@ -56,6 +77,10 @@ public class ModMenuIntegration implements ModMenuApi {
                 .name(key("group.spawnWeight"))
                 .description(OptionDescription.createBuilder()
                         .text(key("group.spawnWeight.@Tooltip")).build());
+        OptionGroup.Builder spawnGroupsGroup = OptionGroup.createBuilder()
+                .name(key("group.spawnGroups"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("group.spawnGroups.@Tooltip")).build());
         OptionGroup.Builder groupSizeGroup = OptionGroup.createBuilder()
                 .name(key("group.groupSize"))
                 .description(OptionDescription.createBuilder()
@@ -69,7 +94,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> wyvernSpawnWeight = Option.<Integer>createBuilder()
                 .name(key("option.wyvernSpawnWeight"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonSpawnWeight.@Tooltip")).build())
+                        .text(key("option.dragonSpawnWeight.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernSpawnWeight,
                         () -> config.wyvernSpawnWeight,
                         val -> config.wyvernSpawnWeight = val)
@@ -79,7 +104,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> moleclawSpawnWeight = Option.<Integer>createBuilder()
                 .name(key("option.moleclawSpawnWeight"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonSpawnWeight.@Tooltip")).build())
+                        .text(key("option.dragonSpawnWeight.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawSpawnWeight,
                         () -> config.moleclawSpawnWeight,
                         val -> config.moleclawSpawnWeight = val)
@@ -89,7 +114,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> pikehornSpawnWeight = Option.<Integer>createBuilder()
                 .name(key("option.pikehornSpawnWeight"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonSpawnWeight.@Tooltip")).build())
+                        .text(key("option.dragonSpawnWeight.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornSpawnWeight,
                         () -> config.pikehornSpawnWeight,
                         val -> config.pikehornSpawnWeight = val)
@@ -98,7 +123,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> lightningChaserSpawnWeight = Option.<Integer>createBuilder()
                 .name(key("option.lightningChaserSpawnWeight"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonSpawnWeight.@Tooltip")).build())
+                        .text(key("option.dragonSpawnWeight.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserSpawnWeight,
                         () -> config.lightningChaserSpawnWeight,
                         val -> config.lightningChaserSpawnWeight = val)
@@ -114,10 +139,38 @@ public class ModMenuIntegration implements ModMenuApi {
                 .customController(opt -> new IntegerSliderController(opt, 0, 100, 1))
                 .build();
 
+        Option<Integer> dragonSpawnGroupCapacity = Option.<Integer>createBuilder()
+                .name(key("option.dragonSpawnGroupCapacity"))
+                .description(OptionDescription.createBuilder()
+                        .text(spawnGroupTooltip(URSpawnGroup.DRAGON.spawnGroup), requiresRestart()).build())
+                .binding(defaults.dragonSpawnGroupCapacity,
+                        () -> config.dragonSpawnGroupCapacity,
+                        val -> config.dragonSpawnGroupCapacity = val)
+                .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
+                .build();
+        Option<Integer> smallDragonSpawnGroupCapacity = Option.<Integer>createBuilder()
+                .name(key("option.smallDragonSpawnGroupCapacity"))
+                .description(OptionDescription.createBuilder()
+                        .text(spawnGroupTooltip(URSpawnGroup.SMALL_DRAGON.spawnGroup), requiresRestart()).build())
+                .binding(defaults.smallDragonSpawnGroupCapacity,
+                        () -> config.smallDragonSpawnGroupCapacity,
+                        val -> config.smallDragonSpawnGroupCapacity = val)
+                .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
+                .build();
+        Option<Integer> undergroundDragonSpawnGroupCapacity = Option.<Integer>createBuilder()
+                .name(key("option.undergroundDragonSpawnGroupCapacity"))
+                .description(OptionDescription.createBuilder()
+                        .text(spawnGroupTooltip(URSpawnGroup.UNDERGROUND_DRAGON.spawnGroup), requiresRestart()).build())
+                .binding(defaults.undergroundDragonSpawnGroupCapacity,
+                        () -> config.undergroundDragonSpawnGroupCapacity,
+                        val -> config.undergroundDragonSpawnGroupCapacity = val)
+                .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
+                .build();
+
         Option<Integer> wyvernMinGroupSize = Option.<Integer>createBuilder()
                 .name(key("option.wyvernMinGroupSize"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMinGroupSize.@Tooltip")).build())
+                        .text(key("option.dragonMinGroupSize.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernMinGroupSize,
                         () -> config.wyvernMinGroupSize,
                         val -> config.wyvernMinGroupSize = val)
@@ -126,7 +179,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> wyvernMaxGroupSize = Option.<Integer>createBuilder()
                 .name(key("option.wyvernMaxGroupSize"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMaxGroupSize.@Tooltip")).build())
+                        .text(key("option.dragonMaxGroupSize.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernMaxGroupSize,
                         () -> config.wyvernMaxGroupSize,
                         val -> config.wyvernMaxGroupSize = val)
@@ -135,7 +188,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> moleclawMinGroupSize = Option.<Integer>createBuilder()
                 .name(key("option.moleclawMinGroupSize"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMinGroupSize.@Tooltip")).build())
+                        .text(key("option.dragonMinGroupSize.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawMinGroupSize,
                         () -> config.moleclawMinGroupSize,
                         val -> config.moleclawMinGroupSize = val)
@@ -144,7 +197,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> moleclawMaxGroupSize = Option.<Integer>createBuilder()
                 .name(key("option.moleclawMaxGroupSize"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMaxGroupSize.@Tooltip")).build())
+                        .text(key("option.dragonMaxGroupSize.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawMaxGroupSize,
                         () -> config.moleclawMaxGroupSize,
                         val -> config.moleclawMaxGroupSize = val)
@@ -153,7 +206,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> pikehornMinGroupSize = Option.<Integer>createBuilder()
                 .name(key("option.pikehornMinGroupSize"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMinGroupSize.@Tooltip")).build())
+                        .text(key("option.dragonMinGroupSize.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornMinGroupSize,
                         () -> config.pikehornMinGroupSize,
                         val -> config.pikehornMinGroupSize = val)
@@ -162,7 +215,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> pikehornMaxGroupSize = Option.<Integer>createBuilder()
                 .name(key("option.pikehornMaxGroupSize"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMaxGroupSize.@Tooltip")).build())
+                        .text(key("option.dragonMaxGroupSize.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornMaxGroupSize,
                         () -> config.pikehornMaxGroupSize,
                         val -> config.pikehornMaxGroupSize = val)
@@ -171,7 +224,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> lightningChaserMinGroupSize = Option.<Integer>createBuilder()
                 .name(key("option.lightningChaserMinGroupSize"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMinGroupSize.@Tooltip")).build())
+                        .text(key("option.dragonMinGroupSize.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserMinGroupSize,
                         () -> config.lightningChaserMinGroupSize,
                         val -> config.lightningChaserMinGroupSize = val)
@@ -180,7 +233,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Integer> lightningChaserMaxGroupSize = Option.<Integer>createBuilder()
                 .name(key("option.lightningChaserMaxGroupSize"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMaxGroupSize.@Tooltip")).build())
+                        .text(key("option.dragonMaxGroupSize.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserMaxGroupSize,
                         () -> config.lightningChaserMaxGroupSize,
                         val -> config.lightningChaserMaxGroupSize = val)
@@ -212,6 +265,10 @@ public class ModMenuIntegration implements ModMenuApi {
         spawnWeightGroup.option(lightningChaserSpawnWeight);
         spawnWeightGroup.option(lightningChaserThunderstormSpawnChance);
 
+        spawnGroupsGroup.option(dragonSpawnGroupCapacity);
+        spawnGroupsGroup.option(undergroundDragonSpawnGroupCapacity);
+        spawnGroupsGroup.option(smallDragonSpawnGroupCapacity);
+
         groupSizeGroup.option(wyvernMinGroupSize);
         groupSizeGroup.option(wyvernMaxGroupSize);
         groupSizeGroup.option(moleclawMinGroupSize);
@@ -225,6 +282,7 @@ public class ModMenuIntegration implements ModMenuApi {
         dragonBehaviourGroup.option(blockDropChance);
 
         gameplayCategory.group(spawnWeightGroup.build());
+        gameplayCategory.group(spawnGroupsGroup.build());
         gameplayCategory.group(groupSizeGroup.build());
         gameplayCategory.group(dragonBehaviourGroup.build());
 
@@ -360,7 +418,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> dragonDamageMultiplier = Option.<Float>createBuilder()
                 .name(key("option.dragonDamageMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonDamageMultiplier.@Tooltip")).build())
+                        .text(key("option.dragonDamageMultiplier.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.dragonDamageMultiplier,
                         () -> config.dragonDamageMultiplier,
                         val -> config.dragonDamageMultiplier = val)
@@ -370,7 +428,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> dragonKnockbackMultiplier = Option.<Float>createBuilder()
                 .name(key("option.dragonKnockbackMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonKnockbackMultiplier.@Tooltip")).build())
+                        .text(key("option.dragonKnockbackMultiplier.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.dragonKnockbackMultiplier,
                         () -> config.dragonKnockbackMultiplier,
                         val -> config.dragonKnockbackMultiplier = val)
@@ -380,7 +438,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> dragonHealthMultiplier = Option.<Float>createBuilder()
                 .name(key("option.dragonHealthMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonHealthMultiplier.@Tooltip")).build())
+                        .text(key("option.dragonHealthMultiplier.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.dragonHealthMultiplier,
                         () -> config.dragonHealthMultiplier,
                         val -> config.dragonHealthMultiplier = val)
@@ -390,7 +448,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> dragonArmorMultiplier = Option.<Float>createBuilder()
                 .name(key("option.dragonArmorMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmorMultiplier.@Tooltip")).build())
+                        .text(key("option.dragonArmorMultiplier.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.dragonArmorMultiplier,
                         () -> config.dragonArmorMultiplier,
                         val -> config.dragonArmorMultiplier = val)
@@ -400,7 +458,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> dragonArmorToughnessMultiplier = Option.<Float>createBuilder()
                 .name(key("option.dragonArmorToughnessMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmorToughnessMultiplier.@Tooltip")).build())
+                        .text(key("option.dragonArmorToughnessMultiplier.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.dragonArmorToughnessMultiplier,
                         () -> config.dragonArmorToughnessMultiplier,
                         val -> config.dragonArmorToughnessMultiplier = val)
@@ -410,7 +468,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> dragonGroundSpeedMultiplier = Option.<Float>createBuilder()
                 .name(key("option.dragonGroundSpeedMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonGroundSpeedMultiplier.@Tooltip")).build())
+                        .text(key("option.dragonGroundSpeedMultiplier.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.dragonGroundSpeedMultiplier,
                         () -> config.dragonGroundSpeedMultiplier,
                         val -> config.dragonGroundSpeedMultiplier = val)
@@ -420,7 +478,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> dragonFlyingSpeedMultiplier = Option.<Float>createBuilder()
                 .name(key("option.dragonFlyingSpeedMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonFlyingSpeedMultiplier.@Tooltip")).build())
+                        .text(key("option.dragonFlyingSpeedMultiplier.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.dragonFlyingSpeedMultiplier,
                         () -> config.dragonFlyingSpeedMultiplier,
                         val -> config.dragonFlyingSpeedMultiplier = val)
@@ -453,7 +511,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> wyvernDamage = Option.<Float>createBuilder()
                 .name(key("option.dragonDamage"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonDamage.@Tooltip")).build())
+                        .text(key("option.dragonDamage.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernDamage,
                         () -> config.wyvernDamage,
                         val -> config.wyvernDamage = val)
@@ -462,7 +520,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> wyvernKnockback = Option.<Float>createBuilder()
                 .name(key("option.dragonKnockback"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonKnockback.@Tooltip")).build())
+                        .text(key("option.dragonKnockback.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernKnockback,
                         () -> config.wyvernKnockback,
                         val -> config.wyvernKnockback = val)
@@ -471,7 +529,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> wyvernHealth = Option.<Float>createBuilder()
                 .name(key("option.dragonHealth"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonHealth.@Tooltip")).build())
+                        .text(key("option.dragonHealth.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernHealth,
                         () -> config.wyvernHealth,
                         val -> config.wyvernHealth = val)
@@ -480,7 +538,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> wyvernArmor = Option.<Float>createBuilder()
                 .name(key("option.dragonArmor"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmor.@Tooltip")).build())
+                        .text(key("option.dragonArmor.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernArmor,
                         () -> config.wyvernArmor,
                         val -> config.wyvernArmor = val)
@@ -489,7 +547,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> wyvernArmorToughness = Option.<Float>createBuilder()
                 .name(key("option.dragonArmorToughness"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmorToughness.@Tooltip")).build())
+                        .text(key("option.dragonArmorToughness.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernArmorToughness,
                         () -> config.wyvernArmorToughness,
                         val -> config.wyvernArmorToughness = val)
@@ -498,7 +556,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> wyvernGroundSpeed = Option.<Float>createBuilder()
                 .name(key("option.dragonGroundSpeed"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonGroundSpeed.@Tooltip")).build())
+                        .text(key("option.dragonGroundSpeed.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernGroundSpeed,
                         () -> config.wyvernGroundSpeed,
                         val -> config.wyvernGroundSpeed = val)
@@ -507,7 +565,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> wyvernFlyingSpeed = Option.<Float>createBuilder()
                 .name(key("option.dragonFlyingSpeed"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonFlyingSpeed.@Tooltip")).build())
+                        .text(key("option.dragonFlyingSpeed.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.wyvernFlyingSpeed,
                         () -> config.wyvernFlyingSpeed,
                         val -> config.wyvernFlyingSpeed = val)
@@ -533,7 +591,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> moleclawDamage = Option.<Float>createBuilder()
                 .name(key("option.dragonDamage"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonDamage.@Tooltip")).build())
+                        .text(key("option.dragonDamage.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawDamage,
                         () -> config.moleclawDamage,
                         val -> config.moleclawDamage = val)
@@ -542,7 +600,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> moleclawKnockback = Option.<Float>createBuilder()
                 .name(key("option.dragonKnockback"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonKnockback.@Tooltip")).build())
+                        .text(key("option.dragonKnockback.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawKnockback,
                         () -> config.moleclawKnockback,
                         val -> config.moleclawKnockback = val)
@@ -551,7 +609,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> moleclawHealth = Option.<Float>createBuilder()
                 .name(key("option.dragonHealth"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonHealth.@Tooltip")).build())
+                        .text(key("option.dragonHealth.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawHealth,
                         () -> config.moleclawHealth,
                         val -> config.moleclawHealth = val)
@@ -560,7 +618,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> moleclawArmor = Option.<Float>createBuilder()
                 .name(key("option.dragonArmor"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmor.@Tooltip")).build())
+                        .text(key("option.dragonArmor.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawArmor,
                         () -> config.moleclawArmor,
                         val -> config.moleclawArmor = val)
@@ -569,7 +627,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> moleclawArmorToughness = Option.<Float>createBuilder()
                 .name(key("option.dragonArmorToughness"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmorToughness.@Tooltip")).build())
+                        .text(key("option.dragonArmorToughness.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawArmorToughness,
                         () -> config.moleclawArmorToughness,
                         val -> config.moleclawArmorToughness = val)
@@ -578,7 +636,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> moleclawGroundSpeed = Option.<Float>createBuilder()
                 .name(key("option.dragonGroundSpeed"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonGroundSpeed.@Tooltip")).build())
+                        .text(key("option.dragonGroundSpeed.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.moleclawGroundSpeed,
                         () -> config.moleclawGroundSpeed,
                         val -> config.moleclawGroundSpeed = val)
@@ -603,7 +661,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> pikehornDamage = Option.<Float>createBuilder()
                 .name(key("option.dragonDamage"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonDamage.@Tooltip")).build())
+                        .text(key("option.dragonDamage.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornDamage,
                         () -> config.pikehornDamage,
                         val -> config.pikehornDamage = val)
@@ -612,7 +670,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> pikehornKnockback = Option.<Float>createBuilder()
                 .name(key("option.dragonKnockback"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonKnockback.@Tooltip")).build())
+                        .text(key("option.dragonKnockback.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornKnockback,
                         () -> config.pikehornKnockback,
                         val -> config.pikehornKnockback = val)
@@ -621,7 +679,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> pikehornHealth = Option.<Float>createBuilder()
                 .name(key("option.dragonHealth"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonHealth.@Tooltip")).build())
+                        .text(key("option.dragonHealth.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornHealth,
                         () -> config.pikehornHealth,
                         val -> config.pikehornHealth = val)
@@ -630,7 +688,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> pikehornArmor = Option.<Float>createBuilder()
                 .name(key("option.dragonArmor"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmor.@Tooltip")).build())
+                        .text(key("option.dragonArmor.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornArmor,
                         () -> config.pikehornArmor,
                         val -> config.pikehornArmor = val)
@@ -639,7 +697,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> pikehornArmorToughness = Option.<Float>createBuilder()
                 .name(key("option.dragonArmorToughness"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmorToughness.@Tooltip")).build())
+                        .text(key("option.dragonArmorToughness.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornArmorToughness,
                         () -> config.pikehornArmorToughness,
                         val -> config.pikehornArmorToughness = val)
@@ -648,7 +706,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> pikehornGroundSpeed = Option.<Float>createBuilder()
                 .name(key("option.dragonGroundSpeed"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonGroundSpeed.@Tooltip")).build())
+                        .text(key("option.dragonGroundSpeed.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornGroundSpeed,
                         () -> config.pikehornGroundSpeed,
                         val -> config.pikehornGroundSpeed = val)
@@ -657,7 +715,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> pikehornFlyingSpeed = Option.<Float>createBuilder()
                 .name(key("option.dragonFlyingSpeed"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonFlyingSpeed.@Tooltip")).build())
+                        .text(key("option.dragonFlyingSpeed.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.pikehornFlyingSpeed,
                         () -> config.pikehornFlyingSpeed,
                         val -> config.pikehornFlyingSpeed = val)
@@ -683,7 +741,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> lightningChaserDamage = Option.<Float>createBuilder()
                 .name(key("option.dragonDamage"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonDamage.@Tooltip")).build())
+                        .text(key("option.dragonDamage.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserDamage,
                         () -> config.lightningChaserDamage,
                         val -> config.lightningChaserDamage = val)
@@ -692,7 +750,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> lightningChaserKnockback = Option.<Float>createBuilder()
                 .name(key("option.dragonKnockback"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonKnockback.@Tooltip")).build())
+                        .text(key("option.dragonKnockback.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserKnockback,
                         () -> config.lightningChaserKnockback,
                         val -> config.lightningChaserKnockback = val)
@@ -701,7 +759,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> lightningChaserHealth = Option.<Float>createBuilder()
                 .name(key("option.dragonHealth"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonHealth.@Tooltip")).build())
+                        .text(key("option.dragonHealth.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserHealth,
                         () -> config.lightningChaserHealth,
                         val -> config.lightningChaserHealth = val)
@@ -710,7 +768,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> lightningChaserArmor = Option.<Float>createBuilder()
                 .name(key("option.dragonArmor"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmor.@Tooltip")).build())
+                        .text(key("option.dragonArmor.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserArmor,
                         () -> config.lightningChaserArmor,
                         val -> config.lightningChaserArmor = val)
@@ -719,7 +777,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> lightningChaserArmorToughness = Option.<Float>createBuilder()
                 .name(key("option.dragonArmorToughness"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonArmorToughness.@Tooltip")).build())
+                        .text(key("option.dragonArmorToughness.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserArmorToughness,
                         () -> config.lightningChaserArmorToughness,
                         val -> config.lightningChaserArmorToughness = val)
@@ -728,7 +786,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> lightningChaserGroundSpeed = Option.<Float>createBuilder()
                 .name(key("option.dragonGroundSpeed"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonGroundSpeed.@Tooltip")).build())
+                        .text(key("option.dragonGroundSpeed.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserGroundSpeed,
                         () -> config.lightningChaserGroundSpeed,
                         val -> config.lightningChaserGroundSpeed = val)
@@ -737,7 +795,7 @@ public class ModMenuIntegration implements ModMenuApi {
         Option<Float> lightningChaserFlyingSpeed = Option.<Float>createBuilder()
                 .name(key("option.dragonFlyingSpeed"))
                 .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonFlyingSpeed.@Tooltip")).build())
+                        .text(key("option.dragonFlyingSpeed.@Tooltip"), requiresRestart()).build())
                 .binding(defaults.lightningChaserFlyingSpeed,
                         () -> config.lightningChaserFlyingSpeed,
                         val -> config.lightningChaserFlyingSpeed = val)

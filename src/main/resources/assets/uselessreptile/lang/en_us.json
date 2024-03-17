@@ -87,6 +87,7 @@
     "config.uselessreptile.group.moleclawAttributes" : "Moleclaw Attributes",
     "config.uselessreptile.group.pikehornAttributes" : "River Pikehorn Attributes",
     "config.uselessreptile.group.lightningChaserAttributes" : "Lightning Chaser Attributes",
+    "config.uselessreptile.group.spawnGroups" : "Spawn Groups",
 
     "config.uselessreptile.option.wyvernSpawnWeight": "Swamp Wyvern Spawn Weight",
     "config.uselessreptile.option.moleclawSpawnWeight": "Moleclaw Spawn Weight",
@@ -126,14 +127,19 @@
     "config.uselessreptile.option.dragonArmorToughnessMultiplier": "Dragon Armor Toughness Multiplier",
     "config.uselessreptile.option.dragonGroundSpeedMultiplier": "Dragon Ground Speed Multiplier",
     "config.uselessreptile.option.dragonFlyingSpeedMultiplier": "Dragon Flying Speed Multiplier",
+    "config.uselessreptile.option.dragonSpawnGroupCapacity": "Dragon Spawn Group Capacity",
+    "config.uselessreptile.option.smallDragonSpawnGroupCapacity": "Small Dragon Spawn Group Capacity",
+    "config.uselessreptile.option.undergroundDragonSpawnGroupCapacity": "Underground Dragon Spawn Group Capacity",
 
-    "config.uselessreptile.group.spawnWeight.@Tooltip" : "Spawn weights for each dragon. Each option allows you to control frequency of appearing of specific dragon. \nChanging any of those values requires game restart",
+    "config.uselessreptile.requires_restart.@Tooltip" : "\nChanging this option requires game restart",
+    "config.uselessreptile.group.spawnWeight.@Tooltip" : "Spawn weights for each dragon. Each option allows you to control frequency of appearing of specific dragon",
+    "config.uselessreptile.group.spawnGroups.@Tooltip" : "Capacities of spawn groups added by this mod",
     "config.uselessreptile.group.dragonBehaviour.@Tooltip" : "Options for changing behavior of dragons in game",
     "config.uselessreptile.group.camera.@Tooltip" : "Settings for camera when you riding the dragon",
     "config.uselessreptile.group.dragonAppearance.@Tooltip" : "Options to change how dragons look",
-    "config.uselessreptile.group.groupSize.@Tooltip" : "Defines in group sizes of dragons when they spawn naturally. Minimal group size always must be equal or less than maximum one. \nChanging any of those values requires game restart",
+    "config.uselessreptile.group.groupSize.@Tooltip" : "Defines in group sizes of dragons when they spawn naturally. Minimal group size always must be equal or less than maximum one.",
     "config.uselessreptile.group.globalMultipliers.@Tooltip" : "Multipliers for specific base attribute of ALL dragons",
-    "config.uselessreptile.group.dragonAttributes.@Tooltip" : "Base dragon attributes. Note that in vanilla game attribute values are limited by certain range (this can be changed by other mods): \n§6Damage: §c[0;2048] \n§6Knockback: §c[0;5] \n§6Health: §c[1;1024] \n§6Armor: §c[0;30] \n§6Armor toughness: [0;20] \n§6Ground and flying speed: §c[0;1024]",
+    "config.uselessreptile.group.dragonAttributes.@Tooltip" : "Base dragon attributes. Note that in vanilla game attribute values are limited by certain range (this can be changed by other mods): \n§6Damage: §c[0;2048] \n§6Knockback: §c[0;5] \n§6Health: §c[1;1024] \n§6Armor: §c[0;30] \n§6Armor toughness: §c[0;20] \n§6Ground and flying speed: §c[0;1024]",
 
     "config.uselessreptile.option.dragonSpawnWeight.@Tooltip": "Responsible for how often this dragon spawn in the world.\nSetting this to 0 will disable spawning \n§cValues lower than 0 may cause crash",
     "config.uselessreptile.option.blockDropChance.@Tooltip": "Defines percentage of blocks that will be dropped after some of block-breaking dragon attacks",
@@ -161,6 +167,7 @@
     "config.uselessreptile.option.dragonArmorToughnessMultiplier.@Tooltip": "Multiplies base armor toughness of all dragons",
     "config.uselessreptile.option.dragonGroundSpeedMultiplier.@Tooltip": "Multiplies base ground speed of all dragons",
     "config.uselessreptile.option.dragonFlyingSpeedMultiplier.@Tooltip": "Multiplies base flying speed of all dragons",
+    "config.uselessreptile.option.spawnGroupCapacity.@Tooltip": "Maximum capacity of this group. \nGroup includes following entities: %s",
 
     "effect.uselessreptile.acid": "Acid",
 

@@ -9,6 +9,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -23,15 +24,19 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.items.FluteItem;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 import org.jetbrains.annotations.Nullable;
@@ -165,6 +170,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     @Override
     protected SoundEvent getDeathSound() {
         return URSounds.PIKEHORN_DEATH;
+    }
+
+    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        BlockPos blockPos = pos.down();
+        return spawnReason == SpawnReason.SPAWNER || world.getBlockState(blockPos).isIn(URTags.PIKEHORN_SPAWNABLE_ON);
     }
 
     @Override

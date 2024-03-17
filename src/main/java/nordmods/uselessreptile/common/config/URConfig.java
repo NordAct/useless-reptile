@@ -18,15 +18,21 @@ public class URConfig {
 
     //COMMON
     @SerialEntry(comment = "SPAWN WEIGHT AND CHANCES")
-    public int wyvernSpawnWeight = 3;
+    public int wyvernSpawnWeight = 1;
     @SerialEntry
-    public int moleclawSpawnWeight = 500;
+    public int moleclawSpawnWeight = 1;
     @SerialEntry
     public int pikehornSpawnWeight = 1;
     @SerialEntry
     public int lightningChaserSpawnWeight = 0;
     @SerialEntry(comment = "Defines a chance of Lightning Chaser spawning near player during thunderstorms each 30 seconds")
     public int lightningChaserThunderstormSpawnChance = 10;
+    @SerialEntry(comment = "SPAWN GROUP CAPACITIES")
+    public int dragonSpawnGroupCapacity = 2;
+    @SerialEntry
+    public int smallDragonSpawnGroupCapacity = 12;
+    @SerialEntry
+    public int undergroundDragonSpawnGroupCapacity = 6;
     @SerialEntry(comment = "GROUP SIZES")
     public int wyvernMinGroupSize = 1;
     @SerialEntry
@@ -36,9 +42,9 @@ public class URConfig {
     @SerialEntry
     public int moleclawMaxGroupSize = 1;
     @SerialEntry
-    public int pikehornMinGroupSize = 2;
+    public int pikehornMinGroupSize = 1;
     @SerialEntry
-    public int pikehornMaxGroupSize = 6;
+    public int pikehornMaxGroupSize = 3;
     @SerialEntry
     public int lightningChaserMinGroupSize = 1;
     @SerialEntry
