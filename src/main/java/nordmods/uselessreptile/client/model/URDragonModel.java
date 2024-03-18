@@ -10,8 +10,8 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 
 public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedEntityGeoModel<T> {
-    public final String dragonID;
-    public final String defaultVariant;
+    private final String dragonID;
+    private final String defaultVariant;
 
     protected URDragonModel(String dragon, String defaultVariant) {
         super(new Identifier(UselessReptile.MODID, dragon + "/" + dragon));
@@ -30,14 +30,14 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
 
         Identifier id;
         if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
-            id = ModelRedirectUtil.getCustomAnimationPath(entity, getDragonFolder());
+            id = ModelRedirectUtil.getCustomAnimationPath(entity, getDragonID());
             if (ResourceUtil.doesExist(id)) {
                 setAnimationLocationCache(entity, id);
                 return id;
             }
         }
 
-        id = ModelRedirectUtil.getVariantAnimationPath(entity, getDragonFolder());
+        id = ModelRedirectUtil.getVariantAnimationPath(entity, getDragonID());
         if (ResourceUtil.doesExist(id)) {
             setAnimationLocationCache(entity, id);
             return id;
@@ -58,14 +58,14 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
 
         Identifier id;
         if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
-            id = ModelRedirectUtil.getCustomModelPath(entity, getDragonFolder());
+            id = ModelRedirectUtil.getCustomModelPath(entity, getDragonID());
             if (ResourceUtil.doesExist(id)) {
                 setModelLocationCache(entity, id);
                 return id;
             }
         }
 
-        id = ModelRedirectUtil.getVariantModelPath(entity, getDragonFolder());
+        id = ModelRedirectUtil.getVariantModelPath(entity, getDragonID());
         if (ResourceUtil.doesExist(id)) {
             setModelLocationCache(entity, id);
             return id;
@@ -86,14 +86,14 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
 
         Identifier id;
         if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
-            id = ModelRedirectUtil.getCustomTexturePath(entity, getDragonFolder());
+            id = ModelRedirectUtil.getCustomTexturePath(entity, getDragonID());
             if (ResourceUtil.doesExist(id)) {
                 setTextureLocationCache(entity, id);
                 return id;
             }
         }
 
-        id = ModelRedirectUtil.getVariantTexturePath(entity.getVariant(), getDragonFolder());
+        id = ModelRedirectUtil.getVariantTexturePath(entity.getVariant(), getDragonID());
         if (ResourceUtil.doesExist(id)) {
             setTextureLocationCache(entity, id);
             return id;
@@ -104,18 +104,18 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
     }
 
     protected final Identifier getDefaultTexture() {
-        return new Identifier(UselessReptile.MODID, "textures/entity/"+ getDragonFolder() + "/" + defaultVariant + ".png");
+        return new Identifier(UselessReptile.MODID, "textures/entity/"+ getDragonID() + "/" + defaultVariant + ".png");
     }
 
     protected final Identifier getDefaultAnimation() {
-        return new Identifier(UselessReptile.MODID, "animations/entity/" + getDragonFolder() + "/" + getDragonFolder() + ".animation.json");
+        return new Identifier(UselessReptile.MODID, "animations/entity/" + getDragonID() + "/" + getDragonID() + ".animation.json");
     }
 
     protected final Identifier getDefaultModel() {
-        return new Identifier(UselessReptile.MODID, "geo/entity/" + getDragonFolder() + "/" + getDragonFolder() + ".geo.json");
+        return new Identifier(UselessReptile.MODID, "geo/entity/" + getDragonID() + "/" + getDragonID() + ".geo.json");
     }
 
-    public String getDragonFolder() {
+    public String getDragonID() {
         return dragonID;
     }
 

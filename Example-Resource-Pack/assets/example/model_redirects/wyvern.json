@@ -12,12 +12,14 @@
 		{
 			"name": "barren_orange",
 			"model": "barren.geo.json",
-			"animation": "barren.animation.json"
+			"animation": "barren.animation.json",
+			"saddle": "saddle_barren.png"
 		},
 		{
 			"name": "barren_brown",
 			"model": "barren.geo.json",
 			"animation": "barren.animation.json",
+			"saddle": "saddle_barren.png",
 			"nametag_accessible": false
 		}
 	]

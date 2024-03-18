@@ -15,7 +15,6 @@ import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.model_redirect.ModelRedirectUtil;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -43,7 +42,7 @@ public class DragonSaddleLayer <T extends URRideableDragonEntity> extends GeoRen
 
         Identifier id;
         if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
-            id = ModelRedirectUtil.getCustomSaddlePath(entity, entity.getDragonID());
+            id = ModelRedirectUtil.getCustomSaddleTexturePath(entity, entity.getDragonID());
             if (ResourceUtil.doesExist(id)) {
                 entity.setSaddleTextureLocationCache(id);
                 renderSaddle(id, matrixStackIn, bufferSource, packedLight, entity, partialTick);
@@ -51,7 +50,7 @@ public class DragonSaddleLayer <T extends URRideableDragonEntity> extends GeoRen
             }
         }
 
-        id = ModelRedirectUtil.getVariantSaddlePath(entity, entity.getDragonID());
+        id = ModelRedirectUtil.getVariantSaddleTexturePath(entity, entity.getDragonID());
         if (ResourceUtil.doesExist(id)) {
             entity.setSaddleTextureLocationCache(id);
             renderSaddle(id, matrixStackIn, bufferSource, packedLight, entity, partialTick);
@@ -70,7 +69,7 @@ public class DragonSaddleLayer <T extends URRideableDragonEntity> extends GeoRen
     }
 
     private Identifier getDefaultSaddleTexture() {
-        return new Identifier(UselessReptile.MODID, "textures/entity/" + ((URDragonModel<T>)getGeoModel()).dragonID + "/saddle.png");
+        return new Identifier(UselessReptile.MODID, "textures/entity/" + ((URDragonModel<T>)getGeoModel()).getDragonID() + "/saddle.png");
 
     }
 }
