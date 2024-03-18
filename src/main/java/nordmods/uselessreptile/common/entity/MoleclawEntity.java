@@ -85,10 +85,9 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        if (!(world instanceof ServerWorldAccess serverWorldAccess)) return false;
         if (world.getChunk(pos).getInhabitedTime() > 12000) return false;
-        if (!HostileEntity.isSpawnDark(serverWorldAccess, pos, random)) return false;
-        return world.getBlockState(pos.down()).isIn(URTags.MOLECLAW_SPAWNABLE_ON);
+        if (world.getLightLevel(LightType.SKY, pos) > 7 || world.getLightLevel(LightType.BLOCK, pos) > 7) return false;
+        return spawnReason == SpawnReason.SPAWNER || world.getBlockState(pos.down()).isIn(URTags.MOLECLAW_SPAWNABLE_ON);
     }
 
     @Override

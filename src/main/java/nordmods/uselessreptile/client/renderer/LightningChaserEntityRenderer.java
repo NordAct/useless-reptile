@@ -15,7 +15,7 @@ public class LightningChaserEntityRenderer extends URRideableDragonRenderer<Ligh
 
     @Override
     public void updateSaddle(LightningChaserEntity entity) {
-        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).getItem() == Items.SADDLE;
+        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).isOf(Items.SADDLE);
         model.getBone("saddle_front").ifPresent(c -> c.setHidden(!hasSaddle));
         model.getBone("saddle_neck1").ifPresent(c -> c.setHidden(!hasSaddle));
         model.getBone("saddle_tail1").ifPresent(c -> c.setHidden(!hasSaddle));

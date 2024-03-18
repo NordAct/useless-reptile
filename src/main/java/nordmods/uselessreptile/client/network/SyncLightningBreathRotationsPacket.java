@@ -19,6 +19,7 @@ public class SyncLightningBreathRotationsPacket {
             client.execute(() -> {
                 for (int id : entities) {
                     LightningBreathEntity entity = (LightningBreathEntity) client.world.getEntityById(id);
+                    if (entity == null) continue;
                     entity.setPitch(pitch);
                     entity.setYaw(yaw);
                 }

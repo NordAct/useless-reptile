@@ -228,13 +228,14 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void onTrackedDataSet(TrackedData<?> data) {
         super.onTrackedDataSet(data);
-        if (CUSTOM_NAME.equals(data) || VARIANT.equals(data)) {
-            setTextureLocationCache(null);
-            setAnimationLocationCache(null);
-            setModelLocationCache(null);
-            setSaddleTextureLocationCache(null);
-            setGlowLayerLocationCache(null);
-        }
+        if (getWorld().isClient)
+            if (CUSTOM_NAME.equals(data) || VARIANT.equals(data)) {
+                setTextureLocationCache(null);
+                setAnimationLocationCache(null);
+                setModelLocationCache(null);
+                setSaddleTextureLocationCache(null);
+                setGlowLayerLocationCache(null);
+            }
     }
 
     @Override
@@ -242,9 +243,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         entityData = new PassiveData(false);
         setTamingProgress(baseTamingProgress);
         DragonVariantUtil.assignVariant(world, this);
-
-        addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, 10000));
-
         return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
     }
 

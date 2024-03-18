@@ -15,7 +15,7 @@ public class WyvernEntityRenderer extends URRideableDragonRenderer<WyvernEntity>
 
     public void updateSaddle (WyvernEntity entity) {
         boolean hasRider = entity.hasControllingPassenger();
-        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).getItem() == Items.SADDLE;
+        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).isOf(Items.SADDLE);
         model.getBone("spikes_front").ifPresent(c -> c.setHidden(hasSaddle));
         model.getBone("saddle_neck1").ifPresent(c -> c.setHidden(!hasSaddle));
         model.getBone("saddle_neck3").ifPresent(c -> c.setHidden(!hasSaddle));

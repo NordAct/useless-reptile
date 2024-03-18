@@ -14,7 +14,7 @@ public class MoleclawEntityRenderer extends URRideableDragonRenderer<MoleclawEnt
     }
 
     public void updateSaddle (MoleclawEntity entity) {
-        boolean isSaddled = entity.getEquippedStack(EquipmentSlot.FEET).getItem() == Items.SADDLE;
+        boolean isSaddled = entity.getEquippedStack(EquipmentSlot.FEET).isOf(Items.SADDLE);
         model.getBone("saddle_front").ifPresent(c -> c.setHidden(!isSaddled));
         model.getBone("saddle_neck").ifPresent(c -> c.setHidden(!isSaddled));
     }
