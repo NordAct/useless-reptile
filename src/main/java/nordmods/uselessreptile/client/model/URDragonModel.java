@@ -120,27 +120,27 @@ public abstract class URDragonModel<T extends URDragonEntity> extends DefaultedE
     }
 
     public Identifier getModelLocationCache(T entity) {
-        return entity.getModelLocationCache();
+        return entity.getAssetCache().getModelLocationCache();
     }
 
     public Identifier getAnimationLocationCache(T entity) {
-        return entity.getAnimationLocationCache();
+        return entity.getAssetCache().getAnimationLocationCache();
     }
 
     public Identifier getTextureLocationCache(T entity) {
-        return entity.getTextureLocationCache();
+        return entity.getAssetCache().getTextureLocationCache();
     }
 
     public void setModelLocationCache(T entity, Identifier state) {
-        entity.setModelLocationCache(state);
+        entity.getAssetCache().setModelLocationCache(state);
     }
 
     public void setAnimationLocationCache(T entity, Identifier state) {
-        entity.setAnimationLocationCache(state);
+        entity.getAssetCache().setAnimationLocationCache(state);
     }
 
     public void setTextureLocationCache(T entity, Identifier state) {
-        entity.setTextureLocationCache(state);
+        entity.getAssetCache().setTextureLocationCache(state);
     }
 
     @Override

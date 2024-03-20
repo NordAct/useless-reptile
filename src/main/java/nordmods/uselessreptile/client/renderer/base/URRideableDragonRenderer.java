@@ -1,11 +1,13 @@
 package nordmods.uselessreptile.client.renderer.base;
 
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
-import nordmods.uselessreptile.client.renderer.layers.DragonSaddleLayer;
 import nordmods.uselessreptile.client.renderer.layers.DragonPassengerLayer;
+import nordmods.uselessreptile.client.renderer.layers.DragonSaddleLayer;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 
 public abstract class URRideableDragonRenderer<T extends URRideableDragonEntity> extends URDragonRenderer<T> {
@@ -18,10 +20,10 @@ public abstract class URRideableDragonRenderer<T extends URRideableDragonEntity>
     }
 
     @Override
-    public void render(T animatable, float entityYaw, float partialTick, MatrixStack poseStack, VertexConsumerProvider bufferSource,
-                       int packedLight) {
+    public void preRender(MatrixStack poseStack, T animatable, BakedGeoModel model, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
+                          float alpha) {
         updateSaddle(animatable);
-        super.render(animatable, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
     }
 
     public abstract void updateSaddle(T entity);

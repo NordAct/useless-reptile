@@ -2,7 +2,6 @@ package nordmods.uselessreptile.client.network;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.network.AttackTypeSyncS2CPacket;
 
 public class AttackTypeSyncPacket {

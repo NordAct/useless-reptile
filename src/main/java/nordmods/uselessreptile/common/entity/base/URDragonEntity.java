@@ -34,7 +34,6 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.shape.VoxelShape;
@@ -45,6 +44,7 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
+import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.pathfinding.DragonNavigation;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
@@ -91,13 +91,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     private static final UUID DRAGON_ARMOR_BONUS_ID = UUID.fromString("c9e68951-e06e-4f5d-8aeb-cf3a09c2638e");
     protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
 
-    //I wish I knew a better way of doing split source for such stuff
     //asset location caching so mod doesn't have to make stupid amount of string operations and map references each frame
-    @Environment(EnvType.CLIENT) private Identifier modelLocationCache;
-    @Environment(EnvType.CLIENT) private Identifier textureLocationCache;
-    @Environment(EnvType.CLIENT) private Identifier animationLocationCache;
-    @Environment(EnvType.CLIENT) private Identifier saddleTextureLocationCache;
-    @Environment(EnvType.CLIENT) private Identifier glowLayerLocationCache;
+    @Environment(EnvType.CLIENT) private final AssetCache assetCache = new AssetCache();
 
     protected URDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -229,13 +224,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public void onTrackedDataSet(TrackedData<?> data) {
         super.onTrackedDataSet(data);
         if (getWorld().isClient)
-            if (CUSTOM_NAME.equals(data) || VARIANT.equals(data)) {
-                setTextureLocationCache(null);
-                setAnimationLocationCache(null);
-                setModelLocationCache(null);
-                setSaddleTextureLocationCache(null);
-                setGlowLayerLocationCache(null);
-            }
+            if (CUSTOM_NAME.equals(data) || VARIANT.equals(data)) assetCache.cleanCache();
     }
 
     @Override
@@ -692,52 +681,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Environment(EnvType.CLIENT)
-    public Identifier getModelLocationCache() {
-        return modelLocationCache;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public Identifier getAnimationLocationCache() {
-        return animationLocationCache;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public Identifier getTextureLocationCache() {
-        return textureLocationCache;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public Identifier getSaddleTextureLocationCache() {
-        return saddleTextureLocationCache;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public Identifier getGlowLayerLocationCache() {
-        return glowLayerLocationCache;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void setModelLocationCache(Identifier state) {
-        modelLocationCache = state;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void setAnimationLocationCache(Identifier state) {
-        animationLocationCache = state;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void setTextureLocationCache(Identifier state) {
-        textureLocationCache = state;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void setSaddleTextureLocationCache(Identifier state) {
-        saddleTextureLocationCache = state;
-    }
-
-    @Environment(EnvType.CLIENT)
-    public void setGlowLayerLocationCache(Identifier state) {
-        glowLayerLocationCache = state;
+    public AssetCache getAssetCache() {
+        return assetCache;
     }
 }

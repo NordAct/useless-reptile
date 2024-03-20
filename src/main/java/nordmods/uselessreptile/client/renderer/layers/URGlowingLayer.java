@@ -21,7 +21,7 @@ public class URGlowingLayer <T extends URDragonEntity> extends GeoRenderLayer<T>
         if (URClientConfig.getConfig().disableEmissiveTextures) return;
 
         if (!ResourceUtil.isResourceReloadFinished) {
-            entity.setGlowLayerLocationCache(null);
+            entity.getAssetCache().setGlowLayerLocationCache(null);
             return;
         }
 
@@ -35,12 +35,12 @@ public class URGlowingLayer <T extends URDragonEntity> extends GeoRenderLayer<T>
     }
 
     private Identifier getGlowingMask(T entity) {
-        if (entity.getGlowLayerLocationCache() != null) return entity.getGlowLayerLocationCache();
+        if (entity.getAssetCache().getGlowLayerLocationCache() != null) return entity.getAssetCache().getGlowLayerLocationCache();
 
         String namespace = getTextureResource(entity).getNamespace();
         String path = getTextureResource(entity).getPath().replace(".png", "_glowing.png");
         Identifier id = new Identifier(namespace, path);
-        entity.setGlowLayerLocationCache(id);
+        entity.getAssetCache().setGlowLayerLocationCache(id);
 
         return id;
     }

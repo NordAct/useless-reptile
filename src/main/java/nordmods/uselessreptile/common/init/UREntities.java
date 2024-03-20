@@ -12,6 +12,7 @@ import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.*;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
+import nordmods.uselessreptile.common.entity.special.RenderOnlyEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.util.URSpawnGroup;
@@ -33,6 +34,9 @@ public class UREntities {
             register("shockwave_sphere", getBuilder(SpawnGroup.MISC, ShockwaveSphereEntity::new, 1, 1, true, true));
     public static final EntityType<LightningBreathEntity> LIGHTNING_BREATH_ENTITY =
             register("lightning_breath", getBuilder(SpawnGroup.MISC, LightningBreathEntity::new, 1f, 1f, false, true));
+
+    public static final EntityType<RenderOnlyEntity> RENDER_ONLY_ENTITY =
+            register("render_only", getBuilder(SpawnGroup.MISC, RenderOnlyEntity::new, 0, 0));
 
 
     public static void init(){

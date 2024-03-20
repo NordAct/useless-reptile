@@ -10,6 +10,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.util.LightningChaserSpawnTimer;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -20,6 +21,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
         super(entityType, world);
     }
 
+    @Unique
     private static final TrackedData<Integer> LIGHTNING_CHASER_SPAWN_COOLDOWN = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
     @Inject(method = "initDataTracker", at = @At("TAIL"))
