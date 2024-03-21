@@ -14,20 +14,17 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class EquipmentDefaultModelDataReloadListener extends JsonDataLoader implements IdentifiableResourceReloadListener {
-    //dragon id, list<equipment model data>
-    public static final Map<String, List<EquipmentModelData>> equipmentDefaultModelDataHolder = new HashMap<>();
-    public EquipmentDefaultModelDataReloadListener() {
-        super(new GsonBuilder().create(), "equipment_default_model_data");
+public class EquipmentModelDataReloadListener extends JsonDataLoader implements IdentifiableResourceReloadListener {
+    public EquipmentModelDataReloadListener() {
+        super(new GsonBuilder().create(), "dragon_model_data/equipment_model_data");
     }
 
     @Override
     protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
-        equipmentDefaultModelDataHolder.clear();
+        EquipmentModelData.equipmentModelDataHolder.clear();
         for (Map.Entry<Identifier, JsonElement> entry : prepared.entrySet()) {
             JsonArray array = entry.getValue().getAsJsonArray();
             for (JsonElement elem : array) add(entry.getKey().getPath(), EquipmentModelData.deserialize(elem));
@@ -37,22 +34,22 @@ public class EquipmentDefaultModelDataReloadListener extends JsonDataLoader impl
 
     @Override
     public Identifier getFabricId() {
-        return new Identifier(UselessReptile.MODID, "equipment_default_model_data");
+        return new Identifier(UselessReptile.MODID, "dragon_model_data/equipment_model_data");
     }
 
     private void add(String dragon, EquipmentModelData equipmentModelData) {
-        List<EquipmentModelData> content = equipmentDefaultModelDataHolder.get(dragon);
+        List<EquipmentModelData> content = EquipmentModelData.equipmentModelDataHolder.get(dragon);
         if (content != null) {
-            if (content.stream().noneMatch(c -> c.item() == equipmentModelData.item())) content.add(equipmentModelData);
+            if (content.stream().noneMatch(c -> c.item().equals(equipmentModelData.item()))) content.add(equipmentModelData);
         } else {
             content = new ArrayList<>();
             content.add(equipmentModelData);
-            equipmentDefaultModelDataHolder.put(dragon, content);
+            EquipmentModelData.equipmentModelDataHolder.put(dragon, content);
         }
     }
 
     public void debugPrint() {
-        for (Map.Entry<String, List<EquipmentModelData>> entry : equipmentDefaultModelDataHolder.entrySet()) {
+        for (Map.Entry<String, List<EquipmentModelData>> entry : EquipmentModelData.equipmentModelDataHolder.entrySet()) {
             for (EquipmentModelData data : entry.getValue()) {
                 UselessReptile.LOGGER.error("{}: {}", entry.getKey(), data);
             }
@@ -60,6 +57,6 @@ public class EquipmentDefaultModelDataReloadListener extends JsonDataLoader impl
     }
 
     public static void init () {
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new EquipmentDefaultModelDataReloadListener());
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new EquipmentModelDataReloadListener());
     }
 }

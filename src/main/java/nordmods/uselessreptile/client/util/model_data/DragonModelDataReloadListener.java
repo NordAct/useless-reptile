@@ -16,17 +16,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DragonModelDataReloadListener extends JsonDataLoader implements IdentifiableResourceReloadListener {
-    //dragon id, map<variant, dragon model data>
-    public static final Map<String, Map<String, DragonModelData>> dragonModelDataHolder = new HashMap<>();
     public DragonModelDataReloadListener() {
         super(new GsonBuilder().create(), "dragon_model_data");
     }
 
     @Override
     protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
-        dragonModelDataHolder.clear();
+        DragonModelData.dragonModelDataHolder.clear();
         for (Map.Entry<Identifier, JsonElement> entry : prepared.entrySet()) {
             String path = entry.getKey().getPath();
+            if (path.contains("equipment_model_data")) continue;
+
             String dragon = path.substring(0, path.indexOf("/"));
             String variant = path.substring(path.indexOf("/") + 1);
             JsonElement element = entry.getValue();
@@ -42,18 +42,18 @@ public class DragonModelDataReloadListener extends JsonDataLoader implements Ide
     }
 
     private void add(String dragon, String variant, DragonModelData modelData) {
-        Map<String, DragonModelData> content = dragonModelDataHolder.get(dragon);
+        Map<String, DragonModelData> content = DragonModelData.dragonModelDataHolder.get(dragon);
         if (content != null) {
             if (!content.containsKey(variant)) content.put(variant, modelData);
         } else {
             content = new HashMap<>();
             content.put(variant, modelData);
-            dragonModelDataHolder.put(dragon, content);
+            DragonModelData.dragonModelDataHolder.put(dragon, content);
         }
     }
 
     public void debugPrint() {
-        for (Map.Entry<String, Map<String, DragonModelData>> entry : dragonModelDataHolder.entrySet()) {
+        for (Map.Entry<String, Map<String, DragonModelData>> entry : DragonModelData.dragonModelDataHolder.entrySet()) {
             for ( Map.Entry<String, DragonModelData> data : entry.getValue().entrySet()) {
                 UselessReptile.LOGGER.error("{}: {}, {}", entry.getKey(), data.getKey(), data.getValue());
             }

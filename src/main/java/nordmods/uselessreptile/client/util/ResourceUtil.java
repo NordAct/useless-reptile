@@ -21,7 +21,7 @@ public class ResourceUtil {
     }
 
     public static boolean doesExist(Identifier id) {
-        return MinecraftClient.getInstance().getResourceManager().getResource(id).isPresent();
+        return  id != null && MinecraftClient.getInstance().getResourceManager().getResource(id).isPresent();
     }
 
     private static final Map<String, String> letters = new HashMap<>();

@@ -91,9 +91,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     private static final UUID DRAGON_ARMOR_BONUS_ID = UUID.fromString("c9e68951-e06e-4f5d-8aeb-cf3a09c2638e");
     protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
 
-    //asset location caching so mod doesn't have to make stupid amount of string operations and map references each frame
-    @Environment(EnvType.CLIENT) private final AssetCache assetCache = new AssetCache();
-
     protected URDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         navigation = new DragonNavigation(this, world);
@@ -680,6 +677,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return 0;
     }
 
+    //asset location caching so mod doesn't have to make stupid amount of string operations and map references each frame
+    @Environment(EnvType.CLIENT) private final AssetCache assetCache = new AssetCache();
     @Environment(EnvType.CLIENT)
     public AssetCache getAssetCache() {
         return assetCache;
