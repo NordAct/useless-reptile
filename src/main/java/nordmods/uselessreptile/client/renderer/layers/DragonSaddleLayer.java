@@ -1,21 +1,16 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
-import net.minecraft.util.math.RotationAxis;
+import nordmods.uselessreptile.client.model.special.DragonSaddleModel;
 import nordmods.uselessreptile.common.entity.WyvernEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import nordmods.uselessreptile.common.entity.special.RenderOnlyEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.model.CoreBakedGeoModel;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -24,36 +19,56 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import java.util.Map;
 
 public class DragonSaddleLayer <T extends URRideableDragonEntity> extends GeoRenderLayer<T> {
+    private final Map<String, CoreGeoBone> saddleBones = new Object2ObjectOpenHashMap<>();
+    private DragonSaddleModel<T> saddleModel;
+    private BakedGeoModel bakedSaddleModel;
 
     public DragonSaddleLayer(GeoRenderer<T> entityRendererIn) {
         super(entityRendererIn);
     }
 
     @Override
+    public void preRender(MatrixStack poseStack, T entity, BakedGeoModel bakedModel, RenderLayer renderType,
+                          VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick,
+                          int packedLight, int packedOverlay) {
+        saddleModel = new DragonSaddleModel<>(entity);
+        bakedSaddleModel = saddleModel.getBakedModel(saddleModel.getModelResource(entity));
+        getSaddleBones(bakedSaddleModel);
+    }
+
+    @Override
     public void render(MatrixStack matrixStackIn, T entity, BakedGeoModel bakedModel, RenderLayer renderType,
                        VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick,
                        int packedLight, int packedOverlay) {
-        if (!(entity instanceof WyvernEntity)) return;
-        matrixStackIn.push();
-        renderSaddle(matrixStackIn, bufferSource, packedLight, entity, partialTick);
-        buffer = bufferSource.getBuffer(renderType);
-        matrixStackIn.pop();
+        if (bakedSaddleModel != null) {
+            getGeoModel().getAnimationProcessor().getRegisteredBones().forEach(bone -> {
+                GeoBone saddleBone = (GeoBone) saddleBones.get(bone.getName());
+                if (saddleBone != null) {
+                    saddleBone.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
+                    saddleBone.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
+                    saddleBone.updatePosition(bone.getPosX(), bone.getPosY(), bone.getPosZ());
+                }
+            });
+            RenderLayer cameo = RenderLayer.getEntityCutout(saddleModel.getTextureResource(entity));
+            getRenderer().reRender(bakedSaddleModel, matrixStackIn, bufferSource, entity, cameo,
+                    bufferSource.getBuffer(cameo), partialTick, packedLight, OverlayTexture.DEFAULT_UV,
+                    1, 1, 1, 1);
+        }
     }
 
-    private void renderSaddle(MatrixStack matrixStackIn, VertexConsumerProvider bufferSource, int packedLightIn, T entity, float partialTick) {
-        ClientWorld world = MinecraftClient.getInstance().world;
-        RenderOnlyEntity<URRideableDragonEntity> saddle = new RenderOnlyEntity<>(world);
-        saddle.owner = entity;
+    @Override
+    public void renderForBone(MatrixStack matrixStackIn, T entity, GeoBone bone, RenderLayer renderType,
+                              VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 
-        EntityRenderDispatcher manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        EntityRenderer<? super RenderOnlyEntity<URRideableDragonEntity>> render = manager.getRenderer(saddle);
-        matrixStackIn.push();
-        try {
-            render.render(saddle, 0, partialTick, matrixStackIn, bufferSource, packedLightIn);
-        } catch (Throwable throwable1) {
-            throw new CrashException(CrashReport.create(throwable1, "Rendering entity in world"));
-        }
-        matrixStackIn.pop();
-        saddle.discard();
+    }
+
+    private void addChildren(CoreGeoBone bone) {
+        saddleBones.put(bone.getName(), bone);
+        for (CoreGeoBone child : bone.getChildBones()) addChildren(child);
+    }
+
+    private void getSaddleBones(CoreBakedGeoModel model) {
+        saddleBones.clear();
+        for (CoreGeoBone bone : model.getBones()) addChildren(bone);
     }
 }
