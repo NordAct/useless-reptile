@@ -49,10 +49,6 @@ public class AssetCache {
         return getEquipmentModelData(id);
     }
 
-    public void clearEquipmentModelData() {
-        equipmentModelData.clear();
-    }
-
     public void cleanCache() {
         setDragonModelData(null);
         getEquipmentModelData().clear();

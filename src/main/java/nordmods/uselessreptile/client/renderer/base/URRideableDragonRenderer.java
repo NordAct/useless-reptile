@@ -6,7 +6,6 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import nordmods.uselessreptile.client.renderer.layers.DragonPassengerLayer;
 import nordmods.uselessreptile.client.renderer.layers.equipment.DragonSaddleLayer;
-import nordmods.uselessreptile.client.renderer.layers.equipment.URDragonEquipmentLayer;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
