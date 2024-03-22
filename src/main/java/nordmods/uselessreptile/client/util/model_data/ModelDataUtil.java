@@ -46,7 +46,6 @@ public class ModelDataUtil {
         return getDragonModelData(dragon, false);
     }
 
-    //todo кэш не сбрасывается
     @Nullable
     public static EquipmentModelData getEquipmentModelData(URDragonEntity dragon, Item item) {
         if (!ResourceUtil.isResourceReloadFinished) {

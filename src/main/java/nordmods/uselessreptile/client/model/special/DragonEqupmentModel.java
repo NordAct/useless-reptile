@@ -34,7 +34,6 @@ public class DragonEqupmentModel<T extends URDragonEntity> extends GeoModel<T> {
     public Identifier getTextureResource(T entity){
         if (!ResourceUtil.isResourceReloadFinished) return null;
 
-
         EquipmentModelData data = ModelDataUtil.getEquipmentModelData(owner, item);
         if (data != null && ResourceUtil.doesExist(data.modelData().texture())) return data.modelData().texture();
 

@@ -41,7 +41,7 @@ public class AssetCache {
     }
 
     public EquipmentModelData getEquipmentModelData(Identifier item) {
-        return equipmentModelData.stream().filter(c -> c.item().equals(item)).findFirst().orElse(null);
+        return equipmentModelData.stream().filter(c -> c.item().equals(item)).findAny().orElse(null);
     }
 
     public EquipmentModelData getEquipmentModelData(Item item) {
