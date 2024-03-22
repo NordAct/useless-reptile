@@ -1,0 +1,8 @@
+{
+  "model_data" : {
+    "texture": "uselessreptile:textures/entity/moleclaw/brown.png",
+    "model": "uselessreptile:geo/entity/moleclaw/moleclaw.geo.json",
+    "animation": "uselessreptile:animations/entity/moleclaw/moleclaw.animation.json"
+  },
+  "nametag_accessible": false
+}

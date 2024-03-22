@@ -1,0 +1,72 @@
+[
+  {
+    "item": "minecraft:saddle",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/saddle.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/saddle.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_chestplate_diamond",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/chestplate.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_helmet_diamond",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/helmet.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_tail_armor_diamond",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/tail_armor.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_chestplate_gold",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/chestplate.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_helmet_gold",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/helmet.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_tail_armor_gold",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/tail_armor.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_chestplate_iron",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/chestplate.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_helmet_iron",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/helmet.geo.json"
+    }
+  },
+  {
+    "item": "uselessreptile:dragon_tail_armor_iron",
+    "model_data": {
+      "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png",
+      "model": "uselessreptile:geo/entity/lightning_chaser/tail_armor.geo.json"
+    }
+  }
+]

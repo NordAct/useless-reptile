@@ -8,8 +8,6 @@ import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.model_data.ModelDataUtil;
 import nordmods.uselessreptile.client.util.model_data.base.DragonModelData;
-import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
-import nordmods.uselessreptile.client.util.model_data.base.ModelData;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.model.GeoModel;
 

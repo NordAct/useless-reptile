@@ -5,7 +5,6 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,8 +71,8 @@ public class AssetCache {
         return equipmentModelData;
     }
 
-    public List<EquipmentModelData> setEquipmentModelData(List<EquipmentModelData> state) {
-        return equipmentModelData;
+    public void setEquipmentModelData(List<EquipmentModelData> state) {
+        equipmentModelData = state;
     }
 
     public void addEquipmentModelData(EquipmentModelData data) {
@@ -96,11 +95,12 @@ public class AssetCache {
     }
 
     public void cleanCache() {
-        setGlowLayerLocationCache(null);
-        setModelLocationCache(null);
-        setAnimationLocationCache(null);
-        setTextureLocationCache(null);
-        setEquipmentModelData(null);
-        setNametagModel(false);
+        modelLocationCache = null;
+        textureLocationCache = null;
+        animationLocationCache = null;
+        glowLayerLocationCache = null;
+        equipmentModelData = null;
+        renderTypeCache = null;
+        nametagModel = false;
     }
 }

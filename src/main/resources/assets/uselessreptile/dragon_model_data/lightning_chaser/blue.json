@@ -1,0 +1,8 @@
+{
+  "model_data" : {
+    "texture": "uselessreptile:textures/entity/lightning_chaser/blue.png",
+    "model": "uselessreptile:geo/entity/lightning_chaser/lightning_chaser.geo.json",
+    "animation": "uselessreptile:animations/entity/lightning_chaser/lightning_chaser.animation.json"
+  },
+  "nametag_accessible": false
+}
