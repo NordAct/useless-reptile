@@ -75,11 +75,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
         navigation = new MoleclawNavigation(this, world);
 
         pitchLimitGround = 50;
-        rotationSpeedGround = 6;
-        basePrimaryAttackCooldown = 60;
-        baseSecondaryAttackCooldown = 30;
+        rotationSpeedGround = attributes().moleclawRotationSpeedGround;
+        basePrimaryAttackCooldown = attributes().moleclawBasePrimaryAttackCooldown;
+        baseSecondaryAttackCooldown = attributes().moleclawBaseSecondaryAttackCooldown;
         baseTamingProgress = 64;
-        regenFromFood = 2;
+        regenerationFromFood = attributes().moleclawRegenerationFromFood;
         ticksUntilHeal = 400;
     }
 
@@ -117,12 +117,12 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     public static DefaultAttributeContainer.Builder createMoleclawAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, getAttributeConfig().moleclawDamage * getAttributeConfig().dragonDamageMultiplier)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, getAttributeConfig().moleclawKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, getAttributeConfig().moleclawHealth * getAttributeConfig().dragonHealthMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR, getAttributeConfig().moleclawArmor * getAttributeConfig().dragonArmorMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, getAttributeConfig().moleclawArmorToughness * getAttributeConfig().dragonArmorToughnessMultiplier)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, getAttributeConfig().moleclawGroundSpeed * getAttributeConfig().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().moleclawDamage * attributes().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().moleclawKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().moleclawHealth * attributes().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, attributes().moleclawArmor * attributes().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().moleclawArmorToughness * attributes().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().moleclawGroundSpeed * attributes().dragonGroundSpeedMultiplier)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
 
     }
@@ -280,9 +280,9 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
         if (isTamingItem(itemStack) && !isTamed()) {
             eat(player, hand, itemStack);
-            if (random.nextInt(3) == 0) setTamingProgress((byte) (getTamingProgress() - 2));
-            else setTamingProgress((byte) (getTamingProgress() - 1));
-            if (player.isCreative()) setTamingProgress((byte) 0);
+            if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
+            else setTamingProgress(getTamingProgress() - 1);
+            if (player.isCreative()) setTamingProgress(0);
             if (getTamingProgress() <= 0) {
                 setOwner(player);
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
@@ -449,7 +449,13 @@ public class MoleclawEntity extends URRideableDragonEntity {
         } else panicSoundDelay = 2;
     }
 
+    @Override
     public boolean isFavoriteFood(ItemStack itemStack){
         return itemStack.isOf(Items.BEETROOT);
+    }
+
+    @Override
+    public int getLimitPerChunk() {
+        return URConfig.getConfig().moleclawMaxGroupSize * 2;
     }
 }

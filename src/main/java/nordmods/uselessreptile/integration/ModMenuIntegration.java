@@ -571,14 +571,84 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.wyvernFlyingSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
+        Option<Integer> wyvernBaseSecondaryAttackCooldown = Option.<Integer>createBuilder()
+                .name(key("option.dragonBaseSecondaryAttackCooldown"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.wyvernBaseSecondaryAttackCooldown.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.wyvernBaseSecondaryAttackCooldown,
+                        () -> config.wyvernBaseSecondaryAttackCooldown,
+                        val -> config.wyvernBaseSecondaryAttackCooldown = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> wyvernBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
+                .name(key("option.dragonBasePrimaryAttackCooldown"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.wyvernBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.wyvernBasePrimaryAttackCooldown,
+                        () -> config.wyvernBasePrimaryAttackCooldown,
+                        val -> config.wyvernBasePrimaryAttackCooldown = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> wyvernBaseAccelerationDuration = Option.<Integer>createBuilder()
+                .name(key("option.dragonBaseAccelerationDuration"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonBaseAccelerationDuration.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.wyvernBaseAccelerationDuration,
+                        () -> config.wyvernBaseAccelerationDuration,
+                        val -> config.wyvernBaseAccelerationDuration = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Float> wyvernRotationSpeedGround = Option.<Float>createBuilder()
+                .name(key("option.dragonRotationSpeedGround"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRotationSpeedGround.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.wyvernRotationSpeedGround,
+                        () -> config.wyvernRotationSpeedGround,
+                        val -> config.wyvernRotationSpeedGround = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> wyvernRotationSpeedAir = Option.<Float>createBuilder()
+                .name(key("option.dragonRotationSpeedAir"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRotationSpeedAir.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.wyvernRotationSpeedAir,
+                        () -> config.wyvernRotationSpeedAir,
+                        val -> config.wyvernRotationSpeedAir = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> wyvernVerticalSpeed = Option.<Float>createBuilder()
+                .name(key("option.dragonVerticalSpeed"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonVerticalSpeed.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.wyvernVerticalSpeed,
+                        () -> config.wyvernVerticalSpeed,
+                        val -> config.wyvernVerticalSpeed = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> wyvernRegenerationFromFood = Option.<Float>createBuilder()
+                .name(key("option.dragonRegenerationFromFood"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.wyvernRegenerationFromFood,
+                        () -> config.wyvernRegenerationFromFood,
+                        val -> config.wyvernRegenerationFromFood = val)
+                .customController(FloatFieldController::new)
+                .build();
 
         wyvernAttributesGroup.option(wyvernDamage);
         wyvernAttributesGroup.option(wyvernKnockback);
+        wyvernAttributesGroup.option(wyvernBasePrimaryAttackCooldown);
+        wyvernAttributesGroup.option(wyvernBaseSecondaryAttackCooldown);
         wyvernAttributesGroup.option(wyvernHealth);
         wyvernAttributesGroup.option(wyvernArmor);
         wyvernAttributesGroup.option(wyvernArmorToughness);
+        wyvernAttributesGroup.option(wyvernRegenerationFromFood);
         wyvernAttributesGroup.option(wyvernGroundSpeed);
         wyvernAttributesGroup.option(wyvernFlyingSpeed);
+        wyvernAttributesGroup.option(wyvernVerticalSpeed);
+        wyvernAttributesGroup.option(wyvernBaseAccelerationDuration);
+        wyvernAttributesGroup.option(wyvernRotationSpeedGround);
+        wyvernAttributesGroup.option(wyvernRotationSpeedAir);
         category.group(wyvernAttributesGroup.build());
     }
 
@@ -642,13 +712,53 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.moleclawGroundSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
+        Option<Integer> moleclawBaseSecondaryAttackCooldown = Option.<Integer>createBuilder()
+                .name(key("option.dragonBaseSecondaryAttackCooldown"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.moleclawBaseSecondaryAttackCooldown.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.moleclawBaseSecondaryAttackCooldown,
+                        () -> config.moleclawBaseSecondaryAttackCooldown,
+                        val -> config.moleclawBaseSecondaryAttackCooldown = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> moleclawBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
+                .name(key("option.dragonBasePrimaryAttackCooldown"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.moleclawBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.moleclawBasePrimaryAttackCooldown,
+                        () -> config.moleclawBasePrimaryAttackCooldown,
+                        val -> config.moleclawBasePrimaryAttackCooldown = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Float> moleclawRotationSpeedGround = Option.<Float>createBuilder()
+                .name(key("option.dragonRotationSpeedGround"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRotationSpeedGround.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.moleclawRotationSpeedGround,
+                        () -> config.moleclawRotationSpeedGround,
+                        val -> config.moleclawRotationSpeedGround = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> moleclawRegenerationFromFood = Option.<Float>createBuilder()
+                .name(key("option.dragonRegenerationFromFood"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.moleclawRegenerationFromFood,
+                        () -> config.moleclawRegenerationFromFood,
+                        val -> config.moleclawRegenerationFromFood = val)
+                .customController(FloatFieldController::new)
+                .build();
 
         moleclawAttributesGroup.option(moleclawDamage);
         moleclawAttributesGroup.option(moleclawKnockback);
+        moleclawAttributesGroup.option(moleclawBasePrimaryAttackCooldown);
+        moleclawAttributesGroup.option(moleclawBaseSecondaryAttackCooldown);
         moleclawAttributesGroup.option(moleclawHealth);
         moleclawAttributesGroup.option(moleclawArmor);
         moleclawAttributesGroup.option(moleclawArmorToughness);
+        moleclawAttributesGroup.option(moleclawRegenerationFromFood);
         moleclawAttributesGroup.option(moleclawGroundSpeed);
+        moleclawAttributesGroup.option(moleclawRotationSpeedGround);
         category.group(moleclawAttributesGroup.build());
     }
 
@@ -721,14 +831,74 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.pikehornFlyingSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
+        Option<Integer> pikehornBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
+                .name(key("option.dragonBasePrimaryAttackCooldown"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.pikehornBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.pikehornBasePrimaryAttackCooldown,
+                        () -> config.pikehornBasePrimaryAttackCooldown,
+                        val -> config.pikehornBasePrimaryAttackCooldown = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> pikehornBaseAccelerationDuration = Option.<Integer>createBuilder()
+                .name(key("option.dragonBaseAccelerationDuration"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonBaseAccelerationDuration.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.pikehornBaseAccelerationDuration,
+                        () -> config.pikehornBaseAccelerationDuration,
+                        val -> config.pikehornBaseAccelerationDuration = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Float> pikehornRotationSpeedGround = Option.<Float>createBuilder()
+                .name(key("option.dragonRotationSpeedGround"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRotationSpeedGround.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.pikehornRotationSpeedGround,
+                        () -> config.pikehornRotationSpeedGround,
+                        val -> config.pikehornRotationSpeedGround = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> pikehornRotationSpeedAir = Option.<Float>createBuilder()
+                .name(key("option.dragonRotationSpeedAir"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRotationSpeedAir.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.pikehornRotationSpeedAir,
+                        () -> config.pikehornRotationSpeedAir,
+                        val -> config.pikehornRotationSpeedAir = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> pikehornVerticalSpeed = Option.<Float>createBuilder()
+                .name(key("option.dragonVerticalSpeed"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonVerticalSpeed.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.pikehornVerticalSpeed,
+                        () -> config.pikehornVerticalSpeed,
+                        val -> config.pikehornVerticalSpeed = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> pikehornRegenerationFromFood = Option.<Float>createBuilder()
+                .name(key("option.dragonRegenerationFromFood"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.pikehornRegenerationFromFood,
+                        () -> config.pikehornRegenerationFromFood,
+                        val -> config.pikehornRegenerationFromFood = val)
+                .customController(FloatFieldController::new)
+                .build();
 
         pikehornAttributesGroup.option(pikehornDamage);
         pikehornAttributesGroup.option(pikehornKnockback);
+        pikehornAttributesGroup.option(pikehornBasePrimaryAttackCooldown);
         pikehornAttributesGroup.option(pikehornHealth);
         pikehornAttributesGroup.option(pikehornArmor);
         pikehornAttributesGroup.option(pikehornArmorToughness);
+        pikehornAttributesGroup.option(pikehornRegenerationFromFood);
         pikehornAttributesGroup.option(pikehornGroundSpeed);
         pikehornAttributesGroup.option(pikehornFlyingSpeed);
+        pikehornAttributesGroup.option(pikehornVerticalSpeed);
+        pikehornAttributesGroup.option(pikehornBaseAccelerationDuration);
+        pikehornAttributesGroup.option(pikehornRotationSpeedGround);
+        pikehornAttributesGroup.option(pikehornRotationSpeedAir);
         category.group(pikehornAttributesGroup.build());
     }
 
@@ -801,14 +971,84 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.lightningChaserFlyingSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
+        Option<Integer> lightningChaserBaseSecondaryAttackCooldown = Option.<Integer>createBuilder()
+                .name(key("option.dragonBaseSecondaryAttackCooldown"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.lightningChaserBaseSecondaryAttackCooldown.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.lightningChaserBaseSecondaryAttackCooldown,
+                        () -> config.lightningChaserBaseSecondaryAttackCooldown,
+                        val -> config.lightningChaserBaseSecondaryAttackCooldown = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> lightningChaserBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
+                .name(key("option.dragonBasePrimaryAttackCooldown"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.lightningChaserBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.lightningChaserBasePrimaryAttackCooldown,
+                        () -> config.lightningChaserBasePrimaryAttackCooldown,
+                        val -> config.lightningChaserBasePrimaryAttackCooldown = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> lightningChaserBaseAccelerationDuration = Option.<Integer>createBuilder()
+                .name(key("option.dragonBaseAccelerationDuration"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonBaseAccelerationDuration.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.lightningChaserBaseAccelerationDuration,
+                        () -> config.lightningChaserBaseAccelerationDuration,
+                        val -> config.lightningChaserBaseAccelerationDuration = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Float> lightningChaserRotationSpeedGround = Option.<Float>createBuilder()
+                .name(key("option.dragonRotationSpeedGround"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRotationSpeedGround.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.lightningChaserRotationSpeedGround,
+                        () -> config.lightningChaserRotationSpeedGround,
+                        val -> config.lightningChaserRotationSpeedGround = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> lightningChaserRotationSpeedAir = Option.<Float>createBuilder()
+                .name(key("option.dragonRotationSpeedAir"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRotationSpeedAir.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.lightningChaserRotationSpeedAir,
+                        () -> config.lightningChaserRotationSpeedAir,
+                        val -> config.lightningChaserRotationSpeedAir = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> lightningChaserVerticalSpeed = Option.<Float>createBuilder()
+                .name(key("option.dragonVerticalSpeed"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonVerticalSpeed.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.lightningChaserVerticalSpeed,
+                        () -> config.lightningChaserVerticalSpeed,
+                        val -> config.lightningChaserVerticalSpeed = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> lightningChaserRegenerationFromFood = Option.<Float>createBuilder()
+                .name(key("option.dragonRegenerationFromFood"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.lightningChaserRegenerationFromFood,
+                        () -> config.lightningChaserRegenerationFromFood,
+                        val -> config.lightningChaserRegenerationFromFood = val)
+                .customController(FloatFieldController::new)
+                .build();
 
         lightningChaserAttributesGroup.option(lightningChaserDamage);
         lightningChaserAttributesGroup.option(lightningChaserKnockback);
+        lightningChaserAttributesGroup.option(lightningChaserBasePrimaryAttackCooldown);
+        lightningChaserAttributesGroup.option(lightningChaserBaseSecondaryAttackCooldown);
         lightningChaserAttributesGroup.option(lightningChaserHealth);
         lightningChaserAttributesGroup.option(lightningChaserArmor);
         lightningChaserAttributesGroup.option(lightningChaserArmorToughness);
+        lightningChaserAttributesGroup.option(lightningChaserRegenerationFromFood);
         lightningChaserAttributesGroup.option(lightningChaserGroundSpeed);
         lightningChaserAttributesGroup.option(lightningChaserFlyingSpeed);
+        lightningChaserAttributesGroup.option(lightningChaserVerticalSpeed);
+        lightningChaserAttributesGroup.option(lightningChaserBaseAccelerationDuration);
+        lightningChaserAttributesGroup.option(lightningChaserRotationSpeedGround);
+        lightningChaserAttributesGroup.option(lightningChaserRotationSpeedAir);
         category.group(lightningChaserAttributesGroup.build());
     }
 }

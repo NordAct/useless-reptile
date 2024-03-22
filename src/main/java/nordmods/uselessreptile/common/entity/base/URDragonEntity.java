@@ -80,7 +80,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected int secondaryAttackDuration = 20;
     protected int baseTamingProgress = 1;
     protected int eatFromInventoryTimer = 20;
-    protected float regenFromFood = 0;
+    protected float regenerationFromFood = 0;
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
     private int healTimer = 0;
@@ -311,7 +311,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (isTamed()) {
             if (isFavoriteFood(itemStack) && getHealth() != getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH)) {
                 eatFood(getWorld(), itemStack);
-                heal(regenFromFood);
+                heal(regenerationFromFood);
                 return ActionResult.SUCCESS;
             }
         }
@@ -597,7 +597,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public float getHealthRegenFromFood() {
-        return regenFromFood;
+        return regenerationFromFood;
     }
 
     public void tickEatFromInventoryTimer() {
@@ -663,7 +663,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return null;
     }
 
-    protected static URMobAttributesConfig getAttributeConfig() {
+    protected static URMobAttributesConfig attributes() {
         return URMobAttributesConfig.getConfig();
     }
 

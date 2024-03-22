@@ -68,18 +68,18 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                     if (diffY > divergence) {
                         if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.4) accelerationDuration -= 2;
                         if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration -= 2;
-                        entity.setUpwardSpeed(0.2f * (float) verticalAccelerationModifier);
+                        entity.setUpwardSpeed(entity.getVerticalSpeed() * (float) verticalAccelerationModifier);
                         tiltState = 1;
                     }
                     if (diffY < -divergence) {
                         if (accelerationDuration < entity.getMaxAccelerationDuration() * 3) accelerationDuration += 2;
-                        entity.setUpwardSpeed(-0.25f * (float) verticalAccelerationModifier);
+                        entity.setUpwardSpeed(-entity.getVerticalSpeed() * (float) verticalAccelerationModifier * 1.3f);
                         tiltState = 2;
                     }
                 } else {
                     if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.4) accelerationDuration -= 2;
                     if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration -= 2;
-                    entity.setUpwardSpeed(0.2f * (float) verticalAccelerationModifier);
+                    entity.setUpwardSpeed(entity.getVerticalSpeed() * (float) verticalAccelerationModifier);
                     tiltState = 1;
                 }
             }

@@ -39,6 +39,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
+import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
@@ -77,16 +78,16 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         super(entityType, world);
         experiencePoints = 20;
 
-        baseSecondaryAttackCooldown = 30;
-        basePrimaryAttackCooldown = 80;
-        baseAccelerationDuration = 400;
+        baseSecondaryAttackCooldown = attributes().wyvernBaseSecondaryAttackCooldown;
+        basePrimaryAttackCooldown = attributes().wyvernBasePrimaryAttackCooldown;
+        baseAccelerationDuration = attributes().wyvernBaseAccelerationDuration;
         baseTamingProgress = 128;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
-        rotationSpeedGround = 8;
-        rotationSpeedAir = 4;
-        verticalSpeed = 0.4f;
-        regenFromFood = 4;
+        rotationSpeedGround = attributes().wyvernRotationSpeedGround;
+        rotationSpeedAir = attributes().wyvernRotationSpeedAir;
+        verticalSpeed = attributes().wyvernVerticalSpeed;
+        regenerationFromFood = attributes().wyvernRegenerationFromFood;
         ticksUntilHeal = 200;
     }
 
@@ -108,13 +109,13 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     public static DefaultAttributeContainer.Builder createWyvernAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, getAttributeConfig().wyvernDamage * getAttributeConfig().dragonDamageMultiplier)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, getAttributeConfig().wyvernKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, getAttributeConfig().wyvernHealth * getAttributeConfig().dragonHealthMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR, getAttributeConfig().wyvernArmor * getAttributeConfig().dragonArmorMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, getAttributeConfig().wyvernArmorToughness * getAttributeConfig().dragonArmorToughnessMultiplier)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, getAttributeConfig().wyvernGroundSpeed * getAttributeConfig().dragonGroundSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, getAttributeConfig().wyvernFlyingSpeed * getAttributeConfig().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().wyvernDamage * attributes().dragonDamageMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().wyvernKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().wyvernHealth * attributes().dragonHealthMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR, attributes().wyvernArmor * attributes().dragonArmorMultiplier)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().wyvernArmorToughness * attributes().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().wyvernGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().wyvernFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 32.0);
     }
 
@@ -264,9 +265,9 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
         if (isTamingItem(itemStack) && !isTamed()) {
             eat(player, hand, itemStack);
-            if (random.nextInt(3) == 0) setTamingProgress((byte) (getTamingProgress() - 2));
-            else setTamingProgress((byte) (getTamingProgress() - 1));
-            if (player.isCreative()) setTamingProgress((byte) 0);
+            if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
+            else setTamingProgress(getTamingProgress() - 1);
+            if (player.isCreative()) setTamingProgress(0);
             if (getTamingProgress() <= 0) {
                 setOwner(player);
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
@@ -382,6 +383,11 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     @Override
     public boolean isFavoriteFood(ItemStack itemStack){
         return itemStack.isOf(Items.CHICKEN);
+    }
+
+    @Override
+    public int getLimitPerChunk() {
+        return URConfig.getConfig().wyvernMaxGroupSize * 2;
     }
 
     @Override

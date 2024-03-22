@@ -26,6 +26,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     protected float tiltProgress;
     protected boolean shouldGlide;
     private int glideTimer = 100;
+    protected float verticalSpeed;
 
     protected URFlyingDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -165,5 +166,10 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
                 }
             }
         }
+    }
+
+    @Override
+    public float getVerticalSpeed() {
+        return verticalSpeed;
     }
 }

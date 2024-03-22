@@ -31,14 +31,19 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float dragonFlyingSpeedMultiplier = 1;
 
-    @SerialEntry(comment = "Note on vanilla attribute value ranges (can be bypassed with other mods):"
-            + "\ndamage: [0;2048]"
-            + "\nknockback: [0;5]"
-            + "\nhealth: [1;1024]"
-            + "\narmor: [0;30]"
-            + "\narmor toughness: [0;20]"
-            + "\nground and flying speed: [0;1024]"
-            + "\nSWAMP WYVERN ATTRIBUTES ")
+    @SerialEntry(comment = """
+            Note on vanilla attribute value ranges (can be bypassed with other mods):
+            Damage: [0;2048]
+            Knockback: [0;5]
+            Health: [1;1024]
+            Armor: [0;30]
+            Armor toughness: [0;20]
+            Ground and flying speed: [0;1024]
+            Other values are technically not attributes and added by the mod itself and have no limitations.
+            Attack cooldowns and acceleration duration are measured in ticks, rotation speed - in degrees.
+            Movement speed is measured in corgi-sized meteors
+            
+            SWAMP WYVERN ATTRIBUTES\s""")
     public float wyvernDamage = 6.0f;
     @SerialEntry
     public float wyvernKnockback = 0.3f;
@@ -52,6 +57,20 @@ public class URMobAttributesConfig {
     public float wyvernGroundSpeed = 0.2f;
     @SerialEntry
     public float wyvernFlyingSpeed = 0.7f;
+    @SerialEntry
+    public int wyvernBaseSecondaryAttackCooldown = 30;
+    @SerialEntry
+    public int wyvernBasePrimaryAttackCooldown = 80;
+    @SerialEntry
+    public int wyvernBaseAccelerationDuration = 400;
+    @SerialEntry
+    public float wyvernRotationSpeedGround = 8;
+    @SerialEntry
+    public float wyvernRotationSpeedAir = 4;
+    @SerialEntry
+    public float wyvernVerticalSpeed = 0.4f;
+    @SerialEntry
+    public float wyvernRegenerationFromFood = 4;
 
     @SerialEntry(comment = "MOLECLAW ATTRIBUTES")
     public float moleclawDamage = 8.0f;
@@ -65,6 +84,14 @@ public class URMobAttributesConfig {
     public float moleclawArmorToughness = 4.0f;
     @SerialEntry
     public float moleclawGroundSpeed = 0.25f;
+    @SerialEntry
+    public int moleclawBaseSecondaryAttackCooldown = 30;
+    @SerialEntry
+    public int moleclawBasePrimaryAttackCooldown = 60;
+    @SerialEntry
+    public float moleclawRotationSpeedGround = 6;
+    @SerialEntry
+    public float moleclawRegenerationFromFood = 2;
 
     @SerialEntry(comment = "RIVER PIKEHORN ATTRIBUTES")
     public float pikehornDamage = 3.0f;
@@ -80,6 +107,18 @@ public class URMobAttributesConfig {
     public float pikehornGroundSpeed = 0.2f;
     @SerialEntry
     public float pikehornFlyingSpeed = 0.8f;
+    @SerialEntry
+    public int pikehornBasePrimaryAttackCooldown = 20;
+    @SerialEntry
+    public int pikehornBaseAccelerationDuration = 100;
+    @SerialEntry
+    public float pikehornRotationSpeedGround = 10;
+    @SerialEntry
+    public float pikehornRotationSpeedAir = 10;
+    @SerialEntry
+    public float pikehornVerticalSpeed = 0.2f;
+    @SerialEntry
+    public float pikehornRegenerationFromFood = 3;
 
     @SerialEntry(comment = "LIGHTNING CHASER ATTRIBUTES")
     public float lightningChaserDamage = 6.0f;
@@ -95,6 +134,20 @@ public class URMobAttributesConfig {
     public float lightningChaserGroundSpeed = 0.25f;
     @SerialEntry
     public float lightningChaserFlyingSpeed = 0.8f;
+    @SerialEntry
+    public int lightningChaserBaseSecondaryAttackCooldown = 30;
+    @SerialEntry
+    public int lightningChaserBasePrimaryAttackCooldown = 30;
+    @SerialEntry
+    public int lightningChaserBaseAccelerationDuration = 800;
+    @SerialEntry
+    public float lightningChaserRotationSpeedGround = 9;
+    @SerialEntry
+    public float lightningChaserRotationSpeedAir = 7;
+    @SerialEntry
+    public float lightningChaserVerticalSpeed = 0.3f;
+    @SerialEntry
+    public float lightningChaserRegenerationFromFood = 4;
 
     public static URMobAttributesConfig getConfig() {
         return CONFIG.instance();

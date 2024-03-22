@@ -169,14 +169,14 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             setGliding(accelerationModifier > 1);
 
             if (isJumpPressed()) {
-                verticalSpeed = this.verticalSpeed;
+                verticalSpeed = getVerticalSpeed();
                 setTiltState((byte) 1);
                 setGliding(false);
                 if (!isMovingBackwards() && isMoving() && getPitch() > -getPitchLimit() && !isDownPressed())
                     setPitch(getPitch() - pitchSpeed);
             }
             if (isDownPressed()) {
-                verticalSpeed = -this.verticalSpeed * 1.3f;
+                verticalSpeed = -getVerticalSpeed() * 1.3f;
                 setTiltState((byte) 2);
                 if (!isMovingBackwards() && isMoving() && getPitch() < getPitchLimit())
                     setPitch(getPitch() + pitchSpeed);
@@ -257,5 +257,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
                 }
             }
         }
+    }
+
+    @Override
+    public float getVerticalSpeed() {
+        return verticalSpeed;
     }
 }
