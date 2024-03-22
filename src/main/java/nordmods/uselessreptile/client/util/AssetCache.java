@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.client.util;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import nordmods.uselessreptile.client.util.model_data.base.DragonModelData;
 import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
 import org.jetbrains.annotations.NotNull;
 
@@ -11,10 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AssetCache {
-    private DragonModelData dragonModelData;
-    @NotNull
-    private final List<EquipmentModelData> equipmentModelData = new ArrayList<>();
+    private Identifier modelLocationCache;
+    private Identifier textureLocationCache;
+    private Identifier animationLocationCache;
     private Identifier glowLayerLocationCache;
+    private RenderLayer renderTypeCache;
+    private boolean nametagModel;
+
+    private List<EquipmentModelData> equipmentModelData;
 
     public Identifier getGlowLayerLocationCache() {
         return glowLayerLocationCache;
@@ -24,23 +28,65 @@ public class AssetCache {
         glowLayerLocationCache = state;
     }
 
-    public DragonModelData getDragonModelData() {
-        return dragonModelData;
+    public Identifier getModelLocationCache() {
+        return modelLocationCache;
     }
 
-    public void setDragonModelData(DragonModelData state) {
-        dragonModelData = state;
+    public void setModelLocationCache(Identifier state) {
+        modelLocationCache = state;
     }
 
-    public @NotNull List<EquipmentModelData> getEquipmentModelData() {
+    public Identifier getAnimationLocationCache() {
+        return animationLocationCache;
+    }
+
+    public void setAnimationLocationCache(Identifier state) {
+        animationLocationCache = state;
+    }
+
+    public Identifier getTextureLocationCache() {
+        return textureLocationCache;
+    }
+
+    public void setTextureLocationCache(Identifier state) {
+        textureLocationCache = state;
+    }
+
+    public RenderLayer getRenderTypeCache() {
+        return renderTypeCache;
+    }
+
+    public void setRenderTypeCache(RenderLayer state) {
+        renderTypeCache = state;
+    }
+
+    public boolean isNametagModel() {
+        return nametagModel;
+    }
+
+    public void setNametagModel(boolean state) {
+        nametagModel = state;
+    }
+
+    public List<EquipmentModelData> getEquipmentModelData() {
+        return equipmentModelData;
+    }
+
+    public List<EquipmentModelData> setEquipmentModelData(List<EquipmentModelData> state) {
         return equipmentModelData;
     }
 
     public void addEquipmentModelData(EquipmentModelData data) {
+        if (equipmentModelData == null) {
+            equipmentModelData = new ArrayList<>();
+            equipmentModelData.add(data);
+            return;
+        }
         if (!equipmentModelData.contains(data)) equipmentModelData.add(data);
     }
 
     public EquipmentModelData getEquipmentModelData(Identifier item) {
+        if (equipmentModelData == null) return null;
         return equipmentModelData.stream().filter(c -> c.item().equals(item)).findAny().orElse(null);
     }
 
@@ -50,8 +96,11 @@ public class AssetCache {
     }
 
     public void cleanCache() {
-        setDragonModelData(null);
-        getEquipmentModelData().clear();
         setGlowLayerLocationCache(null);
+        setModelLocationCache(null);
+        setAnimationLocationCache(null);
+        setTextureLocationCache(null);
+        setEquipmentModelData(null);
+        setNametagModel(false);
     }
 }

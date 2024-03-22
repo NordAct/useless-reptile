@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.client.model.special;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.client.util.ResourceUtil;
@@ -50,5 +51,12 @@ public class DragonEqupmentModel<T extends URDragonEntity> extends GeoModel<T> {
         if (data != null && ResourceUtil.doesExist(data.modelData().animation())) return data.modelData().animation();
 
         return null;
+    }
+
+    @Override
+    public RenderLayer getRenderType(T animatable, Identifier texture) {
+        EquipmentModelData data = ModelDataUtil.getEquipmentModelData(owner, item);
+        if (data != null) return data.modelData().renderType();
+        return RenderLayer.getEntityCutoutNoCull(texture);
     }
 }

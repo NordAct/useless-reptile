@@ -4,9 +4,12 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
+import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.model_data.ModelDataUtil;
 import nordmods.uselessreptile.client.util.model_data.base.DragonModelData;
+import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
+import nordmods.uselessreptile.client.util.model_data.base.ModelData;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.model.GeoModel;
 
@@ -19,56 +22,101 @@ public abstract class URDragonModel<T extends URDragonEntity> extends GeoModel<T
 
     @Override
     public Identifier getAnimationResource(T entity) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation(entity);
+        AssetCache assetCache = entity.getAssetCache();
+        if (!ResourceUtil.isResourceReloadFinished) {
+            assetCache.setAnimationLocationCache(null);
+            return getDefaultAnimation(entity);
+        }
 
-        DragonModelData data = entity.getAssetCache().getDragonModelData();
-        if (data != null && ResourceUtil.doesExist(data.modelData().animation())) return data.modelData().animation();
+        Identifier id = assetCache.getAnimationLocationCache();
+        if (id != null) return id;
 
+        DragonModelData data;
         if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
             data = ModelDataUtil.getNametagDragonModelData(entity);
-            if (data != null && ResourceUtil.doesExist(data.modelData().animation())) return data.modelData().animation();
+            if (data != null && ResourceUtil.doesExist(data.modelData().animation())) {
+                id = data.modelData().animation();
+                assetCache.setAnimationLocationCache(id);
+                return data.modelData().animation();
+            }
         }
 
         data = ModelDataUtil.getVariantDragonModelData(entity);
-        if (data != null && ResourceUtil.doesExist(data.modelData().animation())) return data.modelData().animation();
+        if (data != null && ResourceUtil.doesExist(data.modelData().animation())) {
+            id = data.modelData().animation();
+            assetCache.setAnimationLocationCache(id);
+            return data.modelData().animation();
+        }
 
-        return getDefaultAnimation(entity);
+        id = getDefaultAnimation(entity);
+        assetCache.setAnimationLocationCache(id);
+        return id;
     }
 
     @Override
     public Identifier getModelResource(T entity) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel(entity);
+        AssetCache assetCache = entity.getAssetCache();
+        if (!ResourceUtil.isResourceReloadFinished) {
+            assetCache.setModelLocationCache(null);
+            return getDefaultModel(entity);
+        }
 
-        DragonModelData data = entity.getAssetCache().getDragonModelData();
-        if (data != null && ResourceUtil.doesExist(data.modelData().model())) return data.modelData().model();
+        Identifier id = assetCache.getModelLocationCache();
+        if (id != null) return id;
 
+        DragonModelData data;
         if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
             data = ModelDataUtil.getNametagDragonModelData(entity);
-            if (data != null && ResourceUtil.doesExist(data.modelData().model())) return data.modelData().model();
+            if (data != null && ResourceUtil.doesExist(data.modelData().model())) {
+                id = data.modelData().model();
+                assetCache.setModelLocationCache(id);
+                return data.modelData().model();
+            }
         }
 
         data = ModelDataUtil.getVariantDragonModelData(entity);
-        if (data != null && ResourceUtil.doesExist(data.modelData().model())) return data.modelData().model();
+        if (data != null && ResourceUtil.doesExist(data.modelData().model())) {
+            id = data.modelData().model();
+            assetCache.setModelLocationCache(id);
+            return data.modelData().model();
+        }
 
-        return getDefaultModel(entity);
+        id = getDefaultModel(entity);
+        assetCache.setModelLocationCache(id);
+        return id;
     }
 
     @Override
     public Identifier getTextureResource(T entity){
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(entity);
+        AssetCache assetCache = entity.getAssetCache();
+        if (!ResourceUtil.isResourceReloadFinished) {
+            assetCache.setTextureLocationCache(null);
+            return getDefaultTexture(entity);
+        }
 
-        DragonModelData data = entity.getAssetCache().getDragonModelData();
-        if (data != null && ResourceUtil.doesExist(data.modelData().texture())) return data.modelData().texture();
+        Identifier id = assetCache.getTextureLocationCache();
+        if (id != null) return id;
 
+        DragonModelData data;
         if (!URClientConfig.getConfig().disableNamedEntityModels && entity.getCustomName() != null) {
             data = ModelDataUtil.getNametagDragonModelData(entity);
-            if (data != null && ResourceUtil.doesExist(data.modelData().texture())) return data.modelData().texture();
+            if (data != null && ResourceUtil.doesExist(data.modelData().texture())) {
+                id = data.modelData().texture();
+                assetCache.setTextureLocationCache(id);
+                return data.modelData().texture();
+            }
         }
 
         data = ModelDataUtil.getVariantDragonModelData(entity);
-        if (data != null && ResourceUtil.doesExist(data.modelData().texture())) return data.modelData().texture();
+        if (data != null && ResourceUtil.doesExist(data.modelData().texture())) {
+            id = data.modelData().texture();
+            assetCache.setTextureLocationCache(id);
+            return data.modelData().texture();
+        }
 
-        return getDefaultTexture(entity);
+        id = getDefaultTexture(entity);
+        assetCache.setTextureLocationCache(id);
+        return id;
     }
 
     protected final Identifier getDefaultTexture(T entity) {
@@ -84,7 +132,20 @@ public abstract class URDragonModel<T extends URDragonEntity> extends GeoModel<T
     }
 
     @Override
-    public RenderLayer getRenderType(T animatable, Identifier texture) {
+    public RenderLayer getRenderType(T entity, Identifier texture) {
+        if (!ResourceUtil.isResourceReloadFinished) return RenderLayer.getEntityCutout(texture);
+
+        AssetCache assetCache = entity.getAssetCache();
+        RenderLayer renderType = assetCache.getRenderTypeCache();
+        if (renderType != null) return renderType;
+
+        DragonModelData data = ModelDataUtil.getDragonModelData(entity, assetCache.isNametagModel());
+        if (data != null) {
+            renderType = data.modelData().renderType();
+            assetCache.setRenderTypeCache(renderType);
+            return renderType;
+        }
+
         return RenderLayer.getEntityCutout(texture);
     }
 

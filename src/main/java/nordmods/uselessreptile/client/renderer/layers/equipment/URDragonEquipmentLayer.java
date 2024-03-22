@@ -68,7 +68,7 @@ public abstract class URDragonEquipmentLayer<T extends URDragonEntity> extends G
             }
         });
 
-        RenderLayer cameo = RenderLayer.getEntityCutout(id);
+        RenderLayer cameo = equpmentModel.getRenderType(entity, id);
         getRenderer().reRender(bakedEquipmentModel, matrixStackIn, bufferSource, entity, cameo,
                 bufferSource.getBuffer(cameo), partialTick, packedLight, OverlayTexture.DEFAULT_UV,
                 1, 1, 1, 1);

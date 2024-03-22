@@ -3,6 +3,7 @@ package nordmods.uselessreptile.client.util.model_data;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.model_data.base.DragonModelData;
 import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
@@ -14,11 +15,7 @@ import java.util.Map;
 public class ModelDataUtil {
     @Nullable
     public static DragonModelData getDragonModelData(URDragonEntity dragon, boolean viaNametag) {
-        if (!ResourceUtil.isResourceReloadFinished) {
-            dragon.getAssetCache().setDragonModelData(null);
-            return null;
-        }
-        if (dragon.getAssetCache().getDragonModelData() != null) return dragon.getAssetCache().getDragonModelData();
+        if (!ResourceUtil.isResourceReloadFinished) return null;
 
         String dragonID = dragon.getDragonID();
         Map<String, DragonModelData> dragonModelDataMap = DragonModelData.dragonModelDataHolder.get(dragonID);
@@ -26,11 +23,10 @@ public class ModelDataUtil {
         if (!viaNametag) dragonModelData = dragonModelDataMap.get(dragon.getVariant());
         else {
             DragonModelData temp = dragonModelDataMap.get(ResourceUtil.parseName(dragon));
-            if (temp.nametagAccessible()) dragonModelData = temp;
+            if (temp != null && temp.nametagAccessible()) dragonModelData = temp;
             else dragonModelData = dragonModelDataMap.get(dragon.getVariant());
         }
-
-        dragon.getAssetCache().setDragonModelData(dragonModelData);
+        dragon.getAssetCache().setNametagModel(viaNametag);
         return dragonModelData;
     }
 
@@ -48,16 +44,17 @@ public class ModelDataUtil {
 
     @Nullable
     public static EquipmentModelData getEquipmentModelData(URDragonEntity dragon, Item item) {
+        AssetCache assetCache = dragon.getAssetCache();
         if (!ResourceUtil.isResourceReloadFinished) {
-            dragon.getAssetCache().getEquipmentModelData().clear();
+            assetCache.setEquipmentModelData(null);
             return null;
         }
 
         Identifier id = Registries.ITEM.getId(item);
-        EquipmentModelData equipmentModelData = dragon.getAssetCache().getEquipmentModelData(id);
+        EquipmentModelData equipmentModelData = assetCache.getEquipmentModelData(id);
         if (equipmentModelData != null) return equipmentModelData;
 
-        DragonModelData dragonModelData = dragon.getAssetCache().getDragonModelData();
+        DragonModelData dragonModelData = getDragonModelData(dragon, assetCache.isNametagModel());
         if (dragonModelData == null) {
             equipmentModelData = getDefaultEquipmentModelData(dragon, id);
             return equipmentModelData;
@@ -71,12 +68,12 @@ public class ModelDataUtil {
                 }
             }
         if (equipmentModelData != null) {
-            dragon.getAssetCache().addEquipmentModelData(equipmentModelData);
+            assetCache.addEquipmentModelData(equipmentModelData);
             return equipmentModelData;
         }
 
         equipmentModelData = getDefaultEquipmentModelData(dragon, id);
-        if (equipmentModelData != null) dragon.getAssetCache().addEquipmentModelData(equipmentModelData);
+        if (equipmentModelData != null) assetCache.addEquipmentModelData(equipmentModelData);
         return equipmentModelData;
     }
 
