@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.renderer.layers.equipment;
+package nordmods.uselessreptile.client.renderer.layers;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.client.render.OverlayTexture;
@@ -21,7 +21,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.Map;
 
-public abstract class URDragonEquipmentLayer<T extends URDragonEntity> extends GeoRenderLayer<T> {
+public class URDragonEquipmentLayer<T extends URDragonEntity> extends GeoRenderLayer<T> {
     private final Map<String, CoreGeoBone> saddleBones = new Object2ObjectOpenHashMap<>();
     private DragonEqupmentModel<T> equpmentModel;
     private BakedGeoModel bakedEquipmentModel;

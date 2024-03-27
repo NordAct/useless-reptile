@@ -12,10 +12,4 @@ public class MoleclawEntityRenderer extends URRideableDragonRenderer<MoleclawEnt
         super(renderManager, new MoleclawEntityModel(), true, true, "rider");
         shadowRadius = 1.25f;
     }
-
-    public void updateSaddle (MoleclawEntity entity) {
-        boolean isSaddled = entity.getEquippedStack(EquipmentSlot.FEET).isOf(Items.SADDLE);
-        model.getBone("saddle_front").ifPresent(c -> c.setHidden(!isSaddled));
-        model.getBone("saddle_neck").ifPresent(c -> c.setHidden(!isSaddled));
-    }
 }

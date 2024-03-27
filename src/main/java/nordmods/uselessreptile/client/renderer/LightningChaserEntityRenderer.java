@@ -12,12 +12,4 @@ public class LightningChaserEntityRenderer extends URRideableDragonRenderer<Ligh
         super(renderManager, new LightningChaserEntityModel(), true, true, "rider");
         shadowRadius = 1.5f;
     }
-
-    @Override
-    public void updateSaddle(LightningChaserEntity entity) {
-        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).isOf(Items.SADDLE);
-        model.getBone("saddle_front").ifPresent(c -> c.setHidden(!hasSaddle));
-        model.getBone("saddle_neck1").ifPresent(c -> c.setHidden(!hasSaddle));
-        model.getBone("saddle_tail1").ifPresent(c -> c.setHidden(!hasSaddle));
-    }
 }

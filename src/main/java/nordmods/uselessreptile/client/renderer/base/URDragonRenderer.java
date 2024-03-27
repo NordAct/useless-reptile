@@ -1,11 +1,10 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.entity.EquipmentSlot;
 import nordmods.uselessreptile.client.renderer.layers.BannerLayer;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
-import nordmods.uselessreptile.client.renderer.layers.equipment.DragonChestplateLayer;
-import nordmods.uselessreptile.client.renderer.layers.equipment.DragonHelmetLayer;
-import nordmods.uselessreptile.client.renderer.layers.equipment.DragonTailArmorLayer;
+import nordmods.uselessreptile.client.renderer.layers.URDragonEquipmentLayer;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -16,9 +15,9 @@ public abstract class URDragonRenderer <T extends URDragonEntity> extends GeoEnt
         addRenderLayer(new URGlowingLayer<>(this));
         if (hasBanner) addRenderLayer(new BannerLayer<>(this));
         if (hasArmor) {
-            addRenderLayer(new DragonHelmetLayer<>(this));
-            addRenderLayer(new DragonChestplateLayer<>(this));
-            addRenderLayer(new DragonTailArmorLayer<>(this));
+            addRenderLayer(new URDragonEquipmentLayer<>(this, EquipmentSlot.HEAD));
+            addRenderLayer(new URDragonEquipmentLayer<>(this, EquipmentSlot.CHEST));
+            addRenderLayer(new URDragonEquipmentLayer<>(this, EquipmentSlot.LEGS));
         }
     }
 }
