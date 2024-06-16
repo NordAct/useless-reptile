@@ -1,0 +1,36 @@
+{
+  "parent": "uselessreptile:dragon/root",
+  "criteria": {
+    "entity_tamed": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "uselessreptile:river_pikehorn"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.tame_river_pikehorn.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "uselessreptile:river_pikehorn_spawn_egg"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.tame_river_pikehorn"
+    }
+  },
+  "requirements": [
+    [
+      "entity_tamed"
+    ]
+  ]
+}

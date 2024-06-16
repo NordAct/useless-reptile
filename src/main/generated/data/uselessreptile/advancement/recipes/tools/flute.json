@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "entity_tamed": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "uselessreptile:river_pikehorn"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:tame_animal"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "uselessreptile:flute"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "entity_tamed"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "uselessreptile:flute"
+    ]
+  }
+}

@@ -25,8 +25,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
     private static final TrackedData<Integer> LIGHTNING_CHASER_SPAWN_COOLDOWN = DataTracker.registerData(PlayerEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
     @Inject(method = "initDataTracker", at = @At("TAIL"))
-    private void trackTimer(CallbackInfo ci) {
-        dataTracker.startTracking(LIGHTNING_CHASER_SPAWN_COOLDOWN, 0);
+    private void trackTimer(DataTracker.Builder builder, CallbackInfo ci) {
+        builder.add(LIGHTNING_CHASER_SPAWN_COOLDOWN, 0);
     }
 
     @Inject(method = "writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("TAIL"))

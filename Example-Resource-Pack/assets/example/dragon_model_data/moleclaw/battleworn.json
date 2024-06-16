@@ -1,0 +1,82 @@
+{
+  "model_data" : {
+    "texture": "example:textures/moleclaw/battleworn.png",
+    "model": "example:geo/moleclaw/battleworn.geo.json",
+    "animation": "uselessreptile:animations/entity/moleclaw/moleclaw.animation.json",
+    "cull" : false
+  },
+  "equipment_model_overrides": [
+    {
+      "item": "uselessreptile:moleclaw_helmet_iron",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_iron.png",
+        "model": "example:geo/moleclaw/helmet.geo.json",
+        "cull" : false
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_chestplate_iron",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_iron.png",
+        "model": "example:geo/moleclaw/chestplate.geo.json",
+        "cull" : false
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_tail_armor_iron",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_iron.png",
+        "model": "example:geo/moleclaw/tail_armor.geo.json",
+        "cull" : false
+      }
+    },
+    {
+      "item": "uselessreptile:moleclaw_helmet_gold",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_gold.png",
+        "model": "example:geo/moleclaw/helmet.geo.json",
+        "cull" : false
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_chestplate_gold",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_gold.png",
+        "model": "example:geo/moleclaw/chestplate.geo.json",
+        "cull" : false
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_tail_armor_gold",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_gold.png",
+        "model": "example:geo/moleclaw/tail_armor.geo.json",
+        "cull" : false
+      }
+    },
+    {
+      "item": "uselessreptile:moleclaw_helmet_diamond",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "model": "example:geo/moleclaw/helmet.geo.json",
+        "cull" : false
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_chestplate_diamond",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "model": "example:geo/moleclaw/chestplate.geo.json",
+        "cull" : false
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_tail_armor_diamond",
+      "model_data": {
+        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "model": "example:geo/moleclaw/tail_armor.geo.json",
+        "cull" : false
+      }
+    }
+  ]
+}

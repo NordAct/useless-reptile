@@ -4,12 +4,11 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 
 public class URConfig {
     public static final ConfigClassHandler<URConfig> CONFIG = ConfigClassHandler.createBuilder(URConfig.class)
-            .id(new Identifier(UselessReptile.MODID, "config"))
+            .id(UselessReptile.id("config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("uselessreptile.json5"))
                     .setJson5(true)
@@ -55,6 +54,8 @@ public class URConfig {
     public DragonGriefing allowDragonGriefing = DragonGriefing.ALL;
     @SerialEntry
     public int blockDropChance = 100;
+    @SerialEntry
+    public boolean dragonMadness = false;
 
     public static URConfig getConfig() {
         return CONFIG.instance();

@@ -48,4 +48,8 @@ public class UREvents {
             }
         });
     }
+
+    private static void spawnLightningChaser() {
+
+    }
 }

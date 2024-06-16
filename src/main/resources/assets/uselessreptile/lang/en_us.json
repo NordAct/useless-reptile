@@ -141,6 +141,7 @@
     "config.uselessreptile.option.smallDragonSpawnGroupCapacity": "Small Dragon Spawn Group Capacity",
     "config.uselessreptile.option.undergroundDragonSpawnGroupCapacity": "Underground Dragon Spawn Group Capacity",
     "config.uselessreptile.option.lightningChaserThunderstormSpawnTimerCooldown": "Lightning Chaser Spawn Timer Cooldown",
+    "config.uselessreptile.option.dragonMadness": "Dragon Madness",
 
     "config.uselessreptile.requires_restart.@Tooltip" : "\nChanging this option requires game restart",
     "config.uselessreptile.group.spawnWeight.@Tooltip" : "Spawn weights for each dragon. Each option allows you to control frequency of appearing of specific dragon",
@@ -192,6 +193,7 @@
     "config.uselessreptile.option.lightningChaserBaseSecondaryAttackCooldown.@Tooltip": "Melee and shockwave attack cooldown (in ticks). Note: shockwave attack cooldown is always 10 times bigger than one in this field",
     "config.uselessreptile.option.spawnGroupCapacity.@Tooltip": "Maximum capacity of this group. \nGroup includes following entities: %s",
     "config.uselessreptile.option.lightningChaserThunderstormSpawnTimerCooldown.@Tooltip": "Amount of time (in ticks) that must pass before Lightning Chaser can attempt to spawn near the same player",
+    "config.uselessreptile.option.dragonMadness.@Tooltip": "All (untamed) dragons now attack players on sight",
 
     "effect.uselessreptile.acid": "Acid",
 
@@ -213,5 +215,12 @@
     "advancement.uselessreptile.tame_wyvern.desc": "Tame Swamp Wyvern with Raw Chicken",
     "advancement.uselessreptile.tame_pikehorn.desc": "Tame River Pikehorn with Tropical Fish within the bucket",
     "advancement.uselessreptile.use_flute.desc": "Use Flute to command your River Pikehorns",
-    "advancement.uselessreptile.tame_lightning_chaser.desc": "Tame Lightning Chaser by challenging it in a battle (Tip: you'll need a Trident with Channelling)"
+    "advancement.uselessreptile.tame_lightning_chaser.desc": "Tame Lightning Chaser by challenging it in a battle (Tip: you'll need a Trident with Channelling)",
+
+    "tag.item.uselessreptile.common_dragon_armor": "Dragon Armor",
+    "tag.item.uselessreptile.common_dragon_armor_iron": "Iron Dragon Armor",
+    "tag.item.uselessreptile.common_dragon_armor_gold": "Golden Dragon Armor",
+    "tag.item.uselessreptile.common_dragon_armor_diamond": "Diamond Dragon Armor",
+    "tag.item.uselessreptile.moleclaw_can_equip": "Moleclaw Can Equip",
+    "tag.item.uselessreptile.moleclaw_helmets": "Moleclaw Helmets"
 }

@@ -24,7 +24,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
 
     @Override
     public Identifier getTexture(LightningBreathEntity entity) {
-        return new Identifier(UselessReptile.MODID, "textures/entity/lightning_breath/beam.png");
+        return UselessReptile.id("textures/entity/lightning_breath/beam.png");
     }
 
     @Override
@@ -77,7 +77,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
         for (LightningBreathEntity.LightningBreathBolt lightningBreathBolt : entity.lightningBreathBolts)
             for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
                 LightningBreathEntity.LightningBreathBolt.Segment current = lightningBreathBolt.segments.get(i);
-                RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek().getNormalMatrix(),
+                RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
                         vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(getTexture(entity))),
                         new Vector3f(current.startPoint()).add(0, 0.1f, 0),
                         new Vector3f(current.startPoint()).add(0, -0.1f, 0),
@@ -85,7 +85,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
                         new Vector3f(current.endPoint()).add(0, 0.1f, 0),
                         alpha, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
                         0, 1, 0, 1);
-                RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek().getNormalMatrix(),
+                RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
                         vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(getTexture(entity))),
                         new Vector3f(current.startPoint()).add(0, -0.2f, 0),
                         new Vector3f(current.startPoint()).add(0, 0.2f, 0),
@@ -93,7 +93,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
                         new Vector3f(current.endPoint()).add(0, -0.2f, 0),
                         alpha / 1.5f, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
                         0, 1, 0, 1);
-                RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek().getNormalMatrix(),
+                RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
                         vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(getTexture(entity))),
                         new Vector3f(current.startPoint()).add(0, -0.3f, 0),
                         new Vector3f(current.startPoint()).add(0, 0.3f, 0),

@@ -1,0 +1,8 @@
+{
+  "model_data" : {
+    "texture": "example:textures/wyvern/end.png",
+    "model": "uselessreptile:geo/entity/wyvern/wyvern.geo.json",
+    "animation": "uselessreptile:animations/entity/wyvern/wyvern.animation.json"
+  },
+  "nametag_accessible": false
+}

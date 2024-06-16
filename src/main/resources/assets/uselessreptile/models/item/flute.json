@@ -3,13 +3,13 @@
   "overrides": [
     {
       "predicate": {
-        "mode": 0.5
+        "flute_mode": 0.1
       },
       "model": "uselessreptile:item/flute/flute_gather"
     },
     {
       "predicate": {
-        "mode": 1
+        "flute_mode": 0.2
       },
       "model": "uselessreptile:item/flute/flute_target"
     }

@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:end_stone",
+    "minecraft:red_sand",
+    "#minecraft:terracotta",
+    "minecraft:coarse_dirt"
+  ]
+}

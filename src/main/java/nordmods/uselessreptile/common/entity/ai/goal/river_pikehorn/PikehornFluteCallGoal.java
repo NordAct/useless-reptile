@@ -5,7 +5,7 @@ import net.minecraft.item.ItemStack;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import nordmods.uselessreptile.common.entity.ai.goal.common.FlyingDragonCallBackGoal;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.items.FluteItem;
+import nordmods.uselessreptile.common.item.FluteItem;
 
 public class PikehornFluteCallGoal extends FlyingDragonCallBackGoal<RiverPikehornEntity> {
 
@@ -25,8 +25,8 @@ public class PikehornFluteCallGoal extends FlyingDragonCallBackGoal<RiverPikehor
 
         ItemStack main = player.getMainHandStack();
         ItemStack offhand = player.getOffHandStack();
-        boolean mainCanGather = main.hasNbt() && main.getNbt().getInt(FluteItem.MODE_TAG) != 1 && main.getNbt().getInt(FluteItem.MODE_TAG) != 2 || !main.hasNbt();
-        boolean offhandCanGather = offhand.hasNbt() && offhand.getNbt().getInt(FluteItem.MODE_TAG) != 1 && offhand.getNbt().getInt(FluteItem.MODE_TAG) != 2  || !main.hasNbt();
+        boolean mainCanGather = main.getItem() instanceof FluteItem fluteItem && fluteItem.getFluteMode(main) == 0;
+        boolean offhandCanGather = offhand.getItem() instanceof FluteItem fluteItem && fluteItem.getFluteMode(offhand) == 0;
 
         return player.getItemCooldownManager().isCoolingDown(URItems.FLUTE) && (mainCanGather || offhandCanGather);
     }

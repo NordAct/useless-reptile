@@ -18,10 +18,9 @@ import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
-import org.joml.Matrix4f;
 
 public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
-    protected static final Identifier TEXTURE = new Identifier(UselessReptile.MODID,"textures/gui/dragon_inventory.png");
+    protected static final Identifier TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
     private int mouseX;
     private int mouseY;
     private final URDragonEntity entity;
@@ -84,13 +83,13 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         float centerY = (y1 + y2) / 2f;
         float dx = (float)Math.atan((centerX - mouseX) / 40f);
         float dy = (float) Math.atan((centerY - mouseY) / 40f);
-        float tickDelta = MinecraftClient.getInstance().getTickDelta();
+        float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
 
         context.getMatrices().push();
         context.enableScissor(x1, y1, x2, y2);
 
         context.getMatrices().translate(centerX, centerY, 100);
-        context.getMatrices().multiplyPositionMatrix((new Matrix4f()).scaling(size, size, -size));
+        context.getMatrices().scale(size, size, -size);
         context.getMatrices().translate(0, entity.getHeight() / 2f + 0.4f, 0);
         context.getMatrices().multiply(RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180));
         context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + entity.getYaw(tickDelta)));

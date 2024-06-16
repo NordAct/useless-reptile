@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "#minecraft:animals_spawnable_on",
+      "required": false
+    },
+    {
+      "id": "#minecraft:sand",
+      "required": false
+    }
+  ]
+}

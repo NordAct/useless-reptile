@@ -32,7 +32,7 @@ public class RiverPikehornOnHeadFeatureRenderer extends FeatureRenderer<Abstract
             matrices.push();
             getContextModel().head.rotate(matrices);
             model.setAngles(dragon, limbAngle, limbDistance, dragon.age, yaw(dragon.headYaw, entity.headYaw), MathHelper.clamp(dragon.getPitch() % 360 - entity.getPitch() % 360, -20, 20));
-            model.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityCutout(getDragonTexture(dragon))), light, OverlayTexture.DEFAULT_UV, 1, 1, 1, 1);
+            model.render(matrices, vertexConsumers.getBuffer(RenderLayer.getEntityCutout(getDragonTexture(dragon))), light, OverlayTexture.DEFAULT_UV, 16777215);
             matrices.pop();
         }
     }

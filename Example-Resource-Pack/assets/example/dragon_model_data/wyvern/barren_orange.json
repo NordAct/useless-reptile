@@ -1,0 +1,18 @@
+{
+  "model_data" : {
+    "texture": "example:textures/wyvern/barren_orange.png",
+    "model": "example:geo/wyvern/barren.geo.json",
+    "animation": "example:animations/barren.animation.json"
+  },
+  "nametag_accessible": false,
+  "equipment_model_overrides": [
+    {
+      "item": "minecraft:saddle",
+      "model_data": {
+        "texture": "example:textures/wyvern/saddle_barren.png",
+        "model": "example:geo/wyvern/barren_saddle.geo.json",
+        "cull" : false
+      }
+    }
+  ]
+}

@@ -28,7 +28,6 @@ import nordmods.uselessreptile.common.init.URTags;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 public class LightningBreathEntity extends ProjectileEntity {
@@ -59,8 +58,8 @@ public class LightningBreathEntity extends ProjectileEntity {
     public int getBeamLength() {return dataTracker.get(BEAM_LENGTH);}
 
     @Override
-    protected void initDataTracker() {
-        dataTracker.startTracking(BEAM_LENGTH, 0);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        builder.add(BEAM_LENGTH, 0);
     }
 
     @Override

@@ -18,8 +18,8 @@ public class AcidStatusEffect extends URStatusEffect {
     public boolean canApplyUpdateEffect(int duration, int amplifier) {return true;}
 
     @Override
-    public void applyUpdateEffect(LivingEntity entity, int amplifier) {
-        if (!CommonProtection.canDamageEntity(entity.getWorld(), entity, CommonProtection.UNKNOWN, null)) return;
+    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
+        if (!CommonProtection.canDamageEntity(entity.getWorld(), entity, CommonProtection.UNKNOWN, null)) return false;
 
         int armorUnequipped = 0;
         if (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty()) armorUnequipped++;
@@ -34,6 +34,8 @@ public class AcidStatusEffect extends URStatusEffect {
         if (entity.getWorld().getTickOrder() % 20 == 0) entity.damageArmor(
                 entity.getDamageSources().create(URDamageTypes.ACID),
                 amplifier * (1 + armorUnequipped) * 2);
+
+        return true;
     }
 
     @Override

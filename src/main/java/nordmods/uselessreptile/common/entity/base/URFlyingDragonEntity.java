@@ -35,12 +35,12 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(GLIDING, false);
-        dataTracker.startTracking(FLYING, false);
-        dataTracker.startTracking(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
-        dataTracker.startTracking(IN_AIR_TIMER, 0);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(GLIDING, false);
+        builder.add(FLYING, false);
+        builder.add(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
+        builder.add(IN_AIR_TIMER, 0);
     }
 
     public static final TrackedData<Boolean> GLIDING = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);

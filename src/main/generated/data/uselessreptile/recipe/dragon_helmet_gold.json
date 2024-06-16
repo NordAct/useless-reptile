@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "M": {
+      "item": "minecraft:gold_ingot"
+    }
+  },
+  "pattern": [
+    "MMM",
+    "M M",
+    "L L"
+  ],
+  "result": {
+    "count": 1,
+    "id": "uselessreptile:dragon_helmet_gold"
+  }
+}

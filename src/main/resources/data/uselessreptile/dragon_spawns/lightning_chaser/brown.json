@@ -1,0 +1,9 @@
+{
+  "variant": "brown",
+  "conditions": {
+    "weight": 9,
+    "allowed_biomes": [
+      "#c:is_dry"
+    ]
+  }
+}

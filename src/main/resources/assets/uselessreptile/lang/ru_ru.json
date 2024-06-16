@@ -141,6 +141,7 @@
     "config.uselessreptile.option.smallDragonSpawnGroupCapacity": "Вместимость группы сущностей маленьких драконов",
     "config.uselessreptile.option.undergroundDragonSpawnGroupCapacity": "Вместимость группы сущностей подземных драконов",
     "config.uselessreptile.option.lightningChaserThunderstormSpawnTimerCooldown": "Перезарядка таймера появления ловца молний",
+    "config.uselessreptile.option.dragonMadness": "Драконье безумие",
 
     "config.uselessreptile.requires_restart.@Tooltip" : "\nИзменение данной опции требует перезапуска игры",
     "config.uselessreptile.group.spawnWeight.@Tooltip": "Шансы появления для каждого дракона. Каждая настройка позволяет контролировать частоту появления для конкретного дракона. \nИзменение любого параметра потребует перезапуска игры",
@@ -192,6 +193,7 @@
     "config.uselessreptile.option.lightningChaserBaseSecondaryAttackCooldown.@Tooltip": "Перезарядка ближней атаки и шоковой волны (в тиках). Заметка: перезарядка атаки шоковой волной всегда в 10 раз больше значения в этом поле",
     "config.uselessreptile.option.spawnGroupCapacity.@Tooltip": "Максимальная вместимость группы. \nГруппа включает в себя следующих сущностей: %s",
     "config.uselessreptile.option.lightningChaserThunderstormSpawnTimerCooldown.@Tooltip": "Колличество времени (в тиках), которое должно пройти прежде чем ловец молний снова сможет появиться рядом с одним и тем же игроком",
+    "config.uselessreptile.option.dragonMadness.@Tooltip": "Все (неприрученные) драконы теперь атакуют игроков, только завидев",
 
     "effect.uselessreptile.acid": "Кислота",
 

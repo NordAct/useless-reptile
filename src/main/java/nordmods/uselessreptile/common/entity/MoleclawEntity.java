@@ -2,7 +2,6 @@ package nordmods.uselessreptile.common.entity;
 
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
-import net.fabricmc.fabric.api.mininglevel.v1.MiningLevelManager;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -19,7 +18,6 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.tag.BlockTags;
@@ -42,20 +40,19 @@ import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
 import nordmods.uselessreptile.common.entity.ai.pathfinding.MoleclawNavigation;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.gui.MoleclawScreenHandler;
-import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.items.DragonArmorItem;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import java.util.List;
 
@@ -82,7 +79,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
         if (world.getChunk(pos).getInhabitedTime() > 12000) return false;
         if (world.getLightLevel(LightType.SKY, pos) > 7 || world.getLightLevel(LightType.BLOCK, pos) > 7) return false;
-        return spawnReason == SpawnReason.SPAWNER || world.getBlockState(pos.down()).isIn(URTags.MOLECLAW_SPAWNABLE_ON);
+        return URDragonEntity.canDragonSpawn(type, world, spawnReason, pos, random);
     }
 
     @Override
@@ -103,9 +100,9 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(IS_PANICKING, false);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(IS_PANICKING, false);
     }
     public static final TrackedData<Boolean> IS_PANICKING = DataTracker.registerData(MoleclawEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public boolean isPanicking() {return dataTracker.get(IS_PANICKING);}
@@ -241,35 +238,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return MoleclawScreenHandler.createScreenHandler(syncId, inv, inventory);
     }
 
-
-    @Override
-    protected void updateEquipment() {
-        super.updateEquipment();
-        updateBanner();
-
-        int armorBonus = 0;
-
-        ItemStack head = inventory.getStack(1);
-        ItemStack body = inventory.getStack(2);
-        ItemStack tail = inventory.getStack(3);
-
-        if (head.getItem() instanceof DragonArmorItem helmet) {
-            equipStack(EquipmentSlot.HEAD, head);
-            armorBonus += helmet.getArmorBonus();
-        }
-        if (body.getItem() instanceof DragonArmorItem chestplate) {
-            equipStack(EquipmentSlot.CHEST, body);
-            armorBonus += chestplate.getArmorBonus();
-        }
-        if (tail.getItem() instanceof DragonArmorItem tailArmor) {
-            equipStack(EquipmentSlot.LEGS, tail);
-            armorBonus += tailArmor.getArmorBonus();
-        }
-
-
-        updateArmorBonus(armorBonus);
-    }
-
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
@@ -325,7 +293,13 @@ public class MoleclawEntity extends URRideableDragonEntity {
             GameProfile playerId = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
             if (blockState.isIn(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(getWorld(), blockPos, playerId, rider)) continue;
 
-            float miningLevel = MiningLevelManager.getRequiredMiningLevel(blockState);
+            //rip MiningLevelManager
+            float miningLevel = 0;
+            if (blockState.isIn(BlockTags.INCORRECT_FOR_NETHERITE_TOOL)) miningLevel = 5;
+            else if (blockState.isIn(BlockTags.INCORRECT_FOR_DIAMOND_TOOL)) miningLevel = 4;
+            else if (blockState.isIn(BlockTags.INCORRECT_FOR_IRON_TOOL)) miningLevel = 3;
+            else if (blockState.isIn(BlockTags.INCORRECT_FOR_STONE_TOOL)) miningLevel = 2;
+            else if (blockState.isIn(BlockTags.INCORRECT_FOR_WOODEN_TOOL)) miningLevel = 1;
             float maxMiningLevel = 0;
             if (hasStatusEffect(StatusEffects.STRENGTH)) maxMiningLevel += getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1;
             if (hasStatusEffect(StatusEffects.WEAKNESS)) maxMiningLevel -= getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1;
@@ -355,19 +329,23 @@ public class MoleclawEntity extends URRideableDragonEntity {
                 getPos().getX() + x + 1.25, getPos().getY() + getHeight() + 1 + y, getPos().getZ() + z + 1.25);
     }
 
+    @Override
+    public String getDefaultVariant() {
+        return "black";
+    }
+
     public void tryPanic() {
         playPanicSound();
-        if (!hasHelmet()) setIsPanicking(isTooBrightAtPos(getBlockPos()));
+        if (!hasLightProtection()) setIsPanicking(isTooBrightAtPos(getBlockPos()));
         else setIsPanicking(false);
     }
 
-    public boolean hasHelmet() {
-        Item head = getEquippedStack(EquipmentSlot.HEAD).getItem();
-        return head == URItems.MOLECLAW_HELMET_IRON || head == URItems.MOLECLAW_HELMET_GOLD || head == URItems.MOLECLAW_HELMET_DIAMOND;
+    public boolean hasLightProtection() {
+        return getEquippedStack(EquipmentSlot.HEAD).isIn(URTags.MOLECLAW_PROTECTS_FROM_LIGHT);
     }
 
     public boolean isTooBrightAtPos(BlockPos blockPos) {
-        return getLightAtPos(blockPos, this) > 7 && !hasHelmet();
+        return getLightAtPos(blockPos, this) > 7 && !hasLightProtection();
     }
 
     public static int getLightAtPos(BlockPos blockPos, LivingEntity entity) {

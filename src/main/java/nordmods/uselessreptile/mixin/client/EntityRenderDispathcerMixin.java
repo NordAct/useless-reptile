@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class EntityRenderDispathcerMixin {
 
     @Inject(method = "renderHitbox", at = @At("HEAD"))
-    private static void renderAttackBoxes(MatrixStack matrices, VertexConsumer vertices, Entity entity, float tickDelta, CallbackInfo ci){
+    private static void renderAttackBoxes(MatrixStack matrices, VertexConsumer vertices, Entity entity, float tickDelta, float red, float green, float blue, CallbackInfo ci){
         if (!URClientConfig.getConfig().attackBoxesInDebug) return;
 
         if (entity instanceof URDragonEntity dragon) {

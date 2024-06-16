@@ -1,14 +1,15 @@
 package nordmods.uselessreptile.common.entity;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.SitGoal;
+import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -21,28 +22,25 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.config.URConfig;
-import net.minecraft.world.WorldAccess;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.*;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
-import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.items.FluteItem;
+import nordmods.uselessreptile.common.item.FluteItem;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.keyframe.event.SoundKeyframeEvent;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 public class RiverPikehornEntity extends URFlyingDragonEntity {
 
@@ -75,9 +73,9 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(IS_HUNTING, false);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(IS_HUNTING, false);
     }
     public static final TrackedData<Boolean> IS_HUNTING = DataTracker.registerData(RiverPikehornEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public boolean isHunting() {return dataTracker.get(IS_HUNTING);}
@@ -169,11 +167,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         return URSounds.PIKEHORN_DEATH;
     }
 
-    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        BlockPos blockPos = pos.down();
-        return spawnReason == SpawnReason.SPAWNER || world.getBlockState(blockPos).isIn(URTags.PIKEHORN_SPAWNABLE_ON);
-    }
-
     @Override
     public void tick() {
         super.tick();
@@ -200,9 +193,10 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
             if (huntTimer > 0 && !isHunting()) huntTimer--;
             else setIsHunting(true);
 
-            if (getMainHandStack().isFood()) {
+            ItemStack itemStack = getMainHandStack();
+            if (itemStack.isIn(ItemTags.FISHES) && itemStack.getComponents().contains(DataComponentTypes.FOOD)) {
                 if (eatTimer <= 0 || getMaxHealth() > getHealth()) {
-                    eatFood(getWorld(), getMainHandStack());
+                    eatFood(getWorld(), itemStack, itemStack.getComponents().get(DataComponentTypes.FOOD));
                     heal(getHealthRegenFromFood());
                     stopHunt();
                 } else eatTimer--;
@@ -214,8 +208,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
             if (owner != null) {
                 ItemStack main = owner.getMainHandStack();
                 ItemStack offhand = owner.getOffHandStack();
-                boolean mainCanTarget = main.hasNbt() && main.getNbt().getInt(FluteItem.MODE_TAG) == 1;
-                boolean offhandCanTarget = offhand.hasNbt() && offhand.getNbt().getInt(FluteItem.MODE_TAG) == 1;
+                boolean mainCanTarget = main.getItem() instanceof FluteItem fluteItem && fluteItem.getFluteMode(main) == 1;
+                boolean offhandCanTarget = offhand.getItem() instanceof FluteItem fluteItem && fluteItem.getFluteMode(offhand) == 1;
                 if (owner.getItemCooldownManager().isCoolingDown(URItems.FLUTE) && (mainCanTarget || offhandCanTarget)) setIsHunting(true);
             }
         }
@@ -255,6 +249,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         targetSelector.add(4, new DragonAttackWithOwnerGoal<>(this));
         targetSelector.add(4, new PikehornFluteTargetGoal<>(this, LivingEntity.class));
         targetSelector.add(5, new DragonTrackOwnerAttackerGoal(this));
+        if (URConfig.getConfig().dragonMadness) targetSelector.add(4, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }
 
     @Override
@@ -346,6 +341,16 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     @Override
     public boolean isTamingItem(ItemStack itemStack) {
         return itemStack.isOf(Items.TROPICAL_FISH_BUCKET);
+    }
+
+    @Override
+    public Box getAttackBox() {
+        return getBoundingBox().expand(getScale(), 0, getScale());
+    }
+
+    @Override
+    public String getDefaultVariant() {
+        return "blue";
     }
 
     @Override

@@ -14,11 +14,12 @@ import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -50,10 +51,13 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
             matrixStackIn.push();
             passengers.remove(passenger.getUuid());
 
-            matrixStackIn.translate(0, -0.7f, 0);
-            RenderUtils.translateToPivotPoint(matrixStackIn, bone);
+            Vec3d vec3d = passenger.getVehicleAttachmentPos(animatable.owner);
+            matrixStackIn.translate(vec3d.x * 1/animatable.owner.getScale(), -vec3d.y * 1/animatable.owner.getScale(), vec3d.z * 1/animatable.owner.getScale());
+            RenderUtil.translateToPivotPoint(matrixStackIn, bone);
             float yaw = MathHelper.lerpAngleDegrees(partialTick, animatable.owner.prevBodyYaw, animatable.owner.bodyYaw);
             matrixStackIn.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(180f - yaw));
+            matrixStackIn.scale(1/animatable.owner.getScale(), 1/animatable.owner.getScale(),1/animatable.owner.getScale());
+
             renderEntity(passenger, partialTick, matrixStackIn, bufferSource, packedLight);
             buffer = bufferSource.getBuffer(renderType);
 
@@ -72,12 +76,10 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
         EntityRenderDispatcher manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
 
         render = manager.getRenderer(entityIn);
-        matrixStack.push();
         try {
             render.render(entityIn, 0, partialTicks, matrixStack, bufferIn, packedLight);
         } catch (Throwable throwable1) {
             throw new CrashException(CrashReport.create(throwable1, "Rendering entity in world"));
         }
-        matrixStack.pop();
     }
 }

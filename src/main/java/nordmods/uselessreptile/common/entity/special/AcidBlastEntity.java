@@ -7,6 +7,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.particle.EntityEffectParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -17,24 +18,24 @@ import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.init.*;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEntity {
 
     private int life;
-    private final int color = 10085398;
+    private static final int COLOR = 10085398;
 
     public AcidBlastEntity(EntityType<? extends AcidBlastEntity> entityType, World world) {
-        super(entityType, world, ItemStack.EMPTY);
+        super(entityType, world);
     }
 
     public AcidBlastEntity(World world, LivingEntity owner) {
-        super(UREntities.ACID_BLAST_ENTITY, world, ItemStack.EMPTY);
+        super(UREntities.ACID_BLAST_ENTITY, world);
         setOwner(owner);
     }
 
@@ -56,6 +57,11 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
     protected boolean canHit(Entity entity) {
         if (entity instanceof EntityPart entityPart && entityPart.owner == getOwner()) return false;
         return super.canHit(entity);
+    }
+
+    @Override
+    protected ItemStack getDefaultItemStack() {
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -81,8 +87,7 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
         Entity entity = getOwner();
         if (entity instanceof LivingEntity livingEntity) areaEffectCloudEntity.setOwner(livingEntity);
 
-        areaEffectCloudEntity.setColor(color);
-        areaEffectCloudEntity.setParticleType(ParticleTypes.ENTITY_EFFECT);
+        areaEffectCloudEntity.setParticleType(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, COLOR));
         areaEffectCloudEntity.setRadius(1.0f);
         areaEffectCloudEntity.setDuration(20);
         areaEffectCloudEntity.setRadiusGrowth(0.1f);
@@ -104,12 +109,12 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
     }
 
     private void spawnParticles(int amount) {
-        int i = color;
-        double d = (double)(i >> 16 & 0xFF) / 255.0;
-        double e = (double)(i >> 8 & 0xFF) / 255.0;
-        double f = (double)(i >> 0 & 0xFF) / 255.0;
+        int i = COLOR;
+        float d = (i >> 16 & 0xFF) / 255f;
+        float e = (i >> 8 & 0xFF) / 255f;
+        float f = (i >> 0 & 0xFF) / 255f;
         for (int j = 0; j < amount; ++j) {
-            getWorld().addParticle(ParticleTypes.ENTITY_EFFECT, getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), d, e, f);
+            getWorld().addParticle(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, d, e, f), getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), d, e, f);
         }
     }
 
@@ -119,6 +124,11 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
             animationEvent.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
             return PlayState.CONTINUE;
         }));
+    }
+
+    @Override
+    protected SoundEvent getHitSound() {
+        return URSounds.ACID_SPLASH;
     }
 
     @Override

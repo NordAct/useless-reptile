@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -17,6 +18,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 
 public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable> {
@@ -32,7 +34,7 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
         this.animatable = animatable;
         if (!ResourceUtil.isResourceReloadFinished) return;
         poseStack.push();
-        float partialTick = MinecraftClient.getInstance().getTickDelta();
+        float partialTick = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
         URDragonEntity owner = animatable.owner;
         float yaw = MathHelper.lerpAngleDegrees(partialTick, owner.prevBodyYaw, owner.bodyYaw);
         if (owner.isFrozen())
@@ -48,8 +50,7 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
 
     //have to override that because for some reason they give offset for matrix by 0.5 on each axis
     @Override
-    public void preRender(MatrixStack poseStack, DragonEquipmentAnimatable animatable, BakedGeoModel model, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue,
-                          float alpha) {
+    public void preRender(MatrixStack poseStack, DragonEquipmentAnimatable animatable, BakedGeoModel model, @Nullable VertexConsumerProvider bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
         this.objectRenderTranslations = new Matrix4f(poseStack.peek().getPositionMatrix());
 
         scaleModelForRender(this.scaleWidth, this.scaleHeight, poseStack, animatable, model, isReRender, partialTick, packedLight, packedOverlay);
@@ -73,5 +74,14 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
         poseStack.translate(0, -0.01, 0);
         super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
         poseStack.pop();
+    }
+
+    @Override
+    public void renderRecursively(MatrixStack poseStack, DragonEquipmentAnimatable animatable, GeoBone bone, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight,
+                                  int packedOverlay, int colour) {
+        //TODO: actually investigate tf is this bug (note: happens only if DragonPassengerLayer or BannerLayer are rendered)
+        if (buffer instanceof BufferBuilder builder && !builder.building) buffer = bufferSource.getBuffer(renderType);
+
+        super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
     }
 }

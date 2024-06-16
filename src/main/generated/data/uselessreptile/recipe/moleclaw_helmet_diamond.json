@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "item": "minecraft:tinted_glass"
+    },
+    "H": {
+      "item": "uselessreptile:dragon_helmet_diamond"
+    }
+  },
+  "pattern": [
+    "GHG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "uselessreptile:moleclaw_helmet_diamond"
+  }
+}

@@ -25,7 +25,7 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
 
     @Override
     public Identifier getTexture(ShockwaveSphereEntity entity) {
-        return new Identifier(UselessReptile.MODID, "textures/entity/shockwave_sphere/shockwave.png");
+        return UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
     }
 
     @Override
@@ -78,7 +78,7 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
                 Vector3f v2 = getSphereDot(maxPhi, maxTheta, radius);
                 Vector3f v3 = getSphereDot(maxPhi, minTheta, radius);
 
-                RenderUtil.renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek().getNormalMatrix(), vertexConsumer,
+                RenderUtil.renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek(), vertexConsumer,
                         v0, v1 ,v2 ,v3,
                         alpha, 1, 1, 1,LightmapTextureManager.MAX_LIGHT_COORDINATE,
                         minU, maxU, minV, maxV);

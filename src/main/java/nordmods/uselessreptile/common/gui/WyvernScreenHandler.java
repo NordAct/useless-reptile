@@ -1,8 +1,10 @@
 package nordmods.uselessreptile.common.gui;
 
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.ItemStack;
 import nordmods.uselessreptile.common.init.URScreenHandlers;
 
 public class WyvernScreenHandler extends URDragonScreenHandler {
@@ -17,5 +19,10 @@ public class WyvernScreenHandler extends URDragonScreenHandler {
 
     public static WyvernScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
         return new WyvernScreenHandler(syncId, playerInventory, inventory);
+    }
+
+    @Override
+    protected boolean canEquip(EquipmentSlot equipmentSlot, ItemStack item) {
+        return false;
     }
 }

@@ -28,6 +28,9 @@
     ],
     "preLaunch": [
       "nordmods.uselessreptile.UselessReptile"
+    ],
+    "fabric-datagen": [
+      "nordmods.uselessreptile.datagen.UselessReptileDataGenerator"
     ]
   },
   "mixins": [
@@ -38,7 +41,7 @@
     "fabricloader": ">=0.15",
     "fabric-api": "*",
     "java": ">=17",
-    "minecraft": "1.20.4",
+    "minecraft": ">=1.20.5",
     "geckolib": "*",
     "yet_another_config_lib_v3": ">=3.2.0"
   }

@@ -29,9 +29,9 @@ public class URDragonPart extends EntityPart {
     }
 
     @Override
-    protected void initDataTracker() {
-        dataTracker.startTracking(HEIGHT_MODIFIER, 1f);
-        dataTracker.startTracking(WIDTH_MODIFIER, 1f);
+    protected void initDataTracker(DataTracker.Builder builder) {
+        builder.add(HEIGHT_MODIFIER, 1f);
+        builder.add(WIDTH_MODIFIER, 1f);
     }
 
     public static final TrackedData<Float> HEIGHT_MODIFIER = DataTracker.registerData(URDragonPart.class, TrackedDataHandlerRegistry.FLOAT);
@@ -46,14 +46,14 @@ public class URDragonPart extends EntityPart {
     @Override
     public boolean isInvulnerableTo(DamageSource damageSource) {
         boolean riderOwner = false;
-        if (damageSource.getSource() instanceof PlayerEntity player)
+        if (damageSource.getAttacker() instanceof PlayerEntity player)
             riderOwner = player.getVehicle() == owner && owner.getOwner() == player;
         return riderOwner || super.isInvulnerableTo(damageSource);
     }
 
     @Override
     public boolean damage(DamageSource source, float amount) {
-        return owner.damage(source, amount * damageMultiplier);
+        return super.damage(source, amount * damageMultiplier);
     }
 
     @Override
@@ -67,6 +67,8 @@ public class URDragonPart extends EntityPart {
     }
 
     public void setScale(float destinationHeight, float destinationWidth) {
+        destinationWidth *= owner.getScale();
+        destinationHeight *= owner.getScale();
         float widthMod = getWidthMod();
         float heightMod = getHeightMod();
         float widthDiff = widthMod - destinationWidth;
@@ -97,7 +99,7 @@ public class URDragonPart extends EntityPart {
     }
 
     public void setRelativePos(double x, double y, double z) {
-        setRelativePos(x, y, z, 0, owner.getYaw());
+        setRelativePos(x * owner.getScale(), y * owner.getScale(), z * owner.getScale(), 0, owner.getYaw());
     }
 
     public void setRelativePos(Vector3f vector3f) {

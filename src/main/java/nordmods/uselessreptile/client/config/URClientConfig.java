@@ -4,12 +4,11 @@ import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 
 public class URClientConfig {
     public static final ConfigClassHandler<URClientConfig> CONFIG = ConfigClassHandler.createBuilder(URClientConfig.class)
-            .id(new Identifier(UselessReptile.MODID, "config_client"))
+            .id(UselessReptile.id("config_client"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(FabricLoader.getInstance().getConfigDir().resolve("uselessreptile_client.json5"))
                     .setJson5(true)
@@ -17,11 +16,11 @@ public class URClientConfig {
             .build();
 
     @SerialEntry(comment = "CAMERA SETTINGS")
-    public double cameraDistanceOffset = 2;
+    public float cameraDistanceOffset = 2;
     @SerialEntry
-    public double cameraVerticalOffset = 0;
+    public float cameraVerticalOffset = 0;
     @SerialEntry
-    public double cameraHorizontalOffset = -1.5;
+    public float cameraHorizontalOffset = -1.5f;
     @SerialEntry
     public boolean enableCameraOffset = true;
     @SerialEntry

@@ -1,0 +1,2 @@
+- 1.21 port
+- Added Hungarian translation (bombadil6870)

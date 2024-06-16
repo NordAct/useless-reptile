@@ -1,0 +1,9 @@
+{
+  "comment": "Example of how to add new variant to the pool without any conditions",
+  "variants": [
+    {
+      "name": "striped",
+      "weight": 1
+    }
+  ]
+}

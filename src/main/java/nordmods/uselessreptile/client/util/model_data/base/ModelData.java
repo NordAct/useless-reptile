@@ -12,9 +12,9 @@ import org.jetbrains.annotations.Nullable;
 public record ModelData(Identifier texture, @Nullable Identifier model, @Nullable Identifier animation, RenderLayer renderType) {
     public static ModelData deserialize(JsonElement element) throws JsonParseException {
         JsonObject object = element.getAsJsonObject();
-        Identifier texture = new Identifier(JsonHelper.getString(object, "texture"));
-        Identifier model = JsonHelper.hasString( object,"model") ? new Identifier(JsonHelper.getString(object, "model")) : null;
-        Identifier animation = JsonHelper.hasString( object,"animation") ? new Identifier(JsonHelper.getString(object, "animation")) : new Identifier(UselessReptile.MODID, "animations/entity/empty.animation.json");
+        Identifier texture = Identifier.of(JsonHelper.getString(object, "texture"));
+        Identifier model = JsonHelper.hasString( object,"model") ? Identifier.of(JsonHelper.getString(object, "model")) : null;
+        Identifier animation = JsonHelper.hasString( object,"animation") ? Identifier.of(JsonHelper.getString(object, "animation")) : UselessReptile.id("animations/entity/empty.animation.json");
 
         boolean cull = JsonHelper.hasBoolean( object,"cull") ? JsonHelper.getBoolean(object, "cull") : true;
         boolean translucent = JsonHelper.hasBoolean( object,"translucent") ? JsonHelper.getBoolean(object, "translucent") : false;

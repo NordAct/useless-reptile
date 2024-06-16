@@ -88,15 +88,15 @@ public abstract class URDragonModel<T extends URDragonEntity> extends GeoModel<T
     }
 
     protected final Identifier getDefaultTexture(T entity) {
-        return new Identifier(UselessReptile.MODID, "textures/entity/"+ entity.getDragonID() + "/" + defaultVariant + ".png");
+        return UselessReptile.id("textures/entity/"+ entity.getDragonID() + "/" + defaultVariant + ".png");
     }
 
     protected final Identifier getDefaultAnimation(T entity) {
-        return new Identifier(UselessReptile.MODID, "animations/entity/" + entity.getDragonID() + "/" + entity.getDragonID() + ".animation.json");
+        return UselessReptile.id("animations/entity/" + entity.getDragonID() + "/" + entity.getDragonID() + ".animation.json");
     }
 
     protected final Identifier getDefaultModel(T entity) {
-        return new Identifier(UselessReptile.MODID, "geo/entity/" + entity.getDragonID() + "/" + entity.getDragonID() + ".geo.json");
+        return UselessReptile.id("geo/entity/" + entity.getDragonID() + "/" + entity.getDragonID() + ".geo.json");
     }
 
     @Override

@@ -9,7 +9,7 @@ import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.items.FluteItem;
+import nordmods.uselessreptile.common.item.FluteItem;
 
 public class PikehornFluteTargetGoal<T extends LivingEntity> extends ActiveTargetGoal<T> {
 
@@ -26,8 +26,8 @@ public class PikehornFluteTargetGoal<T extends LivingEntity> extends ActiveTarge
 
         ItemStack main = player.getMainHandStack();
         ItemStack offhand = player.getOffHandStack();
-        boolean mainCanTarget = main.hasNbt() && main.getNbt().getInt(FluteItem.MODE_TAG) == 2;
-        boolean offhandCanTarget = offhand.hasNbt() && offhand.getNbt().getInt(FluteItem.MODE_TAG) == 2;
+        boolean mainCanTarget = main.getItem() instanceof FluteItem fluteItem && fluteItem.getFluteMode(main) == 2;
+        boolean offhandCanTarget = offhand.getItem() instanceof FluteItem fluteItem && fluteItem.getFluteMode(offhand) == 2;
         if (!(player.getItemCooldownManager().isCoolingDown(URItems.FLUTE) && (mainCanTarget || offhandCanTarget))) return false;
 
         float range = 4096;

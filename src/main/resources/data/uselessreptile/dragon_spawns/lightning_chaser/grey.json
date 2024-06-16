@@ -1,0 +1,10 @@
+{
+  "variant": "grey",
+  "conditions": {
+    "weight": 9,
+    "banned_biomes": [
+      "#c:is_dry",
+      "#c:is_ocean"
+    ]
+  }
+}

@@ -1,9 +1,14 @@
 package nordmods.uselessreptile.common.init;
 
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import com.google.common.base.Suppliers;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.component.ComponentType;
+import net.minecraft.component.type.AttributeModifierSlot;
+import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -15,30 +20,35 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.items.DragonArmorItem;
-import nordmods.uselessreptile.common.items.FluteItem;
+import nordmods.uselessreptile.common.item.DragonEquipmentItem;
+import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.item.component.FluteComponent;
+
+import java.util.function.UnaryOperator;
 
 public class URItems {
-    public static final Item WYVERN_SKIN = new Item(new FabricItemSettings());
-    public static final DragonArmorItem DRAGON_HELMET_IRON = new DragonArmorItem(2, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem DRAGON_HELMET_GOLD = new DragonArmorItem(3, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem DRAGON_HELMET_DIAMOND = new DragonArmorItem(4, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem DRAGON_CHESTPLATE_IRON = new DragonArmorItem(3, EquipmentSlot.CHEST, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem DRAGON_CHESTPLATE_GOLD = new DragonArmorItem(5, EquipmentSlot.CHEST, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem DRAGON_CHESTPLATE_DIAMOND = new DragonArmorItem(6, EquipmentSlot.CHEST, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem DRAGON_TAIL_ARMOR_IRON = new DragonArmorItem(1, EquipmentSlot.LEGS, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem DRAGON_TAIL_ARMOR_GOLD = new DragonArmorItem(2, EquipmentSlot.LEGS, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem DRAGON_TAIL_ARMOR_DIAMOND = new DragonArmorItem(3, EquipmentSlot.LEGS, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem MOLECLAW_HELMET_IRON = new DragonArmorItem(2, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem MOLECLAW_HELMET_GOLD = new DragonArmorItem(3, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
-    public static final DragonArmorItem MOLECLAW_HELMET_DIAMOND = new DragonArmorItem(4, EquipmentSlot.HEAD, new FabricItemSettings().maxCount(1));
+    public static final ComponentType<FluteComponent> FLUTE_MODE_COMPONENT = register("flute_mode", builder -> builder.codec(FluteComponent.CODEC).packetCodec(FluteComponent.PACKET_CODEC));
+
+    public static final Item WYVERN_SKIN = new Item(new Item.Settings());
+    public static final DragonEquipmentItem DRAGON_HELMET_IRON = createDragonArmorItem(EquipmentSlot.HEAD, 2, 0);
+    public static final DragonEquipmentItem DRAGON_HELMET_GOLD = createDragonArmorItem(EquipmentSlot.HEAD,3, 0);
+    public static final DragonEquipmentItem DRAGON_HELMET_DIAMOND = createDragonArmorItem(EquipmentSlot.HEAD, 4, 0);
+    public static final DragonEquipmentItem DRAGON_CHESTPLATE_IRON = createDragonArmorItem(EquipmentSlot.CHEST, 4, 0);
+    public static final DragonEquipmentItem DRAGON_CHESTPLATE_GOLD = createDragonArmorItem(EquipmentSlot.CHEST, 5, 0);
+    public static final DragonEquipmentItem DRAGON_CHESTPLATE_DIAMOND = createDragonArmorItem(EquipmentSlot.CHEST, 6, 0);
+    public static final DragonEquipmentItem DRAGON_TAIL_ARMOR_IRON = createDragonArmorItem(EquipmentSlot.LEGS, 1, 0);
+    public static final DragonEquipmentItem DRAGON_TAIL_ARMOR_GOLD = createDragonArmorItem(EquipmentSlot.LEGS, 2, 0);
+    public static final DragonEquipmentItem DRAGON_TAIL_ARMOR_DIAMOND = createDragonArmorItem(EquipmentSlot.LEGS, 3, 0);
+    public static final DragonEquipmentItem MOLECLAW_HELMET_IRON = createDragonArmorItem(EquipmentSlot.HEAD, 2, 0);
+    public static final DragonEquipmentItem MOLECLAW_HELMET_GOLD = createDragonArmorItem(EquipmentSlot.HEAD, 3, 0);
+    public static final DragonEquipmentItem MOLECLAW_HELMET_DIAMOND = createDragonArmorItem(EquipmentSlot.HEAD, 4, 0);
     public static final Item WYVERN_SPAWN_EGG = new SpawnEggItem(UREntities.WYVERN_ENTITY, 5462570, 3094045, new Item.Settings());
     public static final Item MOLECLAW_SPAWN_EGG = new SpawnEggItem(UREntities.MOLECLAW_ENTITY,2105119, 458752, new Item.Settings());
     public static final Item RIVER_PIKEHORN_SPAWN_EGG = new SpawnEggItem(UREntities.RIVER_PIKEHORN_ENTITY,2910895, 1457243, new Item.Settings());
     public static final Item LIGHTNING_CHASER_SPAWN_EGG = new SpawnEggItem(UREntities.LIGHTNING_CHASER_ENTITY,4145472, 10922151, new Item.Settings());
-    public static final FluteItem FLUTE = new FluteItem(new FabricItemSettings().maxCount(1));
+    public static final FluteItem FLUTE = new FluteItem(new Item.Settings().maxCount(1).component(FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT));
 
-    public static final RegistryKey<ItemGroup> UR_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, new Identifier(UselessReptile.MODID, "item_group"));
+    public static final RegistryKey<ItemGroup> UR_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, UselessReptile.id("item_group"));
 
     public static void init(){
         register(WYVERN_SKIN, "wyvern_skin");
@@ -87,8 +97,25 @@ public class URItems {
         });
     }
 
+    private static DragonEquipmentItem createDragonArmorItem(EquipmentSlot equipmentSlot, int armor, int toughness) {
+        return new DragonEquipmentItem(equipmentSlot,
+                Suppliers.memoize(() -> {
+                    AttributeModifiersComponent.Builder builder = AttributeModifiersComponent.builder();
+                    AttributeModifierSlot attributeModifierSlot = AttributeModifierSlot.forEquipmentSlot(equipmentSlot);
+                    Identifier id = DragonEquipmentItem.equipmentModifierID(equipmentSlot);
+                    if (armor > 0) builder.add(EntityAttributes.GENERIC_ARMOR, new EntityAttributeModifier(id, armor, EntityAttributeModifier.Operation.ADD_VALUE), attributeModifierSlot);
+                    if (toughness > 0) builder.add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, new EntityAttributeModifier(id, toughness, EntityAttributeModifier.Operation.ADD_VALUE), attributeModifierSlot);
+                    return builder.build();
+                }),
+                new Item.Settings().maxCount(1));
+    }
+
     private static void register(Item item, String id) {
-        Registry.register(Registries.ITEM, new Identifier(UselessReptile.MODID, id), item);
+        Registry.register(Registries.ITEM, UselessReptile.id(id), item);
+    }
+
+    private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
+        return Registry.register(Registries.DATA_COMPONENT_TYPE, UselessReptile.id(id), (builderOperator.apply(ComponentType.builder())).build());
     }
 }
 

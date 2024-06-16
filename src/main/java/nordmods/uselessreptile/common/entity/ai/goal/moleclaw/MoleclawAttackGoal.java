@@ -34,7 +34,8 @@ public class MoleclawAttackGoal extends Goal {
             return false;
         }
         target = entity.getTarget();
-        boolean tooBright = target != null && entity.isTooBrightAtPos(target.getBlockPos());
+        if (target == null) return false;
+        boolean tooBright = entity.isTooBrightAtPos(target.getBlockPos());
         return !tooBright && (entity.squaredDistanceTo(target) < maxSearchDistance);
     }
 

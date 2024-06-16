@@ -5,7 +5,7 @@ import com.terraformersmc.modmenu.api.ModMenuApi;
 import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.gui.controllers.TickBoxController;
 import dev.isxander.yacl3.gui.controllers.cycling.EnumController;
-import dev.isxander.yacl3.gui.controllers.slider.DoubleSliderController;
+import dev.isxander.yacl3.gui.controllers.slider.FloatSliderController;
 import dev.isxander.yacl3.gui.controllers.slider.IntegerSliderController;
 import dev.isxander.yacl3.gui.controllers.string.number.FloatFieldController;
 import dev.isxander.yacl3.gui.controllers.string.number.IntegerFieldController;
@@ -120,33 +120,33 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.pikehornSpawnWeight = val)
                 .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
                 .build();
-        Option<Integer> lightningChaserSpawnWeight = Option.<Integer>createBuilder()
-                .name(key("option.lightningChaserSpawnWeight"))
-                .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonSpawnWeight.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.lightningChaserSpawnWeight,
-                        () -> config.lightningChaserSpawnWeight,
-                        val -> config.lightningChaserSpawnWeight = val)
-                .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
-                .build();
-        Option<Integer> lightningChaserThunderstormSpawnChance = Option.<Integer>createBuilder()
-                .name(key("option.lightningChaserThunderstormSpawnChance"))
-                .description(OptionDescription.createBuilder()
-                        .text(key("option.lightningChaserThunderstormSpawnChance.@Tooltip")).build())
-                .binding(defaults.lightningChaserThunderstormSpawnChance,
-                        () -> config.lightningChaserThunderstormSpawnChance,
-                        val -> config.lightningChaserThunderstormSpawnChance = val)
-                .customController(opt -> new IntegerSliderController(opt, 0, 100, 1))
-                .build();
-        Option<Integer> lightningChaserThunderstormSpawnTimerCooldown = Option.<Integer>createBuilder()
-                .name(key("option.lightningChaserThunderstormSpawnTimerCooldown"))
-                .description(OptionDescription.createBuilder()
-                        .text(key("option.lightningChaserThunderstormSpawnTimerCooldown.@Tooltip")).build())
-                .binding(defaults.lightningChaserThunderstormSpawnTimerCooldown,
-                        () -> config.lightningChaserThunderstormSpawnTimerCooldown,
-                        val -> config.lightningChaserThunderstormSpawnTimerCooldown = val)
-                .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
-                .build();
+        //Option<Integer> lightningChaserSpawnWeight = Option.<Integer>createBuilder()
+        //        .variant(key("option.lightningChaserSpawnWeight"))
+        //        .description(OptionDescription.createBuilder()
+        //                .text(key("option.dragonSpawnWeight.@Tooltip"), requiresRestart()).build())
+        //        .binding(defaults.lightningChaserSpawnWeight,
+        //                () -> config.lightningChaserSpawnWeight,
+        //                val -> config.lightningChaserSpawnWeight = val)
+        //        .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
+        //        .build();
+        //Option<Integer> lightningChaserThunderstormSpawnChance = Option.<Integer>createBuilder()
+        //        .variant(key("option.lightningChaserThunderstormSpawnChance"))
+        //        .description(OptionDescription.createBuilder()
+        //                .text(key("option.lightningChaserThunderstormSpawnChance.@Tooltip")).build())
+        //        .binding(defaults.lightningChaserThunderstormSpawnChance,
+        //                () -> config.lightningChaserThunderstormSpawnChance,
+        //                val -> config.lightningChaserThunderstormSpawnChance = val)
+        //        .customController(opt -> new IntegerSliderController(opt, 0, 100, 1))
+        //        .build();
+        //Option<Integer> lightningChaserThunderstormSpawnTimerCooldown = Option.<Integer>createBuilder()
+        //        .variant(key("option.lightningChaserThunderstormSpawnTimerCooldown"))
+        //        .description(OptionDescription.createBuilder()
+        //                .text(key("option.lightningChaserThunderstormSpawnTimerCooldown.@Tooltip")).build())
+        //        .binding(defaults.lightningChaserThunderstormSpawnTimerCooldown,
+        //                () -> config.lightningChaserThunderstormSpawnTimerCooldown,
+        //                val -> config.lightningChaserThunderstormSpawnTimerCooldown = val)
+        //        .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
+        //        .build();
 
         Option<Integer> dragonSpawnGroupCapacity = Option.<Integer>createBuilder()
                 .name(key("option.dragonSpawnGroupCapacity"))
@@ -230,24 +230,24 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.pikehornMaxGroupSize = val)
                 .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
                 .build();
-        Option<Integer> lightningChaserMinGroupSize = Option.<Integer>createBuilder()
-                .name(key("option.lightningChaserMinGroupSize"))
-                .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMinGroupSize.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.lightningChaserMinGroupSize,
-                        () -> config.lightningChaserMinGroupSize,
-                        val -> config.lightningChaserMinGroupSize = val)
-                .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
-                .build();
-        Option<Integer> lightningChaserMaxGroupSize = Option.<Integer>createBuilder()
-                .name(key("option.lightningChaserMaxGroupSize"))
-                .description(OptionDescription.createBuilder()
-                        .text(key("option.dragonMaxGroupSize.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.lightningChaserMaxGroupSize,
-                        () -> config.lightningChaserMaxGroupSize,
-                        val -> config.lightningChaserMaxGroupSize = val)
-                .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
-                .build();
+        //Option<Integer> lightningChaserMinGroupSize = Option.<Integer>createBuilder()
+        //        .variant(key("option.lightningChaserMinGroupSize"))
+        //        .description(OptionDescription.createBuilder()
+        //                .text(key("option.dragonMinGroupSize.@Tooltip"), requiresRestart()).build())
+        //        .binding(defaults.lightningChaserMinGroupSize,
+        //                () -> config.lightningChaserMinGroupSize,
+        //                val -> config.lightningChaserMinGroupSize = val)
+        //        .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+        //        .build();
+        //Option<Integer> lightningChaserMaxGroupSize = Option.<Integer>createBuilder()
+        //        .variant(key("option.lightningChaserMaxGroupSize"))
+        //        .description(OptionDescription.createBuilder()
+        //                .text(key("option.dragonMaxGroupSize.@Tooltip"), requiresRestart()).build())
+        //        .binding(defaults.lightningChaserMaxGroupSize,
+        //                () -> config.lightningChaserMaxGroupSize,
+        //                val -> config.lightningChaserMaxGroupSize = val)
+        //        .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+        //        .build();
 
         Option<URConfig.DragonGriefing> allowDragonGriefing = Option.<URConfig.DragonGriefing>createBuilder()
                 .name(key("option.allowDragonGriefing"))
@@ -267,13 +267,22 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.blockDropChance = val)
                 .customController(opt -> new IntegerSliderController(opt, 0, 100, 1))
                 .build();
+        Option<Boolean> dragonMadness = Option.<Boolean>createBuilder()
+                .name(key("option.dragonMadness"))
+                .description(OptionDescription.createBuilder()
+                        .text(key("option.dragonMadness.@Tooltip")).build())
+                .binding(config.dragonMadness,
+                        () -> config.dragonMadness,
+                        val -> config.dragonMadness = val)
+                .customController(TickBoxController::new)
+                .build();
 
         spawnWeightGroup.option(wyvernSpawnWeight);
         spawnWeightGroup.option(moleclawSpawnWeight);
         spawnWeightGroup.option(pikehornSpawnWeight);
-        spawnWeightGroup.option(lightningChaserSpawnWeight);
-        spawnWeightGroup.option(lightningChaserThunderstormSpawnChance);
-        spawnWeightGroup.option(lightningChaserThunderstormSpawnTimerCooldown);
+        //spawnWeightGroup.option(lightningChaserSpawnWeight);
+        //spawnWeightGroup.option(lightningChaserThunderstormSpawnChance);
+        //spawnWeightGroup.option(lightningChaserThunderstormSpawnTimerCooldown);
 
         spawnGroupsGroup.option(dragonSpawnGroupCapacity);
         spawnGroupsGroup.option(undergroundDragonSpawnGroupCapacity);
@@ -285,11 +294,12 @@ public class ModMenuIntegration implements ModMenuApi {
         groupSizeGroup.option(moleclawMaxGroupSize);
         groupSizeGroup.option(pikehornMinGroupSize);
         groupSizeGroup.option(pikehornMaxGroupSize);
-        groupSizeGroup.option(lightningChaserMinGroupSize);
-        groupSizeGroup.option(lightningChaserMaxGroupSize);
+        //groupSizeGroup.option(lightningChaserMinGroupSize);
+        //groupSizeGroup.option(lightningChaserMaxGroupSize);
 
         dragonBehaviourGroup.option(allowDragonGriefing);
         dragonBehaviourGroup.option(blockDropChance);
+        dragonBehaviourGroup.option(dragonMadness);
 
         gameplayCategory.group(spawnWeightGroup.build());
         gameplayCategory.group(spawnGroupsGroup.build());
@@ -319,26 +329,26 @@ public class ModMenuIntegration implements ModMenuApi {
                         .text(key("group.dragonAppearance.@Tooltip")).build());
 
 
-        Option<Double> cameraDistanceOffset = Option.<Double>createBuilder()
+        Option<Float> cameraDistanceOffset = Option.<Float>createBuilder()
                 .name(key("option.cameraDistanceOffset"))
                 .binding(clientDefaults.cameraDistanceOffset,
                         () -> clientConfig.cameraDistanceOffset,
                         val -> clientConfig.cameraDistanceOffset = val)
-                .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
+                .customController(opt -> new FloatSliderController(opt, -5, 5, 0.05f))
                 .build();
-        Option<Double> cameraVerticalOffset = Option.<Double>createBuilder()
+        Option<Float> cameraVerticalOffset = Option.<Float>createBuilder()
                 .name(key("option.cameraVerticalOffset"))
                 .binding(clientDefaults.cameraVerticalOffset,
                         () -> clientConfig.cameraVerticalOffset,
                         val -> clientConfig.cameraVerticalOffset = val)
-                .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
+                .customController(opt -> new FloatSliderController(opt, -5, 5, 0.05f))
                 .build();
-        Option<Double> cameraHorizontalOffset = Option.<Double>createBuilder()
+        Option<Float> cameraHorizontalOffset = Option.<Float>createBuilder()
                 .name(key("option.cameraHorizontalOffset"))
                 .binding(clientDefaults.cameraHorizontalOffset,
                         () -> clientConfig.cameraHorizontalOffset,
                         val -> clientConfig.cameraHorizontalOffset = val)
-                .customController(opt -> new DoubleSliderController(opt, -5, 5, 0.05))
+                .customController(opt -> new FloatSliderController(opt, -5, 5, 0.05f))
                 .build();
         Option<Boolean> enableCameraOffset = Option.<Boolean>createBuilder()
                 .name(key("option.enableCameraOffset"))

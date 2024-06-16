@@ -31,7 +31,7 @@ public class MoleclawNavigation extends DragonNavigation {
         if (currentPath == null) return;
 
         super.adjustPath();
-        if (!entity.isPanicking() && !entity.hasHelmet()) {
+        if (!entity.isPanicking() && !entity.hasLightProtection()) {
             for (int i = 0; i < this.currentPath.getLength(); ++i) {
                 PathNode pathNode = this.currentPath.getNode(i);
                 if (entity.isTooBrightAtPos(new BlockPos(pathNode.x, pathNode.y, pathNode.z))) {

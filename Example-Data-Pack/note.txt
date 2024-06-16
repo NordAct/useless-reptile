@@ -1,0 +1,31 @@
+Example datapack.
+Adds spawns for custom variants of Swamp Wyvern and River Pikehorn.
+
+Swamp Wyvern:
+- Barren Orange and Barren Brown - can be found in badlands, orange spawns below Y 80, brown - above Y 80
+- Ender - spawns (drum roll) in the End
+
+River Pikehorn:
+- Striped - can be found anywhere where pikehorns can spawn
+
+River Pikehorn's Striped variant shows the simplest way of adding variant to the pool alongside existing ones.
+Swamp Wyvern's variants show how to add variants with conditions to spawn.
+In order to allow new Swamp Wyvern's variant to spawn #uselessreptile:wyvern_spawnable_on block tag and #uselessreptile:swamp_wyvern_spawn_whitelist biome tag had to be edited to include end and badlands blocks and respective biomes.
+Pack also edits default variant spawns for Swamp Wyvern in order to prevent default variants spawning in the same biomes as added variants.
+
+Fields:
+- name - name of the variant
+
+- weight - spawn weight of the variant
+
+- allowed_biomes - whitelist of biomes where variant can appear. If not specified, variant can appear anywhere where dragon can appear
+-- tag - biome tags. Defined as list
+-- biome - biome ids. Defined as list
+
+- banned_biomes - blacklist of biomes where variant can't appear. If not specified, variant can appear anywhere where it can appear
+-- tag - biome tags. Defined as list
+-- biome - biome ids. Defined as list
+
+- altitude - Y coordinate range where variant can appear
+-- min - minimal world height for variant to appear. If not specified, defaults to -1000
+-- max - maximum world height up to which variant can appear. If not specified, defaults to 1000

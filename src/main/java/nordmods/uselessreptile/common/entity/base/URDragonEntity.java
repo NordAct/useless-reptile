@@ -1,13 +1,14 @@
 package nordmods.uselessreptile.common.entity.base;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.EnchantmentEffectComponentTypes;
+import net.minecraft.component.type.FoodComponents;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
@@ -15,16 +16,19 @@ import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectCategory;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
+import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.potion.PotionUtil;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -36,6 +40,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.*;
@@ -52,21 +57,22 @@ import nordmods.uselessreptile.common.entity.ai.pathfinding.DragonNavigation;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import nordmods.uselessreptile.common.network.InstrumentSoundBoundMessageS2CPacket;
-import nordmods.uselessreptile.common.util.dragon_variant.DragonVariantUtil;
+import nordmods.uselessreptile.common.network.URPacketHelper;
+import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawn;
+import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawnUtil;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.Animation;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.UUID;
+import java.util.List;
 import java.util.function.BiConsumer;
 
-public abstract class URDragonEntity extends TameableEntity implements GeoEntity, NamedScreenHandlerFactory, AssetCahceOwner {
+public abstract class URDragonEntity extends TameableEntity implements GeoEntity, NamedScreenHandlerFactory, AssetCahceOwner, InventoryChangedListener {
     protected double animationSpeed = 1;
     protected float rotationProgress;
     protected float heightMod = 1;
@@ -87,35 +93,35 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     private int healTimer = 0;
     protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
             (new EntityPositionSource
-                    (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.getRange()));
+                    (this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.value().notificationRadius()));
     protected @Nullable BlockPos jukeboxPos;
-    private static final UUID DRAGON_ARMOR_BONUS_ID = UUID.fromString("c9e68951-e06e-4f5d-8aeb-cf3a09c2638e");
     protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
 
     protected URDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         navigation = new DragonNavigation(this, world);
         lookControl = new DragonLookControl(this);
+        inventory.addListener(this);
     }
 
     @Override
-    protected void initDataTracker() {
-        super.initDataTracker();
-        dataTracker.startTracking(MOVING_BACKWARDS, false);
-        dataTracker.startTracking(IS_SITTING, false);
-        dataTracker.startTracking(DANCING, false);
-        dataTracker.startTracking(TURNING_STATE, (byte)0);//1 - left, 2 - right, 0 - straight
-        dataTracker.startTracking(TAMING_PROGRESS, 1);
-        dataTracker.startTracking(ATTACK_TYPE, 1);
-        dataTracker.startTracking(SPEED_MODIFIER, 1f);
-        dataTracker.startTracking(MOUNTED_OFFSET, 0.35f);
-        dataTracker.startTracking(HEIGHT_MODIFIER, 1f);
-        dataTracker.startTracking(WIDTH_MODIFIER, 1f);
-        dataTracker.startTracking(SECONDARY_ATTACK_COOLDOWN, 0);
-        dataTracker.startTracking(PRIMARY_ATTACK_COOLDOWN, 0);
-        dataTracker.startTracking(ACCELERATION_DURATION, 0);
-        dataTracker.startTracking(BOUNDED_INSTRUMENT_SOUND, "");
-        dataTracker.startTracking(VARIANT, "");
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(MOVING_BACKWARDS, false);
+        builder.add(IS_SITTING, false);
+        builder.add(DANCING, false);
+        builder.add(TURNING_STATE, (byte)0);//1 - left, 2 - right, 0 - straight
+        builder.add(TAMING_PROGRESS, 1);
+        builder.add(ATTACK_TYPE, 1);
+        builder.add(SPEED_MODIFIER, 1f);
+        builder.add(MOUNTED_OFFSET, 0.35f);
+        builder.add(HEIGHT_MODIFIER, 1f);
+        builder.add(WIDTH_MODIFIER, 1f);
+        builder.add(SECONDARY_ATTACK_COOLDOWN, 0);
+        builder.add(PRIMARY_ATTACK_COOLDOWN, 0);
+        builder.add(ACCELERATION_DURATION, 0);
+        builder.add(BOUNDED_INSTRUMENT_SOUND, "");
+        builder.add(VARIANT, "");
     }
 
     public static final TrackedData<Boolean> MOVING_BACKWARDS = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -200,7 +206,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (inventory != null && isTamed()) {
             final NbtList inv = new NbtList();
             for (int i = 0; i < inventory.size(); i++) {
-                inv.add(inventory.getStack(i).writeNbt(new NbtCompound()));
+                inv.add(inventory.getStack(i).encodeAllowEmpty(getRegistryManager()));
             }
             tag.put("Inventory", inv);
         }
@@ -219,8 +225,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             final NbtList inv = tag.getList("Inventory", 10);
             inventory = new SimpleInventory(inv.size());
             for (int i = 0; i < inv.size(); i++) {
-                inventory.setStack(i, ItemStack.fromNbt(inv.getCompound(i)));
+                inventory.setStack(i, ItemStack.fromNbtOrEmpty(this.getRegistryManager(), inv.getCompound(i)));
             }
+            inventory.addListener(this);
         }
     }
 
@@ -232,11 +239,16 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData, @Nullable NbtCompound entityNbt) {
+    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         entityData = new PassiveData(false);
         setTamingProgress(baseTamingProgress);
-        DragonVariantUtil.assignVariant(world, this);
-        return super.initialize(world, difficulty, spawnReason, entityData, entityNbt);
+        DragonSpawnUtil.assignVariantFromList(this, DragonSpawnUtil.getAvailableVariants(world, this));
+        return super.initialize(world, difficulty, spawnReason, entityData);
+    }
+
+    public static DefaultAttributeContainer.Builder createDragonAttributes() {
+        return TameableEntity.createMobAttributes()
+                .add(EntityAttributes.GENERIC_STEP_HEIGHT, 1);
     }
 
     @Nullable
@@ -245,7 +257,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return null;
     }
 
-    //I can't believe that this yarn bug is still a thing
+    //now we wait
     @Override
     public EntityView method_48926() {
         return getWorld();
@@ -265,7 +277,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         public int getRange() {return this.range;}
 
         @Override
-        public boolean listen(ServerWorld world, GameEvent event, GameEvent.Emitter emitter, Vec3d emitterPos) {
+        public boolean listen(ServerWorld world, RegistryEntry<GameEvent> event, GameEvent.Emitter emitter, Vec3d emitterPos) {
             Vec3i vec3i;
             if (emitterPos != null) vec3i = new Vec3i((int) emitterPos.x, (int) emitterPos.y, (int) emitterPos.z);
             else return false;
@@ -305,11 +317,37 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     }
 
-    protected void updateEquipment() {}
+    protected void updateEquipment() {
+        if (inventory != null) {
+            ItemStack head = inventory.getStack(1);
+            equipStack(EquipmentSlot.HEAD, head);
+
+            ItemStack body = inventory.getStack(2);
+            equipStack(EquipmentSlot.CHEST, body);
+
+            ItemStack tail = inventory.getStack(3);
+            equipStack(EquipmentSlot.LEGS, tail);
+        }
+    }
+
+    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+        List<DragonSpawn> availableVariants = DragonSpawnUtil.getAvailableVariants(world, pos, EntityType.getId(type).getPath());
+        return !availableVariants.isEmpty();
+    }
 
     @Override
-    public EntityDimensions getDimensions(EntityPose pose) {
-        return super.getDimensions(pose).scaled(widthMod, heightMod);
+    public void onEquipStack(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack) {
+        boolean empty = newStack.isEmpty() && oldStack.isEmpty();
+        if (!empty && !ItemStack.areItemsAndComponentsEqual(oldStack, newStack) && !firstUpdate) {
+            if (!getWorld().isClient() && isArmorSlot(slot))
+                URPacketHelper.playSound(this, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), getSoundCategory(), 1, 1, 6);
+        }
+        super.onEquipStack(slot, oldStack, newStack);
+    }
+
+    @Override
+    public EntityDimensions getBaseDimensions(EntityPose pose) {
+        return super.getBaseDimensions(pose).scaled(widthMod/getScale(), heightMod/getScale());
     }
 
     @Override
@@ -317,25 +355,24 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         ItemStack itemStack = player.getStackInHand(hand);
         if (isTamed()) {
             if (isFavoriteFood(itemStack) && getHealth() != getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH)) {
-                eatFood(getWorld(), itemStack);
+                eatFood(getWorld(), itemStack, itemStack.getComponents().getOrDefault(DataComponentTypes.FOOD, FoodComponents.SALMON));
                 heal(regenerationFromFood);
                 return ActionResult.SUCCESS;
             }
         }
 
         if (isTamed() && isOwnerOrCreative(player)) {
-            if (itemStack.isOf(Items.POTION) && player.isSneaking()) {
+            if (itemStack.getItem() instanceof PotionItem potionItem && player.isSneaking()) {
                 boolean hasHarmful = false;
                 boolean hasBeneficial = false;
-                for (StatusEffectInstance effect : PotionUtil.getPotionEffects(itemStack)) {
-                    StatusEffectCategory effectType = effect.getEffectType().getCategory();
+                for (StatusEffectInstance effect : potionItem.getComponents().get(DataComponentTypes.POTION_CONTENTS).customEffects()) {
+                    StatusEffectCategory effectType = effect.getEffectType().value().getCategory();
                     if (effectType == StatusEffectCategory.BENEFICIAL) hasBeneficial = true;
                     if (effectType == StatusEffectCategory.HARMFUL) hasHarmful = true;
                 }
                 if (hasBeneficial || !hasHarmful) {
                     //we make the copy cuz else for some fucking reason minecraft will subtract effect time from potion itself too
-                    //делаем копию т.к. иначе по какой-то ебейшей причине кубач будет убавлять время действия эффектов самого зелья также
-                    for (StatusEffectInstance effect : PotionUtil.getPotionEffects(itemStack)) addStatusEffect(new StatusEffectInstance(effect));
+                    for (StatusEffectInstance effect : potionItem.getComponents().get(DataComponentTypes.POTION_CONTENTS).customEffects()) addStatusEffect(new StatusEffectInstance(effect));
                     if (!player.isCreative()) player.setStackInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
                     playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1, 1);
                     return ActionResult.SUCCESS;
@@ -377,11 +414,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public boolean isInstrument(ItemStack itemStack) {
-        return itemStack.getNbt() != null && itemStack.getNbt().contains("instrument");
+        return itemStack.getComponents().contains(DataComponentTypes.INSTRUMENT);
     }
 
     public String getInstrument(ItemStack itemStack) {
-        return itemStack.getNbt().getString("instrument");
+        return itemStack.getComponents().get(DataComponentTypes.INSTRUMENT).getIdAsString();
     }
 
     public void playSound(SoundEvent sound, float volume, float pitch) {
@@ -389,13 +426,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public float getWidthModTransSpeed() {
-        return (float) (0.22 * animationSpeed);
+        return (float) (0.22f * animationSpeed * getScale());
     }
     public float getHeightModTransSpeed() {
-        return (float) (0.3 * animationSpeed);
+        return (float) (0.3 * animationSpeed * getScale());
     }
     public float getMountedOffsetTransSpeed() {
-        return (float) (0.125 * animationSpeed);
+        return (float) (0.125 * animationSpeed * getScale());
     }
 
     @Override
@@ -428,6 +465,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected void setHitboxModifiers(float destinationHeight, float destinationWidth, float destinationMountedOffset) {
+        destinationHeight *= getScale();
+        destinationWidth *= getScale();
+        destinationMountedOffset *= getScale();
+
         float widthMod = getWidthMod();
         float heightMod = getHeightMod();
         float mountedOffset = getMountedOffset();
@@ -497,10 +538,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void tick() {
         super.tick();
-        updateEquipment();
         updateRotationProgress();
         animationSpeed = calcSpeedMod();
-        setStepHeight(1);
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
         if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
@@ -518,17 +557,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     protected boolean isOwnerOrCreative(PlayerEntity player) {return isOwner(player) || player.isCreative();}
 
-    protected void updateArmorBonus(int armorBonus) {
-        if (!getWorld().isClient()) {
-            getAttributeInstance(EntityAttributes.GENERIC_ARMOR).removeModifier(DRAGON_ARMOR_BONUS_ID);
-            if (armorBonus != 0) {
-                getAttributeInstance(EntityAttributes.GENERIC_ARMOR).addTemporaryModifier(new EntityAttributeModifier(DRAGON_ARMOR_BONUS_ID, "Dragon armor bonus", armorBonus, EntityAttributeModifier.Operation.ADDITION));
-            }
-        }
-    }
-
     @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState loopAnim(String anim, software.bernie.geckolib.core.animation.AnimationState<A> event) {
+    protected <A extends GeoEntity> PlayState loopAnim(String anim, AnimationState<A> event) {
         event.getController().setAnimation(RawAnimation.begin().thenLoop(anim)); return PlayState.CONTINUE;
     }
 
@@ -570,8 +600,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    protected Vector3f getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
-        return new Vector3f(0.0F, getMountedOffset(), 0.0F);
+    protected Vec3d getPassengerAttachmentPos(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
+        return new Vec3d(0, getMountedOffset(), 0);
     }
 
     @Override
@@ -580,7 +610,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (inventory != null) {
             for(int i = 0; i < inventory.size(); ++i) {
                 ItemStack itemStack = inventory.getStack(i);
-                if (!itemStack.isEmpty() && !EnchantmentHelper.hasVanishingCurse(itemStack)) {
+                if (!itemStack.isEmpty() && !EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, EnchantmentEffectComponentTypes.PREVENT_EQUIPMENT_DROP)) {
                     dropStack(itemStack);
                 }
             }
@@ -591,11 +621,16 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected void updateBanner() {
         if (isTamed() && inventory != null) {
             ItemStack banner = inventory.getStack(4);
-            if (banner.getItem() instanceof BannerItem) equipStack(EquipmentSlot.OFFHAND, banner);
+            equipStack(EquipmentSlot.OFFHAND, banner);
         }
     }
 
     public boolean isFavoriteFood(ItemStack itemStack){
+        return false;
+    }
+
+    @Override
+    public boolean isBreedingItem(ItemStack stack) {
         return false;
     }
 
@@ -693,6 +728,19 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return ticksUntilHeal;
     }
 
+    public abstract String getDefaultVariant();
+
+    @Override
+    public boolean canBeLeashed() {
+        return isTamed();
+    }
+
+    @Override
+    public void onInventoryChanged(Inventory sender) {
+        updateEquipment();
+        updateBanner();
+    }
+
     //I give no fuck how this happened to be so important for spawning
     @Override
     public float getPathfindingFavor(BlockPos pos, WorldView world) {
@@ -700,8 +748,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     //asset location caching so mod doesn't have to make stupid amount of string operations and map references each frame
-    @Environment(EnvType.CLIENT) private final DragonAssetCache assetCache = new DragonAssetCache();
-    @Environment(EnvType.CLIENT)
+    private final DragonAssetCache assetCache = new DragonAssetCache();
+
     public DragonAssetCache getAssetCache() {
         return assetCache;
     }

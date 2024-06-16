@@ -1,0 +1,23 @@
+{
+  "criteria": {
+    "tick": {
+      "trigger": "minecraft:tick"
+    }
+  },
+  "display": {
+    "background": "minecraft:textures/block/dirt.png",
+    "description": {
+      "translate": "advancement.uselessreptile.root.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "uselessreptile:wyvern_skin"
+    },
+    "title": "Useless Reptile"
+  },
+  "requirements": [
+    [
+      "tick"
+    ]
+  ]
+}

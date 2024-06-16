@@ -6,9 +6,10 @@ import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
+import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.ResourceUtil;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -38,14 +39,14 @@ public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner> extends G
         RenderLayer cameo =  RenderLayer.getEyes(id);
         getRenderer().reRender(getDefaultBakedModel(animatable), matrixStackIn, bufferSource, animatable, cameo,
                 bufferSource.getBuffer(cameo), partialTick, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV,
-                1, 1, 1, 1);
+                RenderUtil.WHITE);
     }
 
     protected Identifier getGlowingTexture(T animatable) {
         if (animatable.getAssetCache().getGlowLayerLocationCache() != null) return animatable.getAssetCache().getGlowLayerLocationCache();
         String namespace = getTextureResource(animatable).getNamespace();
         String path = getTextureResource(animatable).getPath().replace(".png", "_glowing.png");
-        Identifier id = new Identifier(namespace, path);
+        Identifier id = Identifier.of(namespace, path);
         animatable.getAssetCache().setGlowLayerLocationCache(id);
 
         return id;

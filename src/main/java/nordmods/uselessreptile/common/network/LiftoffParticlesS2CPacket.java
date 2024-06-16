@@ -1,20 +1,27 @@
 package nordmods.uselessreptile.common.network;
 
-import io.netty.buffer.Unpooled;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class LiftoffParticlesS2CPacket {
-    public static final Identifier LIFTOFF_PARTICLES_PACKET = new Identifier(UselessReptile.MODID, "liftoff_particles");
+public record LiftoffParticlesS2CPacket(int id) implements CustomPayload {
+    public static final Identifier ID = UselessReptile.id("liftoff_particles");
+    public static final CustomPayload.Id<LiftoffParticlesS2CPacket> PACKET_ID = new CustomPayload.Id<>(ID);
+    public static final PacketCodec<RegistryByteBuf, LiftoffParticlesS2CPacket> PACKET_CODEC = PacketCodecs.INTEGER.xmap(LiftoffParticlesS2CPacket::new, LiftoffParticlesS2CPacket::id).cast();
 
     public static <T extends URDragonEntity & FlyingDragon> void  send(ServerPlayerEntity player, T dragon) {
-        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
-        buf.writeInt(dragon.getId());
-        ServerPlayNetworking.send(player, LIFTOFF_PARTICLES_PACKET, buf);
+        ServerPlayNetworking.send(player, new LiftoffParticlesS2CPacket(dragon.getId()));
+    }
+
+    @Override
+    public Id<? extends CustomPayload> getId() {
+        return PACKET_ID;
     }
 }

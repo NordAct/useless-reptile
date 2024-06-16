@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "B": {
+      "tag": "c:dyes/blue"
+    },
+    "G": {
+      "tag": "c:dyes/green"
+    },
+    "I": {
+      "tag": "c:ingots/iron"
+    },
+    "R": {
+      "tag": "c:dyes/red"
+    },
+    "W": {
+      "tag": "minecraft:planks"
+    }
+  },
+  "pattern": [
+    "RGI",
+    "BW ",
+    "W  "
+  ],
+  "result": {
+    "count": 1,
+    "id": "uselessreptile:flute"
+  }
+}

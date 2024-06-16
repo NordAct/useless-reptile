@@ -1,12 +1,9 @@
 plugins {
     id 'fabric-loom' version '1.6-SNAPSHOT'
     id 'maven-publish'
+    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
-
-archivesBaseName = project.archives_base_name
 version = project.mod_version + "-" + project.minecraft_version
 group = project.maven_group
 
@@ -37,12 +34,10 @@ dependencies {
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolib_version}"
-    modImplementation "dev.isxander.yacl:yet-another-config-lib-fabric:${project.yacl_version}"
+    modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
     modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
-
-    modImplementation("maven.modrinth:carpet:1.4.128")
 }
 
 processResources {
@@ -54,7 +49,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 17
+def targetJavaVersion = 21
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
@@ -66,18 +61,16 @@ java {
     withSourcesJar()
 }
 
-jar {
-    from("gradle.propertoes") {
-        rename { "${it}_${project.archivesBaseName}_${project.minecraft_version}" }
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    'src/main/generated'
+            ]
+        }
     }
 }
 
-publishing {
-    publications {
-    }
-    repositories {
-    }
-}
 loom {
     accessWidenerPath = file("src/main/resources/uselessreptile.accesswidener")
     runs {
@@ -88,7 +81,44 @@ loom {
         client {
             client()
             vmArg "-Dgeckolib.disable_examples=true"
+            vmArg '-Dfabric-tag-conventions-v2.missingTagTranslationWarning=VERBOSE'
+
+            name "Data Generation Client"
+            vmArg "-Dfabric-api.datagen"
+            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
+            vmArg "-Dfabric-api.datagen.modid=uselessreptile"
+
+            ideConfigGenerated = true
+            runDir "build/datagen"
+
             programArgs "--username", "Nord_Act"
         }
+    }
+}
+
+fabricApi {
+    configureDataGeneration()
+}
+
+publishMods {
+    file = remapJar.archiveFile
+    changelog = project.file("CHANGELOG.md").getText()
+    type = BETA
+    displayName = "Useless Reptile ${project.version}"
+    modLoaders.add("fabric")
+    dryRun = true
+
+    curseforge {
+        projectId = "677634"
+        projectSlug = "useless-reptile"
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add(project.property("minecraft_version") as String)
+        requires("fabric-api", "yacl", "geckolib")
+    }
+    modrinth {
+        projectId = "YE4QRt8F"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add(project.property("minecraft_version") as String)
+        requires("fabric-api", "yacl", "geckolib")
     }
 }
