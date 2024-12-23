@@ -34,6 +34,11 @@ Has only melee attacks.
 Lightning breath attacks can trigger same effect as normal lightning strike (i.e. transforming Villagers into Witches, creating charged Creepers, e.t.c.), but without setting target on fire. And also destroys blocks. Shockwave attack can be used to deflect projectiles and push back mobs. Shockwave can be used only if dragon is flying, otherwise dragon can use bite. \
 Both shockwave and lightning breath inflict shock effect that decreases attack and movement speed and obscures vision.
 
+### Items
+- **Vortex Horn** - upgraded version of Goat Horn that can be used to store your dragons inside it
+- **Flute** - special item, that allows you more versatile control over your River Pikehorns
+- **Wyvern Skin** - initially supposed to be a crafting material for *something*, but currently can only be used to get 2 Leather
+
 ### Interaction with dragons
 - You can use goat horns (or anything that is considered an instrument by game) to call up dragons even if they're sitting. For that, you have first to "bind" instrument sound to the dragon by right-clicking with the instrument item on the dragon. After that, dragon will respond exclusively on this specific instrument sound.
 - To sit down/up your dragon, use stick or goat horn while crouching.
@@ -73,10 +78,6 @@ You can read more about those features and see examples here:
 
 **Q:** When is update?\
 **A:** I can't give any ETA on any update. I have real life stuff to deal with (more specifically my study at university) and I never know how it'll turn out and how much of free time I'll have. Also keep in mind there's only one person (me, the owner) working on this project.
-
-**Q:** Why glowing layer doesn't work with shaders?\
-**A:** It's a bug and I'm investigating this. 
-
 
 ## Usage of the mod and the source code
 You are allowed:

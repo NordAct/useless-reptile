@@ -3,7 +3,7 @@
   "category": "equipment",
   "key": {
     "G": {
-      "item": "minecraft:tinted_glass"
+      "tag": "c:glass_blocks/tinted"
     },
     "H": {
       "item": "uselessreptile:dragon_helmet_gold"

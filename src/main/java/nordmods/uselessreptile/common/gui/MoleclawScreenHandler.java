@@ -31,4 +31,9 @@ public class MoleclawScreenHandler extends URDragonScreenHandler {
             default -> false;
         };
     }
+
+    @Override
+    protected boolean isSaddleItem(ItemStack itemStack) {
+        return itemStack.isIn(URTags.MOLECLAW_SADDLES);
+    }
 }

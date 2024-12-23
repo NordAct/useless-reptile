@@ -9,7 +9,6 @@ import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -67,7 +66,7 @@ public class PikehornHuntGoal extends Goal {
             Box box = entity.getBoundingBox().expand(20);
             List<ItemEntity> drops = entity.getWorld().getEntitiesByClass(ItemEntity.class, box.withMinY(box.minY - 20), (item) -> {
                 ItemStack itemStack = item.getStack();
-                return itemStack.isIn(ItemTags.FISHES) && item.isAlive() && !item.cannotPickup();
+                return entity.isFavoriteFood(itemStack) && item.isAlive() && !item.cannotPickup();
             });
 
             if (!drops.isEmpty()) entity.getNavigation().startMovingTo(drops.getFirst(), 1);

@@ -9,10 +9,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.client.model.URDragonModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
+import nordmods.uselessreptile.client.renderer.special.SaddleEquipmentRenderer;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.init.URTags;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -22,6 +24,7 @@ import java.util.Map;
 
 public abstract class URDragonRenderer <T extends URDragonEntity> extends GeoEntityRenderer<T> {
     private final DragonEquipmentRenderer dragonEquipmentRenderer = new DragonEquipmentRenderer();
+    private final SaddleEquipmentRenderer saddleEquipmentRenderer = new SaddleEquipmentRenderer();
     public URDragonRenderer(EntityRendererFactory.Context renderManager) {
         super(renderManager, new URDragonModel<>());
         addRenderLayer(new URGlowingLayer<>(this));
@@ -53,10 +56,12 @@ public abstract class URDragonRenderer <T extends URDragonEntity> extends GeoEnt
                 dragonAssetCache.setEquipmentAnimatable(j, dragonEquipmentAnimatable);
             }
 
-            Identifier id = dragonEquipmentRenderer.getGeoModel().getModelResource(dragonEquipmentAnimatable);
+            DragonEquipmentRenderer usedRenderer = itemStack.isIn(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
+
+            Identifier id = usedRenderer.getGeoModel().getModelResource(dragonEquipmentAnimatable);
             if (id == null) continue;
-            BakedGeoModel bakedEquipmentModel = dragonEquipmentRenderer.getGeoModel().getBakedModel(id);
-            id = dragonEquipmentRenderer.getGeoModel().getTextureResource(dragonEquipmentAnimatable);
+            BakedGeoModel bakedEquipmentModel = usedRenderer.getGeoModel().getBakedModel(id);
+            id = usedRenderer.getGeoModel().getTextureResource(dragonEquipmentAnimatable);
             if (id == null) continue;
 
             Map<String, GeoBone> equipmentBones = dragonEquipmentAnimatable.equipmentBones;
@@ -71,8 +76,8 @@ public abstract class URDragonRenderer <T extends URDragonEntity> extends GeoEnt
                 }
             });
 
-            RenderLayer renderType = dragonEquipmentRenderer.getGeoModel().getRenderType(dragonEquipmentAnimatable, id);
-            dragonEquipmentRenderer.render(poseStack, dragonEquipmentAnimatable, bufferSource, renderType, bufferSource.getBuffer(renderType), packedLight, partialTick);
+            RenderLayer renderType = usedRenderer.getGeoModel().getRenderType(dragonEquipmentAnimatable, id);
+            usedRenderer.render(poseStack, dragonEquipmentAnimatable, bufferSource, renderType, bufferSource.getBuffer(renderType), packedLight, partialTick);
         }
     }
 

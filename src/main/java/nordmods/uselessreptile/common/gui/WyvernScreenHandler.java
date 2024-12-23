@@ -6,6 +6,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import nordmods.uselessreptile.common.init.URScreenHandlers;
+import nordmods.uselessreptile.common.init.URTags;
 
 public class WyvernScreenHandler extends URDragonScreenHandler {
 
@@ -24,5 +25,10 @@ public class WyvernScreenHandler extends URDragonScreenHandler {
     @Override
     protected boolean canEquip(EquipmentSlot equipmentSlot, ItemStack item) {
         return false;
+    }
+
+    @Override
+    protected boolean isSaddleItem(ItemStack itemStack) {
+        return itemStack.isIn(URTags.WYVERN_SADDLES);
     }
 }

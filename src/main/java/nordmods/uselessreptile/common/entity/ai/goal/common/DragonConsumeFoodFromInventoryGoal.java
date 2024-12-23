@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.ai.goal.common;
 
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundEvents;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 
@@ -30,7 +31,7 @@ public class DragonConsumeFoodFromInventoryGoal extends Goal {
             for (int i = 0; i <= URDragonScreenHandler.maxStorageSize; i++) {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
                 if (dragon.isFavoriteFood(itemStack)) {
-                    itemStack.decrement(1);
+                    dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT);
                     dragon.heal(dragon.getHealthRegenerationFromFood());
                     break;
                 }

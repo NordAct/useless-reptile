@@ -5,6 +5,7 @@
   "mixins": [
     "common.AbstractBlockMixin",
     "common.ItemMixin",
+    "common.ItemStackMixin",
     "common.LightningEntityMixin",
     "common.LivingEntityMixin",
     "common.PlayerEntityMixin",

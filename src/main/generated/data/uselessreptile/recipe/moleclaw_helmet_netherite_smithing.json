@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "base": {
+    "item": "uselessreptile:moleclaw_helmet_diamond"
+  },
+  "result": {
+    "count": 1,
+    "id": "uselessreptile:moleclaw_helmet_netherite"
+  },
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  }
+}

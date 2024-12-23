@@ -5,7 +5,10 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import nordmods.uselessreptile.datagen.assets.URDragonModelDataProvider;
 import nordmods.uselessreptile.datagen.assets.UREquipmentModelDataProvider;
 import nordmods.uselessreptile.datagen.assets.URModelProvider;
-import nordmods.uselessreptile.datagen.data.*;
+import nordmods.uselessreptile.datagen.data.URAdvancementProvider;
+import nordmods.uselessreptile.datagen.data.URDamageTypeProvider;
+import nordmods.uselessreptile.datagen.data.UREntityLootTableProvider;
+import nordmods.uselessreptile.datagen.data.URRecipeProvider;
 import nordmods.uselessreptile.datagen.data.dragon_spawn.URDragonSpawnProvider;
 import nordmods.uselessreptile.datagen.data.tag.URBiomeTagProvider;
 import nordmods.uselessreptile.datagen.data.tag.URBlockTagProvider;
@@ -29,5 +32,7 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URModelProvider::new);
         pack.addProvider(UREquipmentModelDataProvider::new);
         pack.addProvider(URDragonModelDataProvider::new);
+
+        //ModonomiconIntegration.initDatagen(fabricDataGenerator);
     }
 }

@@ -81,48 +81,6 @@ public class URDragonSpawnProvider implements DataProvider {
         addRiverPikehornEntry("teal");
         addRiverPikehornEntry("dark_teal");
 
-        DragonSpawn lightningChaserBlue = DragonSpawn.builder()
-                .setVariant("blue")
-                .setWeight(9)
-                .addAllowedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
-                .setMinAltitude(62)
-                .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
-                .addAllowedBlockTag(BlockTags.BASE_STONE_OVERWORLD)
-                .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
-                .build();
-
-        DragonSpawn lightningChaserBrown = DragonSpawn.builder()
-                .setVariant("brown")
-                .setWeight(9)
-                .addAllowedBiomeTag(ConventionalBiomeTags.IS_DRY)
-                .setMinAltitude(62)
-                .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
-                .addAllowedBlockTag(BlockTags.BASE_STONE_OVERWORLD)
-                .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
-                .build();
-
-        DragonSpawn lightningChaserGrey = DragonSpawn.builder()
-                .setVariant("grey")
-                .setWeight(9)
-                .addAllowedBiomeTag(ConventionalBiomeTags.IS_OVERWORLD)
-                .addBannedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
-                .addBannedBiomeTag(ConventionalBiomeTags.IS_DRY)
-                .setMinAltitude(62)
-                .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
-                .addAllowedBlockTag(BlockTags.BASE_STONE_OVERWORLD)
-                .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
-                .build();
-
-        DragonSpawn lightningChaserPurple = DragonSpawn.builder()
-                .setVariant("purple")
-                .setWeight(1)
-                .addAllowedBiomeTag(ConventionalBiomeTags.IS_OVERWORLD)
-                .setMinAltitude(62)
-                .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
-                .addAllowedBlockTag(BlockTags.BASE_STONE_OVERWORLD)
-                .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
-                .build();
-
         DragonSpawn lightningChaserBlueEvent = DragonSpawn.builder()
                 .setVariant("blue")
                 .setWeight(9)
@@ -156,11 +114,6 @@ public class URDragonSpawnProvider implements DataProvider {
                 .setMinAltitude(62)
                 .addAllowedBlockTag(BlockTags.AIR)
                 .build();
-
-        DragonSpawn.addSpawn(UREntities.LIGHTNING_CHASER_ENTITY, lightningChaserBlue);
-        DragonSpawn.addSpawn(UREntities.LIGHTNING_CHASER_ENTITY, lightningChaserBrown);
-        DragonSpawn.addSpawn(UREntities.LIGHTNING_CHASER_ENTITY, lightningChaserGrey);
-        DragonSpawn.addSpawn(UREntities.LIGHTNING_CHASER_ENTITY, lightningChaserPurple);
 
         DragonSpawn.addSpawn(UREntities.LIGHTNING_CHASER_ENTITY, getEventEntry(lightningChaserBlueEvent));
         DragonSpawn.addSpawn(UREntities.LIGHTNING_CHASER_ENTITY, getEventEntry(lightningChaserBrownEvent));

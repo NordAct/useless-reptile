@@ -35,6 +35,9 @@ Tag list for dragon equipment:
 |     Moleclaw     |     `uselessreptile:moleclaw_chestplates`     |           Chestplate           |
 |     Moleclaw     |     `uselessreptile:moleclaw_tail_armor`      |           Tail Armor           |
 |     Moleclaw     | `uselessreptile:protects_moleclaw_from_light` | Helmet (With light protection) |
+|     Moleclaw     |       `uselessreptile:moleclaw_saddles`       |             Saddle             |
 | Lightning Chaser |   `uselessreptile:lightning_chaser_helmets`   |             Helmet             |
 | Lightning Chaser | `uselessreptile:lightning_chaser_chestplates` |           Chestplate           |
 | Lightning Chaser | `uselessreptile:lightning_chaser_tail_armor`  |           Tail Armor           |
+| Lightning Chaser |   `uselessreptile:lightning_chaser_saddles`   |             Saddle             |
+|   Swamp Wyvern   |        `uselessreptile:wyvern_saddles`        |             Saddle             |

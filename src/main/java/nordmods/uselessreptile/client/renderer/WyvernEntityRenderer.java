@@ -5,9 +5,9 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.Items;
 import nordmods.uselessreptile.client.renderer.base.URDragonRenderer;
 import nordmods.uselessreptile.common.entity.WyvernEntity;
+import nordmods.uselessreptile.common.init.URTags;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 
 public class WyvernEntityRenderer extends URDragonRenderer<WyvernEntity> {
@@ -23,7 +23,7 @@ public class WyvernEntityRenderer extends URDragonRenderer<WyvernEntity> {
     }
 
     public void updateSaddle (WyvernEntity entity) {
-        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).isOf(Items.SADDLE);
+        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).isIn(URTags.WYVERN_SADDLES);
         model.getBone("spikes_front").ifPresent(c -> c.setHidden(hasSaddle));
     }
 }

@@ -27,7 +27,6 @@
     "other.uselessreptile.none": "Yok",
     "other.uselessreptile.sound_respond": "%1$s Şimdiki sese cevap verecek: %2$s",
     "config.uselessreptile.title": "İşe Yaramaz Sürüngen Yapılandırması",
-    "config.uselessreptile.option.wyvernSpawnWeight": "Bataklık Ejderi Spawn Ağırlığı",
     "config.uselessreptile.option.cameraVerticalOffset": "Dikey Kamera Ofseti",
     "config.uselessreptile.option.cameraHorizontalOffset": "Yatay Kamera Ofseti",
     "config.uselessreptile.option.enableCameraOffset": "Kamera ofsetine izin ver",

@@ -404,5 +404,21 @@
         "attenuation_distance": 128
       }
     ]
+  },
+  "vortex_horn.suck_in": {
+    "subtitle": "subtitles.uselessreptile.vortex_horn.suck_in",
+    "sounds": [
+      {
+        "name": "uselessreptile:vortex_horn/suck_in"
+      }
+    ]
+  },
+  "vortex_horn.spit_out": {
+    "subtitle": "subtitles.uselessreptile.vortex_horn.spit_out",
+    "sounds": [
+      {
+        "name": "uselessreptile:vortex_horn/spit_out"
+      }
+    ]
   }
 }

@@ -5,6 +5,10 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.entity.LightningChaserEntity;
+import nordmods.uselessreptile.common.entity.MoleclawEntity;
+import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
+import nordmods.uselessreptile.common.entity.WyvernEntity;
 
 public class URMobAttributesConfig {
     public static final ConfigClassHandler<URMobAttributesConfig> CONFIG = ConfigClassHandler.createBuilder(URMobAttributesConfig.class)
@@ -16,16 +20,6 @@ public class URMobAttributesConfig {
             .build();
 
     @SerialEntry(comment = "GLOBAL MULTIPLIERS")
-    public float dragonDamageMultiplier = 1;
-    @SerialEntry
-    public float dragonKnockbackMultiplier = 1;
-    @SerialEntry
-    public float dragonHealthMultiplier = 1;
-    @SerialEntry
-    public float dragonArmorMultiplier = 1;
-    @SerialEntry
-    public float dragonArmorToughnessMultiplier = 1;
-    @SerialEntry
     public float dragonGroundSpeedMultiplier = 1;
     @SerialEntry
     public float dragonFlyingSpeedMultiplier = 1;
@@ -56,7 +50,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float wyvernArmorToughness = 2.0f;
     @SerialEntry
-    public float wyvernGroundSpeed = 0.2f;
+    public float wyvernGroundSpeed = WyvernEntity.BASE_GROUND_SPEED;
     @SerialEntry
     public float wyvernFlyingSpeed = 0.7f;
     @SerialEntry
@@ -85,7 +79,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float moleclawArmorToughness = 4.0f;
     @SerialEntry
-    public float moleclawGroundSpeed = 0.25f;
+    public float moleclawGroundSpeed = MoleclawEntity.BASE_GROUND_SPEED;
     @SerialEntry
     public int moleclawBaseSecondaryAttackCooldown = 30;
     @SerialEntry
@@ -106,17 +100,17 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float riverPikehornArmorToughness = 0f;
     @SerialEntry
-    public float riverPikehornGroundSpeed = 0.2f;
+    public float riverPikehornGroundSpeed = RiverPikehornEntity.BASE_GROUND_SPEED;
     @SerialEntry
     public float riverPikehornFlyingSpeed = 0.8f;
     @SerialEntry
     public int riverPikehornBasePrimaryAttackCooldown = 20;
     @SerialEntry
-    public int riverPikehornBaseAccelerationDuration = 100;
+    public int riverPikehornBaseAccelerationDuration = 200;
     @SerialEntry
     public float riverPikehornRotationSpeedGround = 10;
     @SerialEntry
-    public float riverPikehornRotationSpeedAir = 10;
+    public float riverPikehornRotationSpeedAir = 16;
     @SerialEntry
     public float riverPikehornVerticalSpeed = 0.2f;
     @SerialEntry
@@ -133,7 +127,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float lightningChaserArmorToughness = 6.0f;
     @SerialEntry
-    public float lightningChaserGroundSpeed = 0.25f;
+    public float lightningChaserGroundSpeed = LightningChaserEntity.BASE_GROUND_SPEED;
     @SerialEntry
     public float lightningChaserFlyingSpeed = 0.9f;
     @SerialEntry

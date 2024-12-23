@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
@@ -29,7 +28,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
         if (hasSaddle) {
             this.addSlot(new Slot(inventory, 0, 8, 18) {
                 public boolean canInsert(ItemStack stack) {
-                    return stack.isOf(Items.SADDLE) && !this.hasStack();
+                    return isSaddleItem(stack) && !this.hasStack();
                 }
                 public int getMaxItemCount() {
                     return 1;
@@ -136,6 +135,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
     }
 
     protected abstract boolean canEquip(EquipmentSlot equipmentSlot, ItemStack item);
+    protected abstract boolean isSaddleItem(ItemStack itemStack);
 
     @SuppressWarnings("unused")
     public enum StorageSize {

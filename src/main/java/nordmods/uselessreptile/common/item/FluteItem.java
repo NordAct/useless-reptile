@@ -17,6 +17,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
@@ -48,17 +49,17 @@ public class FluteItem extends Item {
                 MinecraftClient.getInstance().inGameHud.setOverlayMessage(text, false);
             }
             return TypedActionResult.success(itemStack);
-        } else {
-            user.getItemCooldownManager().set(this, 40);
-            if (user instanceof ServerPlayerEntity serverPlayer) {
-                Criteria.CONSUME_ITEM.trigger(serverPlayer, itemStack);
-                user.stopUsingItem();
-                switch (mode) {
-                    case 1 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 10, 1);
-                    case 2 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 10, 1);
-                    default -> world.playSoundFromEntity(null, user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 10, 1);
-                }
+        }
+        user.getItemCooldownManager().set(this, 40);
+        if (user instanceof ServerPlayerEntity serverPlayer) {
+            Criteria.CONSUME_ITEM.trigger(serverPlayer, itemStack);
+            user.stopUsingItem();
+            switch (mode) {
+                case 1 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 10, 1);
+                case 2 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 10, 1);
+                default -> world.playSoundFromEntity(null, user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 10, 1);
             }
+            user.emitGameEvent(URGameEvents.FLUTE_USED);
         }
         return TypedActionResult.consume(itemStack);
     }

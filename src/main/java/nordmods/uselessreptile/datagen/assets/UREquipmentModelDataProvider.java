@@ -61,6 +61,7 @@ public class UREquipmentModelDataProvider implements DataProvider {
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_iron.png"), moleclawHelmet, true);
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_gold.png"), moleclawHelmet, true);
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_diamond.png"), moleclawHelmet, true);
+        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_netherite.png"), moleclawHelmet, true);
     }
 
     protected void addEntry(EntityType<? extends URDragonEntity> type, Item item, Identifier texture, Identifier model, boolean translucent) {
@@ -80,18 +81,22 @@ public class UREquipmentModelDataProvider implements DataProvider {
         Identifier textureIron = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_iron.png");
         Identifier textureGold = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_gold.png");
         Identifier textureDiamond = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_diamond.png");
+        Identifier textureNetherite = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_netherite.png");
         Identifier modelHelmet = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/helmet.geo.json");
         Identifier modelChestplate = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/chestplate.geo.json");
         Identifier modelTailArmor = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/tail_armor.geo.json");
         addEntry(type, URItems.DRAGON_HELMET_IRON, textureIron, modelHelmet, false);
         addEntry(type, URItems.DRAGON_HELMET_GOLD, textureGold, modelHelmet, false);
         addEntry(type, URItems.DRAGON_HELMET_DIAMOND, textureDiamond, modelHelmet, false);
+        addEntry(type, URItems.DRAGON_HELMET_NETHERITE, textureNetherite, modelHelmet, false);
         addEntry(type, URItems.DRAGON_CHESTPLATE_IRON, textureIron, modelChestplate, false);
         addEntry(type, URItems.DRAGON_CHESTPLATE_GOLD, textureGold, modelChestplate, false);
         addEntry(type, URItems.DRAGON_CHESTPLATE_DIAMOND, textureDiamond, modelChestplate, false);
+        addEntry(type, URItems.DRAGON_CHESTPLATE_NETHERITE, textureNetherite, modelChestplate, false);
         addEntry(type, URItems.DRAGON_TAIL_ARMOR_IRON, textureIron, modelTailArmor, false);
         addEntry(type, URItems.DRAGON_TAIL_ARMOR_GOLD, textureGold, modelTailArmor, false);
         addEntry(type, URItems.DRAGON_TAIL_ARMOR_DIAMOND, textureDiamond, modelTailArmor, false);
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_NETHERITE, textureNetherite, modelTailArmor, false);
     }
 
     @Override

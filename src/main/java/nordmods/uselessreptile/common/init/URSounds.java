@@ -37,6 +37,8 @@ public class URSounds {
     public static final SoundEvent LIGHTNING_CHASER_AMBIENT = register("lightning_chaser.ambient");
     public static final SoundEvent LIGHTNING_CHASER_SURRENDER = register("lightning_chaser.surrender", 128);
     public static final SoundEvent LIGHTNING_CHASER_DEATH = register("lightning_chaser.death");
+    public static final SoundEvent VORTEX_HORN_SUCK_IN = register("vortex_horn.suck_in");
+    public static final SoundEvent VORTEX_HORN_SPIT_OUT = register("vortex_horn.spit_out");
 
     private static SoundEvent register(String id) {
         return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(UselessReptile.id(id)));

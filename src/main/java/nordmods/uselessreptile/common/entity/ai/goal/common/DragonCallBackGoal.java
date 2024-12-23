@@ -2,8 +2,8 @@ package nordmods.uselessreptile.common.entity.ai.goal.common;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.entity.ai.navigation.PathTime;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
@@ -11,10 +11,10 @@ import java.util.EnumSet;
 public class DragonCallBackGoal extends Goal {
     protected final URDragonEntity entity;
     protected LivingEntity owner;
-    protected double maxCallDistance = 65536;
-    protected boolean isFollowing = false;
     protected int updateCountdownTicks;
     protected int ticksToStop;
+
+    public static final int MAX_CALL_DISTANCE = 512;
 
     public DragonCallBackGoal(URDragonEntity entity) {
         this.entity = entity;
@@ -24,7 +24,6 @@ public class DragonCallBackGoal extends Goal {
     @Override
     public void start() {
         updateCountdownTicks = 0;
-        isFollowing = true;
         owner = entity.getOwner();
         entity.setIsSitting(false);
         ticksToStop = 0;
@@ -34,32 +33,23 @@ public class DragonCallBackGoal extends Goal {
     @Override
     public boolean canStart() {
         if (!entity.isTamed()) return false;
-        if (entity.isLeashed() || entity.hasVehicle()) return false;
-        PlayerEntity player = (PlayerEntity) entity.getOwner();
+        if (entity.isLeashed() || entity.isSitting()) return false;
+        if (!entity.shouldFollow) return false;
+        LivingEntity player = entity.getOwner();
         if (player == null) return false;
-        if (isFollowing) return true;
-        if (entity.squaredDistanceTo(player) > maxCallDistance) return false;
-        ItemStack main = player.getMainHandStack();
-        if (entity.isInstrument(main)) {
-            String sound = entity.getInstrument(main);
-            return player.isUsingItem() && sound.equals(entity.getBoundedInstrumentSound());
-        }
-        ItemStack offhand = player.getOffHandStack();
-        if (entity.isInstrument(offhand)) {
-            String sound = entity.getInstrument(offhand);
-            return player.isUsingItem() && sound.equals(entity.getBoundedInstrumentSound());
-        }
-        return false;
+        double distance = entity.squaredDistanceTo(player);
+        if (distance < player.getWidth() * player.getWidth() * 9) return false;
+        return distance < MAX_CALL_DISTANCE * MAX_CALL_DISTANCE;
     }
 
     @Override
     public boolean shouldContinue() {
-        if (!owner.isAlive()) return false;
-        return canStart();
+        return canStart() && owner.isAlive();
     }
 
     @Override
     public void stop() {
+        entity.shouldFollow = false;
         owner = null;
         entity.getNavigation().stop();
     }
@@ -69,19 +59,22 @@ public class DragonCallBackGoal extends Goal {
         entity.getLookControl().lookAt(owner, entity.getRotationSpeed(), entity.getPitchLimit());
         entity.setSprinting(true);
         double distance = entity.squaredDistanceTo(owner);
-        double maxDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
 
-        if (entity.isSitting()) stopMoving();
+        if (entity.isSitting()) entity.shouldFollow = false;
 
-        if (distance < maxDistance && owner.isOnGround()) stopMoving();
+        checkProximity(distance);
 
         if (--updateCountdownTicks <= 0) {
             updateCountdownTicks = getTickCount(10);
             entity.getNavigation().startMovingTo(owner, 1);
             entity.setHomePoint(owner.getBlockPos());
+            if (URConfig.getConfig().allowDragonTeleport
+                    && (distance > 4096 || entity.getNavigation() instanceof PathTime pathTime && pathTime.getPathTime() > 70)) entity.tryTeleportToOwner();
         }
     }
 
-    protected void stopMoving() {
-        isFollowing = false;}
+    protected void checkProximity(double currentDistance) {
+        double maxDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
+        if (currentDistance < maxDistance && owner.isOnGround()) entity.shouldFollow = false;
+    }
 }

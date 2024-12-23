@@ -12,6 +12,14 @@
     "homepage": "https://discord.gg/JjYE4vEf3s"
   },
 
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/JjYE4vEf3s"
+      }
+    }
+  },
+
   "license": "All Rights Reserved",
   "icon": "assets/uselessreptile/icon.png",
 

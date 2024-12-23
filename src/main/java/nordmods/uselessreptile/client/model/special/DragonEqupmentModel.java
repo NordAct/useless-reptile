@@ -30,7 +30,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setModelLocationCache(id);
                 return id;
-            }
+            } else UselessReptile.LOGGER.warn("Failed to get model for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonID(), entity.owner.getVariant());
         }
 
         return null;
@@ -50,7 +50,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
             id = data.modelData().texture();
             assetCache.setTextureLocationCache(id);
             return id;
-        }
+        } else UselessReptile.LOGGER.warn("Failed to get texture for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonID(), entity.owner.getVariant());
 
         return null;
     }
@@ -70,7 +70,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setAnimationLocationCache(id);
                 return id;
-            }
+            } else UselessReptile.LOGGER.warn("Failed to get animation for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonID(), entity.owner.getVariant());
         }
 
         assetCache.setAnimationLocationCache(DEFAULT_ANIMATION);

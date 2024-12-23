@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/goat_horn",
+  "overrides": [
+    {
+      "model": "uselessreptile:item/tooting_diamond_vortex_horn",
+      "predicate": {
+        "tooting": 1
+      }
+    }
+  ],
+  "textures": {
+    "layer0": "uselessreptile:item/vortex_horn/diamond_vortex_horn"
+  }
+}

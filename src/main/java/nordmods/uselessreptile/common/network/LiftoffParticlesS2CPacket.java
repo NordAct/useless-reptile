@@ -16,7 +16,7 @@ public record LiftoffParticlesS2CPacket(int id) implements CustomPayload {
     public static final CustomPayload.Id<LiftoffParticlesS2CPacket> PACKET_ID = new CustomPayload.Id<>(ID);
     public static final PacketCodec<RegistryByteBuf, LiftoffParticlesS2CPacket> PACKET_CODEC = PacketCodecs.INTEGER.xmap(LiftoffParticlesS2CPacket::new, LiftoffParticlesS2CPacket::id).cast();
 
-    public static <T extends URDragonEntity & FlyingDragon> void  send(ServerPlayerEntity player, T dragon) {
+    public static <T extends URDragonEntity & FlyingDragon> void send(ServerPlayerEntity player, T dragon) {
         ServerPlayNetworking.send(player, new LiftoffParticlesS2CPacket(dragon.getId()));
     }
 

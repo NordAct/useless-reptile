@@ -31,8 +31,10 @@ public class URClientConfig {
     public boolean disableNamedEntityModels = false;
     @SerialEntry
     public boolean disableEmissiveTextures = false;
-    @SerialEntry
+    @SerialEntry(comment = "displays area in which dragon can deal damage for melee attacks")
     public boolean attackBoxesInDebug = false;
+    @SerialEntry(comment = "hides information in item tooltip about which dragons can wear specific items")
+    public boolean hideEquipmentInfo = false;
 
     public static URClientConfig getConfig() {
         return CONFIG.instance();

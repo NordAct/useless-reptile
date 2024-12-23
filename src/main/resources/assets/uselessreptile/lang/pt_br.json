@@ -64,8 +64,6 @@
     "tooltip.uselessreptile.flute_mode2": "Modo da flauta: Atacar Alvo",
 
     "config.uselessreptile.title": "Configurações de réptil inútil",
-    "config.uselessreptile.option.wyvernSpawnWeight": "Chance de geração de serpe do pântano",
-    "config.uselessreptile.option.moleclawSpawnWeight": "Chance de geração de garroupeira",
     "config.uselessreptile.option.blockDropChance": "Chance do drop de bloco",
     "config.uselessreptile.option.cameraDistanceOffset": "Distância até o deslocamento da câmera",
     "config.uselessreptile.option.cameraVerticalOffset": "Deslocamento vertical da câmera",
@@ -73,16 +71,12 @@
     "config.uselessreptile.option.enableCameraOffset": "Ativar deslocamento da câmera",
     "config.uselessreptile.option.enableCrosshair": "Ativar mira em 3ª pessoa",
     "config.uselessreptile.option.autoThirdPerson": "Alternar perspectivas automaticamente",
-    "config.uselessreptile.option.dragonHealthMultiplier": "Multiplicador de Vida de Dragão",
-    "config.uselessreptile.option.dragonDamageMultiplier": "Multiplicador de Dano de Dragão",
-    "config.uselessreptile.option.pikehornSpawnWeight": "Chance de geração de Lúcio-chifrudo do rio",
     "config.uselessreptile.option.blockDropChance.@Tooltip": "Define a porcentagem de blocos que serão descartados após alguns ataques de dragão de quebra de bloco",
     "config.uselessreptile.option.allowDragonGriefing.@Tooltip": "Define se dragões podem destruir blocos ou não.\nValores permitidos: \n§3ALL §f(tudo pode quebrar), \n§3TAMED §f(só domado pode), \n§3DISABLED §f(ninguém pode quebrar)",
     "config.uselessreptile.option.enableCameraOffset.@Tooltip": "Ativa o deslocamento da câmera em 3ª pessoa enquanto monta o dragão\nSe desativado, os deslocamentos não serão aplicados",
     "config.uselessreptile.option.enableCrosshair.@Tooltip": "Ativa a mira em 3ª pessoa enquanto monta o dragão",
     "config.uselessreptile.option.autoThirdPerson.@Tooltip": "Muda automaticamente as perspectivas ao iniciar e parar de cavalgar o dragão",
-    "config.uselessreptile.option.dragonHealthMultiplier.@Tooltip": "Multiplica o máximo de vida de todos os dragões",
-    "config.uselessreptile.option.dragonDamageMultiplier.@Tooltip": "Multiplica o máximo de ataque de todos os dragões/talvez não se aplique a alguns ataques",
+
     "effect.uselessreptile.acid": "Ácido",
 
     "death.attack.acid": "%1$s foi derretido",

@@ -27,7 +27,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setAnimationLocationCache(id);
                 return id;
-            }
+            } else UselessReptile.LOGGER.warn("Failed to get animation for {} ({}) of variant {}. Default will be used instead", entity.getName().getString(), entity.getDragonID(), entity.getVariant());
         }
 
         id = getDefaultAnimation(entity);
@@ -49,7 +49,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setModelLocationCache(id);
                 return id;
-            }
+            } else UselessReptile.LOGGER.warn("Failed to get model for {} ({}) of variant {}. Default will be used instead", entity.getName().getString(), entity.getDragonID(), entity.getVariant());
         }
 
         id = getDefaultModel(entity);
@@ -70,7 +70,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
             id = data.modelData().texture();
             assetCache.setTextureLocationCache(id);
             return id;
-        }
+        } else UselessReptile.LOGGER.warn("Failed to get texture for {} ({}) of variant {}. Default will be used instead", entity.getName().getString(), entity.getDragonID(), entity.getVariant());
 
         id = getDefaultTexture(entity);
         assetCache.setTextureLocationCache(id);

@@ -11,28 +11,14 @@ public class FlyingDragonCallBackGoal<T extends URDragonEntity & FlyingDragon> e
         this.entity = entity;
     }
 
-    @Override
-    public void tick() {
-        entity.getLookControl().lookAt(owner, entity.getRotationSpeed(), entity.getPitchLimit());
-        entity.setSprinting(true);
-        double distance = entity.squaredDistanceTo(owner);
-        double maxDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
-
-        if (entity.isSitting()) stopMoving();
-
+    protected void checkProximity(double currentDistance) {
         if (!entity.isFlying()) ticksToStop = 0;
-
-        if (distance < maxDistance && (owner.isOnGround() || !entity.isFlying())) {
+        double maxDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
+        if (currentDistance < maxDistance && (owner.isOnGround() || !entity.isFlying())) {
             if (entity.isFlying()) {
-                if (ticksToStop > 10) stopMoving();
+                if (ticksToStop > 10) entity.shouldFollow = false;
                 else ticksToStop++;
-            } else stopMoving();
+            } else entity.shouldFollow = false;
         } else ticksToStop = 0;
-
-        if (--updateCountdownTicks <= 0) {
-            updateCountdownTicks = getTickCount(10);
-            entity.getNavigation().startMovingTo(owner, 1);
-            entity.setHomePoint(owner.getBlockPos());
-        }
     }
 }

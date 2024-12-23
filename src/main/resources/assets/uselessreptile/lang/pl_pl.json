@@ -51,8 +51,6 @@
     "other.uselessreptile.sound_respond": "%1$s będzie teraz reagował/a na następujący dźwięk: %2$s",
 
     "config.uselessreptile.title": "Useless Reptile konfiguracja",
-    "config.uselessreptile.option.wyvernSpawnWeight": "Waga generowania Wiwerny bagiennej",
-    "config.uselessreptile.option.moleclawSpawnWeight": "Waga generowania Kretoszpona",
     "config.uselessreptile.option.blockDropChance": "Szansa upuszczenia bloku",
     "config.uselessreptile.option.cameraDistanceOffset": "Odsunięcie kamery",
     "config.uselessreptile.option.cameraVerticalOffset": "Pionowe przesunięcie kamery",
@@ -60,15 +58,11 @@
     "config.uselessreptile.option.enableCameraOffset": "Włącz przesunięcie kamery",
     "config.uselessreptile.option.enableCrosshair": "Włącz celownik w trybie trzecioosobowym",
     "config.uselessreptile.option.autoThirdPerson": "Automatycznie przełączaj perspektywę",
-    "config.uselessreptile.option.dragonHealthMultiplier": "Mnożnik zdrowia smoków",
-    "config.uselessreptile.option.dragonDamageMultiplier": "Mnożnik obrażeń smoków",
     "config.uselessreptile.option.blockDropChance.@Tooltip": "Ustala szansę na upuszczenie bloku przy niektórych smoczych atakach niszczących bloki",
     "config.uselessreptile.option.allowDragonGriefing.@Tooltip": "Definiuje czy smoki mogą niszczyć bloki czy nie.\nDozwolone wartości: \n§3ALL §f(wszystkie smoki mogą niszczyć), \n§3TAMED §f(tylko oswojone smoki mogą niszczyć), \n§3DISABLED §f(wszystkie smoki nie mogą niszczyć)",
     "config.uselessreptile.option.enableCameraOffset.@Tooltip": "Włącza przesunięcie kamery w trybie trzecioosobowym\nJeśli wyłączone, przesunięcia nie zostaną zastosowane",
     "config.uselessreptile.option.enableCrosshair.@Tooltip": "Włącza celownik w trybie trzecioosobowym podczas ujeżdżania smoka",
     "config.uselessreptile.option.autoThirdPerson.@Tooltip": "Automatycznie włącza perspektywę trzecioosobową podczas ujeżdżania smoka",
-    "config.uselessreptile.option.dragonHealthMultiplier.@Tooltip": "Mnoży maksymalne zdrowie wszystkich smoków",
-    "config.uselessreptile.option.dragonDamageMultiplier.@Tooltip": "Mnoży obrażenia zadawane przez wszystkie smoki\nMoże nie wpływać na niektóre ataki",
 
     "effect.uselessreptile.acid": "Kwas",
 

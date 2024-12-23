@@ -16,14 +16,15 @@ public class URConfig {
             .build();
 
     //COMMON
-    @SerialEntry(comment = "SPAWN WEIGHT AND CHANCES")
-    public int wyvernSpawnWeight = 1;
+    @SerialEntry(comment = "IN WORLD SPAWN \nNatural spawn means dragon can spawn randomly in same manner as any other normal mob if conditions are met")
+    public boolean naturalWyvernSpawn = true;
     @SerialEntry
-    public int moleclawSpawnWeight = 1;
+    public boolean naturalMoleclawSpawn = true;
     @SerialEntry
-    public int pikehornSpawnWeight = 1;
-    @SerialEntry
-    public int lightningChaserSpawnWeight = 0;
+    public boolean naturalRiverPikehornSpawn = true;
+    @SerialEntry(comment = "Note: Lightning Chaser doesn't have variants for natural spawn defined and thus won't appear by default." +
+            "\nYou have to add variant spawns manually via datapack if you want it to spawn naturally")
+    public boolean naturalLightningChaserSpawn = false;
     @SerialEntry(comment = "Defines a chance of Lightning Chaser spawning near player during thunderstorms each 30 seconds (1200 ticks)")
     public int lightningChaserThunderstormSpawnChance = 10;
     @SerialEntry(comment = "Amount of time (in ticks) that must pass before Lightning Chaser can attempt to spawn near the same player")
@@ -43,9 +44,9 @@ public class URConfig {
     @SerialEntry
     public int moleclawMaxGroupSize = 1;
     @SerialEntry
-    public int pikehornMinGroupSize = 1;
+    public int riverPikehornMinGroupSize = 1;
     @SerialEntry
-    public int pikehornMaxGroupSize = 3;
+    public int riverPikehornMaxGroupSize = 3;
     @SerialEntry
     public int lightningChaserMinGroupSize = 1;
     @SerialEntry
@@ -56,6 +57,8 @@ public class URConfig {
     public DragonGriefing lightningChaserGriefing = DragonGriefing.ALL;
     @SerialEntry
     public int blockDropChance = 100;
+    @SerialEntry(comment = "allows dragon to teleport to owner whenever it tries to follow")
+    public boolean allowDragonTeleport = true;
     @SerialEntry
     public boolean dragonMadness = false;
 

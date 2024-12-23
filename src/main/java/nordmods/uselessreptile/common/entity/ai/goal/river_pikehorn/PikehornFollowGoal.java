@@ -5,7 +5,7 @@ import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import nordmods.uselessreptile.common.entity.ai.goal.common.FlyingDragonCallBackGoal;
 
 public class PikehornFollowGoal extends FlyingDragonCallBackGoal<RiverPikehornEntity> {
-    private final int toleranceDistance = 20;
+    private static final int TOLERANCE_DISTANCE_SQUARED = 400;
 
     public PikehornFollowGoal(RiverPikehornEntity entity) {
         super(entity);
@@ -13,14 +13,15 @@ public class PikehornFollowGoal extends FlyingDragonCallBackGoal<RiverPikehornEn
 
     @Override
     public boolean canStart() {
+        if (entity.getTarget() != null || entity.forceTargetInWater) return false;
         LivingEntity owner = entity.getOwner();
         if (owner == null) return false;
-        if (entity.isLeashed() || entity.hasVehicle() || entity.isSitting()) return false;
-        if (entity.getTarget() != null || entity.forceTargetInWater) return false;
-        if (isFollowing) return true;
-
         double distance = entity.squaredDistanceTo(owner);
-        int toleranceDistanceSquared = toleranceDistance * toleranceDistance;
-        return distance > toleranceDistanceSquared && entity.getRandom().nextInt(toleranceDistanceSquared) < distance - toleranceDistanceSquared;
+        if (!entity.shouldFollow) {
+            if (distance > TOLERANCE_DISTANCE_SQUARED && entity.getRandom().nextInt(TOLERANCE_DISTANCE_SQUARED) < distance - TOLERANCE_DISTANCE_SQUARED)
+                entity.shouldFollow = true;
+            else return false;
+        }
+        return super.canStart();
     }
 }

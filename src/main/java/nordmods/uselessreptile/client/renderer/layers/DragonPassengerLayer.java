@@ -7,7 +7,6 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -37,7 +36,6 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
     @Override
     public void renderForBone(MatrixStack matrixStackIn, T animatable, GeoBone bone, RenderLayer renderType,
                               VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        if (animatable.item != Items.SADDLE) return;
         if (!bone.getName().equals(passengerBone)) return;
 
         Entity passenger = animatable.owner.getPassengerList().size() > passengerNumber ? animatable.owner.getPassengerList().get(passengerNumber) : null;

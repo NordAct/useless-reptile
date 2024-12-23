@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": {
+    "item": "minecraft:netherite_ingot"
+  },
+  "base": {
+    "item": "uselessreptile:diamond_vortex_horn"
+  },
+  "result": {
+    "count": 1,
+    "id": "uselessreptile:netherite_vortex_horn"
+  },
+  "template": {
+    "item": "minecraft:netherite_upgrade_smithing_template"
+  }
+}

@@ -15,7 +15,7 @@ import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 
-public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> extends BirdNavigation {
+public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> extends BirdNavigation implements PathTime{
     private final T entity;
     private int jumpCount;
 
@@ -86,7 +86,7 @@ public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> ext
         if (bl || canJumpToNext(currentPath.getNode(index).type) && shouldJumpToNextNode(vec3d)) {
             currentPath.next();
             jumpCount = 0;
-            tickCount = 0;
+            pathStartTime = tickCount;
         }
     }
 
@@ -117,6 +117,10 @@ public class FlyingDragonNavigation<T extends URDragonEntity & FlyingDragon> ext
 
     private FlyingDragonMoveControl<T> getMoveControl() {
         return (FlyingDragonMoveControl<T>) entity.getMoveControl();
+    }
+
+    public int getPathTime() {
+        return tickCount - pathStartTime;
     }
 }
 

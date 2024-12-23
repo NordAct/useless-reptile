@@ -16,12 +16,12 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +31,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
@@ -59,6 +58,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
     public static final float defaultWidth = 2f;
     public static final float defaultHeight = 2.9f;
     private int panicSoundDelay = 0;
+
+    public static float BASE_GROUND_SPEED = 0.25f;
 
     public MoleclawEntity(EntityType<? extends URRideableDragonEntity> entityType, World world) {
         super(entityType, world);
@@ -104,11 +105,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     public static DefaultAttributeContainer.Builder createMoleclawAttributes() {
         return createDragonAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().moleclawDamage * attributes().dragonDamageMultiplier)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().moleclawKnockback * URMobAttributesConfig.getConfig().dragonKnockbackMultiplier)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().moleclawHealth * attributes().dragonHealthMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().moleclawArmor * attributes().dragonArmorMultiplier)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().moleclawArmorToughness * attributes().dragonArmorToughnessMultiplier)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().moleclawDamage)
+                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().moleclawKnockback)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().moleclawHealth)
+                .add(EntityAttributes.GENERIC_ARMOR, attributes().moleclawArmor)
+                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().moleclawArmorToughness)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().moleclawGroundSpeed * attributes().dragonGroundSpeedMultiplier)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().moleclawRotationSpeedGround)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().moleclawBasePrimaryAttackCooldown)
@@ -201,6 +202,16 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     @Override
+    protected float getBaseGroundSpeed() {
+        return BASE_GROUND_SPEED;
+    }
+
+    @Override
+    public boolean isSaddleItem(ItemStack itemStack) {
+        return itemStack.isIn(URTags.MOLECLAW_SADDLES);
+    }
+
+    @Override
     public void travel(Vec3d movementInput) {
         if (!isAlive()) return;
 
@@ -214,7 +225,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         if (canBeControlledByRider()) {
             PlayerEntity rider = (PlayerEntity) getControllingPassenger();
 
-            float f1 = MathHelper.clamp(rider.forwardSpeed, -forwardSpeed, forwardSpeed);
+            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
 
             if (isSprintPressed()) setSprinting(true);
             setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
@@ -222,8 +233,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
             setRotation(rider);
             setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
             if (isJumpPressed() && isOnGround()) jump();
-
-            super.travel(new Vec3d(0, movementInput.y, f1));
+            //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
+            super.travel(new Vec3d(0, movementInput.y  - 0.001, landSpeed));
         } else {
             super.travel(movementInput);
         }
@@ -240,7 +251,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (isTamingItem(itemStack) && !isTamed()) {
-            eat(player, hand, itemStack);
+            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
             if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
             else setTamingProgress(getTamingProgress() - 1);
             if (player.isCreative()) setTamingProgress(0);
@@ -338,7 +349,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     public boolean isTooBrightAtPos(BlockPos blockPos) {
-        return getLightAtPos(blockPos, this) > 7 && !hasLightProtection();
+        return !hasLightProtection() && getLightAtPos(blockPos, this) > 7;
     }
 
     public static int getLightAtPos(BlockPos blockPos, LivingEntity entity) {
@@ -417,11 +428,22 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public boolean isFavoriteFood(ItemStack itemStack){
-        return itemStack.isOf(Items.BEETROOT);
+        return itemStack.isIn(URTags.MOLECLAW_FOOD);
+    }
+
+    @Override
+    public boolean isTamingItem(ItemStack itemStack){
+        return itemStack.isIn(URTags.MOLECLAW_TAMING_ITEM);
     }
 
     @Override
     public int getLimitPerChunk() {
         return URConfig.getConfig().moleclawMaxGroupSize * 2;
+    }
+
+    @Override
+    protected boolean canTeleportTo(BlockPos pos) {
+        if (isTooBrightAtPos(pos)) return false;
+        return super.canTeleportTo(pos);
     }
 }

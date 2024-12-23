@@ -30,4 +30,9 @@ public class LightningChaserScreenHandler extends URDragonScreenHandler{
             default -> false;
         };
     }
+
+    @Override
+    protected boolean isSaddleItem(ItemStack itemStack) {
+        return itemStack.isIn(URTags.LIGHTNING_CHASER_SADDLES);
+    }
 }

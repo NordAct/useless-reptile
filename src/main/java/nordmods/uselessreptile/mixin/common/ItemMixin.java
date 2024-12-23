@@ -11,6 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Language;
+import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import nordmods.uselessreptile.common.event.DragonEquipmentTooltipEntryEvent;
 import org.spongepowered.asm.mixin.Mixin;
@@ -29,6 +30,7 @@ public abstract class ItemMixin {
 
     @Inject(method = "appendTooltip", at = @At("HEAD"))
     private void addDragonEquipmentEntries(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type, CallbackInfo ci) {
+        if (URClientConfig.getConfig().hideEquipmentInfo) return;
         List<EntityType<? extends Entity>> entries = new ArrayList<>(DragonEquipmentTooltipEntryEvent.EVENT.invoker().getEntries(asItem()));
         if (entries.isEmpty()) return;
 

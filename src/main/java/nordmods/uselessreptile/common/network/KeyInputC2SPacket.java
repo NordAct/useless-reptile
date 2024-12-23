@@ -18,16 +18,15 @@ public record KeyInputC2SPacket(boolean jump, boolean forward, boolean back, boo
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (packet, context) -> {
             Entity entity = context.player().getWorld().getEntityById(packet.id);
-            if (entity instanceof URRideableDragonEntity dragon) {
+            if (entity instanceof URRideableDragonEntity dragon && context.player().getVehicle() == entity) {
                 dragon.isSecondaryAttackPressed = packet.secondaryAttack;
                 dragon.isPrimaryAttackPressed = packet.primaryAttack;
-
                 dragon.updateInputs(packet.forward, packet.back, packet.jump, packet.down, packet.sprint);
             }
         });
     }
 
-    private static KeyInputC2SPacket read (RegistryByteBuf buffer) {
+    private static KeyInputC2SPacket read(RegistryByteBuf buffer) {
         boolean jump = buffer.readBoolean();
         boolean forward = buffer.readBoolean();
         boolean back = buffer.readBoolean();

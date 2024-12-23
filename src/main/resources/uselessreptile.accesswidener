@@ -3,3 +3,12 @@ accessible class net/minecraft/client/resource/ResourceReloadLogger$ReloadState
 accessible field net/minecraft/client/resource/ResourceReloadLogger$ReloadState finished Z
 accessible field net/minecraft/entity/Entity CUSTOM_NAME Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/entity/mob/MobEntity getAttackBox ()Lnet/minecraft/util/math/Box;
+accessible method net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder validate (Lnet/minecraft/util/Identifier;)Lnet/minecraft/recipe/RawShapedRecipe;
+accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder category Lnet/minecraft/recipe/book/RecipeCategory;
+accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder output Lnet/minecraft/item/Item;
+accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder count I
+accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder criteria Ljava/util/Map;
+accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder group Ljava/lang/String;
+accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder showNotification Z
+accessible method net/minecraft/entity/LivingEntity applyFoodEffects (Lnet/minecraft/component/type/FoodComponent;)V
+extendable method net/minecraft/entity/passive/TameableEntity canTeleportTo (Lnet/minecraft/util/math/BlockPos;)Z

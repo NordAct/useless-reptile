@@ -143,10 +143,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         }
         setAccelerationDuration(accelerationDuration);
 
-        float f1 = MathHelper.clamp(rider.forwardSpeed, -forwardSpeed, forwardSpeed);
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
         if (!isFlying()) {
+            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
             if (isSprintPressed()) setSprinting(true);
             if (isMovingBackwards() && (isMoveBackPressed() || isMoveBackPressed())) setSprinting(false);
             setRotation(rider);
@@ -160,12 +160,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
                     startToFly();
                     flyUpWindow = 0;
                 }
-            } else if (!isJumpPressed()) jumpWasPressed = false;
+            } else if (!isJumpPressed() && jumpWasPressed) jumpWasPressed = false;
             if (flyUpWindow > 0) flyUpWindow--;
             else jumpWasPressed = false;
-
-            return new Vec3d(0, movementInput.y, f1);
+            //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
+            return new Vec3d(0, movementInput.y - 0.001, landSpeed);
         } else {
+            double flyingSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED);
             float pitchSpeed = 2;
             setRotation(rider);
             float verticalSpeed = 0F;
@@ -195,7 +196,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
                 setTiltState((byte) 0);
             }
 
-            return new Vec3d(0, verticalSpeed * MathHelper.clamp(accelerationModifier, 0.25, 1.5), f1 * accelerationModifier * 2.5F);
+            return new Vec3d(0, verticalSpeed * MathHelper.clamp(accelerationModifier, 0.25, 1.5), flyingSpeed * accelerationModifier * 2.5F);
         }
     }
 

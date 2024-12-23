@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks/tinted"
+    },
+    "H": {
+      "item": "uselessreptile:dragon_helmet_netherite"
+    }
+  },
+  "pattern": [
+    "GHG"
+  ],
+  "result": {
+    "count": 1,
+    "id": "uselessreptile:moleclaw_helmet_netherite"
+  }
+}
