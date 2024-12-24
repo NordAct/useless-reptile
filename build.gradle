@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.8-SNAPSHOT'
+    id 'fabric-loom' version '1.9-SNAPSHOT'
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
@@ -36,12 +36,12 @@ repositories {
             includeGroup "maven.modrinth"
         }
     }
-    maven {
-        url "https://dl.cloudsmith.io/public/klikli-dev/mods/maven/"
-        content {
-            includeGroup "com.klikli_dev"
-        }
-    }
+    //maven {
+    //    url "https://dl.cloudsmith.io/public/klikli-dev/mods/maven/"
+    //    content {
+    //        includeGroup "com.klikli_dev"
+    //    }
+    //}
     flatDir() {
         dir 'libs'
     }
@@ -59,10 +59,10 @@ dependencies {
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
     //modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
     modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1")
-    modImplementation ("com.klikli_dev:modonomicon-${minecraft_version}-fabric:${modonomicon_version}")
+    //modImplementation ("com.klikli_dev:modonomicon-${minecraft_version}-fabric:${modonomicon_version}")
 
-    modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
-    modLocalRuntime "dev.emi:emi-fabric:${project.emi_version}"
+    //modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
+    //modLocalRuntime "dev.emi:emi-fabric:${project.emi_version}"
 }
 
 processResources {
