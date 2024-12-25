@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "B": {
-      "tag": "c:dyes/blue"
-    },
-    "G": {
-      "tag": "c:dyes/green"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "R": {
-      "tag": "c:dyes/red"
-    },
-    "W": {
-      "tag": "minecraft:planks"
-    }
+    "B": "#c:dyes/blue",
+    "G": "#c:dyes/green",
+    "I": "#c:ingots/iron",
+    "R": "#c:dyes/red",
+    "W": "#minecraft:planks"
   },
   "pattern": [
     "RGI",

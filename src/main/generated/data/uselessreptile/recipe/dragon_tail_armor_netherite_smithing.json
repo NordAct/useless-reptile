@@ -1,16 +1,10 @@
 {
   "type": "minecraft:smithing_transform",
-  "addition": {
-    "item": "minecraft:netherite_ingot"
-  },
-  "base": {
-    "item": "uselessreptile:dragon_tail_armor_diamond"
-  },
+  "addition": "#minecraft:netherite_tool_materials",
+  "base": "uselessreptile:dragon_tail_armor_diamond",
   "result": {
     "count": 1,
     "id": "uselessreptile:dragon_tail_armor_netherite"
   },
-  "template": {
-    "item": "minecraft:netherite_upgrade_smithing_template"
-  }
+  "template": "minecraft:netherite_upgrade_smithing_template"
 }

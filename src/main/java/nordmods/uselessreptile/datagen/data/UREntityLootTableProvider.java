@@ -109,7 +109,7 @@ public class UREntityLootTableProvider extends EntityLootTableGenerator implemen
             List<CompletableFuture<?>> list = new ArrayList<>();
             lootTables.forEach((type, loot) -> {
                     LootTable lootTable = loot.build();
-                    Path path = pathResolver.resolveJson(type.getLootTableKey().getValue());
+                    Path path = pathResolver.resolveJson(type.getLootTableKey().get());
                     list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, LootTable.CODEC, lootTable, path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));

@@ -1,13 +1,9 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "uselessreptile:vortex_horn",
   "category": "equipment",
   "key": {
-    "H": {
-      "item": "minecraft:goat_horn"
-    },
-    "R": {
-      "item": "minecraft:breeze_rod"
-    }
+    "H": "minecraft:goat_horn",
+    "R": "minecraft:breeze_rod"
   },
   "pattern": [
     " R ",

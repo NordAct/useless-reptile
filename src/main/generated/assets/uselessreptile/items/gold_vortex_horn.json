@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "uselessreptile:item/gold_vortex_horn"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "uselessreptile:item/tooting_gold_vortex_horn"
+    },
+    "property": "minecraft:using_item"
+  }
+}

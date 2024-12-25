@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class EquipmentModelDataReloadListener extends JsonDataLoader<List<EquipmentModelData>> implements IdentifiableResourceReloadListener {
-    private static final ResourceFinder FINDER = ResourceFinder.json("dragon_model_data/equipment_model_data");
+    private static final ResourceFinder FINDER = ResourceFinder.json("dragon_equipment_model_data");
     public EquipmentModelDataReloadListener() {
         super(EquipmentModelData.CODEC.listOf(), FINDER);
     }
@@ -32,7 +32,7 @@ public class EquipmentModelDataReloadListener extends JsonDataLoader<List<Equipm
 
     @Override
     public Identifier getFabricId() {
-        return UselessReptile.id("dragon_model_data/equipment_model_data");
+        return UselessReptile.id("dragon_equipment_model_data");
     }
 
     public static void init () {

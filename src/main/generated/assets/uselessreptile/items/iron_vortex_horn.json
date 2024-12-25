@@ -1,0 +1,14 @@
+{
+  "model": {
+    "type": "minecraft:condition",
+    "on_false": {
+      "type": "minecraft:model",
+      "model": "uselessreptile:item/iron_vortex_horn"
+    },
+    "on_true": {
+      "type": "minecraft:model",
+      "model": "uselessreptile:item/tooting_iron_vortex_horn"
+    },
+    "property": "minecraft:using_item"
+  }
+}

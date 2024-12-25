@@ -10,9 +10,12 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
+import net.minecraft.registry.RegistryEntryLookup;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -32,6 +35,8 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
 
     @Override
     public void generateAdvancement(RegistryWrapper.WrapperLookup registryLookup, Consumer<AdvancementEntry> consumer) {
+        RegistryEntryLookup<Item> registryEntryLookup = registryLookup.getOrThrow(RegistryKeys.ITEM);
+
         AdvancementEntry root = Advancement.Builder.createUntelemetered()
                 .display(URItems.WYVERN_SKIN,
                         Text.literal("Useless Reptile"),
@@ -44,10 +49,10 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .criterion("tick", AdvancementCriterions.gameTickCondition())
                 .build(UselessReptile.id("dragon/root"));
 
-        AdvancementEntry tameWyvern = tamingAdvancementEntry(UREntities.WYVERN_ENTITY, root);
-        AdvancementEntry tameMoleclaw = tamingAdvancementEntry(UREntities.MOLECLAW_ENTITY, root);
-        AdvancementEntry tameLightningChaser = tamingAdvancementEntry(UREntities.LIGHTNING_CHASER_ENTITY, root);
-        AdvancementEntry tameRiverPikehorn = tamingAdvancementEntry(UREntities.RIVER_PIKEHORN_ENTITY, root);
+        AdvancementEntry tameWyvern = tamingAdvancementEntry(registryLookup, UREntities.WYVERN_ENTITY, root);
+        AdvancementEntry tameMoleclaw = tamingAdvancementEntry(registryLookup, UREntities.MOLECLAW_ENTITY, root);
+        AdvancementEntry tameLightningChaser = tamingAdvancementEntry(registryLookup, UREntities.LIGHTNING_CHASER_ENTITY, root);
+        AdvancementEntry tameRiverPikehorn = tamingAdvancementEntry(registryLookup, UREntities.RIVER_PIKEHORN_ENTITY, root);
 
         AdvancementEntry useFlute = Advancement.Builder.createUntelemetered()
                 .display(URItems.FLUTE,
@@ -58,7 +63,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         true,
                         true,
                         false)
-                .criterion("use_item", AdvancementCriterions.useItemCondition(URItems.FLUTE))
+                .criterion("use_item", AdvancementCriterions.useItemCondition(registryEntryLookup, URItems.FLUTE))
                 .parent(tameRiverPikehorn)
                 .build(UselessReptile.id("dragon/use_flute"));
 
@@ -71,7 +76,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         true,
                         true,
                         false)
-                .criterion("obtain_item", AdvancementCriterions.obtainItem(URTags.PROTECTS_MOLECLAW_FROM_LIGHT))
+                .criterion("obtain_item", AdvancementCriterions.obtainItem(registryEntryLookup, URTags.PROTECTS_MOLECLAW_FROM_LIGHT))
                 .parent(tameMoleclaw)
                 .build(UselessReptile.id("dragon/moleclaw_helmet"));
 
@@ -86,7 +91,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         true,
                         true,
                         false)
-                .criterion("obtain_item", AdvancementCriterions.obtainItem(potion))
+                .criterion("obtain_item", AdvancementCriterions.obtainItem(registryEntryLookup, potion))
                 .parent(tameWyvern)
                 .build(UselessReptile.id("dragon/gather_acid"));
 
@@ -100,18 +105,21 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         consumer.accept(gatherAcid);
     }
 
-    private static AdvancementEntry tamingAdvancementEntry(EntityType<? extends Entity> type, AdvancementEntry parent) {
+    private static AdvancementEntry tamingAdvancementEntry(RegistryWrapper.WrapperLookup registryLookup,EntityType<? extends Entity> type, AdvancementEntry parent) {
+        RegistryEntryLookup<EntityType<?>> registryEntryLookup = registryLookup.getOrThrow(RegistryKeys.ENTITY_TYPE);
         String id = EntityType.getId(type).getPath();
         return Advancement.Builder.createUntelemetered()
-                .display(Registries.ITEM.getEntry(UselessReptile.id(id + "_spawn_egg")),
+                .display(
+                        Registries.ITEM.getEntry(UselessReptile.id(id + "_spawn_egg")).get().value(),
                         Text.translatable("advancement.uselessreptile.tame_" + id),
                         Text.translatable("advancement.uselessreptile.tame_" + id + ".desc"),
                         null,
                         AdvancementFrame.TASK,
                         true,
                         true,
-                        false)
-                .criterion("entity_tamed", AdvancementCriterions.entityTamedCondition(type))
+                        false
+                )
+                .criterion("entity_tamed", AdvancementCriterions.entityTamedCondition(registryEntryLookup, type))
                 .parent(parent)
                 .build(UselessReptile.id("dragon/tame_" + id));
     }

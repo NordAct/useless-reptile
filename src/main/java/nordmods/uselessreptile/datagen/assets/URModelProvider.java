@@ -1,21 +1,19 @@
 package nordmods.uselessreptile.datagen.assets;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.*;
+import net.minecraft.client.render.item.model.ItemModel;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.item_property.FluteModeProperty;
 import nordmods.uselessreptile.common.init.URItems;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 public class URModelProvider extends FabricModelProvider {
     public URModelProvider(FabricDataOutput output) {
@@ -29,42 +27,44 @@ public class URModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(URItems.WYVERN_SPAWN_EGG, item("template_spawn_egg"));
-        itemModelGenerator.register(URItems.LIGHTNING_CHASER_SPAWN_EGG, item("template_spawn_egg"));
-        itemModelGenerator.register(URItems.MOLECLAW_SPAWN_EGG, item("template_spawn_egg"));
-        itemModelGenerator.register(URItems.RIVER_PIKEHORN_SPAWN_EGG, item("template_spawn_egg"));
+        itemModelGenerator.registerSpawnEgg(URItems.WYVERN_SPAWN_EGG, 5462570, 3094045);
+        itemModelGenerator.registerSpawnEgg(URItems.LIGHTNING_CHASER_SPAWN_EGG, 4145472, 10922151);
+        itemModelGenerator.registerSpawnEgg(URItems.MOLECLAW_SPAWN_EGG, 2105119, 458752);
+        itemModelGenerator.registerSpawnEgg(URItems.RIVER_PIKEHORN_SPAWN_EGG, 2910895, 1457243);
 
         itemModelGenerator.register(URItems.WYVERN_SKIN, Models.GENERATED);
 
-        generateVortexHorn(itemModelGenerator.writer, URItems.VORTEX_HORN);
-        generateVortexHorn(itemModelGenerator.writer, URItems.IRON_VORTEX_HORN);
-        generateVortexHorn(itemModelGenerator.writer, URItems.GOLD_VORTEX_HORN);
-        generateVortexHorn(itemModelGenerator.writer, URItems.DIAMOND_VORTEX_HORN);
-        generateVortexHorn(itemModelGenerator.writer, URItems.NETHERITE_VORTEX_HORN);
+        registerVortexHorn(itemModelGenerator, URItems.VORTEX_HORN);
+        registerVortexHorn(itemModelGenerator, URItems.IRON_VORTEX_HORN);
+        registerVortexHorn(itemModelGenerator, URItems.GOLD_VORTEX_HORN);
+        registerVortexHorn(itemModelGenerator, URItems.DIAMOND_VORTEX_HORN);
+        registerVortexHorn(itemModelGenerator, URItems.NETHERITE_VORTEX_HORN);
 
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_CHESTPLATE_IRON, UselessReptile.id("item/armor/dragon/armor_iron_body"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_CHESTPLATE_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_body"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_CHESTPLATE_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_body"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_CHESTPLATE_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_body"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_TAIL_ARMOR_IRON, UselessReptile.id("item/armor/dragon/armor_iron_tail"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_TAIL_ARMOR_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_tail"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_TAIL_ARMOR_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_tail"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_TAIL_ARMOR_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_tail"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_HELMET_IRON, UselessReptile.id("item/armor/dragon/armor_iron_head"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_HELMET_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_head"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_HELMET_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_head"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.DRAGON_HELMET_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_head"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("item/armor/dragon/armor_iron_head_moleclaw"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_head_moleclaw"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_head_moleclaw"));
-        registerDragonArmorModel(itemModelGenerator.writer, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_head_moleclaw"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_IRON, UselessReptile.id("item/armor/dragon/armor_iron_body"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_body"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_body"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_body"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_IRON, UselessReptile.id("item/armor/dragon/armor_iron_tail"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_tail"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_tail"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_tail"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_IRON, UselessReptile.id("item/armor/dragon/armor_iron_head"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_head"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_head"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_head"));
+        registerDragonArmorModel(itemModelGenerator, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("item/armor/dragon/armor_iron_head_moleclaw"));
+        registerDragonArmorModel(itemModelGenerator, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_head_moleclaw"));
+        registerDragonArmorModel(itemModelGenerator, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_head_moleclaw"));
+        registerDragonArmorModel(itemModelGenerator, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_head_moleclaw"));
+
+        registerFlute(itemModelGenerator, URItems.FLUTE);
     }
 
     protected static Model item(String parent, TextureKey... requiredTextureKeys) {
         return new Model(Optional.of(Identifier.of("item/" + parent)), Optional.empty(), requiredTextureKeys);
     }
 
-    protected JsonObject generateDragonArmor(Item item, Map<TextureKey, Identifier> textureMap) {
+    protected void generateDragonArmor(Item item, Identifier texture,  BiConsumer<Identifier, ModelSupplier> modelCollector) {
         JsonArray translation = new JsonArray();
         translation.add(0);
         translation.add(-0.4);
@@ -82,49 +82,157 @@ public class URModelProvider extends FabricModelProvider {
         JsonObject display = new JsonObject();
         display.add("thirdperson_righthand", thirdpersonRighthand);
 
-        Identifier itemID = ModelIds.getItemModelId(item);
-        JsonObject root = Models.GENERATED.createJson(Identifier.of(itemID.getNamespace(), itemID.getPath()), textureMap);
-        root.add("display", display);
-
-        return root;
+        modelCollector.accept(ModelIds.getItemModelId(item), () -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("parent", "minecraft:item/generated");
+            JsonObject jsonObject2 = new JsonObject();
+            jsonObject2.addProperty("layer0", texture.toString());
+            jsonObject.add("textures", jsonObject2);
+            jsonObject.add("display", display);
+            return jsonObject;
+        });
     }
 
-    protected void registerDragonArmorModel(BiConsumer<Identifier, Supplier<JsonElement>> writer, Item item, Identifier texture) {
-        Models.GENERATED.upload(ModelIds.getItemModelId(item), TextureMap.layer0(texture), writer, ((id, textures) -> generateDragonArmor(item, textures)));
+    protected void registerDragonArmorModel(ItemModelGenerator itemModelGenerator, Item item, Identifier texture) {
+        generateDragonArmor(item, texture, itemModelGenerator.modelCollector);
+        itemModelGenerator.register(item);
     }
 
-    protected JsonObject generateVortexHorn(Item item, Map<TextureKey, Identifier> textureMap) {
+    protected void generateVotexHorn(Item item, BiConsumer<Identifier, ModelSupplier> modelCollector) {
+        JsonArray translation;
+        JsonArray rotation;
+        JsonArray scale;
+
+        JsonObject thirdpersonRighthand = new JsonObject();
+        JsonObject thirdpersonLefthand = new JsonObject();
+        JsonObject firstpersonRighthand = new JsonObject();
+        JsonObject firstpersonLefthand = new JsonObject();
+        JsonObject display = new JsonObject();
+
+        translation = updateValues(0, 3, 1);
+        rotation = updateValues(0, 180, 0);
+        scale = updateValues( 0.55, 0.55, 0.55);
+        thirdpersonRighthand.add("translation", translation);
+        thirdpersonRighthand.add("scale", scale);
+        thirdpersonRighthand.add("rotation", rotation);
+
+        translation = updateValues( 0, 3, 1);
+        rotation = updateValues( 0, 0, 0);
+        scale = updateValues( 0.55, 0.55, 0.55);
+        thirdpersonLefthand.add("translation", translation);
+        thirdpersonLefthand.add("scale", scale);
+        thirdpersonLefthand.add("rotation", rotation);
+
+        translation = updateValues( 1.13, 3.2, 1.13);
+        rotation = updateValues( 0, -90, 25);
+        scale = updateValues( 0.68, 0.68, 0.68);
+        firstpersonRighthand.add("translation", translation);
+        firstpersonRighthand.add("scale", scale);
+        firstpersonRighthand.add("rotation", rotation);
+
+        translation = updateValues( 1.13, 3.2, 1.13);
+        rotation = updateValues( 0, -90, 25);
+        scale = updateValues( 0.68, 0.68, 0.68);
+        firstpersonLefthand.add("translation", translation);
+        firstpersonLefthand.add("scale", scale);
+        firstpersonLefthand.add("rotation", rotation);
+
+        display.add("thirdperson_righthand", thirdpersonRighthand);
+        display.add("thirdperson_lefthand", thirdpersonLefthand);
+        display.add("firstperson_righthand", firstpersonRighthand);
+        display.add("firstperson_lefthand", firstpersonLefthand);
+
         Identifier itemID = item.getRegistryEntry().registryKey().getValue();
-        Identifier itemModelID = ModelIds.getItemModelId(item);
-        JsonObject root = item("goat_horn", TextureKey.LAYER0).createJson(Identifier.of(itemModelID.getNamespace(), itemModelID.getPath()), textureMap);
-
-        JsonObject override = new JsonObject();
-        JsonObject predicate = new JsonObject();
-        predicate.add("tooting", new JsonPrimitive(1));
-        override.add("predicate", predicate);
-        override.add("model", new JsonPrimitive( itemID.getNamespace() + ":item/tooting_" + itemID.getPath()));
-
-        JsonArray overrides = new JsonArray();
-        overrides.add(override);
-        root.add("overrides", overrides);
-        return root;
+        modelCollector.accept(ModelIds.getItemModelId(item), () -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("parent", "minecraft:item/generated");
+            JsonObject jsonObject2 = new JsonObject();
+            jsonObject2.addProperty("layer0", Identifier.of(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
+            jsonObject.add("textures", jsonObject2);
+            jsonObject.add("display", display);
+            return jsonObject;
+        });
     }
 
-    protected JsonObject generateTootingVortexHorn(Item item, Map<TextureKey, Identifier> textureMap) {
+    protected void generateTootingVotexHorn(Item item, BiConsumer<Identifier, ModelSupplier> modelCollector) {
+        JsonArray translation;
+        JsonArray rotation;
+        JsonArray scale;
+
+        JsonObject thirdpersonRighthand = new JsonObject();
+        JsonObject thirdpersonLefthand = new JsonObject();
+        JsonObject firstpersonRighthand = new JsonObject();
+        JsonObject firstpersonLefthand = new JsonObject();
+        JsonObject display = new JsonObject();
+
+        translation = updateValues(-1, 2, 2);
+        rotation = updateValues(0, -125, 0);
+        scale = updateValues( 0.5, 0.5, 0.5);
+        thirdpersonRighthand.add("translation", translation);
+        thirdpersonRighthand.add("scale", scale);
+        thirdpersonRighthand.add("rotation", rotation);
+
+        translation = updateValues( -1, 2, 2);
+        rotation = updateValues( 0, 55, 0);
+        scale = updateValues( 0.5, 0.5, 0.5);
+        thirdpersonLefthand.add("translation", translation);
+        thirdpersonLefthand.add("scale", scale);
+        thirdpersonLefthand.add("rotation", rotation);
+
+        translation = updateValues( -1, -2.5, -7.5);
+        rotation = updateValues( 0, -55, 5);
+        firstpersonRighthand.add("translation", translation);
+        firstpersonRighthand.add("rotation", rotation);
+
+        translation = updateValues( 0  , -2.5, -7.5);
+        rotation = updateValues( 0, 155, 5);
+        firstpersonLefthand.add("translation", translation);
+        firstpersonLefthand.add("rotation", rotation);
+
+        display.add("thirdperson_righthand", thirdpersonRighthand);
+        display.add("thirdperson_lefthand", thirdpersonLefthand);
+        display.add("firstperson_righthand", firstpersonRighthand);
+        display.add("firstperson_lefthand", firstpersonLefthand);
+
         Identifier itemID = item.getRegistryEntry().registryKey().getValue();
-        return item("tooting_goat_horn", TextureKey.LAYER0).createJson(Identifier.of(itemID.getNamespace(), "item/tooting_" + itemID.getPath()), textureMap);
+        modelCollector.accept(Identifier.of(itemID.getNamespace(), "item/tooting_" + itemID.getPath()), () -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("parent", "minecraft:item/generated");
+            JsonObject jsonObject2 = new JsonObject();
+            jsonObject2.addProperty("layer0", Identifier.of(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
+            jsonObject.add("textures", jsonObject2);
+            jsonObject.add("display", display);
+            return jsonObject;
+        });
     }
 
-    protected void generateVortexHorn(BiConsumer<Identifier, Supplier<JsonElement>> writer, Item item) {
+    protected void registerVortexHorn(ItemModelGenerator itemModelGenerator, Item item) {
+        generateVotexHorn(item, itemModelGenerator.modelCollector);
+        generateTootingVotexHorn(item, itemModelGenerator.modelCollector);
+
         Identifier itemID = item.getRegistryEntry().registryKey().getValue();
-        Identifier texture = Identifier.of(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath());
-        Models.GENERATED.upload(ModelIds.getItemModelId(item), TextureMap.layer0(texture), writer, ((id, textures) -> generateVortexHorn(item, textures)));
-        generateTootingVortexHorn(writer, item);
+        ItemModel.Unbaked unbaked = ItemModels.basic(Identifier.of(itemID.getNamespace(), "item/" + itemID.getPath()));
+        ItemModel.Unbaked unbaked2 = ItemModels.basic(Identifier.of(itemID.getNamespace(), "item/tooting_" + itemID.getPath()));
+        itemModelGenerator.registerCondition(item, ItemModels.usingItemProperty(), unbaked2, unbaked);
     }
 
-    protected void generateTootingVortexHorn(BiConsumer<Identifier, Supplier<JsonElement>> writer, Item item) {
-        Identifier itemID = item.getRegistryEntry().registryKey().getValue();
-        Identifier texture = Identifier.of(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath());
-        Models.GENERATED.upload(Identifier.of(itemID.getNamespace(), "item/tooting_" + itemID.getPath()), TextureMap.layer0(texture), writer, ((id, textures) -> generateTootingVortexHorn(item, textures)));
+    private JsonArray updateValues(double x, double y, double z) {
+        JsonArray array = new JsonArray();
+        array.add(x);
+        array.add(y);
+        array.add(z);
+        return array;
+    }
+
+    protected void registerFlute(ItemModelGenerator itemModelGenerator, Item item) {
+
+
+        ItemModel.Unbaked mode0 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_call", Models.HANDHELD));
+        ItemModel.Unbaked mode1 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_gather", Models.HANDHELD));
+        ItemModel.Unbaked mode2 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_target", Models.HANDHELD));
+        itemModelGenerator.output.accept(item, ItemModels.rangeDispatch(new FluteModeProperty(), mode0,
+                ItemModels.rangeDispatchEntry(mode0, 0),
+                ItemModels.rangeDispatchEntry(mode1, 1),
+                ItemModels.rangeDispatchEntry(mode2, 2)));
     }
 }

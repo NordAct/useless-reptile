@@ -1,13 +1,75 @@
 {
-  "parent": "minecraft:item/goat_horn",
-  "overrides": [
-    {
-      "model": "uselessreptile:item/tooting_iron_vortex_horn",
-      "predicate": {
-        "tooting": 1
-      }
+  "parent": "minecraft:item/generated",
+  "display": {
+    "firstperson_lefthand": {
+      "rotation": [
+        0.0,
+        -90.0,
+        25.0
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0.0,
+        -90.0,
+        25.0
+      ],
+      "scale": [
+        0.68,
+        0.68,
+        0.68
+      ],
+      "translation": [
+        1.13,
+        3.2,
+        1.13
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ],
+      "translation": [
+        0.0,
+        3.0,
+        1.0
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        0.0,
+        180.0,
+        0.0
+      ],
+      "scale": [
+        0.55,
+        0.55,
+        0.55
+      ],
+      "translation": [
+        0.0,
+        3.0,
+        1.0
+      ]
     }
-  ],
+  },
   "textures": {
     "layer0": "uselessreptile:item/vortex_horn/iron_vortex_horn"
   }

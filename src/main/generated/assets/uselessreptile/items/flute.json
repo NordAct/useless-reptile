@@ -1,0 +1,33 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "uselessreptile:item/flute_call"
+        },
+        "threshold": 0.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "uselessreptile:item/flute_gather"
+        },
+        "threshold": 1.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "uselessreptile:item/flute_target"
+        },
+        "threshold": 2.0
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "uselessreptile:item/flute_call"
+    },
+    "property": "uselessreptile:flute_mode"
+  }
+}

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "L": {
-      "item": "minecraft:leather"
-    },
-    "M": {
-      "tag": "c:ingots/gold"
-    }
+    "L": "minecraft:leather",
+    "M": "#c:ingots/gold"
   },
   "pattern": [
     "MMM",

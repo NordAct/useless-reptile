@@ -2,15 +2,9 @@
   "type": "uselessreptile:vortex_horn",
   "category": "equipment",
   "key": {
-    "H": {
-      "item": "uselessreptile:iron_vortex_horn"
-    },
-    "I": {
-      "tag": "c:ingots/gold"
-    },
-    "R": {
-      "item": "minecraft:breeze_rod"
-    }
+    "H": "uselessreptile:iron_vortex_horn",
+    "I": "#c:ingots/gold",
+    "R": "minecraft:breeze_rod"
   },
   "pattern": [
     "IRI",
