@@ -4,12 +4,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.client.renderer.base.URDragonRenderer;
 import nordmods.uselessreptile.client.renderer.layers.DragonMainHandItemLayer;
-import nordmods.uselessreptile.client.renderer.special.RiverPikehornOnHeadFeatureRenderer;
+import nordmods.uselessreptile.client.renderer.special.HeadMountDragonFeatureRenderer;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
 public class RiverPikehornEntityRenderer extends URDragonRenderer<RiverPikehornEntity> {
@@ -20,12 +21,12 @@ public class RiverPikehornEntityRenderer extends URDragonRenderer<RiverPikehornE
     }
 
     @Override
-    public void render(RiverPikehornEntity entity, float entityYaw, float partialTick, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
-        if (entity.getVehicle() instanceof PlayerEntity player) {
-            if (RiverPikehornOnHeadFeatureRenderer.ON_HEAD.contains(entity.getUuid())) return;
+    public void render(EntityRenderState entityRenderState, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
+        if (animatable.getVehicle() instanceof PlayerEntity player) {
+            if (HeadMountDragonFeatureRenderer.ON_HEAD.contains(animatable.getUuid())) return;
             else if (MinecraftClient.getInstance().player == player && MinecraftClient.getInstance().options.getPerspective().isFirstPerson()) return;
         }
-        super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);
+        super.render(entityRenderState, poseStack, bufferSource, packedLight);
     }
 
     @Override

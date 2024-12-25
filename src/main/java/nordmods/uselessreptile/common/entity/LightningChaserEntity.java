@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.entity;
 
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
@@ -72,6 +71,7 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
@@ -240,13 +240,13 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     public static DefaultAttributeContainer.Builder createLightningChaserAttributes() {
         return createDragonAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().lightningChaserDamage)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().lightningChaserKnockback)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().lightningChaserHealth)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().lightningChaserArmor)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().lightningChaserArmorToughness)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().lightningChaserGroundSpeed * attributes().dragonGroundSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().lightningChaserFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.ATTACK_DAMAGE, attributes().lightningChaserDamage)
+                .add(EntityAttributes.ATTACK_KNOCKBACK, attributes().lightningChaserKnockback)
+                .add(EntityAttributes.MAX_HEALTH, attributes().lightningChaserHealth)
+                .add(EntityAttributes.ARMOR, attributes().lightningChaserArmor)
+                .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().lightningChaserArmorToughness)
+                .add(EntityAttributes.MOVEMENT_SPEED, attributes().lightningChaserGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.FLYING_SPEED, attributes().lightningChaserFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().lightningChaserVerticalSpeed)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().lightningChaserBaseAccelerationDuration)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().lightningChaserRotationSpeedGround)
@@ -308,9 +308,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
+    public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {
         if (damageSource.isOf(DamageTypes.LIGHTNING_BOLT)) return true;
-        else return super.isInvulnerableTo(damageSource);
+        else return super.isInvulnerableTo(world, damageSource);
     }
 
     @Override
@@ -346,8 +346,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 if (isSecondaryAttackPressed && getSpecialAttackCooldown() == 0) triggerShockwave();
             }
             else if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
-                LivingEntity target = getWorld().getClosestEntity(LivingEntity.class, TargetPredicate.DEFAULT, this, getX(), getY(), getZ(), getAttackBox());
-                meleeAttack(target);
+                meleeAttack();
             }
             if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) triggerShoot();
         }
@@ -387,19 +386,19 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private void updateThunderstormBonus() {
         if (getWorld().isClient()) return;
         if (getWorld().getLevelProperties().isThundering()) {
-            tryAddModifier(EntityAttributes.GENERIC_ARMOR, 4, EntityAttributeModifier.Operation.ADD_VALUE);
-            tryAddModifier(EntityAttributes.GENERIC_FLYING_SPEED, 0.2, EntityAttributeModifier.Operation.ADD_VALUE);
-            tryAddModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.05, EntityAttributeModifier.Operation.ADD_VALUE);
-            tryAddModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2f, EntityAttributeModifier.Operation.ADD_VALUE);
+            tryAddModifier(EntityAttributes.ARMOR, 4, EntityAttributeModifier.Operation.ADD_VALUE);
+            tryAddModifier(EntityAttributes.FLYING_SPEED, 0.2, EntityAttributeModifier.Operation.ADD_VALUE);
+            tryAddModifier(EntityAttributes.MOVEMENT_SPEED, 0.05, EntityAttributeModifier.Operation.ADD_VALUE);
+            tryAddModifier(EntityAttributes.ATTACK_DAMAGE, 2f, EntityAttributeModifier.Operation.ADD_VALUE);
             tryAddModifier(URAttributes.DRAGON_ACCELERATION_DURATION, -0.33, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             tryAddModifier(URAttributes.DRAGON_VERTICAL_SPEED, 0.1, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             tryAddModifier(URAttributes.DRAGON_FLYING_ROTATION_SPEED, 0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
             tryAddModifier(URAttributes.DRAGON_GROUND_ROTATION_SPEED, 0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         } else {
-            removeModifier(EntityAttributes.GENERIC_ARMOR);
-            removeModifier(EntityAttributes.GENERIC_FLYING_SPEED);
-            removeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-            removeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE);
+            removeModifier(EntityAttributes.ARMOR);
+            removeModifier(EntityAttributes.FLYING_SPEED);
+            removeModifier(EntityAttributes.MOVEMENT_SPEED);
+            removeModifier(EntityAttributes.ATTACK_DAMAGE);
             removeModifier(URAttributes.DRAGON_ACCELERATION_DURATION);
             removeModifier(URAttributes.DRAGON_VERTICAL_SPEED);
             removeModifier(URAttributes.DRAGON_FLYING_ROTATION_SPEED);
@@ -418,8 +417,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public boolean damage(DamageSource damageSource, float amount) {
-        boolean toReturn = super.damage(damageSource, amount);
+    public boolean damage(ServerWorld world, DamageSource damageSource, float amount) {
+        boolean toReturn = super.damage(world, damageSource, amount);
         if (getHealth() / getMaxHealth() < 0.3 && !hasSurrendered() && (getTamingProgress() <= 0 || isTamed())) {
             if (!isDead()) setHealth(getMaxHealth() * 0.3f);
             setInAirTimer(getMaxInAirTimer());
@@ -469,12 +468,21 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         shockwaveDelay = TRANSITION_TICKS/2;
     }
 
-    public void meleeAttack(LivingEntity target) {
+    public void meleeAttack() {
+        if (!(getWorld() instanceof ServerWorld world)) return;
+        List<LivingEntity> list = getWorld().getEntitiesByClass(LivingEntity.class,  getAttackBox(), this::canTarget);
+        LivingEntity target = null;
+        if (!list.isEmpty()) {
+            target = list.getFirst();
+            for (LivingEntity entry : list) {
+                if (squaredDistanceTo(entry) < squaredDistanceTo(target)) target = entry;
+            }
+        }
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
         if (target != null && !getPassengerList().contains(target)) {
             Box targetBox = target.getBoundingBox();
-            if (doesCollide(targetBox, getAttackBox())) tryAttack(target);
+            if (doesCollide(targetBox, getAttackBox())) tryAttack(world, target);
         }
     }
 
@@ -603,9 +611,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     public boolean canBreakBlocks() {
-        if (getWorld().isClient()) return false;
+        if (!(getWorld() instanceof ServerWorld world)) return false;
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().lightningChaserGriefing.canTamedBreak() : URConfig.getConfig().lightningChaserGriefing.canUntamedBreak();
-        return shouldBreakBlocks && getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
+        return shouldBreakBlocks && world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
     }
 
     @Override

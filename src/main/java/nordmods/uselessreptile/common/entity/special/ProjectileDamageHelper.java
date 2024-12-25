@@ -10,8 +10,8 @@ import net.minecraft.entity.attribute.EntityAttributes;
  */
 public interface ProjectileDamageHelper extends Ownable {
     default float getResultingDamage() {
-        if (getOwner() instanceof LivingEntity livingEntity && livingEntity.getAttributes().hasAttribute(EntityAttributes.GENERIC_ATTACK_DAMAGE))
-            return (float) (livingEntity.getAttributeValue(EntityAttributes.GENERIC_ATTACK_DAMAGE) * getDamageScaling());
+        if (getOwner() instanceof LivingEntity livingEntity && livingEntity.getAttributes().hasAttribute(EntityAttributes.ATTACK_DAMAGE))
+            return (float) (livingEntity.getAttributeValue(EntityAttributes.ATTACK_DAMAGE) * getDamageScaling());
         return getDefaultDamage();
     }
 

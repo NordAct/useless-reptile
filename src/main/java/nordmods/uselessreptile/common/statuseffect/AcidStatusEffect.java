@@ -4,6 +4,7 @@ import eu.pb4.common.protection.api.CommonProtection;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import nordmods.uselessreptile.common.init.URDamageTypes;
 import nordmods.uselessreptile.common.init.URSounds;
@@ -18,8 +19,8 @@ public class AcidStatusEffect extends URStatusEffect {
     public boolean canApplyUpdateEffect(int duration, int amplifier) {return true;}
 
     @Override
-    public boolean applyUpdateEffect(LivingEntity entity, int amplifier) {
-        if (!CommonProtection.canDamageEntity(entity.getWorld(), entity, CommonProtection.UNKNOWN, null)) return false;
+    public boolean applyUpdateEffect(ServerWorld world, LivingEntity entity, int amplifier) {
+        if (!CommonProtection.canDamageEntity(world, entity, CommonProtection.UNKNOWN, null)) return false;
 
         int armorUnequipped = 0;
         if (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty()) armorUnequipped++;
@@ -27,7 +28,7 @@ public class AcidStatusEffect extends URStatusEffect {
         if (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty()) armorUnequipped++;
         if (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty()) armorUnequipped++;
 
-        if (entity.damage(entity.getDamageSources().create(URDamageTypes.ACID), amplifier * (1 + armorUnequipped) / 3f)) {
+        if (entity.damage(world, entity.getDamageSources().create(URDamageTypes.ACID), amplifier * (1 + armorUnequipped) / 3f)) {
             entity.damageArmor(entity.getDamageSources().create(URDamageTypes.ACID), amplifier * (1 + armorUnequipped) * 2);
             URPacketHelper.playSound(entity, URSounds.ACID_BURN, SoundCategory.AMBIENT, 1, 1, 5);
         }

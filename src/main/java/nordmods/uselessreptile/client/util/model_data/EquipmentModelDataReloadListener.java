@@ -1,11 +1,9 @@
 package nordmods.uselessreptile.client.util.model_data;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.JsonDataLoader;
+import net.minecraft.resource.ResourceFinder;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -13,19 +11,21 @@ import net.minecraft.util.profiler.Profiler;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
 
+import java.util.List;
 import java.util.Map;
 
-public class EquipmentModelDataReloadListener extends JsonDataLoader implements IdentifiableResourceReloadListener {
+public class EquipmentModelDataReloadListener extends JsonDataLoader<List<EquipmentModelData>> implements IdentifiableResourceReloadListener {
+    private static final ResourceFinder FINDER = ResourceFinder.json("dragon_model_data/equipment_model_data");
     public EquipmentModelDataReloadListener() {
-        super(new GsonBuilder().create(), "dragon_model_data/equipment_model_data");
+        super(EquipmentModelData.CODEC.listOf(), FINDER);
     }
 
     @Override
-    protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
+    protected void apply(Map<Identifier, List<EquipmentModelData>> prepared, ResourceManager manager, Profiler profiler) {
         EquipmentModelData.reset();
-        for (Map.Entry<Identifier, JsonElement> entry : prepared.entrySet()) {
-            JsonArray array = entry.getValue().getAsJsonArray();
-            for (JsonElement elem : array) EquipmentModelData.add(entry.getKey().getPath(), EquipmentModelData.deserialize(elem));
+        for (Map.Entry<Identifier, List<EquipmentModelData>> entry : prepared.entrySet()) {
+            String path = entry.getKey().getPath();
+            for (EquipmentModelData data : entry.getValue()) EquipmentModelData.add(path, data);
         }
         EquipmentModelData.debugPrint();
     }

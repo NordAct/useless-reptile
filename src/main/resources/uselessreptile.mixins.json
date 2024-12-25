@@ -22,6 +22,8 @@
     "client.InGameHudMixin",
     "client.LivingEntityMixin",
     "client.LivingEntityRendererMixin",
+    "client.LivingEntityRenderStateMixin",
+    "client.PlayerEntityRenderStateMixin",
     "client.PlayerRendererMixin",
     "client.ResourceReloadLoggerMixin"
   ],

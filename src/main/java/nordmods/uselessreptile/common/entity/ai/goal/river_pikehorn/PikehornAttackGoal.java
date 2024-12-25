@@ -14,7 +14,7 @@ public class PikehornAttackGoal extends Goal {
     public PikehornAttackGoal(RiverPikehornEntity entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
-        setControls(EnumSet.of(Control.MOVE, Goal.Control.LOOK));
+        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
     }
 
     @Override

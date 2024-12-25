@@ -6,6 +6,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -70,6 +71,6 @@ public record URDragonDataStorageComponent(List<NbtComponent> entityData) {
         Objects.requireNonNull(nbtComponent);
         NbtCompound nbtCompound = nbtComponent.copyNbt();
         IGNORED_NBT.forEach(nbtCompound::remove);
-        return EntityType.loadEntityWithPassengers(nbtCompound, world, (entityx) -> entityx);
+        return EntityType.loadEntityWithPassengers(nbtCompound, world, SpawnReason.SPAWN_ITEM_USE, (entityx) -> entityx);
     }
 }

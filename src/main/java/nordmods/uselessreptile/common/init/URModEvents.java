@@ -119,9 +119,9 @@ public class URModEvents {
                 if (user instanceof URDragonEntity dragon) dragon.giveItemStack(Items.WATER_BUCKET.getDefaultStack());
                 return;
             }
-            if (itemStack.getItem().hasRecipeRemainder()) {
-                if (user instanceof PlayerEntity player && !player.isCreative()) player.giveItemStack(itemStack.getItem().getRecipeRemainder().getDefaultStack());
-                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(itemStack.getItem().getRecipeRemainder().getDefaultStack());
+            if (!itemStack.getItem().getRecipeRemainder().isEmpty()) {
+                if (user instanceof PlayerEntity player && !player.isCreative()) player.giveItemStack(itemStack.getItem().getRecipeRemainder());
+                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(itemStack.getItem().getRecipeRemainder());
             }
         });
     }

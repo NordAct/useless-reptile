@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -105,12 +106,12 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     public static DefaultAttributeContainer.Builder createMoleclawAttributes() {
         return createDragonAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().moleclawDamage)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().moleclawKnockback)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().moleclawHealth)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().moleclawArmor)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().moleclawArmorToughness)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().moleclawGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.ATTACK_DAMAGE, attributes().moleclawDamage)
+                .add(EntityAttributes.ATTACK_KNOCKBACK, attributes().moleclawKnockback)
+                .add(EntityAttributes.MAX_HEALTH, attributes().moleclawHealth)
+                .add(EntityAttributes.ARMOR, attributes().moleclawArmor)
+                .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().moleclawArmorToughness)
+                .add(EntityAttributes.MOVEMENT_SPEED, attributes().moleclawGroundSpeed * attributes().dragonGroundSpeedMultiplier)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().moleclawRotationSpeedGround)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().moleclawBasePrimaryAttackCooldown)
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().moleclawBaseSecondaryAttackCooldown)
@@ -219,13 +220,13 @@ public class MoleclawEntity extends URRideableDragonEntity {
         if (isSprinting()) setSpeedMod(1.1f);
         else setSpeedMod(1f);
         if (isMovingBackwards()) setSpeedMod(0.6f);
-        float speed = (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        float speed = (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
         if (canBeControlledByRider()) {
             PlayerEntity rider = (PlayerEntity) getControllingPassenger();
 
-            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
 
             if (isSprintPressed()) setSprinting(true);
             setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
@@ -251,7 +252,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (isTamingItem(itemStack) && !isTamed()) {
-            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
+            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
             if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
             else setTamingProgress(getTamingProgress() - 1);
             if (player.isCreative()) setTamingProgress(0);
@@ -275,18 +276,20 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     public void meleeAttack() {
-        List<Entity> targets = getWorld().getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        if (!(getWorld() instanceof ServerWorld world)) return;
+        List<Entity> targets = world.getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob: targets) {
             Box targetBox = mob.getBoundingBox();
-            if (doesCollide(targetBox, getAttackBox())) tryAttack(mob);
+            if (doesCollide(targetBox, getAttackBox())) tryAttack(world, mob);
         }
     }
 
     public void strongAttack() {
+        if (!(getWorld() instanceof ServerWorld world)) return;
         List<Entity> targets = getWorld().getOtherEntities(this, getSecondaryAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob : targets) {
             Box targetBox = mob.getBoundingBox();
-            if (doesCollide(targetBox, getSecondaryAttackBox())) tryAttack(mob);
+            if (doesCollide(targetBox, getSecondaryAttackBox())) tryAttack(world, mob);
         }
 
         if (!canBreakBlocks()) return;
@@ -299,20 +302,20 @@ public class MoleclawEntity extends URRideableDragonEntity {
         for (BlockPos blockPos : blocks) {
             if (isBlockProtected(blockPos)) continue;
 
-            BlockState blockState = getWorld().getBlockState(blockPos);
+            BlockState blockState = world.getBlockState(blockPos);
             float miningLevel = MoleclawGetBlockMiningLevelEvent.EVENT.invoker().getMiningLevel(blockState);
             if (!blockState.isAir() && miningLevel <= maxMiningLevel) {
                 boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
-                getWorld().breakBlock(blockPos, shouldDrop, this);
+                world.breakBlock(blockPos, shouldDrop, this);
             }
         }
     }
 
     @Override
     public boolean canBreakBlocks() {
-        if (getWorld().isClient()) return false;
+        if (!(getWorld() instanceof ServerWorld world)) return false;
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().moleclawGriefing.canTamedBreak() : URConfig.getConfig().moleclawGriefing.canUntamedBreak();
-        return shouldBreakBlocks && getWorld().getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
+        return shouldBreakBlocks &&  world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
     }
 
     @Override

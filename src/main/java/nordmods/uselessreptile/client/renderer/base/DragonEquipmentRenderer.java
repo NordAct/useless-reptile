@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.client.renderer.base;
 
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -49,21 +48,21 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
     }
 
     //*screams*
-    @Override
-    public void preApplyRenderLayers(MatrixStack poseStack, DragonEquipmentAnimatable animatable, BakedGeoModel model, RenderLayer renderType, VertexConsumerProvider bufferSource,
-                                     VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        poseStack.push();
-        poseStack.translate(0, -0.01, 0);
-        super.preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-        poseStack.pop();
-    }
-
-    @Override
-    public void applyRenderLayers(MatrixStack poseStack, DragonEquipmentAnimatable animatable, BakedGeoModel model, RenderLayer renderType, VertexConsumerProvider bufferSource,
-                                  VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-        poseStack.push();
-        poseStack.translate(0, -0.01, 0);
-        super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
-        poseStack.pop();
-    }
+    //@Override
+    //public void preApplyRenderLayers(MatrixStack poseStack, DragonEquipmentAnimatable animatable, BakedGeoModel model, RenderLayer renderType, VertexConsumerProvider bufferSource,
+    //                                 VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+    //    poseStack.push();
+    //    poseStack.translate(0, -0.01, 0);
+    //    super.preApplyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+    //    poseStack.pop();
+    //}
+//
+    //@Override
+    //public void applyRenderLayers(MatrixStack poseStack, DragonEquipmentAnimatable animatable, BakedGeoModel model, RenderLayer renderType, VertexConsumerProvider bufferSource,
+    //                              VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+    //    poseStack.push();
+    //    poseStack.translate(0, -0.01, 0);
+    //    super.applyRenderLayers(poseStack, animatable, model, renderType, bufferSource, buffer, partialTick, packedLight, packedOverlay);
+    //    poseStack.pop();
+    //}
 }

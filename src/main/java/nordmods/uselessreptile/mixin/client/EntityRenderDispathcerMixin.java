@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.mixin.client;
 
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -27,10 +27,10 @@ public abstract class EntityRenderDispathcerMixin {
 
             matrices.push();
             if (dragon.getAttackBox() != null)
-                WorldRenderer.drawBox(matrices, vertices,
+                VertexRendering.drawBox(matrices, vertices,
                         dragon.getAttackBox().offset(x, y, z), 1.0F, 0.0F, 0.5F, 1.0F);
             if (dragon.getSecondaryAttackBox() != null)
-                WorldRenderer.drawBox(matrices, vertices,
+                VertexRendering.drawBox(matrices, vertices,
                         dragon.getSecondaryAttackBox().offset(x, y, z), 1.0F, 0.0F, 1.0F, 1.0F);
             matrices.pop();
         }

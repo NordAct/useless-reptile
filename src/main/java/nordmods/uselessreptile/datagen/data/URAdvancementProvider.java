@@ -103,7 +103,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
     private static AdvancementEntry tamingAdvancementEntry(EntityType<? extends Entity> type, AdvancementEntry parent) {
         String id = EntityType.getId(type).getPath();
         return Advancement.Builder.createUntelemetered()
-                .display(Registries.ITEM.get(UselessReptile.id(id + "_spawn_egg")),
+                .display(Registries.ITEM.getEntry(UselessReptile.id(id + "_spawn_egg")),
                         Text.translatable("advancement.uselessreptile.tame_" + id),
                         Text.translatable("advancement.uselessreptile.tame_" + id + ".desc"),
                         null,

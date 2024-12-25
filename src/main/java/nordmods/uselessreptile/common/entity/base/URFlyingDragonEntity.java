@@ -93,8 +93,8 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     protected float getMovementSpeedModifier() {
         if (!isFlying()) return super.getMovementSpeedModifier();
-        double baseSpeed = getAttributeBaseValue(EntityAttributes.GENERIC_FLYING_SPEED);
-        double speed = getAttributeBaseValue(EntityAttributes.GENERIC_FLYING_SPEED);
+        double baseSpeed = getAttributeBaseValue(EntityAttributes.FLYING_SPEED);
+        double speed = getAttributeBaseValue(EntityAttributes.FLYING_SPEED);
         return (float) (speed / baseSpeed);
     }
 
@@ -131,7 +131,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         if (isSprinting()) setSpeedMod(1.5f);
         else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
         else setSpeedMod(1f);
-        float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
         if (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle()) setFlying(false);

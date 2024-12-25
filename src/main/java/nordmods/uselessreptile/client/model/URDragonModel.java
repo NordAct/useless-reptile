@@ -11,6 +11,7 @@ import nordmods.uselessreptile.client.util.model_data.base.DragonModelData;
 import nordmods.uselessreptile.client.util.model_data.base.ModelData;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     @Override
@@ -36,7 +37,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     }
 
     @Override
-    public Identifier getModelResource(T entity) {
+    public Identifier getModelResource(T entity, GeoRenderer<T> renderer) {
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel(entity);
 
         AssetCache assetCache = entity.getAssetCache();
@@ -58,7 +59,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     }
 
     @Override
-    public Identifier getTextureResource(T entity) {
+    public Identifier getTextureResource(T entity, GeoRenderer<T> renderer) {
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(entity);
 
         AssetCache assetCache = entity.getAssetCache();
@@ -100,7 +101,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
         DragonModelData data = ModelDataUtil.getDragonModelData(entity);
         if (data != null) {
             ModelData modelData = data.modelData();
-            if (modelData.cull()) renderType = modelData.translucent() ? RenderLayer.getEntityTranslucentCull(texture) : RenderLayer.getEntityCutout(texture);
+            if (modelData.cull()) renderType = modelData.translucent() ? RenderLayer.getEntityTranslucent(texture) : RenderLayer.getEntityCutout(texture); //TODO
             else renderType = modelData.translucent() ? RenderLayer.getEntityTranslucent(texture) : RenderLayer.getEntityCutoutNoCull(texture);
             assetCache.setRenderTypeCache(renderType);
             return renderType;

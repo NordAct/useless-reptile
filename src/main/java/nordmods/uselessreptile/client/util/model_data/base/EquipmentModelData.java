@@ -1,9 +1,6 @@
 package nordmods.uselessreptile.client.util.model_data.base;
 
-import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
@@ -18,11 +15,6 @@ public record EquipmentModelData(Identifier item, ModelData modelData) {
             Identifier.CODEC.fieldOf("item").forGetter(EquipmentModelData::item),
             ModelData.CODEC.fieldOf("model_data").forGetter(EquipmentModelData::modelData))
             .apply(instance, EquipmentModelData::new));
-
-    public static EquipmentModelData deserialize(JsonElement input) {
-        DataResult<EquipmentModelData> result = CODEC.parse(JsonOps.INSTANCE, input);
-        return result.getOrThrow();
-    }
 
     public static void add(String dragon, EquipmentModelData equipmentModelData) {
         List<EquipmentModelData> content = equipmentModelDataHolder.get(dragon);

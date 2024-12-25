@@ -96,6 +96,7 @@ sourceSets {
         }
         java { //todo: remove that once guidebook is done
             exclude 'nordmods/uselessreptile/integration/modonomicon/**'
+            exclude 'nordmods/uselessreptile/datagen/**' //todo fix datagen
         }
     }
 }

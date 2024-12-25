@@ -1,10 +1,9 @@
 package nordmods.uselessreptile.common.util.dragon_spawn;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.JsonDataLoader;
+import net.minecraft.resource.ResourceFinder;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -13,9 +12,10 @@ import nordmods.uselessreptile.UselessReptile;
 
 import java.util.Map;
 
-public class DragonSpawnReloadListener extends JsonDataLoader implements IdentifiableResourceReloadListener {
+public class DragonSpawnReloadListener extends JsonDataLoader<DragonSpawn> implements IdentifiableResourceReloadListener {
+    private static final ResourceFinder FINDER = ResourceFinder.json("dragon_spawns");
     public DragonSpawnReloadListener() {
-        super(new GsonBuilder().create(), "dragon_spawns");
+        super(DragonSpawn.CODEC, FINDER);
     }
 
     public static void init() {
@@ -28,15 +28,12 @@ public class DragonSpawnReloadListener extends JsonDataLoader implements Identif
     }
 
     @Override
-    protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
+    protected void apply(Map<Identifier, DragonSpawn> prepared, ResourceManager manager, Profiler profiler) {
         DragonSpawn.clearSpawns();
-        for (Map.Entry<Identifier, JsonElement> entry : prepared.entrySet()) {
+        for (Map.Entry<Identifier, DragonSpawn> entry : prepared.entrySet()) {
             String path = entry.getKey().getPath();
-
             String dragon = path.substring(0, path.indexOf("/"));
-            JsonElement element = entry.getValue();
-            DragonSpawn data = DragonSpawn.deserialize(element.getAsJsonObject());
-            DragonSpawn.addSpawn(dragon, data);
+            DragonSpawn.addSpawn(dragon, entry.getValue());
         }
         DragonSpawn.debugPrint();
     }

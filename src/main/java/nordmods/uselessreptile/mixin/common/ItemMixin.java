@@ -51,7 +51,7 @@ public abstract class ItemMixin {
         if (player != null && player.isSneaking() && player.getFirstPassenger() instanceof RiverPikehornEntity dragon ) {
             dragon.stopRiding();
             dragon.setPosition(context.getBlockPos().up().toCenterPos());
-            cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
+            cir.setReturnValue(ActionResult.SUCCESS);
         }
     }
 }

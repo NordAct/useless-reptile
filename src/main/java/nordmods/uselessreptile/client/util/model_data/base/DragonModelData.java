@@ -1,11 +1,6 @@
 package nordmods.uselessreptile.client.util.model_data.base;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import nordmods.uselessreptile.UselessReptile;
 
@@ -20,12 +15,6 @@ public record DragonModelData(ModelData modelData, Optional<List<EquipmentModelD
                     EquipmentModelData.CODEC.listOf().optionalFieldOf("equipment_model_overrides").forGetter(DragonModelData::equipmentModelDataOverrides),
                     Codec.BOOL.optionalFieldOf("nametag_accessible", true).forGetter(DragonModelData::nametagAccessible))
             .apply(instance, DragonModelData::new));
-
-    public static DragonModelData deserialize(JsonElement element) throws JsonParseException {
-        JsonObject input = element.getAsJsonObject();
-        DataResult<DragonModelData> result = CODEC.parse(JsonOps.INSTANCE, input);
-        return result.getOrThrow();
-    }
 
     public static void add(String dragon, String variant, DragonModelData modelData) {
         Map<String, DragonModelData> content = dragonModelDataHolder.get(dragon);

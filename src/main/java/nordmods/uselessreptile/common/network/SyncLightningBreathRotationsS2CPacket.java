@@ -10,7 +10,7 @@ import nordmods.uselessreptile.UselessReptile;
 
 public record SyncLightningBreathRotationsS2CPacket(int[] beamIDs, float pitch, float yaw) implements CustomPayload {
     public static final Identifier ID = UselessReptile.id("sync_lightning_beam_rotations_packet");
-    public static final CustomPayload.Id<SyncLightningBreathRotationsS2CPacket> PACKET_ID = new CustomPayload.Id<>(ID);
+    public static final Id<SyncLightningBreathRotationsS2CPacket> PACKET_ID = new Id<>(ID);
     public static final PacketCodec<RegistryByteBuf, SyncLightningBreathRotationsS2CPacket> PACKET_CODEC = PacketCodec.ofStatic(SyncLightningBreathRotationsS2CPacket::write, SyncLightningBreathRotationsS2CPacket::read);
 
     public static void send(ServerPlayerEntity player, int[] beamIDs, float pitch, float yaw) {
@@ -34,7 +34,7 @@ public record SyncLightningBreathRotationsS2CPacket(int[] beamIDs, float pitch, 
     }
 
     @Override
-    public CustomPayload.Id<? extends CustomPayload> getId() {
+    public Id<? extends CustomPayload> getId() {
         return PACKET_ID;
     }
 }

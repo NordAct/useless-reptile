@@ -35,8 +35,10 @@ import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAtta
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFluteCallGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFollowGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
+import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.init.*;
+import nordmods.uselessreptile.common.item.FluteItem;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -47,7 +49,7 @@ import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import java.util.function.BiConsumer;
 
-public class RiverPikehornEntity extends URFlyingDragonEntity {
+public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMountDragon {
     private final int huntCooldown = 1200;
     private int huntTimer = getRandom().nextInt(huntCooldown);
     public boolean forceTargetInWater = false;
@@ -173,9 +175,9 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
+    public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {
         if (getVehicle() instanceof PlayerEntity && damageSource.isOf(DamageTypes.IN_WALL)) return true;
-        return super.isInvulnerableTo(damageSource);
+        return super.isInvulnerableTo(world, damageSource);
     }
 
     @Override
@@ -184,18 +186,20 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         if (getVehicle() instanceof PlayerEntity) setHitboxModifiers(0.7f, 0.6f, 0);
         else setHitboxModifiers(0.7f, 0.8f, 0);
 
-        dropLootToOwner();
+        if (getWorld() instanceof ServerWorld world) {
+            dropLootToOwner(world);
 
-        if (!isTamed()) {
-            if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
+            if (!isTamed()) {
+                if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
 
-            ItemStack itemStack = getMainHandStack();
-            if (isHunting() && !itemStack.isEmpty() && --eatTimer <= 0) {
-                if (isFavoriteFood(itemStack)) {
-                    consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT);
-                    heal(getHealthRegenerationFromFood());
-                } else dropStack(itemStack);
-                stopHunt();
+                ItemStack itemStack = getMainHandStack();
+                if (isHunting() && !itemStack.isEmpty() && --eatTimer <= 0) {
+                    if (isFavoriteFood(itemStack)) {
+                        consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value());
+                        heal(getHealthRegenerationFromFood());
+                    } else dropStack(world, itemStack);
+                    stopHunt();
+                }
             }
         }
         setSpeedMod(isInsideWaterOrBubbleColumn() ? 0.5f : 1);
@@ -226,13 +230,13 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
 
     public static DefaultAttributeContainer.Builder createPikehornAttributes() {
         return createDragonAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().riverPikehornDamage)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().riverPikehornKnockback )
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().riverPikehornHealth)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().riverPikehornArmor)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().riverPikehornArmorToughness)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().riverPikehornGroundSpeed * attributes().dragonGroundSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().riverPikehornFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.ATTACK_DAMAGE, attributes().riverPikehornDamage)
+                .add(EntityAttributes.ATTACK_KNOCKBACK, attributes().riverPikehornKnockback )
+                .add(EntityAttributes.MAX_HEALTH, attributes().riverPikehornHealth)
+                .add(EntityAttributes.ARMOR, attributes().riverPikehornArmor)
+                .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().riverPikehornArmorToughness)
+                .add(EntityAttributes.MOVEMENT_SPEED, attributes().riverPikehornGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.FLYING_SPEED, attributes().riverPikehornFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().riverPikehornVerticalSpeed)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().riverPikehornBaseAccelerationDuration)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().riverPikehornRotationSpeedGround)
@@ -264,7 +268,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (isTamingItem(itemStack) && !isTamed()) {
-            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
+            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
             setOwner(player);
             getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
             setPersistent();
@@ -278,13 +282,14 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
     }
 
     public void attackMelee(LivingEntity target) {
+        if (!(getWorld() instanceof ServerWorld world)) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
-        tryAttack(target);
+        tryAttack(world, target);
     }
 
     @Override
-    protected void loot(ItemEntity item) {
+    protected void loot(ServerWorld world, ItemEntity item) {
         if (isOwnerClose()) return;
         if (getEquippedStack(EquipmentSlot.MAINHAND).isEmpty() && isFavoriteFood(item.getStack())
                 || getEquippedStack(EquipmentSlot.MAINHAND).isOf(item.getStack().getItem()) && item.getStack().getComponents().equals(getEquippedStack(EquipmentSlot.MAINHAND).getComponents())) {
@@ -314,11 +319,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
         return distance < getWidth() * 2.0f * (getWidth() * 2.0f);
     }
 
-    private void dropLootToOwner() {
+    private void dropLootToOwner(ServerWorld world) {
         if (!isTamed() || !isOwnerClose()) return;
         ItemStack stack = getEquippedStack(EquipmentSlot.MAINHAND).copy();
         if (!stack.isEmpty()) {
-            dropStack(stack);
+            dropStack(world, stack);
             getEquippedStack(EquipmentSlot.MAINHAND).decrement(stack.getCount());
             setIsHunting(false);
         }
@@ -394,7 +399,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
             if (!stack.isOf(URItems.FLUTE)) stack = player.getOffHandStack();
             if (!stack.isOf(URItems.FLUTE)) return false;
 
-            switch (URItems.FLUTE.getFluteMode(stack)) {
+            switch (((FluteItem)URItems.FLUTE).getFluteMode(stack)) {
                 default -> shouldFollow = true;
                 case 1 -> setIsHunting(true);
                 case 2 -> {

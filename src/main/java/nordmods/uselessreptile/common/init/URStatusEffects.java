@@ -20,10 +20,10 @@ public class URStatusEffects {
     public static final RegistryEntry<StatusEffect> SHOCK = Registry.registerReference(Registries.STATUS_EFFECT,
             UselessReptile.id("shock"),
             new URStatusEffect(StatusEffectCategory.HARMFUL, 12177894, ParticleTypes.ELECTRIC_SPARK)
-                    .addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED,
+                    .addAttributeModifier(EntityAttributes.MOVEMENT_SPEED,
                             UselessReptile.id("shock"),
                             -0.5F, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE)
-                    .addAttributeModifier(EntityAttributes.GENERIC_ATTACK_SPEED,
+                    .addAttributeModifier(EntityAttributes.ATTACK_SPEED,
                             UselessReptile.id("shock"),
                             -0.5F, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE));
 

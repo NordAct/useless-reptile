@@ -4,8 +4,8 @@ import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +19,7 @@ public abstract class ItemStackMixin {
     @Shadow public abstract ComponentMap getComponents();
 
     @Inject(method = "use", at = @At("HEAD"))
-    private void emitInstrumentUsedEvent(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+    private void emitInstrumentUsedEvent(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<ActionResult> cir) {
         if (getComponents().contains(DataComponentTypes.INSTRUMENT)) user.emitGameEvent(URGameEvents.INSTRUMENT_USED);
     }
 }

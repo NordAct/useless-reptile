@@ -6,6 +6,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.BufferBuilderStorage;
 import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
@@ -17,6 +18,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import software.bernie.geckolib.object.Color;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
@@ -54,9 +56,8 @@ public abstract class GameRendererMixin {
         float r = 0.72f * strength;
         float g = 0.82f * strength;
         float b = 0.9f * strength;
-        context.setShaderColor(r, g, b, 1f);
-        context.drawTexture(Identifier.ofVanilla("textures/misc/nausea.png"), 0, 0, -90, 0.0F, 0.0F, width, height, width, height);
-        context.setShaderColor(1f, 1f, 1f, 1f);
+        int color = Color.ofRGB(r, g, b).getColor();
+        context.drawGuiTexture(identifier -> RenderLayer.getGuiNauseaOverlay(), Identifier.ofVanilla("textures/misc/nausea.png"), 0, 0, width, height, color);
 
         RenderSystem.defaultBlendFunc();
         RenderSystem.disableBlend();

@@ -7,6 +7,7 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Vec2f;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import org.joml.Vector3f;
@@ -43,17 +44,17 @@ public class URDragonPart extends EntityPart {
     public float getWidthMod() {return dataTracker.get(WIDTH_MODIFIER);}
     public void setWidthMod(float state) {dataTracker.set(WIDTH_MODIFIER, state);}
 
-    @Override
-    public boolean isInvulnerableTo(DamageSource damageSource) {
+    public boolean checkInvulnerability(ServerWorld world, DamageSource damageSource) {
         boolean riderOwner = false;
         if (damageSource.getAttacker() instanceof PlayerEntity player)
             riderOwner = player.getVehicle() == owner && owner.getOwner() == player;
-        return riderOwner || super.isInvulnerableTo(damageSource);
+        return riderOwner || owner.isInvulnerableTo(world, damageSource);
     }
 
     @Override
-    public boolean damage(DamageSource source, float amount) {
-        return super.damage(source, amount * damageMultiplier);
+    public boolean damage(ServerWorld world, DamageSource source, float amount) {
+        if (checkInvulnerability(world, source)) return false;
+        return super.damage(world, source, amount * damageMultiplier);
     }
 
     @Override

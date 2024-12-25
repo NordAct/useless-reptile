@@ -6,7 +6,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ItemActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -23,16 +22,16 @@ public abstract class AbstractBlockMixin {
         if (player.isSneaking() && player.getFirstPassenger() instanceof RiverPikehornEntity dragon ) {
             dragon.stopRiding();
             dragon.setPosition(pos.up().toCenterPos());
-            cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
+            cir.setReturnValue(ActionResult.SUCCESS);
         }
     }
 
     @Inject(method = "onUseWithItem", at = @At("HEAD"), cancellable = true)
-    private void putDragonAssOff(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ItemActionResult> cir){
+    private void putDragonAssOff(ItemStack stack, BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit, CallbackInfoReturnable<ActionResult> cir){
         if (player.isSneaking() && player.getFirstPassenger() instanceof RiverPikehornEntity dragon ) {
             dragon.stopRiding();
             dragon.setPosition(pos.up().toCenterPos());
-            cir.setReturnValue(ItemActionResult.SUCCESS);
+            cir.setReturnValue(ActionResult.SUCCESS);
         }
     }
 }

@@ -43,7 +43,6 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
     public LightningBreathEntity(EntityType<? extends ProjectileEntity> entityType, World world, Entity owner) {
         super(entityType, world);
         age = 0;
-        ignoreCameraFrustum = true;
         setOwner(owner);
     }
 
@@ -71,8 +70,8 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
         if (!(getWorld() instanceof ServerWorld serverWorld)) return;
         Entity target = entityHitResult.getEntity();
         DamageSource source = getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner());
-        if (target.isInvulnerableTo(source)) return;
-        if (target.damage(source, getResultingDamage())) {
+        if (target instanceof LivingEntity livingEntity && livingEntity.isInvulnerableTo(serverWorld, source)) return;
+        if (target.damage(serverWorld, source, getResultingDamage())) {
             target.playSound(URSounds.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
             boolean wasOnFireBefore = target.isOnFire();
             LightningEntity fakeLightningSoINoNullPointerExceptionWouldHappenIHope = new LightningEntity(EntityType.LIGHTNING_BOLT, serverWorld);
@@ -156,7 +155,6 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
 
     private boolean canTarget(Entity target) {
         if (target instanceof EntityPart part) target = part.owner;
-        if (target.isInvulnerableTo(getDamageSources().create(DamageTypes.LIGHTNING_BOLT))) return false;
         Entity owner = getOwner();
         LivingEntity ownerOwner = owner instanceof TameableEntity tameable ? tameable.getOwner() : null;
         if (target == ownerOwner) return false;
@@ -176,6 +174,9 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
 
     @Override
     public boolean shouldRender(double cameraX, double cameraY, double cameraZ) {
+        return true;
+    }
+    public boolean shouldRender(double distance) {
         return true;
     }
 

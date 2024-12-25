@@ -17,31 +17,32 @@ import org.joml.Random;
 import org.joml.Vector3f;
 
 //reference: https://habr.com/ru/articles/230483/
-public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreathEntity> {
+public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreathEntity, LightningBreathEntityRenderState> {
+    private static final Identifier TEXTURE = UselessReptile.id("textures/entity/lightning_breath/beam.png");
     public LightningBreathEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
     }
 
     @Override
-    public Identifier getTexture(LightningBreathEntity entity) {
-        return UselessReptile.id("textures/entity/lightning_breath/beam.png");
+    public LightningBreathEntityRenderState createRenderState() {
+        return new LightningBreathEntityRenderState();
     }
 
     @Override
-    public void render(LightningBreathEntity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
-        int length = entity.getBeamLength();
+    public void render(LightningBreathEntityRenderState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+        int length = state.length;
         if (length < 1) return;
 
-        for (int i = 0; i < entity.lightningBreathBolts.length; i++) {
-            LightningBreathEntity.LightningBreathBolt lightningBreathBolt = entity.lightningBreathBolts[i];
+        for (int i = 0; i < state.lightningBreathBolts.length; i++) {
+            LightningBreathEntity.LightningBreathBolt lightningBreathBolt = state.lightningBreathBolts[i];
             if (lightningBreathBolt == null) {
-                if (!(entity.getOwner() instanceof LightningChaserEntity owner)) return;
+                if (!(state.owner instanceof LightningChaserEntity owner)) return;
                 lightningBreathBolt = new LightningBreathEntity.LightningBreathBolt();
                 float offset = length / (8f + i);
                 Vector3f headPos = LightningChaserEntityRenderer.headPos.get(owner.getUuid());
                 if (headPos == null) return;
                 //because actual owner's position and lightning breath's one are never the same, and we technically render lightning breath here...
-                Vector3f startPos = new Vector3f((float) (owner.getX() - entity.getX()), (float) (owner.getY() - entity.getY()), (float) (owner.getZ() - entity.getZ()));
+                Vector3f startPos = new Vector3f((float) (owner.getX() - state.x), (float) (owner.getY() - state.y), (float) (owner.getZ() - state.z));
                 startPos.add(headPos);
                 Vector3f vec3d = owner.getRotationVector().multiply(length).toVector3f();
                 lightningBreathBolt.segments.add(
@@ -66,43 +67,49 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
                     }
                     offset /= 2f;
                 }
-                entity.lightningBreathBolts[i] = lightningBreathBolt;
+                state.lightningBreathBolts[i] = lightningBreathBolt;
             }
         }
 
-        float alpha = MathHelper.clamp(1f - (entity.getAge() < 3 ? 0 : (float) entity.getAge() / LightningBreathEntity.MAX_AGE), 0f, 1f);
-        alpha = MathHelper.lerp(tickDelta, entity.prevAlpha, alpha);
-        entity.prevAlpha = alpha;
         matrices.push();
-        for (LightningBreathEntity.LightningBreathBolt lightningBreathBolt : entity.lightningBreathBolts)
+        for (LightningBreathEntity.LightningBreathBolt lightningBreathBolt : state.lightningBreathBolts)
             for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
                 LightningBreathEntity.LightningBreathBolt.Segment current = lightningBreathBolt.segments.get(i);
                 RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
-                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(getTexture(entity))),
+                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE)),
                         new Vector3f(current.startPoint()).add(0, 0.1f, 0),
                         new Vector3f(current.startPoint()).add(0, -0.1f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.1f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.1f, 0),
-                        alpha, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
+                        state.alpha, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
                         0, 1, 0, 1);
                 RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
-                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(getTexture(entity))),
+                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE)),
                         new Vector3f(current.startPoint()).add(0, -0.2f, 0),
                         new Vector3f(current.startPoint()).add(0, 0.2f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.2f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.2f, 0),
-                        alpha / 1.5f, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
+                        state.alpha / 1.5f, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
                         0, 1, 0, 1);
                 RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
-                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(getTexture(entity))),
+                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE)),
                         new Vector3f(current.startPoint()).add(0, -0.3f, 0),
                         new Vector3f(current.startPoint()).add(0, 0.3f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.3f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.3f, 0),
-                        alpha / 3f, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
+                        state.alpha / 3f, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
                         0, 1, 0, 1);
         }
         matrices.pop();
+    }
+
+    public void updateRenderState(LightningBreathEntity entity, LightningBreathEntityRenderState state, float tickDelta) {
+        super.updateRenderState(entity, state, tickDelta);
+        state.length = entity.getBeamLength();
+        state.owner = entity.getOwner();
+        float alpha = MathHelper.clamp(1f - (state.age < 3 ? 0 : state.age / LightningBreathEntity.MAX_AGE), 0f, 1f);
+        state.alpha = MathHelper.lerp(tickDelta, entity.prevAlpha, alpha);
+        entity.prevAlpha = state.alpha;
     }
 }
 

@@ -3,7 +3,7 @@ package nordmods.uselessreptile.mixin.client;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.client.gui.screen.ingame.StatusEffectsDisplay;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import org.spongepowered.asm.mixin.Mixin;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Mixin(AbstractInventoryScreen.class)
+@Mixin(StatusEffectsDisplay.class)
 public abstract class AbstractInventoryScreenMixin {
     @Inject(method = "drawStatusEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
     private void yeetShockEffect(DrawContext context, int mouseX, int mouseY, CallbackInfo ci, @Local LocalRef<Collection<StatusEffectInstance>> localRef) {

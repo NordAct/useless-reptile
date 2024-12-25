@@ -6,6 +6,7 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.crash.CrashException;
@@ -42,17 +43,21 @@ public class RenderUtil {
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F);
     }
 
-    public static <E extends Entity> void renderEntity(E entityIn, float partialTicks, MatrixStack matrixStack, VertexConsumerProvider bufferIn, int packedLight) {
-        EntityRenderer<? super E> render = getEntityRenderer(entityIn);
+    public static <E extends Entity, S extends EntityRenderState> void renderEntity(E entityIn, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider bufferIn, int packedLight) {
         try {
-            render.render(entityIn, 0, partialTicks, matrixStack, bufferIn, packedLight);
+            EntityRenderer<? super E, S> render = (EntityRenderer<? super E, S>) getEntityRenderer(entityIn); //this is cursed and may crash if someone decides they want to be a special bean and have something else as state
+            render.render(render.getAndUpdateRenderState(entityIn, tickDelta), matrixStack, bufferIn, packedLight);
         } catch (Throwable throwable1) {
             throw new CrashException(CrashReport.create(throwable1, "Rendering entity in world"));
         }
     }
 
-    public static <T extends Entity> EntityRenderer<? super T> getEntityRenderer(T entityIn) {
+    public static <E extends Entity> EntityRenderer<? super E, ?> getEntityRenderer(E entityIn) {
         EntityRenderDispatcher manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
         return manager.getRenderer(entityIn);
+    }
+
+    public static float getTickDelta(boolean ignoreFreeze) {
+        return MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(ignoreFreeze);
     }
 }

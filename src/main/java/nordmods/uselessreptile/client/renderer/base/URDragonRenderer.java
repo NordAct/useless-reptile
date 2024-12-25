@@ -4,6 +4,8 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
@@ -31,8 +33,8 @@ public abstract class URDragonRenderer <T extends URDragonEntity> extends GeoEnt
     }
 
     @Override
-    protected float getShadowRadius(T entity) {
-        return super.getShadowRadius(entity) * entity.getScale();
+    protected float getShadowRadius(EntityRenderState state) {
+        return super.getShadowRadius(state) * ((LivingEntityRenderState)state).baseScale;
     }
 
     @Override
@@ -58,10 +60,10 @@ public abstract class URDragonRenderer <T extends URDragonEntity> extends GeoEnt
 
             DragonEquipmentRenderer usedRenderer = itemStack.isIn(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
 
-            Identifier id = usedRenderer.getGeoModel().getModelResource(dragonEquipmentAnimatable);
+            Identifier id = usedRenderer.getGeoModel().getModelResource(dragonEquipmentAnimatable, usedRenderer);
             if (id == null) continue;
             BakedGeoModel bakedEquipmentModel = usedRenderer.getGeoModel().getBakedModel(id);
-            id = usedRenderer.getGeoModel().getTextureResource(dragonEquipmentAnimatable);
+            id = usedRenderer.getGeoModel().getTextureResource(dragonEquipmentAnimatable, usedRenderer);
             if (id == null) continue;
 
             Map<String, GeoBone> equipmentBones = dragonEquipmentAnimatable.equipmentBones;

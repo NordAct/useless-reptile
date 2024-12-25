@@ -1,10 +1,9 @@
 package nordmods.uselessreptile.client.util.model_data;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.resource.JsonDataLoader;
+import net.minecraft.resource.ResourceFinder;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
@@ -14,23 +13,22 @@ import nordmods.uselessreptile.client.util.model_data.base.DragonModelData;
 
 import java.util.Map;
 
-public class DragonModelDataReloadListener extends JsonDataLoader implements IdentifiableResourceReloadListener {
+public class DragonModelDataReloadListener extends JsonDataLoader<DragonModelData> implements IdentifiableResourceReloadListener {
+    private static final ResourceFinder FINDER = ResourceFinder.json("dragon_model_data");
     public DragonModelDataReloadListener() {
-        super(new GsonBuilder().create(), "dragon_model_data");
+        super(DragonModelData.CODEC, FINDER);
     }
 
     @Override
-    protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
+    protected void apply(Map<Identifier, DragonModelData> prepared, ResourceManager manager, Profiler profiler) {
         DragonModelData.reset();
-        for (Map.Entry<Identifier, JsonElement> entry : prepared.entrySet()) {
+        for (Map.Entry<Identifier, DragonModelData> entry : prepared.entrySet()) {
             String path = entry.getKey().getPath();
             if (path.contains("equipment_model_data")) continue;
 
             String dragon = path.substring(0, path.indexOf("/"));
             String variant = path.substring(path.indexOf("/") + 1);
-            JsonElement element = entry.getValue();
-            DragonModelData data = DragonModelData.deserialize(element);
-            DragonModelData.add(dragon, variant, data);
+            DragonModelData.add(dragon, variant, entry.getValue());
         }
         DragonModelData.debugPrint();
     }

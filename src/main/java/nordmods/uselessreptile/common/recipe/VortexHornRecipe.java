@@ -20,17 +20,19 @@ import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent
 
 public class VortexHornRecipe extends ShapedRecipe {
     private final RawShapedRecipe raw;
+    private final ItemStack result;
 
     public VortexHornRecipe(String group, CraftingRecipeCategory category, RawShapedRecipe raw, ItemStack result, boolean showNotification) {
         super(group, category, raw, result, showNotification);
         this.raw = raw;
+        this.result = result;
     }
 
     @Override
     public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
         ItemStack instrument = getInstrumentStack(input);
         if (!instrument.isEmpty()) {
-            ItemStack result = getResult(lookup);
+            ItemStack result = this.result.copy();
             result.set(DataComponentTypes.INSTRUMENT, instrument.get(DataComponentTypes.INSTRUMENT));
             result.set(URItems.DRAGON_STORAGE_COMPONENT, instrument.getOrDefault(URItems.DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT));
             result.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, instrument.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT));
@@ -40,7 +42,7 @@ public class VortexHornRecipe extends ShapedRecipe {
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends ShapedRecipe> getSerializer() {
         return URRecipeSerializers.VORTEX_HORN;
     }
 
@@ -59,10 +61,10 @@ public class VortexHornRecipe extends ShapedRecipe {
                         Codec.STRING.optionalFieldOf("group", "").forGetter(ShapedRecipe::getGroup),
                         CraftingRecipeCategory.CODEC.fieldOf("category").orElse(CraftingRecipeCategory.MISC).forGetter(ShapedRecipe::getCategory),
                         RawShapedRecipe.CODEC.forGetter((recipe) -> recipe.raw),
-                        ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter((recipe) -> recipe.getResult(null)),
+                        ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter((recipe) -> recipe.result),
                         Codec.BOOL.optionalFieldOf("show_notification", true).forGetter(ShapedRecipe::showNotification))
                         .apply(instance, VortexHornRecipe::new));
-        public static final PacketCodec<RegistryByteBuf, VortexHornRecipe> PACKET_CODEC = PacketCodec.ofStatic(VortexHornRecipe.Serializer::write, VortexHornRecipe.Serializer::read);
+        public static final PacketCodec<RegistryByteBuf, VortexHornRecipe> PACKET_CODEC = PacketCodec.ofStatic(Serializer::write, Serializer::read);
 
         public MapCodec<VortexHornRecipe> codec() {
             return CODEC;
@@ -85,7 +87,7 @@ public class VortexHornRecipe extends ShapedRecipe {
             buf.writeString(recipe.getGroup());
             buf.writeEnumConstant(recipe.getCategory());
             RawShapedRecipe.PACKET_CODEC.encode(buf, recipe.raw);
-            ItemStack.PACKET_CODEC.encode(buf, recipe.getResult(null));
+            ItemStack.PACKET_CODEC.encode(buf, recipe.result);
             buf.writeBoolean(recipe.showNotification());
         }
     }

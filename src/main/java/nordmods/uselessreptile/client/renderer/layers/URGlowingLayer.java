@@ -9,9 +9,9 @@ import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.object.Color;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.Color;
 
 public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner> extends GeoRenderLayer<T> {
     public URGlowingLayer(GeoRenderer<T> renderer) {

@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.data.DataOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
-import net.minecraft.data.server.loottable.EntityLootTableGenerator;
+import net.minecraft.data.loottable.EntityLootTableGenerator;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Items;
@@ -47,59 +47,59 @@ public class UREntityLootTableProvider extends EntityLootTableGenerator implemen
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(ItemEntry.builder(URItems.WYVERN_SKIN)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1, 3)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(1, 3)))))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(1, 3)))))
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(ItemEntry.builder(Items.BONE)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1, 3)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(1, 3)))))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(1, 3)))))
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(ItemEntry.builder(Items.ROTTEN_FLESH)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0, 2)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(0, 1))))));
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 1))))));
 
         add(UREntities.RIVER_PIKEHORN_ENTITY, LootTable.builder()
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(ItemEntry.builder(Items.COD)
                                 .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(0, 3)))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 3)))
                                 .apply(FurnaceSmeltLootFunction.builder().conditionally(createSmeltLootCondition())))
                         .with(ItemEntry.builder(Items.SALMON)
                                 .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(0, 3)))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 3)))
                                 .apply(FurnaceSmeltLootFunction.builder().conditionally(createSmeltLootCondition())))
                         .with(ItemEntry.builder(Items.TROPICAL_FISH)
                                 .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(0, 3))))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 3))))
                         .with(ItemEntry.builder(Items.PUFFERFISH)
                                 .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(0, 3))))));
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 3))))));
 
         add(UREntities.MOLECLAW_ENTITY, LootTable.builder()
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(ItemEntry.builder(Items.HANGING_ROOTS)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(1, 3)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(1, 3)))))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(1, 3)))))
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(ItemEntry.builder(Items.GLOW_LICHEN)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0, 2)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(0, 2))))));
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 2))))));
 
         add(UREntities.LIGHTNING_CHASER_ENTITY, LootTable.builder()
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(ItemEntry.builder(Items.IRON_NUGGET)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(8, 16)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(8, 16)))))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(8, 16)))))
                 .pool(LootPool.builder()
                         .rolls(ConstantLootNumberProvider.create(1))
                         .with(ItemEntry.builder(Items.BONE)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0, 4)))
-                                .apply(EnchantedCountIncreaseLootFunction.builder(registryLookup, UniformLootNumberProvider.create(0, 4))))));
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 4))))));
     }
 
     @Override
@@ -109,7 +109,7 @@ public class UREntityLootTableProvider extends EntityLootTableGenerator implemen
             List<CompletableFuture<?>> list = new ArrayList<>();
             lootTables.forEach((type, loot) -> {
                     LootTable lootTable = loot.build();
-                    Path path = pathResolver.resolveJson(type.getLootTableId().getValue());
+                    Path path = pathResolver.resolveJson(type.getLootTableKey().getValue());
                     list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, LootTable.CODEC, lootTable, path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));

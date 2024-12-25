@@ -14,7 +14,7 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
     }
 
     public void moveBack() {
-        state = MoveControl.State.STRAFE;
+        state = State.STRAFE;
     }
 
     public void notMove() {
@@ -55,7 +55,7 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
             }
             case JUMPING -> {
                 entity.setMovementSpeed(speed * entity.getSpeedModifier());
-                if (entity.isOnGround()) state = MoveControl.State.WAIT;
+                if (entity.isOnGround()) state = State.WAIT;
             }
             default -> {
                 entity.setUpwardSpeed(0.0F);
@@ -66,6 +66,6 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
     }
 
     private float getMovementSpeed() {
-        return (float) entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        return (float) entity.getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
     }
 }

@@ -8,10 +8,11 @@ import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.explosion.ExplosionImpl;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
@@ -29,7 +30,7 @@ public class LightningChaserAttackGoal extends Goal {
 
     public LightningChaserAttackGoal(LightningChaserEntity entity) {
         this.entity = entity;
-        setControls(EnumSet.of(Control.MOVE, Goal.Control.LOOK));
+        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
     }
 
     @Override
@@ -74,13 +75,13 @@ public class LightningChaserAttackGoal extends Goal {
         double yDiff = target.getY() - entity.getY();
         if (yDiff > entity.getHeight() && !entity.isFlying()) entity.startToFly();
         boolean canSee = entity.canBreakBlocks() || entity.getVisibilityCache().canSee(target);
-        boolean canDamage = !target.isInvulnerableTo(entity.getDamageSources().create(DamageTypes.LIGHTNING_BOLT, entity)) && canSee;
+        boolean canDamage = !target.isInvulnerableTo((ServerWorld) target.getWorld(), entity.getDamageSources().create(DamageTypes.LIGHTNING_BOLT, entity)) && canSee;
         double desiredY = target.getY() + (canDamage ? 2 : 0) + target.getHeight();
 
         if (distance < MIN_DISTANCE_SQUARED && canDamage) { //too close
             entity.getNavigation().stop();
             entity.getMoveControl().moveBack();
-            if (target instanceof PlayerEntity player && yDiff < player.getAttributeValue(EntityAttributes.PLAYER_ENTITY_INTERACTION_RANGE)
+            if (target instanceof PlayerEntity player && yDiff < player.getAttributeValue(EntityAttributes.ENTITY_INTERACTION_RANGE)
                     || target instanceof MobEntity mob && mob.getAttackBox().intersects(entity.getBoundingBox().expand(2))
                     || entity.getLastAttacker() instanceof MobEntity attacker && attacker.getAttackBox().intersects(entity.getBoundingBox().expand(2))) {
                 if (!entity.isFlying()) { //try jump/back off
@@ -123,7 +124,7 @@ public class LightningChaserAttackGoal extends Goal {
         if (entity.isFlying()) return false;
         boolean doesCollide = entity.doesCollide(entity.getAttackBox(), target.getBoundingBox());
         if (!doesCollide) return false;
-        entity.meleeAttack(target);
+        entity.meleeAttack();
         attackCooldown = 30;
         return true;
     }
@@ -149,7 +150,7 @@ public class LightningChaserAttackGoal extends Goal {
         }
         double distance = entity.squaredDistanceTo(target);
         if (attackDistance < distance) return false;
-        if (Explosion.getExposure(entity.getPos(), target) < 0.1) return false;
+        if (ExplosionImpl.calculateReceivedDamage(entity.getPos(), target) < 0.1) return false;
         entity.triggerShockwave();
         attackCooldown = 40;
         return true;

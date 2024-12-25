@@ -21,7 +21,6 @@ import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
@@ -44,11 +43,11 @@ import java.util.Optional;
 public class VortexHornItem extends GoatHornItem {
     private final int maxCapacity;
     public VortexHornItem(Settings settings, TagKey<Instrument> instrumentTag, int maxCapacity) {
-        super(settings, instrumentTag);
+        super(instrumentTag, settings);
         this.maxCapacity = maxCapacity;
     }
 
-    public VortexHornItem(Settings settings,int maxCapacity) {
+    public VortexHornItem(Settings settings, int maxCapacity) {
         this(settings, InstrumentTags.GOAT_HORNS, maxCapacity);
     }
 
@@ -66,18 +65,18 @@ public class VortexHornItem extends GoatHornItem {
 
     //TODO fix multipart entity rotation desyncs
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (user.isSneaking()) {
-            if (tryMassCatchOrRelease(stack, user, world, hand)) return TypedActionResult.success(stack);
+            if (tryMassCatchOrRelease(stack, user, world, hand)) return ActionResult.SUCCESS;
         }
         if (getPartParent(user) instanceof URDragonEntity dragon) {
             useOnEntity(stack, user, dragon, hand);
             user.stopUsingItem();
-            return TypedActionResult.success(stack);
+            return ActionResult.SUCCESS;
         }
-        TypedActionResult<ItemStack> result = super.use(world, user, hand);
-        user.getItemCooldownManager().set(this, 0);
+        ActionResult result = super.use(world, user, hand);
+        user.getItemCooldownManager().set(stack, 0);
         return result;
     }
 
@@ -108,7 +107,7 @@ public class VortexHornItem extends GoatHornItem {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type) {
+    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
         if (stack.getComponents().contains(URItems.DRAGON_STORAGE_COMPONENT)) {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
             if (dataComponent != null) {
@@ -230,7 +229,7 @@ public class VortexHornItem extends GoatHornItem {
             double z = dragon.getZ();
             float offsetY = dragon.getHeight() / 2f;
             float offsetXZ = dragon.getWidth() / 2f;
-            ParticleS2CPacket packet = new ParticleS2CPacket(ParticleTypes.CLOUD, false,
+            ParticleS2CPacket packet = new ParticleS2CPacket(ParticleTypes.CLOUD, false, false,
                     x, y, z, offsetXZ , offsetY, offsetXZ, 0, 20);
             server.getPlayerManager().sendToAround(null, x, y + offsetY, z, 128, dragon.getWorld().getRegistryKey(), packet);
         }

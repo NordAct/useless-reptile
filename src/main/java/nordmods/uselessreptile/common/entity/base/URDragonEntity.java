@@ -92,9 +92,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected int ticksUntilHeal = -1;
     private int healTimer = 0;
     private BlockPos homePoint = BlockPos.ORIGIN;
-    protected final EntityGameEventHandler<URDragonEntity.JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new URDragonEntity.JukeboxEventListener
+    protected final EntityGameEventHandler<JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new JukeboxEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), GameEvent.JUKEBOX_PLAY.value().notificationRadius()));
-    protected final EntityGameEventHandler<URDragonEntity.HornUsedEventListener> hornUsedEventHandler = new EntityGameEventHandler<>(new URDragonEntity.HornUsedEventListener
+    protected final EntityGameEventHandler<HornUsedEventListener> hornUsedEventHandler = new EntityGameEventHandler<>(new HornUsedEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.INSTRUMENT_USED.value().notificationRadius()));
     protected @Nullable BlockPos jukeboxPos;
     protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
@@ -224,7 +224,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (inventory != null && isTamed()) {
             final NbtList inv = new NbtList();
             for (int i = 0; i < inventory.size(); i++) {
-                inv.add(inventory.getStack(i).encodeAllowEmpty(getRegistryManager()));
+                inv.add(inventory.getStack(i).toNbtAllowEmpty(getRegistryManager()));
             }
             tag.put("Inventory", inv);
         }
@@ -271,16 +271,16 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     protected static DefaultAttributeContainer.Builder createDragonAttributes() {
         return TameableEntity.createMobAttributes()
-                .add(EntityAttributes.GENERIC_STEP_HEIGHT, 1)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH)
-                .add(EntityAttributes.GENERIC_ARMOR)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED)
-                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 160)
-                .add(EntityAttributes.GENERIC_JUMP_STRENGTH)
+                .add(EntityAttributes.STEP_HEIGHT, 1)
+                .add(EntityAttributes.ATTACK_DAMAGE)
+                .add(EntityAttributes.ATTACK_KNOCKBACK)
+                .add(EntityAttributes.MAX_HEALTH)
+                .add(EntityAttributes.ARMOR)
+                .add(EntityAttributes.ARMOR_TOUGHNESS)
+                .add(EntityAttributes.MOVEMENT_SPEED)
+                .add(EntityAttributes.FLYING_SPEED)
+                .add(EntityAttributes.FOLLOW_RANGE, 160)
+                .add(EntityAttributes.JUMP_STRENGTH)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED)
@@ -374,8 +374,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
         if (isTamed()) {
-            if (isFavoriteFood(itemStack) && getHealth() != getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH)) {
-                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT);
+            if (isFavoriteFood(itemStack) && getHealth() != getAttributeValue(EntityAttributes.MAX_HEALTH)) {
+                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value());
                 heal(getHealthRegenerationFromFood());
                 return ActionResult.SUCCESS;
             }
@@ -385,7 +385,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             if (itemStack.getItem() instanceof PotionItem potionItem && player.isSneaking()) {
                 DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(player, itemStack);
                 potionItem.finishUsing(itemStack, getWorld(), this);
-                playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1, 1);
+                playSound(SoundEvents.ENTITY_GENERIC_DRINK.value(), 1, 1);
                 if (!player.isCreative()) { //checking for emptiness for case if somehow potion stack size is more than 1
                     itemStack.decrement(1);
                     if (itemStack.isEmpty()) player.setStackInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
@@ -540,8 +540,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected float getMovementSpeedModifier() {
-        double baseSpeed = getAttributeBaseValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-        double speed = getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        double baseSpeed = getAttributeBaseValue(EntityAttributes.MOVEMENT_SPEED);
+        double speed = getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         return (float) (speed / baseSpeed);
     }
 
@@ -562,7 +562,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         animationSpeed = getMovementSpeedModifier();
         if (this instanceof FlyingDragon flyingDragon && !flyingDragon.isFlying() || !(this instanceof FlyingDragon)) {
-            animationSpeed *= attributes().dragonGroundSpeedMultiplier * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) / getBaseGroundSpeed();
+            animationSpeed *= attributes().dragonGroundSpeedMultiplier * getAttributeValue(EntityAttributes.MOVEMENT_SPEED) / getBaseGroundSpeed();
         }
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
@@ -633,13 +633,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    protected void dropInventory() {
-        super.dropInventory();
+    protected void dropInventory(ServerWorld world) {
+        super.dropInventory(world);
         if (inventory != null) {
             for(int i = 0; i < inventory.size(); ++i) {
                 ItemStack itemStack = inventory.getStack(i);
                 if (!itemStack.isEmpty() && !EnchantmentHelper.hasAnyEnchantmentsWith(itemStack, EnchantmentEffectComponentTypes.PREVENT_EQUIPMENT_DROP)) {
-                    dropStack(itemStack);
+                    dropStack(world, itemStack);
                 }
             }
 
@@ -801,24 +801,20 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public void giveItemStack(ItemStack itemStack) {
+        if (!(getWorld() instanceof ServerWorld world)) return;
         if (inventory.canInsert(itemStack)) inventory.addStack(itemStack);
-        else dropStack(itemStack);
+        else dropStack(world, itemStack);
     }
 
-    public ItemStack consumeGivenItem(@Nullable LivingEntity user, ItemStack itemStack) {
-        return consumeGivenItem(user,itemStack, null);
+    public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack) {
+        return consumeGivenItem(offering,itemStack, null);
     }
 
-    public ItemStack consumeGivenItem(@Nullable LivingEntity user, ItemStack itemStack, @Nullable SoundEvent sound) {
-        DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(user, itemStack);
-        tryApplyFoodEffects(itemStack);
-        if (user == null || !user.isInCreativeMode()) itemStack.decrement(1);
-        if (sound != null) playSound(sound, 1, 1);
+    public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound) {
+        DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, itemStack);
+        if (itemStack.getComponents().contains(DataComponentTypes.CONSUMABLE))
+            itemStack.getComponents().get(DataComponentTypes.CONSUMABLE).finishConsumption(getWorld(), this, itemStack);
         return itemStack;
-    }
-
-    public void tryApplyFoodEffects(ItemStack itemStack) {
-        if (itemStack.getComponents().contains(DataComponentTypes.FOOD)) applyFoodEffects(itemStack.getComponents().get(DataComponentTypes.FOOD));
     }
 
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame

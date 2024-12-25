@@ -17,7 +17,7 @@ public class MoleclawAttackGoal extends Goal {
     public MoleclawAttackGoal(MoleclawEntity entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
-        setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
+        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
     }
 
     @Override

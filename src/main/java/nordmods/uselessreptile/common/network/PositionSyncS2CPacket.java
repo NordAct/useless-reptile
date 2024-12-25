@@ -11,7 +11,7 @@ import nordmods.uselessreptile.UselessReptile;
 
 public record PositionSyncS2CPacket(double x, double y, double z, float yaw, float pitch, int id) implements CustomPayload {
     public static final Identifier ID = UselessReptile.id("position_sync");
-    public static final CustomPayload.Id<PositionSyncS2CPacket> PACKET_ID = new Id<>(ID);
+    public static final Id<PositionSyncS2CPacket> PACKET_ID = new Id<>(ID);
     public static final PacketCodec<RegistryByteBuf, PositionSyncS2CPacket> PACKET_CODEC =
             PacketCodec.ofStatic(PositionSyncS2CPacket::write, PositionSyncS2CPacket::read);
 

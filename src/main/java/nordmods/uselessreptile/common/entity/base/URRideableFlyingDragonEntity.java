@@ -97,7 +97,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         if (isSprinting()) setSpeedMod(1.5f);
         else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
         else setSpeedMod(1f);
-        float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
         if (isOnGround()) setFlying(false);
@@ -146,7 +146,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
         if (!isFlying()) {
-            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
             if (isSprintPressed()) setSprinting(true);
             if (isMovingBackwards() && (isMoveBackPressed() || isMoveBackPressed())) setSprinting(false);
             setRotation(rider);
@@ -166,7 +166,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
             return new Vec3d(0, movementInput.y - 0.001, landSpeed);
         } else {
-            double flyingSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED);
+            double flyingSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.FLYING_SPEED);
             float pitchSpeed = 2;
             setRotation(rider);
             float verticalSpeed = 0F;
@@ -239,8 +239,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     protected float getMovementSpeedModifier() {
         if (!isFlying()) return super.getMovementSpeedModifier();
-        double baseSpeed = getAttributeBaseValue(EntityAttributes.GENERIC_FLYING_SPEED);
-        double speed = getAttributeBaseValue(EntityAttributes.GENERIC_FLYING_SPEED);
+        double baseSpeed = getAttributeBaseValue(EntityAttributes.FLYING_SPEED);
+        double speed = getAttributeBaseValue(EntityAttributes.FLYING_SPEED);
         return (float) (speed / baseSpeed);
     }
 

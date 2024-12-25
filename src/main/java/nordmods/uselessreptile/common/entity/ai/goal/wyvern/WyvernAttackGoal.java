@@ -14,7 +14,7 @@ public class WyvernAttackGoal extends Goal {
     public WyvernAttackGoal(WyvernEntity entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
-        setControls(EnumSet.of(Control.MOVE, Goal.Control.LOOK));
+        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
     }
 
     @Override
@@ -73,6 +73,6 @@ public class WyvernAttackGoal extends Goal {
         }
 
         if (entity.getSecondaryAttackCooldown() > 0) return;
-        if (doesCollide) entity.meleeAttack(target);
+        if (doesCollide) entity.meleeAttack();
     }
 }

@@ -11,13 +11,14 @@ import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
 import nordmods.uselessreptile.client.util.model_data.base.ModelData;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
     private static final Identifier DEFAULT_ANIMATION = UselessReptile.id("animations/entity/empty.animation.json");
 
     @Override
     @Nullable
-    public Identifier getModelResource(DragonEquipmentAnimatable entity) {
+    public Identifier getModelResource(DragonEquipmentAnimatable entity, GeoRenderer<DragonEquipmentAnimatable> renderer) {
         AssetCache assetCache = entity.getAssetCache();
         if (!ResourceUtil.isResourceReloadFinished) return null;
 
@@ -38,7 +39,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
 
     @Override
     @Nullable
-    public Identifier getTextureResource(DragonEquipmentAnimatable entity) {
+    public Identifier getTextureResource(DragonEquipmentAnimatable entity, GeoRenderer<DragonEquipmentAnimatable> renderer) {
         AssetCache assetCache = entity.getAssetCache();
         if (!ResourceUtil.isResourceReloadFinished) return null;
 
@@ -88,7 +89,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         EquipmentModelData data = ModelDataUtil.getEquipmentModelData(entity.owner, entity.item);
         if (data != null) {
             ModelData modelData = data.modelData();
-            if (modelData.cull()) renderType = modelData.translucent() ? RenderLayer.getEntityTranslucentCull(texture) : RenderLayer.getEntityCutout(texture);
+            if (modelData.cull()) renderType = modelData.translucent() ? RenderLayer.getEntityTranslucent(texture) : RenderLayer.getEntityCutout(texture); //TODO culling for translucent
             else renderType = modelData.translucent() ? RenderLayer.getEntityTranslucent(texture) : RenderLayer.getEntityCutoutNoCull(texture);
             assetCache.setRenderTypeCache(renderType);
             return renderType;

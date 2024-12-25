@@ -20,6 +20,6 @@ public class MoleclawUntamedTargetGoal<T extends LivingEntity>  extends UntamedA
     }
 
     public boolean shouldContinue() {
-        return targetEntity != null ? !mob.isTooBrightAtPos(targetEntity.getBlockPos()) && targetPredicate.test(mob, targetEntity) : super.shouldContinue();
+        return targetEntity != null ? !mob.isTooBrightAtPos(targetEntity.getBlockPos()) && targetPredicate.test(getServerWorld(mob), mob, targetEntity) : super.shouldContinue();
     }
 }

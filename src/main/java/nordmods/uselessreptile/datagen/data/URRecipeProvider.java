@@ -3,10 +3,10 @@ package nordmods.uselessreptile.datagen.data;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
-import net.minecraft.data.server.recipe.RecipeExporter;
-import net.minecraft.data.server.recipe.RecipeProvider;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
+import net.minecraft.data.recipe.RecipeExporter;
+import net.minecraft.data.recipe.RecipeGenerator;
+import net.minecraft.data.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
@@ -44,7 +44,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
         offerMoleclawHelmetRecipe(exporter, URItems.MOLECLAW_HELMET_DIAMOND, URItems.DRAGON_HELMET_DIAMOND);
         offerMoleclawHelmetRecipe(exporter, URItems.MOLECLAW_HELMET_NETHERITE, URItems.DRAGON_HELMET_NETHERITE);
 
-        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, URItems.FLUTE)
+        ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, (URItems.FLUTE))
                 .input('R', ConventionalItemTags.RED_DYES)
                 .input('G', ConventionalItemTags.GREEN_DYES)
                 .input('B', ConventionalItemTags.BLUE_DYES)
@@ -66,11 +66,11 @@ public class URRecipeProvider extends FabricRecipeProvider {
         offerVortexHornRecipe(exporter, URItems.GOLD_VORTEX_HORN, URItems.IRON_VORTEX_HORN, ConventionalItemTags.GOLD_INGOTS);
         offerVortexHornRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, URItems.IRON_VORTEX_HORN, ConventionalItemTags.DIAMOND_GEMS);
 
-        RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, RecipeCategory.TOOLS, URItems.NETHERITE_VORTEX_HORN);
-        RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_HELMET_NETHERITE);
-        RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_CHESTPLATE_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_CHESTPLATE_NETHERITE);
-        RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_TAIL_ARMOR_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_TAIL_ARMOR_NETHERITE);
-        RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.MOLECLAW_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.MOLECLAW_HELMET_NETHERITE);
+        RecipeGenerator.offerNetheriteUpgradeRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, RecipeCategory.TOOLS, URItems.NETHERITE_VORTEX_HORN);
+        RecipeGenerator.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_HELMET_NETHERITE);
+        RecipeGenerator.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_CHESTPLATE_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_CHESTPLATE_NETHERITE);
+        RecipeGenerator.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_TAIL_ARMOR_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_TAIL_ARMOR_NETHERITE);
+        RecipeGenerator.offerNetheriteUpgradeRecipe(exporter, URItems.MOLECLAW_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.MOLECLAW_HELMET_NETHERITE);
     }
 
     protected static void offerDragonHelmetRecipe(RecipeExporter exporter, ItemConvertible output, ItemConvertible input) {

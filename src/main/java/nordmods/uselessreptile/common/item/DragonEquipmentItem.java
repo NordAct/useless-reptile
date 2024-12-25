@@ -10,16 +10,8 @@ import java.util.function.Supplier;
 
 public class DragonEquipmentItem extends Item {
 
-    private final Supplier<AttributeModifiersComponent> dragonEquipmentAttributes;
-
-    public DragonEquipmentItem(Supplier<AttributeModifiersComponent> dragonEquipmentAttributes, net.minecraft.item.Item.Settings settings) {
+    public DragonEquipmentItem(Supplier<AttributeModifiersComponent> dragonEquipmentAttributes, Settings settings) {
         super(settings);
-        this.dragonEquipmentAttributes = dragonEquipmentAttributes;
-    }
-
-    @Override
-    public AttributeModifiersComponent getAttributeModifiers() {
-        return dragonEquipmentAttributes.get();
     }
 
     public static Identifier equipmentModifierID(EquipmentSlot equipmentSlot) {

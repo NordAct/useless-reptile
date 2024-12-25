@@ -1,22 +1,27 @@
 package nordmods.uselessreptile.common.entity.special;
 
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.explosion.ExplosionImpl;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class ShockwaveSphereEntity extends ProjectileEntity implements ProjectileDamageHelper {
     private float currentRadius = 0;
@@ -33,7 +38,6 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
         super(entityType, world);
         setNoGravity(true);
         setInvulnerable(true);
-        ignoreCameraFrustum = true;
         setYaw(new Random(getId()).nextInt(360));
     }
 
@@ -66,16 +70,16 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
         Entity target = entityHitResult.getEntity();
-        float exposure = Explosion.getExposure(getEyePos(), target);
+        float exposure = ExplosionImpl.calculateReceivedDamage(getEyePos(), target);
 
         if (exposure > 0) {
             target.playSound(URSounds.SHOCKWAVE_HIT, 1, 1 / exposure);
             Vec3d vec3d = target.getPos().subtract(getEyePos());
             double lengthMod = currentRadius / vec3d.length();
             target.addVelocityInternal(vec3d.normalize().multiply(POWER * lengthMod * exposure));
-            if (target instanceof LivingEntity livingEntity) {
+            if (target instanceof LivingEntity livingEntity && livingEntity.getWorld() instanceof ServerWorld world) {
                 livingEntity.addStatusEffect(new StatusEffectInstance(URStatusEffects.SHOCK, (int) (100 * MathHelper.clamp(lengthMod, 1, 2) * exposure), 0, false, false), getOwner());
-                livingEntity.damage(getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (getResultingDamage() * MathHelper.clamp(lengthMod, 1, 2)));
+                livingEntity.damage(world, getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (getResultingDamage() * MathHelper.clamp(lengthMod, 1, 2)));
             }
         }
         if (!(target instanceof ProjectileEntity)) affected.add(target);
@@ -87,7 +91,6 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
             return false;
         }
         if (getEyePos().distanceTo(target.getPos()) > currentRadius + target.getWidth()/2) return false;
-        if (target.isInvulnerableTo(getDamageSources().create(DamageTypes.LIGHTNING_BOLT))) return false;
         if (target instanceof EntityPart part) target = part.owner;
         Entity owner = getOwner();
         LivingEntity ownerOwner = owner instanceof TameableEntity tameable ? tameable.getOwner() : null;

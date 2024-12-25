@@ -34,8 +34,7 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
     }
 
     @Override
-    public void renderForBone(MatrixStack matrixStackIn, T animatable, GeoBone bone, RenderLayer renderType,
-                              VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+    public void renderForBone(MatrixStack matrixStackIn, T animatable, GeoBone bone, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay, int renderColor) {
         if (!bone.getName().equals(passengerBone)) return;
 
         Entity passenger = animatable.owner.getPassengerList().size() > passengerNumber ? animatable.owner.getPassengerList().get(passengerNumber) : null;

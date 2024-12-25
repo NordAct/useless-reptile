@@ -17,7 +17,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
     }
 
     public void moveBack() {
-        state = MoveControl.State.STRAFE;
+        state = State.STRAFE;
     }
 
     public void notMove() {
@@ -74,7 +74,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
             }
             case JUMPING -> {
                 entity.setMovementSpeed(speed * entity.getSpeedModifier());
-                if (entity.isOnGround()) state = MoveControl.State.WAIT;
+                if (entity.isOnGround()) state = State.WAIT;
             }
             default -> {
                 entity.setUpwardSpeed(0.0F);
@@ -136,9 +136,9 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
     private float getMovementSpeed(float accelerationModifier, boolean inWater) {
         float speed;
         if (entity.isFlying()) {
-            speed = (float) entity.getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) * accelerationModifier;
+            speed = (float) entity.getAttributeValue(EntityAttributes.FLYING_SPEED) * accelerationModifier;
             if (inWater || entity.getRecentDamageSource() == entity.getDamageSources().lava()) entity.getJumpControl().setActive();
-        } else speed = (float) entity.getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        } else speed = (float) entity.getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         return speed;
     }
 }

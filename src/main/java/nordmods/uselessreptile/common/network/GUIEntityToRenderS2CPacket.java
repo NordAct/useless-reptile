@@ -12,7 +12,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public record GUIEntityToRenderS2CPacket(int id) implements CustomPayload {
     public static final Identifier ID = UselessReptile.id("gui_entity_to_render_packet");
-    public static final CustomPayload.Id<GUIEntityToRenderS2CPacket> PACKET_ID = new Id<>(ID);
+    public static final Id<GUIEntityToRenderS2CPacket> PACKET_ID = new Id<>(ID);
     public static final PacketCodec<RegistryByteBuf, GUIEntityToRenderS2CPacket> PACKET_CODEC = PacketCodecs.INTEGER.xmap(GUIEntityToRenderS2CPacket::new, GUIEntityToRenderS2CPacket::id).cast();
 
     public static void send(ServerPlayerEntity player, URDragonEntity dragon) {

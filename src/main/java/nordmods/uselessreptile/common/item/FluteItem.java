@@ -7,15 +7,15 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.consume.UseAction;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.util.UseAction;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
@@ -26,14 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FluteItem extends Item {
-    public FluteItem(net.minecraft.item.Item.Settings settings) {
+    public FluteItem(Settings settings) {
         super(settings);
         ItemStack itemStack = getDefaultStack();
         itemStack.set(URItems.FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT);
     }
 
     @Override
-    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+    public ActionResult use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
         int mode = getFluteMode(itemStack);
         if (user.isSneaking()) {
@@ -48,9 +48,9 @@ public class FluteItem extends Item {
                 Text text = Text.translatable("tooltip.uselessreptile.flute_mode" + mode);
                 MinecraftClient.getInstance().inGameHud.setOverlayMessage(text, false);
             }
-            return TypedActionResult.success(itemStack);
+            return ActionResult.SUCCESS;
         }
-        user.getItemCooldownManager().set(this, 40);
+        user.getItemCooldownManager().set(itemStack, 40);
         if (user instanceof ServerPlayerEntity serverPlayer) {
             Criteria.CONSUME_ITEM.trigger(serverPlayer, itemStack);
             user.stopUsingItem();
@@ -61,7 +61,7 @@ public class FluteItem extends Item {
             }
             user.emitGameEvent(URGameEvents.FLUTE_USED);
         }
-        return TypedActionResult.consume(itemStack);
+        return ActionResult.SUCCESS;
     }
 
     @Override

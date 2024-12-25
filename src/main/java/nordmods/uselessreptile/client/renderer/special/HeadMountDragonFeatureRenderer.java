@@ -1,28 +1,29 @@
 package nordmods.uselessreptile.client.renderer.special;
 
 import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.network.AbstractClientPlayerEntity;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import nordmods.uselessreptile.client.util.RenderUtil;
-import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
+import nordmods.uselessreptile.client.util.duck.HeadMountDragonOwner;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.HashSet;
 import java.util.UUID;
 
-public class RiverPikehornOnHeadFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+public class HeadMountDragonFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState, PlayerEntityModel> {
     public static final HashSet<UUID> ON_HEAD = new HashSet<>();
 
-    public RiverPikehornOnHeadFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
+    public HeadMountDragonFeatureRenderer(FeatureRendererContext<PlayerEntityRenderState, PlayerEntityModel> context) {
         super(context);
     }
 
     @Override
-    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, AbstractClientPlayerEntity entity, float limbAngle, float limbDistance, float tickDelta, float animationProgress, float headYaw, float headPitch) {
-        if (entity.getFirstPassenger() instanceof RiverPikehornEntity dragon) {
+    public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, PlayerEntityRenderState state, float limbAngle, float limbDistance) {
+        if (state instanceof HeadMountDragonOwner owner && owner.getHeadMountDragon() instanceof URDragonEntity dragon) {
             if (dragon.isInvisible()) return;
             ON_HEAD.remove(dragon.getUuid());
             matrices.push();
@@ -30,12 +31,12 @@ public class RiverPikehornOnHeadFeatureRenderer extends FeatureRenderer<Abstract
             ModelPart head = getContextModel().head;
             head.rotate(matrices);
 
-            float scale = 1 / entity.getScale();
-            float offsetScale = dragon.getScale() / entity.getScale();
+            float scale = 1 / state.baseScale;
+            float offsetScale = dragon.getScale() / state.baseScale;
             matrices.translate(0, -0.2960000524520874 * offsetScale - 0.5 * (1 - offsetScale), 0);
             matrices.scale(-scale, -scale, scale);
 
-            RenderUtil.renderEntity(dragon, tickDelta, matrices, vertexConsumers, light);
+            RenderUtil.renderEntity(dragon, RenderUtil.getTickDelta(false), matrices, vertexConsumers, light);
 
             matrices.pop();
             ON_HEAD.add(dragon.getUuid());

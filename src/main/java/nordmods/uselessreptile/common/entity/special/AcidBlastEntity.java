@@ -9,6 +9,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.particle.EntityEffectParticleEffect;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.BlockHitResult;
@@ -74,9 +75,9 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
 
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
-        if (getWorld().isClient()) return;
+        if (!(getWorld() instanceof ServerWorld world)) return;
         Entity target = entityHitResult.getEntity();
-        target.damage(target.getDamageSources().create(URDamageTypes.ACID, getOwner()), getResultingDamage());
+        target.damage(world, target.getDamageSources().create(URDamageTypes.ACID, getOwner()), getResultingDamage());
         spawnEffectCloud();
         playSound(URSounds.ACID_SPLASH, 1, 1);
         super.onEntityHit(entityHitResult);

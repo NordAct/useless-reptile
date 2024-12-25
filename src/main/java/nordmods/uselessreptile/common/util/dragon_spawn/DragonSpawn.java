@@ -48,11 +48,6 @@ public class DragonSpawn {
         return new Builder();
     }
 
-    public static DragonSpawn deserialize(JsonObject input) throws JsonParseException {
-        DataResult<DragonSpawn> result = CODEC.parse(JsonOps.INSTANCE, input);
-        return result.getOrThrow();
-    }
-
     public static void clearSpawns() {
         dragonSpawnsHolder.clear();
     }
@@ -101,7 +96,7 @@ public class DragonSpawn {
         }
 
         public static final Codec<SpawnConditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                        Codecs.NONNEGATIVE_INT.fieldOf("weight").forGetter(SpawnConditions::weight),
+                        Codecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(SpawnConditions::weight),
                         Codecs.TAG_ENTRY_ID.listOf().optionalFieldOf("allowed_biomes").forGetter(SpawnConditions::allowedBiomes),
                         Codecs.TAG_ENTRY_ID.listOf().optionalFieldOf("banned_biomes").forGetter(SpawnConditions::bannedBiomes),
                         Codecs.TAG_ENTRY_ID.listOf().optionalFieldOf("allowed_blocks").forGetter(SpawnConditions::allowedBlocks),

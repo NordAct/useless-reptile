@@ -5,7 +5,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -40,12 +40,11 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
         i = (width - backgroundWidth) / 2;
         j = (height - backgroundHeight) / 2;
-        context.drawTexture(TEXTURE, i, j, 0, 0, backgroundWidth, backgroundHeight);
+        context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i, j, 0, 0, backgroundWidth, backgroundHeight, 256, 256);
         drawSaddle(context);
         drawBanner(context);
         drawArmor(context);
@@ -63,14 +62,14 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     protected void drawSaddle(DrawContext context) {
-        if (hasSaddle) context.drawTexture(TEXTURE, i + 7, j + 35 - 18, 0, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty() ? 0 : 18), 18, 18); //saddle
+        if (hasSaddle) context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7, j + 35 - 18, 0, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty() ? 0 : 18), 18, 18, 256, 256); //saddle
     }
 
     protected void drawArmor(DrawContext context) {
         if (hasArmor) {
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : 18), 18, 18); //head
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() ? 0 : 18), 18, 18); //body
-            context.drawTexture(TEXTURE, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty() ? 0 : 18), 18, 18); //tail
+            context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : 18), 18, 18, 256, 256); //head
+            context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() ? 0 : 18), 18, 18, 256, 256); //body
+            context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty() ? 0 : 18), 18, 18, 256, 256); //tail
         }
     }
 
@@ -96,7 +95,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
 
         DiffuseLighting.method_34742();
         EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        entityRenderDispatcher.render(entity, 0, 0, 0, 0, tickDelta, context.getMatrices(), context.getVertexConsumers(), 15728880);
+        context.draw(vertexConsumerProvider -> entityRenderDispatcher.render(entity, 0, 0, 0, tickDelta, context.getMatrices(), vertexConsumerProvider, 15728880));
         DiffuseLighting.enableGuiDepthLighting();
 
         context.draw();
@@ -108,10 +107,10 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     protected void drawStorage(DrawContext context) {
         int size = storageSize.getSize()/3;
         int offset = hasArmor ? 1 : 0;
-        context.drawTexture(TEXTURE, i + 79 + 18 * offset, j + 17, 0, this.backgroundHeight, size * 18, 54);
+        context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 79 + 18 * offset, j + 17, 0, this.backgroundHeight, size * 18, 54, 256, 256);
     }
 
     protected void drawBanner(DrawContext context) {
-        if (hasBanner) context.drawTexture(TEXTURE, i + 7, j + 35, 18 * 4, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty() ? 0 : 18), 18, 18); //banner
+        if (hasBanner) context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7, j + 35, 18 * 4, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty() ? 0 : 18), 18, 18,  256, 256); //banner
     }
 }

@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
@@ -22,6 +21,7 @@ import net.minecraft.item.Items;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
@@ -51,6 +51,8 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
+
+import java.util.List;
 
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
 
@@ -95,14 +97,14 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     public static DefaultAttributeContainer.Builder createWyvernAttributes() {
         return createDragonAttributes()
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attributes().wyvernDamage)
-                .add(EntityAttributes.GENERIC_ATTACK_KNOCKBACK, attributes().wyvernKnockback)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, attributes().wyvernHealth)
-                .add(EntityAttributes.GENERIC_ARMOR, attributes().wyvernArmor)
-                .add(EntityAttributes.GENERIC_ARMOR_TOUGHNESS, attributes().wyvernArmorToughness)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, attributes().wyvernGroundSpeed * attributes().dragonGroundSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_FLYING_SPEED, attributes().wyvernFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
-                .add(EntityAttributes.GENERIC_JUMP_STRENGTH, 0.42 * 1.5)
+                .add(EntityAttributes.ATTACK_DAMAGE, attributes().wyvernDamage)
+                .add(EntityAttributes.ATTACK_KNOCKBACK, attributes().wyvernKnockback)
+                .add(EntityAttributes.MAX_HEALTH, attributes().wyvernHealth)
+                .add(EntityAttributes.ARMOR, attributes().wyvernArmor)
+                .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().wyvernArmorToughness)
+                .add(EntityAttributes.MOVEMENT_SPEED, attributes().wyvernGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.FLYING_SPEED, attributes().wyvernFlyingSpeed * attributes().dragonFlyingSpeedMultiplier)
+                .add(EntityAttributes.JUMP_STRENGTH, 0.42 * 1.5)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().wyvernVerticalSpeed)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().wyvernBaseAccelerationDuration)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().wyvernRotationSpeedGround)
@@ -237,8 +239,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
         if (canBeControlledByRider()) {
             if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
-                LivingEntity target = getWorld().getClosestEntity(LivingEntity.class, TargetPredicate.DEFAULT, this, getX(), getY(), getZ(), getAttackBox());
-                meleeAttack(target);
+                meleeAttack();
             }
             if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) shoot();
         }
@@ -261,7 +262,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (isTamingItem(itemStack) && !isTamed()) {
-            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
+            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
             if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
             else setTamingProgress(getTamingProgress() - 1);
             if (player.isCreative()) setTamingProgress(0);
@@ -321,13 +322,22 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return 90;
     }
 
-    public void meleeAttack(LivingEntity target) {
+    public void meleeAttack() {
+        if (!(getWorld() instanceof ServerWorld world)) return;
+        List<LivingEntity> list = getWorld().getEntitiesByClass(LivingEntity.class,  getAttackBox(), this::canTarget);
+        LivingEntity target = null;
+        if (!list.isEmpty()) {
+            target = list.getFirst();
+            for (LivingEntity entry : list) {
+                if (squaredDistanceTo(entry) < squaredDistanceTo(target)) target = entry;
+            }
+        }
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
         if (isFlying()) URPacketHelper.playSound(this, URSounds.WYVERN_BITE, SoundCategory.NEUTRAL, 1, 1, 3);
         if (target != null && !getPassengerList().contains(target)) {
             Box targetBox = target.getBoundingBox();
-            if (doesCollide(targetBox, getAttackBox())) tryAttack(target);
+            if (doesCollide(targetBox, getAttackBox())) tryAttack(world, target);
         }
     }
 

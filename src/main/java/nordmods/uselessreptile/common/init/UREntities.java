@@ -6,6 +6,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
@@ -43,7 +45,7 @@ public class UREntities {
     }
 
     private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> builder) {
-        return Registry.register(Registries.ENTITY_TYPE, UselessReptile.id(id), builder.build(null));
+        return Registry.register(Registries.ENTITY_TYPE, UselessReptile.id(id), builder.build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, UselessReptile.id(id))));
     }
 
     private static <T extends Entity> EntityType.Builder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon, boolean fireImmune) {

@@ -12,11 +12,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.RenderUtil;
+import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import org.joml.Vector3f;
 
-public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity> {
-
+public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity, ShockwaveSpereEntityRenderState> {
+    private static final Identifier TEXTURE = UselessReptile.id("textures/entity/lightning_breath/beam.png");
     private static final int SPHERE_ROWS = 16;
 
     public ShockwaveSphereEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -24,34 +25,29 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
     }
 
     @Override
-    public Identifier getTexture(ShockwaveSphereEntity entity) {
-        return UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
+    public ShockwaveSpereEntityRenderState createRenderState() {
+        return new ShockwaveSpereEntityRenderState();
     }
 
     @Override
-    public void render(ShockwaveSphereEntity entity, float yaw, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider vertexConsumers, int light) {
+    public void render(ShockwaveSpereEntityRenderState state, MatrixStack matrixStack, VertexConsumerProvider vertexConsumers, int light) {
         matrixStack.push();
 
-        float radius = MathHelper.lerp(tickDelta, entity.getPrevRadius(), entity.getCurrentRadius());
-        float alpha = MathHelper.clamp(1f - radius / ShockwaveSphereEntity.MAX_RADIUS, 0f, 1f);
-        alpha = MathHelper.lerp(tickDelta, entity.prevAlpha, alpha);
-
-        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(getTexture(entity), true));
+        VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE, true));
 
         matrixStack.push();
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(alpha / 2f * 180f));
-        renderSphere(matrixStack, vertexConsumer, MathHelper.clamp(alpha - 0.2f, 0, 1), radius);
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.alpha / 2f * 180f));
+        renderSphere(matrixStack, vertexConsumer, MathHelper.clamp(state.alpha - 0.2f, 0, 1), state.radius);
         matrixStack.pop();
 
         matrixStack.push();
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-alpha / 1.5f * 180f));
-        renderSphere(matrixStack, vertexConsumer, MathHelper.clamp(alpha/1.5f - 0.1f, 0, 1), radius/1.5f);
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-state.alpha / 1.5f * 180f));
+        renderSphere(matrixStack, vertexConsumer, MathHelper.clamp(state.alpha/1.5f - 0.1f, 0, 1), state.radius/1.5f);
         matrixStack.pop();
         
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(alpha * 180f));
-        renderSphere(matrixStack, vertexConsumer, alpha/2f, radius/2f);
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.alpha * 180f));
+        renderSphere(matrixStack, vertexConsumer, state.alpha/2f, state.radius/2f);
 
-        entity.prevAlpha = alpha;
         matrixStack.pop();
     }
 
@@ -91,5 +87,14 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
         float y = (float) Math.cos(phi);
         float z = (float) (Math.sin(phi) * Math.sin(theta));
         return new Vector3f(x, y, z).mul(radius);
+    }
+
+    @Override
+    public void updateRenderState(ShockwaveSphereEntity entity, ShockwaveSpereEntityRenderState state, float tickDelta) {
+        super.updateRenderState(entity, state, tickDelta);
+        state.radius = MathHelper.lerp(tickDelta, entity.getPrevRadius(), entity.getCurrentRadius());
+        float alpha = MathHelper.clamp(1f - (state.age < 3 ? 0 : state.age / LightningBreathEntity.MAX_AGE), 0f, 1f);
+        state.alpha = MathHelper.lerp(tickDelta, entity.prevAlpha, alpha);
+        entity.prevAlpha = state.alpha;
     }
 }
