@@ -14,7 +14,7 @@
     "common.SpawnGroupMixin"
   ],
   "client": [
-    "client.AbstractInventoryScreenMixin",
+    "client.StatusEffectsDisplayMixin",
     "client.CameraMixin",
     "client.EntityMixin",
     "client.EntityRenderDispathcerMixin",

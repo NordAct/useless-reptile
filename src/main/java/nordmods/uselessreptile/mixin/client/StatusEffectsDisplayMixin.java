@@ -16,8 +16,9 @@ import java.util.Collection;
 import java.util.List;
 
 @Mixin(StatusEffectsDisplay.class)
-public abstract class AbstractInventoryScreenMixin {
-    @Inject(method = "drawStatusEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
+public abstract class StatusEffectsDisplayMixin {
+
+    @Inject(method = "drawStatusEffects(Lnet/minecraft/client/gui/DrawContext;II)V", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
     private void yeetShockEffect(DrawContext context, int mouseX, int mouseY, CallbackInfo ci, @Local LocalRef<Collection<StatusEffectInstance>> localRef) {
         List<StatusEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));
         copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffectType().equals(URStatusEffects.SHOCK));
