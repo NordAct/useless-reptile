@@ -25,7 +25,7 @@ public class LivingEntityRenderStateMixin implements DragonRider {
 
     @Override
     public @Nullable UUID getUUID() {
-        return null;
+        return uuid;
     }
 
     @Override
