@@ -15,3 +15,9 @@ accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder inputs Ljava/
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder pattern Ljava/util/List;
 accessible method net/minecraft/entity/LivingEntity applyFoodEffects (Lnet/minecraft/component/type/FoodComponent;)V
 extendable method net/minecraft/entity/passive/TameableEntity canTeleportTo (Lnet/minecraft/util/math/BlockPos;)Z
+#TODO remove that later
+accessible field net/minecraft/entity/Entity vehicle Lnet/minecraft/entity/Entity;
+accessible method net/minecraft/entity/Entity couldAcceptPassenger ()Z
+accessible method net/minecraft/entity/Entity canAddPassenger (Lnet/minecraft/entity/Entity;)Z
+accessible method net/minecraft/entity/Entity addPassenger (Lnet/minecraft/entity/Entity;)V
+accessible method net/minecraft/entity/Entity streamIntoPassengers ()Ljava/util/stream/Stream;
