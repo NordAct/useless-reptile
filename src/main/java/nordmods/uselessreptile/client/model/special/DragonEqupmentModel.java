@@ -5,6 +5,7 @@ import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
+import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.client.util.model_data.ModelDataUtil;
 import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
@@ -89,7 +90,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         EquipmentModelData data = ModelDataUtil.getEquipmentModelData(entity.owner, entity.item);
         if (data != null) {
             ModelData modelData = data.modelData();
-            if (modelData.cull()) renderType = modelData.translucent() ? RenderLayer.getEntityTranslucent(texture) : RenderLayer.getEntityCutout(texture); //TODO culling for translucent
+            if (modelData.cull()) renderType = modelData.translucent() ? RenderUtil.getEntityTranslucentCull(texture) : RenderLayer.getEntityCutout(texture);
             else renderType = modelData.translucent() ? RenderLayer.getEntityTranslucent(texture) : RenderLayer.getEntityCutoutNoCull(texture);
             assetCache.setRenderTypeCache(renderType);
             return renderType;

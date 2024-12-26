@@ -1,18 +1,21 @@
 package nordmods.uselessreptile.client.util;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.*;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.TriState;
+import net.minecraft.util.Util;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+
+import java.util.function.BiFunction;
 
 public class RenderUtil {
     public static void renderQuad(
@@ -59,5 +62,14 @@ public class RenderUtil {
 
     public static float getTickDelta(boolean ignoreFreeze) {
         return MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(ignoreFreeze);
+    }
+
+    private static final BiFunction<Identifier, Boolean, RenderLayer> ENTITY_TRANSLUCENT_CULL = Util.memoize((texture, affectsOutline) -> {
+        RenderLayer.MultiPhaseParameters multiPhaseParameters = RenderLayer.MultiPhaseParameters.builder().program(RenderPhase.ENTITY_TRANSLUCENT_PROGRAM).texture(new RenderPhase.Texture(texture, TriState.FALSE, false)).transparency(RenderPhase.TRANSLUCENT_TRANSPARENCY).lightmap(RenderPhase.ENABLE_LIGHTMAP).overlay(RenderPhase.ENABLE_OVERLAY_COLOR).build(affectsOutline);
+        return RenderLayer.of("entity_translucent_cull", VertexFormats.POSITION_COLOR_TEXTURE_OVERLAY_LIGHT_NORMAL, VertexFormat.DrawMode.QUADS, 1536, true, true, multiPhaseParameters);
+    });
+
+    public static RenderLayer getEntityTranslucentCull(Identifier texture) {
+        return ENTITY_TRANSLUCENT_CULL.apply(texture, true);
     }
 }

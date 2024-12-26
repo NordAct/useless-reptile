@@ -16,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 
@@ -82,7 +83,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         float centerY = (y1 + y2) / 2f;
         float dx = (float)Math.atan((centerX - mouseX) / 40f);
         float dy = (float) Math.atan((centerY - mouseY) / 40f);
-        float tickDelta = MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(true);
+        float tickDelta = RenderUtil.getTickDelta(false);
 
         context.getMatrices().push();
         context.enableScissor(x1, y1, x2, y2);
