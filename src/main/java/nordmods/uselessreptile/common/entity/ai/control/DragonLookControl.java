@@ -42,6 +42,7 @@ public class DragonLookControl extends LookControl {
 
     @Override
     public void tick() {
+        if (entity.hasControllingPassenger()) return;
         if (lockRotation) return;
         if (lookAtTimer > 0) {
             --lookAtTimer;

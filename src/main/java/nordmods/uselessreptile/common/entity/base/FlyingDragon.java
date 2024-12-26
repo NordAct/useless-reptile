@@ -4,8 +4,6 @@ public interface FlyingDragon {
     int getInAirTimer();
     int getMaxInAirTimer();
     void setInAirTimer(int state);
-    boolean isGliding();
-    void setGliding(boolean state);
     boolean isFlying();
     void setFlying(boolean state);
     byte getTiltState();

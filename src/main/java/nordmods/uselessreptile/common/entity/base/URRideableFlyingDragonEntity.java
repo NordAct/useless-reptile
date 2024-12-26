@@ -55,9 +55,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public int getInAirTimer() {return dataTracker.get(IN_AIR_TIMER);}
     public void setInAirTimer(int state) {dataTracker.set(IN_AIR_TIMER, state);}
 
-    public boolean isGliding() {return dataTracker.get(GLIDING);}
-    public void setGliding(boolean state) {dataTracker.set(GLIDING, state);}
-
     public boolean isFlying() {return dataTracker.get(FLYING);}
     public void setFlying (boolean state) {dataTracker.set(FLYING, state);}
 
@@ -83,7 +80,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
         if (getWorld().isClient()) {
             glideTimer--;
-            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
+            float accelerationMod = getAccelerationDuration()/getMaxAccelerationDuration();
+            shouldGlide = accelerationMod > 1 || glideTimer < 0 && accelerationMod > 0.9;
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();
@@ -105,7 +103,11 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
         if (canBeControlledByRider()) {
             LivingEntity rider = getControllingPassenger();
-            if (rider instanceof PlayerEntity player) super.travel(getControlledMovementInput(player, movementInput));
+            if (rider instanceof PlayerEntity player) {
+                if (isDownPressed() && isPrimaryAttackPressed)
+                    getWorld();
+                super.travel(getControlledMovementInput(player, movementInput));
+            }
         } else {
             if (isFlying()) {
                 if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
@@ -120,6 +122,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     @Override
     protected Vec3d getControlledMovementInput(PlayerEntity rider, Vec3d movementInput) {
+        forwardSpeed = 0;
+        if (isMoveForwardPressed()) forwardSpeed = 1;
+        if (isMoveBackPressed()) forwardSpeed = -1;
+
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
         //The acceleration logic. Looks like a mess, but it's still understandable I guess
         int accelerationDuration = getAccelerationDuration();
@@ -146,7 +152,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
         if (!isFlying()) {
-            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+            double landSpeed = forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
             if (isSprintPressed()) setSprinting(true);
             if (isMovingBackwards() && (isMoveBackPressed() || isMoveBackPressed())) setSprinting(false);
             setRotation(rider);
@@ -166,16 +172,14 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
             return new Vec3d(0, movementInput.y - 0.001, landSpeed);
         } else {
-            double flyingSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.FLYING_SPEED);
+            double flyingSpeed = forwardSpeed * getAttributeValue(EntityAttributes.FLYING_SPEED);
             float pitchSpeed = 2;
             setRotation(rider);
             float verticalSpeed = 0F;
-            setGliding(accelerationModifier > 1);
 
             if (isJumpPressed()) {
                 verticalSpeed = getVerticalSpeed();
                 setTiltState((byte) 1);
-                setGliding(false);
                 if (!isMovingBackwards() && isMoving() && getPitch() > -getPitchLimit() && !isDownPressed())
                     setPitch(getPitch() - pitchSpeed);
             }
@@ -195,7 +199,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
                 if (currentVerticalSpeed != 0) verticalSpeed = currentVerticalSpeed * -0.5F;
                 setTiltState((byte) 0);
             }
-
             return new Vec3d(0, verticalSpeed * MathHelper.clamp(accelerationModifier, 0.25, 1.5), flyingSpeed * accelerationModifier * 2.5F);
         }
     }
@@ -213,10 +216,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     public void startToFly() {
         jump();
-        setFlying(true);
-        setAccelerationDuration(getAccelerationDuration() / 10);
-        if (getWorld() instanceof ServerWorld world)
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) LiftoffParticlesS2CPacket.send(player, this);
+        if (getWorld() instanceof ServerWorld world) {
+            setFlying(true);
+            setAccelerationDuration(getAccelerationDuration() / 10);
+            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos()))
+                LiftoffParticlesS2CPacket.send(player, this);
+
+        }
     }
 
     @Override

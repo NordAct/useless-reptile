@@ -224,9 +224,13 @@ public class MoleclawEntity extends URRideableDragonEntity {
         setMovementSpeed(speed * getSpeedModifier());
 
         if (canBeControlledByRider()) {
+            forwardSpeed = 0;
+            if (isMoveForwardPressed()) forwardSpeed = 1;
+            if (isMoveBackPressed()) forwardSpeed = -1;
+
             PlayerEntity rider = (PlayerEntity) getControllingPassenger();
 
-            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+            double landSpeed = forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
 
             if (isSprintPressed()) setSprinting(true);
             setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));

@@ -37,13 +37,11 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     protected void initDataTracker(DataTracker.Builder builder) {
         super.initDataTracker(builder);
-        builder.add(GLIDING, false);
         builder.add(FLYING, false);
         builder.add(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
         builder.add(IN_AIR_TIMER, 0);
     }
 
-    public static final TrackedData<Boolean> GLIDING = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Boolean> FLYING = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Byte> TILT_STATE = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BYTE);
     public static final TrackedData<Integer> IN_AIR_TIMER = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -51,9 +49,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     public int getInAirTimer() {return dataTracker.get(IN_AIR_TIMER);}
     public void setInAirTimer(int state) {dataTracker.set(IN_AIR_TIMER, state);}
-
-    public boolean isGliding() {return dataTracker.get(GLIDING);}
-    public void setGliding(boolean state) {dataTracker.set(GLIDING, state);}
 
     public boolean isFlying() {return dataTracker.get(FLYING);}
     public void setFlying (boolean state) {dataTracker.set(FLYING, state);}
@@ -100,10 +95,13 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     public void startToFly() {
         jump();
-        setFlying(true);
-        setAccelerationDuration(getAccelerationDuration() / 10);
-        if (getWorld() instanceof ServerWorld world)
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) LiftoffParticlesS2CPacket.send(player, this);
+        if (getWorld() instanceof ServerWorld world) {
+            setFlying(true);
+            setAccelerationDuration(getAccelerationDuration() / 10);
+            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos()))
+                LiftoffParticlesS2CPacket.send(player, this);
+
+        }
     }
 
     public int getMaxInAirTimer() {
@@ -117,7 +115,8 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
         if (getWorld().isClient()) {
             glideTimer--;
-            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
+            float accelerationMod = getAccelerationDuration()/getMaxAccelerationDuration();
+            shouldGlide = accelerationMod > 1 || glideTimer < 0 && accelerationMod > 0.9;
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();

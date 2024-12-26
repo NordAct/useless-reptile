@@ -455,7 +455,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         //т.к. у игрока поворот измеряется от -180 до 180, а у других энтити от 0 до 360, то приведенная ниже дичь необходима
         //due player having rotation from -180 to 180 while all other entities have it from 0 to 360, this check is necessary
         if (destinationYaw < 0) destinationYaw += 360;
-        float yawDiff = currentYaw - destinationYaw;
+        float yawDiff = (currentYaw - destinationYaw) % 360;
         if (yawDiff != 0) {
             if (yawDiff > 180) yawDiff -= 360;
             else if (yawDiff < -180) yawDiff +=360;
