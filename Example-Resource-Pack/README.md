@@ -15,7 +15,7 @@ Showcases how to add custom variants and override equipment models per variant a
 File name - name of the variant. Variant file must be placed in folder named after dragon's id, which must be in `dragon_model_data` folder.
 Swamp Wyvern and Moleclaw variants showcase how to use `equipment_model_overrides` and add glowing layer to the model of both equipment and dragon itself. River Pikehorn variant shows how to add variant that only has different texture from default ones.
 
-Equipment model data must go into `equipment_model_data` folder if it's defined for all variants. File should be named after dragon's id (i.e. `moleclaw.json` for Moleclaw).
+Equipment model data must go into `dragon_equipment_model_data` folder if it's defined for all variants. File should be named after dragon's id (i.e. `moleclaw.json` for Moleclaw).
 Moleclaw shows how to add equipment models for other items than standard equipment items (aka saddle and armor). But in order for that to work correctly you have to install example data pack too since by default you can't equip those items on Moleclaw.
 
 Fields for dragon model data:
