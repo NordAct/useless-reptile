@@ -4,7 +4,6 @@ accessible field net/minecraft/client/resource/ResourceReloadLogger$ReloadState 
 accessible field net/minecraft/entity/Entity CUSTOM_NAME Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/entity/mob/MobEntity getAttackBox ()Lnet/minecraft/util/math/Box;
 accessible method net/minecraft/data/recipe/ShapedRecipeJsonBuilder <init> (Lnet/minecraft/registry/RegistryEntryLookup;Lnet/minecraft/recipe/book/RecipeCategory;Lnet/minecraft/item/ItemConvertible;I)V
-accessible method net/minecraft/data/recipe/ShapedRecipeJsonBuilder validate (Lnet/minecraft/util/Identifier;)Lnet/minecraft/recipe/RawShapedRecipe;
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder category Lnet/minecraft/recipe/book/RecipeCategory;
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder output Lnet/minecraft/item/Item;
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder count I
@@ -19,4 +18,3 @@ accessible field net/minecraft/entity/Entity vehicle Lnet/minecraft/entity/Entit
 accessible method net/minecraft/entity/Entity couldAcceptPassenger ()Z
 accessible method net/minecraft/entity/Entity canAddPassenger (Lnet/minecraft/entity/Entity;)Z
 accessible method net/minecraft/entity/Entity addPassenger (Lnet/minecraft/entity/Entity;)V
-accessible method net/minecraft/entity/Entity streamIntoPassengers ()Ljava/util/stream/Stream;

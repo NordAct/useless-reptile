@@ -1,3 +1,1 @@
-- 1.21.4 port
-- Changed dragon equipment directory from `dragon_model_data/equipment_model_data` to `dragon_equipment_model_data`
-- Some other changes in asset structure to accompany changes within game from 1.21.1 to 1.21.4
+- Fix crash with Lithium installed
