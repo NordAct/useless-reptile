@@ -1,1 +1,3 @@
-- Fix crash with Lithium installed
+- Rideable dragons no longer spam key input packets from client, but rather only when any of inputs changed its state
+- Removed ugly hack to ensure that rideable dragon position is consistent across clients when in multiplayer (it just spammed packet that corrected position each tick when ridden, ik it's bad)
+- River Pikehorn is now removed with owner if it's on the owner's head when owner disconnects. And as well it will appear riding head of the owner on reconnect

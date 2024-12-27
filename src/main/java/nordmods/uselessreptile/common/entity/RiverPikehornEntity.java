@@ -208,19 +208,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             setFlying(true);
         }
         else setSwimming(false);
-
-        if (getVehicle() instanceof PlayerEntity player) {
-            getLookControl().setLockRotation(true);
-            if (getWorld().isClient()) {
-                prevYaw = getYaw();
-                setYaw(player.getYaw());
-                byte turnState = 0;
-                float diff = prevYaw - getYaw();
-                if (diff > 0) turnState = 1;
-                if (diff < 0) turnState = 2;
-                setTurningState(turnState);
-            }
-        } else getLookControl().setLockRotation(false);
     }
 
     @Override
@@ -275,9 +262,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             return ActionResult.SUCCESS;
         }
 
-        if (isTamed() && isOwner(player)) {
-            if (player.isSneaking() && itemStack.isEmpty()) startRiding(player);
-        }
         return super.interactMob(player, hand);
     }
 

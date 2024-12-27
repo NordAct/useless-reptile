@@ -343,12 +343,12 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         if (canBeControlledByRider()) {
             if (isFlying()) {
-                if (isSecondaryAttackPressed && getSpecialAttackCooldown() == 0) triggerShockwave();
+                if (isSecondaryAttackPressed() && getSpecialAttackCooldown() == 0) triggerShockwave();
             }
-            else if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
+            else if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) {
                 meleeAttack();
             }
-            if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) triggerShoot();
+            if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) triggerShoot();
         }
 
         updateThunderstormBonus();

@@ -9,7 +9,7 @@ import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.duck.HeadMountDragonOwner;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -23,23 +23,23 @@ public class HeadMountDragonFeatureRenderer extends FeatureRenderer<PlayerEntity
 
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, PlayerEntityRenderState state, float limbAngle, float limbDistance) {
-        if (state instanceof HeadMountDragonOwner owner && owner.getHeadMountDragon() instanceof URDragonEntity dragon) {
-            if (dragon.isInvisible()) return;
-            ON_HEAD.remove(dragon.getUuid());
+        if (state instanceof HeadMountDragonOwner owner && owner.getHeadMountDragon() instanceof HeadMountDragon dragon) {
+            if (dragon.asURDragon().isInvisible()) return;
+            ON_HEAD.remove(dragon.asURDragon().getUuid());
             matrices.push();
 
             ModelPart head = getContextModel().head;
             head.rotate(matrices);
 
             float scale = 1 / state.baseScale;
-            float offsetScale = dragon.getScale() / state.baseScale;
+            float offsetScale = dragon.asURDragon().getScale() / state.baseScale;
             matrices.translate(0, -0.2960000524520874 * offsetScale - 0.5 * (1 - offsetScale), 0);
             matrices.scale(-scale, -scale, scale);
 
-            RenderUtil.renderEntity(dragon, RenderUtil.getTickDelta(false), matrices, vertexConsumers, light);
+            RenderUtil.renderEntity(dragon.asURDragon(), RenderUtil.getTickDelta(false), matrices, vertexConsumers, light);
 
             matrices.pop();
-            ON_HEAD.add(dragon.getUuid());
+            ON_HEAD.add(dragon.asURDragon().getUuid());
         }
     }
 }

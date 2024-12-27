@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -14,7 +13,6 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Vec3d;
@@ -22,12 +20,8 @@ import net.minecraft.world.World;
 import nordmods.uselessreptile.client.init.URKeybinds;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
-import nordmods.uselessreptile.common.network.PositionSyncS2CPacket;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements RideableInventory {
-    public boolean isSecondaryAttackPressed = false;
-    public boolean isPrimaryAttackPressed = false;
-
     protected URRideableDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -40,6 +34,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         builder.add(JUMP_PRESSED, false);
         builder.add(MOVE_DOWN_PRESSED, false);
         builder.add(SPRINT_PRESSED, false);
+        builder.add(SECONDARY_ATTACK_PRESSED, false);
+        builder.add(PRIMARY_ATTACK_PRESSED, false);
     }
 
     public static final TrackedData<Boolean> MOVE_FORWARD_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -47,12 +43,16 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public static final TrackedData<Boolean> JUMP_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Boolean> MOVE_DOWN_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Boolean> SPRINT_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> SECONDARY_ATTACK_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> PRIMARY_ATTACK_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
-    public void updateInputs(boolean forward, boolean back, boolean jump, boolean down, boolean sprint) {
+    public void updateInputs(boolean forward, boolean back, boolean jump, boolean down, boolean isSecondaryAttackPressed, boolean isPrimaryAttackPressed, boolean sprint) {
         dataTracker.set(MOVE_FORWARD_PRESSED, forward);
         dataTracker.set(MOVE_BACK_PRESSED, back);
         dataTracker.set(JUMP_PRESSED, jump);
         dataTracker.set(MOVE_DOWN_PRESSED, down);
+        dataTracker.set(SECONDARY_ATTACK_PRESSED, isSecondaryAttackPressed);
+        dataTracker.set(PRIMARY_ATTACK_PRESSED, isPrimaryAttackPressed);
         dataTracker.set(SPRINT_PRESSED, sprint);
     }
 
@@ -61,6 +61,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public boolean isJumpPressed() {return dataTracker.get(JUMP_PRESSED);}
     public boolean isDownPressed() {return dataTracker.get(MOVE_DOWN_PRESSED);}
     public boolean isSprintPressed() {return dataTracker.get(SPRINT_PRESSED);}
+    public boolean isSecondaryAttackPressed() {return dataTracker.get(SECONDARY_ATTACK_PRESSED);}
+    public boolean isPrimaryAttackPressed() {return dataTracker.get(PRIMARY_ATTACK_PRESSED);}
 
     @Override
     public LivingEntity getControllingPassenger() {
@@ -86,43 +88,44 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
     @Override
     public boolean isLogicalSideForUpdatingMovement() {
-        if (canBeControlledByRider()) return true;
+        if (canBeControlledByRider()
+                && (getControllingPassenger() instanceof PlayerEntity player && player.isMainPlayer() || !getWorld().isClient())) return true;
         return this.canMoveVoluntarily();
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!canBeControlledByRider()) updateInputs(false, false, false, false, false);
+        if (!canBeControlledByRider()) updateInputs(false, false, false, false, false, false, false);
     }
 
     @Override
     protected void tickControlled(PlayerEntity rider, Vec3d movementInput) {
-        if (getWorld().isClient() && rider == MinecraftClient.getInstance().player) {
+        if (getWorld().isClient() && getControllingPassenger() instanceof PlayerEntity player && player.isMainPlayer()) {
             boolean isSprintPressed = MinecraftClient.getInstance().options.sprintKey.isPressed();
             boolean isMoveForwardPressed = MinecraftClient.getInstance().options.forwardKey.isPressed();
             boolean isJumpPressed = MinecraftClient.getInstance().options.jumpKey.isPressed();
             boolean isMoveBackPressed = MinecraftClient.getInstance().options.backKey.isPressed();
             boolean isDownPressed = URKeybinds.flyDownKey.isUnbound() ? isSprintPressed : URKeybinds.flyDownKey.isPressed();
-            isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
-            isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
+            boolean isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
+            boolean isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
 
-            ClientPlayNetworking.send(
-                    new KeyInputC2SPacket(isJumpPressed,
-                            isMoveForwardPressed,
-                            isMoveBackPressed,
-                            isSprintPressed,
-                            isSecondaryAttackPressed,
-                            isPrimaryAttackPressed,
-                            isDownPressed,
-                            getId()));
-        }
-        if (getWorld() instanceof ServerWorld world) {
-            setHomePoint(getBlockPos());
-            //05.10.24 - I'm done trying to fix this desync. I give no clue why it even happens
-            for (ServerPlayerEntity player : PlayerLookup.around(world, getBlockPos(), 512)) {
-                if (player.getVehicle() == this) continue;
-                PositionSyncS2CPacket.send(player, this);
+            if (isSprintPressed != isSprintPressed()
+                    || isMoveForwardPressed != isMoveForwardPressed()
+                    || isJumpPressed != isJumpPressed()
+                    || isMoveBackPressed != isMoveBackPressed()
+                    || isDownPressed != isDownPressed()
+                    || isSecondaryAttackPressed != isSecondaryAttackPressed()
+                    || isPrimaryAttackPressed != isPrimaryAttackPressed()) {
+                ClientPlayNetworking.send(
+                        new KeyInputC2SPacket(isJumpPressed,
+                                isMoveForwardPressed,
+                                isMoveBackPressed,
+                                isSprintPressed,
+                                isSecondaryAttackPressed,
+                                isPrimaryAttackPressed,
+                                isDownPressed,
+                                getId()));
             }
         }
         super.tickControlled(rider, movementInput);

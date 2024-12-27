@@ -40,13 +40,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     protected void initDataTracker(DataTracker.Builder builder) {
         super.initDataTracker(builder);
-        builder.add(GLIDING, false);
         builder.add(FLYING, false);
         builder.add(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
         builder.add(IN_AIR_TIMER, 0);
     }
-
-    public static final TrackedData<Boolean> GLIDING = DataTracker.registerData(URRideableFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Boolean> FLYING = DataTracker.registerData(URRideableFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Byte> TILT_STATE = DataTracker.registerData(URRideableFlyingDragonEntity.class, TrackedDataHandlerRegistry.BYTE);
     public static final TrackedData<Integer> IN_AIR_TIMER = DataTracker.registerData(URRideableFlyingDragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -80,8 +77,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
         if (getWorld().isClient()) {
             glideTimer--;
-            float accelerationMod = getAccelerationDuration()/getMaxAccelerationDuration();
-            shouldGlide = accelerationMod > 1 || glideTimer < 0 && accelerationMod > 0.9;
+            float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
+            shouldGlide = accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9;
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();
@@ -104,7 +101,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         if (canBeControlledByRider()) {
             LivingEntity rider = getControllingPassenger();
             if (rider instanceof PlayerEntity player) {
-                if (isDownPressed() && isPrimaryAttackPressed)
+                if (isDownPressed() && isPrimaryAttackPressed())
                     getWorld();
                 super.travel(getControlledMovementInput(player, movementInput));
             }
@@ -120,11 +117,20 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         }
     }
 
-    @Override
-    protected Vec3d getControlledMovementInput(PlayerEntity rider, Vec3d movementInput) {
+    public Vec3d updateMovementInput(PlayerEntity rider, Vec3d movementInput) {
         forwardSpeed = 0;
         if (isMoveForwardPressed()) forwardSpeed = 1;
         if (isMoveBackPressed()) forwardSpeed = -1;
+
+        if ((!isMoving() || isFlying())) setSprinting(false);
+        if (isSprinting()) setSpeedMod(1.5f);
+        else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
+        else setSpeedMod(1f);
+        float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+        setMovementSpeed(speed * getSpeedModifier());
+
+        if (isOnGround()) setFlying(false);
+        setNoGravity(isFlying());
 
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
         //The acceleration logic. Looks like a mess, but it's still understandable I guess
@@ -216,13 +222,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     public void startToFly() {
         jump();
-        if (getWorld() instanceof ServerWorld world) {
-            setFlying(true);
-            setAccelerationDuration(getAccelerationDuration() / 10);
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos()))
-                LiftoffParticlesS2CPacket.send(player, this);
-
-        }
+        setFlying(true);
+        setAccelerationDuration(getAccelerationDuration() / 10);
+        if (getWorld() instanceof ServerWorld world)
+            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) LiftoffParticlesS2CPacket.send(player, this);
     }
 
     @Override

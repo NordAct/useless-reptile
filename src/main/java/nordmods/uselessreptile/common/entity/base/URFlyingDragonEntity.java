@@ -95,13 +95,10 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     public void startToFly() {
         jump();
-        if (getWorld() instanceof ServerWorld world) {
-            setFlying(true);
-            setAccelerationDuration(getAccelerationDuration() / 10);
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos()))
-                LiftoffParticlesS2CPacket.send(player, this);
-
-        }
+        setFlying(true);
+        setAccelerationDuration(getAccelerationDuration() / 10);
+        if (getWorld() instanceof ServerWorld world)
+            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) LiftoffParticlesS2CPacket.send(player, this);
     }
 
     public int getMaxInAirTimer() {

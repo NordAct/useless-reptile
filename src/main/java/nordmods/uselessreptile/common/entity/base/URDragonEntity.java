@@ -31,6 +31,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.NamedScreenHandlerFactory;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -67,6 +68,7 @@ import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawn;
 import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawnUtil;
+import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -382,6 +384,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         }
 
         if (isTamed() && isOwner(player)) {
+            if (this instanceof HeadMountDragon && player.isSneaking() && itemStack.isEmpty()) startRiding(player);
+
             if (itemStack.getItem() instanceof PotionItem potionItem && player.isSneaking()) {
                 DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(player, itemStack);
                 potionItem.finishUsing(itemStack, getWorld(), this);
@@ -415,6 +419,27 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             }
         }
         return ActionResult.PASS;
+    }
+
+    @Override
+    public boolean startRiding(Entity entity, boolean force) {
+        boolean result = super.startRiding(entity, force);
+        if (this instanceof HeadMountDragon && result && entity instanceof HeadMountDragonOwner owner) {
+            NbtCompound nbtCompound = new NbtCompound();
+            saveSelfNbt(nbtCompound);
+            owner.setHeadMountDragon(nbtCompound);
+            setPortalCooldown(0);
+        }
+        return result;
+    }
+
+    @Override
+    public void stopRiding() {
+        if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner) {
+            if (owner instanceof ServerPlayerEntity player && player.isDisconnected()) return;
+            owner.setHeadMountDragon(new NbtCompound());
+        }
+        super.stopRiding();
     }
 
     protected boolean isInteractableItem(ItemStack itemStack) {
@@ -572,6 +597,22 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (ticksUntilHeal > -1 && --healTimer <= 0) {
             heal(1);
             healTimer = getTicksUntilHeal();
+        }
+
+        if (this instanceof HeadMountDragon) {
+            if (getVehicle() instanceof PlayerEntity player) {
+                if (!player.isAlive()) stopRiding();
+                getLookControl().setLockRotation(true);
+                if (getWorld().isClient()) {
+                    prevYaw = getYaw();
+                    setYaw(player.getYaw());
+                    byte turnState = 0;
+                    float diff = prevYaw - getYaw();
+                    if (diff > 0) turnState = 1;
+                    if (diff < 0) turnState = 2;
+                    setTurningState(turnState);
+                }
+            } else getLookControl().setLockRotation(false);
         }
     }
 
@@ -815,6 +856,18 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (itemStack.getComponents().contains(DataComponentTypes.CONSUMABLE))
             itemStack.getComponents().get(DataComponentTypes.CONSUMABLE).finishConsumption(getWorld(), this, itemStack);
         return itemStack;
+    }
+
+    @Override
+    public boolean shouldSave() {
+        if (this instanceof HeadMountDragon && getVehicle() instanceof PlayerEntity) return false;
+        return super.shouldSave();
+    }
+
+    @Override
+    public void remove(RemovalReason reason) {
+        super.remove(reason);
+        if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner && reason.shouldDestroy()) owner.setHeadMountDragon(new NbtCompound());
     }
 
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
