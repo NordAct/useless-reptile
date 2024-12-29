@@ -13,10 +13,10 @@ import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class HeadMountDragnFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
+public class HeadMountDragonFeatureRenderer extends FeatureRenderer<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> {
     public static final HashSet<UUID> ON_HEAD = new HashSet<>();
 
-    public HeadMountDragnFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
+    public HeadMountDragonFeatureRenderer(FeatureRendererContext<AbstractClientPlayerEntity, PlayerEntityModel<AbstractClientPlayerEntity>> context) {
         super(context);
     }
 

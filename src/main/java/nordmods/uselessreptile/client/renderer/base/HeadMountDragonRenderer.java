@@ -7,7 +7,7 @@ import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.RotationAxis;
-import nordmods.uselessreptile.client.renderer.special.HeadMountDragnFeatureRenderer;
+import nordmods.uselessreptile.client.renderer.special.HeadMountDragonFeatureRenderer;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
@@ -19,7 +19,7 @@ public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMou
     @Override
     public void render(T entity, float entityYaw, float partialTick, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
         if (entity.getVehicle() instanceof PlayerEntity player) {
-            if (HeadMountDragnFeatureRenderer.ON_HEAD.contains(entity.getUuid())) return;
+            if (HeadMountDragonFeatureRenderer.ON_HEAD.contains(entity.getUuid())) return;
             else if (MinecraftClient.getInstance().player == player && MinecraftClient.getInstance().options.getPerspective().isFirstPerson()) return;
         }
         super.render(entity, entityYaw, partialTick, poseStack, bufferSource, packedLight);

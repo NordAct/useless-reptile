@@ -5,7 +5,7 @@ import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.PlayerEntityRenderer;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import nordmods.uselessreptile.client.renderer.special.HeadMountDragnFeatureRenderer;
+import nordmods.uselessreptile.client.renderer.special.HeadMountDragonFeatureRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,6 +20,6 @@ public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractC
 
     @Inject(method = "<init>(Lnet/minecraft/client/render/entity/EntityRendererFactory$Context;Z)V", at = @At("TAIL"))
     private void addPikehornOnHead(EntityRendererFactory.Context ctx, boolean slim, CallbackInfo ci) {
-        addFeature(new HeadMountDragnFeatureRenderer(this));
+        addFeature(new HeadMountDragonFeatureRenderer(this));
     }
 }
