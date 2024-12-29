@@ -8,7 +8,7 @@ import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import nordmods.uselessreptile.client.renderer.layers.DragonPassengerLayer;
-import nordmods.uselessreptile.client.util.duck.DragonRider;
+import nordmods.uselessreptile.client.util.duck.DragonPassengerOwner;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +26,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
 
     @Inject(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "HEAD"), cancellable = true)
     private void cancelRender(S livingEntityRenderState, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
-        if (livingEntityRenderState instanceof DragonRider owner && owner.isRidingDragon())
+        if (livingEntityRenderState instanceof DragonPassengerOwner owner && owner.isRidingDragon())
             if (DragonPassengerLayer.PASSENGERS.contains(owner.getUUID())) ci.cancel();
     }
 
@@ -36,13 +36,13 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
                     from = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;isInPose(Lnet/minecraft/entity/EntityPose;)Z"),
                     to = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lorg/joml/Quaternionf;)V")))
     private Quaternionf undoRot(Quaternionf quaternion, @Local(ordinal = 0, argsOnly = true) S state) {
-        if (!(state instanceof DragonRider owner && owner.isRidingDragon())) return quaternion;
+        if (!(state instanceof DragonPassengerOwner owner && owner.isRidingDragon())) return quaternion;
         return EMPTY;
     }
 
     @Inject(method = "updateRenderState(Lnet/minecraft/entity/LivingEntity;Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;F)V", at = @At("TAIL"))
     private void checkForHeadMountDragon(T livingEntity, S livingEntityRenderState, float f, CallbackInfo ci) {
-        if (!(livingEntityRenderState instanceof DragonRider owner)) return;
+        if (!(livingEntityRenderState instanceof DragonPassengerOwner owner)) return;
         if (livingEntity.getVehicle() instanceof URRideableDragonEntity) {
             owner.setRidingDragon(true);
             owner.setUUID(livingEntity.getUuid());

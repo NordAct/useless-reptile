@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "common.AbstractBlockMixin",
+    "common.EntityMixin",
     "common.ItemMixin",
     "common.ItemStackMixin",
     "common.LightningEntityMixin",
@@ -15,7 +16,6 @@
     "common.SpawnGroupMixin"
   ],
   "client": [
-    "client.StatusEffectsDisplayMixin",
     "client.CameraMixin",
     "client.EntityMixin",
     "client.EntityRenderDispathcerMixin",
@@ -26,7 +26,8 @@
     "client.LivingEntityRenderStateMixin",
     "client.PlayerEntityRenderStateMixin",
     "client.PlayerRendererMixin",
-    "client.ResourceReloadLoggerMixin"
+    "client.ResourceReloadLoggerMixin",
+    "client.StatusEffectsDisplayMixin"
   ],
   "injectors": {
     "defaultRequire": 1

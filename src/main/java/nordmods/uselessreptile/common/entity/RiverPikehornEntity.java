@@ -265,29 +265,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         return super.interactMob(player, hand);
     }
 
-    @Override //todo temporary fix until better solution found
-    public boolean startRiding(Entity entity, boolean force) {
-        if (!(entity instanceof PlayerEntity)) return super.startRiding(entity, force);
-        if (entity == vehicle) return false;
-        if (!entity.couldAcceptPassenger()) return false;
-
-        for (Entity entity2 = entity; entity2.vehicle != null; entity2 = entity2.vehicle) {
-            if (entity2.vehicle == this) return false;
-        }
-
-        if (force || canStartRiding(entity) && entity.canAddPassenger(this)) {
-            if (hasVehicle()) stopRiding();
-
-            this.setPose(EntityPose.STANDING);
-            this.vehicle = entity;
-            this.vehicle.addPassenger(this);
-            if (isLeashed()) detachLeash();
-            return true;
-        }
-
-        return false;
-    }
-
     public void attackMelee(LivingEntity target) {
         if (!(getWorld() instanceof ServerWorld world)) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());

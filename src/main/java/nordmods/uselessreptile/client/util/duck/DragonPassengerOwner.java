@@ -5,7 +5,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 //yes, that's a hack around whatever mojang wanted to do with entity rendering
-public interface DragonRider {
+public interface DragonPassengerOwner {
     boolean isRidingDragon();
     void setRidingDragon(boolean state);
     @Nullable
