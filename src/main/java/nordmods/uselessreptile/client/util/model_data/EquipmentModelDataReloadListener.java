@@ -17,7 +17,7 @@ import java.util.Map;
 
 public class EquipmentModelDataReloadListener extends JsonDataLoader implements IdentifiableResourceReloadListener {
     public EquipmentModelDataReloadListener() {
-        super(new GsonBuilder().create(), "dragon_model_data/equipment_model_data");
+        super(new GsonBuilder().create(), "dragon_equipment_model_data");
     }
 
     @Override
@@ -32,7 +32,7 @@ public class EquipmentModelDataReloadListener extends JsonDataLoader implements 
 
     @Override
     public Identifier getFabricId() {
-        return UselessReptile.id("dragon_model_data/equipment_model_data");
+        return UselessReptile.id("dragon_equipment_model_data");
     }
 
     public static void init () {

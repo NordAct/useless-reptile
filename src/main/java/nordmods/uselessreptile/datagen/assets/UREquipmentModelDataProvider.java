@@ -30,7 +30,7 @@ public class UREquipmentModelDataProvider implements DataProvider {
 
     public UREquipmentModelDataProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.RESOURCE_PACK, "dragon_model_data/equipment_model_data");
+        this.pathResolver = output.getResolver(DataOutput.OutputType.RESOURCE_PACK, "dragon_equipment_model_data");
         this.registryLookupFuture = registryLookupFuture;
     }
 

@@ -40,13 +40,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     protected void initDataTracker(DataTracker.Builder builder) {
         super.initDataTracker(builder);
-        builder.add(GLIDING, false);
         builder.add(FLYING, false);
         builder.add(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
         builder.add(IN_AIR_TIMER, 0);
     }
-
-    public static final TrackedData<Boolean> GLIDING = DataTracker.registerData(URRideableFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Boolean> FLYING = DataTracker.registerData(URRideableFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Byte> TILT_STATE = DataTracker.registerData(URRideableFlyingDragonEntity.class, TrackedDataHandlerRegistry.BYTE);
     public static final TrackedData<Integer> IN_AIR_TIMER = DataTracker.registerData(URRideableFlyingDragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
@@ -54,9 +51,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     public int getInAirTimer() {return dataTracker.get(IN_AIR_TIMER);}
     public void setInAirTimer(int state) {dataTracker.set(IN_AIR_TIMER, state);}
-
-    public boolean isGliding() {return dataTracker.get(GLIDING);}
-    public void setGliding(boolean state) {dataTracker.set(GLIDING, state);}
 
     public boolean isFlying() {return dataTracker.get(FLYING);}
     public void setFlying (boolean state) {dataTracker.set(FLYING, state);}
@@ -83,7 +77,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
         if (getWorld().isClient()) {
             glideTimer--;
-            shouldGlide = glideTimer < 0 && getAccelerationDuration()/getMaxAccelerationDuration() > 0.9;
+            float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
+            shouldGlide = accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9;
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();
@@ -118,8 +113,17 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         }
     }
 
-    @Override
-    protected Vec3d getControlledMovementInput(PlayerEntity rider, Vec3d movementInput) {
+    public Vec3d updateMovementInput(PlayerEntity rider, Vec3d movementInput) {
+        if ((!isMoving() || isFlying())) setSprinting(false);
+        if (isSprinting()) setSpeedMod(1.5f);
+        else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
+        else setSpeedMod(1f);
+        float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        setMovementSpeed(speed * getSpeedModifier());
+
+        if (isOnGround()) setFlying(false);
+        setNoGravity(isFlying());
+
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
         //The acceleration logic. Looks like a mess, but it's still understandable I guess
         int accelerationDuration = getAccelerationDuration();
@@ -170,12 +174,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             float pitchSpeed = 2;
             setRotation(rider);
             float verticalSpeed = 0F;
-            setGliding(accelerationModifier > 1);
 
             if (isJumpPressed()) {
                 verticalSpeed = getVerticalSpeed();
                 setTiltState((byte) 1);
-                setGliding(false);
                 if (!isMovingBackwards() && isMoving() && getPitch() > -getPitchLimit() && !isDownPressed())
                     setPitch(getPitch() - pitchSpeed);
             }

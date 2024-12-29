@@ -7,6 +7,5 @@ public class URPacketEvents {
         LiftoffParticlesPacket.init();
         GUIEntityToRenderPacket.init();
         SyncLightningBreathRotationsPacket.init();
-        PositionSyncPacket.init();
     }
 }

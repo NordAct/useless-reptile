@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.mixin.common;
 
 import net.minecraft.server.world.ServerWorld;
-import nordmods.uselessreptile.common.util.LightningChaserSpawnTimer;
+import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 

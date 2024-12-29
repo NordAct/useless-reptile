@@ -155,7 +155,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 if (isMovingBackwards()) return loopAnim("fly.back", event);
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
-                if (isGliding() || shouldGlide) return loopAnim("fly.straight.glide", event);
+                if (shouldGlide) return loopAnim("fly.straight.glide", event);
                 if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f && !isClientSpectator()) return loopAnim("fly.straight.heavy", event);
                 return loopAnim("fly.straight", event);
             }
@@ -236,11 +236,11 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         setHitboxModifiers(dHeight, dWidth, dMountedOffset);
 
         if (canBeControlledByRider()) {
-            if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) {
+            if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) {
                 LivingEntity target = getWorld().getClosestEntity(LivingEntity.class, TargetPredicate.DEFAULT, this, getX(), getY(), getZ(), getAttackBox());
                 meleeAttack(target);
             }
-            if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) shoot();
+            if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) shoot();
         }
 
         updateChildParts();

@@ -26,7 +26,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
@@ -187,8 +186,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
         tryPanic();
 
         if (canBeControlledByRider()) {
-            if (isSecondaryAttackPressed && getSecondaryAttackCooldown() == 0) scheduleNormalAttack();
-            if (isPrimaryAttackPressed && getPrimaryAttackCooldown() == 0) scheduleStrongAttack();
+            if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) scheduleNormalAttack();
+            if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) scheduleStrongAttack();
         }
 
         if (attackDelay > 0) {
@@ -209,35 +208,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
     @Override
     public boolean isSaddleItem(ItemStack itemStack) {
         return itemStack.isIn(URTags.MOLECLAW_SADDLES);
-    }
-
-    @Override
-    public void travel(Vec3d movementInput) {
-        if (!isAlive()) return;
-
-        if (!isMoving()) setSprinting(false);
-        if (isSprinting()) setSpeedMod(1.1f);
-        else setSpeedMod(1f);
-        if (isMovingBackwards()) setSpeedMod(0.6f);
-        float speed = (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-        setMovementSpeed(speed * getSpeedModifier());
-
-        if (canBeControlledByRider()) {
-            PlayerEntity rider = (PlayerEntity) getControllingPassenger();
-
-            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-
-            if (isSprintPressed()) setSprinting(true);
-            setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
-            if (isMovingBackwards()) setSprinting(false);
-            setRotation(rider);
-            setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
-            if (isJumpPressed() && isOnGround()) jump();
-            //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
-            super.travel(new Vec3d(0, movementInput.y  - 0.001, landSpeed));
-        } else {
-            super.travel(movementInput);
-        }
     }
 
     @Override

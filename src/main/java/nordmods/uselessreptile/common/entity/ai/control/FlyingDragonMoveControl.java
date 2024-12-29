@@ -41,7 +41,6 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         if (accelerationDuration < 0) accelerationDuration = 0;
         float accelerationModifier = (float)accelerationDuration/entity.getMaxAccelerationDuration();
         if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
-        entity.setGliding(accelerationModifier > 1);
         entity.setMovingBackwards(false);
         entity.setTiltState((byte) 0);
         float verticalAccelerationModifier = MathHelper.clamp(accelerationModifier, 0.25f, 1.5f);

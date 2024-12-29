@@ -35,6 +35,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAtta
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFluteCallGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFollowGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
+import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.init.*;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +48,7 @@ import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import java.util.function.BiConsumer;
 
-public class RiverPikehornEntity extends URFlyingDragonEntity {
+public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMountDragon {
     private final int huntCooldown = 1200;
     private int huntTimer = getRandom().nextInt(huntCooldown);
     public boolean forceTargetInWater = false;
@@ -111,7 +112,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
             if (isMoving() || event.isMoving()) {
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.dive", event);
-                if (isGliding() || shouldGlide) return loopAnim("fly.glide", event);
+                if (shouldGlide) return loopAnim("fly.glide", event);
                 return loopAnim("fly.straight", event);
             }
             event.getController().setAnimationSpeed(Math.max(animationSpeed, 1));
@@ -204,19 +205,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
             setFlying(true);
         }
         else setSwimming(false);
-
-        if (getVehicle() instanceof PlayerEntity player) {
-            getLookControl().setLockRotation(true);
-            if (getWorld().isClient()) {
-                prevYaw = getYaw();
-                setYaw(player.getYaw());
-                byte turnState = 0;
-                float diff = prevYaw - getYaw();
-                if (diff > 0) turnState = 1;
-                if (diff < 0) turnState = 2;
-                setTurningState(turnState);
-            }
-        } else getLookControl().setLockRotation(false);
     }
 
     @Override
@@ -271,9 +259,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity {
             return ActionResult.SUCCESS;
         }
 
-        if (isTamed() && isOwner(player)) {
-            if (player.isSneaking() && itemStack.isEmpty()) startRiding(player);
-        }
         return super.interactMob(player, hand);
     }
 

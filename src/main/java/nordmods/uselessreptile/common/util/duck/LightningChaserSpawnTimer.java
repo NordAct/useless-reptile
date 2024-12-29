@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.util;
+package nordmods.uselessreptile.common.util.duck;
 
 public interface LightningChaserSpawnTimer {
     int useless_reptile$getTimer();

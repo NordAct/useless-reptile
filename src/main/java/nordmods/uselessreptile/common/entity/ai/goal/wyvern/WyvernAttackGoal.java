@@ -60,7 +60,6 @@ public class WyvernAttackGoal extends Goal {
             return;
         }
         entity.setSprinting(true);
-        float yawChange = entity.getRotationSpeed();
         entity.getLookControl().lookAt(target);
         double attackDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
         double distance = entity.squaredDistanceTo(target);
@@ -68,8 +67,7 @@ public class WyvernAttackGoal extends Goal {
         boolean doesCollide = entity.doesCollide(entity.getAttackBox(), target.getBoundingBox());
 
         if (!doesCollide && entity.getPrimaryAttackCooldown() == 0 && (distance > attackDistance * 4 || !target.isOnGround() || distance < attackDistance && entity.getY() - target.getY() >= 1)) {
-            entity.getLookControl().lookAt(target);
-            entity.shoot();
+            if (entity.getLookControl().isLookingAtTarget()) entity.shoot();
         }
 
         if (entity.getSecondaryAttackCooldown() > 0) return;

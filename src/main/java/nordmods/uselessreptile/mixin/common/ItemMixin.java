@@ -12,7 +12,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Colors;
 import net.minecraft.util.Language;
 import nordmods.uselessreptile.client.config.URClientConfig;
-import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
+import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.event.DragonEquipmentTooltipEntryEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -48,7 +49,7 @@ public abstract class ItemMixin {
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
     private void putDragonAssOff(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
         PlayerEntity player = context.getPlayer();
-        if (player != null && player.isSneaking() && player.getFirstPassenger() instanceof RiverPikehornEntity dragon ) {
+        if (player != null && player.isSneaking() && player.getFirstPassenger() instanceof HeadMountDragon headMountDragon && headMountDragon instanceof URDragonEntity dragon) {
             dragon.stopRiding();
             dragon.setPosition(context.getBlockPos().up().toCenterPos());
             cir.setReturnValue(ActionResult.SUCCESS_NO_ITEM_USED);
