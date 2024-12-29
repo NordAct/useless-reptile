@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 public class DragonEquipmentItem extends Item {
 
     public DragonEquipmentItem(Supplier<AttributeModifiersComponent> dragonEquipmentAttributes, Settings settings) {
-        super(settings);
+        super(settings.attributeModifiers(dragonEquipmentAttributes.get()));
     }
 
     public static Identifier equipmentModifierID(EquipmentSlot equipmentSlot) {
