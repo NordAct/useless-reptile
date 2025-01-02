@@ -185,19 +185,19 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         if (getVehicle() instanceof PlayerEntity) setHitboxModifiers(0.7f, 0.6f, 0);
         else setHitboxModifiers(0.7f, 0.8f, 0);
 
-        dropLootToOwner();
-
-        if (!isTamed()) {
+        if (!isTamed() && !getWorld().isClient()) {
             if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
 
             ItemStack itemStack = getMainHandStack();
-            if (isHunting() && !itemStack.isEmpty() && --eatTimer <= 0) {
+            if (!itemStack.isEmpty() && --eatTimer <= 0) {
                 if (isFavoriteFood(itemStack)) {
-                    consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT);
                     heal(getHealthRegenerationFromFood());
+                    equipStack(EquipmentSlot.MAINHAND, consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
                 } else dropStack(itemStack);
                 stopHunt();
             }
+
+            getEquippedStack(EquipmentSlot.MAINHAND);
         }
         setSpeedMod(isInsideWaterOrBubbleColumn() ? 0.5f : 1);
         if (isInsideWaterOrBubbleColumn()) {
@@ -205,6 +205,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             setFlying(true);
         }
         else setSwimming(false);
+
+        dropLootToOwner();
     }
 
     @Override
@@ -300,7 +302,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     }
 
     private void dropLootToOwner() {
-        if (!isTamed() || !isOwnerClose()) return;
+        if (!isTamed() || !isOwnerClose() || getWorld().isClient()) return;
         ItemStack stack = getEquippedStack(EquipmentSlot.MAINHAND).copy();
         if (!stack.isEmpty()) {
             dropStack(stack);
