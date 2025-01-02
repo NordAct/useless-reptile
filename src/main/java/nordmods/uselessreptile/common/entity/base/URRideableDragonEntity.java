@@ -6,6 +6,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.RideableInventory;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -15,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.client.init.URKeybinds;
@@ -97,6 +99,31 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public void tick() {
         super.tick();
         if (!canBeControlledByRider()) updateInputs(false, false, false, false, false, false, false);
+    }
+
+    public Vec3d updateMovementInput(PlayerEntity rider, Vec3d movementInput) {
+        if (!isMoving()) setSprinting(false);
+        if (isSprinting()) setSpeedMod(1.1f);
+        else setSpeedMod(1f);
+        if (isMovingBackwards()) setSpeedMod(0.6f);
+        float speed = (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+        setMovementSpeed(speed * getSpeedModifier());
+
+        double landSpeed = rider.forwardSpeed * speed;
+
+        if (isSprintPressed()) setSprinting(true);
+        setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
+        if (isMovingBackwards()) setSprinting(false);
+        setRotation(rider);
+        setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
+        if (isJumpPressed() && isOnGround()) jump();
+        //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
+        return new Vec3d(0, movementInput.y  - 0.001, landSpeed);
+    }
+
+    @Override
+    protected Vec3d getControlledMovementInput(PlayerEntity rider, Vec3d movementInput) {
+        return super.getControlledMovementInput(rider, updateMovementInput(rider, movementInput));
     }
 
     @Override

@@ -1,1 +1,1 @@
-- Fix attribute modifiers on armor not working
+- Fixed inability to control rideable dragons
