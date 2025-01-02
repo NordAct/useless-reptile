@@ -306,7 +306,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         if (!isTamed() || !isOwnerClose() || getWorld().isClient()) return;
         ItemStack stack = getEquippedStack(EquipmentSlot.MAINHAND).copy();
         if (!stack.isEmpty()) {
-            dropStack(stack);
+            ItemEntity item = dropStack(stack);
+            if (item != null) item.setVelocity(getOwner().getPos().subtract(getPos()).normalize().multiply(0.2));
             getEquippedStack(EquipmentSlot.MAINHAND).decrement(stack.getCount());
             setIsHunting(false);
         }
