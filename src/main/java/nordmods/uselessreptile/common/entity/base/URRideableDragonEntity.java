@@ -14,6 +14,7 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
@@ -96,9 +97,14 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     }
 
     @Override
-    public void tick() {
-        super.tick();
-        if (!canBeControlledByRider()) updateInputs(false, false, false, false, false, false, false);
+    public void travel(Vec3d movementInput) {
+        if (getWorld() instanceof ServerWorld) {
+            boolean hasRider = canBeControlledByRider();
+            getLookControl().setLockRotation(hasRider);
+            if (hasRider) setHomePoint(getBlockPos());
+            else updateInputs(false, false, false, false, false, false, false);
+        }
+        super.travel(movementInput);
     }
 
     public Vec3d updateMovementInput(PlayerEntity rider, Vec3d movementInput) {
