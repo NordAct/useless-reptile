@@ -95,7 +95,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
-        if (isOnGround()) setFlying(false);
+        if (!getWorld().isClient() && isOnGround()) setFlying(false);
         setNoGravity(isFlying());
 
         if (canBeControlledByRider()) {
@@ -121,7 +121,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
-        if (isOnGround()) setFlying(false);
+        if (!getWorld().isClient() && isOnGround()) setFlying(false);
         setNoGravity(isFlying());
 
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
@@ -215,10 +215,11 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     public void startToFly() {
         jump();
-        setFlying(true);
-        setAccelerationDuration(getAccelerationDuration() / 10);
-        if (getWorld() instanceof ServerWorld world)
+        if (getWorld() instanceof ServerWorld world) {
+            setAccelerationDuration(getAccelerationDuration() / 10);
+            setFlying(true);
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) LiftoffParticlesS2CPacket.send(player, this);
+        }
     }
 
     @Override

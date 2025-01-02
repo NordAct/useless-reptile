@@ -200,11 +200,12 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             getEquippedStack(EquipmentSlot.MAINHAND);
         }
         setSpeedMod(isInsideWaterOrBubbleColumn() ? 0.5f : 1);
-        if (isInsideWaterOrBubbleColumn()) {
-            setSwimming(true);
-            setFlying(true);
+        if (!getWorld().isClient()) {
+            if (isInsideWaterOrBubbleColumn()) {
+                setSwimming(true);
+                setFlying(true);
+            } else setSwimming(false);
         }
-        else setSwimming(false);
 
         dropLootToOwner();
     }
