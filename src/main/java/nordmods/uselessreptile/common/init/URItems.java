@@ -4,6 +4,7 @@ import com.google.common.base.Suppliers;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.component.ComponentType;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.AttributeModifierSlot;
 import net.minecraft.component.type.AttributeModifiersComponent;
 import net.minecraft.entity.EquipmentSlot;
@@ -166,7 +167,8 @@ public class URItems {
     private static Item.Settings createVortexHornItemSettings() {
         return new Item.Settings().maxCount(1)
                 .component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT)
-                .component(VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT);
+                .component(VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT)
+                .component(DataComponentTypes.INSTRUMENT, Registries.INSTRUMENT.getDefaultEntry().get());
     }
 }
 

@@ -138,7 +138,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
     }
 
     protected static void offerVortexHornRecipe(RecipeExporter exporter, ItemConvertible outputHorn, ItemConvertible inputHorn, @Nullable ItemConvertible inputMaterial) {
-        ShapedRecipeJsonBuilder builder = ShapedRecipeJsonBuilder.create(RecipeCategory.TOOLS, outputHorn)
+        VortexHornRecipeJsonBuilder builder = VortexHornRecipeJsonBuilder.create(RecipeCategory.TOOLS, outputHorn)
                 .input('R', Items.BREEZE_ROD)
                 .input('H', inputHorn);
 
