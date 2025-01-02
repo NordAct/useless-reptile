@@ -99,10 +99,11 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     @Override
     public void travel(Vec3d movementInput) {
         if (getWorld() instanceof ServerWorld) {
-            setHomePoint(getBlockPos());
-            if (!canBeControlledByRider()) updateInputs(false, false, false, false, false, false, false);
+            boolean hasRider = canBeControlledByRider();
+            getLookControl().setLockRotation(hasRider);
+            if (hasRider) setHomePoint(getBlockPos());
+            else updateInputs(false, false, false, false, false, false, false);
         }
-        getLookControl().setLockRotation(canBeControlledByRider());
         super.travel(movementInput);
     }
 
