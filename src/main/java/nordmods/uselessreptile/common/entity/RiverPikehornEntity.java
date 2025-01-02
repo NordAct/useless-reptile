@@ -186,21 +186,19 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         if (getVehicle() instanceof PlayerEntity) setHitboxModifiers(0.7f, 0.6f, 0);
         else setHitboxModifiers(0.7f, 0.8f, 0);
 
-        if (getWorld() instanceof ServerWorld world) {
-            dropLootToOwner(world);
+        if (!isTamed() && !getWorld().isClient()) {
+            if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
 
-            if (!isTamed()) {
-                if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
-
-                ItemStack itemStack = getMainHandStack();
-                if (isHunting() && !itemStack.isEmpty() && --eatTimer <= 0) {
-                    if (isFavoriteFood(itemStack)) {
-                        consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value());
-                        heal(getHealthRegenerationFromFood());
-                    } else dropStack(world, itemStack);
-                    stopHunt();
-                }
+            ItemStack itemStack = getMainHandStack();
+            if (!itemStack.isEmpty() && --eatTimer <= 0) {
+                if (isFavoriteFood(itemStack)) {
+                    heal(getHealthRegenerationFromFood());
+                    equipStack(EquipmentSlot.MAINHAND, consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
+                } else dropStack(itemStack);
+                stopHunt();
             }
+
+            getEquippedStack(EquipmentSlot.MAINHAND);
         }
         setSpeedMod(isInsideWaterOrBubbleColumn() ? 0.5f : 1);
         if (isInsideWaterOrBubbleColumn()) {
@@ -208,6 +206,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             setFlying(true);
         }
         else setSwimming(false);
+
+        if (getWorld() instanceof ServerWorld world) dropLootToOwner(world);
     }
 
     @Override
@@ -304,7 +304,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     }
 
     private void dropLootToOwner(ServerWorld world) {
-        if (!isTamed() || !isOwnerClose()) return;
+        if (!isTamed() || !isOwnerClose() || getWorld().isClient()) return;
         ItemStack stack = getEquippedStack(EquipmentSlot.MAINHAND).copy();
         if (!stack.isEmpty()) {
             dropStack(world, stack);
