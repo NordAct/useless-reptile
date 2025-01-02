@@ -95,10 +95,11 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     public void startToFly() {
         jump();
-        setFlying(true);
-        setAccelerationDuration(getAccelerationDuration() / 10);
-        if (getWorld() instanceof ServerWorld world)
+        if (getWorld() instanceof ServerWorld world) {
+            setAccelerationDuration(getAccelerationDuration() / 10);
+            setFlying(true);
             for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) LiftoffParticlesS2CPacket.send(player, this);
+        }
     }
 
     public int getMaxInAirTimer() {
@@ -130,7 +131,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
-        if (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle()) setFlying(false);
+         if (!getWorld().isClient() && (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle())) setFlying(false);
         setNoGravity(isFlying());
 
         if (isFlying()) {
