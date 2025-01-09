@@ -176,7 +176,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
             if (isPanicking()) return playAnim( "attack.strong.panic", event);
             return playAnim( "attack.strong", event);
         }
-        return loopAnim("attack.none", event);
+        return playAnim("attack.none", event);
     }
 
     @Override
