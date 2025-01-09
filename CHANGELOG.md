@@ -1,1 +1,7 @@
-- Fixed incorrect recipe type for regular Vortex Horn, which caused it to lose instrument component
+- Fixed home position being set incorrectly for rideable dragons
+- Fixed River Pikehorns dropping fish after they have been tamed and fish was eaten
+- River Pikehorns now will drop fish in direction of their owner
+- Updated sitting animation of River Pikehorn to make it more distinguishable from idle animation
+- Panicking Moleclaws now break blocks when panicking more consistently
+- Fixed Moleclaws being in constant sprint mode if they ever entered it
+- Ridden Moleclaws will now break one extra block above to avoid rider's head being stuck in blocks when digging up or down
