@@ -186,15 +186,15 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         if (getVehicle() instanceof PlayerEntity) setHitboxModifiers(0.7f, 0.6f, 0);
         else setHitboxModifiers(0.7f, 0.8f, 0);
 
-        if (!isTamed() && !getWorld().isClient()) {
+        if (!isTamed() && getWorld() instanceof ServerWorld world) {
             if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
 
             ItemStack itemStack = getMainHandStack();
             if (!itemStack.isEmpty() && --eatTimer <= 0) {
                 if (isFavoriteFood(itemStack)) {
                     heal(getHealthRegenerationFromFood());
-                    equipStack(EquipmentSlot.MAINHAND, consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
-                } else dropStack(itemStack);
+                    equipStack(EquipmentSlot.MAINHAND, consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
+                } else dropStack(world, itemStack);
                 stopHunt();
             }
 

@@ -107,6 +107,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     public Vec3d updateMovementInput(PlayerEntity rider, Vec3d movementInput) {
+        forwardSpeed = 0;
+        if (isMoveForwardPressed()) forwardSpeed = 1;
+        if (isMoveBackPressed()) forwardSpeed = -1;
+
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
         //The acceleration logic. Looks like a mess, but it's still understandable I guess
         int accelerationDuration = getAccelerationDuration();
@@ -133,9 +137,11 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
         if (!isFlying()) {
-            double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
-            if (isSprintPressed()) setSprinting(true);
-            if (isMovingBackwards() && (isMoveBackPressed() || isMoveBackPressed())) setSprinting(false);
+            double landSpeed = forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+            if (isSprintPressed())
+                setSprinting(true);
+            if (isMovingBackwards() && (isMoveBackPressed() || isMoveBackPressed()))
+                setSprinting(false);
             setRotation(rider);
 
             if (isJumpPressed() && !jumpWasPressed) {
@@ -153,9 +159,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
             return new Vec3d(0, movementInput.y - 0.001, landSpeed);
         } else {
-            forwardSpeed = 0;
-            if (isMoveForwardPressed()) forwardSpeed = 1;
-            if (isMoveBackPressed()) forwardSpeed = -1;
             double flyingSpeed = forwardSpeed * getAttributeValue(EntityAttributes.FLYING_SPEED);
             float pitchSpeed = 2;
             setRotation(rider);

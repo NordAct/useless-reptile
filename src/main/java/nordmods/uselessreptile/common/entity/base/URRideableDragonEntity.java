@@ -109,7 +109,11 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     }
 
     public Vec3d updateMovementInput(PlayerEntity rider, Vec3d movementInput) {
-        double landSpeed = rider.forwardSpeed * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        forwardSpeed = 0;
+        if (isMoveForwardPressed()) forwardSpeed = 1;
+        if (isMoveBackPressed()) forwardSpeed = -1;
+
+        double landSpeed = forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         if (isSprintPressed()) setSprinting(true);
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         if (isMovingBackwards()) setSprinting(false);
@@ -125,7 +129,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         if (isSprinting()) setSpeedMod(1.1f);
         else setSpeedMod(1f);
         if (isMovingBackwards()) setSpeedMod(0.6f);
-        float speed = (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
+        float speed = (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
     }
 
