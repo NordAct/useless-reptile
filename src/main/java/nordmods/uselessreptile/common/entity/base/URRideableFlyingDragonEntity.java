@@ -2,7 +2,6 @@ package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -87,7 +86,15 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     public void travel(Vec3d movementInput) {
         if (!isAlive()) return;
+        if (!canBeControlledByRider()) {
+            if (isFlying()) if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
+            else setInAirTimer(0);
+        }
+        super.travel(movementInput);
+    }
 
+    @Override
+    public void updateMovementModifiers() {
         if ((!isMoving() || isFlying())) setSprinting(false);
         if (isSprinting()) setSpeedMod(1.5f);
         else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
@@ -95,35 +102,11 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
-        if (!getWorld().isClient() && isOnGround()) setFlying(false);
+        if (isOnGround()) setFlying(false);
         setNoGravity(isFlying());
-
-        if (canBeControlledByRider()) {
-            LivingEntity rider = getControllingPassenger();
-            if (rider instanceof PlayerEntity player) super.travel(getControlledMovementInput(player, movementInput));
-        } else {
-            if (isFlying()) {
-                if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
-                super.travel(movementInput);
-            } else {
-                setInAirTimer(0);
-                super.travel(movementInput);
-            }
-
-        }
     }
 
     public Vec3d updateMovementInput(PlayerEntity rider, Vec3d movementInput) {
-        if ((!isMoving() || isFlying())) setSprinting(false);
-        if (isSprinting()) setSpeedMod(1.5f);
-        else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
-        else setSpeedMod(1f);
-        float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
-        setMovementSpeed(speed * getSpeedModifier());
-
-        if (!getWorld().isClient() && isOnGround()) setFlying(false);
-        setNoGravity(isFlying());
-
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
         //The acceleration logic. Looks like a mess, but it's still understandable I guess
         int accelerationDuration = getAccelerationDuration();

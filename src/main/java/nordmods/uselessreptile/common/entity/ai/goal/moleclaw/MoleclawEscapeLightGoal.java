@@ -2,11 +2,10 @@ package nordmods.uselessreptile.common.entity.ai.goal.moleclaw;
 
 import net.minecraft.entity.ai.NoPenaltyTargeting;
 import net.minecraft.entity.ai.goal.EscapeDangerGoal;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
+import net.minecraft.util.shape.VoxelShape;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
 
 public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
@@ -14,7 +13,6 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
     private final MoleclawEntity mob;
     private int timer = 0;
     private int nextStrongAttackTimer = 60;
-    private int attackDelay = 0;
 
     public MoleclawEscapeLightGoal(MoleclawEntity mob) {
         super(mob, 1);
@@ -86,21 +84,14 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
         mob.setSprinting(true);
         timer++;
 
-        if (mob.isPrimaryAttack()) {
-            if (attackDelay == 0) {
-                mob.strongAttack();
-                attackDelay = 100;
-            }
-            else attackDelay--;
-        }
-
         if (timer >= nextStrongAttackTimer && mob.getPrimaryAttackCooldown() == 0) {
-            BlockHitResult hitResult = (BlockHitResult) mob.raycast(4, 1, false);
-            if (hitResult.getType() == HitResult.Type.BLOCK) {
-                attackDelay = 4;
-                mob.setPrimaryAttackCooldown(mob.getMaxPrimaryAttackCooldown());
-                timer = 0;
-                nextStrongAttackTimer = mob.getRandom().nextInt(21) + 40;
+            for (VoxelShape shape : mob.getWorld().getBlockCollisions(mob, mob.getSecondaryAttackBox())) {
+                if (!shape.isEmpty()) {
+                    mob.scheduleStrongAttack();
+                    timer = 0;
+                    nextStrongAttackTimer = mob.getRandom().nextInt(21) + 40;
+                    break;
+                }
             }
         }
     }
