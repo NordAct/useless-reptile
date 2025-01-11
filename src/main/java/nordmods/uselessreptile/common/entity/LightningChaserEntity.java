@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity;
 
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
@@ -123,7 +124,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         goalSelector.add(10, new FlyingDragonFlyAroundGoal<>(this, 30));
         goalSelector.add(11, new DragonLookAroundGoal(this));
         targetSelector.add(1, new LightningChaserRevengeGoal(this));
-        targetSelector.add(2, new DragonAttackWithOwnerGoal(this));
+        targetSelector.add(2, new AttackWithOwnerGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.add(2, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
 
     }

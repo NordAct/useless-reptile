@@ -1,1 +1,2 @@
 - Fixed inability to craft more Vortex Horns of the same type after crafting one
+- Fixed River Pikehorns not defending its owner when attacked
