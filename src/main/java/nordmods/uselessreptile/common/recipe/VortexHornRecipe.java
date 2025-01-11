@@ -30,7 +30,7 @@ public class VortexHornRecipe extends ShapedRecipe {
     public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
         ItemStack instrument = getInstrumentStack(input);
         if (!instrument.isEmpty()) {
-            ItemStack result = getResult(lookup);
+            ItemStack result = getResult(lookup).copy();
             result.set(DataComponentTypes.INSTRUMENT, instrument.get(DataComponentTypes.INSTRUMENT));
             result.set(URItems.DRAGON_STORAGE_COMPONENT, instrument.getOrDefault(URItems.DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT));
             result.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, instrument.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT));
