@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity.ai.goal.common;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.entity.ai.navigation.PathTime;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
@@ -12,7 +11,9 @@ public class DragonCallBackGoal extends Goal {
     protected final URDragonEntity entity;
     protected LivingEntity owner;
     protected int updateCountdownTicks;
-    protected int ticksToStop;
+    protected double proximityRange;
+    protected double prevDistance;
+    protected int forceTeleportCountdown;
 
     public static final int MAX_CALL_DISTANCE = 512;
 
@@ -24,9 +25,11 @@ public class DragonCallBackGoal extends Goal {
     @Override
     public void start() {
         updateCountdownTicks = 0;
+        forceTeleportCountdown = 10;
+        prevDistance = 0;
+        proximityRange = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
         owner = entity.getOwner();
         entity.setIsSitting(false);
-        ticksToStop = 0;
         entity.setTarget(null);
     }
 
@@ -59,6 +62,8 @@ public class DragonCallBackGoal extends Goal {
         entity.getLookControl().lookAt(owner, entity.getRotationSpeed(), entity.getPitchLimit());
         entity.setSprinting(true);
         double distance = entity.squaredDistanceTo(owner);
+        if (distance >= prevDistance) forceTeleportCountdown--;
+        else forceTeleportCountdown = getTickCount(100);
 
         if (entity.isSitting()) entity.shouldFollow = false;
 
@@ -69,12 +74,13 @@ public class DragonCallBackGoal extends Goal {
             entity.getNavigation().startMovingTo(owner, 1);
             entity.setHomePoint(owner.getBlockPos());
             if (URConfig.getConfig().allowDragonTeleport
-                    && (distance > 4096 || entity.getNavigation() instanceof PathTime pathTime && pathTime.getPathTime() > 70)) entity.tryTeleportToOwner();
+                    && (distance > 4096 || distance > (proximityRange * 4) && forceTeleportCountdown <= 0)) entity.tryTeleportToOwner();
         }
+
+        prevDistance = distance;
     }
 
     protected void checkProximity(double currentDistance) {
-        double maxDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
-        if (currentDistance < maxDistance && owner.isOnGround()) entity.shouldFollow = false;
+        if (currentDistance < proximityRange && owner.isOnGround()) entity.shouldFollow = false;
     }
 }

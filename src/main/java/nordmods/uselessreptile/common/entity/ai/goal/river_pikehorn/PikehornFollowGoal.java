@@ -5,7 +5,7 @@ import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import nordmods.uselessreptile.common.entity.ai.goal.common.FlyingDragonCallBackGoal;
 
 public class PikehornFollowGoal extends FlyingDragonCallBackGoal<RiverPikehornEntity> {
-    private static final int TOLERANCE_DISTANCE_SQUARED = 400;
+    private static final int TOLERANCE_DISTANCE_SQUARED = 256;
 
     public PikehornFollowGoal(RiverPikehornEntity entity) {
         super(entity);
