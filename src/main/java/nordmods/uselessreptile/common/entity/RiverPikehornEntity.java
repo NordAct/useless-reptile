@@ -1,7 +1,9 @@
 package nordmods.uselessreptile.common.entity;
 
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
+import net.minecraft.entity.ai.goal.TrackOwnerAttackerGoal;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -246,8 +248,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         goalSelector.add(8, new FlyingDragonFlyAroundGoal<>(this, 30));
         goalSelector.add(9, new DragonLookAroundGoal(this));
         targetSelector.add(3, (new DragonRevengeGoal(this, new Class[0])).setGroupRevenge(new Class[0]));
-        targetSelector.add(4, new DragonAttackWithOwnerGoal(this));
-        targetSelector.add(5, new DragonTrackOwnerAttackerGoal(this));
+        targetSelector.add(4, new AttackWithOwnerGoal(this));
+        targetSelector.add(5, new TrackOwnerAttackerGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.add(4, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }
 

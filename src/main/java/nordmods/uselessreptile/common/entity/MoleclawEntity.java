@@ -2,8 +2,10 @@ package nordmods.uselessreptile.common.entity;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
+import net.minecraft.entity.ai.goal.TrackOwnerAttackerGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
@@ -89,8 +91,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
         goalSelector.add(11, new DragonLookAroundGoal(this));
         targetSelector.add(5, new MoleclawUntamedTargetGoal<>(this, PlayerEntity.class));
         targetSelector.add(6, new MoleclawUntamedTargetGoal<>(this, ChickenEntity.class));
-        targetSelector.add(5, new DragonAttackWithOwnerGoal(this));
-        targetSelector.add(6, new DragonTrackOwnerAttackerGoal(this));
+        targetSelector.add(5, new AttackWithOwnerGoal(this));
+        targetSelector.add(6, new TrackOwnerAttackerGoal(this));
         targetSelector.add(4, new DragonRevengeGoal(this));
     }
 

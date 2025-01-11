@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.entity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.*;
+import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
@@ -90,7 +91,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         goalSelector.add(9, new FlyingDragonFlyAroundGoal<>(this, 30));
         goalSelector.add(10, new DragonLookAroundGoal(this));
         targetSelector.add(6, new UntamedActiveTargetGoal<>(this, ChickenEntity.class, true, null));
-        targetSelector.add(5, new DragonAttackWithOwnerGoal(this));
+        targetSelector.add(5, new AttackWithOwnerGoal(this));
         targetSelector.add(4, new DragonRevengeGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.add(5, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
     }
