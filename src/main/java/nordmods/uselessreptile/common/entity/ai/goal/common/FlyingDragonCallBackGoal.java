@@ -5,16 +5,22 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public class FlyingDragonCallBackGoal<T extends URDragonEntity & FlyingDragon> extends DragonCallBackGoal {
     protected final T entity;
+    protected int ticksToStop;
 
     public FlyingDragonCallBackGoal(T entity) {
         super(entity);
         this.entity = entity;
     }
 
+    @Override
+    public void start() {
+        super.start();
+        ticksToStop = 0;
+    }
+
     protected void checkProximity(double currentDistance) {
         if (!entity.isFlying()) ticksToStop = 0;
-        double maxDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
-        if (currentDistance < maxDistance && (owner.isOnGround() || !entity.isFlying())) {
+        if (currentDistance < proximityRange && (owner.isOnGround() || !entity.isFlying())) {
             if (entity.isFlying()) {
                 if (ticksToStop > 10) entity.shouldFollow = false;
                 else ticksToStop++;

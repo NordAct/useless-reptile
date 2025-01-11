@@ -1,2 +1,4 @@
 - Fixed inability to craft more Vortex Horns of the same type after crafting one
 - Fixed River Pikehorns not defending its owner when attacked
+- Fixed dragons not teleporting to owner when they stuck when following
+- Minimal River Pikehorn distance to start following was decreased from 20 to 16 blocks

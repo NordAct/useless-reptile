@@ -8,7 +8,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class DragonNavigation extends MobNavigation implements PathTime {
+public class DragonNavigation extends MobNavigation{
     private final URDragonEntity entity;
 
     public DragonNavigation(URDragonEntity mobEntity, World world) {
@@ -66,9 +66,5 @@ public class DragonNavigation extends MobNavigation implements PathTime {
         nodeReachProximity = (float) Math.sqrt(entity.getRotationSpeed() * entity.getWidth());
         entity.getMoveControl().moveTo(target.getX(), target.getY(), target.getZ(), 1);
         if (distance <= nodeReachProximity) entity.getNavigation().stop();
-    }
-
-    public int getPathTime() {
-        return tickCount - pathStartTime;
     }
 }
