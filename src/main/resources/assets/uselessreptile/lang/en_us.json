@@ -139,6 +139,7 @@
     "config.uselessreptile.option.naturalRiverPikehornSpawn": "Natural River Pikehorn Spawn",
     "config.uselessreptile.option.naturalLightningChaserSpawn": "Natural Lightning Chaser Spawn",
     "config.uselessreptile.option.hideEquipmentInfo": "Hide Equipment Info",
+    "config.uselessreptile.option.renderPassengers": "Render Passengers",
 
     "config.uselessreptile.requires_restart.@Tooltip" : "\nChanging this option requires game restart",
     "config.uselessreptile.group.spawnGroups.@Tooltip" : "Capacities of spawn groups added by this mod",
@@ -190,6 +191,7 @@
     "config.uselessreptile.option.naturalSpawn.@Tooltip": "Enables natural spawning of this dragon",
     "config.uselessreptile.option.naturalLightningChaserSpawn.@Tooltip": "Enables natural spawn of Lightning Chaser in world. This doesn't affect its spawn during thunderstorms\nNote: Lightning Chaser does not have spawns for variants defined that can spawn naturally. You have to add them on your own via datapack or otherwise dragon will not be able to spawn in this way due not having available variants",
     "config.uselessreptile.option.hideEquipmentInfo.@Tooltip": "Hides info in item tooltip about which dragons can equip specific item",
+    "config.uselessreptile.option.renderPassengers.@Tooltip": "Defines if passenger on dragons can be rendered.\nAllowed values: \n§3ALL §f(all passengers will be rendered), \n§3SELF §f(only you as passenger can be rendered), \n§3OTHERS §f(anyone but you as passenger can be rendered), \n§3NONE §f(no passengers will be rendered)",
 
     "effect.uselessreptile.acid": "Acid",
     "effect.uselessreptile.shock": "Shock",
