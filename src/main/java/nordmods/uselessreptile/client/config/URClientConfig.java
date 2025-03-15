@@ -35,6 +35,8 @@ public class URClientConfig {
     public boolean attackBoxesInDebug = false;
     @SerialEntry(comment = "hides information in item tooltip about which dragons can wear specific items")
     public boolean hideEquipmentInfo = false;
+    @SerialEntry(comment = "defines if passengers on dragons can be rendered \npossible valuses: NONE, SELF, OTHERS, ALL")
+    public PassengerVisibility renderPassengers = PassengerVisibility.ALL;
 
     public static URClientConfig getConfig() {
         return CONFIG.instance();
@@ -42,5 +44,28 @@ public class URClientConfig {
 
     public static void init() {
         CONFIG.load();
+    }
+
+    public enum PassengerVisibility {
+        NONE(false, false),
+        SELF(true, false),
+        OTHERS(false, true),
+        ALL(true, true),
+        ;
+        private final boolean renderSelf;
+        private final boolean renderOthers;
+
+        PassengerVisibility(boolean renderSelf, boolean renderOthers) {
+            this.renderSelf = renderSelf;
+            this.renderOthers = renderOthers;
+        }
+
+        public boolean canRenderSelf() {
+            return renderSelf;
+        }
+
+        public boolean canRenderOthers() {
+            return renderOthers;
+        }
     }
 }

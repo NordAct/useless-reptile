@@ -8,6 +8,7 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
+import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
@@ -59,7 +60,9 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable> extends G
     private <E extends Entity> void renderPassenger(E entityIn, float partialTicks, MatrixStack matrixStack, VertexConsumerProvider bufferIn, int packedLight) {
         boolean isFirstPerson = MinecraftClient.getInstance().options.getPerspective().isFirstPerson();
         ClientPlayerEntity clientPlayer = MinecraftClient.getInstance().player;
-        if (isFirstPerson && entityIn == clientPlayer) return;
+        if (entityIn == clientPlayer) {
+            if (isFirstPerson || !URClientConfig.getConfig().renderPassengers.canRenderSelf()) return;
+        } else if (!URClientConfig.getConfig().renderPassengers.canRenderOthers()) return;
 
         nordmods.uselessreptile.client.util.RenderUtil.renderEntity(entityIn, partialTicks, matrixStack, bufferIn, packedLight);
     }
