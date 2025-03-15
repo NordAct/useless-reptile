@@ -1,4 +1,3 @@
-- Fixed inability to craft more Vortex Horns of the same type after crafting one
-- Fixed River Pikehorns not defending its owner when attacked
-- Fixed dragons not teleporting to owner when they stuck when following
-- Minimal River Pikehorn distance to start following was decreased from 20 to 16 blocks
+- Flute sound distance is now limited to 32 (this doesn't affect its actual working range)
+- Added client config option to hide passengers on dragons
+- (1.21.4 only) fixed items without consumable component not being consumed when fed to dragons
