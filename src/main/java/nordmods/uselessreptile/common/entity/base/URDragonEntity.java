@@ -855,6 +855,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, itemStack);
         if (itemStack.getComponents().contains(DataComponentTypes.CONSUMABLE))
             itemStack.getComponents().get(DataComponentTypes.CONSUMABLE).finishConsumption(getWorld(), this, itemStack);
+        else if (offering != null && !offering.isInCreativeMode()) itemStack.decrement(1);
         return itemStack;
     }
 
