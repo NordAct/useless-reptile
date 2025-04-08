@@ -4,18 +4,20 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.type.NbtComponent;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.*;
+import net.minecraft.item.GoatHornItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.InstrumentTags;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -39,16 +41,13 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public class VortexHornItem extends GoatHornItem {
     private final int maxCapacity;
-    public VortexHornItem(Settings settings, TagKey<Instrument> instrumentTag, int maxCapacity) {
-        super(instrumentTag, settings);
-        this.maxCapacity = maxCapacity;
-    }
-
     public VortexHornItem(Settings settings, int maxCapacity) {
-        this(settings, InstrumentTags.GOAT_HORNS, maxCapacity);
+        super(settings);
+        this.maxCapacity = maxCapacity;
     }
 
     public ActionResult useOnEntity(ItemStack stack, PlayerEntity user, LivingEntity entity, Hand hand) {
@@ -106,32 +105,35 @@ public class VortexHornItem extends GoatHornItem {
         return super.useOnBlock(context);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, List<Text> tooltip, TooltipType type) {
+    public void appendTooltip(
+            ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type
+    )  {
         if (stack.getComponents().contains(URItems.DRAGON_STORAGE_COMPONENT)) {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
             if (dataComponent != null) {
                 boolean full = getCurrentCapacity(stack) >= maxCapacity;
-                tooltip.add(Text.translatable("tooltip.uselessreptile.vortex_horn.capacity",getCurrentCapacity(stack) , maxCapacity).formatted(full ? Formatting.YELLOW : Formatting.GRAY));
-                if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) tooltip.add(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
+                textConsumer.accept(Text.translatable("tooltip.uselessreptile.vortex_horn.capacity",getCurrentCapacity(stack) , maxCapacity).formatted(full ? Formatting.YELLOW : Formatting.GRAY));
+                if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
                 else {
-                    tooltip.add(Text.translatable("tooltip.uselessreptile.vortex_horn.contained_dragons"));
+                    textConsumer.accept(Text.translatable("tooltip.uselessreptile.vortex_horn.contained_dragons"));
                     for (NbtComponent nbtComponent : dataComponent.entityData()) {
                         NbtCompound nbt = nbtComponent.copyNbt();
                         if (nbtComponent.contains("CustomName")) {
-                            String string = nbt.getString("CustomName");
-                            tooltip.add(Text.Serialization.fromJson(string, MinecraftClient.getInstance().player.getRegistryManager()));
+                            String string = nbt.getString("CustomName").orElse("");
+                            textConsumer.accept(Text.Serialization.fromJson(string, MinecraftClient.getInstance().player.getRegistryManager()));
                         } else {
-                            String string = nbt.getString("id");
+                            String string = nbt.getString("id").orElse("");
                             Optional<EntityType<?>> entityType = EntityType.get(string);
-                            tooltip.add(entityType.map(value -> Text.translatable(value.getTranslationKey())).orElseGet(() -> Text.literal("ERROR").formatted(Formatting.RED)));
+                            textConsumer.accept(entityType.map(value -> Text.translatable(value.getTranslationKey())).orElseGet(() -> Text.literal("ERROR").formatted(Formatting.RED)));
                         }
                     }
                 }
             }
-            tooltip.add(Text.empty());
+            textConsumer.accept(Text.empty());
         }
-        super.appendTooltip(stack, context, tooltip, type);
+        super.appendTooltip(stack, context, displayComponent, textConsumer, type);
     }
 
     protected boolean tryMassCatchOrRelease(ItemStack stack, PlayerEntity user, World world, Hand hand) {
@@ -204,7 +206,7 @@ public class VortexHornItem extends GoatHornItem {
                 dragon.setPos(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
                 if (dragon instanceof URDragonEntity urDragon) {
                     urDragon.setHomePoint(pos);
-                    urDragon.setBoundedInstrumentSound(URDragonEntity.getInstrument(stack));
+                    urDragon.setBoundedInstrumentSound(urDragon.getInstrument(stack));
                     urDragon.updateEquipment();
                     VortexHornCapacityComponent capacityComponent = new VortexHornCapacityComponent(stack.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT).capacity() - urDragon.vortexHornCapacity());
                     stack.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, capacityComponent);

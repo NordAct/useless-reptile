@@ -7,6 +7,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.predicate.component.ComponentMapPredicate;
+import net.minecraft.predicate.component.ComponentsPredicate;
 import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.RegistryEntryLookup;
@@ -31,7 +32,7 @@ public class AdvancementCriterions {
     public static AdvancementCriterion<InventoryChangedCriterion.Conditions> obtainItem(RegistryEntryLookup<Item> registryEntryLookup, ItemStack itemStack) {
         return Criteria.INVENTORY_CHANGED.create(new InventoryChangedCriterion.Conditions(Optional.empty(),
                 InventoryChangedCriterion.Conditions.Slots.ANY,
-                List.of(ItemPredicate.Builder.create().items(registryEntryLookup, itemStack.getItem()).component(ComponentMapPredicate.of(itemStack.getComponents())).build())
+                List.of(ItemPredicate.Builder.create().items(registryEntryLookup, itemStack.getItem()).components(ComponentsPredicate.Builder.create().exact(ComponentMapPredicate.of(itemStack.getComponents())).build()).build())
                 ));
     }
 

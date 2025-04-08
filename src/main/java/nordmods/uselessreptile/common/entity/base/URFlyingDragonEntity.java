@@ -65,7 +65,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
-        setFlying(tag.getBoolean("IsFlying"));
+        setFlying(tag.getBoolean("IsFlying", false));
     }
 
     @Override
@@ -131,7 +131,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
-         if (!getWorld().isClient() && (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle())) setFlying(false);
+         if (!getWorld().isClient() && (isOnGround() && !isSubmergedInWater() || hasVehicle())) setFlying(false);
         setNoGravity(isFlying());
 
         if (isFlying()) {
@@ -145,12 +145,12 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    protected int computeFallDamage(float fallDistance, float damageMultiplier) {
+    protected int computeFallDamage(double fallDistance, float damageMultiplier) {
         return 0;
     }
 
     @Override
-    public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
+    public boolean handleFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
 
     protected float getOffGroundSpeed() {
         return getMovementSpeed() *  0.14f;

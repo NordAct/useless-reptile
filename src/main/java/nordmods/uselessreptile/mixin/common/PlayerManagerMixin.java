@@ -4,7 +4,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ConnectedClientData;
@@ -23,13 +22,11 @@ public abstract class PlayerManagerMixin {
     private void spawnHeadMountDragon(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci,
                                       @Local Optional<NbtCompound> optional, @Local(ordinal = 1) ServerWorld serverWorld2) {
         optional.ifPresent(nbt -> {
-            if (nbt.contains("HeadMountDragon", NbtElement.COMPOUND_TYPE)) {
-                EntityType.getEntityFromNbt(nbt.getCompound("HeadMountDragon"), serverWorld2, SpawnReason.LOAD).ifPresent(dragon -> {
-                    serverWorld2.tryLoadEntity(dragon);
-                    dragon.setPosition(player.getPos());
-                    if (player.getFirstPassenger() == null) dragon.startRiding(player, true);
-                });
-            }
+            EntityType.getEntityFromNbt(nbt.getCompoundOrEmpty("HeadMountDragon"), serverWorld2, SpawnReason.LOAD).ifPresent(dragon -> {
+                serverWorld2.tryLoadEntity(dragon);
+                dragon.setPosition(player.getPos());
+                if (player.getFirstPassenger() == null) dragon.startRiding(player, true);
+            });
         });
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.entity.ai.FuzzyPositions;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.collection.Weighted;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -153,7 +154,7 @@ public class PikehornHuntGoal extends Goal {
     private boolean biomeHasFish(BlockPos blockPos) {
         World world = entity.getWorld();
         Biome biome = world.getBiome(blockPos).value();
-        List<SpawnSettings.SpawnEntry> entries = biome.getSpawnSettings().getSpawnEntries(SpawnGroup.WATER_AMBIENT).getEntries();
+        List<Weighted<SpawnSettings.SpawnEntry>> entries = biome.getSpawnSettings().getSpawnEntries(SpawnGroup.WATER_AMBIENT).getEntries();
         return !entries.isEmpty();
     }
 

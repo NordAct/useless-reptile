@@ -38,17 +38,16 @@ import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFoll
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
-import nordmods.uselessreptile.common.init.*;
-import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URTags;
+import nordmods.uselessreptile.common.item.FluteItem;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.PlayState;
 
 import java.util.function.BiConsumer;
@@ -98,10 +97,10 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<RiverPikehornEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::mainController);
-        AnimationController<RiverPikehornEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turnController);
-        AnimationController<RiverPikehornEntity> attack = new AnimationController<>(this, "attack", 0, this::attackController);
-        AnimationController<RiverPikehornEntity> eye = new AnimationController<>(this, "eye", 0, this::eyeController);
+        AnimationController<RiverPikehornEntity> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
+        AnimationController<RiverPikehornEntity> turn = new AnimationController<>( "turn", TRANSITION_TICKS, this::turnController);
+        AnimationController<RiverPikehornEntity> attack = new AnimationController<>("attack", 0, this::attackController);
+        AnimationController<RiverPikehornEntity> eye = new AnimationController<>("eye", 0, this::eyeController);
         main.setSoundKeyframeHandler(this::soundHandler);
         attack.setSoundKeyframeHandler(this::soundHandler);
         turn.setSoundKeyframeHandler(this::soundHandler);
@@ -109,11 +108,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         animationData.add(main, turn, attack, eye);
     }
 
-    private <A extends GeoEntity> PlayState eyeController(net.minecraft.entity.AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
         return loopAnim("blink", event);
     }
-    private <A extends GeoEntity> PlayState mainController(net.minecraft.entity.AnimationState<A> event) {
-        event.getController().setAnimationSpeed(animationSpeed);
+    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+        event.controller().setAnimationSpeed(animationSpeed);
         if (hasVehicle()) return loopAnim("sit.head", event);
         if (isFlying()) {
             if (isMoving() || event.isMoving()) {
@@ -122,19 +121,19 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
                 if (shouldGlide) return loopAnim("fly.glide", event);
                 return loopAnim("fly.straight", event);
             }
-            event.getController().setAnimationSpeed(Math.max(animationSpeed, 1));
+            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
             return loopAnim("fly.idle", event);
         }
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving()) return loopAnim("walk", event);
-        event.getController().setAnimationSpeed(1);
+        event.controller().setAnimationSpeed(1);
         if (isDancing()) return loopAnim("dance", event);
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turnController(net.minecraft.entity.AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.getController().setAnimationSpeed(animationSpeed);
+        event.controller().setAnimationSpeed(animationSpeed);
 
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) return loopAnim("turn.fly.left", event);
@@ -145,25 +144,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attackController(net.minecraft.entity.AnimationState<A> event) {
-        event.getController().setAnimationSpeed(1/ getCooldownModifier());
+    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event) {
+        event.controller().setAnimationSpeed(1/ getCooldownModifier());
         if (isPrimaryAttack()) return playAnim( "attack" + getAttackType(), event);
         return playAnim("attack.none", event);
     }
-
-    //private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
-    //    if (getWorld().isClient())
-    //        switch (event.getKeyframeData().getSound()) {
-    //            case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 1, 1.2F);
-    //            case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 0.7f, 1.2f);
-    //            case "step" -> playSound(SoundEvents.ENTITY_CHICKEN_STEP, 0.5f, 0.8f);
-    //        }
-    //}
-//
-    //private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
-    //    if (getWorld().isClient())
-    //        if (event.getKeyframeData().getSound().equals("attack")) playSound(URSounds.PIKEHORN_ATTACK, 1, 1);
-    //}
 
     @Override
     public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {
@@ -191,9 +176,9 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
             getEquippedStack(EquipmentSlot.MAINHAND);
         }
-        setSpeedMod(isInsideWaterOrBubbleColumn() ? 0.5f : 1);
+        setSpeedMod(isSubmergedInWater() ? 0.5f : 1);
         if (!getWorld().isClient()) {
-            if (isInsideWaterOrBubbleColumn()) {
+            if (isSubmergedInWater()) {
                 setSwimming(true);
                 setFlying(true);
             } else setSwimming(false);

@@ -66,7 +66,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
-        setFlying(tag.getBoolean("IsFlying"));
+        setFlying(tag.getBoolean("IsFlying", false));
     }
 
     @Override
@@ -191,12 +191,12 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    protected int computeFallDamage(float fallDistance, float damageMultiplier) {
+    protected int computeFallDamage(double fallDistance, float damageMultiplier) {
         return 0;
     }
 
     @Override
-    public boolean handleFallDamage(float fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
+    public boolean handleFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
 
     @Override
     public boolean isFlappingWings() {return isFlying();}

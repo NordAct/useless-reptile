@@ -23,6 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.item.Instrument;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
@@ -72,15 +73,17 @@ import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
+import software.bernie.geckolib.animation.keyframe.event.KeyFrameEvent;
+import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public abstract class URDragonEntity extends TameableEntity implements GeoEntity, NamedScreenHandlerFactory, AssetCahceOwner, InventoryChangedListener {
@@ -232,7 +235,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (inventory != null && isTamed()) {
             final NbtList inv = new NbtList();
             for (int i = 0; i < inventory.size(); i++) {
-                inv.add(inventory.getStack(i).toNbtAllowEmpty(getRegistryManager()));
+                inv.add(inventory.getStack(i).toNbt(getRegistryManager()));
             }
             tag.put("Inventory", inv);
         }
@@ -241,22 +244,22 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
-        dataTracker.set(VARIANT, tag.getString("Variant"));
+        dataTracker.set(VARIANT, tag.getString("Variant", getDefaultVariant()));
 
-        if (!isTamed()) setTamingProgress(tag.getInt("TamingProgress"));
+        if (!isTamed()) setTamingProgress(tag.getInt("TamingProgress", baseTamingProgress));
         else {
-            setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound"));
-            int[] coords = tag.getIntArray("HomePoint");
+            setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound", ""));
+            int[] coords = tag.getIntArray("HomePoint").orElse(new int[] {getBlockX(), getBlockY(), getBlockZ()});
             if (coords.length == 0) setHomePoint(getBlockPos());
             else setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
         }
 
-        setIsSitting(tag.getBoolean("Sitting"));
+        setIsSitting(tag.getBoolean("Sitting", false));
         if (tag.contains("Inventory")) {
-            final NbtList inv = tag.getList("Inventory", 10);
+            final NbtList inv = tag.getListOrEmpty("Inventory");
             inventory = new SimpleInventory(inv.size());
             for (int i = 0; i < inv.size(); i++) {
-                inventory.setStack(i, ItemStack.fromNbtOrEmpty(this.getRegistryManager(), inv.getCompound(i)));
+                inventory.setStack(i, ItemStack.fromNbt(getRegistryManager(), inv.getCompound(i).orElse(new NbtCompound())).orElse(ItemStack.EMPTY));
             }
             inventory.addListener(this);
         }
@@ -336,8 +339,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
 
-    protected <ENTITY extends GeoEntity> void soundHandler(SoundKeyframeEvent<ENTITY> event) {
-        SoundInfo soundInfo = getSoundInfo(event.getKeyframeData().getSound());
+    protected <ENTITY extends GeoEntity> void soundHandler(KeyFrameEvent<ENTITY, SoundKeyframeData> event) {
+        SoundInfo soundInfo = getSoundInfo(event.keyframeData().getSound());
         if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
     }
 
@@ -531,9 +534,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return itemStack.getComponents().contains(DataComponentTypes.INSTRUMENT);
     }
 
-    public static String getInstrument(ItemStack itemStack) {
+    public String getInstrument(ItemStack itemStack) {
         if (!itemStack.getComponents().contains(DataComponentTypes.INSTRUMENT)) return "";
-        return itemStack.getComponents().get(DataComponentTypes.INSTRUMENT).getIdAsString();
+        Optional<RegistryEntry<Instrument>> instrument = itemStack.getComponents().get(DataComponentTypes.INSTRUMENT).getInstrument(getWorld().getRegistryManager());
+        if (instrument.isPresent()) return instrument.get().value().description().getString();
+        return "";
     }
 
     public void playSound(SoundEvent sound, float volume, float pitch) {
@@ -701,13 +706,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState loopAnim(String anim, net.minecraft.entity.AnimationState<A> event) {
-        event.getController().setAnimation(RawAnimation.begin().thenLoop(anim)); return PlayState.CONTINUE;
+    protected <A extends GeoEntity> PlayState loopAnim(String anim, AnimationTest<A> event) {
+        event.controller().setAnimation(RawAnimation.begin().thenLoop(anim)); return PlayState.CONTINUE;
     }
 
     @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState playAnim(String anim, net.minecraft.entity.AnimationState<A> event) {
-        event.getController().setAnimation(RawAnimation.begin().then(anim, Animation.LoopType.PLAY_ONCE)); return PlayState.CONTINUE;
+    protected <A extends GeoEntity> PlayState playAnim(String anim, AnimationTest<A> event) {
+        event.controller().setAnimation(RawAnimation.begin().then(anim, Animation.LoopType.PLAY_ONCE)); return PlayState.CONTINUE;
     }
 
 
@@ -824,11 +829,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public boolean hasTargetInWater() {
-        return getTarget() != null && getTarget().isInsideWaterOrBubbleColumn() && canNavigateInFluids;
+        return getTarget() != null && getTarget().isSubmergedInWater() && canNavigateInFluids;
     }
 
     @Override
-    protected boolean shouldSwimInFluids() {
+    public boolean shouldSwimInFluids() {
         return !canNavigateInFluids;
     }
 

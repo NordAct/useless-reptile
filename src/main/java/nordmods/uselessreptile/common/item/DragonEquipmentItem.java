@@ -23,6 +23,7 @@ public class DragonEquipmentItem extends Item {
             case BODY -> UselessReptile.id("dragon_body_equipment");
             case OFFHAND -> UselessReptile.id("dragon_offhand_equipment");
             case MAINHAND -> UselessReptile.id("dragon_mainhand_equipment");
+            case SADDLE -> UselessReptile.id("dragon_saddle_equipment");
         };
     }
 }

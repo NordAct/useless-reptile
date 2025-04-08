@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.mixin.common;
 
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtElement;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 import org.jetbrains.annotations.NotNull;
@@ -33,10 +33,8 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
 
     @Inject(method = "readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("TAIL"))
     private void readFromNbt(NbtCompound nbt, CallbackInfo ci) {
-        useless_reptile$setTimer(nbt.getInt("LightningChaserSpawnCooldown"));
-        if (nbt.contains("HeadMountDragon", NbtElement.COMPOUND_TYPE)) {
-            setHeadMountDragon(nbt.getCompound("HeadMountDragon"));
-        }
+        useless_reptile$setTimer(nbt.getInt("LightningChaserSpawnCooldown", URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown));
+        setHeadMountDragon(nbt.getCompoundOrEmpty("HeadMountDragon"));
     }
 
     public int useless_reptile$getTimer() {
@@ -62,12 +60,15 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
         return headMountDragon;
     }
 
-    @Inject(method = "remove", at = @At("TAIL"))
+    @Inject(method = "remove", at = @At("TAIL")) //TODO check if fix is working
     private void removeHeadMountDragon(RemovalReason reason, CallbackInfo ci) {
         if (!headMountDragon.isEmpty() && getWorld() instanceof ServerWorld world) {
             if (!reason.shouldDestroy()) {
-                Entity dragon = world.getEntity(headMountDragon.getUuid("UUID"));
-                if (dragon != null) dragon.remove(reason);
+                EntityType.getEntityFromNbt(headMountDragon, world, SpawnReason.LOAD).ifPresent(dragon -> {
+                    dragon.remove(reason);
+                });
+                //Entity dragon = world.getEntity(headMountDragon.getUuid("UUID"));
+                //if (dragon != null) dragon.remove(reason);
             }
         }
     }

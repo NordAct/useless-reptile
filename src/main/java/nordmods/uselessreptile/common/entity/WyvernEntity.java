@@ -4,8 +4,6 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
-import net.minecraft.entity.ai.TargetPredicate;
-import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
@@ -38,20 +36,22 @@ import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
-import nordmods.uselessreptile.common.init.*;
+import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URPotions;
+import nordmods.uselessreptile.common.init.URStatusEffects;
+import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.PlayState;
 
 import java.util.List;
@@ -118,10 +118,10 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<WyvernEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::mainController);
-        AnimationController<WyvernEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turnController);
-        AnimationController<WyvernEntity> attack = new AnimationController<>(this, "attack", 0, this::attackController);
-        AnimationController<WyvernEntity> eye = new AnimationController<>(this, "eye", 0, this::eyeController);
+        AnimationController<WyvernEntity> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
+        AnimationController<WyvernEntity> turn = new AnimationController<>("turn", TRANSITION_TICKS, this::turnController);
+        AnimationController<WyvernEntity> attack = new AnimationController<>("attack", 0, this::attackController);
+        AnimationController<WyvernEntity> eye = new AnimationController<>("eye", 0, this::eyeController);
         main.setSoundKeyframeHandler(this::soundHandler);
         attack.setSoundKeyframeHandler(this::soundHandler);
         turn.setSoundKeyframeHandler(this::soundHandler);
@@ -129,32 +129,15 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         animationData.add(main, turn, attack, eye);
     }
 
-    //private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
-    //    if (getWorld().isClient())
-    //        switch (event.getKeyframeData().getSound()) {
-    //            case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.7F);
-    //            case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
-    //            case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
-    //        }
-    //}
-//
-    //private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
-    //    if (getWorld().isClient())
-    //        switch (event.getKeyframeData().getSound()) {
-    //            case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
-    //            case "bite" ->  playSound(URSounds.WYVERN_BITE, 1, 1);
-    //        }
-    //}
-
-    private <A extends GeoEntity> PlayState eyeController(net.minecraft.entity.AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
         return loopAnim("blink", event);
     }
-    private <A extends GeoEntity> PlayState mainController(net.minecraft.entity.AnimationState<A> event) {
-        if (event.getController().hasAnimationFinished()) event.getController().forceAnimationReset();
-        event.getController().setAnimationSpeed(animationSpeed);
+    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+        if (event.controller().hasAnimationFinished()) event.controller().forceAnimationReset();
+        event.controller().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isSecondaryAttack()) {
-                event.getController().setAnimationSpeed(1/ getCooldownModifier());
+                event.controller().setAnimationSpeed(1/ getCooldownModifier());
                 return loopAnim("fly.attack", event);
             }
             if (isMoving() || event.isMoving()) {
@@ -165,19 +148,19 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
                 return loopAnim("fly.straight", event);
             }
-            event.getController().setAnimationSpeed(Math.max(animationSpeed, 1));
+            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
             return loopAnim("fly.idle", event);
         }
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
-        event.getController().setAnimationSpeed(1);
+        event.controller().setAnimationSpeed(1);
         if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turnController(net.minecraft.entity.AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.getController().setAnimationSpeed(animationSpeed);
+        event.controller().setAnimationSpeed(animationSpeed);
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) return loopAnim("turn.fly.left", event);
             if (turnState == 2) return loopAnim("turn.fly.right", event);
@@ -187,8 +170,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attackController(net.minecraft.entity.AnimationState<A> event) {
-        event.getController().setAnimationSpeed(1/ getCooldownModifier());
+    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event) {
+        event.controller().setAnimationSpeed(1/ getCooldownModifier());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
         if (isPrimaryAttack()) {
             if (isFlying() && (isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
@@ -276,7 +259,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 ItemStack potion = new ItemStack(Items.POTION);
                 potion.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(URPotions.ACID));
                 player.incrementStat(Stats.USED.getOrCreateStat(bottle));
-                getWorld().playSoundClient(player, player.getBlockPos(), SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
+                getWorld().playSoundClient(SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
                 player.setStackInHand(hand, consumeGivenItem(player, itemStack));
                 player.giveItemStack(potion);
                 return ActionResult.SUCCESS;

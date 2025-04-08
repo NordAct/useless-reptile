@@ -5,8 +5,8 @@ import net.minecraft.item.Item;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -34,8 +34,8 @@ public class DragonEquipmentAnimatable implements GeoAnimatable, AssetCahceOwner
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        AnimationController<DragonEquipmentAnimatable> idle = new AnimationController<>(this, "idle", URDragonEntity.TRANSITION_TICKS, event -> {
-            event.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
+        AnimationController<DragonEquipmentAnimatable> idle = new AnimationController<>("idle", URDragonEntity.TRANSITION_TICKS, event -> {
+            event.controller().setAnimation(RawAnimation.begin().thenLoop("idle"));
             return PlayState.CONTINUE;
         });
         controllers.add(idle);

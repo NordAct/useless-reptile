@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
@@ -41,8 +40,6 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, TEXTURE);
         i = (width - backgroundWidth) / 2;
         j = (height - backgroundHeight) / 2;
         context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i, j, 0, 0, backgroundWidth, backgroundHeight, 256, 256);

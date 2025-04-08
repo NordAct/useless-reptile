@@ -13,3 +13,4 @@ accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder showNotificat
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder inputs Ljava/util/Map;
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder pattern Ljava/util/List;
 extendable method net/minecraft/entity/passive/TameableEntity canTeleportTo (Lnet/minecraft/util/math/BlockPos;)Z
+extendable method net/minecraft/entity/Entity isLogicalSideForUpdatingMovement ()Z

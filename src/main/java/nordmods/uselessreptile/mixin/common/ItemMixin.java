@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.mixin.common;
 
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,13 +25,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 @Mixin(Item.class)
 public abstract class ItemMixin {
     @Shadow public abstract Item asItem();
 
     @Inject(method = "appendTooltip", at = @At("HEAD"))
-    private void addDragonEquipmentEntries(ItemStack stack, Item.TooltipContext context, List<Text> tooltip, TooltipType type, CallbackInfo ci) {
+    private void addDragonEquipmentEntries(ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type, CallbackInfo ci) {
         if (URClientConfig.getConfig().hideEquipmentInfo) return;
         List<EntityType<? extends Entity>> entries = new ArrayList<>(DragonEquipmentTooltipEntryEvent.EVENT.invoker().getEntries(asItem()));
         if (entries.isEmpty()) return;
@@ -43,7 +45,7 @@ public abstract class ItemMixin {
         }
         values = values.substring(0, values.length() - 2);
 
-        tooltip.add(Text.translatable("tooltip.uselessreptile.can_be_equipped_by", values).withColor(Colors.LIGHT_GRAY));
+        textConsumer.accept(Text.translatable("tooltip.uselessreptile.can_be_equipped_by", values).withColor(Colors.LIGHT_GRAY));
     }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)

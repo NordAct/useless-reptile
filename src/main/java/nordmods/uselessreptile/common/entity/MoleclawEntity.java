@@ -43,9 +43,9 @@ import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
-import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.PlayState;
 
 import java.util.List;
@@ -118,10 +118,10 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<MoleclawEntity> main = new AnimationController<>(this, "main", TRANSITION_TICKS, this::mainController);
-        AnimationController<MoleclawEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turnController);
-        AnimationController<MoleclawEntity> attack = new AnimationController<>(this, "attack", 0, this::attackController);
-        AnimationController<MoleclawEntity> eye = new AnimationController<>(this, "eye", 0, this::eyeController);
+        AnimationController<MoleclawEntity> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
+        AnimationController<MoleclawEntity> turn = new AnimationController<>("turn", TRANSITION_TICKS, this::turnController);
+        AnimationController<MoleclawEntity> attack = new AnimationController<>( "attack", 0, this::attackController);
+        AnimationController<MoleclawEntity> eye = new AnimationController<>("eye", 0, this::eyeController);
         main.setSoundKeyframeHandler(this::soundHandler);
         attack.setSoundKeyframeHandler(this::soundHandler);
         turn.setSoundKeyframeHandler(this::soundHandler);
@@ -129,46 +129,33 @@ public class MoleclawEntity extends URRideableDragonEntity {
         animationData.add(main, turn, attack, eye);
     }
 
-    //private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
-    //    if (getWorld().isClient())
-    //        if (event.getKeyframeData().getSound().equals("step")) playSound(URSounds.DRAGON_STEP, 1, 0.7f);
-    //}
-//
-    //private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
-    //    if (getWorld().isClient())
-    //        switch (event.getKeyframeData().getSound()) {
-    //            case "attack_strong" -> playSound(URSounds.MOLECLAW_STRONG_ATTACK, 1, 1F);
-    //            case "attack" -> playSound(URSounds.MOLECLAW_ATTACK, 1, 1);
-    //        }
-    //}
-
-    private <A extends GeoEntity> PlayState eyeController(net.minecraft.entity.AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
         return loopAnim("blink", event);
     }
 
-    private <A extends GeoEntity> PlayState mainController(net.minecraft.entity.AnimationState<A> event) {
-        event.getController().setAnimationSpeed(animationSpeed);
+    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+        event.controller().setAnimationSpeed(animationSpeed);
         if (getIsSitting() && !isDancing() && !isPanicking()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
             if (isPanicking()) return loopAnim("panic", event);
             return loopAnim("walk", event);
         }
-        event.getController().setAnimationSpeed(1);
+        event.controller().setAnimationSpeed(1);
         if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
         if (isPanicking()) return loopAnim("panic.idle", event);
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turnController(net.minecraft.entity.AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.getController().setAnimationSpeed(animationSpeed);
+        event.controller().setAnimationSpeed(animationSpeed);
         if (turnState == 1) return loopAnim("turn.left", event);
         if (turnState == 2) return loopAnim("turn.right", event);
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attackController(net.minecraft.entity.AnimationState<A> event){
-        event.getController().setAnimationSpeed(1/ getCooldownModifier());
+    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event){
+        event.controller().setAnimationSpeed(1/ getCooldownModifier());
         if (isSecondaryAttack()) return playAnim( "attack.normal" + getAttackType(), event);
         if (isPrimaryAttack()) {
             if (isPanicking()) return playAnim( "attack.strong.panic", event);
@@ -355,8 +342,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     @Override
-    public boolean disablesShield() {
-        return isPrimaryAttack();
+    public float getWeaponDisableBlockingForSeconds() {
+        return 5.0F;
     }
 
     @Override

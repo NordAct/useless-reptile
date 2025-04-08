@@ -22,8 +22,8 @@ import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animatable.manager.AnimatableManager;
+import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
@@ -124,8 +124,8 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar animatableManager) {
-        animatableManager.add(new AnimationController<>(this, "contr", 0, animationEvent -> {
-            animationEvent.getController().setAnimation(RawAnimation.begin().thenLoop("idle"));
+        animatableManager.add(new AnimationController<>("contr", 0, animationEvent -> {
+            animationEvent.controller().setAnimation(RawAnimation.begin().thenLoop("idle"));
             return PlayState.CONTINUE;
         }));
     }
