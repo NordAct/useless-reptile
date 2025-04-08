@@ -1,0 +1,12 @@
+[
+  {
+    "id": "minecraft:generic.scale",
+    "amount": -0.2,
+    "operation": "add_multiplied_base"
+  },
+  {
+    "id": "minecraft:generic.max_health",
+    "amount": -2,
+    "operation": "add_value"
+  }
+]

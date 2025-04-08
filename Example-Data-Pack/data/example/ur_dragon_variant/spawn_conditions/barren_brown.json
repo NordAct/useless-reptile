@@ -1,0 +1,25 @@
+[
+  {
+    "allowed_biomes": [
+      "#c:is_savanna"
+    ],
+    "allowed_blocks": [
+      "#minecraft:animals_spawnable_on"
+    ],
+    "weight": 1
+  },
+  {
+    "allowed_biomes": [
+      "#c:is_badlands"
+    ],
+    "altitude": {
+      "min": 80
+    },
+    "allowed_blocks": [
+      "#minecraft:animals_spawnable_on",
+      "#minecraft:sand",
+      "#minecraft:terracotta"
+    ],
+    "weight": 1
+  }
+]

@@ -11,10 +11,12 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.Heightmap;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.event.DragonEquipmentTooltipEntryEvent;
@@ -22,7 +24,6 @@ import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
-import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawnUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +57,7 @@ public class URModEvents {
                                 world.getTopY(Heightmap.Type.WORLD_SURFACE, (int) (pos.getX() + sin * 128), (int) (pos.getZ() + cos * 128)) + 16,
                                 (int) (pos.getZ() + cos * 128));
                         while (!world.getBlockState(spawnPos).isAir()) spawnPos = spawnPos.up();
-                        if (DragonSpawnUtil.getAvailableVariants(world, spawnPos, "lightning_chaser").isEmpty()) {
+                        if (DragonSpawnUtil.getAvailableVariants(world, spawnPos, EntityType.getId(UREntities.LIGHTNING_CHASER_ENTITY)).findFirst().isEmpty()) {
                             worldTimer.useless_reptile$setTimer(1200);
                             return;
                         }
@@ -66,7 +67,9 @@ public class URModEvents {
                             lightningChaser.roamingSpot = new BlockPos(pos.getX(),
                                     world.getTopY(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ()),
                                     pos.getZ());
-                            URPacketHelper.playSound(lightningChaser, URSounds.LIGHTNING_CHASER_DISTANT_ROAR, lightningChaser.getSoundCategory(), 1, 1, 1);
+                            URDragonEntity.SoundInfo soundInfo = lightningChaser.getSoundInfo("roar");
+                            if (soundInfo != null)
+                                URPacketHelper.playSound(lightningChaser, SoundEvent.of(soundInfo.id()), lightningChaser.getSoundCategory(), soundInfo.volume(), soundInfo.pitch(), 1);
                         }
                         playerTimer.useless_reptile$setTimer(URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown);
                         break;

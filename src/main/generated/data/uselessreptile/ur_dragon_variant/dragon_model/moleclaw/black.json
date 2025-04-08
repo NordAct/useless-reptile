@@ -1,0 +1,39 @@
+{
+  "model_data": {
+    "animation": "uselessreptile:animations/entity/moleclaw/moleclaw.animation.json",
+    "cull": false,
+    "model": "uselessreptile:geo/entity/moleclaw/moleclaw.geo.json",
+    "texture": "uselessreptile:textures/entity/moleclaw/black.png"
+  },
+  "sounds": [
+    {
+      "id": "uselessreptile:dragon.step",
+      "name": "step",
+      "pitch": 0.7
+    },
+    {
+      "id": "uselessreptile:moleclaw.strong_attack",
+      "name": "attack_strong"
+    },
+    {
+      "id": "uselessreptile:moleclaw.attack",
+      "name": "attack"
+    },
+    {
+      "id": "uselessreptile:moleclaw.ambient",
+      "name": "idle"
+    },
+    {
+      "id": "uselessreptile:moleclaw.hurt",
+      "name": "hurt"
+    },
+    {
+      "id": "uselessreptile:moleclaw.death",
+      "name": "death"
+    },
+    {
+      "id": "uselessreptile:moleclaw.panicking",
+      "name": "panic"
+    }
+  ]
+}

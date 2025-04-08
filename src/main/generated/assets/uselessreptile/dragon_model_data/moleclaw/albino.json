@@ -1,9 +1,0 @@
-{
-  "model_data": {
-    "animation": "uselessreptile:animations/entity/moleclaw/moleclaw.animation.json",
-    "cull": false,
-    "model": "uselessreptile:geo/entity/moleclaw/moleclaw.geo.json",
-    "texture": "uselessreptile:textures/entity/moleclaw/albino.png"
-  },
-  "nametag_accessible": false
-}

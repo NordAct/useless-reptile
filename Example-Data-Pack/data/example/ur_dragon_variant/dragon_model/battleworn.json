@@ -1,0 +1,45 @@
+{
+  "model_data" : {
+    "texture": "example:textures/moleclaw/battleworn.png",
+    "model": "example:geo/moleclaw/battleworn.geo.json",
+    "animation": "uselessreptile:animations/entity/moleclaw/moleclaw.animation.json",
+    "cull" : false
+  },
+  "sounds": [
+    {
+      "id": "uselessreptile:dragon.step",
+      "name": "step",
+      "pitch": 0.6
+    },
+    {
+      "id": "uselessreptile:moleclaw.strong_attack",
+      "name": "attack_strong",
+      "pitch": 0.7
+    },
+    {
+      "id": "uselessreptile:moleclaw.attack",
+      "name": "attack",
+      "pitch": 0.7
+    },
+    {
+      "id": "uselessreptile:moleclaw.ambient",
+      "name": "idle",
+      "pitch": 0.7
+    },
+    {
+      "id": "uselessreptile:moleclaw.hurt",
+      "name": "hurt",
+      "pitch": 0.7
+    },
+    {
+      "id": "uselessreptile:moleclaw.death",
+      "name": "death",
+      "pitch": 0.7
+    },
+    {
+      "id": "uselessreptile:moleclaw.panicking",
+      "name": "panic",
+      "pitch": 0.7
+    }
+  ]
+}

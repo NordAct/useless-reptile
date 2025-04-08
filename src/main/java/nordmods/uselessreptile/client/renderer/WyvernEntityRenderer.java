@@ -23,7 +23,7 @@ public class WyvernEntityRenderer extends URDragonRenderer<WyvernEntity> {
     }
 
     public void updateSaddle (WyvernEntity entity) {
-        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.FEET).isIn(URTags.WYVERN_SADDLES);
+        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.BODY).isIn(URTags.WYVERN_SADDLES);
         model.getBone("spikes_front").ifPresent(c -> c.setHidden(hasSaddle));
     }
 }

@@ -1,0 +1,7 @@
+{
+  "id": "uselessreptile:wyvern",
+  "name": "Ender",
+  "equipment": "example:ender",
+  "dragon_model": "example:ender",
+  "spawn_conditions": "example:ender"
+}

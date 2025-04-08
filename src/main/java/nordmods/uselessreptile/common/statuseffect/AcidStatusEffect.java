@@ -24,7 +24,7 @@ public class AcidStatusEffect extends URStatusEffect {
 
         int armorUnequipped = 0;
         if (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty()) armorUnequipped++;
-        if (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty()) armorUnequipped++;
+        if (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() && entity.getEquippedStack(EquipmentSlot.BODY).isEmpty()) armorUnequipped++;
         if (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty()) armorUnequipped++;
         if (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty()) armorUnequipped++;
 

@@ -1,60 +1,65 @@
 package nordmods.uselessreptile.client.model.special;
 
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.client.util.model_data.ModelDataUtil;
-import nordmods.uselessreptile.client.util.model_data.base.EquipmentModelData;
-import nordmods.uselessreptile.client.util.model_data.base.ModelData;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
+import nordmods.uselessreptile.common.dragon_variant.model.DragonEquipment;
+import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoRenderer;
 
 public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
-    private static final Identifier DEFAULT_ANIMATION = UselessReptile.id("animations/entity/empty.animation.json");
+    public static final Identifier DEFAULT_ANIMATION = UselessReptile.id("animations/entity/empty.animation.json");
+    public static final Identifier DEFAULT_MODEL = UselessReptile.id("geo/entity/empty.geo.json");
+    public static final Identifier DEFAULT_TEXTURE = SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
 
     @Override
     @Nullable
     public Identifier getModelResource(DragonEquipmentAnimatable entity, GeoRenderer<DragonEquipmentAnimatable> renderer) {
         AssetCache assetCache = entity.getAssetCache();
-        if (!ResourceUtil.isResourceReloadFinished) return null;
+        if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_MODEL;
 
         Identifier id = assetCache.getModelLocationCache();
         if (id != null) return id;
 
-        EquipmentModelData data = ModelDataUtil.getEquipmentModelData(entity.owner, entity.item);
-        if (data != null && data.modelData().model().isPresent()) {
-            id = data.modelData().model().get();
+        DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(entity.owner, entity.item);
+        if (data != null && ResourceUtil.doesExist(data.modelData().model())) {
+            id = data.modelData().model();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setModelLocationCache(id);
                 return id;
-            } else UselessReptile.LOGGER.warn("Failed to get model for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonID(), entity.owner.getVariant());
+            } else UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonId(), entity.owner.getVariant());
         }
-
-        return null;
+        assetCache.setModelLocationCache(DEFAULT_MODEL);
+        return DEFAULT_MODEL;
     }
 
     @Override
     @Nullable
     public Identifier getTextureResource(DragonEquipmentAnimatable entity, GeoRenderer<DragonEquipmentAnimatable> renderer) {
         AssetCache assetCache = entity.getAssetCache();
-        if (!ResourceUtil.isResourceReloadFinished) return null;
+        if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_TEXTURE;
 
         Identifier id = assetCache.getTextureLocationCache();
         if (id != null) return id;
 
-        EquipmentModelData data = ModelDataUtil.getEquipmentModelData(entity.owner, entity.item);
-        if (data != null) {
+        DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(entity.owner, entity.item);
+        if (data != null && ResourceUtil.doesExist(data.modelData().texture())) {
             id = data.modelData().texture();
-            assetCache.setTextureLocationCache(id);
-            return id;
-        } else UselessReptile.LOGGER.warn("Failed to get texture for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonID(), entity.owner.getVariant());
-
-        return null;
+            if (ResourceUtil.doesExist(id)) {
+                assetCache.setTextureLocationCache(id);
+                return id;
+            } else UselessReptile.LOGGER.warn("Failed to find texture for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonId(), entity.owner.getVariant());
+        }
+        assetCache.setTextureLocationCache(DEFAULT_TEXTURE);
+        return DEFAULT_TEXTURE;
     }
 
     @Override
@@ -66,13 +71,13 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         Identifier id = assetCache.getAnimationLocationCache();
         if (id != null) return id;
 
-        EquipmentModelData data = ModelDataUtil.getEquipmentModelData(entity.owner, entity.item);
+        DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(entity.owner, entity.item);
         if (data != null && data.modelData().animation().isPresent()) {
             id = data.modelData().animation().get();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setAnimationLocationCache(id);
                 return id;
-            } else UselessReptile.LOGGER.warn("Failed to get animation for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonID(), entity.owner.getVariant());
+            } else UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}", entity.item, entity.owner.getName().getString(), entity.owner.getDragonId(), entity.owner.getVariant());
         }
 
         assetCache.setAnimationLocationCache(DEFAULT_ANIMATION);
@@ -87,7 +92,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         RenderLayer renderType = assetCache.getRenderTypeCache();
         if (renderType != null) return renderType;
 
-        EquipmentModelData data = ModelDataUtil.getEquipmentModelData(entity.owner, entity.item);
+        DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(entity.owner, entity.item);
         if (data != null) {
             ModelData modelData = data.modelData();
             if (modelData.cull()) renderType = modelData.translucent() ? RenderUtil.getEntityTranslucentCull(texture) : RenderLayer.getEntityCutout(texture);

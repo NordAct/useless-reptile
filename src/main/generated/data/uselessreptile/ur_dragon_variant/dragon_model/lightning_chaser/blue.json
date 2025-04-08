@@ -1,0 +1,54 @@
+{
+  "model_data": {
+    "animation": "uselessreptile:animations/entity/lightning_chaser/lightning_chaser.animation.json",
+    "model": "uselessreptile:geo/entity/lightning_chaser/lightning_chaser.geo.json",
+    "texture": "uselessreptile:textures/entity/lightning_chaser/blue.png"
+  },
+  "sounds": [
+    {
+      "id": "uselessreptile:dragon.step",
+      "name": "step"
+    },
+    {
+      "id": "uselessreptile:dragon.woosh",
+      "name": "woosh",
+      "volume": 2.0
+    },
+    {
+      "id": "minecraft:entity.ender_dragon.flap",
+      "name": "flap",
+      "pitch": 0.6,
+      "volume": 3.0
+    },
+    {
+      "id": "minecraft:entity.ender_dragon.flap",
+      "name": "flap_heavy",
+      "pitch": 0.5,
+      "volume": 3.0
+    },
+    {
+      "id": "uselessreptile:lightning_chaser.bite",
+      "name": "bite"
+    },
+    {
+      "id": "uselessreptile:lightning_chaser.ambient",
+      "name": "idle"
+    },
+    {
+      "id": "uselessreptile:lightning_chaser.distant_roar",
+      "name": "roar"
+    },
+    {
+      "id": "uselessreptile:lightning_chaser.accept_challenge",
+      "name": "accept_challenge"
+    },
+    {
+      "id": "uselessreptile:lightning_chaser.hurt",
+      "name": "hurt"
+    },
+    {
+      "id": "uselessreptile:lightning_chaser.death",
+      "name": "death"
+    }
+  ]
+}

@@ -113,8 +113,8 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
         if (getWorld().isClient()) {
             glideTimer--;
-            float accelerationMod = getAccelerationDuration()/getMaxAccelerationDuration();
-            shouldGlide = accelerationMod > 1 || glideTimer < 0 && accelerationMod > 0.9;
+            float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
+            shouldGlide = accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9;
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();

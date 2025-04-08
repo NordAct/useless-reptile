@@ -3,10 +3,10 @@ package nordmods.uselessreptile.common.entity.special;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.Tameable;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.hit.EntityHitResult;
@@ -93,9 +93,9 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
         if (getEyePos().distanceTo(target.getPos()) > currentRadius + target.getWidth()/2) return false;
         if (target instanceof EntityPart part) target = part.owner;
         Entity owner = getOwner();
-        LivingEntity ownerOwner = owner instanceof TameableEntity tameable ? tameable.getOwner() : null;
+        LivingEntity ownerOwner = owner instanceof Tameable tameable ? tameable.getOwner() : null;
         if (target == ownerOwner) return false;
-        if (target instanceof TameableEntity tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
+        if (target instanceof Tameable tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
 
         return true;
     }

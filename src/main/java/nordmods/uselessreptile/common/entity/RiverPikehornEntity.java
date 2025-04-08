@@ -18,7 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -41,13 +40,16 @@ import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URGameEvents;
+import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URTags;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import java.util.function.BiConsumer;
 
@@ -100,8 +102,10 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         AnimationController<RiverPikehornEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turnController);
         AnimationController<RiverPikehornEntity> attack = new AnimationController<>(this, "attack", 0, this::attackController);
         AnimationController<RiverPikehornEntity> eye = new AnimationController<>(this, "eye", 0, this::eyeController);
-        main.setSoundKeyframeHandler(this::soundListenerMain);
-        attack.setSoundKeyframeHandler(this::soundListenerAttack);
+        main.setSoundKeyframeHandler(this::soundHandler);
+        attack.setSoundKeyframeHandler(this::soundHandler);
+        turn.setSoundKeyframeHandler(this::soundHandler);
+        eye.setSoundKeyframeHandler(this::soundHandler);
         animationData.add(main, turn, attack, eye);
     }
 
@@ -147,34 +151,19 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         return playAnim("attack.none", event);
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
-        if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
-                case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 1, 1.2F);
-                case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 0.7f, 1.2f);
-                case "step" -> playSound(SoundEvents.ENTITY_CHICKEN_STEP, 0.5f, 0.8f);
-            }
-    }
-
-    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
-        if (getWorld().isClient())
-            if (event.getKeyframeData().getSound().equals("attack")) playSound(URSounds.PIKEHORN_ATTACK, 1, 1);
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return URSounds.PIKEHORN_AMBIENT;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
-        return URSounds.PIKEHORN_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return URSounds.PIKEHORN_DEATH;
-    }
+    //private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    //    if (getWorld().isClient())
+    //        switch (event.getKeyframeData().getSound()) {
+    //            case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 1, 1.2F);
+    //            case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 0.7f, 1.2f);
+    //            case "step" -> playSound(SoundEvents.ENTITY_CHICKEN_STEP, 0.5f, 0.8f);
+    //        }
+    //}
+//
+    //private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    //    if (getWorld().isClient())
+    //        if (event.getKeyframeData().getSound().equals("attack")) playSound(URSounds.PIKEHORN_ATTACK, 1, 1);
+    //}
 
     @Override
     public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {

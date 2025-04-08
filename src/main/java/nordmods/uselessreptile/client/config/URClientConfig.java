@@ -31,12 +31,17 @@ public class URClientConfig {
     public boolean disableNamedEntityModels = false;
     @SerialEntry
     public boolean disableEmissiveTextures = false;
-    @SerialEntry(comment = "displays area in which dragon can deal damage for melee attacks")
-    public boolean attackBoxesInDebug = false;
     @SerialEntry(comment = "hides information in item tooltip about which dragons can wear specific items")
     public boolean hideEquipmentInfo = false;
     @SerialEntry(comment = "defines if passengers on dragons can be rendered \npossible valuses: NONE, SELF, OTHERS, ALL")
     public PassengerVisibility renderPassengers = PassengerVisibility.ALL;
+    @SerialEntry(comment = "DEBUG INFO")
+    public boolean logDragonModelData = false;
+    @SerialEntry
+    public boolean logEquipmentModelData = false;
+    @SerialEntry(comment = "displays area in which dragon can deal damage for melee attacks")
+    public boolean attackBoxesInDebug = false;
+
 
     public static URClientConfig getConfig() {
         return CONFIG.instance();

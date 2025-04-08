@@ -1,0 +1,46 @@
+{
+  "display_name_key": "entity.example.wyvern.barren",
+  "model_data" : {
+    "texture": "example:textures/wyvern/barren_brown.png",
+    "model": "example:geo/wyvern/barren.geo.json",
+    "animation": "example:animations/barren.animation.json"
+  },
+  "sounds": [
+    {
+      "id": "uselessreptile:dragon.step",
+      "name": "step"
+    },
+    {
+      "id": "uselessreptile:dragon.woosh",
+      "name": "woosh",
+      "volume": 2.0
+    },
+    {
+      "id": "minecraft:entity.ender_dragon.flap",
+      "name": "flap",
+      "pitch": 0.7,
+      "volume": 3.0
+    },
+    {
+      "id": "minecraft:entity.ender_dragon.shoot",
+      "name": "shoot",
+      "volume": 2.0
+    },
+    {
+      "id": "uselessreptile:wyvern.bite",
+      "name": "bite"
+    },
+    {
+      "id": "uselessreptile:wyvern.ambient",
+      "name": "idle"
+    },
+    {
+      "id": "uselessreptile:wyvern.hurt",
+      "name": "hurt"
+    },
+    {
+      "id": "uselessreptile:wyvern.death",
+      "name": "death"
+    }
+  ]
+}

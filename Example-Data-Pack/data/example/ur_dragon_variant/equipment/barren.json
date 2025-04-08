@@ -1,0 +1,13 @@
+{
+  "parent": "uselessreptile:wyvern",
+  "equipment": [
+    {
+      "item": "minecraft:saddle",
+      "model_data": {
+        "texture": "example:textures/wyvern/saddle_barren.png",
+        "model": "example:geo/wyvern/barren_saddle.geo.json",
+        "cull" : false
+      }
+    }
+  ]
+}

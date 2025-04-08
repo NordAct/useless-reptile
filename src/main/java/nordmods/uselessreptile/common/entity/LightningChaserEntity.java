@@ -27,7 +27,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -70,7 +69,6 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -156,27 +154,29 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         AnimationController<LightningChaserEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turnController);
         AnimationController<LightningChaserEntity> attack = new AnimationController<>(this, "attack", 0, this::attackController);
         AnimationController<LightningChaserEntity> eye = new AnimationController<>(this, "eye", 0, this::eyeController);
-        main.setSoundKeyframeHandler(this::soundListenerMain);
-        attack.setSoundKeyframeHandler(this::soundListenerAttack);
+        main.setSoundKeyframeHandler(this::soundHandler);
+        attack.setSoundKeyframeHandler(this::soundHandler);
+        turn.setSoundKeyframeHandler(this::soundHandler);
+        eye.setSoundKeyframeHandler(this::soundHandler);
         animationData.add(main, turn, attack, eye);
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
-        if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
-                case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.6F);
-                case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
-                case "step" -> playSound(URSounds.LIGHTNING_CHASER_STEP, 1, 1);
-                case "flap_heavy" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.5F);
-            }
-    }
-
-    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
-        if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
-                case "bite" -> playSound(URSounds.LIGHTNING_CHASER_BITE, 1, 1);
-            }
-    }
+    //private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    //    if (getWorld().isClient())
+    //        switch (event.getKeyframeData().getSound()) {
+    //            case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.6F);
+    //            case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
+    //            case "step" -> playSound(URSounds.DRAGON_STEP, 1, 1);
+    //            case "flap_heavy" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.5F);
+    //        }
+    //}
+//
+    //private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    //    if (getWorld().isClient())
+    //        switch (event.getKeyframeData().getSound()) {
+    //            case "bite" -> playSound(URSounds.LIGHTNING_CHASER_BITE, 1, 1);
+    //        }
+    //}
 
     private <A extends GeoEntity> PlayState eyeController(AnimationState<A> event) {
         return loopAnim("blink", event);
@@ -195,7 +195,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
                 if (shouldGlide) return loopAnim("fly.straight.glide", event);
-                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f && !isClientSpectator()) return loopAnim("fly.straight.heavy", event);
+                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
                 return loopAnim("fly.straight", event);
             }
             event.getController().setAnimationSpeed(Math.max(animationSpeed, 1));
@@ -292,20 +292,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         }
     }
 
-    @Override
-    protected SoundEvent getAmbientSound() {
-        if (!isTamed() && isFlying() && getWorld().isThundering() && !getShouldBailOut() && !hasSurrendered()) return URSounds.LIGHTNING_CHASER_DISTANT_ROAR;
-        return URSounds.LIGHTNING_CHASER_AMBIENT;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
-        return URSounds.LIGHTNING_CHASER_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return URSounds.LIGHTNING_CHASER_DEATH;
+    public void playAmbientSound() {
+        boolean playRoar = !isTamed() && isFlying() && getWorld().isThundering() && !getShouldBailOut() && !hasSurrendered();
+        SoundInfo soundInfo = getSoundInfo(playRoar ? "roar" : "idle");
+        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
     }
 
     @Override

@@ -1,0 +1,7 @@
+{
+  "dragon_model": "uselessreptile:river_pikehorn/dark_teal",
+  "equipment": "uselessreptile:empty",
+  "id": "uselessreptile:river_pikehorn",
+  "name": "dark_teal",
+  "spawn_conditions": "uselessreptile:river_pikehorn/default"
+}

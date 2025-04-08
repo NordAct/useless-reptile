@@ -174,7 +174,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public void updateEquipment() {
         super.updateEquipment();
         ItemStack saddle = inventory.getStack(0);
-        equipStack(EquipmentSlot.FEET, saddle);
+        equipStack(EquipmentSlot.BODY, saddle);
     }
 
     public boolean hasSaddle() {

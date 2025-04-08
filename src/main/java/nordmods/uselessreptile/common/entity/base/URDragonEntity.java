@@ -4,15 +4,14 @@ import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeType;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.attribute.*;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -29,6 +28,7 @@ import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -52,22 +52,22 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
+import nordmods.uselessreptile.common.dragon_variant.model.DragonModel;
+import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
-import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URGameEvents;
-import nordmods.uselessreptile.common.init.URStatusEffects;
-import nordmods.uselessreptile.common.init.URTags;
+import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URPacketHelper;
-import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawn;
-import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -76,8 +76,10 @@ import software.bernie.geckolib.animation.Animation;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -101,6 +103,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected @Nullable BlockPos jukeboxPos;
     protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
     public boolean shouldFollow = false;
+    protected Text defaultDisplayName;
+    private HashMap<String, SoundInfo> soundInfoHolder = new HashMap<>();
+    public static final Identifier VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
+
 
     protected URDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -254,20 +260,92 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             }
             inventory.addListener(this);
         }
+        updateEquipment();
     }
 
     @Override
     public void onTrackedDataSet(TrackedData<?> data) {
         super.onTrackedDataSet(data);
-        if (getWorld().isClient)
-            if (CUSTOM_NAME.equals(data) || VARIANT.equals(data)) assetCache.cleanCache();
+        if (CUSTOM_NAME.equals(data) || VARIANT.equals(data)) {
+            assetCache.cleanCache();
+            soundInfoHolder = new HashMap<>();
+        }
+        if (VARIANT.equals(data)) {
+            removeVariantModifiers();
+            applyVariantModifiers();
+            defaultDisplayName = null;
+        }
+    }
+
+    private void applyVariantModifiers() {
+        DragonVariant variant = DragonVariant.getByVariant(this);
+        if (variant == null) {
+            UselessReptile.LOGGER.warn("Couldn't find any info on variant {} ({}), thus variant modifiers cannot be set", getVariant(), getDragonId());
+            return;
+        }
+
+        variant.variantAttributeModifiers().ifPresent(id -> {
+            List<EntityAttributeModifier> modifiers = getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT_ATTRIBUTE_MODIFIERS).get(id);
+            if (modifiers != null) modifiers.forEach(entityAttributeModifier -> {
+                EntityAttribute attribute = getRegistryManager().getOrThrow(RegistryKeys.ATTRIBUTE).get(entityAttributeModifier.id());
+                if (attribute != null) {
+                    EntityAttributeInstance entityAttributeInstance = getAttributeInstance(
+                            getRegistryManager()
+                                    .getOrThrow(RegistryKeys.ATTRIBUTE)
+                                    .getEntry(entityAttributeModifier.id()).get()
+                    );
+                    if (entityAttributeInstance != null && !entityAttributeInstance.hasModifier(VARIANT_BONUS_MODIFIER))
+                        entityAttributeInstance.addTemporaryModifier(new EntityAttributeModifier(VARIANT_BONUS_MODIFIER, entityAttributeModifier.value(), entityAttributeModifier.operation()));
+
+                }
+            });
+        });
+    }
+
+    private void removeVariantModifiers() {
+        AttributeContainer container = getAttributes();
+        getRegistryManager().getOrThrow(RegistryKeys.ATTRIBUTE).streamEntries().forEach(entityAttributeReference -> {
+            if (container.hasAttribute(entityAttributeReference))
+                container.getCustomInstance(entityAttributeReference).removeModifier(VARIANT_BONUS_MODIFIER);
+        });
+    }
+
+    @Nullable
+    public SoundInfo getSoundInfo(String name) {
+        if (!soundInfoHolder.containsKey(name)) {
+            DragonModel model = DragonVariantUtil.getDragonModelData(this);
+            if (model != null) {
+                if (model.sounds().isPresent()) {
+                    DragonModel.Sound sound = model.sounds().get().stream()
+                            .filter(s -> s.name().equals(name))
+                            .findFirst()
+                            .orElse(null);
+
+                    if (sound != null) soundInfoHolder.put(name, new SoundInfo(sound.id(), sound.volume().orElse(1f), sound.pitch().orElse(1f)));
+                    else {
+                        UselessReptile.LOGGER.warn("Sound {} is not defined for {} ({}) of variant {}.", name, getName().getString(), getDragonId(), getVariant());
+                        soundInfoHolder.put(name, null);
+                    }
+                } else {
+                    UselessReptile.LOGGER.warn("Could not find sound {} for {} ({}) of variant {} as no sounds are defined.", name, getName().getString(), getDragonId(), getVariant());
+                    soundInfoHolder.put(name, null);
+                }
+            }
+        }
+        return soundInfoHolder.get(name);
+    }
+
+
+    protected <ENTITY extends GeoEntity> void soundHandler(SoundKeyframeEvent<ENTITY> event) {
+        SoundInfo soundInfo = getSoundInfo(event.getKeyframeData().getSound());
+        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
     }
 
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         entityData = new PassiveData(false);
         setTamingProgress(baseTamingProgress);
-        DragonSpawnUtil.assignVariantFromList(this, DragonSpawnUtil.getAvailableVariants(world, this), spawnReason);
+        DragonSpawnUtil.assignAvailableVariant(this, spawnReason);
         return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
@@ -353,8 +431,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        List<DragonSpawn> availableVariants = DragonSpawnUtil.getAvailableVariants(world, pos, EntityType.getId(type).getPath());
-        return !availableVariants.isEmpty();
+        return DragonSpawnUtil.getAvailableVariants(world, pos, EntityType.getId(type)).findFirst().isPresent();
     }
 
     @Override
@@ -650,6 +727,40 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
+    @Deprecated
+    protected SoundEvent getAmbientSound() {
+        return null;
+    }
+
+    public void playAmbientSound() {
+        SoundInfo soundInfo = getSoundInfo("idle");
+        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
+    }
+
+    @Override
+    @Deprecated
+    protected SoundEvent getHurtSound(DamageSource source) {
+        playHurtSound(source); //don't ask
+        return null;
+    }
+
+    @Override
+    protected void playHurtSound(DamageSource damageSource) {
+        SoundInfo soundInfo = getSoundInfo("hurt");
+        if (soundInfo != null) {
+            ambientSoundChance = -getMinAmbientSoundDelay();
+            playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
+        }
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        SoundInfo soundInfo = getSoundInfo("death");
+        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
+        return null;
+    }
+
+    @Override
     public SoundCategory getSoundCategory() {
         return SoundCategory.NEUTRAL;
     }
@@ -658,14 +769,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public boolean canTarget(@Nullable LivingEntity target) {
         if (target == null) return false;
         if (isSitting()) return false;
-        if (getOwner() != null && target instanceof TameableEntity tameable && tameable.getOwner() == getOwner()) return false;
+        if (getOwner() != null && target instanceof Tameable tameable && tameable.getOwner() == getOwner()) return false;
         return super.canTarget(target);
-    }
-
-    //idk how else to detect Replay Mod
-    public boolean isClientSpectator() {
-        if (MinecraftClient.getInstance().player != null) return MinecraftClient.getInstance().player.isSpectator();
-        else return false;
     }
 
     @Override
@@ -732,8 +837,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return (int) getRotationSpeed();
     }
 
-    public String getDragonID() {
-        return EntityType.getId(getType()).getPath();
+    public String getDragonIdPath() {
+        return getDragonId().getPath();
+    }
+
+    public Identifier getDragonId() {
+        return EntityType.getId(getType());
     }
 
     private void updateRotationProgress() {
@@ -871,6 +980,16 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner && reason.shouldDestroy()) owner.setHeadMountDragon(new NbtCompound());
     }
 
+    @Override
+    protected Text getDefaultName() {
+        if (defaultDisplayName == null) {
+            DragonVariant variant = DragonVariant.getByVariant(this);
+            if (variant != null && variant.displayNameKey().isPresent()) defaultDisplayName = Text.translatable(variant.displayNameKey().get());
+            if (defaultDisplayName == null) defaultDisplayName = super.getDefaultName();
+        }
+        return defaultDisplayName;
+    }
+
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
 
@@ -942,4 +1061,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             return false;
         }
     }
+
+    public record SoundInfo(Identifier id, float volume, float pitch) {}
 }

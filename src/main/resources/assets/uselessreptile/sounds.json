@@ -21,6 +21,17 @@
       }
     ]
   },
+  "dragon.step": {
+    "subtitle": "subtitles.block.generic.footsteps",
+    "sounds": [
+      {
+        "name": "uselessreptile:common/step1"
+      },
+      {
+        "name": "uselessreptile:common/step2"
+      }
+    ]
+  },
   "wyvern.step": {
     "subtitle": "subtitles.block.generic.footsteps",
     "sounds": [
@@ -320,17 +331,6 @@
     "sounds": [
       {
         "name": "uselessreptile:lightning_chaser/death"
-      }
-    ]
-  },
-  "lightning_chaser.step": {
-    "subtitle": "subtitles.block.generic.footsteps",
-    "sounds": [
-      {
-        "name": "uselessreptile:lightning_chaser/step1"
-      },
-      {
-        "name": "uselessreptile:lightning_chaser/step2"
       }
     ]
   },

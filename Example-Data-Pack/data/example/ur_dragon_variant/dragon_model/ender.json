@@ -1,0 +1,50 @@
+{
+  "display_name_key": "entity.example.wyvern.ender",
+  "model_data" : {
+    "texture": "example:textures/wyvern/end.png",
+    "model": "uselessreptile:geo/entity/wyvern/wyvern.geo.json",
+    "animation": "uselessreptile:animations/entity/wyvern/wyvern.animation.json"
+  },
+  "sounds": [
+    {
+      "id": "uselessreptile:wyvern.step",
+      "name": "step"
+    },
+    {
+      "id": "uselessreptile:dragon.woosh",
+      "name": "woosh",
+      "volume": 2.0
+    },
+    {
+      "id": "minecraft:entity.ender_dragon.flap",
+      "name": "flap",
+      "pitch": 0.7,
+      "volume": 3.0
+    },
+    {
+      "id": "minecraft:entity.ender_dragon.shoot",
+      "name": "shoot",
+      "volume": 2.0
+    },
+    {
+      "id": "uselessreptile:wyvern.bite",
+      "name": "bite"
+    },
+    {
+      "id": "entity.ender_dragon.ambient",
+      "name": "idle",
+      "pitch": 1.5,
+      "volume": 0.7
+    },
+    {
+      "id": "entity.ender_dragon.hurt",
+      "name": "hurt",
+      "pitch": 1.5,
+      "volume": 0.7
+    },
+    {
+      "id": "uselessreptile:wyvern.death",
+      "name": "death"
+    }
+  ]
+}

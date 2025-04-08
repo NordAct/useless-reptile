@@ -2,15 +2,14 @@ package nordmods.uselessreptile.common.entity.ai.goal.moleclaw;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
-import net.minecraft.entity.passive.TameableEntity;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
 
 public class MoleclawUntamedTargetGoal<T extends LivingEntity>  extends UntamedActiveTargetGoal<T> {
 
     private final MoleclawEntity mob;
-    public MoleclawUntamedTargetGoal(TameableEntity tameable, Class targetClass) {
+    public MoleclawUntamedTargetGoal(MoleclawEntity tameable, Class targetClass) {
         super(tameable, targetClass, true, null);
-        mob = (MoleclawEntity) tameable;
+        mob = tameable;
     }
 
     public boolean canStart() {

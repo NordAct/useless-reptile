@@ -4,12 +4,13 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.PotionContentsComponent;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
+import net.minecraft.entity.ai.TargetPredicate;
+import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
@@ -37,6 +38,7 @@ import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
@@ -51,7 +53,6 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import java.util.List;
 
@@ -121,27 +122,29 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         AnimationController<WyvernEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turnController);
         AnimationController<WyvernEntity> attack = new AnimationController<>(this, "attack", 0, this::attackController);
         AnimationController<WyvernEntity> eye = new AnimationController<>(this, "eye", 0, this::eyeController);
-        main.setSoundKeyframeHandler(this::soundListenerMain);
-        attack.setSoundKeyframeHandler(this::soundListenerAttack);
+        main.setSoundKeyframeHandler(this::soundHandler);
+        attack.setSoundKeyframeHandler(this::soundHandler);
+        turn.setSoundKeyframeHandler(this::soundHandler);
+        eye.setSoundKeyframeHandler(this::soundHandler);
         animationData.add(main, turn, attack, eye);
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
-        if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
-                case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.7F);
-                case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
-                case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
-            }
-    }
-
-    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
-        if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
-                case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
-                case "bite" ->  playSound(URSounds.WYVERN_BITE, 1, 1);
-            }
-    }
+    //private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    //    if (getWorld().isClient())
+    //        switch (event.getKeyframeData().getSound()) {
+    //            case "flap" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_FLAP, 3, 0.7F);
+    //            case "woosh" -> playSound(URSounds.DRAGON_WOOSH, 2, 1);
+    //            case "step" -> playSound(URSounds.WYVERN_STEP, 1, 1);
+    //        }
+    //}
+//
+    //private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    //    if (getWorld().isClient())
+    //        switch (event.getKeyframeData().getSound()) {
+    //            case "shoot" -> playSound(SoundEvents.ENTITY_ENDER_DRAGON_SHOOT, 2, 1);
+    //            case "bite" ->  playSound(URSounds.WYVERN_BITE, 1, 1);
+    //        }
+    //}
 
     private <A extends GeoEntity> PlayState eyeController(AnimationState<A> event) {
         return loopAnim("blink", event);
@@ -159,7 +162,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
                 if (shouldGlide) return loopAnim("fly.straight.glide", event);
-                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f && !isClientSpectator()) return loopAnim("fly.straight.heavy", event);
+                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
                 return loopAnim("fly.straight", event);
             }
             event.getController().setAnimationSpeed(Math.max(animationSpeed, 1));
@@ -192,21 +195,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             return playAnim("attack.range", event);
         }
         return playAnim("attack.none", event);
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return URSounds.WYVERN_AMBIENT;
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
-        return URSounds.WYVERN_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return URSounds.WYVERN_DEATH;
     }
 
     @Override
@@ -335,7 +323,11 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         }
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
-        if (isFlying()) URPacketHelper.playSound(this, URSounds.WYVERN_BITE, SoundCategory.NEUTRAL, 1, 1, 3);
+        if (isFlying()) {
+            URDragonEntity.SoundInfo soundInfo = getSoundInfo("bite");
+            if (soundInfo != null)
+                URPacketHelper.playSound(this, SoundEvent.of(soundInfo.id()), SoundCategory.NEUTRAL, soundInfo.volume(), soundInfo.pitch(), 3);
+        }
         if (target != null && !getPassengerList().contains(target)) {
             Box targetBox = target.getBoundingBox();
             if (doesCollide(targetBox, getAttackBox())) tryAttack(world, target);

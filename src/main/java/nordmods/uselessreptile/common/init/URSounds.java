@@ -7,6 +7,7 @@ import nordmods.uselessreptile.UselessReptile;
 
 public class URSounds {
     public static final SoundEvent DRAGON_WOOSH = register("dragon.woosh");
+    public static final SoundEvent DRAGON_STEP = register("dragon.step");
     public static final SoundEvent WYVERN_STEP = register("wyvern.step");
     public static final SoundEvent WYVERN_BITE = register("wyvern.bite");
     public static final SoundEvent WYVERN_HURT = register("wyvern.hurt");
@@ -31,7 +32,6 @@ public class URSounds {
     public static final SoundEvent SHOCKWAVE = register("shockwave", 64);
     public static final SoundEvent LIGHTNING_CHASER_ACCEPT_CHALLENGE = register("lightning_chaser.accept_challenge", 256);
     public static final SoundEvent LIGHTNING_CHASER_DISTANT_ROAR = register("lightning_chaser.distant_roar", 256);
-    public static final SoundEvent LIGHTNING_CHASER_STEP = register("lightning_chaser.step");
     public static final SoundEvent LIGHTNING_CHASER_BITE = register("lightning_chaser.bite");
     public static final SoundEvent LIGHTNING_CHASER_HURT = register("lightning_chaser.hurt");
     public static final SoundEvent LIGHTNING_CHASER_AMBIENT = register("lightning_chaser.ambient");

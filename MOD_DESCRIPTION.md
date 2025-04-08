@@ -18,21 +18,22 @@ Note: older versions may not contain all features listed.
 
 ### Mobs
 - **Swamp Wyvern** - can be found on swamps and tamed with 1-2 stacks of raw chicken. You can ride tamed Swamp Wyverns with use of a saddle. You can also get acid from it by right-clicking with empty bottle and use the acid later as any other potion. Cannot equip armor. \
-Can shoot acid blasts with mediocre accuracy and bite.
+  Can shoot acid blasts with mediocre accuracy and bite.
 
 
 - **Moleclaw** - can be found in caves and tamed with 0.5-1 stacks of beetroot. Needs saddle to be ridden, useful for digging. Afraid of light, but can ignore it if Moleclaw Helmet is equipped. \
-By default can only destroy blocks that wooden pickaxe can break. You can use strength or weakness potions to break blocks requiring stronger tool or to completely prevent block breaking.\
-Has only melee AoE attacks.
+  By default can only destroy blocks that wooden pickaxe can break. You can use strength or weakness potions to break blocks requiring stronger tool or to completely prevent block breaking.\
+  Has only melee AoE attacks.
 
 
 - **River Pikehorn** - can be found near non-frozen rivers and on beaches. You can tame it with bucket of tropical fish and use flute for extra level of control over your Pikehorns, like sending them to fish for you or attack some mob. Oh, and also you can put one on your head (you have to crouch to put dragon on and off). \
-Has only melee attacks.
+  Has only melee attacks.
 
 
 - **Lightning Chaser** - can appear during thunderstorms near any player. To tame it you have to defeat it in a fight by taking down to low HP and successfully hitting it with lightning at least 3 times (you can use Trident with Channelling enchantment for that). Can be ridden with saddle on. \
-Lightning breath attacks can trigger same effect as normal lightning strike (i.e. transforming Villagers into Witches, creating charged Creepers, e.t.c.), but without setting target on fire. And also destroys blocks. Shockwave attack can be used to deflect projectiles and push back mobs. Shockwave can be used only if dragon is flying, otherwise dragon can use bite. \
-Both shockwave and lightning breath inflict shock effect that decreases attack and movement speed and obscures vision.
+  Lightning breath attacks can trigger same effect as normal lightning strike (i.e. transforming Villagers into Witches, creating charged Creepers, e.t.c.), but without setting target on fire. And also destroys blocks. Shockwave attack can be used to deflect projectiles and push back mobs. Shockwave can be used only if dragon is flying, otherwise dragon can use bite. \
+  Both shockwave and lightning breath inflict shock effect that decreases attack and movement speed and obscures vision. \
+  __**Note: some pre 0.8.0 mod versions (like versions for Minecraft 1.20.1) have this dragon, but it cannot appear naturally and lacks some parts of AI**__
 
 ### Items
 - **Vortex Horn** - upgraded version of Goat Horn that can be used to store your dragons inside it
@@ -43,7 +44,7 @@ Both shockwave and lightning breath inflict shock effect that decreases attack a
 - You can use goat horns (or anything that is considered an instrument by game) to call up dragons even if they're sitting. For that, you have first to "bind" instrument sound to the dragon by right-clicking with the instrument item on the dragon. After that, dragon will respond exclusively on this specific instrument sound.
 - To sit down/up your dragon, use stick or goat horn while crouching.
 - You can give normal potions to your dragon while crouching.
-- To open dragon's inventory, crouch and right-click on dragon with something that is not stick, potion or goat horn. Note: some dragons don't have it.
+- To open dragon's inventory, crouch and right-click on dragon with something that is not stick, potion or goat horn and at least one empty hand. Note: some dragons don't have it.
 - Rideable dragons can equip **banners** and display them as long as saddle is presented.
 
 ### Controls
@@ -51,7 +52,7 @@ Both shockwave and lightning breath inflict shock effect that decreases attack a
 - Left ctrl - fly down (can be rebinded)
 - G - primary attack/ability (can be rebinded)
 - R - secondary attack/ability (can be rebinded)
-Rideable dragons cannot move sideways
+  Rideable dragons cannot move sideways
 
 ### Custom dragon variants, equipment and spawns
 You can add custom dragon variants and dragon equipment via power of data and resource packs, that Mojang gladly made very useful for mod makers too.\
@@ -74,7 +75,7 @@ You can read more about those features and see examples here:
 
 **Q:** Can you port this mod to Forge/other mod loader?\
 **A:** I'm not going to do it myself because this is too much for me, and I'm personally not a big fan of Forge bloatness (kinda includes NeoForge too). But I'm open for anyone who is wishing to make port themselves.
-  But if you wish to use this mod with **NeoForge** here and now, you can use [Sinytra Connector](https://modrinth.com/mod/connector). **Warning: no complaints about incorrect work of the mod in this case will be reviewed. I'll accept bug reports only if you were using mod on Fabric/Quilt**
+But if you wish to use this mod with **NeoForge** here and now, you can use [Sinytra Connector](https://modrinth.com/mod/connector). **Warning: no complaints about incorrect work of the mod in this case will be reviewed. I'll accept bug reports only if you were using mod on Fabric/Quilt**
 
 **Q:** When is update?\
 **A:** I can't give any ETA on any update. I have real life stuff to deal with (more specifically my study at university) and I never know how it'll turn out and how much of free time I'll have. Also keep in mind there's only one person (me, the owner) working on this project.

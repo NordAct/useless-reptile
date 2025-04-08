@@ -1,0 +1,144 @@
+{
+  "equipment": [
+    {
+      "item": "minecraft:saddle",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/saddle.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/saddle.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_helmet_iron",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_iron.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_helmet_gold",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_gold.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_helmet_diamond",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_diamond.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_helmet_netherite",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_netherite.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_chestplate_iron",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/chestplate.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_iron.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_chestplate_gold",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/chestplate.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_gold.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_chestplate_diamond",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/chestplate.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_diamond.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_chestplate_netherite",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/chestplate.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_netherite.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_tail_armor_iron",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/tail_armor.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_iron.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_tail_armor_gold",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/tail_armor.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_gold.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_tail_armor_diamond",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/tail_armor.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_diamond.png"
+      }
+    },
+    {
+      "item": "uselessreptile:dragon_tail_armor_netherite",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/tail_armor.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_netherite.png"
+      }
+    },
+    {
+      "item": "uselessreptile:moleclaw_helmet_iron",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_iron.png",
+        "translucent": true
+      }
+    },
+    {
+      "item": "uselessreptile:moleclaw_helmet_gold",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_gold.png",
+        "translucent": true
+      }
+    },
+    {
+      "item": "uselessreptile:moleclaw_helmet_diamond",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_diamond.png",
+        "translucent": true
+      }
+    },
+    {
+      "item": "uselessreptile:moleclaw_helmet_netherite",
+      "model_data": {
+        "cull": false,
+        "model": "uselessreptile:geo/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_netherite.png",
+        "translucent": true
+      }
+    }
+  ]
+}

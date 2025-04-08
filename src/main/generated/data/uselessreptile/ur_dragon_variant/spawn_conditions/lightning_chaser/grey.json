@@ -1,0 +1,18 @@
+[
+  {
+    "allowed_biomes": [
+      "#c:is_overworld"
+    ],
+    "allowed_blocks": [
+      "#minecraft:air"
+    ],
+    "altitude": {
+      "min": 62
+    },
+    "banned_biomes": [
+      "#c:is_ocean",
+      "#c:is_dry"
+    ],
+    "weight": 9
+  }
+]

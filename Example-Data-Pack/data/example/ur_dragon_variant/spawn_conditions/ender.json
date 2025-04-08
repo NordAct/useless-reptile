@@ -1,0 +1,11 @@
+[
+  {
+    "allowed_biomes": [
+      "#c:is_end"
+    ],
+    "allowed_blocks": [
+      "minecraft:end_stone"
+    ],
+    "weight": 1
+  }
+]

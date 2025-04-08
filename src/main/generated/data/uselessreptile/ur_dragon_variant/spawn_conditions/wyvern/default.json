@@ -1,0 +1,14 @@
+[
+  {
+    "allowed_biomes": [
+      "#c:is_swamp"
+    ],
+    "allowed_blocks": [
+      "#minecraft:animals_spawnable_on"
+    ],
+    "banned_biomes": [
+      "minecraft:mangrove_swamp"
+    ],
+    "weight": 1
+  }
+]

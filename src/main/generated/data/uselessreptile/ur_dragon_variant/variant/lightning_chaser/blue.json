@@ -1,0 +1,7 @@
+{
+  "dragon_model": "uselessreptile:lightning_chaser/blue",
+  "equipment": "uselessreptile:lightning_chaser",
+  "id": "uselessreptile:lightning_chaser",
+  "name": "blue",
+  "spawn_conditions": "uselessreptile:lightning_chaser/blue"
+}

@@ -9,7 +9,6 @@ import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.projectile.ProjectileEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -156,9 +155,9 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
     private boolean canTarget(Entity target) {
         if (target instanceof EntityPart part) target = part.owner;
         Entity owner = getOwner();
-        LivingEntity ownerOwner = owner instanceof TameableEntity tameable ? tameable.getOwner() : null;
+        LivingEntity ownerOwner = owner instanceof Tameable tameable ? tameable.getOwner() : null;
         if (target == ownerOwner) return false;
-        if (target instanceof TameableEntity tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
+        if (target instanceof Tameable tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
 
         return true;
     }
@@ -211,7 +210,7 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
                 BlockState blockState = world.getBlockState(pos);
                 return blockState.isIn(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS) || blockState.getHardness(world, pos) == 0;
             }) || !world.getOtherEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
-                LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof TameableEntity tameable ? tameable.getOwner() : null;
+                LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof Tameable tameable ? tameable.getOwner() : null;
                 if (entity instanceof Tameable tameable && tameable.getOwner() != null && tameable.getOwner() == ownerOwner)
                     return false;
                 if (owner.getControllingPassenger() == entity) return false;

@@ -1,0 +1,46 @@
+{
+  "model_data" : {
+    "texture": "example:textures/river_pikehorn/striped.png",
+    "model": "uselessreptile:geo/entity/river_pikehorn/river_pikehorn.geo.json",
+    "animation": "uselessreptile:animations/entity/river_pikehorn/river_pikehorn.animation.json"
+  },
+  "sounds": [
+    {
+      "id": "minecraft:entity.chicken.step",
+      "name": "step",
+      "pitch": 0.9,
+      "volume": 0.5
+    },
+    {
+      "id": "uselessreptile:dragon.woosh",
+      "name": "woosh",
+      "pitch": 1.3,
+      "volume": 0.7
+    },
+    {
+      "id": "minecraft:entity.ender_dragon.flap",
+      "name": "flap",
+      "pitch": 1.3
+    },
+    {
+      "id": "uselessreptile:river_pikehorn.attack",
+      "name": "attack",
+      "pitch": 1.1
+    },
+    {
+      "id": "uselessreptile:river_pikehorn.ambient",
+      "name": "idle",
+      "pitch": 1.1
+    },
+    {
+      "id": "uselessreptile:river_pikehorn.hurt",
+      "name": "hurt",
+      "pitch": 1.1
+    },
+    {
+      "id": "uselessreptile:river_pikehorn.death",
+      "name": "death",
+      "pitch": 1.1
+    }
+  ]
+}

@@ -8,7 +8,6 @@ import net.minecraft.entity.ai.goal.SwimGoal;
 import net.minecraft.entity.ai.goal.TrackOwnerAttackerGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -18,11 +17,9 @@ import net.minecraft.entity.passive.ChickenEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
@@ -43,7 +40,6 @@ import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.gui.MoleclawScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -51,7 +47,6 @@ import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import java.util.List;
 
@@ -127,24 +122,25 @@ public class MoleclawEntity extends URRideableDragonEntity {
         AnimationController<MoleclawEntity> turn = new AnimationController<>(this, "turn", TRANSITION_TICKS, this::turnController);
         AnimationController<MoleclawEntity> attack = new AnimationController<>(this, "attack", 0, this::attackController);
         AnimationController<MoleclawEntity> eye = new AnimationController<>(this, "eye", 0, this::eyeController);
-        main.setSoundKeyframeHandler(this::soundListenerMain);
-        attack.setSoundKeyframeHandler(this::soundListenerAttack);
+        main.setSoundKeyframeHandler(this::soundHandler);
+        attack.setSoundKeyframeHandler(this::soundHandler);
+        turn.setSoundKeyframeHandler(this::soundHandler);
+        eye.setSoundKeyframeHandler(this::soundHandler);
         animationData.add(main, turn, attack, eye);
     }
 
-    private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
-        if (getWorld().isClient())
-            if (event.getKeyframeData().getSound().equals("step"))
-                playSound(getStepSound(getBlockPos(), getWorld().getBlockState(getBlockPos())), 1, 1);
-    }
-
-    private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
-        if (getWorld().isClient())
-            switch (event.getKeyframeData().getSound()) {
-                case "attack_strong" -> playSound(URSounds.MOLECLAW_STRONG_ATTACK, 1, 1F);
-                case "attack" -> playSound(URSounds.MOLECLAW_ATTACK, 1, 1);
-            }
-    }
+    //private <ENTITY extends GeoEntity> void soundListenerMain(SoundKeyframeEvent<ENTITY> event) {
+    //    if (getWorld().isClient())
+    //        if (event.getKeyframeData().getSound().equals("step")) playSound(URSounds.DRAGON_STEP, 1, 0.7f);
+    //}
+//
+    //private <ENTITY extends GeoEntity> void soundListenerAttack(SoundKeyframeEvent<ENTITY> event) {
+    //    if (getWorld().isClient())
+    //        switch (event.getKeyframeData().getSound()) {
+    //            case "attack_strong" -> playSound(URSounds.MOLECLAW_STRONG_ATTACK, 1, 1F);
+    //            case "attack" -> playSound(URSounds.MOLECLAW_ATTACK, 1, 1);
+    //        }
+    //}
 
     private <A extends GeoEntity> PlayState eyeController(AnimationState<A> event) {
         return loopAnim("blink", event);
@@ -358,33 +354,9 @@ public class MoleclawEntity extends URRideableDragonEntity {
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
     }
 
-    private SoundEvent getStepSound(BlockPos pos, BlockState state) {
-        if (state.getFluidState().isEmpty()) {
-            BlockState blockState = getWorld().getBlockState(pos.up());
-            BlockSoundGroup blockSoundGroup = blockState.isIn(BlockTags.INSIDE_STEP_SOUND_BLOCKS) ? blockState.getSoundGroup() : state.getSoundGroup();
-            return blockSoundGroup.getStepSound();
-        }
-        return getSwimSound();
-    }
-
     @Override
     public boolean disablesShield() {
         return isPrimaryAttack();
-    }
-
-    @Override
-    protected SoundEvent getHurtSound(DamageSource source) {
-        return URSounds.MOLECLAW_HURT;
-    }
-
-    @Override
-    protected SoundEvent getDeathSound() {
-        return URSounds.MOLECLAW_DEATH;
-    }
-
-    @Override
-    protected SoundEvent getAmbientSound() {
-        return URSounds.MOLECLAW_AMBIENT;
     }
 
     @Override
@@ -395,7 +367,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
     private void playPanicSound() {
         if (isPanicking()) {
             if (panicSoundDelay == 0) {
-                playSound(URSounds.MOLECLAW_PANICKING, 1 ,1);
+                SoundInfo soundInfo = getSoundInfo("panic");
+                if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume() ,soundInfo.pitch());
                 panicSoundDelay = random.nextInt(41) + 60;
             }
             else panicSoundDelay--;

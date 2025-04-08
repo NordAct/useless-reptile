@@ -23,7 +23,7 @@ public class URConfig {
     @SerialEntry
     public boolean naturalRiverPikehornSpawn = true;
     @SerialEntry(comment = "Note: Lightning Chaser doesn't have variants for natural spawn defined and thus won't appear by default." +
-            "\nYou have to add variant spawns manually via datapack if you want it to spawn naturally")
+            "\nYou have to add name spawns manually via datapack if you want it to spawn naturally")
     public boolean naturalLightningChaserSpawn = false;
     @SerialEntry(comment = "Defines a chance of Lightning Chaser spawning near player during thunderstorms each 30 seconds (1200 ticks)")
     public int lightningChaserThunderstormSpawnChance = 10;
