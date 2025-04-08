@@ -61,7 +61,7 @@ public class RenderUtil {
     }
 
     public static float getTickDelta(boolean ignoreFreeze) {
-        return MinecraftClient.getInstance().getRenderTickCounter().getTickDelta(ignoreFreeze);
+        return MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(ignoreFreeze);
     }
 
     private static final BiFunction<Identifier, Boolean, RenderLayer> ENTITY_TRANSLUCENT_CULL = Util.memoize((texture, affectsOutline) -> {

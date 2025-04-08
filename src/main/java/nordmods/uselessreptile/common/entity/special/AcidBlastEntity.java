@@ -70,7 +70,7 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
 
     @Override
     public void playSound(SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) getWorld().playSound(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
+        if (!isSilent()) getWorld().playSoundClient(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
     }
 
     @Override
@@ -118,7 +118,7 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
         float e = (i >> 8 & 0xFF) / 255f;
         float f = (i >> 0 & 0xFF) / 255f;
         for (int j = 0; j < amount; ++j) {
-            getWorld().addParticle(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, d, e, f), getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), d, e, f);
+            getWorld().addParticleClient(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, d, e, f), getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), d, e, f);
         }
     }
 

@@ -29,7 +29,7 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
         URDragonEntity owner = animatable.owner;
 
         if (!isReRender) {
-            float yaw = MathHelper.lerpAngleDegrees(partialTick, owner.prevBodyYaw, owner.bodyYaw);
+            float yaw = MathHelper.lerpAngleDegrees(partialTick, owner.lastBodyYaw, owner.bodyYaw);
             if (owner.isFrozen())
                 yaw += (float) (Math.cos(owner.age * 3.25d) * Math.PI * 0.4d);
             yaw = 180f - yaw;

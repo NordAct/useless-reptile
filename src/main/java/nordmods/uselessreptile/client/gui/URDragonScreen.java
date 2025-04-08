@@ -94,7 +94,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         context.getMatrices().multiply(RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180));
         context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + entity.getYaw(tickDelta)));
 
-        DiffuseLighting.method_34742();
+        DiffuseLighting.enableGuiShaderLighting();
         EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
         context.draw(vertexConsumerProvider -> entityRenderDispatcher.render(entity, 0, 0, 0, tickDelta, context.getMatrices(), vertexConsumerProvider, 15728880));
         DiffuseLighting.enableGuiDepthLighting();

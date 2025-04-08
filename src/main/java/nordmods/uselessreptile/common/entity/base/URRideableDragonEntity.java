@@ -93,7 +93,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public boolean isLogicalSideForUpdatingMovement() {
         if (canBeControlledByRider()
                 && (getControllingPassenger() instanceof PlayerEntity player && player.isMainPlayer() || !getWorld().isClient())) return true;
-        return this.canMoveVoluntarily();
+        return this.canActVoluntarily();
     }
 
     @Override

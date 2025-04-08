@@ -146,10 +146,10 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     //        }
     //}
 
-    private <A extends GeoEntity> PlayState eyeController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState eyeController(net.minecraft.entity.AnimationState<A> event) {
         return loopAnim("blink", event);
     }
-    private <A extends GeoEntity> PlayState mainController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState mainController(net.minecraft.entity.AnimationState<A> event) {
         if (event.getController().hasAnimationFinished()) event.getController().forceAnimationReset();
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
@@ -175,7 +175,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turnController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState turnController(net.minecraft.entity.AnimationState<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
@@ -187,7 +187,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attackController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState attackController(net.minecraft.entity.AnimationState<A> event) {
         event.getController().setAnimationSpeed(1/ getCooldownModifier());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
         if (isPrimaryAttack()) {
@@ -256,7 +256,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             else setTamingProgress(getTamingProgress() - 1);
             if (player.isCreative()) setTamingProgress(0);
             if (getTamingProgress() <= 0) {
-                setOwner(player);
+                setTamedBy(player);
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
             } else {
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
@@ -276,7 +276,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 ItemStack potion = new ItemStack(Items.POTION);
                 potion.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(URPotions.ACID));
                 player.incrementStat(Stats.USED.getOrCreateStat(bottle));
-                getWorld().playSound(player, player.getBlockPos(), SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
+                getWorld().playSoundClient(player, player.getBlockPos(), SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
                 player.setStackInHand(hand, consumeGivenItem(player, itemStack));
                 player.giveItemStack(potion);
                 return ActionResult.SUCCESS;
@@ -324,7 +324,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
         if (isFlying()) {
-            URDragonEntity.SoundInfo soundInfo = getSoundInfo("bite");
+            SoundInfo soundInfo = getSoundInfo("bite");
             if (soundInfo != null)
                 URPacketHelper.playSound(this, SoundEvent.of(soundInfo.id()), SoundCategory.NEUTRAL, soundInfo.volume(), soundInfo.pitch(), 3);
         }

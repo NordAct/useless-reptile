@@ -55,9 +55,9 @@ public class FluteItem extends Item {
             Criteria.CONSUME_ITEM.trigger(serverPlayer, itemStack);
             user.stopUsingItem();
             switch (mode) {
-                case 1 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 2, 1);
-                case 2 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 2, 1);
-                default -> world.playSoundFromEntity(null, user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 2, 1);
+                case 1 -> world.playSoundFromEntityClient(null, user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 2, 1);
+                case 2 -> world.playSoundFromEntityClient(null, user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 2, 1);
+                default -> world.playSoundFromEntityClient(null, user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 2, 1);
             }
             user.emitGameEvent(URGameEvents.FLUTE_USED);
         }

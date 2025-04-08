@@ -142,11 +142,11 @@ public class MoleclawEntity extends URRideableDragonEntity {
     //        }
     //}
 
-    private <A extends GeoEntity> PlayState eyeController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState eyeController(net.minecraft.entity.AnimationState<A> event) {
         return loopAnim("blink", event);
     }
 
-    private <A extends GeoEntity> PlayState mainController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState mainController(net.minecraft.entity.AnimationState<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         if (getIsSitting() && !isDancing() && !isPanicking()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
@@ -159,7 +159,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turnController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState turnController(net.minecraft.entity.AnimationState<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
         if (turnState == 1) return loopAnim("turn.left", event);
@@ -167,7 +167,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attackController(AnimationState<A> event){
+    private <A extends GeoEntity> PlayState attackController(net.minecraft.entity.AnimationState<A> event){
         event.getController().setAnimationSpeed(1/ getCooldownModifier());
         if (isSecondaryAttack()) return playAnim( "attack.normal" + getAttackType(), event);
         if (isPrimaryAttack()) {
@@ -225,7 +225,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
             else setTamingProgress(getTamingProgress() - 1);
             if (player.isCreative()) setTamingProgress(0);
             if (getTamingProgress() <= 0) {
-                setOwner(player);
+                setTamedBy(player);
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
             } else {
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);

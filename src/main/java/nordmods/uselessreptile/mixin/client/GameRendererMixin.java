@@ -32,7 +32,7 @@ public abstract class GameRendererMixin {
         if (client.player.hasStatusEffect(URStatusEffects.SHOCK)) {
             DrawContext drawContext = new DrawContext(client, buffers.getEntityVertexConsumers());
             float strength = MathHelper.clamp(client.player.getStatusEffect(URStatusEffects.SHOCK).getDuration()/100f, 0f, 1f);
-            renderShockOverlay(drawContext, strength, tickCounter.getTickDelta(false));
+            renderShockOverlay(drawContext, strength, tickCounter.getTickProgress(false));
             prevStrength = strength;
         } else prevStrength = 1f;
     }

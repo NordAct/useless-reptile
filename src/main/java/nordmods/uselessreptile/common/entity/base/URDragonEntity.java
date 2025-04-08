@@ -387,8 +387,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    public void setOwner(PlayerEntity entity) {
-        super.setOwner(entity);
+    public void setTamedBy(PlayerEntity entity) {
+        super.setTamedBy(entity);
         setHomePoint(getBlockPos());
     }
 
@@ -537,7 +537,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public void playSound(SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) getWorld().playSound(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
+        if (!isSilent()) getWorld().playSoundClient(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
     }
 
     public float getWidthModTransSpeed() {
@@ -574,7 +574,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         } else {
             if (!getWorld().isClient()) setTurningState((byte)0);
         }
-        prevYaw = bodyYaw = getYaw();
+        lastYaw = bodyYaw = getYaw();
         super.setRotation(currentYaw, MathHelper.clamp(pitch, -getPitchLimit(), getPitchLimit()));
         headYaw = currentYaw;
     }
@@ -681,10 +681,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 if (!player.isAlive()) stopRiding();
                 getLookControl().setLockRotation(true);
                 if (getWorld().isClient()) {
-                    prevYaw = getYaw();
+                    lastYaw = getYaw();
                     setYaw(player.getYaw());
                     byte turnState = 0;
-                    float diff = prevYaw - getYaw();
+                    float diff = lastYaw - getYaw();
                     if (diff > 0) turnState = 1;
                     if (diff < 0) turnState = 2;
                     setTurningState(turnState);
@@ -701,12 +701,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState loopAnim(String anim, AnimationState<A> event) {
+    protected <A extends GeoEntity> PlayState loopAnim(String anim, net.minecraft.entity.AnimationState<A> event) {
         event.getController().setAnimation(RawAnimation.begin().thenLoop(anim)); return PlayState.CONTINUE;
     }
 
     @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState playAnim(String anim, AnimationState<A> event) {
+    protected <A extends GeoEntity> PlayState playAnim(String anim, net.minecraft.entity.AnimationState<A> event) {
         event.getController().setAnimation(RawAnimation.begin().then(anim, Animation.LoopType.PLAY_ONCE)); return PlayState.CONTINUE;
     }
 

@@ -178,10 +178,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     //        }
     //}
 
-    private <A extends GeoEntity> PlayState eyeController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState eyeController(net.minecraft.entity.AnimationState<A> event) {
         return loopAnim("blink", event);
     }
-    private <A extends GeoEntity> PlayState mainController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState mainController(net.minecraft.entity.AnimationState<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         event.getController().transitionLength(TRANSITION_TICKS);
         if (isFlying()) {
@@ -209,7 +209,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turnController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState turnController(net.minecraft.entity.AnimationState<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
@@ -225,7 +225,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attackController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState attackController(net.minecraft.entity.AnimationState<A> event) {
         event.getController().setAnimationSpeed(1/ getCooldownModifier());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
         if (isPrimaryAttack()) {
@@ -502,7 +502,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         if (!isTamed()) {
             if (hasSurrendered() && getTamingProgress() <= 0 || player.isCreative() && isFavoriteFood(itemStack)) {
-                setOwner(player);
+                setTamedBy(player);
                 setPersistent();
                 setSurrendered(false);
                 shouldBailOut = false;

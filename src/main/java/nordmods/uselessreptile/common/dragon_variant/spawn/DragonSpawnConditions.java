@@ -68,11 +68,11 @@ public record DragonSpawnConditions(int weight,
             Optional<List<Codecs.TagEntryId>> bannedBiomes = this.bannedBiomes != null ? Optional.of(this.bannedBiomes) : Optional.empty();
             Optional<List<Codecs.TagEntryId>> allowedBlocks = this.allowedBlocks != null ? Optional.of(this.allowedBlocks) : Optional.empty();
             Optional<List<Codecs.TagEntryId>> bannedBlocks = this.bannedBlocks != null ? Optional.of(this.bannedBlocks) : Optional.empty();
-            Optional<DragonSpawnConditions.AltitudeRestriction> altitudeRestriction;
+            Optional<AltitudeRestriction> altitudeRestriction;
             if (this.minAltitude != null || this.maxAltitude != null) {
                 Optional<Integer> minAltitude = this.minAltitude != null ? Optional.of(this.minAltitude) : Optional.empty();
                 Optional<Integer> maxAltitude = this.maxAltitude != null ? Optional.of(this.maxAltitude) : Optional.empty();
-                altitudeRestriction = Optional.of(new DragonSpawnConditions.AltitudeRestriction(minAltitude, maxAltitude));
+                altitudeRestriction = Optional.of(new AltitudeRestriction(minAltitude, maxAltitude));
             }
             else altitudeRestriction = Optional.empty();
 

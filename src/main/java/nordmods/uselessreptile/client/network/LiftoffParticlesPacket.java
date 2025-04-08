@@ -13,7 +13,7 @@ public class LiftoffParticlesPacket {
             if (entity instanceof URDragonEntity dragon) {
                 float span = dragon.getWidthMod()/2;
                 for (int i = 0; i < 25 * span; i++)
-                    context.player().getWorld().addParticle(ParticleTypes.CLOUD,
+                    context.player().getWorld().addParticleClient(ParticleTypes.CLOUD,
                             dragon.getX(), dragon.getY() + 1, dragon.getZ(),
                             context.player().getRandom().nextGaussian() * 0.1 * span,
                             -Math.abs(context.player().getRandom().nextGaussian()) * 0.05 * span,

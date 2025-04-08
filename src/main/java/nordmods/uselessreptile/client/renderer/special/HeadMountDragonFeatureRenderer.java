@@ -29,7 +29,7 @@ public class HeadMountDragonFeatureRenderer extends FeatureRenderer<PlayerEntity
             matrices.push();
 
             ModelPart head = getContextModel().head;
-            head.rotate(matrices);
+            head.applyTransform(matrices);
 
             float scale = 1 / state.baseScale;
             float offsetScale = dragon.asURDragon().getScale() / state.baseScale;

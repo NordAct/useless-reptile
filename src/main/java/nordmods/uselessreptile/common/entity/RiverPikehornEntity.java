@@ -109,10 +109,10 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         animationData.add(main, turn, attack, eye);
     }
 
-    private <A extends GeoEntity> PlayState eyeController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState eyeController(net.minecraft.entity.AnimationState<A> event) {
         return loopAnim("blink", event);
     }
-    private <A extends GeoEntity> PlayState mainController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState mainController(net.minecraft.entity.AnimationState<A> event) {
         event.getController().setAnimationSpeed(animationSpeed);
         if (hasVehicle()) return loopAnim("sit.head", event);
         if (isFlying()) {
@@ -132,7 +132,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         return loopAnim("idle", event);
     }
 
-    private <A extends GeoEntity> PlayState turnController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState turnController(net.minecraft.entity.AnimationState<A> event) {
         byte turnState = getTurningState();
         event.getController().setAnimationSpeed(animationSpeed);
 
@@ -145,7 +145,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         return loopAnim("turn.none", event);
     }
 
-    private <A extends GeoEntity> PlayState attackController(AnimationState<A> event) {
+    private <A extends GeoEntity> PlayState attackController(net.minecraft.entity.AnimationState<A> event) {
         event.getController().setAnimationSpeed(1/ getCooldownModifier());
         if (isPrimaryAttack()) return playAnim( "attack" + getAttackType(), event);
         return playAnim("attack.none", event);
@@ -248,7 +248,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
         if (isTamingItem(itemStack) && !isTamed()) {
             player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
-            setOwner(player);
+            setTamedBy(player);
             getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
             setPersistent();
             return ActionResult.SUCCESS;
@@ -272,7 +272,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             triggerItemPickedUpByEntityCriteria(item);
             ItemStack itemStack = item.getStack();
             equipStack(EquipmentSlot.MAINHAND, itemStack);
-            updateDropChances(EquipmentSlot.MAINHAND);
+            setDropGuaranteed(EquipmentSlot.MAINHAND);
             sendPickup(item, itemStack.getCount());
             item.discard();
         }
