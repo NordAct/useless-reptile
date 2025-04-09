@@ -3,27 +3,36 @@ package nordmods.uselessreptile.client.renderer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
-import nordmods.uselessreptile.client.renderer.base.URDragonRenderer;
+import nordmods.uselessreptile.client.init.URDataTickets;
+import nordmods.uselessreptile.client.renderer.base.URDragonEntityRenderer;
 import nordmods.uselessreptile.common.entity.WyvernEntity;
 import nordmods.uselessreptile.common.init.URTags;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-public class WyvernEntityRenderer extends URDragonRenderer<WyvernEntity> {
+public class WyvernEntityRenderer<R extends LivingEntityRenderState & GeoRenderState> extends URDragonEntityRenderer<WyvernEntity, R> {
     public WyvernEntityRenderer(EntityRendererFactory.Context renderManager) {
         super(renderManager);
         shadowRadius = 1.5f;
     }
 
     @Override
-    public void preRender(MatrixStack poseStack, WyvernEntity animatable, BakedGeoModel model, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
-        updateSaddle(animatable);
-        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+    public void preRender(R renderState, MatrixStack poseStack, BakedGeoModel model, @Nullable VertexConsumerProvider bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
+        updateSaddle(renderState);
+        super.preRender(renderState, poseStack, model, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
     }
 
-    public void updateSaddle (WyvernEntity entity) {
-        boolean hasSaddle = entity.getEquippedStack(EquipmentSlot.BODY).isIn(URTags.WYVERN_SADDLES);
-        model.getBone("spikes_front").ifPresent(c -> c.setHidden(hasSaddle));
+    protected void updateSaddle (R renderState) {
+        model.getBone("spikes_front").ifPresent(c -> c.setHidden(renderState.getGeckolibData(URDataTickets.HAS_SADDLE)));
+    }
+
+    @Override
+    public void addRenderData(WyvernEntity animatable, Void relatedObject, R renderState) {
+        super.addRenderData(animatable, relatedObject, renderState);
+        renderState.addGeckolibData(URDataTickets.HAS_SADDLE, animatable.getEquippedStack(EquipmentSlot.BODY).isIn(URTags.WYVERN_SADDLES));
     }
 }

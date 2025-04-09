@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.renderer.LightningChaserEntityRenderer;
+import nordmods.uselessreptile.client.state.LightningBreathEntityRenderState;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;

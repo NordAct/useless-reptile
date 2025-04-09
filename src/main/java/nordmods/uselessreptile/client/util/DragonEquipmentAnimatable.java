@@ -10,13 +10,14 @@ import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.Map;
 
 public class DragonEquipmentAnimatable implements GeoAnimatable, AssetCahceOwner {
-    public final URDragonEntity owner;
+    public GeoRenderState ownerRenderState;
     public final Item item;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private final AssetCache assetCache = new AssetCache();
@@ -26,8 +27,8 @@ public class DragonEquipmentAnimatable implements GeoAnimatable, AssetCahceOwner
         return assetCache;
     }
 
-    public DragonEquipmentAnimatable(URDragonEntity owner, Item item) {
-        this.owner = owner;
+    public DragonEquipmentAnimatable(GeoRenderState ownerRenderState, Item item) {
+        this.ownerRenderState = ownerRenderState;
         this.item = item;
     }
 

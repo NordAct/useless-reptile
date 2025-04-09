@@ -281,7 +281,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     private void applyVariantModifiers() {
-        DragonVariant variant = DragonVariant.getByVariant(this);
+        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld());
         if (variant == null) {
             UselessReptile.LOGGER.warn("Couldn't find any info on variant {} ({}), thus variant modifiers cannot be set", getVariant(), getDragonId());
             return;
@@ -316,7 +316,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Nullable
     public SoundInfo getSoundInfo(String name) {
         if (!soundInfoHolder.containsKey(name)) {
-            DragonModel model = DragonVariantUtil.getDragonModelData(this);
+            DragonModel model = DragonVariantUtil.getDragonModelData(getDragonId(), getCustomName().getString(), getVariant(), getWorld());
             if (model != null) {
                 if (model.sounds().isPresent()) {
                     DragonModel.Sound sound = model.sounds().get().stream()
@@ -988,7 +988,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     protected Text getDefaultName() {
         if (defaultDisplayName == null) {
-            DragonVariant variant = DragonVariant.getByVariant(this);
+            DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld());
             if (variant != null && variant.displayNameKey().isPresent()) defaultDisplayName = Text.translatable(variant.displayNameKey().get());
             if (defaultDisplayName == null) defaultDisplayName = super.getDefaultName();
         }

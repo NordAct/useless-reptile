@@ -2,8 +2,12 @@ package nordmods.uselessreptile.common.dragon_variant;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URRegistryKeys;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +47,11 @@ public record DragonVariant(Identifier dragonId, String name, Optional<String> d
             .apply(instance, (id, variant, displayNameKey, dragonModelData, dragonEquipment) -> new DragonVariant(id, variant, displayNameKey, dragonModelData, dragonEquipment, Optional.empty(), Optional.empty())));
 
     @NotNull
-    public static DragonVariant getDefaultVariant(URDragonEntity dragon) {
+    public static DragonVariant getDefaultVariant(Identifier dragonId, World world) {
+        NbtCompound nbtCompound = new NbtCompound();
+        nbtCompound.putString("id", dragonId.toString());
+        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromNbt(nbtCompound, world, SpawnReason.TRIGGERED).get();
+        dragon.discard();
         return dragon.getWorld().getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT)
                 .stream()
                 .filter(dragonVariant -> dragonVariant.dragonId().equals(dragon.getDragonId()) && dragonVariant.name().equals(dragon.getDefaultVariant()))
@@ -52,36 +60,32 @@ public record DragonVariant(Identifier dragonId, String name, Optional<String> d
     }
 
     @Nullable
-    public static DragonVariant getByVariant(URDragonEntity dragon) {
-        Identifier id = dragon.getDragonId();
-        String name = dragon.getVariant();
-        Registry<DragonVariant> registry = dragon.getWorld().getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT);
+    public static DragonVariant getByVariant(Identifier dragonId, String variant, World world) {
+        Registry<DragonVariant> registry = world.getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT);
         return registry.stream()
-                .filter(dragonVariant -> dragonVariant.dragonId().equals(id) && dragonVariant.name().equals(name))
+                .filter(dragonVariant -> dragonVariant.dragonId().equals(dragonId) && dragonVariant.name().equals(variant))
                 .findFirst()
                 .orElse(null);
     }
 
     @Nullable
-    public static DragonVariant getByCustomName(URDragonEntity dragon) {
-        Identifier id = dragon.getDragonId();
-        String name = dragon.getName().getString();
-        Registry<DragonVariant> registry = dragon.getWorld().getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT_CUSTOM_NAME);
+    public static DragonVariant getByCustomName(Identifier dragonId, String name, World world) {
+        Registry<DragonVariant> registry = world.getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT_CUSTOM_NAME);
         return registry.stream()
-                .filter(dragonVariant -> dragonVariant.dragonId().equals(id) && dragonVariant.name().equals(name))
+                .filter(dragonVariant -> dragonVariant.dragonId().equals(dragonId) && dragonVariant.name().equals(name))
                 .findFirst()
                 .orElse(null);
     }
 
-    public static DragonVariant getDragonVariant(URDragonEntity dragon) {
-        DragonVariant variant = null;
+    public static DragonVariant getDragonVariant(Identifier dragonId, String name, String variant, World world) {
+        DragonVariant dragonVariant = null;
 
-        if (dragon.hasCustomName()) variant = getByCustomName(dragon);
-        if (variant != null) return variant;
+        if (name != null) dragonVariant = getByCustomName(dragonId, name, world);
+        if (dragonVariant != null) return dragonVariant;
 
-        variant = getByVariant(dragon);
-        if (variant != null) return variant;
+        dragonVariant = getByVariant(dragonId, name, world);
+        if (dragonVariant != null) return dragonVariant;
 
-        return getDefaultVariant(dragon);
+        return getDefaultVariant(dragonId, world);
     }
 }

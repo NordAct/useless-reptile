@@ -7,19 +7,21 @@ import net.minecraft.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
 
-public class DragonMainHandItemLayer<T extends URDragonEntity> extends BlockAndItemGeoLayer<T> {
+public class DragonMainHandItemLayer<T extends URDragonEntity, R extends GeoRenderState> extends BlockAndItemGeoLayer<T, Void, R> {
 
-    public DragonMainHandItemLayer(GeoRenderer<T> renderer) {
+    public DragonMainHandItemLayer(GeoRenderer<T, Void, R> renderer) {
         super(renderer);
     }
 
     @Nullable
     @Override
-    protected ItemStack getStackForBone(GeoBone bone, T animatable) {
-        return bone.getName().equals("main_hand") ? animatable.getEquippedStack(EquipmentSlot.MAINHAND) : null;
+    protected ItemStack getStackForBone(GeoBone bone, R renderState) {
+        return bone.getName().equals("main_hand") ? renderState.getGeckolibData(DataTickets.HAN) : null;
     }
 
     @Override

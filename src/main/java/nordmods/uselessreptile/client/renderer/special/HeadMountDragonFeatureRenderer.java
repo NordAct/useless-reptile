@@ -23,7 +23,7 @@ public class HeadMountDragonFeatureRenderer extends FeatureRenderer<PlayerEntity
 
     @Override
     public void render(MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, PlayerEntityRenderState state, float limbAngle, float limbDistance) {
-        if (state instanceof HeadMountDragonOwner owner && owner.getHeadMountDragon() instanceof HeadMountDragon dragon) {
+        if (state instanceof HeadMountDragonOwner owner && owner.getHeadMountDragon() instanceof HeadMountDragon dragon) { //TODO replace this with render state
             if (dragon.asURDragon().isInvisible()) return;
             ON_HEAD.remove(dragon.asURDragon().getUuid());
             matrices.push();

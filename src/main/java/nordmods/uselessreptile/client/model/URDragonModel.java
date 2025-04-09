@@ -1,106 +1,161 @@
 package nordmods.uselessreptile.client.model;
 
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.util.AssetCache;
-import nordmods.uselessreptile.client.util.DragonAssetCache;
-import nordmods.uselessreptile.client.util.RenderUtil;
-import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.client.init.URDataTickets;
+import nordmods.uselessreptile.client.util.*;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModel;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     @Override
     public Identifier getAnimationResource(T entity) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation(entity);
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation(entity.getDragonId());
 
         AssetCache assetCache = entity.getAssetCache();
         Identifier id = assetCache.getAnimationLocationCache();
         if (id != null) return id;
 
-        DragonModel data  = DragonVariantUtil.getDragonModelData(entity);
+        Identifier dragonId = entity.getDragonId();
+        String name = entity.hasCustomName() ? entity.getCustomName().getString() : null;
+        String variant = entity.getVariant();
+        DragonModel data = DragonVariantUtil.getDragonModelData(
+                dragonId,
+                name,
+                variant,
+                MinecraftClient.getInstance().world
+        );
         if (data != null && ResourceUtil.doesExist(data.modelData().animation().orElseThrow())) {
             id = data.modelData().animation().get();
             assetCache.setAnimationLocationCache(id);
             return id;
-        } else UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead", entity.getName().getString(), entity.getDragonId(), entity.getVariant());
+        } else UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
+                name,
+                dragonId,
+                variant);
 
-        id = getDefaultAnimation(entity);
+        id = getDefaultAnimation(dragonId);
         assetCache.setAnimationLocationCache(id);
         return id;
     }
 
     @Override
-    public Identifier getModelResource(T entity, GeoRenderer<T> renderer) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel(entity);
+    public Identifier getModelResource(GeoRenderState renderState) {
+        Identifier dragonId = renderState.getGeckolibData(URDataTickets.DRAGON_ID);
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel(dragonId);
 
-        AssetCache assetCache = entity.getAssetCache();
+        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE);
         Identifier id = assetCache.getModelLocationCache();
         if (id != null) return id;
 
-        DragonModel data  = DragonVariantUtil.getDragonModelData(entity);
+        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
+        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String variant = renderState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
+
+        DragonModel data = DragonVariantUtil.getDragonModelData(
+                dragonId,
+                name,
+                variant,
+                MinecraftClient.getInstance().world
+        );
         if (data != null && ResourceUtil.doesExist(data.modelData().model())) {
             id = data.modelData().model();
             assetCache.setModelLocationCache(id);
             return id;
-        } else UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead", entity.getName().getString(), entity.getDragonId(), entity.getVariant());
+        } else UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
+                name,
+                dragonId,
+                variant);
 
-
-        id = getDefaultModel(entity);
+        id = getDefaultModel(dragonId);
         assetCache.setModelLocationCache(id);
         return id;
     }
 
     @Override
-    public Identifier getTextureResource(T entity, GeoRenderer<T> renderer) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(entity);
+    public Identifier getTextureResource(GeoRenderState renderState) {
+        Identifier dragonId = renderState.getGeckolibData(URDataTickets.DRAGON_ID);
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(dragonId);
 
-        AssetCache assetCache = entity.getAssetCache();
-        Identifier id = assetCache.getTextureLocationCache();
+
+
+        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE);
+        Identifier id = assetCache.getModelLocationCache();
         if (id != null) return id;
 
-        DragonModel data = DragonVariantUtil.getDragonModelData(entity);
+        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
+        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String variant = renderState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
+
+        DragonModel data  = DragonVariantUtil.getDragonModelData(
+                dragonId,
+                name,
+                variant,
+                MinecraftClient.getInstance().world
+        );
         if (data != null && ResourceUtil.doesExist(data.modelData().texture())) {
             id = data.modelData().texture();
             assetCache.setTextureLocationCache(id);
             return id;
-        } else UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead", entity.getName().getString(), entity.getDragonId(), entity.getVariant());
+        } else UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead",
+                name,
+                dragonId,
+                variant);
 
-        id = getDefaultTexture(entity);
+        id = getDefaultTexture(dragonId);
         assetCache.setTextureLocationCache(id);
         return id;
     }
 
-    protected final Identifier getDefaultTexture(T entity) {
-        return UselessReptile.id("textures/entity/"+ entity.getDragonIdPath() + "/" + entity.getDefaultVariant() + ".png");
+    protected final Identifier getDefaultTexture(Identifier entity) {
+        NbtCompound nbtCompound = new NbtCompound();
+        nbtCompound.putString("id", entity.toString());
+        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromNbt(nbtCompound, MinecraftClient.getInstance().world, SpawnReason.TRIGGERED).get();
+        dragon.discard();
+        return UselessReptile.id("textures/entity/"+ entity.getPath() + "/" + dragon.getDefaultVariant() + ".png");
     }
 
-    protected final Identifier getDefaultAnimation(T entity) {
-        return UselessReptile.id("animations/entity/" + entity.getDragonIdPath() + "/" + entity.getDragonIdPath() + ".animation.json");
+    protected final Identifier getDefaultAnimation(Identifier entity) {
+        return UselessReptile.id("animations/entity/" + entity.getPath() + "/" + entity.getPath() + ".animation.json");
     }
 
-    protected final Identifier getDefaultModel(T entity) {
-        return UselessReptile.id("geo/entity/" + entity.getDragonIdPath() + "/" + entity.getDragonIdPath() + ".geo.json");
+    protected final Identifier getDefaultModel(Identifier entity) {
+        return UselessReptile.id("geo/entity/" + entity.getPath() + "/" + entity.getPath() + ".geo.json");
     }
 
     @Override
-    public RenderLayer getRenderType(T entity, Identifier texture) {
+    public RenderLayer getRenderType(GeoRenderState renderState, Identifier texture) {
         if (!ResourceUtil.isResourceReloadFinished) return RenderLayer.getEntityCutout(texture);
 
-        DragonAssetCache assetCache = entity.getAssetCache();
+        DragonAssetCache assetCache = renderState.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE);
         RenderLayer renderType = assetCache.getRenderTypeCache();
         if (renderType != null) return renderType;
 
-        DragonModel data = DragonVariantUtil.getDragonModelData(entity);
+        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
+        Identifier dragonId = renderState.getGeckolibData(URDataTickets.DRAGON_ID);
+        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String variant = renderState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
+
+        DragonModel data  = DragonVariantUtil.getDragonModelData(
+                dragonId,
+                name,
+                variant,
+                MinecraftClient.getInstance().world
+        );
         if (data != null) {
             ModelData modelData = data.modelData();
-            if (modelData.cull()) renderType = modelData.translucent() ? RenderUtil.getEntityTranslucentCull(texture) : RenderLayer.getEntityCutout(texture);
-            else renderType = modelData.translucent() ? RenderLayer.getEntityTranslucent(texture) : RenderLayer.getEntityCutoutNoCull(texture);
+            if (modelData.translucent()) renderType = RenderLayer.getEntityTranslucent(texture); //all translucent models can't have culling
+            else renderType = modelData.cull() ? RenderLayer.getEntityCutout(texture) : RenderLayer.getEntityCutoutNoCull(texture);
             assetCache.setRenderTypeCache(renderType);
             return renderType;
         }

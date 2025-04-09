@@ -11,6 +11,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.state.ShockwaveSpereEntityRenderState;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
