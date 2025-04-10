@@ -11,6 +11,7 @@ import nordmods.uselessreptile.client.renderer.layers.DragonPassengerLayer;
 import nordmods.uselessreptile.client.util.duck.DragonPassengerOwner;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,11 +32,11 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
     }
 
     @ModifyArg(method = "setupTransforms",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lorg/joml/Quaternionf;)V"),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lorg/joml/Quaternionfc;)V"),
             slice = @Slice(
                     from = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;isInPose(Lnet/minecraft/entity/EntityPose;)Z"),
-                    to = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lorg/joml/Quaternionf;)V")))
-    private Quaternionf undoRot(Quaternionf quaternion, @Local(ordinal = 0, argsOnly = true) S state) {
+                    to = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;multiply(Lorg/joml/Quaternionfc;)V")))
+    private Quaternionfc undoRot(Quaternionfc quaternion, @Local(ordinal = 0, argsOnly = true) S state) {
         if (!(state instanceof DragonPassengerOwner owner && owner.isRidingDragon())) return quaternion;
         return EMPTY;
     }

@@ -1,14 +1,13 @@
 package nordmods.uselessreptile.mixin.client;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.BufferBuilderStorage;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.common.init.URStatusEffects;
 import org.spongepowered.asm.mixin.Final;
@@ -18,7 +17,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import software.bernie.geckolib.object.Color;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
@@ -48,21 +46,12 @@ public abstract class GameRendererMixin {
         context.getMatrices().scale(scale, scale, scale);
         context.getMatrices().translate(-width/2f, -height/2f, 0f);
 
-        RenderSystem.disableDepthTest();
-        RenderSystem.depthMask(false);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE);
-
         float r = 0.72f * strength;
         float g = 0.82f * strength;
         float b = 0.9f * strength;
-        int color = Color.ofRGB(r, g, b).getColor();
-        context.drawGuiTexture(identifier -> RenderLayer.getGuiNauseaOverlay(), Identifier.ofVanilla("textures/misc/nausea.png"), 0, 0, width, height, color);
+        int color = ColorHelper.fromFloats(1.0F, r, g, b);
+        context.drawGuiTexture(identifier -> RenderLayer.getGuiNauseaOverlay(), InGameHud.NAUSEA_TEXTURE, 0, 0, width, height, color);
 
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.disableBlend();
-        RenderSystem.depthMask(true);
-        RenderSystem.enableDepthTest();
         context.getMatrices().pop();
     }
 }

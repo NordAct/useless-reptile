@@ -7,14 +7,14 @@ import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.renderer.base.URDragonEntityRenderer;
+import nordmods.uselessreptile.client.renderer.base.URRideableDragonEntityRenderer;
 import nordmods.uselessreptile.common.entity.WyvernEntity;
 import nordmods.uselessreptile.common.init.URTags;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-public class WyvernEntityRenderer<R extends LivingEntityRenderState & GeoRenderState> extends URDragonEntityRenderer<WyvernEntity, R> {
+public class WyvernEntityRenderer<R extends LivingEntityRenderState & GeoRenderState> extends URRideableDragonEntityRenderer<WyvernEntity, R> {
     public WyvernEntityRenderer(EntityRendererFactory.Context renderManager) {
         super(renderManager);
         shadowRadius = 1.5f;
@@ -27,12 +27,12 @@ public class WyvernEntityRenderer<R extends LivingEntityRenderState & GeoRenderS
     }
 
     protected void updateSaddle (R renderState) {
-        model.getBone("spikes_front").ifPresent(c -> c.setHidden(renderState.getGeckolibData(URDataTickets.HAS_SADDLE)));
+        model.getBone("spikes_front").ifPresent(c -> c.setHidden(renderState.getGeckolibData(URDataTickets.DRAGON_HAS_SADDLE)));
     }
 
     @Override
     public void addRenderData(WyvernEntity animatable, Void relatedObject, R renderState) {
         super.addRenderData(animatable, relatedObject, renderState);
-        renderState.addGeckolibData(URDataTickets.HAS_SADDLE, animatable.getEquippedStack(EquipmentSlot.BODY).isIn(URTags.WYVERN_SADDLES));
+        renderState.addGeckolibData(URDataTickets.DRAGON_HAS_SADDLE, animatable.getEquippedStack(EquipmentSlot.BODY).isIn(URTags.WYVERN_SADDLES));
     }
 }

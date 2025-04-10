@@ -28,7 +28,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
     public Identifier getModelResource(GeoRenderState renderState) {
         if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_MODEL;
 
-        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.ASSET_CACHE);
+        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE);
         GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
         LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
 
@@ -38,7 +38,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         Identifier dragonId = ownerState.getGeckolibData(URDataTickets.DRAGON_ID);
         String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
         String variant = ownerState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
-        Identifier itemId = renderState.getGeckolibData(URDataTickets.ITEM_ID);
+        Identifier itemId = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID);
         DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(
                 dragonId,
                 name,
@@ -66,7 +66,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
     public Identifier getTextureResource(GeoRenderState renderState) {
         if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_TEXTURE;
 
-        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.ASSET_CACHE);
+        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE);
         GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
         LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
 
@@ -76,7 +76,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         Identifier dragonId = ownerState.getGeckolibData(URDataTickets.DRAGON_ID);
         String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
         String variant = ownerState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
-        Identifier itemId = renderState.getGeckolibData(URDataTickets.ITEM_ID);
+        Identifier itemId = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID);
         DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(
                 dragonId,
                 name,
@@ -142,7 +142,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
     public RenderLayer getRenderType(GeoRenderState renderState, Identifier texture) {
         if (!ResourceUtil.isResourceReloadFinished) return RenderLayer.getEntityCutout(texture);
 
-        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.ASSET_CACHE);
+        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE);
         GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
         LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
 
@@ -152,7 +152,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         Identifier dragonId = ownerState.getGeckolibData(URDataTickets.DRAGON_ID);
         String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
         String variant = ownerState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
-        Identifier itemId = renderState.getGeckolibData(URDataTickets.ITEM_ID);
+        Identifier itemId = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID);
         DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(
                 dragonId,
                 name,

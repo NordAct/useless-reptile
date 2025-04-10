@@ -7,9 +7,10 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
-import nordmods.uselessreptile.client.model.special.DragonEqupmentModel;
-import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import nordmods.uselessreptile.client.init.URDataTickets;
+import nordmods.uselessreptile.client.model.special.DragonEqupmentModel;
+import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
+import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -19,8 +20,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable> {
     public DragonEquipmentRenderer() {
         super(new DragonEqupmentModel());
-        //TODO
-        //addRenderLayer(new URGlowingLayer<>(this));
+        addRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE)));
     }
 
     //have to override that because for some reason they give offset for matrix by 0.5 on each axis
@@ -52,7 +52,7 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
     @Override
     public void addRenderData(DragonEquipmentAnimatable animatable, Void relatedObject, GeoRenderState renderState) {
         renderState.addGeckolibData(URDataTickets.DRAGON_RENDER_STATE, animatable.ownerRenderState);
-        renderState.addGeckolibData(URDataTickets.ITEM_ID, Registries.ITEM.getId(animatable.item));
-        renderState.addGeckolibData(URDataTickets.ASSET_CACHE, animatable.getAssetCache());
+        renderState.addGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID, Registries.ITEM.getId(animatable.item));
+        renderState.addGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE, animatable.getAssetCache());
     }
 }

@@ -1,9 +1,11 @@
 package nordmods.uselessreptile.client.renderer.base;
 
+import com.google.common.collect.ImmutableList;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.state.EntityHitbox;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
@@ -11,11 +13,17 @@ import net.minecraft.entity.EntityEquipment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Box;
+import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.model.URDragonModel;
 import nordmods.uselessreptile.client.model.special.DragonEqupmentModel;
+import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.renderer.special.SaddleEquipmentRenderer;
-import nordmods.uselessreptile.client.util.*;
+import nordmods.uselessreptile.client.util.DragonAssetCache;
+import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
+import nordmods.uselessreptile.client.util.RenderUtil;
+import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URTags;
 import org.jetbrains.annotations.Nullable;
@@ -31,8 +39,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     private final SaddleEquipmentRenderer saddleEquipmentRenderer = new SaddleEquipmentRenderer();
     public URDragonEntityRenderer(EntityRendererFactory.Context renderManager) {
         super(renderManager, new URDragonModel<>());
-        //TODO
-        //addRenderLayer(new URGlowingLayer<>(this));
+        addRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE)));
     }
 
     @Override
@@ -104,5 +111,45 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
         EntityEquipment map = new EntityEquipment();
         for (EquipmentSlot slot : EquipmentSlot.values()) map.put(slot, animatable.getEquippedStack(slot));
         renderState.addGeckolibData(URDataTickets.DRAGON_EQIPMENT, map);
+    }
+
+    @Override
+    protected void appendHitboxes(T entity, ImmutableList.Builder<EntityHitbox> builder, float tickDelta) {
+        super.appendHitboxes(entity, builder, tickDelta);
+        if (URClientConfig.getConfig().attackBoxesInDebug) {
+            //double x = -MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX());
+            //double y = -MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY());
+            //double z = -MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ());
+
+            Box box = entity.getAttackBox();
+            if (box != null) {
+                builder.add(new EntityHitbox(
+                        box.minX - entity.getX(),
+                        box.minY - entity.getY(),
+                        box.minZ - entity.getZ(),
+                        box.maxX - entity.getX(),
+                        box.maxY - entity.getY(),
+                        box.maxZ - entity.getZ(),
+                        1.0F,
+                        0.5F,
+                        0.0F
+                ));
+            }
+
+            box = entity.getSecondaryAttackBox();
+            if (box != null) {
+                builder.add(new EntityHitbox(
+                        box.minX - entity.getX(),
+                        box.minY - entity.getY(),
+                        box.minZ - entity.getZ(),
+                        box.maxX - entity.getX(),
+                        box.maxY - entity.getY(),
+                        box.maxZ - entity.getZ(),
+                        1.0F,
+                        0.5F,
+                        1.0F
+                ));
+            }
+        }
     }
 }
