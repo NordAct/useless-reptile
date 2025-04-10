@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.model.special;
+package nordmods.uselessreptile.client.model;
 
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;

@@ -3,7 +3,6 @@
   "addition": "#minecraft:netherite_tool_materials",
   "base": "uselessreptile:dragon_chestplate_diamond",
   "result": {
-    "count": 1,
     "id": "uselessreptile:dragon_chestplate_netherite"
   },
   "template": "minecraft:netherite_upgrade_smithing_template"

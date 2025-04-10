@@ -54,12 +54,11 @@ public class UREquipmentProvider implements DataProvider {
         addCommonArmor(UREntities.LIGHTNING_CHASER_ENTITY);
         addCommonArmor(UREntities.MOLECLAW_ENTITY);
 
-        Identifier moleclawHelmet = UselessReptile.id("geo/entity/moleclaw/helmet.geo.json");
+        Identifier moleclawHelmet = UselessReptile.id("entity/moleclaw/helmet");
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_iron.png"), moleclawHelmet, true);
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_gold.png"), moleclawHelmet, true);
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_diamond.png"), moleclawHelmet, true);
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_netherite.png"), moleclawHelmet, true);
-
         holder.put(UselessReptile.id("empty"), new DragonEquipment(Optional.empty(), List.of()));
     }
 
@@ -72,8 +71,8 @@ public class UREquipmentProvider implements DataProvider {
 
     protected void addSaddle(EntityType<? extends URDragonEntity> type) {
         Identifier id = EntityType.getId(type);
-        Identifier texture = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/saddle.png");
-        Identifier model = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/saddle.geo.json");
+        Identifier texture = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
+        Identifier model = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
         addEntry(type, Items.SADDLE, texture, model, false);
     }
 
@@ -83,9 +82,9 @@ public class UREquipmentProvider implements DataProvider {
         Identifier textureGold = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_gold.png");
         Identifier textureDiamond = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_diamond.png");
         Identifier textureNetherite = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_netherite.png");
-        Identifier modelHelmet = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/helmet.geo.json");
-        Identifier modelChestplate = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/chestplate.geo.json");
-        Identifier modelTailArmor = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/tail_armor.geo.json");
+        Identifier modelHelmet = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/helmet");
+        Identifier modelChestplate = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/chestplate");
+        Identifier modelTailArmor = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/tail_armor");
         addEntry(type, URItems.DRAGON_HELMET_IRON, textureIron, modelHelmet, false);
         addEntry(type, URItems.DRAGON_HELMET_GOLD, textureGold, modelHelmet, false);
         addEntry(type, URItems.DRAGON_HELMET_DIAMOND, textureDiamond, modelHelmet, false);

@@ -126,11 +126,11 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     }
 
     protected final Identifier getDefaultAnimation(Identifier entity) {
-        return UselessReptile.id("animations/entity/" + entity.getPath() + "/" + entity.getPath() + ".animation.json");
+        return UselessReptile.id("entity/" + entity.getPath() + "/" + entity.getPath());
     }
 
     protected final Identifier getDefaultModel(Identifier entity) {
-        return UselessReptile.id("geo/entity/" + entity.getPath() + "/" + entity.getPath() + ".geo.json");
+        return UselessReptile.id("entity/" + entity.getPath() + "/" + entity.getPath());
     }
 
     @Override

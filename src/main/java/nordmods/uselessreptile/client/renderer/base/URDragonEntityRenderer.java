@@ -17,7 +17,7 @@ import net.minecraft.util.math.Box;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.model.URDragonModel;
-import nordmods.uselessreptile.client.model.special.DragonEqupmentModel;
+import nordmods.uselessreptile.client.model.DragonEqupmentModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.renderer.special.SaddleEquipmentRenderer;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
@@ -69,12 +69,14 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
             } else dragonEquipmentAnimatable.ownerRenderState = dragonRenderState;
 
             DragonEquipmentRenderer usedRenderer = itemStack.isIn(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
+            GeoRenderState temp = new GeoRenderState.Impl();
+            usedRenderer.addRenderData(dragonEquipmentAnimatable, null, temp);
 
-            Identifier id = usedRenderer.getGeoModel().getModelResource(dragonRenderState);
+            Identifier id = usedRenderer.getGeoModel().getModelResource(temp);
             if (id == DragonEqupmentModel.DEFAULT_MODEL) continue;
             BakedGeoModel bakedEquipmentModel = usedRenderer.getGeoModel().getBakedModel(id);
 
-            id = usedRenderer.getGeoModel().getTextureResource(dragonRenderState);
+            id = usedRenderer.getGeoModel().getTextureResource(temp);
             Map<String, GeoBone> equipmentBones = dragonEquipmentAnimatable.equipmentBones;
             if (equipmentBones.isEmpty()) getEquipmentBones(equipmentBones, bakedEquipmentModel);
 
@@ -87,7 +89,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
                 }
             });
 
-            RenderLayer renderType = usedRenderer.getGeoModel().getRenderType(dragonRenderState, id);
+            RenderLayer renderType = usedRenderer.getGeoModel().getRenderType(temp, id);
             usedRenderer.render(poseStack, dragonEquipmentAnimatable, bufferSource, renderType, bufferSource.getBuffer(renderType), packedLight, RenderUtil.getTickDelta(false));
         }
     }

@@ -8,7 +8,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.model.special.DragonEqupmentModel;
+import nordmods.uselessreptile.client.model.DragonEqupmentModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import org.jetbrains.annotations.Nullable;

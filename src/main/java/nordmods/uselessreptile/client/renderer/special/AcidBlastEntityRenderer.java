@@ -2,7 +2,7 @@ package nordmods.uselessreptile.client.renderer.special;
 
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.state.EntityRenderState;
-import nordmods.uselessreptile.client.model.special.AcidBlastEntityModel;
+import nordmods.uselessreptile.client.model.AcidBlastEntityModel;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;

@@ -235,7 +235,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (inventory != null && isTamed()) {
             final NbtList inv = new NbtList();
             for (int i = 0; i < inventory.size(); i++) {
-                inv.add(inventory.getStack(i).toNbt(getRegistryManager()));
+                NbtCompound nbtCompound = new NbtCompound();
+                nbtCompound.putByte("Slot", (byte)i);
+                ItemStack stack = inventory.getStack(i);
+                if (!stack.isEmpty()) inv.add(stack.toNbt(getRegistryManager(), nbtCompound));
             }
             tag.put("Inventory", inv);
         }
@@ -259,8 +262,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             final NbtList inv = tag.getListOrEmpty("Inventory");
             inventory = new SimpleInventory(inv.size());
             for (int i = 0; i < inv.size(); i++) {
-                inventory.setStack(i, ItemStack.fromNbt(getRegistryManager(), inv.getCompound(i).orElse(new NbtCompound())).orElse(ItemStack.EMPTY));
-            }
+                NbtCompound nbtCompound = inv.getCompoundOrEmpty(i);
+                int slot = nbtCompound.getByte("Slot", (byte)0) & 255;
+                if (slot < inv.size()) {
+                    inventory.setStack(slot, ItemStack.fromNbt(getRegistryManager(), nbtCompound).orElse(ItemStack.EMPTY));
+                }            }
             inventory.addListener(this);
         }
         updateEquipment();
@@ -316,7 +322,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Nullable
     public SoundInfo getSoundInfo(String name) {
         if (!soundInfoHolder.containsKey(name)) {
-            DragonModel model = DragonVariantUtil.getDragonModelData(getDragonId(), getCustomName().getString(), getVariant(), getWorld());
+            DragonModel model = DragonVariantUtil.getDragonModelData(getDragonId(), hasCustomName() ? getCustomName().getString() : null, getVariant(), getWorld());
             if (model != null) {
                 if (model.sounds().isPresent()) {
                     DragonModel.Sound sound = model.sounds().get().stream()

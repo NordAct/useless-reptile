@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.model.special;
+package nordmods.uselessreptile.client.model;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
@@ -19,8 +19,8 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
-    public static final Identifier DEFAULT_ANIMATION = UselessReptile.id("animations/entity/empty.animation.json");
-    public static final Identifier DEFAULT_MODEL = UselessReptile.id("geo/entity/empty.geo.json");
+    public static final Identifier DEFAULT_ANIMATION = UselessReptile.id("entity/empty");
+    public static final Identifier DEFAULT_MODEL = UselessReptile.id("entity/empty");
     public static final Identifier DEFAULT_TEXTURE = SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE;
 
     @Override
@@ -28,7 +28,8 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
     public Identifier getModelResource(GeoRenderState renderState) {
         if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_MODEL;
 
-        AssetCache assetCache = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE);
+        AssetCache assetCache = renderState.getOrDefaultGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE, null) ;
+        if (assetCache == null) return DEFAULT_MODEL;
         GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
         LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
 
@@ -67,6 +68,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_TEXTURE;
 
         AssetCache assetCache = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE);
+        if (assetCache == null) return DEFAULT_MODEL;
         GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
         LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
 

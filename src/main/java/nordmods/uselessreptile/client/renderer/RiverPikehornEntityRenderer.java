@@ -19,7 +19,7 @@ public class RiverPikehornEntityRenderer <R extends LivingEntityRenderState & Ge
         addRenderLayer(new BlockAndItemGeoLayer<>(this,
                 (bone ,state) -> {
                     if (!bone.getName().equals("main_hand")) return null;
-                    GeoRenderState ownerState = state.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
+                    GeoRenderState ownerState = state.getOrDefaultGeckolibData(URDataTickets.DRAGON_RENDER_STATE, null);
                     if (ownerState != null) return ownerState.getGeckolibData(URDataTickets.DRAGON_EQIPMENT).get(EquipmentSlot.MAINHAND);
                     return null;
                 },

@@ -73,8 +73,8 @@ public class URDragonModelProvider implements DataProvider {
 
     protected ModelData getModelData(Identifier id, String variant, boolean cull) {
         Identifier texture = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/" + variant +".png");
-        Identifier model = Identifier.of(id.getNamespace(), "geo/entity/" + id.getPath() + "/" + id.getPath() +".geo.json");
-        Identifier animation = Identifier.of(id.getNamespace(), "animations/entity/" + id.getPath() + "/" + id.getPath() +".animation.json");
+        Identifier model = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/" + id.getPath());
+        Identifier animation = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/" + id.getPath());
         return new ModelData(texture, model, Optional.of(animation), cull, false);
     }
 
