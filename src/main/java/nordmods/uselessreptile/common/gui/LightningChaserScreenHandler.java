@@ -14,7 +14,7 @@ public class LightningChaserScreenHandler extends URDragonScreenHandler{
     }
 
     public LightningChaserScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(maxStorageSize));
+        this(syncId, playerInventory, new SimpleInventory(MAX_STORAGE_SIZE));
     }
 
     public static LightningChaserScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {

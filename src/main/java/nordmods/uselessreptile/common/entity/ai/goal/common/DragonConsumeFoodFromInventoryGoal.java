@@ -28,7 +28,7 @@ public class DragonConsumeFoodFromInventoryGoal extends Goal {
     public void tick() {
         dragon.tickEatFromInventoryTimer();
         if (dragon.getEatFromInventoryTimer() == 0) {
-            for (int i = 0; i <= URDragonScreenHandler.maxStorageSize; i++) {
+            for (int i = 0; i <= URDragonScreenHandler.MAX_STORAGE_SIZE; i++) {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
                 if (dragon.isFavoriteFood(itemStack)) {
                     dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value());

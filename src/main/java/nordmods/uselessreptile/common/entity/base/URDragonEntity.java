@@ -104,7 +104,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected final EntityGameEventHandler<HornUsedEventListener> hornUsedEventHandler = new EntityGameEventHandler<>(new HornUsedEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.INSTRUMENT_USED.value().notificationRadius()));
     protected @Nullable BlockPos jukeboxPos;
-    protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.maxStorageSize);
+    protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.MAX_STORAGE_SIZE);
     public boolean shouldFollow = false;
     protected Text defaultDisplayName;
     private HashMap<String, SoundInfo> soundInfoHolder = new HashMap<>();
@@ -260,13 +260,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         setIsSitting(tag.getBoolean("Sitting", false));
         if (tag.contains("Inventory")) {
             final NbtList inv = tag.getListOrEmpty("Inventory");
-            inventory = new SimpleInventory(inv.size());
             for (int i = 0; i < inv.size(); i++) {
                 NbtCompound nbtCompound = inv.getCompoundOrEmpty(i);
-                int slot = nbtCompound.getByte("Slot", (byte)0) & 255;
-                if (slot < inv.size()) {
+                int slot = nbtCompound.getByte("Slot", (byte)0);
+                if (slot < inventory.size()) {
                     inventory.setStack(slot, ItemStack.fromNbt(getRegistryManager(), nbtCompound).orElse(ItemStack.EMPTY));
-                }            }
+                }
+            }
             inventory.addListener(this);
         }
         updateEquipment();

@@ -12,6 +12,7 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.StackReference;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -187,6 +188,12 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
             player.openHandledScreen(this);
         }
+    }
+
+    @Override
+    public StackReference getStackReference(int mappedIndex) {
+        int i = mappedIndex - 500;
+        return i >= 0 && i < inventory.size() ? StackReference.of(inventory, i) : super.getStackReference(mappedIndex);
     }
 
     protected void setRotation(PlayerEntity rider) {

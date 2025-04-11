@@ -35,7 +35,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
                 variant,
                 MinecraftClient.getInstance().world
         );
-        if (data != null && ResourceUtil.doesExist(data.modelData().animation().orElseThrow())) {
+        if (data != null && ResourceUtil.doesExist(data.modelData().animation().orElseThrow().withPrefixedPath("geckolib/animations/").withSuffixedPath(".json"))) {
             id = data.modelData().animation().get();
             assetCache.setAnimationLocationCache(id);
             return id;
@@ -68,7 +68,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
                 variant,
                 MinecraftClient.getInstance().world
         );
-        if (data != null && ResourceUtil.doesExist(data.modelData().model())) {
+        if (data != null && ResourceUtil.doesExist(data.modelData().model().withPrefixedPath("geckolib/models/").withSuffixedPath(".json"))) {
             id = data.modelData().model();
             assetCache.setModelLocationCache(id);
             return id;
@@ -86,8 +86,6 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     public Identifier getTextureResource(GeoRenderState renderState) {
         Identifier dragonId = renderState.getGeckolibData(URDataTickets.DRAGON_ID);
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(dragonId);
-
-
 
         AssetCache assetCache = renderState.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE);
         Identifier id = assetCache.getModelLocationCache();

@@ -47,9 +47,9 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
                 MinecraftClient.getInstance().world,
                 itemId
         );
-        if (data != null && ResourceUtil.doesExist(data.modelData().model())) {
+        if (data != null) {
             id = data.modelData().model();
-            if (ResourceUtil.doesExist(id)) {
+            if (ResourceUtil.doesExist(id.withPrefixedPath("geckolib/models/").withSuffixedPath(".json"))) {
                 assetCache.setModelLocationCache(id);
                 return id;
             } else UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}",
@@ -86,7 +86,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
                 MinecraftClient.getInstance().world,
                 itemId
         );
-        if (data != null && ResourceUtil.doesExist(data.modelData().texture())) {
+        if (data != null) {
             id = data.modelData().texture();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setTextureLocationCache(id);
@@ -126,7 +126,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         );
         if (data != null && data.modelData().animation().isPresent()) {
             id = data.modelData().animation().get();
-            if (ResourceUtil.doesExist(id)) {
+            if (ResourceUtil.doesExist(id.withPrefixedPath("geckolib/animations/").withSuffixedPath(".json"))) {
                 assetCache.setAnimationLocationCache(id);
                 return id;
             } else UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}",

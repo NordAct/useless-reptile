@@ -16,7 +16,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
 
     protected final Inventory inventory;
     protected final StorageSize storageSize;
-    public static final int maxStorageSize = 20;
+    public static final int MAX_STORAGE_SIZE = 20;
 
     protected URDragonScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, Inventory inventory, StorageSize storageSize, boolean hasSaddle, boolean hasArmor, boolean hasBanner) {
         super(type, syncId);
@@ -123,7 +123,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
             if (invSlot < inventory.size()) {
                 if (!insertItem(originalStack, inventory.size(), this.slots.size(), true)) return ItemStack.EMPTY;
             } else {
-                for (int i = 0; i < maxStorageSize; i++)
+                for (int i = 0; i < MAX_STORAGE_SIZE; i++)
                     if (!insertItem(originalStack, i, inventory.size(), false)) return ItemStack.EMPTY;
             }
 

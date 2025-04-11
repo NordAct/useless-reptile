@@ -15,7 +15,7 @@ public class WyvernScreenHandler extends URDragonScreenHandler {
     }
 
     public WyvernScreenHandler(int syncId, PlayerInventory playerInventory) {
-        this(syncId, playerInventory, new SimpleInventory(maxStorageSize));
+        this(syncId, playerInventory, new SimpleInventory(MAX_STORAGE_SIZE));
     }
 
     public static WyvernScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory, Inventory inventory) {
