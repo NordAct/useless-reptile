@@ -41,13 +41,13 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends
                 (state, bone) -> {
             if (!bone.getName().equals("rider")) return null;
             GeoRenderState ownerState = getOwnerRenderState(state);
-            if (ownerState != null) return ownerState.getGeckolibData(URDataTickets.PASSENGER_RENDER_STATE);
+            if (ownerState != null) return ownerState.getOrDefaultGeckolibData(URDataTickets.PASSENGER_RENDER_STATE, null);
             return null;
             },
                 (state, bone) -> {
             if (!bone.getName().equals("rider")) return null;
             GeoRenderState ownerState = getOwnerRenderState(state);
-            if (ownerState != null) return ownerState.getGeckolibData(URDataTickets.PASSENGER_RENDER);
+            if (ownerState != null) return ownerState.getOrDefaultGeckolibData(URDataTickets.PASSENGER_RENDER, null);
             return null;
             },
                 (state, bone) -> getOwnerRenderState(state).getGeckolibData(URDataTickets.PASSENGER_UUID));

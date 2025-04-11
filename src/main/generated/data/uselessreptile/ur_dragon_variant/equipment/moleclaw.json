@@ -5,7 +5,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/saddle",
-        "texture": "uselessreptile:entity/moleclaw/saddle"
+        "texture": "uselessreptile:textures/entity/moleclaw/saddle.png"
       }
     },
     {

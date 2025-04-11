@@ -30,13 +30,18 @@ public class URRideableDragonEntityRenderer<T extends URRideableDragonEntity, R 
             renderState.addGeckolibData(URDataTickets.PASSENGER_RENDER, RenderUtil.getEntityRenderer(passenger));
             renderState.addGeckolibData(URDataTickets.PASSENGER_UUID, passenger.getUuid());
             renderState.addGeckolibData(URDataTickets.PASSENGER_ATTACHMENT_POS, passenger.getVehicleAttachmentPos(animatable));
-            renderState.addGeckolibData(URDataTickets.PASSENGER_ATTACHMENT_POS, passenger.getVehicleAttachmentPos(animatable));
             renderState.addGeckolibData(
                     URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT,
                     passenger == MinecraftClient.getInstance().player ?
                             URClientConfig.getConfig().renderPassengers.canRenderSelf() :
                             URClientConfig.getConfig().renderPassengers.canRenderOthers()
                     );
+        } else {
+            renderState.addGeckolibData(URDataTickets.PASSENGER_RENDER_STATE, null);
+            renderState.addGeckolibData(URDataTickets.PASSENGER_RENDER, null);
+            renderState.addGeckolibData(URDataTickets.PASSENGER_UUID, null);
+            renderState.addGeckolibData(URDataTickets.PASSENGER_ATTACHMENT_POS, null);
+            renderState.addGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT, false);
         }
     }
 }

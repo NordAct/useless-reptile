@@ -71,7 +71,7 @@ public class UREquipmentProvider implements DataProvider {
 
     protected void addSaddle(EntityType<? extends URDragonEntity> type) {
         Identifier id = EntityType.getId(type);
-        Identifier texture = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
+        Identifier texture = Identifier.of(id.getNamespace(), "textures/entity/" + id.getPath() + "/saddle.png");
         Identifier model = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
         addEntry(type, Items.SADDLE, texture, model, false);
     }
