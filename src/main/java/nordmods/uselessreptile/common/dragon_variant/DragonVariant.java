@@ -83,7 +83,7 @@ public record DragonVariant(Identifier dragonId, String name, Optional<String> d
         if (name != null) dragonVariant = getByCustomName(dragonId, name, world);
         if (dragonVariant != null) return dragonVariant;
 
-        dragonVariant = getByVariant(dragonId, name, world);
+        dragonVariant = getByVariant(dragonId, variant, world);
         if (dragonVariant != null) return dragonVariant;
 
         return getDefaultVariant(dragonId, world);

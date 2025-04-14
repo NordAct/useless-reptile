@@ -24,7 +24,7 @@
     "client.LivingEntityRendererMixin",
     "client.LivingEntityRenderStateMixin",
     "client.PlayerEntityRenderStateMixin",
-    "client.PlayerRendererMixin",
+    "client.PlayerEntityRendererMixin",
     "client.ResourceReloadLoggerMixin",
     "client.StatusEffectsDisplayMixin"
   ],

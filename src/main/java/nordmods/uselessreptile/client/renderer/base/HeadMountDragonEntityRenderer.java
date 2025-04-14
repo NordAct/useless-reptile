@@ -23,8 +23,10 @@ public abstract class HeadMountDragonEntityRenderer<T extends URDragonEntity & H
     @Override
     public void defaultRender(R renderState, MatrixStack poseStack, VertexConsumerProvider bufferSource, RenderLayer renderType, VertexConsumer buffer) {
         if (renderState.getGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER)) {
-            if (HeadMountDragonFeatureRenderer.ON_HEAD.contains(renderState.getGeckolibData(URDataTickets.DRAGON_UUID))) return;
-            else if (renderState.getGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT)) return;
+            if (HeadMountDragonFeatureRenderer.ON_HEAD.contains(renderState.getGeckolibData(URDataTickets.DRAGON_UUID)))
+                return;
+            else if (!renderState.getGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT))
+                return;
         }
         super.defaultRender(renderState, poseStack, bufferSource, renderType, buffer);
     }
