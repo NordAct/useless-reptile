@@ -516,13 +516,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 return ActionResult.SUCCESS;
             }
         }
-
-        if (isTamed()) {
-            if (player.isSneaking() && itemStack.isEmpty() && isOwner(player)) {
-                player.openHandledScreen(this);
-                return ActionResult.SUCCESS;
-            }
-        }
         return super.interactMob(player, hand);
     }
 
