@@ -31,13 +31,12 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         AssetCache assetCache = renderState.getOrDefaultGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE, null) ;
         if (assetCache == null) return DEFAULT_MODEL;
         GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
-        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
 
         Identifier id = assetCache.getModelLocationCache();
         if (id != null) return id;
 
         Identifier dragonId = ownerState.getGeckolibData(URDataTickets.DRAGON_ID);
-        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String name = ownerState.getGeckolibData(URDataTickets.DRAGON_NAME) != null ? ownerState.getGeckolibData(URDataTickets.DRAGON_NAME).getString() : null;
         String variant = ownerState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
         Identifier itemId = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID);
         DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(
@@ -52,11 +51,15 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
             if (ResourceUtil.doesExist(id.withPrefixedPath("geckolib/models/").withSuffixedPath(".json"))) {
                 assetCache.setModelLocationCache(id);
                 return id;
-            } else UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}",
-                    itemId,
-                    name,
-                    dragonId,
-                    variant);
+            } else {
+                LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
+                if (name == null) name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
+                UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}",
+                        itemId,
+                        name,
+                        dragonId,
+                        variant);
+            }
         }
         assetCache.setModelLocationCache(DEFAULT_MODEL);
         return DEFAULT_MODEL;
@@ -70,13 +73,12 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         AssetCache assetCache = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE);
         if (assetCache == null) return DEFAULT_MODEL;
         GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
-        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
 
         Identifier id = assetCache.getTextureLocationCache();
         if (id != null) return id;
 
         Identifier dragonId = ownerState.getGeckolibData(URDataTickets.DRAGON_ID);
-        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String name = ownerState.getGeckolibData(URDataTickets.DRAGON_NAME) != null ? ownerState.getGeckolibData(URDataTickets.DRAGON_NAME).getString() : null;
         String variant = ownerState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
         Identifier itemId = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID);
         DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(
@@ -91,11 +93,15 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setTextureLocationCache(id);
                 return id;
-            } else UselessReptile.LOGGER.warn("Failed to find texture for equipment ({}) for {} ({}) of variant {}",
-                    itemId,
-                    name,
-                    dragonId,
-                    variant);
+            } else {
+                LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
+                if (name == null) name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
+                UselessReptile.LOGGER.warn("Failed to find texture for equipment ({}) for {} ({}) of variant {}",
+                        itemId,
+                        name,
+                        dragonId,
+                        variant);
+            }
         }
         assetCache.setTextureLocationCache(DEFAULT_TEXTURE);
         return DEFAULT_TEXTURE;
@@ -107,14 +113,13 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
         if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_ANIMATION;
 
         GeoRenderState ownerState = animatable.ownerRenderState;
-        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
         AssetCache assetCache = animatable.getAssetCache();
 
         Identifier id = assetCache.getAnimationLocationCache();
         if (id != null) return id;
 
         Identifier dragonId = ownerState.getGeckolibData(URDataTickets.DRAGON_ID);
-        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String name = ownerState.getGeckolibData(URDataTickets.DRAGON_NAME) != null ? ownerState.getGeckolibData(URDataTickets.DRAGON_NAME).getString() : null;
         String variant = ownerState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
         Identifier itemId = Registries.ITEM.getId(animatable.item);
         DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(
@@ -129,11 +134,15 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
             if (ResourceUtil.doesExist(id.withPrefixedPath("geckolib/animations/").withSuffixedPath(".json"))) {
                 assetCache.setAnimationLocationCache(id);
                 return id;
-            } else UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}",
-                    itemId,
-                    name,
-                    dragonId,
-                    variant);
+            } else {
+                LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
+                if (name == null) name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
+                UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}",
+                        itemId,
+                        name,
+                        dragonId,
+                        variant);
+            }
         }
 
         assetCache.setAnimationLocationCache(DEFAULT_ANIMATION);
@@ -146,13 +155,12 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
 
         AssetCache assetCache = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE);
         GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
-        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)ownerState;
 
         RenderLayer renderType = assetCache.getRenderTypeCache();
         if (renderType != null) return renderType;
 
         Identifier dragonId = ownerState.getGeckolibData(URDataTickets.DRAGON_ID);
-        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String name = ownerState.getGeckolibData(URDataTickets.DRAGON_NAME) != null ? ownerState.getGeckolibData(URDataTickets.DRAGON_NAME).getString() : null;
         String variant = ownerState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
         Identifier itemId = renderState.getGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID);
         DragonEquipment.Equipment data = DragonVariantUtil.getEquipmentModelData(

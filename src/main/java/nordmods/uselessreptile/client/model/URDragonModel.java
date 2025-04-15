@@ -76,7 +76,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
             return id;
         } else {
             LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
-            name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
+            if (name == null) name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
             UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
                     name,
                     dragonId,
@@ -112,7 +112,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
             return id;
         } else {
             LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
-            name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
+            if (name == null) name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
             UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead",
                     name,
                     dragonId,

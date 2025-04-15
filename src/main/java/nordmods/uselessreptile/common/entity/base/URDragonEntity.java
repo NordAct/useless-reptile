@@ -37,11 +37,12 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
@@ -489,7 +490,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 if (!getBoundedInstrumentSound().equals(sound)) setBoundedInstrumentSound(sound);
                 else setBoundedInstrumentSound("");
                 Text instrumentSound = Text.translatable(getBoundedInstrumentSound().isEmpty() ?
-                        "other.uselessreptile.none" : getInstrumentSoundKey(Identifier.of(getBoundedInstrumentSound())));
+                        "other.uselessreptile.none" : getBoundedInstrumentSound()); //might fetch keys for non-vanilla instruments incorrectly
                 if (!getWorld().isClient()) player.sendMessage(Text.translatable("other.uselessreptile.sound_respond", getName(), instrumentSound), true);
                 if (getWorld().isClient()) player.playSound(SoundEvents.BLOCK_COMPARATOR_CLICK, 0.2f, 2);
                 return ActionResult.SUCCESS;
@@ -532,10 +533,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return itemStack.isOf(Items.POTION) || itemStack.isOf(Items.STICK) || isInstrument(itemStack) || isFavoriteFood(itemStack);
     }
 
-    private String getInstrumentSoundKey(Identifier sound) {
-        return Util.createTranslationKey("instrument", sound);
-    }
-
     public boolean isInstrument(ItemStack itemStack) {
         return itemStack.getComponents().contains(DataComponentTypes.INSTRUMENT);
     }
@@ -543,7 +540,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public String getInstrument(ItemStack itemStack) {
         if (!itemStack.getComponents().contains(DataComponentTypes.INSTRUMENT)) return "";
         Optional<RegistryEntry<Instrument>> instrument = itemStack.getComponents().get(DataComponentTypes.INSTRUMENT).getInstrument(getWorld().getRegistryManager());
-        if (instrument.isPresent()) return instrument.get().value().description().getString();
+        if (instrument.isPresent()) {
+            boolean translatable = instrument.get().value().description().getContent() instanceof TranslatableTextContent;
+            return translatable ? ((TranslatableTextContent) instrument.get().value().description().getContent()).getKey() : ((PlainTextContent)instrument.get().value().description().getContent()).string();
+        }
         return "";
     }
 
