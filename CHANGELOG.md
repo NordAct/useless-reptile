@@ -2,3 +2,4 @@
 - (Backport for 1.21.1 version) Untamed River Pikehorns will now return to place where they have spawned at when finishing fishing
 - (Backport for 1.21.1 version) Controller support
 - (Backport for 1.21.1 version) Added free look around option
+- (Backport for 1.21.1 version) More clear interaction logic for opening inventory or starting to ride dragon
