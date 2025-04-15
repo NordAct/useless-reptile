@@ -471,7 +471,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         }
 
         if (isTamed() && isOwner(player)) {
-            if (this instanceof HeadMountDragon && player.isSneaking() && itemStack.isEmpty()) startRiding(player);
+            if (this instanceof HeadMountDragon && player.isSneaking() && itemStack.isEmpty()) {
+                startRiding(player);
+                return ActionResult.SUCCESS;
+            }
 
             if (itemStack.getItem() instanceof PotionItem potionItem && player.isSneaking()) {
                 DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(player, itemStack);
@@ -502,6 +505,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                     setIsSitting(true);
                     getNavigation().stop();
                 }
+                return ActionResult.SUCCESS;
+            }
+
+            if (player.isSneaking() && inventory.size() > 0) {
+                if (!getWorld().isClient())
+                    player.openHandledScreen(this);
                 return ActionResult.SUCCESS;
             }
         }

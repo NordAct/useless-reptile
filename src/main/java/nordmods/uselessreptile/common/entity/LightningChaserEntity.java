@@ -441,11 +441,16 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     public void meleeAttack() {
         if (!(getWorld() instanceof ServerWorld world)) return;
-        List<LivingEntity> list = getWorld().getEntitiesByClass(LivingEntity.class,  getAttackBox(), this::canTarget);
-        LivingEntity target = null;
+        List<Entity> list = world.getOtherEntities(
+                this,
+                getAttackBox(),
+                entity -> !getPassengerList().contains(entity)
+                        && !entity.isPartOf(this)
+                        && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity)));
+        Entity target = null;
         if (!list.isEmpty()) {
             target = list.getFirst();
-            for (LivingEntity entry : list) {
+            for (Entity entry : list) {
                 if (squaredDistanceTo(entry) < squaredDistanceTo(target)) target = entry;
             }
         }
@@ -491,13 +496,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 return ActionResult.SUCCESS;
             } else if (hasSurrendered() && getTamingProgress() > 0) {
                 getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
-                return ActionResult.SUCCESS;
-            }
-        }
-
-        if (isTamed()) {
-            if (player.isSneaking() && itemStack.isEmpty() && isOwner(player)) {
-                player.openHandledScreen(this);
                 return ActionResult.SUCCESS;
             }
         }

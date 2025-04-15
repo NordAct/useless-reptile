@@ -249,11 +249,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         }
 
         if (isTamed()) {
-            if (player.isSneaking() && itemStack.isEmpty() && isOwner(player)) {
-                player.openHandledScreen(this);
-                return ActionResult.SUCCESS;
-            }
-
             if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwner(player)) {
                 Item bottle = itemStack.getItem();
                 ItemStack potion = new ItemStack(Items.POTION);
@@ -296,11 +291,16 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     public void meleeAttack() {
         if (!(getWorld() instanceof ServerWorld world)) return;
-        List<LivingEntity> list = getWorld().getEntitiesByClass(LivingEntity.class,  getAttackBox(), this::canTarget);
-        LivingEntity target = null;
+        List<Entity> list = world.getOtherEntities(
+                this,
+                getAttackBox(),
+                entity -> !getPassengerList().contains(entity)
+                        && !entity.isPartOf(this)
+                        && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity)));
+        Entity target = null;
         if (!list.isEmpty()) {
             target = list.getFirst();
-            for (LivingEntity entry : list) {
+            for (Entity entry : list) {
                 if (squaredDistanceTo(entry) < squaredDistanceTo(target)) target = entry;
             }
         }
