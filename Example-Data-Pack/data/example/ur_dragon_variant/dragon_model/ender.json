@@ -1,9 +1,8 @@
 {
-  "display_name_key": "entity.example.wyvern.ender",
   "model_data" : {
     "texture": "example:textures/wyvern/end.png",
-    "model": "uselessreptile:geo/entity/wyvern/wyvern.geo.json",
-    "animation": "uselessreptile:animations/entity/wyvern/wyvern.animation.json"
+    "model": "uselessreptile:entity/wyvern/wyvern",
+    "animation": "uselessreptile:entity/wyvern/wyvern"
   },
   "sounds": [
     {

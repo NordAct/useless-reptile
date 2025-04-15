@@ -1,8 +1,8 @@
 {
   "model_data" : {
     "texture": "example:textures/moleclaw/battleworn.png",
-    "model": "example:geo/moleclaw/battleworn.geo.json",
-    "animation": "uselessreptile:animations/entity/moleclaw/moleclaw.animation.json",
+    "model": "example:moleclaw/battleworn",
+    "animation": "uselessreptile:entity/moleclaw/moleclaw",
     "cull" : false
   },
   "sounds": [

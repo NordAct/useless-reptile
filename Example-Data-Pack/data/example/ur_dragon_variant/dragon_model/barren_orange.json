@@ -1,9 +1,8 @@
 {
-  "display_name_key": "entity.example.wyvern.barren",
   "model_data" : {
     "texture": "example:textures/wyvern/barren_orange.png",
-    "model": "example:geo/wyvern/barren.geo.json",
-    "animation": "example:animations/barren.animation.json"
+    "model": "example:wyvern/barren",
+    "animation": "example:barren"
   },
   "sounds": [
     {

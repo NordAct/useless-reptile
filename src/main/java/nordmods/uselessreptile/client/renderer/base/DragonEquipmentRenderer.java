@@ -11,7 +11,6 @@ import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
@@ -33,6 +32,5 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
         renderState.addGeckolibData(URDataTickets.DRAGON_RENDER_STATE, animatable.ownerRenderState);
         renderState.addGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID, Registries.ITEM.getId(animatable.item));
         renderState.addGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE, animatable.getAssetCache());
-        renderState.addGeckolibData(DataTickets.PACKED_LIGHT, animatable.ownerRenderState.getGeckolibData(DataTickets.PACKED_LIGHT)); //todo maybe remove it later if Geckolib fixes it
     }
 }

@@ -4,14 +4,14 @@
     {
       "item": "minecraft:dirt",
       "model_data": {
-        "model": "example:geo/moleclaw/block.geo.json",
+        "model": "example:moleclaw/block",
         "texture": "minecraft:textures/block/dirt.png"
       }
     },
     {
       "item": "minecraft:stone",
       "model_data": {
-        "model": "example:geo/moleclaw/block.geo.json",
+        "model": "example:moleclaw/block",
         "texture": "minecraft:textures/block/stone.png"
       }
     }

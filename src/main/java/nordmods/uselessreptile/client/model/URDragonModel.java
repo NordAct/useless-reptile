@@ -39,10 +39,13 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
             id = data.modelData().animation().get();
             assetCache.setAnimationLocationCache(id);
             return id;
-        } else UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
-                name,
-                dragonId,
-                variant);
+        } else {
+            name = entity.getDisplayName().getString();
+            UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
+                    name,
+                    dragonId,
+                    variant);
+        }
 
         id = getDefaultAnimation(dragonId);
         assetCache.setAnimationLocationCache(id);
@@ -58,8 +61,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
         Identifier id = assetCache.getModelLocationCache();
         if (id != null) return id;
 
-        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
-        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String name = renderState.getGeckolibData(URDataTickets.DRAGON_NAME) != null ? renderState.getGeckolibData(URDataTickets.DRAGON_NAME).getString() : null;
         String variant = renderState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
 
         DragonModel data = DragonVariantUtil.getDragonModelData(
@@ -72,10 +74,14 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
             id = data.modelData().model();
             assetCache.setModelLocationCache(id);
             return id;
-        } else UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
-                name,
-                dragonId,
-                variant);
+        } else {
+            LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
+            name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
+            UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
+                    name,
+                    dragonId,
+                    variant);
+        }
 
         id = getDefaultModel(dragonId);
         assetCache.setModelLocationCache(id);
@@ -88,11 +94,10 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(dragonId);
 
         AssetCache assetCache = renderState.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE);
-        Identifier id = assetCache.getModelLocationCache();
+        Identifier id = assetCache.getTextureLocationCache();
         if (id != null) return id;
 
-        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
-        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String name = renderState.getGeckolibData(URDataTickets.DRAGON_NAME) != null ? renderState.getGeckolibData(URDataTickets.DRAGON_NAME).getString() : null;
         String variant = renderState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
 
         DragonModel data  = DragonVariantUtil.getDragonModelData(
@@ -105,10 +110,14 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
             id = data.modelData().texture();
             assetCache.setTextureLocationCache(id);
             return id;
-        } else UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead",
-                name,
-                dragonId,
-                variant);
+        } else {
+            LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
+            name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
+            UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead",
+                    name,
+                    dragonId,
+                    variant);
+        }
 
         id = getDefaultTexture(dragonId);
         assetCache.setTextureLocationCache(id);

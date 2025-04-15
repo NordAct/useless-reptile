@@ -3,5 +3,6 @@
   "name": "Barren Brown",
   "equipment": "example:barren",
   "dragon_model": "example:barren_brown",
-  "spawn_conditions": "example:barren_brown"
+  "spawn_conditions": "example:barren_brown",
+  "display_name_key": "entity.example.wyvern.barren"
 }

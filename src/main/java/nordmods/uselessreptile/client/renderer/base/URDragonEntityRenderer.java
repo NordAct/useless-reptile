@@ -6,7 +6,6 @@ import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.state.EntityHitbox;
-import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityEquipment;
@@ -16,8 +15,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.model.URDragonModel;
 import nordmods.uselessreptile.client.model.DragonEqupmentModel;
+import nordmods.uselessreptile.client.model.URDragonModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.renderer.special.SaddleEquipmentRenderer;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
@@ -43,8 +42,8 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     }
 
     @Override
-    protected float getShadowRadius(EntityRenderState state) {
-        return super.getShadowRadius(state) * ((LivingEntityRenderState)state).baseScale;
+    protected float getShadowRadius(R state) {
+        return super.getShadowRadius(state) * state.baseScale;
     }
 
     @Override
@@ -107,7 +106,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     public void addRenderData(T animatable, Void relatedObject, R renderState) {
         renderState.addGeckolibData(URDataTickets.DRAGON_ID, animatable.getDragonId());
         renderState.addGeckolibData(URDataTickets.DRAGON_VARIANT, animatable.getVariant());
-        renderState.addGeckolibData(URDataTickets.DRAGON_NAME, animatable.getName());
+        renderState.addGeckolibData(URDataTickets.DRAGON_NAME, animatable.getCustomName());
         renderState.addGeckolibData(URDataTickets.DRAGON_ASSET_CACHE, animatable.getAssetCache());
 
         EntityEquipment map = new EntityEquipment();
