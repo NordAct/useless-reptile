@@ -2,7 +2,7 @@
   "model_data": {
     "animation": "uselessreptile:entity/lightning_chaser/lightning_chaser",
     "model": "uselessreptile:entity/lightning_chaser/lightning_chaser",
-    "texture": "uselessreptile:textures/entity/lightning_chaser/purple.png"
+    "texture": "uselessreptile:entity/lightning_chaser/purple"
   },
   "sounds": [
     {

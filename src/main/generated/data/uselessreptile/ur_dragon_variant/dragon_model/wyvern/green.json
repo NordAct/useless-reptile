@@ -2,7 +2,7 @@
   "model_data": {
     "animation": "uselessreptile:entity/wyvern/wyvern",
     "model": "uselessreptile:entity/wyvern/wyvern",
-    "texture": "uselessreptile:textures/entity/wyvern/green.png"
+    "texture": "uselessreptile:entity/wyvern/green"
   },
   "sounds": [
     {

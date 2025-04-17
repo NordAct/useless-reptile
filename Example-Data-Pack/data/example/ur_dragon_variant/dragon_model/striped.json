@@ -1,6 +1,6 @@
 {
   "model_data" : {
-    "texture": "example:textures/river_pikehorn/striped.png",
+    "texture": "example:river_pikehorn/striped",
     "model": "uselessreptile:entity/river_pikehorn/river_pikehorn",
     "animation": "uselessreptile:entity/river_pikehorn/river_pikehorn"
   },

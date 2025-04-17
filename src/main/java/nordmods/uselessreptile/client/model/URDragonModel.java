@@ -35,10 +35,12 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
                 variant,
                 MinecraftClient.getInstance().world
         );
-        if (data != null && ResourceUtil.doesExist(data.modelData().animation().orElseThrow().withPrefixedPath("geckolib/animations/").withSuffixedPath(".json"))) {
-            id = data.modelData().animation().get();
-            assetCache.setAnimationLocationCache(id);
-            return id;
+        if (data != null) {
+            id = data.modelData().animation().orElseThrow();
+            if (ResourceUtil.doesExist(id.withPrefixedPath("geckolib/animations/").withSuffixedPath(".json"))) {
+                assetCache.setAnimationLocationCache(id);
+                return id;
+            }
         } else {
             name = entity.getDisplayName().getString();
             UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
@@ -70,10 +72,12 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
                 variant,
                 MinecraftClient.getInstance().world
         );
-        if (data != null && ResourceUtil.doesExist(data.modelData().model().withPrefixedPath("geckolib/models/").withSuffixedPath(".json"))) {
+        if (data != null ) {
             id = data.modelData().model();
-            assetCache.setModelLocationCache(id);
-            return id;
+            if (ResourceUtil.doesExist(id.withPrefixedPath("geckolib/models/").withSuffixedPath(".json"))) {
+                assetCache.setModelLocationCache(id);
+                return id;
+            }
         } else {
             LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
             if (name == null) name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";
@@ -106,10 +110,12 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
                 variant,
                 MinecraftClient.getInstance().world
         );
-        if (data != null && ResourceUtil.doesExist(data.modelData().texture())) {
-            id = data.modelData().texture();
-            assetCache.setTextureLocationCache(id);
-            return id;
+        if (data != null) {
+            id = data.modelData().texture().withPrefixedPath("textures/").withSuffixedPath(".png");
+            if (ResourceUtil.doesExist(id)) {
+                assetCache.setTextureLocationCache(id);
+                return id;
+            }
         } else {
             LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
             if (name == null) name = livingOwnerState.displayName != null ? livingOwnerState.displayName.getString() : "???";

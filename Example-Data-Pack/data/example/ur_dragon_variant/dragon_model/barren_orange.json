@@ -1,6 +1,6 @@
 {
   "model_data" : {
-    "texture": "example:textures/wyvern/barren_orange.png",
+    "texture": "example:wyvern/barren_orange",
     "model": "example:wyvern/barren",
     "animation": "example:barren"
   },

@@ -5,7 +5,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/saddle",
-        "texture": "uselessreptile:textures/entity/moleclaw/saddle.png"
+        "texture": "uselessreptile:entity/moleclaw/saddle"
       }
     },
     {
@@ -13,7 +13,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_iron.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_iron"
       }
     },
     {
@@ -21,7 +21,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_gold.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_gold"
       }
     },
     {
@@ -29,7 +29,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_diamond.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_diamond"
       }
     },
     {
@@ -37,7 +37,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_netherite.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_netherite"
       }
     },
     {
@@ -45,7 +45,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/chestplate",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_iron.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_iron"
       }
     },
     {
@@ -53,7 +53,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/chestplate",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_gold.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_gold"
       }
     },
     {
@@ -61,7 +61,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/chestplate",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_diamond.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_diamond"
       }
     },
     {
@@ -69,7 +69,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/chestplate",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_netherite.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_netherite"
       }
     },
     {
@@ -77,7 +77,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/tail_armor",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_iron.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_iron"
       }
     },
     {
@@ -85,7 +85,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/tail_armor",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_gold.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_gold"
       }
     },
     {
@@ -93,7 +93,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/tail_armor",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_diamond.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_diamond"
       }
     },
     {
@@ -101,7 +101,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/tail_armor",
-        "texture": "uselessreptile:textures/entity/moleclaw/armor_netherite.png"
+        "texture": "uselessreptile:entity/moleclaw/armor_netherite"
       }
     },
     {
@@ -109,7 +109,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
-        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_iron.png",
+        "texture": "uselessreptile:entity/moleclaw/moleclaw_helmet_iron",
         "translucent": true
       }
     },
@@ -118,7 +118,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
-        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_gold.png",
+        "texture": "uselessreptile:entity/moleclaw/moleclaw_helmet_gold",
         "translucent": true
       }
     },
@@ -127,7 +127,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
-        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_diamond.png",
+        "texture": "uselessreptile:entity/moleclaw/moleclaw_helmet_diamond",
         "translucent": true
       }
     },
@@ -136,7 +136,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
-        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_netherite.png",
+        "texture": "uselessreptile:entity/moleclaw/moleclaw_helmet_netherite",
         "translucent": true
       }
     }

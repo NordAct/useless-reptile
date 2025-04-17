@@ -89,7 +89,7 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
                 itemId
         );
         if (data != null) {
-            id = data.modelData().texture();
+            id = data.modelData().texture().withPrefixedPath("textures/").withSuffixedPath(".png");
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setTextureLocationCache(id);
                 return id;

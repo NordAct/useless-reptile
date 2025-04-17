@@ -5,7 +5,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/saddle",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/saddle.png"
+        "texture": "uselessreptile:entity/lightning_chaser/saddle"
       }
     },
     {
@@ -13,7 +13,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/helmet",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_iron"
       }
     },
     {
@@ -21,7 +21,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/helmet",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_gold"
       }
     },
     {
@@ -29,7 +29,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/helmet",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_diamond"
       }
     },
     {
@@ -37,7 +37,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/helmet",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_netherite.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_netherite"
       }
     },
     {
@@ -45,7 +45,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/chestplate",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_iron"
       }
     },
     {
@@ -53,7 +53,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/chestplate",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_gold"
       }
     },
     {
@@ -61,7 +61,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/chestplate",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_diamond"
       }
     },
     {
@@ -69,7 +69,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/chestplate",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_netherite.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_netherite"
       }
     },
     {
@@ -77,7 +77,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/tail_armor",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_iron"
       }
     },
     {
@@ -85,7 +85,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/tail_armor",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_gold"
       }
     },
     {
@@ -93,7 +93,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/tail_armor",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_diamond"
       }
     },
     {
@@ -101,7 +101,7 @@
       "model_data": {
         "cull": false,
         "model": "uselessreptile:entity/lightning_chaser/tail_armor",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_netherite.png"
+        "texture": "uselessreptile:entity/lightning_chaser/armor_netherite"
       }
     }
   ]

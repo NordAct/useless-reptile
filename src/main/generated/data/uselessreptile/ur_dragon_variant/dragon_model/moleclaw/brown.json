@@ -3,7 +3,7 @@
     "animation": "uselessreptile:entity/moleclaw/moleclaw",
     "cull": false,
     "model": "uselessreptile:entity/moleclaw/moleclaw",
-    "texture": "uselessreptile:textures/entity/moleclaw/brown.png"
+    "texture": "uselessreptile:entity/moleclaw/brown"
   },
   "sounds": [
     {

@@ -1,6 +1,6 @@
 {
   "model_data" : {
-    "texture": "example:textures/moleclaw/battleworn.png",
+    "texture": "example:moleclaw/battleworn",
     "model": "example:moleclaw/battleworn",
     "animation": "uselessreptile:entity/moleclaw/moleclaw",
     "cull" : false
