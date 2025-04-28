@@ -9,7 +9,9 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.util.*;
+import nordmods.uselessreptile.client.util.AssetCache;
+import nordmods.uselessreptile.client.util.DragonAssetCache;
+import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModel;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
@@ -178,4 +180,9 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
         return renderType;
     }
 
+    @Override
+    public void prepareForRenderPass(T animatable, GeoRenderState renderState) {
+        if (renderState.hasGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT) && !renderState.getGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT)) return;
+        super.prepareForRenderPass(animatable, renderState);
+    }
 }
