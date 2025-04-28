@@ -6,13 +6,13 @@ import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.renderer.LightningChaserEntityRenderer;
 import nordmods.uselessreptile.client.state.LightningBreathEntityRenderState;
 import nordmods.uselessreptile.client.util.RenderUtil;
-import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import org.joml.Random;
 import org.joml.Vector3f;
@@ -33,44 +33,6 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
     public void render(LightningBreathEntityRenderState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
         int length = state.length;
         if (length < 1) return;
-
-        for (int i = 0; i < state.lightningBreathBolts.length; i++) {
-            LightningBreathEntity.LightningBreathBolt lightningBreathBolt = state.lightningBreathBolts[i];
-            if (lightningBreathBolt == null) {
-                if (!(state.owner instanceof LightningChaserEntity owner)) return;
-                lightningBreathBolt = new LightningBreathEntity.LightningBreathBolt();
-                float offset = length / (8f + i);
-                Vector3f headPos = LightningChaserEntityRenderer.headPos.get(owner.getUuid());
-                if (headPos == null) return;
-                //because actual owner's position and lightning breath's one are never the same, and we technically render lightning breath here...
-                Vector3f startPos = new Vector3f((float) (owner.getX() - state.x), (float) (owner.getY() - state.y), (float) (owner.getZ() - state.z));
-                startPos.add(headPos);
-                Vector3f vec3d = owner.getRotationVector().multiply(length).toVector3f();
-                lightningBreathBolt.segments.add(
-                        new LightningBreathEntity.LightningBreathBolt.Segment(
-                                new Vector3f(startPos.x, startPos.y, startPos.z),
-                                new Vector3f(vec3d.x + startPos.x, vec3d.y + startPos.y, vec3d.z + startPos.x)));
-                for (int l = 0; l < 3; l++) {
-                    //do not the foreach unless you want to cause infinite loop
-                    int listSize = lightningBreathBolt.segments.size();
-                    for (int j = 0; j < listSize; j++) {
-                        LightningBreathEntity.LightningBreathBolt.Segment segment = lightningBreathBolt.segments.get(j);
-                        lightningBreathBolt.segments.remove(segment);
-                        Vector3f start = segment.startPoint();
-                        Vector3f end = segment.endPoint();
-                        Random random = new Random(l + owner.getRandom().nextInt(100));
-                        Vector3f mid = new Vector3f(
-                                (start.x + end.x) / 2f + random.nextFloat() * offset * 2f - offset,
-                                (start.y + end.y) / 2f + random.nextFloat() * offset * 2f - offset,
-                                (start.z + end.z) / 2f + random.nextFloat() * offset * 2f - offset);
-                        lightningBreathBolt.segments.add(new LightningBreathEntity.LightningBreathBolt.Segment(start, mid));
-                        lightningBreathBolt.segments.add(new LightningBreathEntity.LightningBreathBolt.Segment(mid, end));
-                    }
-                    offset /= 2f;
-                }
-                state.lightningBreathBolts[i] = lightningBreathBolt;
-            }
-        }
 
         matrices.push();
         for (LightningBreathEntity.LightningBreathBolt lightningBreathBolt : state.lightningBreathBolts)
@@ -106,11 +68,54 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
 
     public void updateRenderState(LightningBreathEntity entity, LightningBreathEntityRenderState state, float tickDelta) {
         super.updateRenderState(entity, state, tickDelta);
+        Entity owner = entity.getOwner();
+        if (owner == null) {
+            state.length = 0;
+            return;
+        }
         state.length = entity.getBeamLength();
-        state.owner = entity.getOwner();
         float alpha = MathHelper.clamp(1f - (state.age < 3 ? 0 : state.age / LightningBreathEntity.MAX_AGE), 0f, 1f);
         state.alpha = MathHelper.lerp(tickDelta, entity.prevAlpha, alpha);
         entity.prevAlpha = state.alpha;
+
+        for (int i = 0; i < entity.lightningBreathBolts.length; i++) {
+            LightningBreathEntity.LightningBreathBolt lightningBreathBolt = entity.lightningBreathBolts[i];
+            if (lightningBreathBolt != null) continue;
+
+            lightningBreathBolt = new LightningBreathEntity.LightningBreathBolt();
+            float offset = state.length / (8f + i);
+            Vector3f headPos = LightningChaserEntityRenderer.headPos.get(owner.getUuid());
+            if (headPos == null) return;
+            //because actual owner's position and lightning breath's one are never the same, and we technically render lightning breath here...
+            Vector3f startPos = new Vector3f((float) (owner.getX() - state.x), (float) (owner.getY() - state.y), (float) (owner.getZ() - state.z));
+            startPos.add(headPos);
+            Vector3f vec3d = entity.getRotationVector().multiply(state.length).toVector3f();
+            lightningBreathBolt.segments.add(
+                    new LightningBreathEntity.LightningBreathBolt.Segment(
+                            new Vector3f(startPos.x, startPos.y, startPos.z),
+                            new Vector3f(vec3d.x + startPos.x, vec3d.y + startPos.y, vec3d.z + startPos.x)));
+            for (int l = 0; l < 3; l++) {
+                //do not the foreach unless you want to cause infinite loop
+                int listSize = lightningBreathBolt.segments.size();
+                for (int j = 0; j < listSize; j++) {
+                    LightningBreathEntity.LightningBreathBolt.Segment segment = lightningBreathBolt.segments.get(j);
+                    lightningBreathBolt.segments.remove(segment);
+                    Vector3f start = segment.startPoint();
+                    Vector3f end = segment.endPoint();
+                    Random random = new Random(l + owner.getRandom().nextInt(100));
+                    Vector3f mid = new Vector3f(
+                            (start.x + end.x) / 2f + random.nextFloat() * offset * 2f - offset,
+                            (start.y + end.y) / 2f + random.nextFloat() * offset * 2f - offset,
+                            (start.z + end.z) / 2f + random.nextFloat() * offset * 2f - offset);
+                    lightningBreathBolt.segments.add(new LightningBreathEntity.LightningBreathBolt.Segment(start, mid));
+                    lightningBreathBolt.segments.add(new LightningBreathEntity.LightningBreathBolt.Segment(mid, end));
+                }
+                offset /= 2f;
+            }
+            entity.lightningBreathBolts[i] = lightningBreathBolt;
+        }
+
+        state.lightningBreathBolts = entity.lightningBreathBolts;
     }
 }
 
