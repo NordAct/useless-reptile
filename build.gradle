@@ -47,16 +47,12 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    //modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolib_version}"
-    modImplementation "software.bernie.geckolib:geckolib-fabric:1.21.5-5.0"
+    modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolib_version}"
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
     modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1-1.21.5")
     //modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
-
-    //modCompileOnly "dev.emi:emi-fabric:${project.emi_version}:api"
-    //modLocalRuntime "dev.emi:emi-fabric:${project.emi_version}"
 }
 
 processResources {
