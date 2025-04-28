@@ -15,4 +15,6 @@
 
 - You now can access dragon's inventory even if both of your hands are full of items (as long as none of them are interactable ones)
 
+- Untamed River Pikehorns will now return to place where they have spawned at when finishing fishing
+
 - Updated spawn egg item icons ~~because spawn egg template is no longer a thing *cries*~~

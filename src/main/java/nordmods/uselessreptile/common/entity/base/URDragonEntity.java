@@ -226,12 +226,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         super.writeCustomDataToNbt(tag);
         tag.putString("Variant", getVariant());
 
+        int[] coords = {getHomePoint().getX(), getHomePoint().getY(), getHomePoint().getZ()};
+        tag.putIntArray("HomePoint", coords);
+
         if (!isTamed()) tag.putInt("TamingProgress", getTamingProgress());
-        else {
-            tag.putString("BoundedInstrumentSound", getBoundedInstrumentSound());
-            int[] coords = {getHomePoint().getX(), getHomePoint().getY(), getHomePoint().getZ()};
-            tag.putIntArray("HomePoint", coords);
-        }
+        else tag.putString("BoundedInstrumentSound", getBoundedInstrumentSound());
+
         tag.putBoolean("Sitting", getIsSitting());
         if (inventory != null && isTamed()) {
             final NbtList inv = new NbtList();
@@ -250,13 +250,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         super.readCustomDataFromNbt(tag);
         dataTracker.set(VARIANT, tag.getString("Variant", getDefaultVariant()));
 
+        int[] coords = tag.getIntArray("HomePoint").orElse(new int[] {getBlockX(), getBlockY(), getBlockZ()});
+        if (coords.length == 0) setHomePoint(getBlockPos());
+        else setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
+
         if (!isTamed()) setTamingProgress(tag.getInt("TamingProgress", baseTamingProgress));
-        else {
-            setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound", ""));
-            int[] coords = tag.getIntArray("HomePoint").orElse(new int[] {getBlockX(), getBlockY(), getBlockZ()});
-            if (coords.length == 0) setHomePoint(getBlockPos());
-            else setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
-        }
+        else setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound", ""));
 
         setIsSitting(tag.getBoolean("Sitting", false));
         if (tag.contains("Inventory")) {
@@ -356,6 +355,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         entityData = new PassiveData(false);
         setTamingProgress(baseTamingProgress);
         DragonSpawnUtil.assignAvailableVariant(this, spawnReason);
+        setHomePoint(getBlockPos());
         return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
