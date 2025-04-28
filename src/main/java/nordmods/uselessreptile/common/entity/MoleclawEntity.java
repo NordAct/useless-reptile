@@ -336,7 +336,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public float getWeaponDisableBlockingForSeconds() {
-        return 5.0F;
+        return isPrimaryAttack() ? 5.0F : 1F;
     }
 
     @Override

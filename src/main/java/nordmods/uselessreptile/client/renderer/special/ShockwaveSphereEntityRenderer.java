@@ -13,12 +13,11 @@ import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.state.ShockwaveSpereEntityRenderState;
 import nordmods.uselessreptile.client.util.RenderUtil;
-import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import org.joml.Vector3f;
 
 public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity, ShockwaveSpereEntityRenderState> {
-    private static final Identifier TEXTURE = UselessReptile.id("textures/entity/lightning_breath/beam.png");
+    private static final Identifier TEXTURE = UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
     private static final int SPHERE_ROWS = 16;
 
     public ShockwaveSphereEntityRenderer(EntityRendererFactory.Context ctx) {
@@ -35,7 +34,6 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
         matrixStack.push();
 
         VertexConsumer vertexConsumer = vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE, true));
-
         matrixStack.push();
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.alpha / 2f * 180f));
         renderSphere(matrixStack, vertexConsumer, MathHelper.clamp(state.alpha - 0.2f, 0, 1), state.radius);
@@ -45,7 +43,7 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-state.alpha / 1.5f * 180f));
         renderSphere(matrixStack, vertexConsumer, MathHelper.clamp(state.alpha/1.5f - 0.1f, 0, 1), state.radius/1.5f);
         matrixStack.pop();
-        
+
         matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.alpha * 180f));
         renderSphere(matrixStack, vertexConsumer, state.alpha/2f, state.radius/2f);
 
@@ -94,7 +92,7 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
     public void updateRenderState(ShockwaveSphereEntity entity, ShockwaveSpereEntityRenderState state, float tickDelta) {
         super.updateRenderState(entity, state, tickDelta);
         state.radius = MathHelper.lerp(tickDelta, entity.getPrevRadius(), entity.getCurrentRadius());
-        float alpha = MathHelper.clamp(1f - (state.age < 3 ? 0 : state.age / LightningBreathEntity.MAX_AGE), 0f, 1f);
+        float alpha = MathHelper.clamp(1f - (state.age < 3 ? 0 : state.radius / ShockwaveSphereEntity.MAX_RADIUS), 0f, 1f);
         state.alpha = MathHelper.lerp(tickDelta, entity.prevAlpha, alpha);
         entity.prevAlpha = state.alpha;
     }

@@ -33,7 +33,7 @@ public class URRideableDragonEntityRenderer<T extends URRideableDragonEntity, R 
             renderState.addGeckolibData(
                     URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT,
                     passenger == MinecraftClient.getInstance().player ?
-                            URClientConfig.getConfig().renderPassengers.canRenderSelf() :
+                            URClientConfig.getConfig().renderPassengers.canRenderSelf() && !MinecraftClient.getInstance().options.getPerspective().isFirstPerson():
                             URClientConfig.getConfig().renderPassengers.canRenderOthers()
                     );
         } else {

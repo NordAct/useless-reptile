@@ -62,6 +62,8 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends
     protected void renderForBone(R renderState, GeoBone bone, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
         consumer.accept(bone, (renderState2, matrixStackIn, bone2, renderType, bufferSource,
                 packedLight, packedOverlay, renderColor) -> {
+            GeoRenderState ownerState = getOwnerRenderState(renderState);
+            if (!ownerState.getGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT)) return;
             EntityRenderState passengerState = passengerRenderStateGetter.apply(renderState, bone);
             if (passengerState == null) return;
             EntityRenderer<? extends Entity, EntityRenderState> renderer = passengerRenderGetter.apply(renderState, bone);
@@ -69,7 +71,6 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends
 
             matrixStackIn.push();
             UUID passengerUUID = passengerUUIDGetter.apply(renderState, bone);
-            GeoRenderState ownerState = getOwnerRenderState(renderState);
             PASSENGERS.remove(passengerUUID);
             Vec3d vec3d = ownerState.getGeckolibData(URDataTickets.PASSENGER_ATTACHMENT_POS);
             float scale = 1/((LivingEntityRenderState)ownerState).baseScale;
@@ -79,7 +80,7 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends
             renderer.render(passengerState,
                     matrixStackIn,
                     bufferSource,
-                    getOwnerRenderState(renderState).getGeckolibData(DataTickets.PACKED_LIGHT)
+                    ownerState.getGeckolibData(DataTickets.PACKED_LIGHT)
             );
             PASSENGERS.add(passengerUUID);
             matrixStackIn.pop();

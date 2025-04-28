@@ -104,7 +104,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         ticksUntilHeal = 500;
-        specialAttackDuration = 30;
+        specialAttackDuration = 27;
     }
 
     @Override
@@ -169,6 +169,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         event.controller().transitionLength(TRANSITION_TICKS);
         if (isFlying()) {
             if (isSpecialAttack()) {
+                event.controller().setAnimationSpeed(1);
                 event.controller().transitionLength(TRANSITION_TICKS/2);
                 event.controller().setAnimationSpeed(getCooldownModifier());
                 return loopAnim("fly.shockwave", event);
@@ -575,7 +576,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     public float getWeaponDisableBlockingForSeconds() {
-        return 5.0F;
+        return isSecondaryAttack() || isPrimaryAttack() ? 5.0F : 0f;
     }
 
     @Override

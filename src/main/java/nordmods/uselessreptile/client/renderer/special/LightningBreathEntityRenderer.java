@@ -90,10 +90,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
             Vector3f startPos = new Vector3f((float) (owner.getX() - state.x), (float) (owner.getY() - state.y), (float) (owner.getZ() - state.z));
             startPos.add(headPos);
             Vector3f vec3d = entity.getRotationVector().multiply(state.length).toVector3f();
-            lightningBreathBolt.segments.add(
-                    new LightningBreathEntity.LightningBreathBolt.Segment(
-                            new Vector3f(startPos.x, startPos.y, startPos.z),
-                            new Vector3f(vec3d.x + startPos.x, vec3d.y + startPos.y, vec3d.z + startPos.x)));
+            lightningBreathBolt.segments.add(new LightningBreathEntity.LightningBreathBolt.Segment(startPos, vec3d.add(startPos)));
             for (int l = 0; l < 3; l++) {
                 //do not the foreach unless you want to cause infinite loop
                 int listSize = lightningBreathBolt.segments.size();
