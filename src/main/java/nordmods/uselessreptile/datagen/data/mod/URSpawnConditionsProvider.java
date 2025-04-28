@@ -29,7 +29,7 @@ public class URSpawnConditionsProvider implements DataProvider {
 
     public URSpawnConditionsProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "ur_dragon_variant/spawn_conditions");
+        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/spawn_conditions");
         this.registryLookupFuture = registriesFuture;
     }
 

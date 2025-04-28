@@ -5,14 +5,14 @@
       "item": "minecraft:dirt",
       "model_data": {
         "model": "example:moleclaw/block",
-        "texture": "minecraft:textures/block/dirt.png"
+        "texture": "minecraft:block/dirt"
       }
     },
     {
       "item": "minecraft:stone",
       "model_data": {
         "model": "example:moleclaw/block",
-        "texture": "minecraft:textures/block/stone.png"
+        "texture": "minecraft:block/stone"
       }
     }
   ]

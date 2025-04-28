@@ -28,8 +28,8 @@ public class URDragonVariantProvider implements DataProvider {
 
     public URDragonVariantProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "ur_dragon_variant/variant");
-        this.pathResolverCustomName = output.getResolver(DataOutput.OutputType.DATA_PACK, "ur_dragon_variant/custom_name");
+        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/variant");
+        this.pathResolverCustomName = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/custom_name");
         this.registryLookupFuture = registryLookupFuture;
     }
 

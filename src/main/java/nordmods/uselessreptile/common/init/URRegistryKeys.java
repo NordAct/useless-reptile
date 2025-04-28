@@ -6,7 +6,6 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonEquipment;
@@ -16,13 +15,13 @@ import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions
 import java.util.List;
 
 public class URRegistryKeys {
-    public static final RegistryKey<Registry<DragonVariant>> DRAGON_VARIANT = RegistryKey.ofRegistry(Identifier.of("ur_dragon_variant","variant"));
-    public static final RegistryKey<Registry<DragonVariant>> DRAGON_VARIANT_CUSTOM_NAME = RegistryKey.ofRegistry(Identifier.of("ur_dragon_variant","custom_name"));
-    public static final RegistryKey<Registry<DragonModel>> DRAGON_MODEL = RegistryKey.ofRegistry(Identifier.of("ur_dragon_variant","dragon_model"));
-    public static final RegistryKey<Registry<DragonEquipment>> DRAGON_EQUIPMENT = RegistryKey.ofRegistry(Identifier.of("ur_dragon_variant","equipment"));
-    public static final RegistryKey<Registry<DragonEquipment>> DRAGON_EQUIPMENT_INJECT = RegistryKey.ofRegistry(Identifier.of("ur_dragon_variant","equipment_inject"));
-    public static final RegistryKey<Registry<List<DragonSpawnConditions>>> DRAGON_SPAWN_CONDITIONS = RegistryKey.ofRegistry(Identifier.of("ur_dragon_variant","spawn_conditions"));
-    public static final RegistryKey<Registry<List<EntityAttributeModifier>>> DRAGON_VARIANT_ATTRIBUTE_MODIFIERS = RegistryKey.ofRegistry(Identifier.of("ur_dragon_variant","attribute_modifiers"));
+    public static final RegistryKey<Registry<DragonVariant>> DRAGON_VARIANT = RegistryKey.ofRegistry(UselessReptile.id("variant"));
+    public static final RegistryKey<Registry<DragonVariant>> DRAGON_VARIANT_CUSTOM_NAME = RegistryKey.ofRegistry(UselessReptile.id("custom_name"));
+    public static final RegistryKey<Registry<DragonModel>> DRAGON_MODEL = RegistryKey.ofRegistry(UselessReptile.id("dragon_model"));
+    public static final RegistryKey<Registry<DragonEquipment>> DRAGON_EQUIPMENT = RegistryKey.ofRegistry(UselessReptile.id("equipment"));
+    public static final RegistryKey<Registry<DragonEquipment>> DRAGON_EQUIPMENT_INJECT = RegistryKey.ofRegistry(UselessReptile.id("equipment_inject"));
+    public static final RegistryKey<Registry<List<DragonSpawnConditions>>> DRAGON_SPAWN_CONDITIONS = RegistryKey.ofRegistry(UselessReptile.id("spawn_conditions"));
+    public static final RegistryKey<Registry<List<EntityAttributeModifier>>> DRAGON_VARIANT_ATTRIBUTE_MODIFIERS = RegistryKey.ofRegistry(UselessReptile.id("attribute_modifiers"));
 
     public static void init() {
         DynamicRegistries.registerSynced(DRAGON_MODEL, DragonModel.CODEC);

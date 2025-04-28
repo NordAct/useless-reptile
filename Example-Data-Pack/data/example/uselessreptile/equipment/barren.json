@@ -4,7 +4,7 @@
     {
       "item": "minecraft:saddle",
       "model_data": {
-        "texture": "example:textures/wyvern/saddle_barren.png",
+        "texture": "example:wyvern/saddle_barren",
         "model": "example:wyvern/barren_saddle",
         "cull" : false
       }

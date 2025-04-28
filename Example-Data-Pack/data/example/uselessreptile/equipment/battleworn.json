@@ -4,7 +4,7 @@
     {
       "item": "uselessreptile:moleclaw_helmet_iron",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_iron.png",
+        "texture": "example:moleclaw/armor_iron",
         "model": "example:moleclaw/helmet",
         "cull" : false
       }
@@ -12,7 +12,7 @@
     {
       "item": "uselessreptile:dragon_chestplate_iron",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_iron.png",
+        "texture": "example:moleclaw/armor_iron",
         "model": "example:moleclaw/chestplate",
         "cull" : false
       }
@@ -20,7 +20,7 @@
     {
       "item": "uselessreptile:dragon_tail_armor_iron",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_iron.png",
+        "texture": "example:moleclaw/armor_iron",
         "model": "example:moleclaw/tail_armor",
         "cull" : false
       }
@@ -28,7 +28,7 @@
     {
       "item": "uselessreptile:moleclaw_helmet_gold",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_gold.png",
+        "texture": "example:moleclaw/armor_gold",
         "model": "example:moleclaw/helmet",
         "cull" : false
       }
@@ -36,7 +36,7 @@
     {
       "item": "uselessreptile:dragon_chestplate_gold",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_gold.png",
+        "texture": "example:moleclaw/armor_gold",
         "model": "example:moleclaw/chestplate",
         "cull" : false
       }
@@ -44,7 +44,7 @@
     {
       "item": "uselessreptile:dragon_tail_armor_gold",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_gold.png",
+        "texture": "example:moleclaw/armor_gold",
         "model": "example:moleclaw/tail_armor",
         "cull" : false
       }
@@ -52,7 +52,7 @@
     {
       "item": "uselessreptile:moleclaw_helmet_diamond",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "texture": "example:moleclaw/armor_diamond",
         "model": "example:moleclaw/helmet",
         "cull" : false
       }
@@ -60,7 +60,7 @@
     {
       "item": "uselessreptile:dragon_chestplate_diamond",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "texture": "example:moleclaw/armor_diamond",
         "model": "example:moleclaw/chestplate",
         "cull" : false
       }
@@ -68,7 +68,7 @@
     {
       "item": "uselessreptile:dragon_tail_armor_diamond",
       "model_data": {
-        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "texture": "example:moleclaw/armor_diamond",
         "model": "example:moleclaw/tail_armor",
         "cull" : false
       }

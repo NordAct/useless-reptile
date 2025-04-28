@@ -29,7 +29,7 @@ public class UREquipmentProvider implements DataProvider {
 
     public UREquipmentProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "ur_dragon_variant/equipment");
+        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/equipment");
         this.registryLookupFuture = registryLookupFuture;
     }
 
