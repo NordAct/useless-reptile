@@ -901,12 +901,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return (DragonLookControl) lookControl;
     }
 
-    //making public for sake of debug render
-    @Override
-    public Box getAttackBox() {
-        return super.getAttackBox();
-    }
-
     public Box getSecondaryAttackBox() {
         return null;
     }

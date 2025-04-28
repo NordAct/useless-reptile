@@ -35,10 +35,6 @@ public class URClientConfig {
     public boolean hideEquipmentInfo = false;
     @SerialEntry(comment = "defines if passengers on dragons can be rendered \npossible valuses: NONE, SELF, OTHERS, ALL")
     public PassengerVisibility renderPassengers = PassengerVisibility.ALL;
-    @SerialEntry(comment = "DEBUG INFO")
-    public boolean logDragonModelData = false;
-    @SerialEntry
-    public boolean logEquipmentModelData = false;
     @SerialEntry(comment = "displays area in which dragon can deal damage for melee attacks")
     public boolean attackBoxesInDebug = false;
 

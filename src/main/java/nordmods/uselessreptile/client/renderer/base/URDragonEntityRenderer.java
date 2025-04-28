@@ -118,37 +118,37 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     protected void appendHitboxes(T entity, ImmutableList.Builder<EntityHitbox> builder, float tickDelta) {
         super.appendHitboxes(entity, builder, tickDelta);
         if (URClientConfig.getConfig().attackBoxesInDebug) {
-            //double x = -MathHelper.lerp(tickDelta, entity.lastRenderX, entity.getX());
-            //double y = -MathHelper.lerp(tickDelta, entity.lastRenderY, entity.getY());
-            //double z = -MathHelper.lerp(tickDelta, entity.lastRenderZ, entity.getZ());
+            double x = -entity.getX();
+            double y = -entity.getY();
+            double z = -entity.getZ();
 
             Box box = entity.getAttackBox();
             if (box != null) {
                 builder.add(new EntityHitbox(
-                        box.minX - entity.getX(),
-                        box.minY - entity.getY(),
-                        box.minZ - entity.getZ(),
-                        box.maxX - entity.getX(),
-                        box.maxY - entity.getY(),
-                        box.maxZ - entity.getZ(),
-                        1.0F,
-                        0.5F,
-                        0.0F
+                        box.minX + x,
+                        box.minY + y,
+                        box.minZ + z,
+                        box.maxX + x,
+                        box.maxY + y,
+                        box.maxZ + z,
+                        1,
+                        0,
+                        1
                 ));
             }
 
             box = entity.getSecondaryAttackBox();
             if (box != null) {
                 builder.add(new EntityHitbox(
-                        box.minX - entity.getX(),
-                        box.minY - entity.getY(),
-                        box.minZ - entity.getZ(),
-                        box.maxX - entity.getX(),
-                        box.maxY - entity.getY(),
-                        box.maxZ - entity.getZ(),
+                        box.minX + x,
+                        box.minY + y,
+                        box.minZ + z,
+                        box.maxX + x,
+                        box.maxY + y,
+                        box.maxZ + z,
                         1.0F,
-                        0.5F,
-                        1.0F
+                        0.0f,
+                        0.25f
                 ));
             }
         }
