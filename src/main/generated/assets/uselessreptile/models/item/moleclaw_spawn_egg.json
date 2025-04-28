@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "uselessreptile:item/moleclaw_spawn_egg"
+  }
+}

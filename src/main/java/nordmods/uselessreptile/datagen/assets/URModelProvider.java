@@ -27,13 +27,11 @@ public class URModelProvider extends FabricModelProvider {
 
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        //TODO MAKE NEW EGG ICONS
-        //itemModelGenerator.registerSpawnEgg(URItems.WYVERN_SPAWN_EGG, 5462570, 3094045);
-        //itemModelGenerator.registerSpawnEgg(URItems.LIGHTNING_CHASER_SPAWN_EGG, 4145472, 10922151);
-        //itemModelGenerator.registerSpawnEgg(URItems.MOLECLAW_SPAWN_EGG, 2105119, 458752);
-        //itemModelGenerator.registerSpawnEgg(URItems.RIVER_PIKEHORN_SPAWN_EGG, 2910895, 1457243);
-
         itemModelGenerator.register(URItems.WYVERN_SKIN, Models.GENERATED);
+        itemModelGenerator.register(URItems.WYVERN_SPAWN_EGG, Models.GENERATED);
+        itemModelGenerator.register(URItems.LIGHTNING_CHASER_SPAWN_EGG, Models.GENERATED);
+        itemModelGenerator.register(URItems.MOLECLAW_SPAWN_EGG, Models.GENERATED);
+        itemModelGenerator.register(URItems.RIVER_PIKEHORN_SPAWN_EGG, Models.GENERATED);
 
         registerVortexHorn(itemModelGenerator, URItems.VORTEX_HORN);
         registerVortexHorn(itemModelGenerator, URItems.IRON_VORTEX_HORN);
