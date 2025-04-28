@@ -9,7 +9,7 @@ group = project.maven_group
 
 repositories {
     mavenCentral()
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    //maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven {
         name 'Xander Maven'
@@ -47,7 +47,8 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolib_version}"
+    //modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolib_version}"
+    modImplementation "software.bernie.geckolib:geckolib-fabric:1.21.5-5.0"
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
