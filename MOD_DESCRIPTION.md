@@ -3,7 +3,7 @@ Useless Reptile is a Fabric mod that aimed to bring some dragons into your world
 **Warning:** mod is Work-in-Progress and a lot of stuff may change in the future updates.
 
 [Discord Server](https://discord.gg/JjYE4vEf3s)\
-Currently supported game versions: 1.21+
+Currently supported game versions: 1.21.5+
 
 ## Showcase
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/x5ysfiDE4rk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
@@ -44,7 +44,7 @@ Note: older versions may not contain all features listed.
 - You can use goat horns (or anything that is considered an instrument by game) to call up dragons even if they're sitting. For that, you have first to "bind" instrument sound to the dragon by right-clicking with the instrument item on the dragon. After that, dragon will respond exclusively on this specific instrument sound.
 - To sit down/up your dragon, use stick or goat horn while crouching.
 - You can give normal potions to your dragon while crouching.
-- To open dragon's inventory, crouch and right-click on dragon with something that is not stick, potion or goat horn and at least one empty hand. Note: some dragons don't have it.
+- To open dragon's inventory, crouch and right-click on dragon with something that is not stick, potion or goat horn. Note: some dragons don't have it.
 - Rideable dragons can equip **banners** and display them as long as saddle is presented.
 
 ### Controls
@@ -57,8 +57,8 @@ Note: older versions may not contain all features listed.
 ### Custom dragon variants, equipment and spawns
 You can add custom dragon variants and dragon equipment via power of data and resource packs, that Mojang gladly made very useful for mod makers too.\
 You can read more about those features and see examples here:
-- [Example Data Pack](https://github.com/NordAct/useless-reptile/tree/1.21/Example-Data-Pack)
-- [Example Resource Pack](https://github.com/NordAct/useless-reptile/tree/1.21/Example-Resource-Pack)
+- [Example Data Pack](https://github.com/NordAct/useless-reptile/tree/1.21.5/Example-Data-Pack)
+- [Example Resource Pack](https://github.com/NordAct/useless-reptile/tree/1.21.5/Example-Resource-Pack)
 
 ## FAQ
 **Q:** I found a bug! How can I report it?\
