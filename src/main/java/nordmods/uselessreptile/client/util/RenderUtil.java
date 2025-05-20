@@ -1,25 +1,14 @@
 package nordmods.uselessreptile.client.util;
 
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.render.*;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.TriState;
-import net.minecraft.util.Util;
-import net.minecraft.util.crash.CrashException;
-import net.minecraft.util.crash.CrashReport;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
-
-import java.util.function.BiFunction;
 
 public class RenderUtil {
     public static void renderQuad(
@@ -48,15 +37,6 @@ public class RenderUtil {
                 .overlay(OverlayTexture.DEFAULT_UV)
                 .light(light)
                 .normal(normalMatrix, 0.0F, 1.0F, 0.0F);
-    }
-
-    public static <E extends Entity, S extends EntityRenderState> void renderEntity(E entityIn, float tickDelta, MatrixStack matrixStack, VertexConsumerProvider bufferIn, int packedLight) {
-        try {
-            EntityRenderer<? super E, S> render = (EntityRenderer<? super E, S>) getEntityRenderer(entityIn); //this is cursed and may crash if someone decides they want to be a special bean and have something else as state
-            render.render(render.getAndUpdateRenderState(entityIn, tickDelta), matrixStack, bufferIn, packedLight);
-        } catch (Throwable throwable1) {
-            throw new CrashException(CrashReport.create(throwable1, "Rendering entity in world"));
-        }
     }
 
     public static <E extends Entity> EntityRenderer<? super E, ?> getEntityRenderer(E entityIn) {

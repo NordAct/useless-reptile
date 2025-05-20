@@ -7,8 +7,6 @@ import nordmods.uselessreptile.UselessReptile;
 public class ResourceUtil {
     //check if resource reload is finished because Minecraft acknowledges new resources before Geckolib does, which leads to bad stuff
     public static boolean isResourceReloadFinished;
-    public static final String TAB = "   ";
-    public static final String TAB_NEWLINE = "\n" + TAB;
 
     //note: very resource intense, try to avoid repetitive calls
     public static boolean doesExist(Identifier id, boolean logWarning) {
