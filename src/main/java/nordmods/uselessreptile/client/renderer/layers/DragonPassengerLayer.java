@@ -77,6 +77,7 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends
             matrixStackIn.translate(vec3d.x * scale, -vec3d.y * scale, vec3d.z * scale);
             RenderUtil.translateToPivotPoint(matrixStackIn, bone);
             matrixStackIn.scale(scale, scale, scale);
+            passengerState.displayName = null;
             renderer.render(passengerState,
                     matrixStackIn,
                     bufferSource,
