@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -21,6 +21,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeybinds;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
@@ -141,12 +142,18 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
     @Override
     protected void tickControlled(PlayerEntity rider, Vec3d movementInput) {
-        if (getWorld().isClient() && getControllingPassenger() instanceof PlayerEntity player && player.isMainPlayer()) {
-            boolean isSprintPressed = MinecraftClient.getInstance().options.sprintKey.isPressed();
-            boolean isMoveForwardPressed = MinecraftClient.getInstance().options.forwardKey.isPressed();
-            boolean isJumpPressed = MinecraftClient.getInstance().options.jumpKey.isPressed();
-            boolean isMoveBackPressed = MinecraftClient.getInstance().options.backKey.isPressed();
-            boolean isDownPressed = URKeybinds.flyDownKey.isUnbound() ? isSprintPressed : URKeybinds.flyDownKey.isPressed();
+        if (getWorld().isClient() && getControllingPassenger() instanceof ClientPlayerEntity player) {
+            boolean isSprintPressed = player.input.playerInput.sprint();
+            boolean isMoveForwardPressed = player.input.playerInput.forward();
+            boolean isJumpPressed = (player.input.playerInput.jump())
+                    || (URClientConfig.getConfig().upDownCameraControl
+                        && hasVerticalInput()
+                        && player.getPitch() < -URClientConfig.getConfig().upDownCameraPitchThreshold);
+            boolean isMoveBackPressed = player.input.playerInput.backward();
+            boolean isDownPressed = (URKeybinds.flyDownKey.isUnbound() ? isSprintPressed : URKeybinds.flyDownKey.isPressed())
+                    || (URClientConfig.getConfig().upDownCameraControl
+                        && hasVerticalInput()
+                        && player.getPitch() > URClientConfig.getConfig().upDownCameraPitchThreshold);
             boolean isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
             boolean isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
 
@@ -205,4 +212,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     }
 
     public abstract boolean isSaddleItem(ItemStack itemStack);
+
+    public boolean hasVerticalInput() {
+        return false;
+    }
 }
