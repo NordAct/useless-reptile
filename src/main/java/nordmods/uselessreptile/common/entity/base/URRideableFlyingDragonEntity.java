@@ -284,6 +284,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     @Override
     public boolean hasVerticalInput() {
-        return isFlying();
+        return isFlying() && !freeLook();
     }
 }

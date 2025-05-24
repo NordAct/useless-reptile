@@ -41,6 +41,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         builder.add(SPRINT_PRESSED, false);
         builder.add(SECONDARY_ATTACK_PRESSED, false);
         builder.add(PRIMARY_ATTACK_PRESSED, false);
+        builder.add(FREE_LOOK, false);
     }
 
     public static final TrackedData<Boolean> MOVE_FORWARD_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -50,8 +51,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public static final TrackedData<Boolean> SPRINT_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Boolean> SECONDARY_ATTACK_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Boolean> PRIMARY_ATTACK_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> FREE_LOOK = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
-    public void updateInputs(boolean forward, boolean back, boolean jump, boolean down, boolean isSecondaryAttackPressed, boolean isPrimaryAttackPressed, boolean sprint) {
+    public void updateInputs(boolean forward, boolean back, boolean jump, boolean down, boolean isSecondaryAttackPressed, boolean isPrimaryAttackPressed, boolean sprint, boolean freeLook) {
         dataTracker.set(MOVE_FORWARD_PRESSED, forward);
         dataTracker.set(MOVE_BACK_PRESSED, back);
         dataTracker.set(JUMP_PRESSED, jump);
@@ -59,6 +61,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         dataTracker.set(SECONDARY_ATTACK_PRESSED, isSecondaryAttackPressed);
         dataTracker.set(PRIMARY_ATTACK_PRESSED, isPrimaryAttackPressed);
         dataTracker.set(SPRINT_PRESSED, sprint);
+        dataTracker.set(FREE_LOOK, freeLook);
     }
 
     public boolean isMoveForwardPressed() {return dataTracker.get(MOVE_FORWARD_PRESSED);}
@@ -68,6 +71,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public boolean isSprintPressed() {return dataTracker.get(SPRINT_PRESSED);}
     public boolean isSecondaryAttackPressed() {return dataTracker.get(SECONDARY_ATTACK_PRESSED);}
     public boolean isPrimaryAttackPressed() {return dataTracker.get(PRIMARY_ATTACK_PRESSED);}
+    public boolean freeLook() {return dataTracker.get(FREE_LOOK);}
 
     @Override
     public LivingEntity getControllingPassenger() {
@@ -105,7 +109,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
             boolean hasRider = canBeControlledByRider();
             getLookControl().setLockRotation(hasRider);
             if (hasRider) setHomePoint(getBlockPos());
-            else updateInputs(false, false, false, false, false, false, false);
+            else updateInputs(false, false, false, false, false, false, false, false);
         }
         super.travel(movementInput);
     }
@@ -156,6 +160,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
                         && player.getPitch() > URClientConfig.getConfig().upDownCameraPitchThreshold);
             boolean isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
             boolean isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
+            boolean freeLook = URKeybinds.freeLookKey.isPressed();
 
             if (isSprintPressed != isSprintPressed()
                     || isMoveForwardPressed != isMoveForwardPressed()
@@ -163,7 +168,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
                     || isMoveBackPressed != isMoveBackPressed()
                     || isDownPressed != isDownPressed()
                     || isSecondaryAttackPressed != isSecondaryAttackPressed()
-                    || isPrimaryAttackPressed != isPrimaryAttackPressed()) {
+                    || isPrimaryAttackPressed != isPrimaryAttackPressed()
+                    || freeLook != freeLook()
+            ) {
                 ClientPlayNetworking.send(
                         new KeyInputC2SPacket(isJumpPressed,
                                 isMoveForwardPressed,
@@ -172,6 +179,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
                                 isSecondaryAttackPressed,
                                 isPrimaryAttackPressed,
                                 isDownPressed,
+                                freeLook,
                                 getId()));
             }
         }
@@ -204,7 +212,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     }
 
     protected void setRotation(PlayerEntity rider) {
-        setRotation(rider.getYaw(), rider.getPitch());
+        if (freeLook()) setRotation(getYaw(), getPitch());
+        else setRotation(rider.getYaw(), rider.getPitch());
     }
 
     public int vortexHornCapacity() {
