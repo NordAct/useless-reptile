@@ -1,3 +1,4 @@
 - Fixed not working perspective change back to first person when automatic perspective switch is enabled and playing on either server or when using Sinytra Connector
 - (Backport for 1.21.1 version) Untamed River Pikehorns will now return to place where they have spawned at when finishing fishing
 - (Backport for 1.21.1 version) Controller support
+- (Backport for 1.21.1 version) Added free look around option
