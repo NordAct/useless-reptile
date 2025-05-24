@@ -27,6 +27,10 @@ public class URClientConfig {
     public boolean enableCrosshair = true;
     @SerialEntry
     public boolean autoThirdPerson = true;
+    @SerialEntry(comment = "allows to fly up or down while riding dragon by changing camera's pitch")
+    public boolean upDownCameraControl = false;
+    @SerialEntry
+    public float upDownCameraPitchThreshold = 30;
     @SerialEntry(comment = "DRAGON APPEARANCE")
     public boolean disableNamedEntityModels = false;
     @SerialEntry

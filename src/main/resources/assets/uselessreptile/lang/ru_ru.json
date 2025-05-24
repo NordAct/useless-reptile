@@ -140,6 +140,8 @@
     "config.uselessreptile.option.naturalLightningChaserSpawn": "Естественное появление ловца молний",
     "config.uselessreptile.option.hideEquipmentInfo": "Спрятать информацию о снаряжении",
     "config.uselessreptile.option.renderPassengers": "Отображение пассажиров",
+    "config.uselessreptile.option.upDownCameraControl": "Полет вверх/вниз с помощью камеры",
+    "config.uselessreptile.option.upDownCameraPitchThreshold": "Угол отклонения для полета вверх/вниз с помощью камеры",
 
     "config.uselessreptile.requires_restart.@Tooltip" : "\nИзменение данной опции требует перезапуска игры",
     "config.uselessreptile.group.spawnGroups.@Tooltip" : "Вместимость групп сущностей, добавленных данным модом",
@@ -192,6 +194,8 @@
     "config.uselessreptile.option.naturalLightningChaserSpawn.@Tooltip": "Включает естественное появление ловца молний в мире. Эта опция не затрагивает появление ловца молний во время шторма\nУчтите, что ловец молний не имеет вариантов, которые могут появиться естественным путем. Для этого вам требуется вручную добавить спавны вариантов через датапак, или в противном случае дракон не сможет появиться таким путем из-за отсутствия доступных вариантов",
     "config.uselessreptile.option.hideEquipmentInfo.@Tooltip": "Скрывает информацию о том, какие драконы могут экипировать определенный предмет",
     "config.uselessreptile.option.renderPassengers.@Tooltip": "Определяет, могут ли отображаться пассажиры на драконах.\nДопустимые значения: \n§3ALL §f(все пассажиры будут отображаться), \n§3SELF §f(в качестве пассажира можете отображаться только вы), \n§3OTHERS §f(в качестве пассажира могут отображаться все кроме вас), \n§3NONE §f(ни один пассажир не будет отображаться)",
+    "config.uselessreptile.option.upDownCameraControl.@Tooltip": "Позволяет использовать наклон камеры в качестве ввода вверх/вниз для летающих драконов",
+    "config.uselessreptile.option.upDownCameraPitchThreshold.@Tooltip": "Определяет минимальное отклонение угла наклона камеры для активации ввода вверх/вниз",
 
     "effect.uselessreptile.acid": "Кислота",
     "effect.uselessreptile.shock": "Шок",

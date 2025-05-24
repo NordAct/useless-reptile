@@ -276,4 +276,9 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             startToFly();
         }
     }
+
+    @Override
+    public boolean hasVerticalInput() {
+        return isFlying();
+    }
 }
