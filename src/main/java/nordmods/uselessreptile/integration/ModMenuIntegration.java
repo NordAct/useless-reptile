@@ -396,6 +396,24 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> clientConfig.autoThirdPerson = val)
                 .customController(BooleanController::new)
                 .build();
+        Option<Boolean> upDownCameraControl = Option.<Boolean>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.upDownCameraControl"))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.upDownCameraControl.@Tooltip")).build())
+                .binding(clientDefaults.upDownCameraControl,
+                        () -> clientConfig.upDownCameraControl,
+                        val -> clientConfig.upDownCameraControl = val)
+                .customController(BooleanController::new)
+                .build();
+        Option<Float> upDownCameraPitchThreshold = Option.<Float>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.upDownCameraPitchThreshold"))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.upDownCameraPitchThreshold.@Tooltip")).build())
+                .binding(clientDefaults.upDownCameraPitchThreshold,
+                        () -> clientConfig.upDownCameraPitchThreshold,
+                        val -> clientConfig.upDownCameraPitchThreshold = val)
+                .customController(opt -> new FloatSliderController(opt, 1, 89, 1))
+                .build();
 
         Option<Boolean> disableNamedTextures = Option.<Boolean>createBuilder()
                 .name(Text.translatable("config.uselessreptile.option.disableNamedEntityModels"))
@@ -449,6 +467,8 @@ public class ModMenuIntegration implements ModMenuApi {
         cameraGroup.option(enableCameraOffset);
         cameraGroup.option(enableCrosshair);
         cameraGroup.option(autoThirdPerson);
+        cameraGroup.option(upDownCameraControl);
+        cameraGroup.option(upDownCameraPitchThreshold);
 
         dragonAppearanceGroup.option(disableNamedTextures);
         dragonAppearanceGroup.option(disableEmissiveTextures);
