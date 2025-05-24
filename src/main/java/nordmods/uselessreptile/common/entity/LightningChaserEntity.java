@@ -95,7 +95,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     protected final EntityGameEventHandler<LightningStrikeEventListener> lightningStrikeEventHandler = new EntityGameEventHandler<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
 
-    public static float BASE_GROUND_SPEED = 0.25f;
+    public static final float BASE_GROUND_SPEED = 0.25f;
 
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);

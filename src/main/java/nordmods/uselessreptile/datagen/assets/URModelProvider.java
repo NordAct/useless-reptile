@@ -224,8 +224,6 @@ public class URModelProvider extends FabricModelProvider {
     }
 
     protected void registerFlute(ItemModelGenerator itemModelGenerator, Item item) {
-
-
         ItemModel.Unbaked mode0 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_call", Models.HANDHELD));
         ItemModel.Unbaked mode1 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_gather", Models.HANDHELD));
         ItemModel.Unbaked mode2 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_target", Models.HANDHELD));

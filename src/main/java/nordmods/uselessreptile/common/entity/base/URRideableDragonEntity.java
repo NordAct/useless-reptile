@@ -186,7 +186,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     }
 
     public boolean hasSaddle() {
-        return inventory != null ?  isSaddleItem(inventory.getStack(0)) : false;
+        return inventory != null && isSaddleItem(inventory.getStack(0));
     }
 
     @Override

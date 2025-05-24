@@ -30,7 +30,7 @@ public abstract class CameraMixin {
 
     @Shadow protected abstract void moveBy(float f, float g, float h);
 
-    @Unique private final int ROUNDS = 1000;
+    @Unique private static final int ROUNDS = 1000;
 
     @Inject(method = "update", at = @At(value = "TAIL"))
     public void offsetCameraDistance(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {

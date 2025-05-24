@@ -41,7 +41,7 @@ repositories {
     }
 
     //bruh (needed for Controlify)
-    maven { url 'https://maven.quiltmc.org/repository/release'}
+    //maven { url 'https://maven.quiltmc.org/repository/release'}
 }
 
 dependencies {
@@ -57,7 +57,7 @@ dependencies {
     modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1-1.21.5") //added localy
 
     //test mods
-    modRuntimeOnly("dev.isxander:controlify:2.1.1+1.21.5-fabric")
+    //modRuntimeOnly("dev.isxander:controlify:2.1.1+1.21.5-fabric")
 }
 
 processResources {

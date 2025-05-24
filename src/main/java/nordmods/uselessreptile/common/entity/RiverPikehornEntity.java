@@ -62,7 +62,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     protected final EntityGameEventHandler<FluteUsedEventListener> fluteUsedEventHandler = new EntityGameEventHandler<>(new FluteUsedEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.FLUTE_USED.value().notificationRadius()));
 
-    public static float BASE_GROUND_SPEED = 0.2f;
+    public static final float BASE_GROUND_SPEED = 0.2f;
 
     public RiverPikehornEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -362,7 +362,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             if (!stack.isOf(URItems.FLUTE)) return false;
 
             switch (((FluteItem)URItems.FLUTE).getFluteMode(stack)) {
-                default -> shouldFollow = true;
                 case 1 -> setIsHunting(true);
                 case 2 -> {
                     Vec3d rot = player.getRotationVec(1);
@@ -375,6 +374,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
                     if (hitResult != null) setTarget((LivingEntity) hitResult.getEntity());
                 }
+                default -> shouldFollow = true;
             }
 
             return true;

@@ -56,7 +56,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     public static final float defaultHeight = 2.9f;
     private int panicSoundDelay = 0;
 
-    public static float BASE_GROUND_SPEED = 0.25f;
+    public static final float BASE_GROUND_SPEED = 0.25f;
 
     public MoleclawEntity(EntityType<? extends URRideableDragonEntity> entityType, World world) {
         super(entityType, world);
