@@ -9,7 +9,7 @@ group = project.maven_group
 
 repositories {
     mavenCentral()
-    //maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
+    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven {
         name 'Xander Maven'
@@ -39,6 +39,9 @@ repositories {
     flatDir() {
         dir 'libs'
     }
+
+    //bruh (needed for Controlify)
+    //maven { url 'https://maven.quiltmc.org/repository/release'}
 }
 
 dependencies {
@@ -51,8 +54,10 @@ dependencies {
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
-    modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1-1.21.5")
-    //modImplementation include ("com.github.NordAct:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
+    modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1-1.21.5") //added localy
+
+    //test mods
+    //modRuntimeOnly("dev.isxander:controlify:2.1.1+1.21.5-fabric")
 }
 
 processResources {

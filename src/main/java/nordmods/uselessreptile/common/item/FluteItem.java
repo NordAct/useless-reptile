@@ -4,6 +4,7 @@ import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -24,6 +25,7 @@ import nordmods.uselessreptile.common.item.component.FluteComponent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class FluteItem extends Item {
     public FluteItem(Settings settings) {
@@ -54,12 +56,12 @@ public class FluteItem extends Item {
         if (user instanceof ServerPlayerEntity serverPlayer) {
             Criteria.CONSUME_ITEM.trigger(serverPlayer, itemStack);
             user.stopUsingItem();
-            switch (mode) {
-                case 1 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 2, 1);
-                case 2 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 2, 1);
-                default -> world.playSoundFromEntityClient(user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 2, 1);
-            }
             user.emitGameEvent(URGameEvents.FLUTE_USED);
+        }
+        switch (mode) {
+            case 1 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 2, 1);
+            case 2 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 2, 1);
+            default -> world.playSoundFromEntityClient(user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 2, 1);
         }
         return ActionResult.SUCCESS;
     }
@@ -69,14 +71,17 @@ public class FluteItem extends Item {
         return UseAction.TOOT_HORN;
     }
 
-    public void appendTooltip(ItemStack itemStack, TooltipContext context, List<Text> tooltip, TooltipType type) {
-        int mode = getFluteMode(itemStack);
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void appendTooltip(ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+        int mode = getFluteMode(stack);
         String tooltipString = "tooltip.uselessreptile.flute_mode" + mode;
 
-        if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) tooltip.add(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
-        else for (Text text : getParsedText("tooltip.uselessreptile.flute")) tooltip.add(((MutableText) text).formatted(Formatting.GRAY));
+        if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
+        else for (Text text : getParsedText("tooltip.uselessreptile.flute")) textConsumer.accept(((MutableText) text).formatted(Formatting.GRAY));
 
-        tooltip.add(Text.translatable(tooltipString).formatted(Formatting.GRAY));
+        textConsumer.accept(Text.translatable(tooltipString).formatted(Formatting.GRAY));
     }
 
     private static List<Text> getParsedText(String key) {

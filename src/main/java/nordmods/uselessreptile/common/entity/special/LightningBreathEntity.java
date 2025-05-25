@@ -167,10 +167,6 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
         return false;
     }
 
-    public int getAge() {
-        return age;
-    }
-
     @Override
     public boolean shouldRender(double cameraX, double cameraY, double cameraZ) {
         return true;

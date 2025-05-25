@@ -67,7 +67,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     private final URDragonPart tail3 = new URDragonPart(this);
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
 
-    public static float BASE_GROUND_SPEED = 0.2f;
+    public static final float BASE_GROUND_SPEED = 0.2f;
 
     public WyvernEntity(EntityType<? extends URRideableFlyingDragonEntity> entityType, World world) {
         super(entityType, world);
@@ -144,7 +144,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 if (isMovingBackwards()) return loopAnim("fly.back", event);
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
-                if (shouldGlide) return loopAnim("fly.straight.glide", event);
+                if (isFlyGliding()) return loopAnim("fly.straight.glide", event);
                 if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
                 return loopAnim("fly.straight", event);
             }

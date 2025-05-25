@@ -24,7 +24,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     protected final int maxInAirTimer = 600;
     protected float pitchLimitAir = 90;
     protected float tiltProgress;
-    protected boolean shouldGlide;
     private int glideTimer = 100;
     private boolean forceFlight = false;
 
@@ -38,17 +37,22 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     protected void initDataTracker(DataTracker.Builder builder) {
         super.initDataTracker(builder);
         builder.add(FLYING, false);
+        builder.add(FLY_GLIDING, false);
         builder.add(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
         builder.add(IN_AIR_TIMER, 0);
     }
 
     public static final TrackedData<Boolean> FLYING = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> FLY_GLIDING = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public static final TrackedData<Byte> TILT_STATE = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BYTE);
     public static final TrackedData<Integer> IN_AIR_TIMER = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
 
 
     public int getInAirTimer() {return dataTracker.get(IN_AIR_TIMER);}
     public void setInAirTimer(int state) {dataTracker.set(IN_AIR_TIMER, state);}
+
+    public boolean isFlyGliding() {return dataTracker.get(FLY_GLIDING);}
+    public void setFlyGliding (boolean state) {dataTracker.set(FLY_GLIDING, state);}
 
     public boolean isFlying() {return dataTracker.get(FLYING);}
     public void setFlying (boolean state) {dataTracker.set(FLYING, state);}
@@ -111,10 +115,10 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         super.tick();
         updateTiltProgress();
 
-        if (getWorld().isClient()) {
+        if (!getWorld().isClient()) {
             glideTimer--;
             float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
-            shouldGlide = accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9;
+            setFlyGliding(accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9);
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();

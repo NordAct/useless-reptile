@@ -4,8 +4,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.render.DiffuseLighting;
+import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -15,9 +18,12 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     protected static final Identifier TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
@@ -85,18 +91,25 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         context.getMatrices().push();
         context.enableScissor(x1, y1, x2, y2);
 
+        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
+        LivingEntityRenderState state = (LivingEntityRenderState) renderer.getAndUpdateRenderState(entity, tickDelta);
+        state.displayName = null;
+        if (state instanceof GeoRenderState geoRenderState) {
+            geoRenderState.addGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT, false);
+            geoRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, LightmapTextureManager.MAX_LIGHT_COORDINATE); //geckolib moment
+        }
+
         context.getMatrices().translate(centerX, centerY, 100);
-        context.getMatrices().scale(size, size, -size);
-        context.getMatrices().translate(0, entity.getHeight() / 2f + 0.4f, 0);
+        context.getMatrices().scale(size / state.baseScale, size / state.baseScale, -size / state.baseScale);
+        context.getMatrices().translate(0, state.height / 2f + 0.4f, 0);
         context.getMatrices().multiply(RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180));
-        context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + entity.getYaw(tickDelta)));
+        context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + state.bodyYaw));
 
         DiffuseLighting.enableGuiShaderLighting();
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        context.draw(vertexConsumerProvider -> entityRenderDispatcher.render(entity, 0, 0, 0, tickDelta, context.getMatrices(), vertexConsumerProvider, 15728880));
+        context.draw(vertexConsumerProvider -> entityRenderDispatcher.render(state, 0d, 0d, 0d, context.getMatrices(), vertexConsumerProvider, LightmapTextureManager.MAX_LIGHT_COORDINATE));
         DiffuseLighting.enableGuiDepthLighting();
 
-        context.draw();
         context.disableScissor();
         context.getMatrices().pop();
 

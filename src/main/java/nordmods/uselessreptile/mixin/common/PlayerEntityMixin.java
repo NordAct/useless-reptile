@@ -60,15 +60,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
         return headMountDragon;
     }
 
-    @Inject(method = "remove", at = @At("TAIL")) //TODO check if fix is working
+    @Inject(method = "remove", at = @At("TAIL"))
     private void removeHeadMountDragon(RemovalReason reason, CallbackInfo ci) {
         if (!headMountDragon.isEmpty() && getWorld() instanceof ServerWorld world) {
             if (!reason.shouldDestroy()) {
                 EntityType.getEntityFromNbt(headMountDragon, world, SpawnReason.LOAD).ifPresent(dragon -> {
                     dragon.remove(reason);
                 });
-                //Entity dragon = world.getEntity(headMountDragon.getUuid("UUID"));
-                //if (dragon != null) dragon.remove(reason);
             }
         }
     }

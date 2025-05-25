@@ -95,7 +95,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     protected final EntityGameEventHandler<LightningStrikeEventListener> lightningStrikeEventHandler = new EntityGameEventHandler<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
 
-    public static float BASE_GROUND_SPEED = 0.25f;
+    public static final float BASE_GROUND_SPEED = 0.25f;
 
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -178,7 +178,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 if (isMovingBackwards()) return loopAnim("fly.back", event);
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
-                if (shouldGlide) return loopAnim("fly.straight.glide", event);
+                if (isFlyGliding()) return loopAnim("fly.straight.glide", event);
                 if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
                 return loopAnim("fly.straight", event);
             }

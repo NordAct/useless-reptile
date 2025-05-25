@@ -101,6 +101,15 @@ public class URRecipeProvider extends FabricRecipeProvider {
                 .offerTo(exporter);
     }
 
+    protected static void offerDragonTailArmorRecipe(RecipeGenerator generator,RecipeExporter exporter, ItemConvertible output, ItemConvertible input) {
+        generator.createShaped(RecipeCategory.COMBAT, output)
+                .input('L', Items.LEATHER)
+                .input('M', input)
+                .pattern("MMM")
+                .pattern(" L ")
+                .criterion("has_material", generator.conditionsFromItem(input))
+                .offerTo(exporter);
+    }
 
     protected static void offerDragonHelmetRecipe(RecipeGenerator generator, RecipeExporter exporter, ItemConvertible output, TagKey<Item> input) {
         generator.createShaped(RecipeCategory.COMBAT, output)
