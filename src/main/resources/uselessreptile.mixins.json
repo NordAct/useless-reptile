@@ -13,7 +13,10 @@
     "common.PlayerManagerMixin",
     "common.ServerPlayerEntityMixin",
     "common.ServerWorldMixin",
-    "common.SpawnGroupMixin"
+    "common.SpawnGroupMixin",
+    "geckolib.AnimationControllerMixin",
+    "geckolib.AnimationProcessorMixin",
+    "geckolib.GeckoLibResourcesMixin"
   ],
   "client": [
     "client.CameraMixin",
@@ -23,8 +26,8 @@
     "client.LivingEntityMixin",
     "client.LivingEntityRendererMixin",
     "client.LivingEntityRenderStateMixin",
-    "client.PlayerEntityRenderStateMixin",
     "client.PlayerEntityRendererMixin",
+    "client.PlayerEntityRenderStateMixin",
     "client.ResourceReloadLoggerMixin",
     "client.StatusEffectsDisplayMixin"
   ],

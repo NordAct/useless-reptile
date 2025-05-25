@@ -1,5 +1,7 @@
 package nordmods.uselessreptile.common.entity;
 
+import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -22,18 +24,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
 import net.minecraft.world.event.EntityPositionSource;
@@ -62,14 +65,24 @@ import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animatable.processing.AnimationController;
+import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.loading.math.MolangQueries;
+import software.bernie.geckolib.model.DefaultedEntityGeoModel;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
@@ -96,6 +109,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
 
     public static final float BASE_GROUND_SPEED = 0.25f;
+
+    private GeoModel<LightningChaserEntity> serverModel;//TODO TEST CASE
 
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -159,6 +174,11 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         turn.setSoundKeyframeHandler(this::soundHandler);
         eye.setSoundKeyframeHandler(this::soundHandler);
         animationData.add(main, turn, attack, eye);
+        if (!getWorld().isClient()) {//TODO TEST CASE
+            serverModel = new DefaultedEntityGeoModel<>(UselessReptile.id("lightning_chaser/lightning_chaser_server"));
+            GeoRenderState renderState = new GeoRenderState.Impl();
+            serverModel.getAnimationProcessor().setActiveModel(serverModel.getBakedModel(serverModel.getModelResource(renderState)));
+        }
     }
 
     private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
@@ -174,7 +194,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 event.controller().setAnimationSpeed(getCooldownModifier());
                 return loopAnim("fly.shockwave", event);
             }
-            if (isMoving() || event.isMoving()) {
+            if (isMoving() || limbAnimator.isLimbMoving()) {
                 if (isMovingBackwards()) return loopAnim("fly.back", event);
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
@@ -187,7 +207,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         }
         if (hasSurrendered()) return loopAnim("surrender", event);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
-        if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
+        if (limbAnimator.isLimbMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
         if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
         return loopAnim("idle", event);
@@ -197,7 +217,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         byte turnState = getTurningState();
         event.controller().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
-            if ((isMoving() || event.isMoving()) && !isMovingBackwards()) {
+            if ((isMoving() || limbAnimator.isLimbMoving()) && !isMovingBackwards()) {
                 if (turnState == 1) return loopAnim("turn.fly.left", event);
                 if (turnState == 2) return loopAnim("turn.fly.right", event);
             }
@@ -215,7 +235,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         if (isPrimaryAttack()) {
             if (isFlying()) {
                 if (isSpecialAttack()) return playAnim("attack.range.fly.shockwave", event);
-                if ((isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
+                if ((isMoving() || limbAnimator.isLimbMoving()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
                 return playAnim("attack.range.fly.idle", event);
             }
             return playAnim("attack.range", event);
@@ -343,6 +363,68 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         }
 
         updateChildParts();
+
+        processServerAnimation(); //TODO MOVE THIS
+
+        //TODO TEST CASE
+        if (!getWorld().isClient()) {
+            for (GeoBone bone : serverModel.getAnimationProcessor().getRegisteredBones()) {
+                Vec3d point = getBonePos(bone);
+                if (MinecraftClient.getInstance().player != null) MinecraftClient.getInstance().player.sendMessage(Text.of(String.valueOf(point)), true);
+                point = point.rotateY((-getYaw() + 180f) * MathHelper.RADIANS_PER_DEGREE);
+                point = point.add(getPos());
+                ParticleEffect effect = ParticleTypes.ELECTRIC_SPARK;
+                ParticleS2CPacket packet = new ParticleS2CPacket(effect, true, true, point.x, point.y, point.z, 0, 0, 0, 0, 1);
+                getServer().getPlayerManager().sendToAll(packet);
+            }
+        }
+    }
+
+    private void processServerAnimation() {
+        if (getWorld().isClient()) return;
+
+        AnimatableManager<LightningChaserEntity> manager = getAnimatableInstanceCache().getManagerForId(getId());
+        manager.getAnimationControllers().forEach((controllerName, controller) -> {
+            GeoRenderState renderState = new GeoRenderState.Impl();
+            renderState.addGeckolibData(UselessReptile.ANIMATION_TICKS, (double) age);
+            renderState.addGeckolibData(UselessReptile.BONE_RESET_TIME, getBoneResetTime());
+
+            MolangQueries.Actor<LightningChaserEntity> actor = new MolangQueries.Actor<>(this, renderState, new MutableObject<>(controller), age, 1, getWorld(), null, null);
+            controller.prepareForRenderPass(this, manager, actor, new Reference2DoubleOpenHashMap<>(1), age, serverModel);
+
+            serverModel.handleAnimations(new AnimationState<>(renderState, manager, 1, new Reference2DoubleOpenHashMap<>(0), controller));
+        });
+    }
+
+    private List<GeoBone> getFullPath(GeoBone bone) {
+        List<GeoBone> list = new ArrayList<>();
+        list.add(bone);
+        while (bone.getParent() != null) {
+            list.add(bone.getParent());
+            bone = bone.getParent();
+        }
+        return list.reversed();
+    }
+
+    private Vec3d getBonePos(GeoBone geoBone) {
+        List<GeoBone> path = getFullPath(geoBone);
+        Matrix4f global = new Matrix4f().identity();
+
+        for (GeoBone bone : path) {
+            GeoBone parent = bone.getParent();
+            Vector3f parentPivot = parent != null ? new Vector3f(parent.getPivotX(), parent.getPivotY(), parent.getPivotZ()) : new Vector3f();
+            Vector3f pivot = new Vector3f(bone.getPivotX(), bone.getPivotY(), bone.getPivotZ()).sub(parentPivot);
+            Vector3f rotation = new Vector3f(bone.getRotX(), bone.getRotY(), bone.getRotZ());
+            Vector3f scale = new Vector3f(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
+            Vector3f translation = new Vector3f(-bone.getPosX(), bone.getPosY(), bone.getPosZ());
+            //
+            global.translate(pivot);
+            global.rotateZYX(rotation);
+            global.translate(translation);
+            global.scale(scale);
+        }
+        Vector4f worldPosition = new Vector4f(0, 0, 0, 1).mul(global);
+        return new Vec3d(worldPosition.x/16f, worldPosition.y/16f, worldPosition.z/16f);
     }
 
     @Override
