@@ -1,8 +1,8 @@
-package nordmods.uselessreptile.mixin.geckolib;
+package nordmods.sap.mixin;
 
 import net.minecraft.util.math.MathHelper;
-import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.util.duck.OverrideEasingTypeFunctionGetter;
+import nordmods.sap.SAP;
+import nordmods.sap.util.OverrideEasingTypeFunctionGetter;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,7 +23,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import java.util.Collection;
 import java.util.Map;
 
-@Mixin(value = AnimationProcessor.class, remap = false)//TODO MOVE TO OTHER PROJECT
+@Mixin(value = AnimationProcessor.class, remap = false)
 public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
 
     @Shadow protected abstract void resetBoneTransformationMarkers();
@@ -40,11 +40,11 @@ public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
 
     @Inject(method = "tickAnimation", at = @At("HEAD"), cancellable = true)
     private void redirectEntireFuckingMethod(AnimationState<T> animationState, CallbackInfo ci) {
-        if (!animationState.hasData(UselessReptile.ANIMATION_TICKS)) return;
+        if (!animationState.hasData(SAP.ANIMATION_TICKS)) return;
 
         AnimatableManager<T> animatableManager = animationState.manager();
         Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animatableManager.getBoneSnapshotCollection());
-        double lerpedAnimationTick = animationState.getData(UselessReptile.ANIMATION_TICKS);
+        double lerpedAnimationTick = animationState.getData(SAP.ANIMATION_TICKS);
 
         for (AnimationController<T> controller : animatableManager.getAnimationControllers().values()) {
             if (this.reloadAnimations) {
@@ -102,7 +102,7 @@ public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
         }
 
         reloadAnimations = false;
-        double resetTickLength = animationState.getData(UselessReptile.BONE_RESET_TIME);
+        double resetTickLength = animationState.getData(SAP.BONE_RESET_TIME);
 
         for (GeoBone bone : getRegisteredBones()) {
             if (!bone.hasRotationChanged()) {

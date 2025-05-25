@@ -13,10 +13,7 @@
     "common.PlayerManagerMixin",
     "common.ServerPlayerEntityMixin",
     "common.ServerWorldMixin",
-    "common.SpawnGroupMixin",
-    "geckolib.AnimationControllerMixin",
-    "geckolib.AnimationProcessorMixin",
-    "geckolib.GeckoLibResourcesMixin"
+    "common.SpawnGroupMixin"
   ],
   "client": [
     "client.CameraMixin",

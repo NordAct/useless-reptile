@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.geckolib;
+package nordmods.sap.mixin;
 
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
@@ -20,15 +20,15 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 
-@Mixin(value = GeckoLibResources.class, remap = false)//TODO MOVE TO OTHER PROJECT
+@Mixin(value = GeckoLibResources.class, remap = false)
 public abstract class GeckoLibResourcesMixin {
     @Shadow
-    protected static CompletableFuture<Map<Identifier, BakedAnimations>> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager) {
+    private static CompletableFuture<Map<Identifier, BakedAnimations>> loadAnimations(Executor backgroundExecutor, ResourceManager resourceManager) {
         return null;
     }
 
     @Shadow
-    protected static CompletableFuture<Map<Identifier, BakedGeoModel>> loadModels(Executor backgroundExecutor, ResourceManager resourceManager) {
+    private static CompletableFuture<Map<Identifier, BakedGeoModel>> loadModels(Executor backgroundExecutor, ResourceManager resourceManager) {
         return null;
     }
 

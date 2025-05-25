@@ -1,7 +1,5 @@
 package nordmods.uselessreptile.common.entity;
 
-import it.unimi.dsi.fastutil.objects.Reference2DoubleOpenHashMap;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -32,7 +30,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -46,6 +43,7 @@ import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
+import nordmods.sap.ServerModelOwner;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -65,28 +63,22 @@ import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
-import org.apache.commons.lang3.mutable.MutableObject;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationState;
 import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
+public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity, ServerModelOwner<LightningChaserEntity> {
     private int shockwaveDelay = -1;
     private int shootDelay = -1;
     private int bailOutTimer = 6000;
@@ -174,11 +166,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         turn.setSoundKeyframeHandler(this::soundHandler);
         eye.setSoundKeyframeHandler(this::soundHandler);
         animationData.add(main, turn, attack, eye);
-        if (!getWorld().isClient()) {//TODO TEST CASE
-            serverModel = new DefaultedEntityGeoModel<>(UselessReptile.id("lightning_chaser/lightning_chaser_server"));
-            GeoRenderState renderState = new GeoRenderState.Impl();
-            serverModel.getAnimationProcessor().setActiveModel(serverModel.getBakedModel(serverModel.getModelResource(renderState)));
-        }
+        if (!getWorld().isClient()) createServerModel();
     }
 
     private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
@@ -364,13 +352,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         updateChildParts();
 
-        processServerAnimation(); //TODO MOVE THIS
-
         //TODO TEST CASE
         if (!getWorld().isClient()) {
-            for (GeoBone bone : serverModel.getAnimationProcessor().getRegisteredBones()) {
+            for (GeoBone bone : getServerModel().getAnimationProcessor().getRegisteredBones()) {
                 Vec3d point = getBonePos(bone);
-                if (MinecraftClient.getInstance().player != null) MinecraftClient.getInstance().player.sendMessage(Text.of(String.valueOf(point)), true);
                 point = point.rotateY((-getYaw() + 180f) * MathHelper.RADIANS_PER_DEGREE);
                 point = point.add(getPos());
                 ParticleEffect effect = ParticleTypes.ELECTRIC_SPARK;
@@ -380,51 +365,26 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         }
     }
 
-    private void processServerAnimation() {
-        if (getWorld().isClient()) return;
-
-        AnimatableManager<LightningChaserEntity> manager = getAnimatableInstanceCache().getManagerForId(getId());
-        manager.getAnimationControllers().forEach((controllerName, controller) -> {
-            GeoRenderState renderState = new GeoRenderState.Impl();
-            renderState.addGeckolibData(UselessReptile.ANIMATION_TICKS, (double) age);
-            renderState.addGeckolibData(UselessReptile.BONE_RESET_TIME, getBoneResetTime());
-
-            MolangQueries.Actor<LightningChaserEntity> actor = new MolangQueries.Actor<>(this, renderState, new MutableObject<>(controller), age, 1, getWorld(), null, null);
-            controller.prepareForRenderPass(this, manager, actor, new Reference2DoubleOpenHashMap<>(1), age, serverModel);
-
-            serverModel.handleAnimations(new AnimationState<>(renderState, manager, 1, new Reference2DoubleOpenHashMap<>(0), controller));
-        });
+    //SERVER MODEL METHODS
+    @Override
+    public GeoModel<LightningChaserEntity> getServerModel() {
+        return serverModel;
     }
 
-    private List<GeoBone> getFullPath(GeoBone bone) {
-        List<GeoBone> list = new ArrayList<>();
-        list.add(bone);
-        while (bone.getParent() != null) {
-            list.add(bone.getParent());
-            bone = bone.getParent();
-        }
-        return list.reversed();
+    @Override
+    public int getInstanceId() {
+        return getId();
     }
 
-    private Vec3d getBonePos(GeoBone geoBone) {
-        List<GeoBone> path = getFullPath(geoBone);
-        Matrix4f global = new Matrix4f().identity();
+    @Override
+    public World getServerWorld() {
+        return getWorld();
+    }
 
-        for (GeoBone bone : path) {
-            GeoBone parent = bone.getParent();
-            Vector3f parentPivot = parent != null ? new Vector3f(parent.getPivotX(), parent.getPivotY(), parent.getPivotZ()) : new Vector3f();
-            Vector3f pivot = new Vector3f(bone.getPivotX(), bone.getPivotY(), bone.getPivotZ()).sub(parentPivot);
-            Vector3f rotation = new Vector3f(bone.getRotX(), bone.getRotY(), bone.getRotZ());
-            Vector3f scale = new Vector3f(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
-            Vector3f translation = new Vector3f(-bone.getPosX(), bone.getPosY(), bone.getPosZ());
-            //
-            global.translate(pivot);
-            global.rotateZYX(rotation);
-            global.translate(translation);
-            global.scale(scale);
-        }
-        Vector4f worldPosition = new Vector4f(0, 0, 0, 1).mul(global);
-        return new Vec3d(worldPosition.x/16f, worldPosition.y/16f, worldPosition.z/16f);
+    private void createServerModel() { //todo make model holder for SAP
+        serverModel = new DefaultedEntityGeoModel<>(UselessReptile.id("lightning_chaser/lightning_chaser_server"));
+        GeoRenderState renderState = new GeoRenderState.Impl();
+        serverModel.getAnimationProcessor().setActiveModel(serverModel.getBakedModel(serverModel.getModelResource(renderState)));
     }
 
     @Override

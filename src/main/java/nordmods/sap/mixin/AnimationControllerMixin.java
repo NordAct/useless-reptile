@@ -1,6 +1,6 @@
-package nordmods.uselessreptile.mixin.geckolib;
+package nordmods.sap.mixin;
 
-import nordmods.uselessreptile.common.util.duck.OverrideEasingTypeFunctionGetter;
+import nordmods.sap.util.OverrideEasingTypeFunctionGetter;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -10,7 +10,7 @@ import software.bernie.geckolib.animation.EasingType;
 
 import java.util.function.Function;
 
-@Mixin(value = AnimationController.class, remap = false) //TODO MOVE TO OTHER PROJECT
+@Mixin(value = AnimationController.class, remap = false)
 public abstract class AnimationControllerMixin<T extends GeoAnimatable> implements OverrideEasingTypeFunctionGetter<T> {
     @Shadow protected Function<AnimationState<T>, EasingType> overrideEasingTypeFunction;
 

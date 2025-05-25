@@ -26,7 +26,8 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "nordmods.uselessreptile.UselessReptile"
+      "nordmods.uselessreptile.UselessReptile",
+      "nordmods.serverside_animation_processor.SAP"
     ],
     "client": [
       "nordmods.uselessreptile.client.UselessReptileClient"
@@ -42,7 +43,8 @@
     ]
   },
   "mixins": [
-    "uselessreptile.mixins.json"
+    "uselessreptile.mixins.json",
+    "sap.mixins.json"
   ],
   "accessWidener" : "uselessreptile.accesswidener",
   "depends": {
