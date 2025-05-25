@@ -27,7 +27,7 @@
   "entrypoints": {
     "main": [
       "nordmods.uselessreptile.UselessReptile",
-      "nordmods.serverside_animation_processor.SAP"
+      "nordmods.sap.SAP"
     ],
     "client": [
       "nordmods.uselessreptile.client.UselessReptileClient"
