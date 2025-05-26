@@ -60,7 +60,7 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
             default -> {
                 entity.setUpwardSpeed(0.0F);
                 entity.setForwardSpeed(0.0F);
-                entity.setMovingBackwards(entity.isMoving());
+                entity.setMovingBackwards(entity.isMovingXZ());
             }
         }
     }

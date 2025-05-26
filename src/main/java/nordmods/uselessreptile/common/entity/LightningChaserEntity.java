@@ -70,7 +70,6 @@ import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animatable.processing.AnimationController;
 import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -173,7 +172,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         return loopAnim("blink", event);
     }
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
-        event.controller().setAnimationSpeed(animationSpeed);
+        event.controller().setAnimationSpeed(getAniamtionSpeed());
         event.controller().transitionLength(TRANSITION_TICKS);
         if (isFlying()) {
             if (isSpecialAttack()) {
@@ -182,7 +181,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 event.controller().setAnimationSpeed(getCooldownModifier());
                 return loopAnim("fly.shockwave", event);
             }
-            if (isMoving() || limbAnimator.isLimbMoving()) {
+            if (isMovingXZ() || isMoving()) {
                 if (isMovingBackwards()) return loopAnim("fly.back", event);
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
@@ -190,12 +189,12 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
                 return loopAnim("fly.straight", event);
             }
-            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
+            event.controller().setAnimationSpeed(Math.max(getAniamtionSpeed(), 1));
             return loopAnim("fly.idle", event);
         }
         if (hasSurrendered()) return loopAnim("surrender", event);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
-        if (limbAnimator.isLimbMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
+        if (isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
         if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
         return loopAnim("idle", event);
@@ -203,9 +202,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.controller().setAnimationSpeed(animationSpeed);
+        event.controller().setAnimationSpeed(getAniamtionSpeed());
         if (isFlying()) {
-            if ((isMoving() || limbAnimator.isLimbMoving()) && !isMovingBackwards()) {
+            if ((isMovingXZ() || isMoving()) && !isMovingBackwards()) {
                 if (turnState == 1) return loopAnim("turn.fly.left", event);
                 if (turnState == 2) return loopAnim("turn.fly.right", event);
             }
@@ -223,7 +222,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         if (isPrimaryAttack()) {
             if (isFlying()) {
                 if (isSpecialAttack()) return playAnim("attack.range.fly.shockwave", event);
-                if ((isMoving() || limbAnimator.isLimbMoving()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
+                if ((isMovingXZ() || isMoving()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
                 return playAnim("attack.range.fly.idle", event);
             }
             return playAnim("attack.range", event);
@@ -302,7 +301,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         float dMountedOffset;
         dWidth = 2.95f;
         if (isFlying()) {
-            if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
+            if (isMovingXZ() && !isMovingBackwards() && !isSecondaryAttack()) {
                 dHeight = 1f;
                 dMountedOffset = 0.75f;
             } else {
@@ -350,19 +349,46 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             }
         }
 
-        updateChildParts();
+        //updateChildParts();
 
         //TODO TEST CASE
         if (!getWorld().isClient()) {
-            for (GeoBone bone : getServerModel().getAnimationProcessor().getRegisteredBones()) {
-                Vec3d point = getBonePos(bone);
-                point = point.rotateY((-getYaw() + 180f) * MathHelper.RADIANS_PER_DEGREE);
-                point = point.add(getPos());
+            updateBox(wing1Left, "elbow_left");
+            updateBox(wing2Left, "fingers_left");
+            updateBox(wing1Right, "elbow_right");
+            updateBox(wing2Right, "fingers_right");
+            updateBox(head, "head");
+            updateBox(neck2, "neck3");
+            updateBox(neck1, "neck2");
+            updateBox(tail3, "tail4");
+            updateBox(tail2, "tail3");
+            updateBox(tail1, "tail2");
+
+            for (EntityPart part : getParts()) {
+                Vec3d point = part.getPos().add(0, part.getHeight()/2, 0);
                 ParticleEffect effect = ParticleTypes.ELECTRIC_SPARK;
                 ParticleS2CPacket packet = new ParticleS2CPacket(effect, true, true, point.x, point.y, point.z, 0, 0, 0, 0, 1);
                 getServer().getPlayerManager().sendToAll(packet);
             }
+
+            //for (GeoBone bone : getServerModel().getAnimationProcessor().getRegisteredBones()) {
+            //    Vec3d point = getBonePos(bone);
+            //    point = point.rotateY((-getYaw() + 180f) * MathHelper.RADIANS_PER_DEGREE);
+            //    point = point.add(getPos());
+            //    ParticleEffect effect = ParticleTypes.ELECTRIC_SPARK;
+            //    ParticleS2CPacket packet = new ParticleS2CPacket(effect, true, true, point.x, point.y, point.z, 0, 0, 0, 0, 1);
+            //    getServer().getPlayerManager().sendToAll(packet);
+            //}
+        } else {
+            //updateChildParts();
         }
+    }
+
+    private void updateBox(URDragonPart part, String bone) {
+        Vec3d partPos = getBonePos(bone).rotateY((-getYaw() + 180f) * MathHelper.RADIANS_PER_DEGREE).add(0, -part.getHeight()/2, 0);
+        part.setRelativePos(partPos.x, partPos.y, partPos.z, 0, 0);
+        
+        //part.getServer().getPlayerManager().sendToAll(EntityPositionS2CPacket.create(part.getId(), PlayerPosition.fromEntity(part), Set.of(), isOnGround()));
     }
 
     //SERVER MODEL METHODS
@@ -654,7 +680,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         float pitchOffset = tiltProgress / TRANSITION_TICKS;
 
         if (isFlying()) {
-            if (isMoving() && !isMovingBackwards() && !isSpecialAttack()) {
+            if (isMovingXZ() && !isMovingBackwards() && !isSpecialAttack()) {
                 if (getTiltState() == 2) {
                     wing1LeftPos = new Vector3f(2, 0, 0.5f);
                     wing1LeftScale = new Vec2f(1, 1.5f);

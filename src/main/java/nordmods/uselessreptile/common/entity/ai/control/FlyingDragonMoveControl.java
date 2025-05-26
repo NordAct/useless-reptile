@@ -78,9 +78,9 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
             default -> {
                 entity.setUpwardSpeed(0.0F);
                 entity.setForwardSpeed(0.0F);
-                entity.setMovingBackwards(entity.isMoving());
+                entity.setMovingBackwards(entity.isMovingXZ());
                 accelerationDuration /= 2;
-                if (!entity.isMoving()) accelerationDuration = 0;
+                if (!entity.isMovingXZ()) accelerationDuration = 0;
             }
         }
 

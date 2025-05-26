@@ -134,13 +134,13 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
         if (event.controller().hasAnimationFinished()) event.controller().forceAnimationReset();
-        event.controller().setAnimationSpeed(animationSpeed);
+        event.controller().setAnimationSpeed(getAniamtionSpeed());
         if (isFlying()) {
             if (isSecondaryAttack()) {
                 event.controller().setAnimationSpeed(1/ getCooldownModifier());
                 return loopAnim("fly.attack", event);
             }
-            if (isMoving() || event.isMoving()) {
+            if (isMovingXZ() || event.isMoving()) {
                 if (isMovingBackwards()) return loopAnim("fly.back", event);
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
@@ -148,7 +148,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
                 return loopAnim("fly.straight", event);
             }
-            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
+            event.controller().setAnimationSpeed(Math.max(getAniamtionSpeed(), 1));
             return loopAnim("fly.idle", event);
         }
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
@@ -160,8 +160,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.controller().setAnimationSpeed(animationSpeed);
-        if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
+        event.controller().setAnimationSpeed(getAniamtionSpeed());
+        if (isFlying() && (isMovingXZ() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) return loopAnim("turn.fly.left", event);
             if (turnState == 2) return loopAnim("turn.fly.right", event);
         }
@@ -174,7 +174,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         event.controller().setAnimationSpeed(1/ getCooldownModifier());
         if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
         if (isPrimaryAttack()) {
-            if (isFlying() && (isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
+            if (isFlying() && (isMovingXZ() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
             return playAnim("attack.range", event);
         }
         return playAnim("attack.none", event);
@@ -195,7 +195,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         float dMountedOffset;
         if (isFlying()) {
             dWidth = 2.95f;
-            if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
+            if (isMovingXZ() && !isMovingBackwards() && !isSecondaryAttack()) {
                 dHeight = 1f;
                 dMountedOffset = 0.75f;
             } else {
@@ -334,7 +334,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public float getHeightModTransSpeed() {
-        return (float) (0.13 * animationSpeed * getScale());
+        return (float) (0.13 * getAniamtionSpeed() * getScale());
     }
 
     @Nullable
@@ -383,7 +383,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         float pitchOffset = tiltProgress / TRANSITION_TICKS;
 
         if (isFlying()) {
-            if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
+            if (isMovingXZ() && !isMovingBackwards() && !isSecondaryAttack()) {
                 if (getTiltState() == 2) {
                     wingLeftPos = new Vector3f(2, 0, -0.5f);
                     wingLeftScale = new Vec2f(1, 1.5f);

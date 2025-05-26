@@ -88,7 +88,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public abstract class URDragonEntity extends TameableEntity implements GeoEntity, NamedScreenHandlerFactory, AssetCahceOwner, InventoryChangedListener {
-    protected double animationSpeed = 1;
     public static final int TRANSITION_TICKS = 10;
     protected float pitchLimitGround = 90;
     protected int primaryAttackDuration = 20;
@@ -140,6 +139,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         builder.add(ACCELERATION_DURATION, 0);
         builder.add(BOUNDED_INSTRUMENT_SOUND, "");
         builder.add(VARIANT, "");
+        builder.add(ANIMATION_SPEED, 1f);
     }
 
     public static final TrackedData<Boolean> MOVING_BACKWARDS = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -159,6 +159,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public static final TrackedData<Integer> ATTACK_TYPE = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
     public static final TrackedData<String> BOUNDED_INSTRUMENT_SOUND = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.STRING);
     public static final TrackedData<String> VARIANT = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.STRING);
+    public static final TrackedData<Float> ANIMATION_SPEED = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.FLOAT);
 
     public boolean isSecondaryAttack() {return getSecondaryAttackCooldown() > getMaxSecondaryAttackCooldown() - secondaryAttackDuration;} //old melee
     public int getSecondaryAttackCooldown() {return  dataTracker.get(SECONDARY_ATTACK_COOLDOWN);}
@@ -184,7 +185,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public boolean isDancing() {return dataTracker.get(DANCING);}
     public void setDancing(boolean state) {dataTracker.set(DANCING, state);}
 
-    public boolean isMoving() {return getVelocity().getZ() != 0 || getVelocity().getX() != 0;}
+    public boolean isMovingXZ() {return getVelocity().getZ() != 0 || getVelocity().getX() != 0;}
+    public boolean isMoving() {return  getVelocity().lengthSquared() > 0.015;}
 
     public boolean getIsSitting() {return dataTracker.get(IS_SITTING);}
     public void setIsSitting(boolean state) {
@@ -220,6 +222,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public String getBoundedInstrumentSound() {return  dataTracker.get(BOUNDED_INSTRUMENT_SOUND);}
     public void setBoundedInstrumentSound(String state) {dataTracker.set(BOUNDED_INSTRUMENT_SOUND, state);}
+
+    public float getAniamtionSpeed() {return dataTracker.get(ANIMATION_SPEED);}
+    public void setAnimationSpeed(float state) {dataTracker.set(ANIMATION_SPEED, state);}
 
     @Override
     public void writeCustomDataToNbt(NbtCompound tag) {
@@ -561,13 +566,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public float getWidthModTransSpeed() {
-        return (float) (0.22f * animationSpeed * getScale());
+        return 0.22f * getAniamtionSpeed() * getScale();
     }
     public float getHeightModTransSpeed() {
-        return (float) (0.3 * animationSpeed * getScale());
+        return  0.3f * getAniamtionSpeed() * getScale();
     }
     public float getMountedOffsetTransSpeed() {
-        return (float) (0.125 * animationSpeed * getScale());
+        return 0.125f * getAniamtionSpeed() * getScale();
     }
 
     @Override
@@ -680,11 +685,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void tick() {
         super.tick();
-        if (!getWorld().isClient()) updateRotationProgress();
-
-        animationSpeed = getMovementSpeedModifier();
-        if (this instanceof FlyingDragon flyingDragon && !flyingDragon.isFlying() || !(this instanceof FlyingDragon)) {
-            animationSpeed *= attributes().dragonGroundSpeedMultiplier * getAttributeValue(EntityAttributes.MOVEMENT_SPEED) / getBaseGroundSpeed();
+        if (!getWorld().isClient()) {
+            updateRotationProgress();
+            setAnimationSpeed(getMovementSpeedModifier());
         }
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);

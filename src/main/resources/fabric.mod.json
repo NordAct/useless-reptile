@@ -26,8 +26,8 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "nordmods.uselessreptile.UselessReptile",
-      "nordmods.sap.SAP"
+      "nordmods.sap.SAP",
+      "nordmods.uselessreptile.UselessReptile"
     ],
     "client": [
       "nordmods.uselessreptile.client.UselessReptileClient"
@@ -36,6 +36,7 @@
       "nordmods.uselessreptile.integration.ModMenuIntegration"
     ],
     "preLaunch": [
+      "nordmods.sap.SAP",
       "nordmods.uselessreptile.UselessReptile"
     ],
     "fabric-datagen": [

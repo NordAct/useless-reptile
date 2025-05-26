@@ -23,7 +23,7 @@ public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable
     int getInstanceId();
     World getServerWorld();
 
-    default void processServerAnimation() { //todo figure out why the hell queries seem to not work
+    default void processServerAnimation() { //todo figure out why the hell queries seem to not work and animation eventually desyncs
         if (getServerWorld().isClient()) return;
 
         AnimatableManager<T> manager = getAnimatableInstanceCache().getManagerForId(getInstanceId());
@@ -47,6 +47,10 @@ public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable
             bone = bone.getParent();
         }
         return list.reversed();
+    }
+
+    default Vec3d getBonePos(String name) {
+        return getBonePos(getServerModel().getAnimationProcessor().getBone(name));
     }
 
     default Vec3d getBonePos(GeoBone geoBone) {

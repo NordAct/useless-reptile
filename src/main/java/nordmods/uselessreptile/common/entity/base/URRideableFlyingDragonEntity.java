@@ -99,7 +99,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     @Override
     public void updateMovementModifiers() {
-        if ((!isMoving() || isFlying())) setSprinting(false);
+        if ((!isMovingXZ() || isFlying())) setSprinting(false);
         if (isSprinting()) setSpeedMod(1.5f);
         else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
         else setSpeedMod(1f);
@@ -128,7 +128,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             accelerationDuration += 2;
         if (!(isMoveBackPressed() || isMoveForwardPressed()) || (isMoveBackPressed() && isMoveForwardPressed())) {
             accelerationDuration /= 2;
-            if (!isMoving()) accelerationDuration = 0;
+            if (!isMovingXZ()) accelerationDuration = 0;
         }
         if (isMoveBackPressed() && !isMoveForwardPressed() && accelerationDuration > getMaxAccelerationDuration() * 0.25)
             accelerationDuration -= 2;
@@ -138,7 +138,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         }
         setAccelerationDuration(accelerationDuration);
 
-        setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
+        setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMovingXZ()));
         setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
         if (!isFlying()) {
             double landSpeed = forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
@@ -171,13 +171,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             if (isJumpPressed()) {
                 verticalSpeed = getVerticalSpeed();
                 setTiltState((byte) 1);
-                if (!isMovingBackwards() && isMoving() && getPitch() > -getPitchLimit() && !isDownPressed())
+                if (!isMovingBackwards() && isMovingXZ() && getPitch() > -getPitchLimit() && !isDownPressed())
                     setPitch(getPitch() - pitchSpeed);
             }
             if (isDownPressed()) {
                 verticalSpeed = -getVerticalSpeed() * 1.3f;
                 setTiltState((byte) 2);
-                if (!isMovingBackwards() && isMoving() && getPitch() < getPitchLimit())
+                if (!isMovingBackwards() && isMovingXZ() && getPitch() < getPitchLimit())
                     setPitch(getPitch() + pitchSpeed);
             }
             float currentVerticalSpeed = (float) getVelocity().getY();
@@ -227,7 +227,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     @Override
     public float getPitchLimit() {
-        if (isFlying() && isMoving() && !isMovingBackwards()) return pitchLimitAir;
+        if (isFlying() && isMovingXZ() && !isMovingBackwards()) return pitchLimitAir;
         return pitchLimitGround;
     }
 

@@ -63,7 +63,7 @@ public class MoleclawAttackGoal extends Goal {
         entity.getLookControl().lookAt(target);
         entity.getNavigation().startMovingTo(target, 1);
 
-        if (!entity.isMoving()) notMovingTimer++;
+        if (!entity.isMovingXZ()) notMovingTimer++;
         else notMovingTimer = 0;
         if (notMovingTimer >= nextStrongAttackTimer && entity.getPrimaryAttackCooldown() == 0) {
             int any = 0;

@@ -112,16 +112,16 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         return loopAnim("blink", event);
     }
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
-        event.controller().setAnimationSpeed(animationSpeed);
+        event.controller().setAnimationSpeed(getAniamtionSpeed());
         if (hasVehicle()) return loopAnim("sit.head", event);
         if (isFlying()) {
-            if (isMoving() || event.isMoving()) {
+            if (isMovingXZ() || event.isMoving()) {
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.dive", event);
                 if (isFlyGliding()) return loopAnim("fly.glide", event);
                 return loopAnim("fly.straight", event);
             }
-            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
+            event.controller().setAnimationSpeed(Math.max(getAniamtionSpeed(), 1));
             return loopAnim("fly.idle", event);
         }
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
@@ -133,9 +133,9 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.controller().setAnimationSpeed(animationSpeed);
+        event.controller().setAnimationSpeed(getAniamtionSpeed());
 
-        if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
+        if (isFlying() && (isMovingXZ() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) return loopAnim("turn.fly.left", event);
             if (turnState == 2) return loopAnim("turn.fly.right", event);
         }

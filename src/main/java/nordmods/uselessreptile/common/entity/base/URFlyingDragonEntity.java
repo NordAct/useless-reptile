@@ -85,7 +85,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     @Override
     public float getPitchLimit() {
-        if (isFlying() && isMoving() && !isMovingBackwards()) return pitchLimitAir;
+        if (isFlying() && isMovingXZ() && !isMovingBackwards()) return pitchLimitAir;
         return pitchLimitGround;
     }
 
@@ -128,7 +128,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     public void travel(Vec3d movementInput) {
         if (!isAlive()) return;
 
-        if ((!isMoving() || isFlying())) setSprinting(false);
+        if ((!isMovingXZ() || isFlying())) setSprinting(false);
         if (isSprinting()) setSpeedMod(1.5f);
         else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
         else setSpeedMod(1f);

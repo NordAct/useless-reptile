@@ -121,7 +121,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
         double landSpeed = forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         if (isSprintPressed()) setSprinting(true);
-        setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
+        setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMovingXZ()));
         if (isMovingBackwards()) setSprinting(false);
         setRotation(rider);
         setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
@@ -131,7 +131,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     }
 
     public void updateMovementModifiers() {
-        if (!isMoving()) setSprinting(false);
+        if (!isMovingXZ()) setSprinting(false);
         if (isSprinting()) setSpeedMod(1.1f);
         else setSpeedMod(1f);
         if (isMovingBackwards()) setSpeedMod(0.6f);
