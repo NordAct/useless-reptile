@@ -58,13 +58,13 @@ import java.util.List;
 
 public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
 
-    private final URDragonPart wingLeft = new URDragonPart(this);
-    private final URDragonPart wingRight = new URDragonPart(this);
-    private final URDragonPart neck = new URDragonPart(this);
-    private final URDragonPart head = new URDragonPart(this);
-    private final URDragonPart tail1 = new URDragonPart(this);
-    private final URDragonPart tail2 = new URDragonPart(this);
-    private final URDragonPart tail3 = new URDragonPart(this);
+    private final URDragonPart wingLeft = new URDragonPart(this, "wingLeft");
+    private final URDragonPart wingRight = new URDragonPart(this, "wingRight");
+    private final URDragonPart neck = new URDragonPart(this, "neck");
+    private final URDragonPart head = new URDragonPart(this, "head");
+    private final URDragonPart tail1 = new URDragonPart(this, "tail2");
+    private final URDragonPart tail2 = new URDragonPart(this, "tail3");
+    private final URDragonPart tail3 = new URDragonPart(this, "tail4");
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
 
     public static final float BASE_GROUND_SPEED = 0.2f;

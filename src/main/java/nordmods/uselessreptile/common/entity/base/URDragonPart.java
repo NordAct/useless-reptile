@@ -18,15 +18,17 @@ public class URDragonPart extends EntityPart {
     private float heightMod = 1;
     private float widthMod = 1;
     private final float damageMultiplier;
+    public final String name;
 
-    public URDragonPart(URDragonEntity owner) {
-        this(owner, 1);
+    public URDragonPart(URDragonEntity owner, String name) {
+        this(owner, 1, name);
     }
 
-    public URDragonPart(URDragonEntity owner, float damageMultiplier) {
+    public URDragonPart(URDragonEntity owner, float damageMultiplier, String name) {
         super(owner, 1, 1);
         this.owner = owner;
         this.damageMultiplier = damageMultiplier;
+        this.name = name;
         calculateDimensions();
     }
 

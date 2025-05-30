@@ -54,7 +54,7 @@ dependencies {
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
-    modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1-1.21.5") //added localy
+    modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:${project.primitive_multipart_entities_version}-1.21.5") //added localy
 
     //test mods
     //modRuntimeOnly("dev.isxander:controlify:2.1.1+1.21.5-fabric")

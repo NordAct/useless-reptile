@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.common.entity;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -22,6 +23,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
@@ -33,7 +35,10 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.*;
 import net.minecraft.world.event.EntityPositionSource;
@@ -62,6 +67,7 @@ import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
+import nordmods.uselessreptile.common.network.SyncPartPosS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -85,16 +91,16 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private boolean isChallenger = false;
     public BlockPos roamingSpot;
     private static final Identifier THUNDERSTORM_BONUS = UselessReptile.id("thunderstorm_bonus");
-    private final URDragonPart wing1Left = new URDragonPart(this);
-    private final URDragonPart wing1Right = new URDragonPart(this);
-    private final URDragonPart wing2Left = new URDragonPart(this);
-    private final URDragonPart wing2Right = new URDragonPart(this);
-    private final URDragonPart neck1 = new URDragonPart(this);
-    private final URDragonPart neck2 = new URDragonPart(this);
-    private final URDragonPart head = new URDragonPart(this);
-    private final URDragonPart tail1 = new URDragonPart(this);
-    private final URDragonPart tail2 = new URDragonPart(this);
-    private final URDragonPart tail3 = new URDragonPart(this);
+    private final URDragonPart wing1Left = new URDragonPart(this, "elbow_left");
+    private final URDragonPart wing1Right = new URDragonPart(this, "fingers_left");
+    private final URDragonPart wing2Left = new URDragonPart(this, "elbow_right");
+    private final URDragonPart wing2Right = new URDragonPart(this, "fingers_right");
+    private final URDragonPart neck1 = new URDragonPart(this, "neck2");
+    private final URDragonPart neck2 = new URDragonPart(this, "neck3");
+    private final URDragonPart head = new URDragonPart(this, "head");
+    private final URDragonPart tail1 = new URDragonPart(this, "tail2");
+    private final URDragonPart tail2 = new URDragonPart(this, "tail3");
+    private final URDragonPart tail3 = new URDragonPart(this, "tail4");
     private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
     protected final EntityGameEventHandler<LightningStrikeEventListener> lightningStrikeEventHandler = new EntityGameEventHandler<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
@@ -349,46 +355,38 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             }
         }
 
-        //updateChildParts();
-
         //TODO TEST CASE
         if (!getWorld().isClient()) {
-            updateBox(wing1Left, "elbow_left");
-            updateBox(wing2Left, "fingers_left");
-            updateBox(wing1Right, "elbow_right");
-            updateBox(wing2Right, "fingers_right");
-            updateBox(head, "head");
-            updateBox(neck2, "neck3");
-            updateBox(neck1, "neck2");
-            updateBox(tail3, "tail4");
-            updateBox(tail2, "tail3");
-            updateBox(tail1, "tail2");
-
-            for (EntityPart part : getParts()) {
-                Vec3d point = part.getPos().add(0, part.getHeight()/2, 0);
+            Vec3d[] holder = new Vec3d[getParts().length];
+            EntityPart[] entityParts = getParts();
+            for (int i = 0; i < entityParts.length; i++) {
+                EntityPart part = entityParts[i];
+                updateBox((URDragonPart) part, i, holder);
+                Vec3d point = part.getPos().add(0, part.getHeight() / 2, 0);
                 ParticleEffect effect = ParticleTypes.ELECTRIC_SPARK;
                 ParticleS2CPacket packet = new ParticleS2CPacket(effect, true, true, point.x, point.y, point.z, 0, 0, 0, 0, 1);
                 getServer().getPlayerManager().sendToAll(packet);
             }
 
-            //for (GeoBone bone : getServerModel().getAnimationProcessor().getRegisteredBones()) {
-            //    Vec3d point = getBonePos(bone);
-            //    point = point.rotateY((-getYaw() + 180f) * MathHelper.RADIANS_PER_DEGREE);
-            //    point = point.add(getPos());
-            //    ParticleEffect effect = ParticleTypes.ELECTRIC_SPARK;
-            //    ParticleS2CPacket packet = new ParticleS2CPacket(effect, true, true, point.x, point.y, point.z, 0, 0, 0, 0, 1);
-            //    getServer().getPlayerManager().sendToAll(packet);
-            //}
-        } else {
-            //updateChildParts();
+            for (ServerPlayerEntity player : PlayerLookup.tracking((ServerWorld) getWorld(), getBlockPos()))
+                SyncPartPosS2CPacket.send(player, this, holder);
         }
     }
 
-    private void updateBox(URDragonPart part, String bone) {
-        Vec3d partPos = getBonePos(bone).rotateY((-getYaw() + 180f) * MathHelper.RADIANS_PER_DEGREE).add(0, -part.getHeight()/2, 0);
-        part.setRelativePos(partPos.x, partPos.y, partPos.z, 0, 0);
-        
-        //part.getServer().getPlayerManager().sendToAll(EntityPositionS2CPacket.create(part.getId(), PlayerPosition.fromEntity(part), Set.of(), isOnGround()));
+    @Override
+    public void onSpawnPacket(EntitySpawnS2CPacket packet) {
+        super.onSpawnPacket(packet);
+        EntityPart[] enderDragonParts = this.getParts();
+
+        for (int i = 0; i < enderDragonParts.length; i++) {
+            enderDragonParts[i].setId(i + packet.getEntityId() + 1);
+        }
+    }
+
+    private void updateBox(URDragonPart part, int ordinal, Vec3d[] relativePosHolder) {
+        Vec3d relativePos = getBonePos(part.name).add(0, -part.getHeight()/2, 0);
+        relativePosHolder[ordinal] = relativePos;
+        part.setRelativePos(relativePos.x, relativePos.y, relativePos.z, 0, getYaw() - 180f);
     }
 
     //SERVER MODEL METHODS
