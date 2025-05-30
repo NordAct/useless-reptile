@@ -41,4 +41,9 @@ public class SAP implements ModInitializer, PreLaunchEntrypoint {
     public void onPreLaunch() {
         //exists for sake of correct load order
     }
+
+    //idk better way to do that
+    public static boolean isServerSide() {
+        return !Thread.currentThread().getName().equals("Render thread");
+    }
 }

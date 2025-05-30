@@ -2,7 +2,7 @@ package nordmods.sap.mixin;
 
 import net.minecraft.util.math.MathHelper;
 import nordmods.sap.SAP;
-import nordmods.sap.util.OverrideEasingTypeFunctionGetter;
+import nordmods.sap.util.AnimationControllerAccessor;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -19,6 +19,8 @@ import software.bernie.geckolib.animation.keyframe.AnimationPoint;
 import software.bernie.geckolib.animation.keyframe.BoneAnimationQueue;
 import software.bernie.geckolib.animation.state.BoneSnapshot;
 import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.loading.math.MolangQueries;
+import software.bernie.geckolib.loading.math.value.Variable;
 
 import java.util.Collection;
 import java.util.Map;
@@ -38,6 +40,7 @@ public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
 
     @Shadow @Final private Map<String, GeoBone> bones;
 
+    //there's no way to avoid calling OG data ticket class without doing this
     @Inject(method = "tickAnimation", at = @At("HEAD"), cancellable = true)
     private void redirectEntireFuckingMethod(AnimationState<T> animationState, CallbackInfo ci) {
         if (!animationState.hasData(SAP.ANIMATION_TICKS)) return;
@@ -51,6 +54,14 @@ public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
                 controller.forceAnimationReset();
                 controller.getBoneAnimationQueues().clear();
             }
+
+            for (Variable variable : ((AnimationControllerAccessor<T>) controller).useless_reptile$getUsedVariables()) { //yes, it has to be done here
+                switch (variable.name()) {
+                    case MolangQueries.ANIM_TIME -> animationState.queryValues().putIfAbsent(variable, controller.getCurrentAnimationSeconds());
+                    //TODO support for other queries
+                }
+            }
+
 
             controller.beginTick(animationState, bones, boneSnapshots, lerpedAnimationTick);
 
@@ -68,7 +79,7 @@ public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
                 AnimationPoint scaleXPoint = boneAnimation.scaleXQueue().poll();
                 AnimationPoint scaleYPoint = boneAnimation.scaleYQueue().poll();
                 AnimationPoint scaleZPoint = boneAnimation.scaleZQueue().poll();
-                EasingType easingType = (EasingType) ((OverrideEasingTypeFunctionGetter)controller).getOverrideEasingTypeFunction().apply(animationState);
+                EasingType easingType = (EasingType) ((AnimationControllerAccessor)controller).useless_reptile$getOverrideEasingTypeFunction().apply(animationState);
 
                 if (rotXPoint != null && rotYPoint != null && rotZPoint != null) {
                     bone.setRotX((float)EasingType.lerpWithOverride(rotXPoint, easingType, animationState) + initialSnapshot.getRotX());

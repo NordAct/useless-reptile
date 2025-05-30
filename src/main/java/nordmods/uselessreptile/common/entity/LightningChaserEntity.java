@@ -413,7 +413,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     private void createServerModel() { //todo make model holder for SAP
-        serverModel = new DefaultedEntityGeoModel<>(UselessReptile.id("lightning_chaser/lightning_chaser_server"));
+        //serverModel = new DefaultedEntityGeoModel<>(UselessReptile.id("lightning_chaser/lightning_chaser_server"));
+        serverModel = new DefaultedEntityGeoModel<>(UselessReptile.id("lightning_chaser/lightning_chaser"));
         GeoRenderState renderState = new GeoRenderState.Impl();
         serverModel.getAnimationProcessor().setActiveModel(serverModel.getBakedModel(serverModel.getModelResource(renderState)));
     }

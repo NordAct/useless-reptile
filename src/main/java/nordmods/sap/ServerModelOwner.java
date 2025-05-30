@@ -35,7 +35,7 @@ public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable
             MolangQueries.Actor<T> actor = new MolangQueries.Actor<>((T)this, renderState, new MutableObject<>(controller), getTick(this), 1, getServerWorld(), null, null);
             controller.prepareForRenderPass((T) this, manager, actor, new Reference2DoubleOpenHashMap<>(1), getTick(this), getServerModel());
 
-            getServerModel().handleAnimations(new AnimationState<>(renderState, manager, 1, new Reference2DoubleOpenHashMap<>(0), controller));
+            getServerModel().handleAnimations(new AnimationState<>(renderState, manager, 1, new Reference2DoubleOpenHashMap<>(), controller));
         });
     }
 
@@ -53,6 +53,7 @@ public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable
         return getBonePos(getServerModel().getAnimationProcessor().getBone(name));
     }
 
+    //returns relative to parent position. Almost accurate
     default Vec3d getBonePos(GeoBone geoBone) {
         List<GeoBone> path = getFullPath(geoBone);
         Matrix4f global = new Matrix4f().identity();
@@ -60,15 +61,11 @@ public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable
         for (GeoBone bone : path) {
             GeoBone parent = bone.getParent();
             Vector3f parentPivot = parent != null ? new Vector3f(parent.getPivotX(), parent.getPivotY(), parent.getPivotZ()) : new Vector3f();
-            Vector3f pivot = new Vector3f(bone.getPivotX(), bone.getPivotY(), bone.getPivotZ()).sub(parentPivot);
-            Vector3f rotation = new Vector3f(bone.getRotX(), bone.getRotY(), bone.getRotZ());
-            Vector3f scale = new Vector3f(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
-            Vector3f translation = new Vector3f(-bone.getPosX(), bone.getPosY(), bone.getPosZ());
             //
-            global.translate(pivot);
-            global.rotateZYX(rotation);
-            global.translate(translation);
-            global.scale(scale);
+            global.translate(new Vector3f(bone.getPivotX(), bone.getPivotY(), bone.getPivotZ()).sub(parentPivot));
+            global.rotateZYX(new Vector3f(bone.getRotX(), bone.getRotY(), bone.getRotZ()));
+            global.translate(new Vector3f(-bone.getPosX(), bone.getPosY(), bone.getPosZ()));
+            global.scale(new Vector3f(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ()));
         }
         Vector4f worldPosition = new Vector4f(0, 0, 0, 1).mul(global);
         return new Vec3d(worldPosition.x/16f, worldPosition.y/16f, worldPosition.z/16f);

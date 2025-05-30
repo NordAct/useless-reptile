@@ -3,9 +3,9 @@ package nordmods.sap.mixin;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.Identifier;
+import nordmods.sap.SAP;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -35,14 +35,10 @@ public abstract class GeckoLibResourcesMixin {
     private static Map<Identifier, BakedAnimations> ANIMATIONS_SERVER = Collections.emptyMap();
     private static Map<Identifier, BakedGeoModel> MODELS_SERVER = Collections.emptyMap();
 
-    @Unique
-    private static boolean isServerSide() {
-        return !Thread.currentThread().getName().equals("Render thread");
-    }
 
     @Inject(method = "reload", at = @At("HEAD"), cancellable = true)
     private static void correctSideReload(ResourceReloader.Synchronizer stage, ResourceManager resourceManager, Executor backgroundExecutor, Executor gameExecutor, CallbackInfoReturnable<CompletableFuture<Void>> cir) {
-        if (isServerSide()) {
+        if (SAP.isServerSide()) {
             CompletableFuture<Map<Identifier, BakedAnimations>> animations = loadAnimations(backgroundExecutor, resourceManager);
             CompletableFuture<Map<Identifier, BakedGeoModel>> models = loadModels(backgroundExecutor, resourceManager);
 
@@ -57,11 +53,11 @@ public abstract class GeckoLibResourcesMixin {
 
     @Inject(method = "getBakedAnimations", at = @At("HEAD"), cancellable = true)
     private static void correctSideAnimation(CallbackInfoReturnable<Map<Identifier, BakedAnimations>> cir) {
-        if (isServerSide()) cir.setReturnValue(ANIMATIONS_SERVER);
+        if (SAP.isServerSide()) cir.setReturnValue(ANIMATIONS_SERVER);
     }
 
     @Inject(method = "getBakedModels", at = @At("HEAD"), cancellable = true)
     private static void correctSideModel(CallbackInfoReturnable<Map<Identifier, BakedGeoModel>> cir) {
-        if (isServerSide()) cir.setReturnValue(MODELS_SERVER);
+        if (SAP.isServerSide()) cir.setReturnValue(MODELS_SERVER);
     }
 }
