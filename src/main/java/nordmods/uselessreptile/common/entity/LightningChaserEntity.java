@@ -77,7 +77,10 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiConsumer;
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity implements URMultipartEntity, ServerModelOwner<LightningChaserEntity> {
@@ -101,6 +104,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
     protected final EntityGameEventHandler<LightningStrikeEventListener> lightningStrikeEventHandler = new EntityGameEventHandler<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
+    private Set<String> processableBones = new HashSet<>();
 
     public static final float BASE_GROUND_SPEED = 0.25f;
 
@@ -410,6 +414,16 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     @Override
     public World getServerWorld() {
         return getWorld();
+    }
+
+    @Override
+    public Collection<String> getProcessableBones() {
+        return processableBones;
+    }
+
+    @Override
+    public void addProcessableBone(String boneName) {
+        processableBones.add(boneName);
     }
 
     private void createServerModel() { //todo make model holder for SAP

@@ -1,5 +1,6 @@
 package nordmods.sap.mixin;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import net.minecraft.util.math.MathHelper;
 import nordmods.sap.SAP;
 import nordmods.sap.util.AnimationControllerAccessor;
@@ -23,6 +24,7 @@ import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.loading.math.value.Variable;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 @Mixin(value = AnimationProcessor.class, remap = false)
@@ -43,11 +45,16 @@ public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
     //there's no way to avoid calling OG data ticket class without doing this
     @Inject(method = "tickAnimation", at = @At("HEAD"), cancellable = true)
     private void redirectEntireFuckingMethod(AnimationState<T> animationState, CallbackInfo ci) {
-        if (!animationState.hasData(SAP.ANIMATION_TICKS)) return;
+        if (!SAP.isServerSide()) return;
 
         AnimatableManager<T> animatableManager = animationState.manager();
         Map<String, BoneSnapshot> boneSnapshots = updateBoneSnapshots(animatableManager.getBoneSnapshotCollection());
         double lerpedAnimationTick = animationState.getData(SAP.ANIMATION_TICKS);
+
+        //filtering out bones which are not needed to reduce load (animation processing is not cheap)
+        Collection<String> processableBones = animationState.getDataOrDefault(SAP.PROCESSABLE_BONES, List.of());
+        Map<String, GeoBone> processable = new Object2ObjectOpenHashMap<>();
+        processableBones.forEach(bone -> processable.put(bone, bones.get(bone)));
 
         for (AnimationController<T> controller : animatableManager.getAnimationControllers().values()) {
             if (this.reloadAnimations) {
@@ -62,8 +69,7 @@ public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
                 }
             }
 
-
-            controller.beginTick(animationState, bones, boneSnapshots, lerpedAnimationTick);
+            controller.beginTick(animationState, processable, boneSnapshots, lerpedAnimationTick);
 
             for (BoneAnimationQueue boneAnimation : controller.getBoneAnimationQueues().values()) {
                 GeoBone bone = boneAnimation.bone();

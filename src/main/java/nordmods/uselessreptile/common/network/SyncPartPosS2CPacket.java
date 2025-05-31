@@ -7,9 +7,9 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
-import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.base.URMultipartEntity;
 
 public record SyncPartPosS2CPacket(int ownerId, Vec3d[] relativePos) implements CustomPayload {
     public static final Identifier ID = UselessReptile.id("sync_part_pos");
@@ -35,7 +35,7 @@ public record SyncPartPosS2CPacket(int ownerId, Vec3d[] relativePos) implements 
         for (Vec3d pos : packet.relativePos) buf.writeVec3d(pos);
     }
 
-    public static <T extends URDragonEntity & MultipartEntity>  void send(ServerPlayerEntity player, T entity, Vec3d[] relativePos) {
+    public static <T extends URDragonEntity & URMultipartEntity>  void send(ServerPlayerEntity player, T entity, Vec3d[] relativePos) {
         ServerPlayNetworking.send(player, new SyncPartPosS2CPacket(entity.getId(), relativePos));
     }
 

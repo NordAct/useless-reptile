@@ -27,4 +27,13 @@ public abstract class AnimationControllerMixin<T extends GeoAnimatable> implemen
     public Set<Variable> useless_reptile$getUsedVariables() {
         return getUsedVariables();
     }
+
+    //@ModifyVariable(method = "beginTick", at = @At("HEAD"), ordinal = 0, argsOnly = true)
+    //private Map<String, GeoBone> filterUsedBones(Map<String, GeoBone> value, @Local(argsOnly = true) AnimationState<T> state) {
+    //    if (!state.hasData(SAP.PROCESSABLE_BONES)) return value;
+    //    Map<String, GeoBone> newMap = new Object2ObjectOpenHashMap<>();
+    //    Collection<String> processableBones = state.getData(SAP.PROCESSABLE_BONES);
+    //    processableBones.forEach(bone -> newMap.put(bone, value.get(bone)));
+    //    return newMap;
+    //}
 }

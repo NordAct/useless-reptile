@@ -10,6 +10,7 @@ import net.minecraft.util.Identifier;
 import software.bernie.geckolib.cache.GeckoLibResources;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 
+import java.util.Collection;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 //S - serverside
@@ -19,6 +20,7 @@ import java.util.concurrent.Executor;
 public class SAP implements ModInitializer, PreLaunchEntrypoint {
     public static DataTicket<Double> ANIMATION_TICKS = DataTicket.create("sap_animation_tick", Double.class);
     public static DataTicket<Double> BONE_RESET_TIME = DataTicket.create("sap_bone_reset_time", Double.class);
+    public static DataTicket<Collection> PROCESSABLE_BONES = DataTicket.create("sap_processable_bones", Collection.class); //string set
 
     @Override
     public void onInitialize() {

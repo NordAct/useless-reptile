@@ -16,12 +16,15 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable {
     GeoModel<T> getServerModel();
     int getInstanceId();
     World getServerWorld();
+    Collection<String> getProcessableBones(); //for sake of optimization
+    void addProcessableBone(String boneName);
 
     default void processServerAnimation() { //todo figure out why the hell queries seem to not work and animation eventually desyncs
         if (getServerWorld().isClient()) return;
@@ -31,6 +34,7 @@ public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable
             GeoRenderState renderState = new GeoRenderState.Impl();
             renderState.addGeckolibData(SAP.ANIMATION_TICKS, getTick(this));
             renderState.addGeckolibData(SAP.BONE_RESET_TIME, getBoneResetTime());
+            renderState.addGeckolibData(SAP.PROCESSABLE_BONES, getProcessableBones());
 
             MolangQueries.Actor<T> actor = new MolangQueries.Actor<>((T)this, renderState, new MutableObject<>(controller), getTick(this), 1, getServerWorld(), null, null);
             controller.prepareForRenderPass((T) this, manager, actor, new Reference2DoubleOpenHashMap<>(1), getTick(this), getServerModel());
@@ -59,6 +63,7 @@ public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable
         Matrix4f global = new Matrix4f().identity();
 
         for (GeoBone bone : path) {
+            addProcessableBone(bone.getName());
             GeoBone parent = bone.getParent();
             Vector3f parentPivot = parent != null ? new Vector3f(parent.getPivotX(), parent.getPivotY(), parent.getPivotZ()) : new Vector3f();
             //
