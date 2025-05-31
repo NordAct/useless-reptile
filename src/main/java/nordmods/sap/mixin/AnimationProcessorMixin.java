@@ -24,7 +24,6 @@ import software.bernie.geckolib.loading.math.MolangQueries;
 import software.bernie.geckolib.loading.math.value.Variable;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 
 @Mixin(value = AnimationProcessor.class, remap = false)
@@ -52,7 +51,7 @@ public abstract class AnimationProcessorMixin<T extends GeoAnimatable> {
         double lerpedAnimationTick = animationState.getData(SAP.ANIMATION_TICKS);
 
         //filtering out bones which are not needed to reduce load (animation processing is not cheap)
-        Collection<String> processableBones = animationState.getDataOrDefault(SAP.PROCESSABLE_BONES, List.of());
+        Collection<String> processableBones = animationState.getData(SAP.PROCESSABLE_BONES);
         Map<String, GeoBone> processable = new Object2ObjectOpenHashMap<>();
         processableBones.forEach(bone -> processable.put(bone, bones.get(bone)));
 

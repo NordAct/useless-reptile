@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
 import net.minecraft.entity.ai.goal.SitGoal;
@@ -23,7 +22,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.packet.s2c.play.EntitySpawnS2CPacket;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -44,7 +42,6 @@ import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import nordmods.sap.ServerModelOwner;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -64,7 +61,6 @@ import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
-import nordmods.uselessreptile.common.network.SyncPartPosS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -77,13 +73,12 @@ import software.bernie.geckolib.model.DefaultedEntityGeoModel;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiConsumer;
 
-public class LightningChaserEntity extends URRideableFlyingDragonEntity implements URMultipartEntity, ServerModelOwner<LightningChaserEntity> {
+public class LightningChaserEntity extends URRideableFlyingDragonEntity implements URMultipartEntity<LightningChaserEntity> {
     private int shockwaveDelay = -1;
     private int shootDelay = -1;
     private int bailOutTimer = 6000;
@@ -104,13 +99,12 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
     protected final EntityGameEventHandler<LightningStrikeEventListener> lightningStrikeEventHandler = new EntityGameEventHandler<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
-    private Set<String> processableBones = new HashSet<>();
+    private List<String> processableBones = new ArrayList<>();
 
     public static final float BASE_GROUND_SPEED = 0.25f;
 
     private GeoModel<LightningChaserEntity> serverModel;//TODO TEST CASE
     private Vec3d[] partNextPos = new Vec3d[0];
-    private boolean updateParts;
 
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -357,47 +351,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 removeAllPassengers();
             }
         }
-
-        //TODO TEST CASE
-        if (!getWorld().isClient()) {
-            Vec3d[] holder = new Vec3d[getParts().length];
-            EntityPart[] entityParts = getParts();
-            for (int i = 0; i < entityParts.length; i++) {
-                EntityPart part = entityParts[i];
-                updateBox((URDragonPart) part, i, holder);
-                //Vec3d point = part.getPos().add(0, part.getHeight() / 2, 0);
-                //ParticleEffect effect = ParticleTypes.ELECTRIC_SPARK;
-                //ParticleS2CPacket packet = new ParticleS2CPacket(effect, true, true, point.x, point.y, point.z, 0, 0, 0, 0, 1);
-                //getServer().getPlayerManager().sendToAll(packet);
-            }
-
-            for (ServerPlayerEntity player : PlayerLookup.tracking((ServerWorld) getWorld(), getBlockPos()))
-                SyncPartPosS2CPacket.send(player, this, holder);
-        }
-        if (updateParts) {
-            EntityPart[] entityParts = getParts();
-            for (int i = 0; i < entityParts.length; i++) {
-                EntityPart part = entityParts[i];
-                Vec3d relativePos = partNextPos[i];
-                part.setRelativePos(relativePos.x, relativePos.y, relativePos.z, 0, getYaw() - 180f);
-            }
-        }
-    }
-
-    @Override
-    public void onSpawnPacket(EntitySpawnS2CPacket packet) {
-        super.onSpawnPacket(packet);
-        EntityPart[] enderDragonParts = this.getParts();
-
-        for (int i = 0; i < enderDragonParts.length; i++) {
-            enderDragonParts[i].setId(i + packet.getEntityId() + 1);
-        }
-    }
-
-    private void updateBox(URDragonPart part, int ordinal, Vec3d[] relativePosHolder) {
-        Vec3d relativePos = getBonePos(part.name).add(0, -part.getHeight()/2, 0);
-        relativePosHolder[ordinal] = relativePos;
-        part.setRelativePos(relativePos.x, relativePos.y, relativePos.z, 0, getYaw() - 180f);
     }
 
     //SERVER MODEL METHODS
@@ -424,6 +377,16 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     @Override
     public void addProcessableBone(String boneName) {
         processableBones.add(boneName);
+    }
+
+    @Override
+    public void updateNextPartPos(Vec3d[] relativePos) {
+        partNextPos = relativePos;
+    }
+
+    @Override
+    public Vec3d[] getNextPartPos() {
+        return partNextPos;
     }
 
     private void createServerModel() { //todo make model holder for SAP
@@ -624,12 +587,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public boolean canTarget(LivingEntity target) {
         if (hasSurrendered() || getShouldBailOut()) return false;
         return super.canTarget(target);
-    }
-
-    @Override
-    public void updatePartsPos(Vec3d[] relativePos) {
-        partNextPos = relativePos;
-        updateParts = true;
     }
 
     protected class LightningStrikeEventListener implements GameEventListener {

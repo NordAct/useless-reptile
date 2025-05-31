@@ -10,7 +10,7 @@ public class SyncPartPosPacket {
         ClientPlayNetworking.registerGlobalReceiver(SyncPartPosS2CPacket.PACKET_ID, (packet, context) -> {
             Entity entity = context.player().getWorld().getEntityById(packet.ownerId());
             if (!(entity instanceof URMultipartEntity multipartEntity)) return;
-            multipartEntity.updatePartsPos(packet.relativePos());
+            multipartEntity.updateNextPartPos(packet.relativePos());
         });
     }
 }

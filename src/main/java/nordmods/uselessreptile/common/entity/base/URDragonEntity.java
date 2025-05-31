@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.base;
 
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.component.DataComponentTypes;
@@ -54,6 +55,7 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
+import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
@@ -69,6 +71,7 @@ import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
+import nordmods.uselessreptile.common.network.SyncPartPosS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jetbrains.annotations.Nullable;
@@ -713,6 +716,29 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                     setTurningState(turnState);
                 }
             } else getLookControl().setLockRotation(false);
+        }
+
+        if (this instanceof URMultipartEntity multipartEntity) {
+            if (!getWorld().isClient()) {
+                Vec3d[] holder = new Vec3d[multipartEntity.getParts().length];
+                EntityPart[] entityParts = multipartEntity.getParts();
+                for (int i = 0; i < entityParts.length; i++) {
+                    URDragonPart part = (URDragonPart) entityParts[i];
+                    Vec3d relativePos = multipartEntity.getBonePos(part.name).add(0, -part.getHeight()/2, 0);
+                    holder[i] = relativePos;
+                    part.setRelativePos(relativePos.x, relativePos.y, relativePos.z, 0, getYaw() - 180f);
+                }
+
+                for (ServerPlayerEntity player : PlayerLookup.tracking((ServerWorld) getWorld(), getBlockPos()))
+                    SyncPartPosS2CPacket.send(player, getId(), holder);
+            } else {
+                EntityPart[] entityParts = multipartEntity.getParts();
+                for (int i = 0; i < multipartEntity.getNextPartPos().length; i++) {
+                    EntityPart part = entityParts[i];
+                    Vec3d relativePos = multipartEntity.getNextPartPos()[i];
+                    part.setRelativePos(relativePos.x, relativePos.y, relativePos.z, 0, getYaw() - 180f);
+                }
+            }
         }
     }
 

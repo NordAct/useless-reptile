@@ -41,6 +41,7 @@ public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable
 
             getServerModel().handleAnimations(new AnimationState<>(renderState, manager, 1, new Reference2DoubleOpenHashMap<>(), controller));
         });
+        getProcessableBones().clear();
     }
 
     default List<GeoBone> getFullPath(GeoBone bone) {
