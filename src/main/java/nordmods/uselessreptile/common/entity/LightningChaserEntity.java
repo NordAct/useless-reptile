@@ -184,7 +184,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 event.controller().setAnimationSpeed(getCooldownModifier());
                 return loopAnim("fly.shockwave", event);
             }
-            if (isMovingXZ() || isMoving()) {
+            if (isMovingXZ()) {
                 if (isMovingBackwards()) return loopAnim("fly.back", event);
                 if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
                 if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
@@ -197,7 +197,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         }
         if (hasSurrendered()) return loopAnim("surrender", event);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
-        if (isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
+        if (isMovingXZ() || isMoveForwardPressed()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
         if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
         return loopAnim("idle", event);
@@ -207,7 +207,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         byte turnState = getTurningState();
         event.controller().setAnimationSpeed(getAniamtionSpeed());
         if (isFlying()) {
-            if ((isMovingXZ() || isMoving()) && !isMovingBackwards()) {
+            if ((isMovingXZ()) && !isMovingBackwards()) {
                 if (turnState == 1) return loopAnim("turn.fly.left", event);
                 if (turnState == 2) return loopAnim("turn.fly.right", event);
             }
@@ -225,7 +225,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         if (isPrimaryAttack()) {
             if (isFlying()) {
                 if (isSpecialAttack()) return playAnim("attack.range.fly.shockwave", event);
-                if ((isMovingXZ() || isMoving()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
+                if ((isMovingXZ()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
                 return playAnim("attack.range.fly.idle", event);
             }
             return playAnim("attack.range", event);
@@ -256,10 +256,16 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     protected void initDataTracker(DataTracker.Builder builder) {
         super.initDataTracker(builder);
         builder.add(SURRENDERED, false);
+        builder.add(ANIMATION_TICK, 0f);
     }
+
     public static final TrackedData<Boolean> SURRENDERED = DataTracker.registerData(LightningChaserEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
     public boolean hasSurrendered() {return dataTracker.get(SURRENDERED);}
     public void setSurrendered(boolean state) {dataTracker.set(SURRENDERED, state);}
+
+    public static final TrackedData<Float> ANIMATION_TICK = DataTracker.registerData(LightningChaserEntity.class, TrackedDataHandlerRegistry.FLOAT);
+    public float getAnimationTime() {return dataTracker.get(ANIMATION_TICK);}
+    public void setAnimationTime(float state) {dataTracker.set(ANIMATION_TICK, state);}
 
     @Override
     public void writeCustomDataToNbt(NbtCompound tag) {
@@ -365,7 +371,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public World getServerWorld() {
+    public World getCurrentWorld() {
         return getWorld();
     }
 

@@ -22,21 +22,24 @@ import java.util.List;
 public interface ServerModelOwner<T extends GeoAnimatable> extends GeoAnimatable {
     GeoModel<T> getServerModel();
     int getInstanceId();
-    World getServerWorld();
+    World getCurrentWorld();
     Collection<String> getProcessableBones(); //for sake of optimization
     void addProcessableBone(String boneName);
+    float getAnimationTime(); //use data tracker to sync animation time
+    void setAnimationTime(float state);
 
     default void processServerAnimation() { //todo figure out why the hell queries seem to not work and animation eventually desyncs
-        if (getServerWorld().isClient()) return;
+        if (getCurrentWorld().isClient()) return;
 
         AnimatableManager<T> manager = getAnimatableInstanceCache().getManagerForId(getInstanceId());
         manager.getAnimationControllers().forEach((controllerName, controller) -> {
             GeoRenderState renderState = new GeoRenderState.Impl();
+            setAnimationTime((float) controller.getCurrentAnimationSeconds());
             renderState.addGeckolibData(SAP.ANIMATION_TICKS, getTick(this));
             renderState.addGeckolibData(SAP.BONE_RESET_TIME, getBoneResetTime());
             renderState.addGeckolibData(SAP.PROCESSABLE_BONES, getProcessableBones());
 
-            MolangQueries.Actor<T> actor = new MolangQueries.Actor<>((T)this, renderState, new MutableObject<>(controller), getTick(this), 1, getServerWorld(), null, null);
+            MolangQueries.Actor<T> actor = new MolangQueries.Actor<>((T)this, renderState, new MutableObject<>(controller), getTick(this), 1, getCurrentWorld(), null, null);
             controller.prepareForRenderPass((T) this, manager, actor, new Reference2DoubleOpenHashMap<>(1), getTick(this), getServerModel());
 
             getServerModel().handleAnimations(new AnimationState<>(renderState, manager, 1, new Reference2DoubleOpenHashMap<>(), controller));

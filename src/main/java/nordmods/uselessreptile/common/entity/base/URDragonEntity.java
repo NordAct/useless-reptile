@@ -189,7 +189,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public void setDancing(boolean state) {dataTracker.set(DANCING, state);}
 
     public boolean isMovingXZ() {return getVelocity().getZ() != 0 || getVelocity().getX() != 0;}
-    public boolean isMoving() {return  getVelocity().lengthSquared() > 0.015;}
 
     public boolean getIsSitting() {return dataTracker.get(IS_SITTING);}
     public void setIsSitting(boolean state) {
