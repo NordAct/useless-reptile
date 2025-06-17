@@ -61,7 +61,7 @@ public record URDragonDataStorageComponent(List<NbtComponent> entityData) {
 
     public static NbtComponent createData(Entity entity) {
         NbtCompound nbtCompound = new NbtCompound();
-        entity.saveSelfNbt(nbtCompound);
+        entity.saveSelfData(nbtCompound);
         Objects.requireNonNull(nbtCompound);
         IGNORED_NBT.forEach(nbtCompound::remove);
         return NbtComponent.of(nbtCompound);

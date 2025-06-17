@@ -50,7 +50,7 @@ public record DragonVariant(Identifier dragonId, String name, Optional<String> d
     public static DragonVariant getDefaultVariant(Identifier dragonId, World world) {
         NbtCompound nbtCompound = new NbtCompound();
         nbtCompound.putString("id", dragonId.toString());
-        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromNbt(nbtCompound, world, SpawnReason.TRIGGERED).get();
+        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromData(nbtCompound, world, SpawnReason.TRIGGERED).get();
         dragon.discard();
         return dragon.getWorld().getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT)
                 .stream()

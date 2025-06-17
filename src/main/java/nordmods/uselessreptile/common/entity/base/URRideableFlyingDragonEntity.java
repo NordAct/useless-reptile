@@ -62,14 +62,14 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public void setTiltState(byte state) {dataTracker.set(TILT_STATE, state);}
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound tag) {
-        super.writeCustomDataToNbt(tag);
+    public void writeCustomData(NbtCompound tag) {
+        super.writeCustomData(tag);
         tag.putBoolean("IsFlying", isFlying());
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound tag) {
-        super.readCustomDataFromNbt(tag);
+    public void readCustomData(NbtCompound tag) {
+        super.readCustomData(tag);
         setFlying(tag.getBoolean("IsFlying", false));
     }
 

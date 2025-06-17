@@ -252,8 +252,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public void setSurrendered(boolean state) {dataTracker.set(SURRENDERED, state);}
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound tag) {
-        super.writeCustomDataToNbt(tag);
+    public void writeCustomData(NbtCompound tag) {
+        super.writeCustomData(tag);
         if (!isTamed()) {
             tag.putInt("BailOutTimer", bailOutTimer);
             tag.putBoolean("HasSurrendered", hasSurrendered());
@@ -263,8 +263,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound tag) {
-        super.readCustomDataFromNbt(tag);
+    public void readCustomData(NbtCompound tag) {
+        super.readCustomData(tag);
         if (!isTamed()) {
             bailOutTimer = tag.getInt("BailOutTimer").orElse(bailOutTimer);
             setSurrendered(tag.getBoolean("HasSurrendered", false));

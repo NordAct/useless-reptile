@@ -108,7 +108,7 @@ public class VortexHornItem extends GoatHornItem {
     @SuppressWarnings("deprecation")
     @Override
     public void appendTooltip(
-            ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type
+            ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type
     )  {
         if (stack.getComponents().contains(URItems.DRAGON_STORAGE_COMPONENT)) {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);

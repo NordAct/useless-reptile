@@ -22,7 +22,7 @@ public abstract class PlayerManagerMixin {
     private void spawnHeadMountDragon(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci,
                                       @Local Optional<NbtCompound> optional, @Local(ordinal = 1) ServerWorld serverWorld2) {
         optional.ifPresent(nbt -> {
-            EntityType.getEntityFromNbt(nbt.getCompoundOrEmpty("HeadMountDragon"), serverWorld2, SpawnReason.LOAD).ifPresent(dragon -> {
+            EntityType.getEntityFromData(nbt.getCompoundOrEmpty("HeadMountDragon"), serverWorld2, SpawnReason.LOAD).ifPresent(dragon -> {
                 serverWorld2.tryLoadEntity(dragon);
                 dragon.setPosition(player.getPos());
                 if (player.getFirstPassenger() == null) dragon.startRiding(player, true);

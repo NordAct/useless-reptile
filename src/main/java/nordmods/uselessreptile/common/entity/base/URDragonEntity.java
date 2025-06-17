@@ -222,8 +222,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public void setBoundedInstrumentSound(String state) {dataTracker.set(BOUNDED_INSTRUMENT_SOUND, state);}
 
     @Override
-    public void writeCustomDataToNbt(NbtCompound tag) {
-        super.writeCustomDataToNbt(tag);
+    public void writeCustomData(NbtCompound tag) {
+        super.writeCustomData(tag);
         tag.putString("Variant", getVariant());
 
         int[] coords = {getHomePoint().getX(), getHomePoint().getY(), getHomePoint().getZ()};
@@ -246,8 +246,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    public void readCustomDataFromNbt(NbtCompound tag) {
-        super.readCustomDataFromNbt(tag);
+    public void readCustomData(NbtCompound tag) {
+        super.readCustomData(tag);
         dataTracker.set(VARIANT, tag.getString("Variant", getDefaultVariant()));
 
         int[] coords = tag.getIntArray("HomePoint").orElse(new int[] {getBlockX(), getBlockY(), getBlockZ()});
@@ -522,7 +522,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         boolean result = super.startRiding(entity, force);
         if (this instanceof HeadMountDragon && result && entity instanceof HeadMountDragonOwner owner) {
             NbtCompound nbtCompound = new NbtCompound();
-            saveSelfNbt(nbtCompound);
+            saveSelfData(nbtCompound);
             owner.setHeadMountDragon(nbtCompound);
             setPortalCooldown(0);
         }

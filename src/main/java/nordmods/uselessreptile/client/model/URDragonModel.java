@@ -135,7 +135,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     protected final Identifier getDefaultTexture(Identifier entity) {
         NbtCompound nbtCompound = new NbtCompound();
         nbtCompound.putString("id", entity.toString());
-        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromNbt(nbtCompound, MinecraftClient.getInstance().world, SpawnReason.TRIGGERED).get();
+        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromData(nbtCompound, MinecraftClient.getInstance().world, SpawnReason.TRIGGERED).get();
         dragon.discard();
         return UselessReptile.id("textures/entity/"+ entity.getPath() + "/" + dragon.getDefaultVariant() + ".png");
     }
