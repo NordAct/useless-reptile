@@ -3,16 +3,26 @@ package nordmods.uselessreptile.client.gui;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.render.LightmapTextureManager;
+import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.init.URDataTickets;
+import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import software.bernie.geckolib.constant.DataTickets;
+import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     protected static final Identifier TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
@@ -67,42 +77,34 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     protected void drawEntity(DrawContext context) {
-        if (entity != null) InventoryScreen.drawEntity(context, i + 26, j + 18, i + 78, j + 70, 13, 0.25F, this.mouseX, this.mouseY, this.entity);
+        if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, 13, this.mouseX, this.mouseY, this.entity);
     }
 
-//    private void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size, float mouseX, float mouseY, LivingEntity entity) {
-//        float centerX = (x1 + x2) / 2f;
-//        float centerY = (y1 + y2) / 2f;
-//        float dx = (float)Math.atan((centerX - mouseX) / 40f);
-//        float dy = (float) Math.atan((centerY - mouseY) / 40f);
-//        float tickDelta = RenderUtil.getTickDelta(false);
-//
-//        context.getMatrices().pushMatrix();
-//        context.enableScissor(x1, y1, x2, y2);
-//
-//        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-//        EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
-//        LivingEntityRenderState state = (LivingEntityRenderState) renderer.getAndUpdateRenderState(entity, tickDelta);
-//        state.displayName = null;
-//        if (state instanceof GeoRenderState geoRenderState) {
-//            geoRenderState.addGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT, false);
-//            geoRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, LightmapTextureManager.MAX_LIGHT_COORDINATE); //geckolib moment
-//        }
-//
-//        context.getMatrices().translate(centerX, centerY);
-//        context.getMatrices().scale(size / state.baseScale, size / state.baseScale);
-//        context.getMatrices().translate(0, state.height / 2f + 0.4f);
-//        context.getMatrices().multiply(RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180));
-//        context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + state.bodyYaw));
-//
-//        DiffuseLighting.enableGuiShaderLighting();
-//        context.draw(vertexConsumerProvider -> entityRenderDispatcher.render(state, 0d, 0d, 0d, context.getMatrices(), vertexConsumerProvider, LightmapTextureManager.MAX_LIGHT_COORDINATE));
-//        DiffuseLighting.enableGuiDepthLighting();
-//
-//        context.disableScissor();
-//        context.getMatrices().popMatrix();
-//
-//    }
+    private void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size, float mouseX, float mouseY, LivingEntity entity) {
+        float centerX = (x1 + x2) / 2f;
+        float centerY = (y1 + y2) / 2f;
+        float dx = (float)Math.atan((centerX - mouseX) / 40f);
+        float dy = (float) Math.atan((centerY - mouseY) / 40f);
+        float tickDelta = RenderUtil.getTickDelta(false);
+
+        context.enableScissor(x1, y1, x2, y2);
+
+        EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
+        LivingEntityRenderState state = (LivingEntityRenderState) renderer.getAndUpdateRenderState(entity, tickDelta);
+        state.displayName = null;
+        if (state instanceof GeoRenderState geoRenderState) {
+            geoRenderState.addGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT, false);
+            geoRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, LightmapTextureManager.MAX_LIGHT_COORDINATE); //geckolib moment
+        }
+
+        Quaternionf rot = new Quaternionf();
+        Quaternionf cam = RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180).mul(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + state.bodyYaw));
+        rot.mul(cam);
+
+        context.addEntity(state, size / state.baseScale, new Vector3f(0, state.height / 2f + 0.4f, 0), rot, cam, x1, y1, x2, y2);
+
+        context.disableScissor();
+    }
 
     protected void drawStorage(DrawContext context) {
         int size = storageSize.getSize()/3;
