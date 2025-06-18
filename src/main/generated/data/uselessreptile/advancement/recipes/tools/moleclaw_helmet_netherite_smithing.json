@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:moleclaw_helmet_netherite_smithing"
+        "recipe": "uselessreptile:moleclaw_helmet_netherite_smithing"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:moleclaw_helmet_netherite_smithing"
+      "uselessreptile:moleclaw_helmet_netherite_smithing"
     ]
   }
 }

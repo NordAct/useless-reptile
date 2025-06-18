@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:dragon_helmet_netherite_smithing"
+        "recipe": "uselessreptile:dragon_helmet_netherite_smithing"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:dragon_helmet_netherite_smithing"
+      "uselessreptile:dragon_helmet_netherite_smithing"
     ]
   }
 }
