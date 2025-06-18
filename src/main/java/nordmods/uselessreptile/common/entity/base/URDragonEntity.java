@@ -23,12 +23,12 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.SimpleInventory;
+import net.minecraft.inventory.StackWithSlot;
 import net.minecraft.item.Instrument;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PotionItem;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.NamedScreenHandlerFactory;
@@ -37,6 +37,9 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
+import net.minecraft.storage.NbtWriteView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.text.PlainTextContent;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableTextContent;
@@ -222,7 +225,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public void setBoundedInstrumentSound(String state) {dataTracker.set(BOUNDED_INSTRUMENT_SOUND, state);}
 
     @Override
-    public void writeCustomData(NbtCompound tag) {
+    public void writeCustomData(WriteView tag) {
         super.writeCustomData(tag);
         tag.putString("Variant", getVariant());
 
@@ -234,23 +237,20 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         tag.putBoolean("Sitting", getIsSitting());
         if (inventory != null && isTamed()) {
-            final NbtList inv = new NbtList();
+            WriteView.ListAppender<StackWithSlot> listAppender = tag.getListAppender("Inventory", StackWithSlot.CODEC);
             for (int i = 0; i < inventory.size(); i++) {
-                NbtCompound nbtCompound = new NbtCompound();
-                nbtCompound.putByte("Slot", (byte)i);
                 ItemStack stack = inventory.getStack(i);
-                if (!stack.isEmpty()) inv.add(stack.toNbt(getRegistryManager(), nbtCompound));
+                if (!stack.isEmpty()) listAppender.add(new StackWithSlot(i, stack));
             }
-            tag.put("Inventory", inv);
         }
     }
 
     @Override
-    public void readCustomData(NbtCompound tag) {
+    public void readCustomData(ReadView tag) {
         super.readCustomData(tag);
         dataTracker.set(VARIANT, tag.getString("Variant", getDefaultVariant()));
 
-        int[] coords = tag.getIntArray("HomePoint").orElse(new int[] {getBlockX(), getBlockY(), getBlockZ()});
+        int[] coords = tag.getOptionalIntArray("HomePoint").orElse(new int[] {getBlockX(), getBlockY(), getBlockZ()});
         if (coords.length == 0) setHomePoint(getBlockPos());
         else setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
 
@@ -258,17 +258,14 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         else setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound", ""));
 
         setIsSitting(tag.getBoolean("Sitting", false));
-        if (tag.contains("Inventory")) {
-            final NbtList inv = tag.getListOrEmpty("Inventory");
-            for (int i = 0; i < inv.size(); i++) {
-                NbtCompound nbtCompound = inv.getCompoundOrEmpty(i);
-                int slot = nbtCompound.getByte("Slot", (byte)0);
-                if (slot < inventory.size()) {
-                    inventory.setStack(slot, ItemStack.fromNbt(getRegistryManager(), nbtCompound).orElse(ItemStack.EMPTY));
-                }
+
+        for (StackWithSlot stackWithSlot : tag.getTypedListView("Inventory", StackWithSlot.CODEC)) {
+            if (stackWithSlot.isValidSlot(this.inventory.size())) {
+                inventory.setStack(stackWithSlot.slot(), stackWithSlot.stack());
             }
-            inventory.addListener(this);
         }
+        inventory.addListener(this);
+
         updateEquipment();
     }
 
@@ -521,9 +518,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public boolean startRiding(Entity entity, boolean force) {
         boolean result = super.startRiding(entity, force);
         if (this instanceof HeadMountDragon && result && entity instanceof HeadMountDragonOwner owner) {
-            NbtCompound nbtCompound = new NbtCompound();
-            saveSelfData(nbtCompound);
-            owner.setHeadMountDragon(nbtCompound);
+            NbtWriteView nbtWriteView = NbtWriteView.create(UselessReptile.ERROR_REPORTER, entity.getRegistryManager());
+            saveSelfData(nbtWriteView);
+            owner.setHeadMountDragon(nbtWriteView.getNbt());
             setPortalCooldown(0);
         }
         return result;

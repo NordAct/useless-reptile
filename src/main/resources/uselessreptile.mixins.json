@@ -18,13 +18,12 @@
   "client": [
     "client.CameraMixin",
     "client.EntityMixin",
-    "client.GameRendererMixin",
     "client.InGameHudMixin",
     "client.LivingEntityMixin",
     "client.LivingEntityRendererMixin",
     "client.LivingEntityRenderStateMixin",
-    "client.PlayerEntityRenderStateMixin",
     "client.PlayerEntityRendererMixin",
+    "client.PlayerEntityRenderStateMixin",
     "client.ResourceReloadLoggerMixin",
     "client.StatusEffectsDisplayMixin"
   ],

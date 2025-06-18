@@ -21,12 +21,13 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
@@ -252,7 +253,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public void setSurrendered(boolean state) {dataTracker.set(SURRENDERED, state);}
 
     @Override
-    public void writeCustomData(NbtCompound tag) {
+    public void writeCustomData(WriteView tag) {
         super.writeCustomData(tag);
         if (!isTamed()) {
             tag.putInt("BailOutTimer", bailOutTimer);
@@ -263,10 +264,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public void readCustomData(NbtCompound tag) {
+    public void readCustomData(ReadView tag) {
         super.readCustomData(tag);
         if (!isTamed()) {
-            bailOutTimer = tag.getInt("BailOutTimer").orElse(bailOutTimer);
+            bailOutTimer = tag.getInt("BailOutTimer", bailOutTimer);
             setSurrendered(tag.getBoolean("HasSurrendered", false));
             shouldBailOut = tag.getBoolean("BailingOut", false);
             isChallenger = tag.getBoolean("IsChallenger", false);

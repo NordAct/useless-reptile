@@ -6,7 +6,11 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
@@ -25,16 +29,16 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
         super(entityType, world);
     }
 
-    @Inject(method = "writeCustomDataToNbt(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("TAIL"))
-    private void writeToNbt(NbtCompound nbt, CallbackInfo ci) {
-        nbt.putInt("LightningChaserSpawnCooldown", useless_reptile$getTimer());
-        if (!headMountDragon.isEmpty()) nbt.put("HeadMountDragon", headMountDragon);
+    @Inject(method = "writeCustomData", at = @At("TAIL"))
+    private void writeToNbt(WriteView view, CallbackInfo ci) {
+        view.putInt("LightningChaserSpawnCooldown", useless_reptile$getTimer());
+        if (!headMountDragon.isEmpty()) view.put("HeadMountDragon", NbtCompound.CODEC, headMountDragon);
     }
 
-    @Inject(method = "readCustomDataFromNbt(Lnet/minecraft/nbt/NbtCompound;)V", at = @At("TAIL"))
-    private void readFromNbt(NbtCompound nbt, CallbackInfo ci) {
-        useless_reptile$setTimer(nbt.getInt("LightningChaserSpawnCooldown", URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown));
-        setHeadMountDragon(nbt.getCompoundOrEmpty("HeadMountDragon"));
+    @Inject(method = "readCustomData", at = @At("TAIL"))
+    private void readFromNbt(ReadView view, CallbackInfo ci) {
+        useless_reptile$setTimer(view.getInt("LightningChaserSpawnCooldown", URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown));
+        setHeadMountDragon(view.read("HeadMountDragon", NbtCompound.CODEC).orElse(headMountDragon));
     }
 
     public int useless_reptile$getTimer() {
@@ -64,7 +68,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
     private void removeHeadMountDragon(RemovalReason reason, CallbackInfo ci) {
         if (!headMountDragon.isEmpty() && getWorld() instanceof ServerWorld world) {
             if (!reason.shouldDestroy()) {
-                EntityType.getEntityFromData(headMountDragon, world, SpawnReason.LOAD).ifPresent(dragon -> {
+                EntityType.getEntityFromData(NbtReadView.create(UselessReptile.ERROR_REPORTER, world.getRegistryManager(), headMountDragon), world, SpawnReason.LOAD).ifPresent(dragon -> {
                     dragon.remove(reason);
                 });
             }

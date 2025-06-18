@@ -11,7 +11,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.GoatHornItem;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
@@ -20,6 +19,7 @@ import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
@@ -121,8 +121,8 @@ public class VortexHornItem extends GoatHornItem {
                     for (NbtComponent nbtComponent : dataComponent.entityData()) {
                         NbtCompound nbt = nbtComponent.copyNbt();
                         if (nbtComponent.contains("CustomName")) {
-                            String string = nbt.getString("CustomName").orElse("");
-                            textConsumer.accept(Text.Serialization.fromJson(string, MinecraftClient.getInstance().player.getRegistryManager()));
+                            Text customName = nbt.get("CustomName", TextCodecs.CODEC).orElse(Text.empty());
+                            textConsumer.accept(customName);
                         } else {
                             String string = nbt.getString("id").orElse("");
                             Optional<EntityType<?>> entityType = EntityType.get(string);

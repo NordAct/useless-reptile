@@ -1,29 +1,18 @@
 package nordmods.uselessreptile.client.gui;
 
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.render.DiffuseLighting;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     protected static final Identifier TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
@@ -48,7 +37,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
         i = (width - backgroundWidth) / 2;
         j = (height - backgroundHeight) / 2;
-        context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i, j, 0, 0, backgroundWidth, backgroundHeight, 256, 256);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0, 0, backgroundWidth, backgroundHeight, 256, 256);
         drawSaddle(context);
         drawBanner(context);
         drawArmor(context);
@@ -66,62 +55,62 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     protected void drawSaddle(DrawContext context) {
-        if (hasSaddle) context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7, j + 35 - 18, 0, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty() ? 0 : 18), 18, 18, 256, 256); //saddle
+        if (hasSaddle) context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7, j + 35 - 18, 0, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty() ? 0 : 18), 18, 18, 256, 256); //saddle
     }
 
     protected void drawArmor(DrawContext context) {
         if (hasArmor) {
-            context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : 18), 18, 18, 256, 256); //head
-            context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() ? 0 : 18), 18, 18, 256, 256); //body
-            context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty() ? 0 : 18), 18, 18, 256, 256); //tail
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : 18), 18, 18, 256, 256); //head
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() ? 0 : 18), 18, 18, 256, 256); //body
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty() ? 0 : 18), 18, 18, 256, 256); //tail
         }
     }
 
     protected void drawEntity(DrawContext context) {
-        if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, 13, this.mouseX, this.mouseY, this.entity);
+        if (entity != null) InventoryScreen.drawEntity(context, i + 26, j + 18, i + 78, j + 70, 13, 0.25F, this.mouseX, this.mouseY, this.entity);
     }
 
-    private void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size, float mouseX, float mouseY, LivingEntity entity) {
-        float centerX = (x1 + x2) / 2f;
-        float centerY = (y1 + y2) / 2f;
-        float dx = (float)Math.atan((centerX - mouseX) / 40f);
-        float dy = (float) Math.atan((centerY - mouseY) / 40f);
-        float tickDelta = RenderUtil.getTickDelta(false);
-
-        context.getMatrices().push();
-        context.enableScissor(x1, y1, x2, y2);
-
-        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
-        EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
-        LivingEntityRenderState state = (LivingEntityRenderState) renderer.getAndUpdateRenderState(entity, tickDelta);
-        state.displayName = null;
-        if (state instanceof GeoRenderState geoRenderState) {
-            geoRenderState.addGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT, false);
-            geoRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, LightmapTextureManager.MAX_LIGHT_COORDINATE); //geckolib moment
-        }
-
-        context.getMatrices().translate(centerX, centerY, 100);
-        context.getMatrices().scale(size / state.baseScale, size / state.baseScale, -size / state.baseScale);
-        context.getMatrices().translate(0, state.height / 2f + 0.4f, 0);
-        context.getMatrices().multiply(RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180));
-        context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + state.bodyYaw));
-
-        DiffuseLighting.enableGuiShaderLighting();
-        context.draw(vertexConsumerProvider -> entityRenderDispatcher.render(state, 0d, 0d, 0d, context.getMatrices(), vertexConsumerProvider, LightmapTextureManager.MAX_LIGHT_COORDINATE));
-        DiffuseLighting.enableGuiDepthLighting();
-
-        context.disableScissor();
-        context.getMatrices().pop();
-
-    }
+//    private void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size, float mouseX, float mouseY, LivingEntity entity) {
+//        float centerX = (x1 + x2) / 2f;
+//        float centerY = (y1 + y2) / 2f;
+//        float dx = (float)Math.atan((centerX - mouseX) / 40f);
+//        float dy = (float) Math.atan((centerY - mouseY) / 40f);
+//        float tickDelta = RenderUtil.getTickDelta(false);
+//
+//        context.getMatrices().pushMatrix();
+//        context.enableScissor(x1, y1, x2, y2);
+//
+//        EntityRenderDispatcher entityRenderDispatcher = MinecraftClient.getInstance().getEntityRenderDispatcher();
+//        EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
+//        LivingEntityRenderState state = (LivingEntityRenderState) renderer.getAndUpdateRenderState(entity, tickDelta);
+//        state.displayName = null;
+//        if (state instanceof GeoRenderState geoRenderState) {
+//            geoRenderState.addGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT, false);
+//            geoRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, LightmapTextureManager.MAX_LIGHT_COORDINATE); //geckolib moment
+//        }
+//
+//        context.getMatrices().translate(centerX, centerY);
+//        context.getMatrices().scale(size / state.baseScale, size / state.baseScale);
+//        context.getMatrices().translate(0, state.height / 2f + 0.4f);
+//        context.getMatrices().multiply(RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180));
+//        context.getMatrices().multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + state.bodyYaw));
+//
+//        DiffuseLighting.enableGuiShaderLighting();
+//        context.draw(vertexConsumerProvider -> entityRenderDispatcher.render(state, 0d, 0d, 0d, context.getMatrices(), vertexConsumerProvider, LightmapTextureManager.MAX_LIGHT_COORDINATE));
+//        DiffuseLighting.enableGuiDepthLighting();
+//
+//        context.disableScissor();
+//        context.getMatrices().popMatrix();
+//
+//    }
 
     protected void drawStorage(DrawContext context) {
         int size = storageSize.getSize()/3;
         int offset = hasArmor ? 1 : 0;
-        context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 79 + 18 * offset, j + 17, 0, this.backgroundHeight, size * 18, 54, 256, 256);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 79 + 18 * offset, j + 17, 0, this.backgroundHeight, size * 18, 54, 256, 256);
     }
 
     protected void drawBanner(DrawContext context) {
-        if (hasBanner) context.drawTexture(RenderLayer::getGuiTextured, TEXTURE, i + 7, j + 35, 18 * 4, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty() ? 0 : 18), 18, 18,  256, 256); //banner
+        if (hasBanner) context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7, j + 35, 18 * 4, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty() ? 0 : 18), 18, 18,  256, 256); //banner
     }
 }

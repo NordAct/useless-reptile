@@ -9,9 +9,10 @@ import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -62,13 +63,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public void setTiltState(byte state) {dataTracker.set(TILT_STATE, state);}
 
     @Override
-    public void writeCustomData(NbtCompound tag) {
+    public void writeCustomData(WriteView tag) {
         super.writeCustomData(tag);
         tag.putBoolean("IsFlying", isFlying());
     }
 
     @Override
-    public void readCustomData(NbtCompound tag) {
+    public void readCustomData(ReadView tag) {
         super.readCustomData(tag);
         setFlying(tag.getBoolean("IsFlying", false));
     }
