@@ -1,1 +1,1 @@
-- 1.21.6 port
+- Fixed not working perspective change back to first person when automatic perspective switch is enabled and playing on either server or when using Sinytra Connector
