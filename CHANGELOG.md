@@ -1,3 +1,1 @@
-- Flute sound distance is now limited to 32 (this doesn't affect its actual working range)
-- Added client config option to hide passengers on dragons
-- (1.21.4 only) fixed items without consumable component not being consumed when fed to dragons
+- Fixed not working perspective change back to first person when automatic perspective switch is enabled and playing on either server or when using Sinytra Connector
