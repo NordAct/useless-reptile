@@ -38,10 +38,7 @@ public class PikehornHuntGoal extends Goal {
     public boolean canStart() {
         //locating the hunt spot
         if (!entity.isHunting() || entity.getTarget() != null) return false;
-        if (entity.isTamed() || startingPos == null) {
-            startingPos = entity.getOwner() != null ? entity.getOwner().getBlockPos() : entity.getBlockPos();
-            startingPos = adjustToWater(startingPos);
-        }
+        if (entity.isTamed() || startingPos == null) startingPos = entity.getOwner() != null ? entity.getOwner().getBlockPos() : entity.getHomePoint();
         if (huntSpot == null) findFishyPlace(50);
         return huntSpot != null && startingPos != null;
     }
@@ -106,7 +103,7 @@ public class PikehornHuntGoal extends Goal {
         } else {
             if (entity.getAir() >= entity.getMaxAir() * 0.9 && !entity.forceTargetInWater) entity.forceTargetInWater = true;
             //else go back to starting pos
-            entity.getNavigation().startMovingTo(startingPos.getX(), startingPos.getY() + 1, startingPos.getZ(), 1);
+            entity.getNavigation().startMovingTo(startingPos.getX(), startingPos.getY(), startingPos.getZ(), 1);
             if (entity.forceTargetInWater) {
                 double distance = entity.getBlockPos().getSquaredDistance(startingPos.up());
                 if (distance < entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f)) stopHunt();
