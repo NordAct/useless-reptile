@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.mixin.client;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.network.OtherClientPlayerEntity;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.client.config.URClientConfig;
@@ -24,14 +24,13 @@ public abstract class LivingEntityMixin extends Entity{
         super(type, world);
     }
 
-    @Inject(method = "onDismounted", at = @At("HEAD"))
-    private void setFirstPersonPerspective(Entity vehicle, CallbackInfo ci) {
+    @Inject(method = "stopRiding", at = @At("HEAD"))
+    private void setFirstPersonPerspective(CallbackInfo ci) {
         if (!URClientConfig.getConfig().autoThirdPerson) return;
-        ClientPlayerEntity player = MinecraftClient.getInstance().player;
-        if (player == null) return;
-        GameOptions gameOptions = MinecraftClient.getInstance().options;
+        if (!(getVehicle() instanceof URRideableDragonEntity) || !((Object)this instanceof PlayerEntity player && player.isMainPlayer())) return;
 
-        if (vehicle instanceof URRideableDragonEntity) gameOptions.setPerspective(Perspective.FIRST_PERSON);
+        GameOptions gameOptions = MinecraftClient.getInstance().options;
+        gameOptions.setPerspective(Perspective.FIRST_PERSON);
     }
 
     //Fix for when ridden dragon (URideableDragonEntity) gets its velocity reset on client-side of other player. This is needed for correct animation playing
