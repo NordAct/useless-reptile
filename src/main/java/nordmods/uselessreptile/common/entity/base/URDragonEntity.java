@@ -219,9 +219,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (!isTamed()) tag.putInt("TamingProgress", getTamingProgress());
         else {
             tag.putString("BoundedInstrumentSound", getBoundedInstrumentSound());
-            int[] coords = {getHomePoint().getX(), getHomePoint().getY(), getHomePoint().getZ()};
-            tag.putIntArray("HomePoint", coords);
         }
+
+        int[] coords = {getHomePoint().getX(), getHomePoint().getY(), getHomePoint().getZ()};
+        tag.putIntArray("HomePoint", coords);
+
         tag.putBoolean("Sitting", getIsSitting());
         if (inventory != null && isTamed()) {
             final NbtList inv = new NbtList();
@@ -240,10 +242,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (!isTamed()) setTamingProgress(tag.getInt("TamingProgress"));
         else {
             setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound"));
-            int[] coords = tag.getIntArray("HomePoint");
-            if (coords.length == 0) setHomePoint(getBlockPos());
-            else setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
         }
+
+        int[] coords = tag.getIntArray("HomePoint");
+        if (coords.length == 0) setHomePoint(getBlockPos());
+        else setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
 
         setIsSitting(tag.getBoolean("Sitting"));
         if (tag.contains("Inventory")) {
@@ -268,6 +271,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         entityData = new PassiveData(false);
         setTamingProgress(baseTamingProgress);
         DragonSpawnUtil.assignVariantFromList(this, DragonSpawnUtil.getAvailableVariants(world, this), spawnReason);
+        setHomePoint(getBlockPos());
         return super.initialize(world, difficulty, spawnReason, entityData);
     }
 
