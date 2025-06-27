@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -147,17 +146,17 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     @Override
     protected void tickControlled(PlayerEntity rider, Vec3d movementInput) {
         if (getWorld().isClient() && getControllingPassenger() instanceof ClientPlayerEntity player) {
-            boolean isSprintPressed = MinecraftClient.getInstance().options.sprintKey.isPressed();
-            boolean isMoveForwardPressed = player.input.pressingForward;
-            boolean isJumpPressed = (player.input.jumping)
+            boolean isSprintPressed = player.input.playerInput.sprint();
+            boolean isMoveForwardPressed = player.input.playerInput.forward();
+            boolean isJumpPressed = (player.input.playerInput.jump())
                     || (URClientConfig.getConfig().upDownCameraControl
-                        && hasVerticalInput()
-                        && player.getPitch() < -URClientConfig.getConfig().upDownCameraPitchThreshold);
-            boolean isMoveBackPressed = player.input.pressingBack;
+                    && hasVerticalInput()
+                    && player.getPitch() < -URClientConfig.getConfig().upDownCameraPitchThreshold);
+            boolean isMoveBackPressed = player.input.playerInput.backward();
             boolean isDownPressed = (URKeybinds.flyDownKey.isUnbound() ? isSprintPressed : URKeybinds.flyDownKey.isPressed())
                     || (URClientConfig.getConfig().upDownCameraControl
-                        && hasVerticalInput()
-                        && player.getPitch() > URClientConfig.getConfig().upDownCameraPitchThreshold);
+                    && hasVerticalInput()
+                    && player.getPitch() > URClientConfig.getConfig().upDownCameraPitchThreshold);
             boolean isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
             boolean isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
             boolean freeLook = URKeybinds.freeLookKey.isPressed();
