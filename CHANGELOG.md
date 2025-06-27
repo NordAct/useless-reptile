@@ -1,4 +1,1 @@
-- Added hotkey for free look around. When held, dragon will no longer respond to changing camera angle. Default hotkey is Z
-- Added config options for vertical input control with camera
-- Fixed missing tooltip on flute
-- Input from controllers when using mod for controller compatibility now should be registered correctly when riding dragon
+- Fixed not working perspective change back to first person when automatic perspective switch is enabled and playing on either server or when using Sinytra Connector
