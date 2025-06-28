@@ -265,6 +265,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
             if (isBlockProtected(blockPos)) continue;
 
             BlockState blockState = getWorld().getBlockState(blockPos);
+            if (blockState.getBlock().getHardness() < 0) continue;
+
             float miningLevel = MoleclawGetBlockMiningLevelEvent.EVENT.invoker().getMiningLevel(blockState);
             if (!blockState.isAir() && miningLevel <= maxMiningLevel) {
                 boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
