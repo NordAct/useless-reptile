@@ -53,6 +53,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         AdvancementEntry tameMoleclaw = tamingAdvancementEntry(registryLookup, UREntities.MOLECLAW_ENTITY, root);
         AdvancementEntry tameLightningChaser = tamingAdvancementEntry(registryLookup, UREntities.LIGHTNING_CHASER_ENTITY, root);
         AdvancementEntry tameRiverPikehorn = tamingAdvancementEntry(registryLookup, UREntities.RIVER_PIKEHORN_ENTITY, root);
+        AdvancementEntry tameMagmamuncher = tamingAdvancementEntry(registryLookup, UREntities.MAGMAMUNCHER_ENTITY, root);
 
         AdvancementEntry useFlute = Advancement.Builder.createUntelemetered()
                 .display(URItems.FLUTE,
@@ -100,6 +101,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         consumer.accept(tameMoleclaw);
         consumer.accept(tameLightningChaser);
         consumer.accept(tameRiverPikehorn);
+        consumer.accept(tameMagmamuncher);
         consumer.accept(useFlute);
         consumer.accept(moleclawHelmet);
         consumer.accept(gatherAcid);

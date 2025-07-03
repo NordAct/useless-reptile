@@ -36,6 +36,8 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     protected boolean hasBanner = false;
     public static int entityToRenderID;
     protected URDragonScreenHandler.StorageSize storageSize = URDragonScreenHandler.StorageSize.NONE;
+    protected float entityRenderSize = 13;
+    protected Vector3f entityScreenOffset = new Vector3f();
 
     public URDragonScreen(T handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -77,10 +79,10 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
     }
 
     protected void drawEntity(DrawContext context) {
-        if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, 13, this.mouseX, this.mouseY, this.entity);
+        if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, entityRenderSize, this.mouseX, this.mouseY, this.entity);
     }
 
-    private void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, int size, float mouseX, float mouseY, LivingEntity entity) {
+    private void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity) {
         float centerX = (x1 + x2) / 2f;
         float centerY = (y1 + y2) / 2f;
         float dx = (float)Math.atan((centerX - mouseX) / 40f);
@@ -101,7 +103,7 @@ public abstract class URDragonScreen<T extends ScreenHandler> extends HandledScr
         Quaternionf cam = RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180).mul(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + state.bodyYaw));
         rot.mul(cam);
 
-        context.addEntity(state, size / state.baseScale, new Vector3f(0, state.height / 2f + 0.4f, 0), rot, cam, x1, y1, x2, y2);
+        context.addEntity(state, size / state.baseScale, new Vector3f(0, state.height / 2f + 0.4f, 0).add(entityScreenOffset), rot, cam, x1, y1, x2, y2);
 
         context.disableScissor();
     }

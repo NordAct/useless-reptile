@@ -1,0 +1,7 @@
+{
+  "dragon_model": "uselessreptile:magmamuncher/netherrack",
+  "equipment": "uselessreptile:empty",
+  "id": "uselessreptile:magmamuncher",
+  "name": "netherrack",
+  "spawn_conditions": "uselessreptile:magmamuncher/default"
+}

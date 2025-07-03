@@ -95,6 +95,8 @@ public class URDragonVariantProvider implements DataProvider {
         addRiverPikehorn("dark_purple");
         addRiverPikehorn("teal");
         addRiverPikehorn("dark_teal");
+
+        addMagmamuncher("netherrack");
     }
 
     protected void addWyvern(String name) {
@@ -148,6 +150,20 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("lightning_chaser/" + name),
                 UselessReptile.id("lightning_chaser"),
                 Optional.of(UselessReptile.id("lightning_chaser/" + name)),
+                Optional.empty()
+        );
+        addEntry(getId(id, name), variant);
+    }
+
+    protected void addMagmamuncher(String name) {
+        Identifier id = EntityType.getId(UREntities.MAGMAMUNCHER_ENTITY);
+        DragonVariant variant = new DragonVariant(
+                id,
+                name,
+                Optional.empty(),
+                UselessReptile.id("magmamuncher/" + name),
+                UselessReptile.id("empty"),
+                Optional.of(UselessReptile.id("magmamuncher/default")),
                 Optional.empty()
         );
         addEntry(getId(id, name), variant);

@@ -9,10 +9,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.entity.LightningChaserEntity;
-import nordmods.uselessreptile.common.entity.MoleclawEntity;
-import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
-import nordmods.uselessreptile.common.entity.WyvernEntity;
+import nordmods.uselessreptile.common.entity.*;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
@@ -35,6 +32,8 @@ public class UREntities {
             register("shockwave_sphere", getBuilder(SpawnGroup.MISC, ShockwaveSphereEntity::new, 1, 1, true, true));
     public static final EntityType<LightningBreathEntity> LIGHTNING_BREATH_ENTITY =
             register("lightning_breath", getBuilder(SpawnGroup.MISC, LightningBreathEntity::new, 1f, 1f, true, true));
+    public static final EntityType<MagmamuncherEntity> MAGMAMUNCHER_ENTITY =
+            register("magmamuncher", getBuilder(URSpawnGroup.SMALL_DRAGON.spawnGroup, MagmamuncherEntity::new, 1, 1, false, true));
 
 
     public static void init(){
@@ -42,6 +41,7 @@ public class UREntities {
         FabricDefaultAttributeRegistry.register(MOLECLAW_ENTITY, MoleclawEntity.createMoleclawAttributes());
         FabricDefaultAttributeRegistry.register(RIVER_PIKEHORN_ENTITY, RiverPikehornEntity.createPikehornAttributes());
         FabricDefaultAttributeRegistry.register(LIGHTNING_CHASER_ENTITY, LightningChaserEntity.createLightningChaserAttributes());
+        FabricDefaultAttributeRegistry.register(MAGMAMUNCHER_ENTITY, MagmamuncherEntity.createMagmamuncherAttributes());
     }
 
     private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> builder) {

@@ -55,6 +55,7 @@ public class URItems {
     public static final Item MOLECLAW_SPAWN_EGG = registerItem("moleclaw_spawn_egg", settings -> new SpawnEggItem(UREntities.MOLECLAW_ENTITY, settings));
     public static final Item RIVER_PIKEHORN_SPAWN_EGG = registerItem("river_pikehorn_spawn_egg", settings -> new SpawnEggItem(UREntities.RIVER_PIKEHORN_ENTITY, settings));
     public static final Item LIGHTNING_CHASER_SPAWN_EGG = registerItem("lightning_chaser_spawn_egg", settings -> new SpawnEggItem(UREntities.LIGHTNING_CHASER_ENTITY, settings));
+    public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", settings -> new SpawnEggItem(UREntities.MAGMAMUNCHER_ENTITY, settings));
     public static final Item FLUTE = registerItem("flute", settings -> new FluteItem(settings.maxCount(1).component(FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT)));
     public static final Item VORTEX_HORN = registerItem("vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings), 1));
     public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings), 3));
@@ -75,9 +76,11 @@ public class URItems {
             c.add(MOLECLAW_SPAWN_EGG);
             c.add(RIVER_PIKEHORN_SPAWN_EGG);
             c.add(LIGHTNING_CHASER_SPAWN_EGG);
+            c.add(MAGMAMUNCHER_SPAWN_EGG);
             c.add(Items.CHICKEN);
             c.add(Items.BEETROOT);
             c.add(Items.TROPICAL_FISH_BUCKET);
+            c.add(Items.BLAZE_ROD);
             c.add(Items.SADDLE);
             c.add(MOLECLAW_HELMET_IRON);
             c.add(MOLECLAW_HELMET_GOLD);

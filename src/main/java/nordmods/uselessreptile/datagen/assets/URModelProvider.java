@@ -32,6 +32,7 @@ public class URModelProvider extends FabricModelProvider {
         itemModelGenerator.register(URItems.LIGHTNING_CHASER_SPAWN_EGG, Models.GENERATED);
         itemModelGenerator.register(URItems.MOLECLAW_SPAWN_EGG, Models.GENERATED);
         itemModelGenerator.register(URItems.RIVER_PIKEHORN_SPAWN_EGG, Models.GENERATED);
+        itemModelGenerator.register(URItems.MAGMAMUNCHER_SPAWN_EGG, Models.GENERATED);
 
         registerVortexHorn(itemModelGenerator, URItems.VORTEX_HORN);
         registerVortexHorn(itemModelGenerator, URItems.IRON_VORTEX_HORN);

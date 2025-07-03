@@ -90,6 +90,8 @@ public class URSpawnConditionsProvider implements DataProvider {
                 .build();
         addSpawn("lightning_chaser/purple", Collections.singletonList(lightningChaserPurpleEvent));
         addSpawn("cannot_sapwn", Collections.singletonList(DragonSpawnConditions.builder().setWeight(0).build()));
+
+        //TODO: magmamuncher spawn conditions
     }
 
     protected void addWyvernEntry(String name, int weight) {

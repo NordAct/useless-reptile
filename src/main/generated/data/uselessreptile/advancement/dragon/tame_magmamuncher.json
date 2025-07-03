@@ -1,0 +1,36 @@
+{
+  "parent": "uselessreptile:dragon/root",
+  "criteria": {
+    "entity_tamed": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "uselessreptile:magmamuncher"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.tame_magmamuncher.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "uselessreptile:magmamuncher_spawn_egg"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.tame_magmamuncher"
+    }
+  },
+  "requirements": [
+    [
+      "entity_tamed"
+    ]
+  ]
+}

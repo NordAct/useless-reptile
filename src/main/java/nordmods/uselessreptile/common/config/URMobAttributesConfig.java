@@ -5,10 +5,7 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.entity.LightningChaserEntity;
-import nordmods.uselessreptile.common.entity.MoleclawEntity;
-import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
-import nordmods.uselessreptile.common.entity.WyvernEntity;
+import nordmods.uselessreptile.common.entity.*;
 
 public class URMobAttributesConfig {
     public static final ConfigClassHandler<URMobAttributesConfig> CONFIG = ConfigClassHandler.createBuilder(URMobAttributesConfig.class)
@@ -146,6 +143,25 @@ public class URMobAttributesConfig {
     public float lightningChaserVerticalSpeed = 0.3f;
     @SerialEntry
     public float lightningChaserRegenerationFromFood = 4;
+
+    @SerialEntry(comment = "MAGMAMUNCHER ATTRIBUTES")
+    public float magmamuncherDamage = 4.0f;
+    @SerialEntry
+    public float magmamuncherKnockback = 0.2f;
+    @SerialEntry
+    public float magmamuncherHealth = 16.0f;
+    @SerialEntry
+    public float magmamuncherArmor = 2;
+    @SerialEntry
+    public float magmamuncherArmorToughness = 0;
+    @SerialEntry
+    public float magmamuncherGroundSpeed = MagmamuncherEntity.BASE_GROUND_SPEED;
+    @SerialEntry
+    public int magmamuncherBasePrimaryAttackCooldown = 30;
+    @SerialEntry
+    public float magmamuncherRotationSpeedGround = 8;
+    @SerialEntry
+    public float magmamuncherRegenerationFromFood = 4;
 
     public static URMobAttributesConfig getConfig() {
         return CONFIG.instance();

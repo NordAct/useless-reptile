@@ -522,6 +522,7 @@ public class ModMenuIntegration implements ModMenuApi {
         addMoleclawAttributesGroup(mobAttributesCategory, config, defaults);
         addPikehornAttributesGroup(mobAttributesCategory, config, defaults);
         addLightningChaserAttributesGroup(mobAttributesCategory, config, defaults);
+        addMagmamuncherAttributesGroup(mobAttributesCategory, config, defaults);
 
         return mobAttributesCategory.build();
     }
@@ -1085,4 +1086,105 @@ public class ModMenuIntegration implements ModMenuApi {
         lightningChaserAttributesGroup.option(lightningChaserRotationSpeedAir);
         category.group(lightningChaserAttributesGroup.build());
     }
+
+    private static void addMagmamuncherAttributesGroup(ConfigCategory.Builder category, URMobAttributesConfig config, URMobAttributesConfig defaults) {
+        OptionGroup.Builder magmamuncherAttributesGroup = OptionGroup.createBuilder()
+                .name(Text.translatable("config.uselessreptile.group.magmamuncherAttributes"))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.group.dragonAttributes.@Tooltip")).build());
+
+        Option<Float> magmamuncherDamage = Option.<Float>createBuilder()
+                .name(Text.translatable(EntityAttributes.ATTACK_DAMAGE.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonDamage.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherDamage,
+                        () -> config.magmamuncherDamage,
+                        val -> config.magmamuncherDamage = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> magmamuncherKnockback = Option.<Float>createBuilder()
+                .name(Text.translatable(EntityAttributes.ATTACK_KNOCKBACK.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonKnockback.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherKnockback,
+                        () -> config.magmamuncherKnockback,
+                        val -> config.magmamuncherKnockback = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> magmamuncherHealth = Option.<Float>createBuilder()
+                .name(Text.translatable(EntityAttributes.MAX_HEALTH.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonHealth.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherHealth,
+                        () -> config.magmamuncherHealth,
+                        val -> config.magmamuncherHealth = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> magmamuncherArmor = Option.<Float>createBuilder()
+                .name(Text.translatable(EntityAttributes.ARMOR.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonArmor.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherArmor,
+                        () -> config.magmamuncherArmor,
+                        val -> config.magmamuncherArmor = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> magmamuncherArmorToughness = Option.<Float>createBuilder()
+                .name(Text.translatable(EntityAttributes.ARMOR_TOUGHNESS.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonArmorToughness.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherArmorToughness,
+                        () -> config.magmamuncherArmorToughness,
+                        val -> config.magmamuncherArmorToughness = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> magmamuncherGroundSpeed = Option.<Float>createBuilder()
+                .name(Text.translatable(EntityAttributes.MOVEMENT_SPEED.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonGroundSpeed.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherGroundSpeed,
+                        () -> config.magmamuncherGroundSpeed,
+                        val -> config.magmamuncherGroundSpeed = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Integer> magmamuncherBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
+                .name(Text.translatable(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.magmamuncherBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherBasePrimaryAttackCooldown,
+                        () -> config.magmamuncherBasePrimaryAttackCooldown,
+                        val -> config.magmamuncherBasePrimaryAttackCooldown = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Float> magmamuncherRotationSpeedGround = Option.<Float>createBuilder()
+                .name(Text.translatable(URAttributes.DRAGON_GROUND_ROTATION_SPEED.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonRotationSpeedGround.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherRotationSpeedGround,
+                        () -> config.magmamuncherRotationSpeedGround,
+                        val -> config.magmamuncherRotationSpeedGround = val)
+                .customController(FloatFieldController::new)
+                .build();
+        Option<Float> magmamuncherRegenerationFromFood = Option.<Float>createBuilder()
+                .name(Text.translatable(URAttributes.DRAGON_REGENERATION_FROM_FOOD.value().getTranslationKey()))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherRegenerationFromFood,
+                        () -> config.magmamuncherRegenerationFromFood,
+                        val -> config.magmamuncherRegenerationFromFood = val)
+                .customController(FloatFieldController::new)
+                .build();
+
+        magmamuncherAttributesGroup.option(magmamuncherDamage);
+        magmamuncherAttributesGroup.option(magmamuncherKnockback);
+        magmamuncherAttributesGroup.option(magmamuncherBasePrimaryAttackCooldown);
+        magmamuncherAttributesGroup.option(magmamuncherHealth);
+        magmamuncherAttributesGroup.option(magmamuncherArmor);
+        magmamuncherAttributesGroup.option(magmamuncherArmorToughness);
+        magmamuncherAttributesGroup.option(magmamuncherRegenerationFromFood);
+        magmamuncherAttributesGroup.option(magmamuncherGroundSpeed);
+        magmamuncherAttributesGroup.option(magmamuncherRotationSpeedGround);
+        category.group(magmamuncherAttributesGroup.build());
+    }
+
 }

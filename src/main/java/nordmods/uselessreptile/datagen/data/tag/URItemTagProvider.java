@@ -94,5 +94,7 @@ public class URItemTagProvider extends FabricTagProvider.ItemTagProvider{
                 .add(Items.TROPICAL_FISH_BUCKET.getRegistryEntry().registryKey().getValue());
         getTagBuilder(URTags.MOLECLAW_TAMING_ITEM)
                 .addOptionalTag(URTags.MOLECLAW_FOOD.id());
+        getTagBuilder(URTags.MAGMAMUNCHER_TAMING_ITEM)
+                .add(Items.BLAZE_ROD.getRegistryEntry().registryKey().getValue());
     }
 }
