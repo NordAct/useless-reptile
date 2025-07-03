@@ -10,7 +10,9 @@ import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
+import net.minecraft.storage.NbtWriteView;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.UselessReptile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -60,11 +62,10 @@ public record URDragonDataStorageComponent(List<NbtComponent> entityData) {
             "leash");
 
     public static NbtComponent createData(Entity entity) {
-        NbtCompound nbtCompound = new NbtCompound();
-        entity.saveSelfNbt(nbtCompound);
-        Objects.requireNonNull(nbtCompound);
-        IGNORED_NBT.forEach(nbtCompound::remove);
-        return NbtComponent.of(nbtCompound);
+        NbtWriteView nbtWriteView = NbtWriteView.create(UselessReptile.ERROR_REPORTER, entity.getRegistryManager());
+        entity.saveSelfData(nbtWriteView);
+        IGNORED_NBT.forEach(nbtWriteView::remove);
+        return NbtComponent.of(nbtWriteView.getNbt());
     }
     @Nullable
     public static Entity createEntity(NbtComponent nbtComponent, World world) {

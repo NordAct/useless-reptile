@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "minecraft:netherite_vortex_horn_smithing"
+        "recipe": "uselessreptile:netherite_vortex_horn_smithing"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -26,7 +26,7 @@
   ],
   "rewards": {
     "recipes": [
-      "minecraft:netherite_vortex_horn_smithing"
+      "uselessreptile:netherite_vortex_horn_smithing"
     ]
   }
 }

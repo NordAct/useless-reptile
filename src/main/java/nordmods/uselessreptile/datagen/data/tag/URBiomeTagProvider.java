@@ -17,16 +17,16 @@ public class URBiomeTagProvider extends FabricTagProvider<Biome>{
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-        getOrCreateTagBuilder(URTags.LIGHTNING_CHASER_SPAWN_BLACKLIST)
-                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS);
+        getTagBuilder(URTags.LIGHTNING_CHASER_SPAWN_BLACKLIST)
+                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS.id());
 
-        getOrCreateTagBuilder(URTags.MOLECLAW_SPAWN_BLACKLIST)
-                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS);
+        getTagBuilder(URTags.MOLECLAW_SPAWN_BLACKLIST)
+                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS.id());
 
-        getOrCreateTagBuilder(URTags.WYVERN_SPAWN_BLACKLIST)
-                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS);
+        getTagBuilder(URTags.WYVERN_SPAWN_BLACKLIST)
+                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS.id());
 
-        getOrCreateTagBuilder(URTags.RIVER_PIKEHORN_SPAWN_BLACKLIST)
-                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS);
+        getTagBuilder(URTags.RIVER_PIKEHORN_SPAWN_BLACKLIST)
+                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS.id());
     }
 }

@@ -16,17 +16,19 @@ public class URBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 
     @Override
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-        getOrCreateTagBuilder(URTags.DRAGON_UNBREAKABLE)
-                .addOptionalTag(BlockTags.AIR);
-        getOrCreateTagBuilder(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)
-                .addOptionalTag(BlockTags.LEAVES)
-                .addOptionalTag(BlockTags.REPLACEABLE)
-                .addOptionalTag(BlockTags.FLOWERS)
-                .addOptionalTag(BlockTags.WOOL_CARPETS)
-                .addOptionalTag(BlockTags.WOOL)
-                .add(Blocks.MOSS_BLOCK)
-                .add(Blocks.MOSS_CARPET)
-                .addOptionalTag(BlockTags.SNOW)
-                .add(Blocks.MUSHROOM_STEM, Blocks.BROWN_MUSHROOM_BLOCK, Blocks.RED_MUSHROOM_BLOCK);
+        getTagBuilder(URTags.DRAGON_UNBREAKABLE)
+                .addOptionalTag(BlockTags.AIR.id());
+        getTagBuilder(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)
+                .addOptionalTag(BlockTags.LEAVES.id())
+                .addOptionalTag(BlockTags.REPLACEABLE.id())
+                .addOptionalTag(BlockTags.FLOWERS.id())
+                .addOptionalTag(BlockTags.WOOL_CARPETS.id())
+                .addOptionalTag(BlockTags.WOOL.id())
+                .add(Blocks.MOSS_BLOCK.getRegistryEntry().registryKey().getValue())
+                .add(Blocks.MOSS_CARPET.getRegistryEntry().registryKey().getValue())
+                .add(Blocks.MUSHROOM_STEM.getRegistryEntry().registryKey().getValue())
+                .add(Blocks.BROWN_MUSHROOM_BLOCK.getRegistryEntry().registryKey().getValue())
+                .add(Blocks.RED_MUSHROOM_BLOCK.getRegistryEntry().registryKey().getValue())
+                .addOptionalTag(BlockTags.SNOW.id());
     }
 }

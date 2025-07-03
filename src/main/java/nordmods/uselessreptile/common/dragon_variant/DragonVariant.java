@@ -6,8 +6,10 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registry;
+import net.minecraft.storage.NbtReadView;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URRegistryKeys;
 import org.jetbrains.annotations.NotNull;
@@ -50,7 +52,7 @@ public record DragonVariant(Identifier dragonId, String name, Optional<String> d
     public static DragonVariant getDefaultVariant(Identifier dragonId, World world) {
         NbtCompound nbtCompound = new NbtCompound();
         nbtCompound.putString("id", dragonId.toString());
-        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromNbt(nbtCompound, world, SpawnReason.TRIGGERED).get();
+        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromData(NbtReadView.create(UselessReptile.ERROR_REPORTER, world.getRegistryManager(), nbtCompound), world, SpawnReason.TRIGGERED).get();
         dragon.discard();
         return dragon.getWorld().getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT)
                 .stream()

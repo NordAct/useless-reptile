@@ -6,6 +6,7 @@ import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.storage.NbtReadView;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URDataTickets;
@@ -135,7 +136,7 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     protected final Identifier getDefaultTexture(Identifier entity) {
         NbtCompound nbtCompound = new NbtCompound();
         nbtCompound.putString("id", entity.toString());
-        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromNbt(nbtCompound, MinecraftClient.getInstance().world, SpawnReason.TRIGGERED).get();
+        URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromData(NbtReadView.create(UselessReptile.ERROR_REPORTER,  MinecraftClient.getInstance().world.getRegistryManager(), nbtCompound), MinecraftClient.getInstance().world, SpawnReason.TRIGGERED).get();
         dragon.discard();
         return UselessReptile.id("textures/entity/"+ entity.getPath() + "/" + dragon.getDefaultVariant() + ".png");
     }

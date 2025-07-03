@@ -74,7 +74,7 @@ public class FluteItem extends Item {
 
     @SuppressWarnings("deprecation")
     @Override
-    public void appendTooltip(ItemStack stack, Item.TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
+    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
         int mode = getFluteMode(stack);
         String tooltipString = "tooltip.uselessreptile.flute_mode" + mode;
 
