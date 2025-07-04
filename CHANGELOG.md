@@ -1,1 +1,1 @@
-- Fix Moleclaw being an absolute destruction machine that is able to break bedrock (and some other unbreakable blocks)
+- Fixed crash if you had River Pikehorn on your head while riding the dragon and entering the world for first time during session while having auto perspective switch turned on
