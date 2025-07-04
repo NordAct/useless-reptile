@@ -7,7 +7,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 
 public class DragonConsumeFoodFromInventoryGoal extends Goal {
-    private final URDragonEntity dragon;
+    protected final URDragonEntity dragon;
 
     public DragonConsumeFoodFromInventoryGoal(URDragonEntity dragon) {
         this.dragon = dragon;
@@ -27,7 +27,7 @@ public class DragonConsumeFoodFromInventoryGoal extends Goal {
     @Override
     public void tick() {
         dragon.tickEatFromInventoryTimer();
-        if (dragon.getEatFromInventoryTimer() == 0) {
+        if (canConsume()) {
             for (int i = DragonInventory.INVENTORY_START_INDEX; i <= dragon.getInventory().size(); i++) {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
                 if (dragon.isFavoriteFood(itemStack)) {
@@ -41,5 +41,9 @@ public class DragonConsumeFoodFromInventoryGoal extends Goal {
 
     protected void afterItemConsumed(ItemStack stack) {
         dragon.heal(dragon.getHealthRegenerationFromFood());
+    }
+
+    protected boolean canConsume() {
+        return dragon.getEatFromInventoryTimer() == 0;
     }
 }

@@ -6,7 +6,7 @@
   },
   "sounds": [
     {
-      "id": "minecraft:entity.chicken.step",
+      "id": "minecraft:block.netherrack.step",
       "name": "step",
       "pitch": 0.8,
       "volume": 0.5
@@ -26,6 +26,10 @@
     {
       "id": "uselessreptile:river_pikehorn.death",
       "name": "death"
+    },
+    {
+      "id": "minecraft:item.firecharge.use",
+      "name": "apply_fire_resistance"
     }
   ]
 }

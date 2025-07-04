@@ -20,8 +20,13 @@
 					"pivot": [0, -0.075, 0]
 				},
 				{
-					"name": "body_front",
+					"name": "Tbody_front",
 					"parent": "dragon",
+					"pivot": [0, 3.925, 1]
+				},
+				{
+					"name": "body_front",
+					"parent": "Tbody_front",
 					"pivot": [0, 3.925, 1],
 					"cubes": [
 						{
@@ -47,8 +52,18 @@
 					]
 				},
 				{
-					"name": "neck",
+					"name": "Aneck",
 					"parent": "body_front",
+					"pivot": [0, 4.175, -4]
+				},
+				{
+					"name": "Tneck",
+					"parent": "Aneck",
+					"pivot": [0, 4.175, -4]
+				},
+				{
+					"name": "neck",
+					"parent": "Tneck",
 					"pivot": [0, 4.175, -4],
 					"cubes": [
 						{
@@ -66,8 +81,18 @@
 					]
 				},
 				{
-					"name": "head",
+					"name": "Ahead",
 					"parent": "neck",
+					"pivot": [0, 3.175, -5.25]
+				},
+				{
+					"name": "Thead",
+					"parent": "Ahead",
+					"pivot": [0, 3.175, -5.25]
+				},
+				{
+					"name": "head",
+					"parent": "Thead",
 					"pivot": [0, 3.175, -5.25],
 					"cubes": [
 						{
@@ -159,8 +184,28 @@
 					]
 				},
 				{
-					"name": "jaw",
+					"name": "blink",
 					"parent": "head",
+					"pivot": [0, 3.175, -5.25],
+					"cubes": [
+						{
+							"origin": [-1.5, 1.55, -7.25],
+							"size": [3, 3, 2],
+							"uv": {
+								"east": {"uv": [46, 6], "uv_size": [2, 3]},
+								"west": {"uv": [48, 6], "uv_size": [2, 3]}
+							}
+						}
+					]
+				},
+				{
+					"name": "Ajaw",
+					"parent": "head",
+					"pivot": [0, 2.525, -7.25]
+				},
+				{
+					"name": "jaw",
+					"parent": "Ajaw",
 					"pivot": [0, 2.525, -7.25],
 					"cubes": [
 						{
@@ -344,8 +389,13 @@
 					]
 				},
 				{
-					"name": "body_back",
+					"name": "Tbody_back",
 					"parent": "dragon",
+					"pivot": [0, 3.925, 1]
+				},
+				{
+					"name": "body_back",
+					"parent": "Tbody_back",
 					"pivot": [0, 3.925, 1],
 					"cubes": [
 						{
@@ -513,8 +563,13 @@
 					]
 				},
 				{
-					"name": "tail1",
+					"name": "Ttail1",
 					"parent": "body_back",
+					"pivot": [0, 3.425, 6]
+				},
+				{
+					"name": "tail1",
+					"parent": "Ttail1",
 					"pivot": [0, 3.425, 6],
 					"cubes": [
 						{
@@ -540,8 +595,13 @@
 					]
 				},
 				{
-					"name": "tail2",
+					"name": "Ttail2",
 					"parent": "tail1",
+					"pivot": [0, 3.325, 9.5]
+				},
+				{
+					"name": "tail2",
+					"parent": "Ttail2",
 					"pivot": [0, 3.325, 9.5],
 					"cubes": [
 						{

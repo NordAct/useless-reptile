@@ -2,20 +2,35 @@ package nordmods.uselessreptile.common.entity;
 
 import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.mob.MagmaCubeEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonCallBackGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonLookAroundGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonRevengeGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonWanderAroundGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherAttackGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherConsumeFoodFromInventoryGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherEatMagmaGoal;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.gui.MagmamuncherScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URTags;
@@ -28,10 +43,13 @@ import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.PlayState;
 
 public class MagmamuncherEntity extends URDragonEntity implements HeadMountDragon {
-    public static final float BASE_GROUND_SPEED = 0.3f;
+    public static final float BASE_GROUND_SPEED = 0.26f;
+
     public MagmamuncherEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         baseTamingProgress = 12;
+        sprintSpeedModifier = 1.3f;
+        inventory = new DragonInventory(DragonInventory.StorageSize.SMALL, false, false, false);
     }
 
     @Override
@@ -76,7 +94,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         eye.setSoundKeyframeHandler(this::soundHandler);
         controllerRegistrar.add(main, turn, attack, eye);
     }
-    //TODO: in blockbench - turn, blink and attack animations
+
     private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
         return loopAnim("blink", event);
     }
@@ -93,6 +111,10 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
         event.controller().setAnimationSpeed(animationSpeed);
+        if (event.isMoving()) {
+            if (turnState == 1) return loopAnim("turn.walk.left", event);
+            if (turnState == 2) return loopAnim("turn.walk.right", event);
+        }
         if (turnState == 1) return loopAnim("turn.left", event);
         if (turnState == 2) return loopAnim("turn.right", event);
         return loopAnim("turn.none", event);
@@ -115,6 +137,22 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().magmamuncherRotationSpeedGround)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().magmamuncherBasePrimaryAttackCooldown)
                 .add(URAttributes.DRAGON_REGENERATION_FROM_FOOD, attributes().magmamuncherRegenerationFromFood);
+    }
+
+    @Override
+    protected void initGoals() {
+        goalSelector.add(1, new DragonCallBackGoal(this));
+        goalSelector.add(2, new SitGoal(this));
+        goalSelector.add(3, new MagmamuncherConsumeFoodFromInventoryGoal(this));
+        goalSelector.add(5, new MagmamuncherAttackGoal(this, 4096));
+        goalSelector.add(6, new MagmamuncherEatMagmaGoal());
+        goalSelector.add(8, new DragonWanderAroundGoal(this));
+        goalSelector.add(9, new DragonLookAroundGoal(this));
+        targetSelector.add(1, new DragonRevengeGoal(this));
+        targetSelector.add(2, new AttackWithOwnerGoal(this));
+        targetSelector.add(3, new TrackOwnerAttackerGoal(this));
+        if (URConfig.getConfig().dragonMadness) targetSelector.add(4, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
+        targetSelector.add(5, new ActiveTargetGoal<>(this, MagmaCubeEntity.class, true, null));
     }
 
     @Override
@@ -145,5 +183,17 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         }
 
         return super.interactMob(player, hand);
+    }
+
+    public void attackMelee(LivingEntity target) {
+        if (!(getWorld() instanceof ServerWorld world)) return;
+        setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
+        setAttackType(random.nextInt(3)+1);
+        EntityAttributeModifier modifier = new EntityAttributeModifier(UselessReptile.id("magma_cube_bonus"), 1, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        if (target instanceof MagmaCubeEntity) getAttributeInstance(EntityAttributes.ATTACK_DAMAGE).addTemporaryModifier(modifier);
+        if (tryAttack(world, target)) {
+            target.setOnFireFor((float) (0.75f * getAttributeValue(EntityAttributes.ATTACK_DAMAGE)));
+        }
+        getAttributeInstance(EntityAttributes.ATTACK_DAMAGE).removeModifier(modifier);
     }
 }

@@ -9,6 +9,6 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 public class MagmamuncherEntityRenderer<R extends LivingEntityRenderState & GeoRenderState> extends HeadMountDragonEntityRenderer<MagmamuncherEntity, R> {
     public MagmamuncherEntityRenderer(EntityRendererFactory.Context renderManager) {
         super(renderManager);
-        shadowRadius = 0.4f;
+        shadowRadius = 0.35f;
     }
 }
