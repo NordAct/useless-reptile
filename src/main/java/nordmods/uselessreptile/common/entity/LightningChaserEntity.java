@@ -54,6 +54,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningC
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
@@ -106,6 +107,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         pitchLimitAir = 20;
         ticksUntilHeal = 500;
         specialAttackDuration = 27;
+        inventory = new DragonInventory(DragonInventory.StorageSize.MEDIUM, true, true, true);
     }
 
     @Override

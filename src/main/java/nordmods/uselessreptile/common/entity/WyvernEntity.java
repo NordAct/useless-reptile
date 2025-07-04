@@ -38,6 +38,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -78,6 +79,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         pitchLimitAir = 20;
         ticksUntilHeal = 200;
         sprintSpeedModifier = 1.2f;
+        inventory = new DragonInventory(DragonInventory.StorageSize.SMALL, false, true, true);
     }
 
     @Override

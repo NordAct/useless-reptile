@@ -15,7 +15,6 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
@@ -76,7 +75,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         secondaryAttackDuration = 12;
         primaryAttackDuration = 12;
         canNavigateInFluids = true;
-        inventory = new SimpleInventory(0);
         ticksUntilHeal = 400;
     }
 

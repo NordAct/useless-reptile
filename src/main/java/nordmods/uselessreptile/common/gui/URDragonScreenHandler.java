@@ -10,15 +10,15 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import org.jetbrains.annotations.Nullable;
 
 public abstract class URDragonScreenHandler extends ScreenHandler {
 
     protected final Inventory inventory;
-    protected final StorageSize storageSize;
-    public static final int MAX_STORAGE_SIZE = 20;
+    protected final DragonInventory.StorageSize storageSize;
 
-    protected URDragonScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, Inventory inventory, StorageSize storageSize, boolean hasSaddle, boolean hasArmor, boolean hasBanner) {
+    protected URDragonScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, Inventory inventory, DragonInventory.StorageSize storageSize, boolean hasSaddle, boolean hasArmor, boolean hasBanner) {
         super(type, syncId);
 
         this.inventory = inventory;
@@ -123,7 +123,7 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
             if (invSlot < inventory.size()) {
                 if (!insertItem(originalStack, inventory.size(), this.slots.size(), true)) return ItemStack.EMPTY;
             } else {
-                for (int i = 0; i < MAX_STORAGE_SIZE; i++)
+                for (int i = 0; i < DragonInventory.getInventorySize(storageSize); i++)
                     if (!insertItem(originalStack, i, inventory.size(), false)) return ItemStack.EMPTY;
             }
 
@@ -136,22 +136,4 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
 
     protected abstract boolean canEquip(EquipmentSlot equipmentSlot, ItemStack item);
     protected abstract boolean isSaddleItem(ItemStack itemStack);
-
-    @SuppressWarnings("unused")
-    public enum StorageSize {
-        NONE(0),
-        SMALL(3),
-        MEDIUM(6),
-        LARGE(9),
-        VERY_LARGE(12),
-        MAX(15);
-
-        private final int size;
-
-        StorageSize(int size) {
-            this.size = size;
-        }
-
-        public int getSize() {return size;}
-    }
 }

@@ -37,6 +37,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTar
 import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.gui.MoleclawScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -66,6 +67,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         pitchLimitGround = 50;
         baseTamingProgress = 64;
         ticksUntilHeal = 400;
+        inventory = new DragonInventory(DragonInventory.StorageSize.LARGE, true, true, true);
     }
 
     public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {

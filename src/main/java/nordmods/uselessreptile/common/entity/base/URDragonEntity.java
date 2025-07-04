@@ -21,7 +21,6 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.inventory.StackWithSlot;
 import net.minecraft.item.Instrument;
 import net.minecraft.item.ItemStack;
@@ -67,8 +66,8 @@ import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
-import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URPacketHelper;
@@ -109,7 +108,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected final EntityGameEventHandler<HornUsedEventListener> hornUsedEventHandler = new EntityGameEventHandler<>(new HornUsedEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.INSTRUMENT_USED.value().notificationRadius()));
     protected @Nullable BlockPos jukeboxPos;
-    protected SimpleInventory inventory = new SimpleInventory(URDragonScreenHandler.MAX_STORAGE_SIZE);
+    protected DragonInventory inventory = new DragonInventory(DragonInventory.StorageSize.NO_INVENTORY, false, false, false);
     public boolean shouldFollow = false;
     protected Text defaultDisplayName;
     private HashMap<String, SoundInfo> soundInfoHolder = new HashMap<>();
@@ -1028,6 +1027,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public boolean damage(ServerWorld world, DamageSource damageSource, float amount) {
         if (isDancing() && damageSource.getAttacker() != null) updateJukeboxPos(jukeboxPos, true);
         return super.damage(world, damageSource, amount);
+    }
+
+    public DragonInventory getInventory() {
+        return inventory;
     }
 
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
