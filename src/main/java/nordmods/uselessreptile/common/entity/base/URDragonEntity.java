@@ -103,6 +103,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected int eatFromInventoryTimer = 20;
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
+    protected float sprintSpeedModifier = 1.1f;
+    protected float backwardSpeedModifier = 0.75f;
     private int healTimer = 0;
     private BlockPos homePoint = BlockPos.ORIGIN;
     protected final EntityGameEventHandler<JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new JukeboxEventListener
@@ -115,6 +117,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected Text defaultDisplayName;
     private HashMap<String, SoundInfo> soundInfoHolder = new HashMap<>();
     public static final Identifier VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
+    public static final Identifier SPEED_MODIFIER_BONUS = UselessReptile.id("speed_modifier");
 
 
     protected URDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
@@ -135,7 +138,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         builder.add(ROTATION_PROGRESS, (byte)0);
         builder.add(TAMING_PROGRESS, 1);
         builder.add(ATTACK_TYPE, 1);
-        builder.add(SPEED_MODIFIER, 1f);
         builder.add(MOUNTED_OFFSET, 0.35f);
         builder.add(HEIGHT_MODIFIER, 1f);
         builder.add(WIDTH_MODIFIER, 1f);
@@ -153,7 +155,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public static final TrackedData<Byte> TURNING_STATE = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.BYTE);
     public static final TrackedData<Byte> ROTATION_PROGRESS = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.BYTE);
     public static final TrackedData<Integer> TAMING_PROGRESS = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
-    public static final TrackedData<Float> SPEED_MODIFIER = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.FLOAT);
     public static final TrackedData<Float> MOUNTED_OFFSET = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.FLOAT);
     public static final TrackedData<Float> HEIGHT_MODIFIER = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.FLOAT);
     public static final TrackedData<Float> WIDTH_MODIFIER = DataTracker.registerData(URDragonEntity.class, TrackedDataHandlerRegistry.FLOAT);
@@ -210,9 +211,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public int getTamingProgress() {return dataTracker.get(TAMING_PROGRESS);}
     public void setTamingProgress(int state) {dataTracker.set(TAMING_PROGRESS, state);}
-
-    public float getSpeedModifier() {return dataTracker.get(SPEED_MODIFIER);}
-    public void setSpeedMod(float state) {dataTracker.set(SPEED_MODIFIER, state);}
 
     public float getMountedOffset() {return dataTracker.get(MOUNTED_OFFSET);}
     public void setMountedOffset(float state) {dataTracker.set(MOUNTED_OFFSET, state);}
@@ -347,6 +345,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected <ENTITY extends GeoEntity> void soundHandler(KeyFrameEvent<ENTITY, SoundKeyframeData> event) {
         SoundInfo soundInfo = getSoundInfo(event.keyframeData().getSound());
         if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
+    }
+
+    @Override
+    public double getBoneResetTime() {
+        return TRANSITION_TICKS;
     }
 
     @Override
@@ -727,12 +730,20 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public void updateMovementModifiers() {
-        if (!isMoving()) setSprinting(false);
-        if (isSprinting()) setSpeedMod(1.1f);
-        else setSpeedMod(1f);
-        if (isMovingBackwards()) setSpeedMod(0.6f);
+        if ((!isMoving())) setSprinting(false);
+        float speedModifier = 1;
+        if (isSprinting()) speedModifier = sprintSpeedModifier;
+        else if (isMovingBackwards()) speedModifier = backwardSpeedModifier;
+
+        EntityAttributeInstance instance = getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+        if (speedModifier != 1f) {
+            EntityAttributeModifier modifier = new EntityAttributeModifier(SPEED_MODIFIER_BONUS, speedModifier - 1f, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            if (!instance.hasModifier(modifier.id())) instance.addTemporaryModifier(modifier);
+            else instance.updateModifier(modifier);
+        } else instance.removeModifier(SPEED_MODIFIER_BONUS);
+
         float speed = (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
-        setMovementSpeed(speed * getSpeedModifier());
+        setMovementSpeed(speed * speedModifier);
     }
 
     protected abstract float getBaseGroundSpeed();

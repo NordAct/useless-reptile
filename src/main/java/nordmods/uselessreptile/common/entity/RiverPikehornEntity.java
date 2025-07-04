@@ -6,6 +6,8 @@ import net.minecraft.entity.ai.goal.SitGoal;
 import net.minecraft.entity.ai.goal.TrackOwnerAttackerGoal;
 import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
@@ -21,6 +23,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -30,6 +33,7 @@ import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.event.PositionSource;
 import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAttackGoal;
@@ -61,7 +65,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     private boolean isHunting = false;
     protected final EntityGameEventHandler<FluteUsedEventListener> fluteUsedEventHandler = new EntityGameEventHandler<>(new FluteUsedEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.FLUTE_USED.value().notificationRadius()));
-
+    private static final Identifier WATER_SPEED_MODIFIER_BONUS = UselessReptile.id("water_speed_modifier");
     public static final float BASE_GROUND_SPEED = 0.2f;
 
     public RiverPikehornEntity(EntityType<? extends TameableEntity> entityType, World world) {
@@ -176,7 +180,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
             getEquippedStack(EquipmentSlot.MAINHAND);
         }
-        setSpeedMod(isSubmergedInWater() ? 0.5f : 1);
+
         if (!getWorld().isClient()) {
             if (isSubmergedInWater()) {
                 setSwimming(true);
@@ -185,6 +189,18 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         }
 
         if (getWorld() instanceof ServerWorld world) dropLootToOwner(world);
+    }
+
+    @Override
+    public void updateMovementModifiers() {
+        EntityAttributeInstance instance = isFlying() ?getAttributeInstance(EntityAttributes.FLYING_SPEED) : getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+        if (isSubmergedInWater()) {
+            EntityAttributeModifier modifier = new EntityAttributeModifier(WATER_SPEED_MODIFIER_BONUS, -0.5f, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            if (!instance.hasModifier(modifier.id())) instance.addTemporaryModifier(modifier);
+            else instance.updateModifier(modifier);
+        } else instance.removeModifier(WATER_SPEED_MODIFIER_BONUS);
+
+        super.updateMovementModifiers();
     }
 
     @Override

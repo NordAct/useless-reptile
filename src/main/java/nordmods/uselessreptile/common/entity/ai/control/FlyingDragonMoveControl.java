@@ -55,7 +55,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                 else accelerationDuration++;
 
                 entity.setRotation(destinationYaw, entity.getPitch());
-                entity.setMovementSpeed(-speed * entity.getSpeedModifier() * (entity.isFlying() ? 1f/entity.getSpeedModifier() : 0.5f));
+                entity.setMovementSpeed(-speed);
             }
             case MOVE_TO -> {
                 state = State.WAIT;
@@ -69,10 +69,10 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                 if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration--;
 
                 entity.setRotation(destinationYaw, entity.getPitch());
-                entity.setMovementSpeed(speed * entity.getSpeedModifier());
+                entity.setMovementSpeed(speed);
             }
             case JUMPING -> {
-                entity.setMovementSpeed(speed * entity.getSpeedModifier());
+                entity.setMovementSpeed(speed);
                 if (entity.isOnGround()) state = State.WAIT;
             }
             default -> {

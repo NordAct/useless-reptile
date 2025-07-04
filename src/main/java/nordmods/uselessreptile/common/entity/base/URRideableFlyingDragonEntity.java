@@ -2,6 +2,8 @@ package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
@@ -101,11 +103,19 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     public void updateMovementModifiers() {
         if ((!isMoving() || isFlying())) setSprinting(false);
-        if (isSprinting()) setSpeedMod(1.5f);
-        else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
-        else setSpeedMod(1f);
+        float speedModifier = 1;
+        if (isSprinting()) speedModifier = sprintSpeedModifier;
+        else if (isMovingBackwards()) speedModifier = backwardSpeedModifier;
+
+        EntityAttributeInstance instance = isFlying() ?getAttributeInstance(EntityAttributes.FLYING_SPEED) : getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+        if (speedModifier != 1f) {
+            EntityAttributeModifier modifier = new EntityAttributeModifier(SPEED_MODIFIER_BONUS, speedModifier - 1f, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            if (!instance.hasModifier(modifier.id())) instance.addTemporaryModifier(modifier);
+            else instance.updateModifier(modifier);
+        } else instance.removeModifier(SPEED_MODIFIER_BONUS);
+
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
-        setMovementSpeed(speed * getSpeedModifier());
+        setMovementSpeed(speed * speedModifier);
 
         if (isOnGround()) setFlying(false);
         setNoGravity(isFlying());

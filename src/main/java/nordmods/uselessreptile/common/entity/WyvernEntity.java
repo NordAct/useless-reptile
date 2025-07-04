@@ -77,6 +77,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         ticksUntilHeal = 200;
+        sprintSpeedModifier = 1.2f;
     }
 
     @Override

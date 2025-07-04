@@ -159,7 +159,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public int magmamuncherBasePrimaryAttackCooldown = 30;
     @SerialEntry
-    public float magmamuncherRotationSpeedGround = 8;
+    public float magmamuncherRotationSpeedGround = 20;
     @SerialEntry
     public float magmamuncherRegenerationFromFood = 4;
 

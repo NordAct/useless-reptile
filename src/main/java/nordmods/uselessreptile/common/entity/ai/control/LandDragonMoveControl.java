@@ -40,7 +40,7 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
                 entity.setMovingBackwards(true);
 
                 entity.setRotation(destinationYaw, entity.getPitch());
-                entity.setMovementSpeed(-speed * entity.getSpeedModifier() * 0.5f);
+                entity.setMovementSpeed(-speed);
             }
             case MOVE_TO -> {
                 state = State.WAIT;
@@ -51,10 +51,10 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
                 }
 
                 entity.setRotation(destinationYaw, entity.getPitch());
-                entity.setMovementSpeed(speed * entity.getSpeedModifier());
+                entity.setMovementSpeed(speed);
             }
             case JUMPING -> {
-                entity.setMovementSpeed(speed * entity.getSpeedModifier());
+                entity.setMovementSpeed(speed);
                 if (entity.isOnGround()) state = State.WAIT;
             }
             default -> {
