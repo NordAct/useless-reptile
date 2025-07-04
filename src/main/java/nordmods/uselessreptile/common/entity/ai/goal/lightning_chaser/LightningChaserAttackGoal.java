@@ -122,7 +122,7 @@ public class LightningChaserAttackGoal extends Goal {
     private boolean tryMeleeAttack() {
         if (entity.getSecondaryAttackCooldown() > 0) return false;
         if (entity.isFlying()) return false;
-        boolean doesCollide = entity.doesCollide(entity.getAttackBox(), target.getBoundingBox());
+        boolean doesCollide = entity.getAttackBox().intersects(target.getBoundingBox());
         if (!doesCollide) return false;
         entity.meleeAttack();
         attackCooldown = 30;

@@ -75,7 +75,7 @@ public class MoleclawAttackGoal extends Goal {
         }
 
         if (entity.getSecondaryAttackCooldown() > 0) return;
-        boolean doesCollide = entity.doesCollide(entity.getAttackBox(), target.getBoundingBox());
+        boolean doesCollide = entity.getAttackBox().intersects(target.getBoundingBox());
         if (doesCollide) entity.scheduleNormalAttack();
     }
 }

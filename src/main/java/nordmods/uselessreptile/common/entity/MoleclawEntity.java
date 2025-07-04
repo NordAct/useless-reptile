@@ -228,7 +228,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         List<Entity> targets = world.getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob: targets) {
             Box targetBox = mob.getBoundingBox();
-            if (doesCollide(targetBox, getAttackBox())) tryAttack(world, mob);
+            if (targetBox.intersects(getAttackBox())) tryAttack(world, mob);
         }
     }
 
@@ -237,7 +237,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         List<Entity> targets = getWorld().getOtherEntities(this, getSecondaryAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob : targets) {
             Box targetBox = mob.getBoundingBox();
-            if (doesCollide(targetBox, getSecondaryAttackBox())) tryAttack(world, mob);
+            if (targetBox.intersects(getSecondaryAttackBox())) tryAttack(world, mob);
         }
 
         if (!canBreakBlocks()) return;

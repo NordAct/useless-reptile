@@ -460,7 +460,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         setAttackType(random.nextInt(3)+1);
         if (target != null && !getPassengerList().contains(target)) {
             Box targetBox = target.getBoundingBox();
-            if (doesCollide(targetBox, getAttackBox())) tryAttack(world, target);
+            if (targetBox.intersects(getAttackBox())) tryAttack(world, target);
         }
     }
 

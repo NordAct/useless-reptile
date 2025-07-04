@@ -45,14 +45,11 @@ import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.function.BooleanBiFunction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.*;
 import net.minecraft.world.event.EntityPositionSource;
 import net.minecraft.world.event.GameEvent;
@@ -768,12 +765,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public AnimatableInstanceCache getAnimatableInstanceCache() {return cache;}
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-
-    public boolean doesCollide(Box box1, Box box2) {
-        VoxelShape voxelShape = VoxelShapes.cuboid(box1);
-        VoxelShape voxelShape2 = VoxelShapes.cuboid(box2);
-        return VoxelShapes.matchesAnywhere(voxelShape2, voxelShape, BooleanBiFunction.AND);
-    }
 
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {

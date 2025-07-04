@@ -61,11 +61,9 @@ public class PikehornAttackGoal extends Goal {
         }
         entity.setSprinting(true);
         entity.getLookControl().lookAt(target);
-        double attackDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
-        double distance = entity.squaredDistanceTo(target);
         entity.getNavigation().startMovingTo(target, 1);
 
-        if (entity.getPrimaryAttackCooldown() > 0 || distance >= attackDistance) return;
+        if (entity.getPrimaryAttackCooldown() > 0 || !entity.getAttackBox().intersects(target.getBoundingBox())) return;
 
         entity.attackMelee(target);
     }

@@ -101,7 +101,7 @@ public class PikehornHuntGoal extends Goal {
                     entity.getLookControl().lookAt(fish);
                     entity.getNavigation().startMovingTo(fish, 1);
                     if (entity.getPrimaryAttackCooldown() > 0) return;
-                    if (entity.doesCollide(entity.getAttackBox(), fish.getBoundingBox())) entity.attackMelee(fish);
+                    if (entity.getAttackBox().intersects(fish.getBoundingBox())) entity.attackMelee(fish);
                 }
             }
         } else {

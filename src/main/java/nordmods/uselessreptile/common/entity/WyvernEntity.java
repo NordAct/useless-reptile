@@ -314,7 +314,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         }
         if (target != null && !getPassengerList().contains(target)) {
             Box targetBox = target.getBoundingBox();
-            if (doesCollide(targetBox, getAttackBox())) tryAttack(world, target);
+            if (targetBox.intersects(getAttackBox())) tryAttack(world, target);
         }
     }
 
