@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity.base;
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -47,7 +46,10 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.function.BooleanBiFunction;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -531,6 +533,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner) {
             if (owner instanceof ServerPlayerEntity player && player.isDisconnected()) return;
             owner.setHeadMountDragon(new NbtCompound());
+            setYaw(((Entity) owner).getYaw() + 180f);
         }
         super.stopRiding();
     }
@@ -707,6 +710,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                     setTurningState(turnState);
                 }
             } else getLookControl().setLockRotation(false);
+        }
+
+        if (!getWorld().isClient() && age % 20 == 0) {
+            boolean jukeboxReachable = false;
+            if (jukeboxPos != null) jukeboxReachable = jukeboxPos.isWithinDistance(getBlockPos(), 9);
+            if (jukeboxReachable) updateJukeboxPos(jukeboxPos, true);
+            else updateJukeboxPos(null, false);
         }
     }
 
@@ -997,6 +1007,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return defaultDisplayName;
     }
 
+    @Override
+    public boolean damage(ServerWorld world, DamageSource damageSource, float amount) {
+        if (isDancing() && damageSource.getAttacker() != null) updateJukeboxPos(jukeboxPos, true);
+        return super.damage(world, damageSource, amount);
+    }
+
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
 
@@ -1019,17 +1035,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         @Override
         public boolean listen(ServerWorld world, RegistryEntry<GameEvent> event, GameEvent.Emitter emitter, Vec3d emitterPos) {
-            Vec3i vec3i;
-            if (emitterPos != null) vec3i = new Vec3i((int) emitterPos.x, (int) emitterPos.y, (int) emitterPos.z);
-            else return false;
-
-            boolean isJukebox = false;
-            if (jukeboxPos != null) isJukebox = world.getBlockState(jukeboxPos).isOf(Blocks.JUKEBOX);
-            if (event == GameEvent.JUKEBOX_PLAY) {
-                updateJukeboxPos(new BlockPos(vec3i), true);
+            if (event.matches(GameEvent.JUKEBOX_PLAY)) {
+                updateJukeboxPos(BlockPos.ofFloored(emitterPos), true);
                 return true;
-            } else if (event == GameEvent.JUKEBOX_STOP_PLAY || !isJukebox) {
-                updateJukeboxPos(new BlockPos(vec3i), false);
+            } else if (event.matches(GameEvent.JUKEBOX_STOP_PLAY)) {
+                updateJukeboxPos(BlockPos.ofFloored(emitterPos), false);
                 return true;
             } else {
                 return false;
