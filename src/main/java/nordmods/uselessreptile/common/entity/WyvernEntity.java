@@ -163,7 +163,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.controller().setAnimationSpeed(animationSpeed);
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) return loopAnim("turn.fly.left", event);
             if (turnState == 2) return loopAnim("turn.fly.right", event);
@@ -337,7 +336,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public float getHeightModTransSpeed() {
-        return (float) (0.13 * animationSpeed * getScale());
+        return (float) (0.13 * getScale());
     }
 
     @Nullable

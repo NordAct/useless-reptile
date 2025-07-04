@@ -135,8 +135,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.controller().setAnimationSpeed(animationSpeed);
-
         if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) return loopAnim("turn.fly.left", event);
             if (turnState == 2) return loopAnim("turn.fly.right", event);

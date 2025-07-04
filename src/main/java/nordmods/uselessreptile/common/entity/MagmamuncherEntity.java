@@ -110,7 +110,6 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
 
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.controller().setAnimationSpeed(animationSpeed);
         if (event.isMoving()) {
             if (turnState == 1) return loopAnim("turn.walk.left", event);
             if (turnState == 2) return loopAnim("turn.walk.right", event);

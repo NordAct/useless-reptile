@@ -198,7 +198,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.controller().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if ((isMoving() || event.isMoving()) && !isMovingBackwards()) {
                 if (turnState == 1) return loopAnim("turn.fly.left", event);

@@ -58,6 +58,7 @@ import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
+import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
@@ -100,7 +101,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
     protected float sprintSpeedModifier = 1.1f;
-    protected float backwardSpeedModifier = 0.75f;
+    protected float backwardSpeedModifier = 0.6f;
     private int healTimer = 0;
     private BlockPos homePoint = BlockPos.ORIGIN;
     protected final EntityGameEventHandler<JukeboxEventListener> jukeboxEventHandler = new EntityGameEventHandler<>(new JukeboxEventListener
@@ -560,13 +561,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public float getWidthModTransSpeed() {
-        return (float) (0.22f * animationSpeed * getScale());
+        return 0.22f * getScale();
     }
     public float getHeightModTransSpeed() {
-        return (float) (0.3 * animationSpeed * getScale());
+        return (float) (0.3 * getScale());
     }
     public float getMountedOffsetTransSpeed() {
-        return (float) (0.125 * animationSpeed * getScale());
+        return (float) (0.125 * getScale());
     }
 
     @Override
@@ -680,11 +681,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public void tick() {
         super.tick();
         if (!getWorld().isClient()) updateRotationProgress();
-
-        animationSpeed = getMovementSpeedModifier();
-        if (this instanceof FlyingDragon flyingDragon && !flyingDragon.isFlying() || !(this instanceof FlyingDragon)) {
-            animationSpeed *= attributes().dragonGroundSpeedMultiplier * getAttributeValue(EntityAttributes.MOVEMENT_SPEED) / getBaseGroundSpeed();
-        }
+        else updateAnimationSpeed();
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
         if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
@@ -717,6 +714,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             if (jukeboxReachable) updateJukeboxPos(jukeboxPos, true);
             else updateJukeboxPos(null, false);
         }
+    }
+
+    protected void updateAnimationSpeed() {
+        animationSpeed = MathHelper.lerp(RenderUtil.getTickDelta(false), animationSpeed, getMovementSpeedModifier());
     }
 
     @Override

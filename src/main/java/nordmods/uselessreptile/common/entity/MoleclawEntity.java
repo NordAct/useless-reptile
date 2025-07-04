@@ -150,7 +150,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
         byte turnState = getTurningState();
-        event.controller().setAnimationSpeed(animationSpeed);
         if (turnState == 1) return loopAnim("turn.left", event);
         if (turnState == 2) return loopAnim("turn.right", event);
         return loopAnim("turn.none", event);
