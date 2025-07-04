@@ -45,6 +45,7 @@ public class HeadMountDragonFeatureRenderer extends FeatureRenderer<PlayerEntity
             matrices.translate(0, -0.2960000524520874 * offsetScale - 0.5 * (1 - offsetScale), 0);
             matrices.scale(-scale, -scale, scale);
 
+            if (!dragonState.hasGeckolibData(DataTickets.PACKED_LIGHT)) dragonState.addGeckolibData(DataTickets.PACKED_LIGHT, light);
             renderer.render((EntityRenderState) dragonState, matrices, vertexConsumers, light);
 
             matrices.pop();
