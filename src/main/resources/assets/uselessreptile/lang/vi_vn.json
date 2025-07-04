@@ -37,7 +37,7 @@
   "tooltip.uselessreptile.flute_mode0": "Chế độ sáo: Gọi",
   "tooltip.uselessreptile.flute_mode1": "Chế độ sáo: Tụ tập cá",
   "tooltip.uselessreptile.flute_mode2": "Chế độ sáo: Tấn công mục tiêu",
-  "tooltip.uselessreptile.can_be_equipped_by": "Có thể được trang bị bởi: %s",
+  "tooltip.uselessreptile.can_be_equipped_by": "Có thể được trang bị bởi:",
 
   "entity.uselessreptile.wyvern": "Wyvern Đầm lầy",
   "entity.uselessreptile.moleclaw": "Móng Mỏ",

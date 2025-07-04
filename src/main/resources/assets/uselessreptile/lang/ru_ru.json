@@ -46,7 +46,7 @@
     "tooltip.uselessreptile.flute_mode0": "Режим флейты: сбор",
     "tooltip.uselessreptile.flute_mode1": "Режим флейты: рыбалка",
     "tooltip.uselessreptile.flute_mode2": "Режим флейты: атака цели",
-    "tooltip.uselessreptile.can_be_equipped_by": "Можно экипировать на: %s",
+    "tooltip.uselessreptile.can_be_equipped_by": "Можно экипировать на:",
     "tooltip.uselessreptile.vortex_horn.capacity": "Вместимость: %s / %s",
     "tooltip.uselessreptile.vortex_horn.contained_dragons": "Драконы внутри:",
 

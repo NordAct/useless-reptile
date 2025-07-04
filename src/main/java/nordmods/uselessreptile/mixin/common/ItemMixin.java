@@ -11,7 +11,6 @@ import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Colors;
-import net.minecraft.util.Language;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -37,15 +36,10 @@ public abstract class ItemMixin {
         List<EntityType<? extends Entity>> entries = new ArrayList<>(DragonEquipmentTooltipEntryEvent.EVENT.invoker().getEntries(asItem()));
         if (entries.isEmpty()) return;
 
-        String values = "";
-        Language language = Language.getInstance();
+        textConsumer.accept(Text.translatable("tooltip.uselessreptile.can_be_equipped_by").withColor(Colors.LIGHT_GRAY));
         for (EntityType<?> entityType : entries) {
-            String entry = language.get(entityType.getTranslationKey());
-            values = values.concat(entry).concat(", ");
+            textConsumer.accept(Text.literal("- ").withColor(Colors.LIGHT_GRAY).append(Text.translatable(entityType.getTranslationKey()).withColor(Colors.LIGHT_GRAY)));
         }
-        values = values.substring(0, values.length() - 2);
-
-        textConsumer.accept(Text.translatable("tooltip.uselessreptile.can_be_equipped_by", values).withColor(Colors.LIGHT_GRAY));
     }
 
     @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
