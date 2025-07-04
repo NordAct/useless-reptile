@@ -12,7 +12,6 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
@@ -128,7 +127,13 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     public void travel(Vec3d movementInput) {
         if (!isAlive()) return;
+        if (isFlying()) if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
+        else setInAirTimer(0);
+        super.travel(movementInput);
+    }
 
+    @Override
+    public void updateMovementModifiers() {
         if ((!isMoving() || isFlying())) setSprinting(false);
         if (isSprinting()) setSpeedMod(1.5f);
         else if (isMovingBackwards() && isFlying()) setSpeedMod(0.6f);
@@ -136,17 +141,8 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
-         if (!getWorld().isClient() && (isOnGround() && !isSubmergedInWater() || hasVehicle())) setFlying(false);
+        if (isOnGround()) setFlying(false);
         setNoGravity(isFlying());
-
-        if (isFlying()) {
-            setPitch( MathHelper.clamp(getPitch(), -getPitchLimit(), getPitchLimit()));
-            if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
-            super.travel(movementInput);
-        } else {
-            setInAirTimer(0);
-            super.travel(movementInput);
-        }
     }
 
     @Override

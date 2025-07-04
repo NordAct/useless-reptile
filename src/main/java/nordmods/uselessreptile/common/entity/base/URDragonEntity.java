@@ -720,6 +720,21 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         }
     }
 
+    @Override
+    public void travel(Vec3d movementInput) {
+        updateMovementModifiers();
+        super.travel(movementInput);
+    }
+
+    public void updateMovementModifiers() {
+        if (!isMoving()) setSprinting(false);
+        if (isSprinting()) setSpeedMod(1.1f);
+        else setSpeedMod(1f);
+        if (isMovingBackwards()) setSpeedMod(0.6f);
+        float speed = (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+        setMovementSpeed(speed * getSpeedModifier());
+    }
+
     protected abstract float getBaseGroundSpeed();
 
     @Override

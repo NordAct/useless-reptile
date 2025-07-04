@@ -104,7 +104,6 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
     @Override
     public void travel(Vec3d movementInput) {
-        updateMovementModifiers();
         if (getWorld() instanceof ServerWorld) {
             boolean hasRider = canBeControlledByRider();
             getLookControl().setLockRotation(hasRider);
@@ -128,15 +127,6 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         if (isJumpPressed() && isOnGround()) jump();
         //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
         return new Vec3d(0, movementInput.y  - 0.001, landSpeed);
-    }
-
-    public void updateMovementModifiers() {
-        if (!isMoving()) setSprinting(false);
-        if (isSprinting()) setSpeedMod(1.1f);
-        else setSpeedMod(1f);
-        if (isMovingBackwards()) setSpeedMod(0.6f);
-        float speed = (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
-        setMovementSpeed(speed * getSpeedModifier());
     }
 
     @Override
