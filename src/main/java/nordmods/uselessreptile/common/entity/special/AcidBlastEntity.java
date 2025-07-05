@@ -5,17 +5,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.particle.EntityEffectParticleEffect;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
-import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.init.URDamageTypes;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
@@ -28,26 +22,17 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-//todo rewrite to not use PersistentProjectileEntity
-public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEntity, ProjectileDamageHelper {
-
-    private int life;
-    private static final int COLOR = 10085398;
-
+public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, ProjectileDamageHelper {
+    private static final int COLOR = 0x99E416;
     public AcidBlastEntity(EntityType<? extends AcidBlastEntity> entityType, World world) {
         super(entityType, world);
+        lifeLimit = 200;
     }
 
     public AcidBlastEntity(World world, LivingEntity owner) {
-        super(UREntities.ACID_BLAST_ENTITY, world);
+        this(UREntities.ACID_BLAST_ENTITY, world);
         setOwner(owner);
-    }
-
-    protected void age() {
-        ++life;
-        if (life >= 100) {
-            discard();
-        }
+        pickupType = PickupPermission.DISALLOWED;
     }
 
     @Override
@@ -58,28 +43,11 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
     }
 
     @Override
-    protected boolean canHit(Entity entity) {
-        if (entity instanceof EntityPart entityPart && entityPart.owner == getOwner()) return false;
-        return super.canHit(entity);
-    }
-
-    @Override
-    protected ItemStack getDefaultItemStack() {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
-    public void playSound(SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) getWorld().playSoundClient(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
-    }
-
-    @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         if (!(getWorld() instanceof ServerWorld world)) return;
         Entity target = entityHitResult.getEntity();
         target.damage(world, target.getDamageSources().create(URDamageTypes.ACID, getOwner()), getResultingDamage());
         spawnEffectCloud();
-        playSound(URSounds.ACID_SPLASH, 1, 1);
         super.onEntityHit(entityHitResult);
         if (target instanceof LivingEntity entity) entity.addStatusEffect(new StatusEffectInstance(URStatusEffects.ACID, 60, 1));
         discard();
@@ -90,10 +58,10 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
         AreaEffectCloudEntity areaEffectCloudEntity = new AreaEffectCloudEntity(getWorld(), getX(), getY(), getZ());
         Entity entity = getOwner();
         if (entity instanceof LivingEntity livingEntity) areaEffectCloudEntity.setOwner(livingEntity);
-
-        areaEffectCloudEntity.setParticleType(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, COLOR));
+        playSound(URSounds.ACID_SPLASH, 1, 1);
         areaEffectCloudEntity.setRadius(1.0f);
         areaEffectCloudEntity.setDuration(20);
+        areaEffectCloudEntity.setWaitTime(0);
         areaEffectCloudEntity.setRadiusGrowth(0.1f);
         areaEffectCloudEntity.addEffect(new StatusEffectInstance(URStatusEffects.ACID, 10, 1));
         areaEffectCloudEntity.setSilent(true);
@@ -108,18 +76,7 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
     @Override
     public void tick() {
         super.tick();
-        if (getWorld().isClient()) spawnParticles(8);
-        age();
-    }
-
-    private void spawnParticles(int amount) {
-        int i = COLOR;
-        float d = (i >> 16 & 0xFF) / 255f;
-        float e = (i >> 8 & 0xFF) / 255f;
-        float f = (i >> 0 & 0xFF) / 255f;
-        for (int j = 0; j < amount; ++j) {
-            getWorld().addParticleClient(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, d, e, f), getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), d, e, f);
-        }
+        if (getWorld().isClient()) spawnEffectParticles(8, COLOR);
     }
 
     @Override
@@ -141,11 +98,6 @@ public class AcidBlastEntity extends PersistentProjectileEntity implements GeoEn
     }
 
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-
-    @Override
-    public boolean shouldSave() {
-        return false;
-    }
 
     @Override
     public float getDefaultDamage() {
