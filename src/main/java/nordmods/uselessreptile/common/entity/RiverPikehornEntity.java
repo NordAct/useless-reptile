@@ -9,8 +9,6 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -114,6 +112,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         return loopAnim("blink", event);
     }
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
         event.controller().setAnimationSpeed(animationSpeed);
         if (hasVehicle()) return loopAnim("sit.head", event);
         if (isFlying()) {
@@ -148,12 +147,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         event.controller().setAnimationSpeed(1/ getCooldownModifier());
         if (isPrimaryAttack()) return playAnim( "attack" + getAttackType(), event);
         return playAnim("attack.none", event);
-    }
-
-    @Override
-    public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {
-        if (getVehicle() instanceof PlayerEntity && damageSource.isOf(DamageTypes.IN_WALL)) return true;
-        return super.isInvulnerableTo(world, damageSource);
     }
 
     @Override

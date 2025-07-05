@@ -43,7 +43,7 @@ import software.bernie.geckolib.animatable.processing.AnimationTest;
 import software.bernie.geckolib.animation.PlayState;
 
 public class MagmamuncherEntity extends URDragonEntity implements HeadMountDragon {
-    public static final float BASE_GROUND_SPEED = 0.26f;
+    public static final float BASE_GROUND_SPEED = 0.2f;
 
     public MagmamuncherEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
@@ -99,6 +99,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         return loopAnim("blink", event);
     }
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
         event.controller().setAnimationSpeed(animationSpeed);
         if (hasVehicle()) return loopAnim("sit.head", event);
         if (getIsSitting() && !isDancing()) return loopAnim("sit", event);

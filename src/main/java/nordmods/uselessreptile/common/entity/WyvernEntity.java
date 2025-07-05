@@ -137,6 +137,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
         if (event.controller().hasAnimationFinished()) event.controller().forceAnimationReset();
+        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
         event.controller().setAnimationSpeed(animationSpeed);
         if (isFlying()) {
             if (isSecondaryAttack()) {

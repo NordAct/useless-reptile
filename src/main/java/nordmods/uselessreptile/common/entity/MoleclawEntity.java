@@ -136,6 +136,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
         event.controller().setAnimationSpeed(animationSpeed);
         if (getIsSitting() && !isDancing() && !isPanicking()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {

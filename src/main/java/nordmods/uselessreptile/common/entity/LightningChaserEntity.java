@@ -168,8 +168,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         return loopAnim("blink", event);
     }
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
         event.controller().setAnimationSpeed(animationSpeed);
-        event.controller().transitionLength(TRANSITION_TICKS);
         if (isFlying()) {
             if (isSpecialAttack()) {
                 event.controller().setAnimationSpeed(1);

@@ -11,6 +11,7 @@ import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.*;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -58,7 +59,6 @@ import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
-import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
@@ -717,7 +717,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected void updateAnimationSpeed() {
-        animationSpeed = MathHelper.lerp(RenderUtil.getTickDelta(false), animationSpeed, getMovementSpeedModifier());
+        animationSpeed = MathHelper.lerp(1f/getWorld().getTickManager().getTickRate(), animationSpeed, getMovementSpeedModifier());
     }
 
     @Override
@@ -1031,6 +1031,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public boolean damage(ServerWorld world, DamageSource damageSource, float amount) {
         if (isDancing() && damageSource.getAttacker() != null) updateJukeboxPos(jukeboxPos, true);
         return super.damage(world, damageSource, amount);
+    }
+
+
+    @Override
+    public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {
+        if (this instanceof HeadMountDragon && getVehicle() instanceof PlayerEntity && damageSource.isOf(DamageTypes.IN_WALL)) return true;
+        return super.isInvulnerableTo(world, damageSource);
     }
 
     public DragonInventory getInventory() {
