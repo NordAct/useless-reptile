@@ -33,6 +33,6 @@ public class WyvernEntityRenderer<R extends LivingEntityRenderState & GeoRenderS
     @Override
     public void addRenderData(WyvernEntity animatable, Void relatedObject, R renderState) {
         super.addRenderData(animatable, relatedObject, renderState);
-        renderState.addGeckolibData(URDataTickets.DRAGON_HAS_SADDLE, animatable.getEquippedStack(EquipmentSlot.BODY).isIn(URTags.WYVERN_SADDLES));
+        renderState.addGeckolibData(URDataTickets.DRAGON_HAS_SADDLE, animatable.getEquippedStack(EquipmentSlot.SADDLE).isIn(URTags.WYVERN_SADDLES));
     }
 }
