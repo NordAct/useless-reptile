@@ -1040,6 +1040,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return super.isInvulnerableTo(world, damageSource);
     }
 
+    @Override
+    public void setTamed(boolean tamed, boolean updateAttributes) {
+        super.setTamed(tamed, updateAttributes);
+        inventory.addListener(this);
+    }
+
     public DragonInventory getInventory() {
         return inventory;
     }
