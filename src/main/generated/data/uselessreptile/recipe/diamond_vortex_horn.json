@@ -2,7 +2,7 @@
   "type": "uselessreptile:vortex_horn",
   "category": "equipment",
   "key": {
-    "H": "uselessreptile:iron_vortex_horn",
+    "H": "uselessreptile:gold_vortex_horn",
     "I": "#c:gems/diamond",
     "R": "minecraft:breeze_rod"
   },
