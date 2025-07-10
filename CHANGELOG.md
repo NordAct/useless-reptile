@@ -1,1 +1,1 @@
-- Fixed crash if you had River Pikehorn on your head while riding the dragon and entering the world for first time during session while having auto perspective switch turned on
+- Fixed Diamond Vortex Horn recipe using Iron Vortex Horn instead of gold one
