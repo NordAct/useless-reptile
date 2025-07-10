@@ -64,7 +64,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
         offerVortexHornRecipe(exporter, URItems.VORTEX_HORN, Items.GOAT_HORN, (ItemConvertible) null);
         offerVortexHornRecipe(exporter, URItems.IRON_VORTEX_HORN, URItems.VORTEX_HORN, ConventionalItemTags.IRON_INGOTS);
         offerVortexHornRecipe(exporter, URItems.GOLD_VORTEX_HORN, URItems.IRON_VORTEX_HORN, ConventionalItemTags.GOLD_INGOTS);
-        offerVortexHornRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, URItems.IRON_VORTEX_HORN, ConventionalItemTags.DIAMOND_GEMS);
+        offerVortexHornRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, URItems.GOLD_VORTEX_HORN, ConventionalItemTags.DIAMOND_GEMS);
 
         RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, RecipeCategory.TOOLS, URItems.NETHERITE_VORTEX_HORN);
         RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_HELMET_NETHERITE);
