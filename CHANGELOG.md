@@ -1,1 +1,1 @@
-- Fix Moleclaw being an absolute destruction machine that is able to break bedrock (and some other unbreakable blocks)
+- Fixed Diamond Vortex Horn recipe using Iron Vortex Horn instead of gold one
