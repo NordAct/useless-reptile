@@ -58,6 +58,7 @@ dependencies {
 
     //test mods
     //modRuntimeOnly("dev.isxander:controlify:2.1.1+1.21.5-fabric")
+    modImplementation("maven.modrinth:debugutils:1.21.8-1.0.9-fabric")
 }
 
 processResources {

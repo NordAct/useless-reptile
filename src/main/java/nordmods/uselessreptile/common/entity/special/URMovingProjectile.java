@@ -5,7 +5,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.particle.EntityEffectParticleEffect;
+import net.minecraft.particle.TintedParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
@@ -57,7 +57,7 @@ public abstract class URMovingProjectile extends PersistentProjectileEntity {
         float g = (color >> 8 & 0xFF) / 255f;
         float b = (color & 0xFF) / 255f;
         for (int j = 0; j < amount; ++j) {
-            getWorld().addParticleClient(EntityEffectParticleEffect.create(ParticleTypes.ENTITY_EFFECT, r, g, b), getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), r, g, b);
+            getWorld().addParticleClient(TintedParticleEffect.create(ParticleTypes.ENTITY_EFFECT, r, g, b), getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), r, g, b);
         }
     }
 }
