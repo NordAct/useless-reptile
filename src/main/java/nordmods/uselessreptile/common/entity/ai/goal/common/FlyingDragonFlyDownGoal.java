@@ -16,8 +16,8 @@ public class FlyingDragonFlyDownGoal<T extends URDragonEntity & FlyingDragon> ex
 
     @Override
     public boolean canStart() {
-        if (this.mob.getInAirTimer() < this.mob.getMaxInAirTimer()) return false;
-        if (this.mob.getTarget() != null) return false;
+        if (!mob.shouldFlyDown()) return false;
+        if (mob.getTarget() != null) return false;
         return super.canStart();
     }
     @Override

@@ -49,9 +49,10 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
                     entity.setForwardSpeed(0.0F);
                     return;
                 }
-
+                if (entity.isLookingAtDirection(entity.getPitch(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
+                    entity.setMovementSpeed(speed);
+                } else entity.setForwardSpeed(0.0F);
                 entity.setRotation(destinationYaw, entity.getPitch());
-                entity.setMovementSpeed(speed);
             }
             case JUMPING -> {
                 entity.setMovementSpeed(speed);

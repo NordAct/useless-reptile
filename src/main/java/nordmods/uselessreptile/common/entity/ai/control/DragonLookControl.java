@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.control.LookControl;
 import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -69,5 +70,10 @@ public class DragonLookControl extends LookControl {
 
     public void setLockRotation(boolean state) {
         lockRotation = state;
+    }
+
+    @Override
+    public void lookAt(Entity target, float maxYawChange, float maxPitchChange) {
+        if (entity.getVisibilityCache().canSee(target)) super.lookAt(target, maxYawChange, maxPitchChange);
     }
 }

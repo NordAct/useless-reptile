@@ -14,4 +14,5 @@ public interface FlyingDragon {
     void forceFlightNextTick();
     boolean isFlyGliding();
     void setFlyGliding (boolean state);
+    boolean shouldFlyDown();
 }

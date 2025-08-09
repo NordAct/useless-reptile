@@ -47,10 +47,7 @@ import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
-import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserAttackGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserBailOutGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRevengeGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRoamAroundGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.*;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
@@ -81,7 +78,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private int bailOutTimer = 6000;
     private boolean shouldBailOut = false;
     private boolean isChallenger = false;
-    public BlockPos roamingSpot;
     private static final Identifier THUNDERSTORM_BONUS = UselessReptile.id("thunderstorm_bonus");
     private final URDragonPart wing1Left = new URDragonPart(this);
     private final URDragonPart wing1Right = new URDragonPart(this);
@@ -119,7 +115,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         goalSelector.add(5, new LightningChaserAttackGoal(this));
         goalSelector.add(6, new LightningChaserRoamAroundGoal(this));
         goalSelector.add(6, new LightningChaserBailOutGoal(this));
-        goalSelector.add(7, new FlyingDragonFlyDownGoal<>(this, 30));
+        goalSelector.add(7, new FlyingDragonFlyDownGoal<>(this, 60));
         goalSelector.add(8, new DragonReturnToHomePoint(this));
         goalSelector.add(9, new DragonWanderAroundGoal(this));
         goalSelector.add(10, new FlyingDragonFlyAroundGoal<>(this, 30));
@@ -327,7 +323,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         updateThunderstormBonus();
 
-        if (!shouldBailOut) {
+        if (!getWorld().isClient() && !shouldBailOut) {
             if (isChallenger) {
                 if (getTarget() == null && !isTamed()) {
                     if (bailOutTimer > 0) bailOutTimer--;
@@ -343,6 +339,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 removeAllPassengers();
             }
         }
+
+        getLookControl().setLockRotation(hasSurrendered() && !isFlying());
 
         updateChildParts();
     }
@@ -398,6 +396,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             setInAirTimer(getMaxInAirTimer());
             setTarget(null);
             setSurrendered(true);
+            setInAirTimer(getMaxInAirTimer());
+            if (damageSource.getAttacker() != null) setHomePoint(damageSource.getAttacker().getBlockPos());
+            else setHomePoint(getBlockPos());
             URPacketHelper.playSound(this, URSounds.LIGHTNING_CHASER_SURRENDER, getSoundCategory(), 1, 1,1);
             if (isChallenger) bailOutTimer = 6000;
         }
@@ -489,7 +490,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (!isTamed()) {
-            if (hasSurrendered() && getTamingProgress() <= 0 || player.isCreative() && isFavoriteFood(itemStack)) {
+            if (hasSurrendered() && !getShouldBailOut() && getTamingProgress() <= 0 || player.isCreative() && isFavoriteFood(itemStack)) {
                 setTamedBy(player);
                 setPersistent();
                 setSurrendered(false);
@@ -586,6 +587,21 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         if (!(getWorld() instanceof ServerWorld world)) return false;
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().lightningChaserGriefing.canTamedBreak() : URConfig.getConfig().lightningChaserGriefing.canUntamedBreak();
         return shouldBreakBlocks && world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
+    }
+
+    @Override
+    public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
+        return isChallenger || shouldBailOut || super.isLookingAtDirection(pitch, yaw, pitchTolerance, yawTolerance);
+    }
+
+    @Override
+    public boolean shouldFlyDown() {
+        return super.shouldFlyDown() || (hasSurrendered() && !shouldBailOut && isFlying());
+    }
+
+    @Override
+    public boolean shouldSave() {
+        return super.shouldSave() && !shouldBailOut;
     }
 
     @Override

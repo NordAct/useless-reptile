@@ -25,7 +25,7 @@ public class DragonCallBackGoal extends Goal {
     @Override
     public void start() {
         updateCountdownTicks = 0;
-        forceTeleportCountdown = 10;
+        forceTeleportCountdown = getTickCount(100);
         prevDistance = 0;
         proximityRange = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
         owner = entity.getOwner();
@@ -59,7 +59,6 @@ public class DragonCallBackGoal extends Goal {
 
     @Override
     public void tick() {
-        entity.getLookControl().lookAt(owner, entity.getRotationSpeed(), entity.getPitchLimit());
         entity.setSprinting(true);
         double distance = entity.squaredDistanceTo(owner);
         if (distance >= prevDistance) forceTeleportCountdown--;

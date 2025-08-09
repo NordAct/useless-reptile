@@ -64,9 +64,9 @@ public class URModEvents {
                         LightningChaserEntity lightningChaser = UREntities.LIGHTNING_CHASER_ENTITY.spawn(world, spawnPos, SpawnReason.EVENT);
                         if (lightningChaser != null) {
                             lightningChaser.setFlying(true);
-                            lightningChaser.roamingSpot = new BlockPos(pos.getX(),
+                            lightningChaser.setHomePoint(new BlockPos(pos.getX(),
                                     world.getTopY(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ()),
-                                    pos.getZ());
+                                    pos.getZ()));
                             URDragonEntity.SoundInfo soundInfo = lightningChaser.getSoundInfo("roar");
                             if (soundInfo != null)
                                 URPacketHelper.playSound(lightningChaser, SoundEvent.of(soundInfo.id()), lightningChaser.getSoundCategory(), soundInfo.volume(), soundInfo.pitch(), 1);
