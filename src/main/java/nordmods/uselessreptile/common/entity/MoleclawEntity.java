@@ -414,4 +414,9 @@ public class MoleclawEntity extends URRideableDragonEntity {
         if (isTooBrightAtPos(pos)) return false;
         return super.canTeleportTo(pos);
     }
+
+    @Override
+    public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
+        return isPanicking() || super.isLookingAtDirection(pitch, yaw, pitchTolerance, yawTolerance);
+    }
 }

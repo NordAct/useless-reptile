@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser;
 
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.world.chunk.ChunkStatus;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 
 import java.util.EnumSet;
@@ -21,33 +21,26 @@ public class LightningChaserBailOutGoal extends Goal {
     @Override
     public boolean canStart() {
         if (entity.isTamed() || !entity.isChallenger()) return false;
-        if (entity.getShouldBailOut()) {
-            if (pointOfInterest == null) {
-                Vec3d vec3d = entity.getRotationVector(0, entity.getYaw()).multiply(8192).add(entity.getPos());
-                pointOfInterest = new BlockPos((int) vec3d.x, entity.getWorld().getHeight(), (int) vec3d.z);
-            }
-            return true;
-        }
+        if (entity.getShouldBailOut()) return true;
         return false;
     }
 
     @Override
     public boolean shouldContinue() {
-        if (timeout > 240) return false;
-        PlayerEntity closestPlayer = entity.getWorld().getClosestPlayer(entity, 8192);
-        if (closestPlayer != null && pointOfInterest != null) pointOfInterest = new BlockPos(pointOfInterest.getX(), closestPlayer.getBlockY() + 40, pointOfInterest.getZ());
-        else return false;
+        if (timeout > getTickCount(20*60)) return false;
         return this.canStart();
     }
 
     @Override
     public void start() {
+        updatePointOfInterest();
         entity.setSurrendered(false);
         entity.setIsSitting(false);
     }
 
     @Override
     public void stop() {
+        entity.getNavigation().stop();
         if (canStart()) entity.discard();
     }
 
@@ -55,5 +48,18 @@ public class LightningChaserBailOutGoal extends Goal {
     public void tick() {
         entity.getNavigation().startMovingTo(pointOfInterest.getX(), pointOfInterest.getY(), pointOfInterest.getZ(), 1);
         timeout++;
+    }
+
+    private void updatePointOfInterest() {
+        int dist = 512;
+        BlockPos pos;
+        do {
+            pos = BlockPos.ofFloored(entity.getRotationVector(0, entity.getYaw()).multiply(dist).add(entity.getPos()));
+            int x = ChunkSectionPos.getSectionCoord(pos.getX());
+            int z = ChunkSectionPos.getSectionCoord(pos.getZ());
+            if (entity.getWorld().getChunk(x, z, ChunkStatus.SURFACE, false) != null) break;
+            dist -= 16;
+        } while (true);
+        pointOfInterest = new BlockPos(pos.getX(), 256, pos.getX());
     }
 }

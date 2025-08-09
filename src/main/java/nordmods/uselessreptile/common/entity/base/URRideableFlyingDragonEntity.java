@@ -16,7 +16,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
-import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonNavigation;
+import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
+import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.network.LiftoffParticlesS2CPacket;
 
@@ -29,11 +30,15 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     protected boolean shouldGlide;
     private int glideTimer = 100;
     private boolean forceFlight = false;
+    private final FlyingDragonLandNavigation<URRideableFlyingDragonEntity> landNavigation;
+    private final FlyingDragonAirNavigation<URRideableFlyingDragonEntity> airNavigation;
 
     protected URRideableFlyingDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         moveControl = new FlyingDragonMoveControl<>(this);
-        navigation = new FlyingDragonNavigation<>(this, world);
+        landNavigation = new FlyingDragonLandNavigation<>(this, getWorld());
+        airNavigation = new FlyingDragonAirNavigation<>(this, getWorld());
+        navigation = landNavigation;
     }
 
     @Override
@@ -70,6 +75,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
+    public void onTrackedDataSet(TrackedData<?> data) {
+        super.onTrackedDataSet(data);
+        if (!getWorld().isClient)
+            if (FLYING.equals(data)) getNavigation().recalculatePath();
+    }
+
+    @Override
     public void tick() {
         super.tick();
         updateTiltProgress();
@@ -81,6 +93,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();
+
+        navigation = isFlying() ? airNavigation : landNavigation;
     }
 
     @Override
@@ -102,7 +116,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
-        if (isOnGround()) setFlying(false);
+        if (!getWorld().isClient() && isOnGround())
+            setFlying(false);
         setNoGravity(isFlying());
     }
 
@@ -280,5 +295,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     public boolean hasVerticalInput() {
         return isFlying() && !freeLook();
+    }
+
+    @Override
+    public boolean shouldFlyDown() {
+        return getInAirTimer() >= getMaxInAirTimer();
     }
 }

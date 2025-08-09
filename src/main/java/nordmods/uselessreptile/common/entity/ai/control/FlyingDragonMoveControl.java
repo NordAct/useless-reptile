@@ -64,12 +64,13 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                     entity.setForwardSpeed(0.0F);
                     return;
                 }
+                if (entity.isLookingAtDirection(entity.getPitch(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
+                    if (accelerationDuration < entity.getMaxAccelerationDuration()) accelerationDuration++;
+                    if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration--;
 
-                if (accelerationDuration < entity.getMaxAccelerationDuration()) accelerationDuration++;
-                if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration--;
-
+                    entity.setMovementSpeed(speed * entity.getSpeedModifier());
+                } else entity.setForwardSpeed(0.0F);
                 entity.setRotation(destinationYaw, entity.getPitch());
-                entity.setMovementSpeed(speed * entity.getSpeedModifier());
             }
             case JUMPING -> {
                 entity.setMovementSpeed(speed * entity.getSpeedModifier());

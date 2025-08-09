@@ -2,20 +2,20 @@ package nordmods.uselessreptile.common.entity.ai.goal.common;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.ai.FuzzyPositions;
-import net.minecraft.entity.ai.goal.FlyGoal;
+import net.minecraft.entity.ai.goal.WanderAroundGoal;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jetbrains.annotations.Nullable;
 
-public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> extends FlyGoal {
-
+public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> extends WanderAroundGoal {
     protected final T mob;
     protected final int range;
 
 
     public FlyingDragonFlyAroundGoal(T entity, int range) {
-        super(entity, 1);
+        super(entity, 1, DEFAULT_CHANCE, false);
         this.mob = entity;
         this.range = range;
     }
@@ -31,8 +31,7 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
         if (!this.mob.isFlying()) return false;
         return super.canStart();
     }
-
-    @Nullable
+    
     protected BlockPos liquidAdjustment(BlockPos destination) {
         float height = mob.getHeightMod() + 0.5f;
         int adjustment = 0;
@@ -54,15 +53,24 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
     protected BlockPos findRandomAirSpot() {
         BlockPos div = null;
         for (int i = 0; i < 5; i++) {
-            BlockPos fuzz = FuzzyPositions.localFuzz(mob.getRandom(), range, 5);
+            BlockPos fuzz = FuzzyPositions.localFuzz(mob.getRandom(), range, 20);
+            if (fuzz.toCenterPos().length() < 10) continue;
             BlockPos result = mob.getBlockPos().add(fuzz);
-            if (mob.getWorld().getBlockState(result).isAir()) {
+            if (mob.getWorld().getBlockState(result).isAir() && mob.getWorld().getBlockState(result.down()).isAir()) {
                 div = result;
                 break;
             }
         }
         if (div == null) return null;
         return liquidAdjustment(div);
+    }
+
+    @Nullable
+    @Override
+    protected Vec3d getWanderTarget() {
+        BlockPos target = findRandomAirSpot();
+        if (target != null) return target.toCenterPos();
+        else return null;
     }
 
 }

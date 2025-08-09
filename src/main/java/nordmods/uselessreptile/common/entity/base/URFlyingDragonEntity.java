@@ -15,23 +15,27 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
-import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonNavigation;
+import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
+import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.network.LiftoffParticlesS2CPacket;
 
 public abstract class URFlyingDragonEntity extends URDragonEntity implements FlyingDragon {
-
     protected final int maxInAirTimer = 600;
     protected float pitchLimitAir = 90;
     protected float tiltProgress;
     protected boolean shouldGlide;
     private int glideTimer = 100;
     private boolean forceFlight = false;
+    private final FlyingDragonLandNavigation<URFlyingDragonEntity> landNavigation;
+    private final FlyingDragonAirNavigation<URFlyingDragonEntity> airNavigation;
 
     protected URFlyingDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         moveControl = new FlyingDragonMoveControl<>(this);
-        navigation = new FlyingDragonNavigation<>(this, world);
+        landNavigation = new FlyingDragonLandNavigation<>(this, getWorld());
+        airNavigation = new FlyingDragonAirNavigation<>(this, getWorld());
+        navigation = landNavigation;
     }
 
     @Override
@@ -66,6 +70,13 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     public void readCustomDataFromNbt(NbtCompound tag) {
         super.readCustomDataFromNbt(tag);
         setFlying(tag.getBoolean("IsFlying"));
+    }
+
+    @Override
+    public void onTrackedDataSet(TrackedData<?> data) {
+        super.onTrackedDataSet(data);
+        if (!getWorld().isClient)
+            if (FLYING.equals(data)) getNavigation().recalculatePath();
     }
 
     @Override
@@ -118,6 +129,8 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();
+
+        navigation = isFlying() ? airNavigation : landNavigation;
     }
 
     @Override
@@ -131,7 +144,8 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.GENERIC_FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED);
         setMovementSpeed(speed * getSpeedModifier());
 
-         if (!getWorld().isClient() && (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle())) setFlying(false);
+         if (!getWorld().isClient() && (isOnGround() && !isInsideWaterOrBubbleColumn() || hasVehicle()))
+             setFlying(false);
         setNoGravity(isFlying());
 
         if (isFlying()) {
@@ -192,5 +206,10 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
             forceFlight = false;
             startToFly();
         }
+    }
+
+    @Override
+    public boolean shouldFlyDown() {
+        return getInAirTimer() >= getMaxInAirTimer();
     }
 }
