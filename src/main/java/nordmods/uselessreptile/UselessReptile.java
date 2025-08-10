@@ -32,6 +32,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
         URModEvents.init();
         URPackets.init();
         URRecipeSerializers.init();
+        URBlocks.init();
     }
 
     @Override

@@ -472,6 +472,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         if (isTamed() && isOwner(player)) {
             if (this instanceof HeadMountDragon && player.isSneaking() && itemStack.isEmpty()) {
+                detachLeash();
                 startRiding(player);
                 return ActionResult.SUCCESS;
             }

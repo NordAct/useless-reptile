@@ -7,6 +7,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.dimension.DimensionType;
 import nordmods.uselessreptile.UselessReptile;
 
 public class URTags {
@@ -42,6 +43,8 @@ public class URTags {
     public static final TagKey<Item> MOLECLAW_FOOD = register(RegistryKeys.ITEM, "moleclaw_food");
     public static final TagKey<Item> RIVER_PIKEHORN_FOOD = register(RegistryKeys.ITEM, "river_pikehorn_food");
     public static final TagKey<Item> LIGHTNING_CHASER_FOOD = register(RegistryKeys.ITEM, "lightning_chaser_food");
+
+    public static final TagKey<DimensionType> DEPLETED_MAGMA_REGENERATES = register(RegistryKeys.DIMENSION_TYPE, "depleted_magma_regenerates");
 
     private static<T> TagKey<T> register(RegistryKey<? extends Registry<T>> registryKey, String id) {
         return TagKey.of(registryKey, UselessReptile.id(id));

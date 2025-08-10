@@ -6,10 +6,12 @@ import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.*;
 import net.minecraft.client.render.item.model.ItemModel;
+import net.minecraft.client.render.model.json.ModelVariant;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.item_property.FluteModeProperty;
+import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URItems;
 
 import java.util.Optional;
@@ -22,7 +24,31 @@ public class URModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-
+        ModelVariant modelVariant = new ModelVariant(Identifier.of("block/netherrack"));
+        blockStateModelGenerator.blockStateCollector
+                .accept(
+                        VariantsBlockModelDefinitionCreator.of(
+                                URBlocks.DEPLETED_MAGMA,
+                                BlockStateModelGenerator.createWeightedVariant(
+                                        modelVariant,
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_X_90),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_X_180),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_X_270),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_90),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_90.then(BlockStateModelGenerator.ROTATE_X_90)),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_90.then(BlockStateModelGenerator.ROTATE_X_180)),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_90.then(BlockStateModelGenerator.ROTATE_X_270)),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_180),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_180.then(BlockStateModelGenerator.ROTATE_X_90)),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_180.then(BlockStateModelGenerator.ROTATE_X_180)),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_180.then(BlockStateModelGenerator.ROTATE_X_270)),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_270),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_270.then(BlockStateModelGenerator.ROTATE_X_90)),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_270.then(BlockStateModelGenerator.ROTATE_X_180)),
+                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_270.then(BlockStateModelGenerator.ROTATE_X_270))
+                                )
+                        )
+                );
     }
 
     @Override
