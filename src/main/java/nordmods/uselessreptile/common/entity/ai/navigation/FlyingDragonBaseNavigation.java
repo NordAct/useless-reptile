@@ -1,9 +1,7 @@
 package nordmods.uselessreptile.common.entity.ai.navigation;
 
-import io.github.flemmli97.debugutils.utils.DebuggingPackets;
 import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.pathing.BirdNavigation;
-import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
@@ -12,9 +10,6 @@ import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
 
 
 public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & FlyingDragon> extends BirdNavigation {
@@ -114,16 +109,6 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
     protected FlyingDragonMoveControl<T> getMoveControl() {
         return (FlyingDragonMoveControl<T>) entity.getMoveControl();
-    }
-
-    @Override
-    @Nullable
-    protected Path findPathToAny(Set<BlockPos> positions, int range, boolean useHeadPos, int distance, float followRange) {
-        positions.stream().findFirst().ifPresent(pos -> {
-            if (pos.equals(BlockPos.ORIGIN)) throw new IllegalStateException("How the fuck");
-        });
-
-        return super.findPathToAny(positions, range, useHeadPos, distance, followRange);
     }
 }
 

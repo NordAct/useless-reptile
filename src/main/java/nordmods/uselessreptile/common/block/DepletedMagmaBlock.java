@@ -16,7 +16,7 @@ import net.minecraft.world.WorldView;
 import nordmods.uselessreptile.common.init.URTags;
 
 public class DepletedMagmaBlock extends NetherrackBlock {
-    public static final IntProperty AGE = Properties.AGE_15;
+    public static final IntProperty AGE = Properties.AGE_2;
     public DepletedMagmaBlock(Settings settings) {
         super(settings);
         setDefaultState(stateManager.getDefaultState().with(AGE, 0));
@@ -36,7 +36,7 @@ public class DepletedMagmaBlock extends NetherrackBlock {
 
     private void tickRegenerate(BlockState state, ServerWorld world, BlockPos pos) {
         int age = state.get(AGE);
-        if (age < Properties.AGE_15_MAX) world.setBlockState(pos, state.with(AGE, age + 1), Block.SKIP_REDRAW_AND_BLOCK_ENTITY_REPLACED_CALLBACK);
+        if (age < Properties.AGE_2_MAX) world.setBlockState(pos, state.with(AGE, age + 1), Block.SKIP_REDRAW_AND_BLOCK_ENTITY_REPLACED_CALLBACK);
         else world.setBlockState(pos, Blocks.MAGMA_BLOCK.getDefaultState());
     }
 

@@ -1,14 +1,16 @@
 package nordmods.uselessreptile.common.entity.ai.navigation;
 
+import io.github.flemmli97.debugutils.utils.DebuggingPackets;
 import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.pathing.MobNavigation;
+import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class DragonNavigation extends MobNavigation{
+public class DragonNavigation extends MobNavigation {
     protected final URDragonEntity entity;
     protected boolean nodeChecked;
     protected boolean isSurroundingEmpty;
@@ -20,19 +22,21 @@ public class DragonNavigation extends MobNavigation{
 
     @Override
     public void tick() {
-        BlockPos target = getTargetPos();
+        if (entity.hasControllingPassenger() || entity.hasVehicle() || entity.isSitting()) return;
+
         boolean isFullBlock = entity.getSteppingBlockState().isFullCube(entity.getWorld(), entity.getSteppingPos());
         if (NavigationConditions.isSolidAt(entity, entity.getBlockPos()) && isFullBlock) entity.getJumpControl().setActive();
+        entity.setPathfindingPenalty(PathNodeType.WATER, !entity.hasTargetInWater() ? 8 : 0);
+        entity.setPathfindingPenalty(PathNodeType.WATER_BORDER, !entity.hasTargetInWater() ? 8 : 0);
 
+        tickCount++;
+
+        BlockPos target = getTargetPos();
         if (!isIdle() && target != null) {
-            tickCount++;
             continueFollowingPath();
             moveOrStop(target);
-            if (!isIdle()) {
-                double yDiffNode = currentPath.getCurrentNode().getPos().getY() - entity.getY();
-                if (yDiffNode > entity.getStepHeight() && entity.horizontalCollision) entity.getJumpControl().setActive();
-            }
         }
+        checkTimeouts(getPos());
 
         //TODO pathfinding debug option
         //if (currentPath != null) {
@@ -40,22 +44,22 @@ public class DragonNavigation extends MobNavigation{
         //        ServerPlayNetworking.send(player, new DebugPathCustomPayload(entity.getId(), currentPath, nodeReachProximity));
         //    });
         //}
+        DebuggingPackets.sendPathfindingPacket(entity.getWorld(), entity, currentPath, nodeReachProximity);
     }
 
     @Override
     protected void continueFollowingPath() {
         Vec3d vec3d = getPos();
-        int index = currentPath.getCurrentNodeIndex();
-        Vec3d currentTarget = Vec3d.ofBottomCenter(currentPath.getNodePos(index));
+        Vec3d currentTarget = Vec3d.ofBottomCenter(currentPath.getCurrentNodePos());
         getMoveControl().moveTo(currentTarget.x, currentTarget.y, currentTarget.z, 1);
 
         double xDiff = Math.abs(entity.getX() - currentTarget.getX());
-        double yDiff = currentTarget.getY() - entity.getY();
+        double yDiff = entity.getY() - currentTarget.getY();
         double zDiff = Math.abs(entity.getZ() - currentTarget.getZ());
 
-        boolean bl = xDiff < (double)nodeReachProximity && zDiff < (double)nodeReachProximity &&  yDiff <= entity.getStepHeight() && yDiff > -3.0D;
+        boolean bl = xDiff < (double)nodeReachProximity && zDiff < (double)nodeReachProximity &&  yDiff <= entity.getStepHeight() && yDiff > -entity.getSafeFallDistance();
 
-        if (bl || canJumpToNext(currentPath.getNode(index).type) && shouldJumpToNextNode(vec3d)) {
+        if (bl || canJumpToNext(currentPath.getCurrentNode().type) && shouldJumpToNextNode(vec3d)) {
             currentPath.next();
             if (!currentPath.isFinished()) {
                 currentTarget = Vec3d.ofBottomCenter(getTargetPos());
@@ -64,6 +68,8 @@ public class DragonNavigation extends MobNavigation{
             pathStartTime = tickCount;
             nodeChecked = false;
         }
+
+        if (currentTarget.distanceTo(getTargetPos().toCenterPos()) > entity.getPos().distanceTo(getTargetPos().toCenterPos())) recalculatePath();
     }
 
     protected boolean shouldJumpToNextNode(Vec3d currentPos) {
@@ -89,9 +95,8 @@ public class DragonNavigation extends MobNavigation{
     protected void moveOrStop(BlockPos target) {
         double distance = entity.squaredDistanceTo(target.getX(), target.getY(), target.getZ());
         nodeReachProximity = entity.getWidth() / 2;
-        if (distance <= nodeReachProximity) entity.getNavigation().stop();
+        if (distance <= nodeReachProximity) stop();
     }
-
 
     protected MoveControl getMoveControl() {
         return entity.getMoveControl();

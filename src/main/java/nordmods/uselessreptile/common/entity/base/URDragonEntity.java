@@ -1083,7 +1083,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         float dYaw = Math.abs(getYaw() % 360 - yaw);
         float dPitch = Math.abs(getPitch() - pitch);
         return dPitch < pitchTolerance
-                && dYaw < yawTolerance;
+                && dYaw % 360 < yawTolerance;
     }
 
     protected class JukeboxEventListener implements GameEventListener {
