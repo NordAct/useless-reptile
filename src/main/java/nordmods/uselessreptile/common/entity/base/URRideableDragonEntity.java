@@ -6,27 +6,33 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.RideableInventory;
+import net.minecraft.entity.attribute.EntityAttributeInstance;
+import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.StackReference;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeybinds;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements RideableInventory {
+    public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
+
     protected URRideableDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
     }
@@ -106,6 +112,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public void travel(Vec3d movementInput) {
         if (getWorld() instanceof ServerWorld) {
             boolean hasRider = canBeControlledByRider();
+            updateRiderBonus(hasRider);
             getLookControl().setLockRotation(hasRider);
             if (hasRider) setHomePoint(getBlockPos());
             else updateInputs(false, false, false, false, false, false, false, false);
@@ -187,18 +194,23 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         return inventory != null && isSaddleItem(inventory.getStack(0));
     }
 
+    protected void updateRiderBonus(boolean hasRider) {
+        float mult = URMobAttributesConfig.getConfig().riddenDragonGroundSpeedMultiplier;
+        if (mult == 1) return;
+
+        EntityAttributeInstance entityAttributeInstance = getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+        if (hasRider) {
+            if (!entityAttributeInstance.hasModifier(RIDER_BONUS))
+                entityAttributeInstance.addTemporaryModifier(new EntityAttributeModifier(RIDER_BONUS, mult, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        } else entityAttributeInstance.removeModifier(RIDER_BONUS);
+    }
+
     @Override
     public void openInventory(PlayerEntity player) {
         if (!getWorld().isClient() && canBeControlledByRider() && isOwner(player)) {
             GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
             player.openHandledScreen(this);
         }
-    }
-
-    @Override
-    public StackReference getStackReference(int mappedIndex) {
-        int i = mappedIndex - 500;
-        return i >= 0 && i < inventory.size() ? StackReference.of(inventory, i) : super.getStackReference(mappedIndex);
     }
 
     protected void setRotation(PlayerEntity rider) {

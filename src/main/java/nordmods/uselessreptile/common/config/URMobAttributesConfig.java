@@ -17,9 +17,9 @@ public class URMobAttributesConfig {
             .build();
 
     @SerialEntry(comment = "GLOBAL MULTIPLIERS")
-    public float dragonGroundSpeedMultiplier = 1;
+    public float riddenDragonGroundSpeedMultiplier = 1;
     @SerialEntry
-    public float dragonFlyingSpeedMultiplier = 1;
+    public float riddenDragonFlyingSpeedMultiplier = 1;
 
     @SerialEntry(comment = """
             Base dragon attributes.

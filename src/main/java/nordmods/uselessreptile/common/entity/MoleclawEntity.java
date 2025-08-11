@@ -109,7 +109,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
                 .add(EntityAttributes.MAX_HEALTH, attributes().moleclawHealth)
                 .add(EntityAttributes.ARMOR, attributes().moleclawArmor)
                 .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().moleclawArmorToughness)
-                .add(EntityAttributes.MOVEMENT_SPEED, attributes().moleclawGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.MOVEMENT_SPEED, attributes().moleclawGroundSpeed)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().moleclawRotationSpeedGround)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().moleclawBasePrimaryAttackCooldown)
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().moleclawBaseSecondaryAttackCooldown)

@@ -18,6 +18,7 @@ import net.minecraft.storage.WriteView;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
@@ -218,6 +219,19 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             }
             return new Vec3d(0, verticalSpeed * MathHelper.clamp(accelerationModifier, 0.25, 1.5), flyingSpeed * accelerationModifier * 2.5F);
         }
+    }
+
+    protected void updateRiderBonus(boolean hasRider) {
+        super.updateRiderBonus(hasRider);
+
+        float mult = URMobAttributesConfig.getConfig().riddenDragonFlyingSpeedMultiplier;
+        if (mult == 1) return;
+
+        EntityAttributeInstance entityAttributeInstance = getAttributeInstance(EntityAttributes.FLYING_SPEED);
+        if (hasRider) {
+            if (!entityAttributeInstance.hasModifier(RIDER_BONUS))
+                entityAttributeInstance.addTemporaryModifier(new EntityAttributeModifier(RIDER_BONUS, mult, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+        } else entityAttributeInstance.removeModifier(RIDER_BONUS);
     }
 
     @Override

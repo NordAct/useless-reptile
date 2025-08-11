@@ -23,6 +23,7 @@ import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
+import net.minecraft.inventory.StackReference;
 import net.minecraft.inventory.StackWithSlot;
 import net.minecraft.item.Instrument;
 import net.minecraft.item.ItemStack;
@@ -1069,6 +1070,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             Vec3d vec3d = new Vec3d(entity.getX() - getX(), entity.getY() - getY(), entity.getZ() - getZ()).normalize().multiply(Math.max(distance - 2.0F, 0.0F));
             getNavigation().startMovingAlong(getNavigation().findPathTo(BlockPos.ofFloored(getX() + vec3d.x, getY() + vec3d.y, getZ() + vec3d.z), 0, 16), getFollowLeashSpeed());
         }
+    }
+
+    @Override
+    public StackReference getStackReference(int mappedIndex) {
+        int i = mappedIndex - 500;
+        return i >= 0 && i < inventory.size() ? StackReference.of(inventory, i) : super.getStackReference(mappedIndex);
     }
 
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {

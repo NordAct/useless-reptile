@@ -133,7 +133,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
                 .add(EntityAttributes.MAX_HEALTH, attributes().magmamuncherHealth)
                 .add(EntityAttributes.ARMOR, attributes().magmamuncherArmor)
                 .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().magmamuncherArmorToughness)
-                .add(EntityAttributes.MOVEMENT_SPEED, attributes().magmamuncherGroundSpeed * attributes().dragonGroundSpeedMultiplier)
+                .add(EntityAttributes.MOVEMENT_SPEED, attributes().magmamuncherGroundSpeed)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().magmamuncherRotationSpeedGround)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().magmamuncherBasePrimaryAttackCooldown)
                 .add(URAttributes.DRAGON_REGENERATION_FROM_FOOD, attributes().magmamuncherRegenerationFromFood);

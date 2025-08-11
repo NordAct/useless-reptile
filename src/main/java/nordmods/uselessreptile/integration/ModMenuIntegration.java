@@ -494,28 +494,28 @@ public class ModMenuIntegration implements ModMenuApi {
                 .description(OptionDescription.createBuilder()
                         .text(Text.translatable("config.uselessreptile.group.globalMultipliers.@Tooltip")).build());
 
-        Option<Float> dragonGroundSpeedMultiplier = Option.<Float>createBuilder()
-                .name(Text.translatable("config.uselessreptile.option.dragonGroundSpeedMultiplier"))
+        Option<Float> riddenDragonGroundSpeedMultiplier = Option.<Float>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.riddenDragonGroundSpeedMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(Text.translatable("config.uselessreptile.option.dragonGroundSpeedMultiplier.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.dragonGroundSpeedMultiplier,
-                        () -> config.dragonGroundSpeedMultiplier,
-                        val -> config.dragonGroundSpeedMultiplier = val)
+                        .text(Text.translatable("config.uselessreptile.option.riddenDragonGroundSpeedMultiplier.@Tooltip")).build())
+                .binding(defaults.riddenDragonGroundSpeedMultiplier,
+                        () -> config.riddenDragonGroundSpeedMultiplier,
+                        val -> config.riddenDragonGroundSpeedMultiplier = val)
                 .customController(FloatFieldController::new)
                 .build();
 
-        Option<Float> dragonFlyingSpeedMultiplier = Option.<Float>createBuilder()
-                .name(Text.translatable("config.uselessreptile.option.dragonFlyingSpeedMultiplier"))
+        Option<Float> riddenDragonFlyingSpeedMultiplier = Option.<Float>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.riddenDragonFlyingSpeedMultiplier"))
                 .description(OptionDescription.createBuilder()
-                        .text(Text.translatable("config.uselessreptile.option.dragonFlyingSpeedMultiplier.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.dragonFlyingSpeedMultiplier,
-                        () -> config.dragonFlyingSpeedMultiplier,
-                        val -> config.dragonFlyingSpeedMultiplier = val)
+                        .text(Text.translatable("config.uselessreptile.option.riddenDragonFlyingSpeedMultiplier.@Tooltip")).build())
+                .binding(defaults.riddenDragonFlyingSpeedMultiplier,
+                        () -> config.riddenDragonFlyingSpeedMultiplier,
+                        val -> config.riddenDragonFlyingSpeedMultiplier = val)
                 .customController(FloatFieldController::new)
                 .build();
 
-        globalMultipliersGroup.option(dragonGroundSpeedMultiplier);
-        globalMultipliersGroup.option(dragonFlyingSpeedMultiplier);
+        globalMultipliersGroup.option(riddenDragonGroundSpeedMultiplier);
+        globalMultipliersGroup.option(riddenDragonFlyingSpeedMultiplier);
         mobAttributesCategory.group(globalMultipliersGroup.build());
 
         addWyvernAttributesGroup(mobAttributesCategory, config, defaults);
