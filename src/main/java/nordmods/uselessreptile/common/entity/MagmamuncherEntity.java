@@ -176,6 +176,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
 
     @Override
     protected void initGoals() {
+        goalSelector.add(0, new SwimGoal(this));
         goalSelector.add(1, new DragonCallBackGoal(this));
         goalSelector.add(2, new SitGoal(this));
         goalSelector.add(3, new MagmamuncherConsumeFoodFromInventoryGoal(this));
