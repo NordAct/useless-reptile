@@ -54,7 +54,7 @@ public class DragonNavigation extends MobNavigation {
         getMoveControl().moveTo(currentTarget.x, currentTarget.y, currentTarget.z, 1);
 
         double xDiff = Math.abs(entity.getX() - currentTarget.getX());
-        double yDiff = entity.getY() - currentTarget.getY();
+        double yDiff = currentTarget.getY() - entity.getY();
         double zDiff = Math.abs(entity.getZ() - currentTarget.getZ());
 
         boolean bl = xDiff < (double)nodeReachProximity && zDiff < (double)nodeReachProximity &&  yDiff <= entity.getStepHeight() && yDiff > -entity.getSafeFallDistance();

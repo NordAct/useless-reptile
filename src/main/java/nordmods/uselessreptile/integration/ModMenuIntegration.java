@@ -266,6 +266,15 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.lightningChaserGriefing = val)
                 .customController(opt -> new EnumController<>(opt, URConfig.DragonGriefing.class))
                 .build();
+        Option<URConfig.DragonGriefing> magmamuncherGriefing = Option.<URConfig.DragonGriefing>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.magmamuncherGriefing"))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.allowDragonGriefing.@Tooltip")).build())
+                .binding(defaults.magmamuncherGriefing,
+                        () -> config.magmamuncherGriefing,
+                        val -> config.magmamuncherGriefing = val)
+                .customController(opt -> new EnumController<>(opt, URConfig.DragonGriefing.class))
+                .build();
         Option<Integer> blockDropChance = Option.<Integer>createBuilder()
                 .name(Text.translatable("config.uselessreptile.option.blockDropChance"))
                 .description(OptionDescription.createBuilder()

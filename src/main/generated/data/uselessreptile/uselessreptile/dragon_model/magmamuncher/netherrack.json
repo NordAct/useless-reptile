@@ -9,7 +9,7 @@
       "id": "minecraft:block.netherrack.step",
       "name": "step",
       "pitch": 0.8,
-      "volume": 0.5
+      "volume": 0.25
     },
     {
       "id": "uselessreptile:river_pikehorn.attack",

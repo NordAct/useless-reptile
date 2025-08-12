@@ -3,17 +3,22 @@ package nordmods.uselessreptile.common.entity.ai.goal.magmamuncher;
 import net.minecraft.block.Blocks;
 import net.minecraft.command.argument.EntityAnchorArgumentType;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.pathing.Path;
+import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import nordmods.uselessreptile.common.entity.MagmamuncherEntity;
 
+import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Set;
 //todo drop when magma is eaten
 public class MagmamuncherEatMagmaGoal extends Goal {
     private final MagmamuncherEntity entity;
     private int timer;
     private Direction offset = null;
+    private final List<BlockPos> invalidPos = new ArrayList<>();
 
     public MagmamuncherEatMagmaGoal(MagmamuncherEntity entity) {
         this.entity = entity;
@@ -22,6 +27,8 @@ public class MagmamuncherEatMagmaGoal extends Goal {
 
     @Override
     public boolean canStart() {
+        if (!entity.canBreakBlocks()) return false;
+
         if (entity.hasVehicle() || entity.isSitting() || entity.getTarget() != null) return false;
 
         if (entity.eatMagmaCooldown > 0) return false;
@@ -37,7 +44,8 @@ public class MagmamuncherEatMagmaGoal extends Goal {
 
     @Override
     public void start() {
-        timer = getTickCount(20);
+        timer = getTickCount(40);
+        invalidPos.clear();
     }
 
     @Override
@@ -46,6 +54,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
         entity.eatMagmaCooldown = MagmamuncherEntity.EAT_MAGMA_COOLDOWN_AVERAGE + entity.getRandom().nextBetween(-20*10, 20*10);
         entity.setMagmaBlockPos(BlockPos.ORIGIN);
         entity.setEatingMagma(false);
+        invalidPos.clear();
         entity.getNavigation().stop();
     }
 
@@ -56,11 +65,11 @@ public class MagmamuncherEatMagmaGoal extends Goal {
 
     @Override
     public void tick() {
-        timer++;
+        if (entity.isEatingMagma()) entity.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, entity.getMagmaBlockPos().toCenterPos());
 
         BlockPos targetPos = entity.getMagmaBlockPos();
         double dist = targetPos.toCenterPos().squaredDistanceTo(entity.getPos());
-        if (dist < MagmamuncherEntity.DISTANCE_TO_EAT * MagmamuncherEntity.DISTANCE_TO_EAT) {
+        if (dist < MagmamuncherEntity.DISTANCE_TO_EAT * MagmamuncherEntity.DISTANCE_TO_EAT && entity.getLookControl().isLookingAtTarget()) {
             entity.setEatingMagma(true);
         }
         targetPos = targetPos.offset(offset);
@@ -69,46 +78,70 @@ public class MagmamuncherEatMagmaGoal extends Goal {
             offset = null;
             return;
         }
-
         entity.getNavigation().startMovingTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1);
         if (entity.getNavigation().isIdle()) {
-            if (dist > MagmamuncherEntity.DISTANCE_TO_EAT * MagmamuncherEntity.DISTANCE_TO_EAT) //bandaid fix for a dumbass not getting close enough to eat its magma
+            //bandaid fix for a dumbass not getting close enough to eat its magma
+            if (dist > MagmamuncherEntity.DISTANCE_TO_EAT * MagmamuncherEntity.DISTANCE_TO_EAT && dist < 3) {
                 entity.addVelocity(targetPos.toCenterPos().subtract(entity.getPos()).normalize().multiply(0.1));
-            entity.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, entity.getMagmaBlockPos().toCenterPos());
+                return;
+            } else if (entity.getNavigation().getTargetPos() != null && entity.getNavigation().getTargetPos().getY() < entity.getMagmaBlockPos().getY()) {
+                invalidPos.add(entity.getMagmaBlockPos());
+                entity.setMagmaBlockPos(BlockPos.ORIGIN);
+                entity.getNavigation().stop();
+                offset = null;
+            }
         }
+        if (!entity.isEatingMagma() && entity.getNavigation().isIdle()) timer--;
     }
 
     private void locateClosestBlock() {
-        double dist = Double.MAX_VALUE;
-        for (BlockPos blockPos : BlockPos.iterate(entity.getBoundingBox().expand(5, 5 ,5))) {
+        int dist = Integer.MAX_VALUE;
+        for (BlockPos blockPos : BlockPos.iterate(entity.getBoundingBox().expand(10, 10 ,10))) {
             blockPos = blockPos.toImmutable();
-            double newDist = blockPos.getSquaredDistance(entity.getBlockPos());
+            if (invalidPos.contains(blockPos)) continue;
+
+            //taxicab distance with some weights... because this idiot tries to pathfind where it can't
+            int dx =  Math.abs(blockPos.getX() - entity.getBlockX());
+            int dy = Math.abs(blockPos.getY() - entity.getBlockY());
+            int dz = Math.abs(blockPos.getZ() - entity.getBlockZ());
+            int newDist = dx + dy * (dy > 1 ? 2 : 0) + dz;
             if (newDist > dist) continue;
 
             if (!(entity.getWorld().getBlockState(blockPos).getBlock().equals(Blocks.MAGMA_BLOCK))) continue;
 
             offset = null;
-            if (entity.getWorld().getBlockState(blockPos.up()).isAir())
+            if (entity.getPathfindingPenalty(entity.getNavigation().getNodeMaker().getDefaultNodeType(entity, blockPos.up())) == 0)
                 offset = Direction.UP;
-            else if (entity.getWorld().getBlockState(blockPos.south()).getCollisionShape(entity.getWorld(), blockPos.south()).isEmpty())
+            else if (entity.getPathfindingPenalty(entity.getNavigation().getNodeMaker().getDefaultNodeType(entity, blockPos.down())) == 0)
+                offset = Direction.DOWN;
+            else if (entity.getPathfindingPenalty(entity.getNavigation().getNodeMaker().getDefaultNodeType(entity, blockPos.south())) == 0)
                 offset = Direction.SOUTH;
-            else if (entity.getWorld().getBlockState(blockPos.north()).getCollisionShape(entity.getWorld(), blockPos.north()).isEmpty())
+            else if (entity.getPathfindingPenalty(entity.getNavigation().getNodeMaker().getDefaultNodeType(entity, blockPos.north())) == 0)
                 offset = Direction.NORTH;
-            else if (entity.getWorld().getBlockState(blockPos.east()).getCollisionShape(entity.getWorld(), blockPos.east()).isEmpty())
+            else if (entity.getPathfindingPenalty(entity.getNavigation().getNodeMaker().getDefaultNodeType(entity, blockPos.east())) == 0)
                 offset = Direction.EAST;
-            else if (entity.getWorld().getBlockState(blockPos.west()).getCollisionShape(entity.getWorld(), blockPos.west()).isEmpty())
+            else if (entity.getPathfindingPenalty(entity.getNavigation().getNodeMaker().getDefaultNodeType(entity, blockPos.west())) == 0)
                 offset = Direction.WEST;
             if (offset == null) continue;
 
-            if (entity.getWorld().getBlockState(blockPos.down(1)).getCollisionShape(entity.getWorld(), blockPos.down(1)).isEmpty()
-                && entity.getWorld().getBlockState(blockPos.down(2)).getCollisionShape(entity.getWorld(), blockPos.down(2)).isEmpty())
-                continue;
+            if (offset == Direction.DOWN
+                    && entity.getNavigation().getNodeMaker().getDefaultNodeType(entity, blockPos.down(2)) != PathNodeType.BLOCKED) continue;
 
-            if (entity.getNavigation().findPathTo(Set.of(blockPos.offset(offset)), 16) != null) {
-                dist = newDist;
-                entity.setMagmaBlockPos(blockPos);
+            Path path = entity.getNavigation().findPathTo(Set.of(blockPos.offset(offset)), 16);
+            if (path == null) continue;
+
+            boolean invalid = false;
+            for (int i = 0; i < path.getLength(); i++) {
+                if (entity.getPathfindingPenalty(path.getNode(i).type) > 0) {
+                    invalid = true;
+                    break;
+                }
             }
+            if (invalid) continue;
 
+            dist = newDist;
+            entity.setMagmaBlockPos(blockPos);
+            timer = getTickCount(40);
         }
     }
 }

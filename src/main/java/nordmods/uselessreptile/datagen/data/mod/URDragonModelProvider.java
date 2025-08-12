@@ -134,7 +134,7 @@ public class URDragonModelProvider implements DataProvider {
 
     protected void addMagmamuncher(String variant) { //TODO: magmamuncher sounds
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", SoundEvents.BLOCK_NETHERRACK_STEP.id(), Optional.of(0.5f), Optional.of(0.8f)));
+        sounds.add(new DragonModel.Sound("step", SoundEvents.BLOCK_NETHERRACK_STEP.id(), Optional.of(0.25f), Optional.of(0.8f)));
         sounds.add(new DragonModel.Sound("attack", URSounds.PIKEHORN_ATTACK.id(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModel.Sound("idle", URSounds.PIKEHORN_AMBIENT.id(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModel.Sound("hurt", URSounds.PIKEHORN_HURT.id(), Optional.empty(), Optional.empty()));

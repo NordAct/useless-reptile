@@ -54,6 +54,7 @@
     "entity.uselessreptile.moleclaw": "Moleclaw",
     "entity.uselessreptile.river_pikehorn": "River Pikehorn",
     "entity.uselessreptile.lightning_chaser": "Lightning Chaser",
+    "entity.uselessreptile.magmamuncher": "Magmamuncher",
 
     "key.category.uselessreptile": "Useless Reptile Controls",
     "key.uselessreptile.primaryAttackKey": "Primary Attack",
@@ -143,6 +144,7 @@
     "config.uselessreptile.option.renderPassengers": "Render Passengers",
     "config.uselessreptile.option.upDownCameraControl": "Fly Up/Down Control with Camera",
     "config.uselessreptile.option.upDownCameraPitchThreshold": "Fly Up/Down Control with Camera Pitch Threshold",
+    "config.uselessreptile.option.magmamuncherGriefing": "Magmamuncher Griefing",
 
     "config.uselessreptile.requires_restart.@Tooltip" : "\nChanging this option requires game restart",
     "config.uselessreptile.group.spawnGroups.@Tooltip" : "Capacities of spawn groups added by this mod",

@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.datagen.data;
 
+import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.data.DataOutput;
 import net.minecraft.data.DataProvider;
@@ -10,6 +11,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Items;
 import net.minecraft.loot.LootPool;
 import net.minecraft.loot.LootTable;
+import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.loot.entry.ItemEntry;
 import net.minecraft.loot.function.EnchantedCountIncreaseLootFunction;
 import net.minecraft.loot.function.FurnaceSmeltLootFunction;
@@ -32,7 +34,7 @@ public class UREntityLootTableProvider extends EntityLootTableGenerator implemen
     protected final FabricDataOutput output;
     private final DataOutput.PathResolver pathResolver;
     private final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture;
-    private final Map<EntityType<?>, LootTable.Builder> lootTables = new HashMap<>();
+    private final Map<Pair<String, EntityType<?>>, LootTable.Builder> lootTables = new HashMap<>();
     public UREntityLootTableProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture) {
         super(FeatureSet.empty(), registryLookupFuture.join());
         this.output = output;
@@ -100,6 +102,26 @@ public class UREntityLootTableProvider extends EntityLootTableGenerator implemen
                         .with(ItemEntry.builder(Items.BONE)
                                 .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0, 4)))
                                 .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 4))))));
+
+        add(UREntities.MAGMAMUNCHER_ENTITY, LootTable.builder()
+                .pool(LootPool.builder()
+                        .rolls(ConstantLootNumberProvider.create(1))
+                        .with(ItemEntry.builder(Items.NETHERRACK)
+                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1)))))
+                .pool(LootPool.builder()
+                        .rolls(ConstantLootNumberProvider.create(1))
+                        .with(ItemEntry.builder(Items.COAL)
+                                .apply(SetCountLootFunction.builder(UniformLootNumberProvider.create(0, 3)))
+                                .apply(EnchantedCountIncreaseLootFunction.builder(registries, UniformLootNumberProvider.create(0, 3))))));
+
+        add(UREntities.MAGMAMUNCHER_ENTITY, LootTable.builder()
+                .pool(LootPool.builder()
+                        .rolls(ConstantLootNumberProvider.create(1))
+                        .with(ItemEntry.builder(Items.COAL)
+                                .weight(1)
+                                .apply(SetCountLootFunction.builder(ConstantLootNumberProvider.create(1)))
+                                .conditionally(RandomChanceLootCondition.builder(0.25f)))),
+                "_from_magma");
     }
 
     @Override
@@ -108,16 +130,21 @@ public class UREntityLootTableProvider extends EntityLootTableGenerator implemen
             generate();
             List<CompletableFuture<?>> list = new ArrayList<>();
             lootTables.forEach((type, loot) -> {
-                    LootTable lootTable = loot.build();
-                    Path path = pathResolver.resolveJson(type.getLootTableKey().get());
-                    list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, LootTable.CODEC, lootTable, path));
+                String suffix = type.getFirst();
+                LootTable lootTable = loot.build();
+                Path path = Path.of(pathResolver.resolveJson(type.getSecond().getLootTableKey().get()).toString().replace(".json", suffix + ".json"));
+                list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, LootTable.CODEC, lootTable, path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
     }
 
+    private void add(EntityType<? extends Entity> type, LootTable.Builder builder, String suffix) {
+        lootTables.put(new Pair<>(suffix, type), builder);
+    }
+
     private void add(EntityType<? extends Entity> type, LootTable.Builder builder) {
-        lootTables.put(type, builder);
+        add(type, builder, "");
     }
 
     @Override

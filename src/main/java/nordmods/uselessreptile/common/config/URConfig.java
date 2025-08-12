@@ -51,10 +51,12 @@ public class URConfig {
     public int lightningChaserMinGroupSize = 1;
     @SerialEntry
     public int lightningChaserMaxGroupSize = 1;
-    @SerialEntry(comment = "BEHAVIOUR \nPossible values: ALL, TAMED, DISABLED")
+    @SerialEntry(comment = "BEHAVIOUR \nPossible values for griefing: ALL, TAMED, DISABLED")
     public DragonGriefing moleclawGriefing = DragonGriefing.ALL;
     @SerialEntry
     public DragonGriefing lightningChaserGriefing = DragonGriefing.ALL;
+    @SerialEntry
+    public DragonGriefing magmamuncherGriefing = DragonGriefing.ALL;
     @SerialEntry
     public int blockDropChance = 100;
     @SerialEntry(comment = "allows dragon to teleport to owner whenever it tries to follow")

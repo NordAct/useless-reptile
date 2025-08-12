@@ -54,6 +54,7 @@
     "entity.uselessreptile.moleclaw": "Кротолап",
     "entity.uselessreptile.river_pikehorn": "Речной пикорог",
     "entity.uselessreptile.lightning_chaser": "Ловец молний",
+    "entity.uselessreptile.magmamuncher": "Магмаед",
 
     "key.category.uselessreptile": "Useless Reptile - Управление",
     "key.uselessreptile.primaryAttackKey": "Основная атака",
@@ -143,6 +144,7 @@
     "config.uselessreptile.option.renderPassengers": "Отображение пассажиров",
     "config.uselessreptile.option.upDownCameraControl": "Полет вверх/вниз с помощью камеры",
     "config.uselessreptile.option.upDownCameraPitchThreshold": "Угол отклонения для полета вверх/вниз с помощью камеры",
+    "config.uselessreptile.option.magmamuncherGriefing": "Разрушение блоков магмаедом",
 
     "config.uselessreptile.requires_restart.@Tooltip" : "\nИзменение данной опции требует перезапуска игры",
     "config.uselessreptile.group.spawnGroups.@Tooltip" : "Вместимость групп сущностей, добавленных данным модом",
