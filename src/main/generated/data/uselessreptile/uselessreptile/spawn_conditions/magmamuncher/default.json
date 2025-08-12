@@ -1,0 +1,18 @@
+[
+  {
+    "allowed_biomes": [
+      "minecraft:nether_wastes",
+      "#c:is_nether_forest"
+    ],
+    "allowed_blocks": [
+      "#c:netherracks",
+      "#c:gravels",
+      "minecraft:magma_block"
+    ],
+    "altitude": {
+      "max": 37,
+      "min": 26
+    },
+    "weight": 1
+  }
+]

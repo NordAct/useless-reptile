@@ -28,5 +28,8 @@ public class URBiomeTagProvider extends FabricTagProvider<Biome>{
 
         getTagBuilder(URTags.RIVER_PIKEHORN_SPAWN_BLACKLIST)
                 .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS.id());
+
+        getTagBuilder(URTags.MAGMAMUNCHER_SPAWN_BLACKLIST)
+                .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS.id());
     }
 }

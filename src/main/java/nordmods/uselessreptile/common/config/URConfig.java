@@ -25,6 +25,8 @@ public class URConfig {
     @SerialEntry(comment = "Note: Lightning Chaser doesn't have variants for natural spawn defined and thus won't appear by default." +
             "\nYou have to add name spawns manually via datapack if you want it to spawn naturally")
     public boolean naturalLightningChaserSpawn = false;
+    @SerialEntry
+    public boolean naturalMagmamuncherSpawn = true;
     @SerialEntry(comment = "Defines a chance of Lightning Chaser spawning near player during thunderstorms each 30 seconds (1200 ticks)")
     public int lightningChaserThunderstormSpawnChance = 10;
     @SerialEntry(comment = "Amount of time (in ticks) that must pass before Lightning Chaser can attempt to spawn near the same player")
@@ -51,6 +53,10 @@ public class URConfig {
     public int lightningChaserMinGroupSize = 1;
     @SerialEntry
     public int lightningChaserMaxGroupSize = 1;
+    @SerialEntry
+    public int magmamuncherMinGroupSize = 1;
+    @SerialEntry
+    public int magmamuncherMaxGroupSize = 1;
     @SerialEntry(comment = "BEHAVIOUR \nPossible values for griefing: ALL, TAMED, DISABLED")
     public DragonGriefing moleclawGriefing = DragonGriefing.ALL;
     @SerialEntry

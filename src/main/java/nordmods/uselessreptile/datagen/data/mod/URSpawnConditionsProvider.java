@@ -89,9 +89,10 @@ public class URSpawnConditionsProvider implements DataProvider {
                 .addAllowedBlockTag(BlockTags.AIR)
                 .build();
         addSpawn("lightning_chaser/purple", Collections.singletonList(lightningChaserPurpleEvent));
-        addSpawn("cannot_sapwn", Collections.singletonList(DragonSpawnConditions.builder().setWeight(0).build()));
 
-        //TODO: magmamuncher spawn conditions
+        addMagmamuncherEntry("default", 1);
+
+        addSpawn("cannot_sapwn", Collections.singletonList(DragonSpawnConditions.builder().setWeight(0).build()));
     }
 
     protected void addWyvernEntry(String name, int weight) {
@@ -135,6 +136,20 @@ public class URSpawnConditionsProvider implements DataProvider {
                 .build();
 
         addSpawn("river_pikehorn/" + name, Collections.singletonList(spawn));
+    }
+
+    protected void addMagmamuncherEntry(String name, int weight) {
+        DragonSpawnConditions spawn = DragonSpawnConditions.builder()
+                .setWeight(weight)
+                .addAllowedBiome(BiomeKeys.NETHER_WASTES)
+                .addAllowedBiomeTag(ConventionalBiomeTags.IS_NETHER_FOREST)
+                .addAllowedBlockTag(ConventionalBlockTags.NETHERRACKS)
+                .addAllowedBlockTag(ConventionalBlockTags.GRAVELS)
+                .addAllowedBlock(Blocks.MAGMA_BLOCK.getRegistryEntry().registryKey())
+                .setMinAltitude(26)
+                .setMaxAltitude(37)
+                .build();
+        addSpawn("magmamuncher/" + name, Collections.singletonList(spawn));
     }
 
     protected void addSpawn(String name, List<DragonSpawnConditions> conditions) {

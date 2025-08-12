@@ -18,6 +18,7 @@ public class URTags {
     public static final TagKey<Biome> RIVER_PIKEHORN_SPAWN_BLACKLIST = register(RegistryKeys.BIOME,"river_pikehorn_spawn_blacklist");
     public static final TagKey<Biome> MOLECLAW_SPAWN_BLACKLIST = register(RegistryKeys.BIOME,"moleclaw_spawn_blacklist");
     public static final TagKey<Biome> LIGHTNING_CHASER_SPAWN_BLACKLIST = register(RegistryKeys.BIOME,"lightning_chaser_spawn_blacklist");
+    public static final TagKey<Biome> MAGMAMUNCHER_SPAWN_BLACKLIST = register(RegistryKeys.BIOME,"magmamuncher_spawn_blacklist");
 
     public static final TagKey<Item> DRAGON_SADDLES = register(RegistryKeys.ITEM, "dragon_saddles");
 
