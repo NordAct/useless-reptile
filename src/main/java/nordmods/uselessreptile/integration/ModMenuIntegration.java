@@ -128,6 +128,15 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.naturalLightningChaserSpawn = val)
                 .customController(BooleanController::new)
                 .build();
+        Option<Boolean> naturalMagmamuncherSpawn = Option.<Boolean>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.naturalMagmamuncherSpawn"))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.naturalSpawn.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.naturalMagmamuncherSpawn,
+                        () -> config.naturalMagmamuncherSpawn,
+                        val -> config.naturalMagmamuncherSpawn = val)
+                .customController(BooleanController::new)
+                .build();
         Option<Integer> lightningChaserThunderstormSpawnChance = Option.<Integer>createBuilder()
                 .name(Text.translatable("config.uselessreptile.option.lightningChaserThunderstormSpawnChance"))
                 .description(OptionDescription.createBuilder()
@@ -247,6 +256,24 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.lightningChaserMaxGroupSize = val)
                 .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
                 .build();
+        Option<Integer> magmamuncherMinGroupSize = Option.<Integer>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.magmamuncherMinGroupSize"))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonMinGroupSize.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherMinGroupSize,
+                        () -> config.magmamuncherMinGroupSize,
+                        val -> config.magmamuncherMinGroupSize = val)
+                .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                .build();
+        Option<Integer> magmamuncherMaxGroupSize = Option.<Integer>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.magmamuncherMaxGroupSize"))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.dragonMaxGroupSize.@Tooltip"), requiresRestart()).build())
+                .binding(defaults.magmamuncherMaxGroupSize,
+                        () -> config.magmamuncherMaxGroupSize,
+                        val -> config.magmamuncherMaxGroupSize = val)
+                .customController(opt -> new IntegerFieldController(opt, 1, Integer.MAX_VALUE))
+                .build();
 
         Option<URConfig.DragonGriefing> moleclawGriefing = Option.<URConfig.DragonGriefing>createBuilder()
                 .name(Text.translatable("config.uselessreptile.option.moleclawGriefing"))
@@ -307,6 +334,7 @@ public class ModMenuIntegration implements ModMenuApi {
         inWorldSpawnGroup.option(naturalMoleclawSpawn);
         inWorldSpawnGroup.option(naturalPikehornSpawn);
         inWorldSpawnGroup.option(naturalLightningChaserSpawn);
+        inWorldSpawnGroup.option(naturalMagmamuncherSpawn);
         inWorldSpawnGroup.option(lightningChaserThunderstormSpawnChance);
         inWorldSpawnGroup.option(lightningChaserThunderstormSpawnTimerCooldown);
 
@@ -322,9 +350,12 @@ public class ModMenuIntegration implements ModMenuApi {
         groupSizeGroup.option(riverPikehornMaxGroupSize);
         groupSizeGroup.option(lightningChaserMinGroupSize);
         groupSizeGroup.option(lightningChaserMaxGroupSize);
+        groupSizeGroup.option(magmamuncherMinGroupSize);
+        groupSizeGroup.option(magmamuncherMaxGroupSize);
 
         dragonBehaviourGroup.option(moleclawGriefing);
         dragonBehaviourGroup.option(lightningChaserGriefing);
+        dragonBehaviourGroup.option(magmamuncherGriefing);
         dragonBehaviourGroup.option(blockDropChance);
         dragonBehaviourGroup.option(allowDragonTeleport);
         dragonBehaviourGroup.option(dragonMadness);

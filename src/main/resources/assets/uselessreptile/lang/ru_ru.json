@@ -106,6 +106,7 @@
     "config.uselessreptile.group.lightningChaserAttributes" : "Аттрибуты ловца молний",
     "config.uselessreptile.group.spawnGroups" : "Группы сущностей",
     "config.uselessreptile.group.inWorldSpawn": "Появление драконов в мире",
+    "config.uselessreptile.group.magmamuncherAttributes": "Аттрибуты магмаеда",
 
     "config.uselessreptile.option.blockDropChance": "Шанс выпадения блоков",
     "config.uselessreptile.option.cameraDistanceOffset": "Сдвиг расстояния до камеры",
@@ -145,6 +146,9 @@
     "config.uselessreptile.option.upDownCameraControl": "Полет вверх/вниз с помощью камеры",
     "config.uselessreptile.option.upDownCameraPitchThreshold": "Угол отклонения для полета вверх/вниз с помощью камеры",
     "config.uselessreptile.option.magmamuncherGriefing": "Разрушение блоков магмаедом",
+    "config.uselessreptile.option.naturalMagmamuncherSpawn": "Естественное появление магмаеда",
+    "config.uselessreptile.option.magmamuncherMinGroupSize": "Минимальный размер группы магмаедов",
+    "config.uselessreptile.option.magmamuncherMaxGroupSize": "Максимальный размер группы магмаедов",
 
     "config.uselessreptile.requires_restart.@Tooltip" : "\nИзменение данной опции требует перезапуска игры",
     "config.uselessreptile.group.spawnGroups.@Tooltip" : "Вместимость групп сущностей, добавленных данным модом",
@@ -199,6 +203,7 @@
     "config.uselessreptile.option.renderPassengers.@Tooltip": "Определяет, могут ли отображаться пассажиры на драконах.\nДопустимые значения: \n§3ALL §f(все пассажиры будут отображаться), \n§3SELF §f(в качестве пассажира можете отображаться только вы), \n§3OTHERS §f(в качестве пассажира могут отображаться все кроме вас), \n§3NONE §f(ни один пассажир не будет отображаться)",
     "config.uselessreptile.option.upDownCameraControl.@Tooltip": "Позволяет использовать наклон камеры в качестве ввода вверх/вниз для летающих драконов",
     "config.uselessreptile.option.upDownCameraPitchThreshold.@Tooltip": "Определяет минимальное отклонение угла наклона камеры для активации ввода вверх/вниз",
+    "config.uselessreptile.option.magmamuncherBasePrimaryAttackCooldown.@Tooltip": "Перезарядка ближней атаки (в тиках)",
 
     "effect.uselessreptile.acid": "Кислота",
     "effect.uselessreptile.shock": "Шок",
