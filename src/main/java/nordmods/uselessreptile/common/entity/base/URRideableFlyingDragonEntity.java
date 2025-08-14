@@ -1,6 +1,8 @@
 package nordmods.uselessreptile.common.entity.base;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.EntityAttributeInstance;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
@@ -24,6 +26,7 @@ import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNaviga
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.network.LiftoffParticlesS2CPacket;
+import nordmods.uselessreptile.common.network.RequestLiftoffC2SPacket;
 
 public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntity implements FlyingDragon {
     protected final int maxInAirTimer = 600;
@@ -87,6 +90,20 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         super.onTrackedDataSet(data);
         if (!getWorld().isClient)
             if (FLYING.equals(data)) getNavigation().recalculatePath();
+        if (JUMP_PRESSED.equals(data)) {
+            if (getWorld().isClient() && getControllingPassenger() instanceof ClientPlayerEntity player) {
+                if (isJumpPressed() && !jumpWasPressed) {
+                    if (flyUpWindow <= 0) {
+                        jumpWasPressed = true;
+                        flyUpWindow = 10;
+                    } else {
+                        ClientPlayNetworking.send(new RequestLiftoffC2SPacket(getId()));
+                        flyUpWindow = 0;
+                    }
+                } else if (!isJumpPressed() && jumpWasPressed) jumpWasPressed = false;
+                else jumpWasPressed = false;
+            }
+        }
     }
 
     @Override
@@ -99,6 +116,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
             setFlyGliding(accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9);
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
+        } else {
+            if (flyUpWindow > 0) flyUpWindow--;
         }
         checkForceFlight();
 
@@ -176,17 +195,9 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             setRotation(rider);
 
             if (isJumpPressed() && !jumpWasPressed) {
-                if (flyUpWindow <= 0) {
-                    jumpWasPressed = true;
-                    flyUpWindow = 10;
-                    if (isOnGround()) jump();
-                } else {
-                    startToFly();
-                    flyUpWindow = 0;
-                }
+                jumpWasPressed = true;
+                if (isOnGround()) jump();
             } else if (!isJumpPressed() && jumpWasPressed) jumpWasPressed = false;
-            if (flyUpWindow > 0) flyUpWindow--;
-            else jumpWasPressed = false;
             //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
             return new Vec3d(0, movementInput.y - 0.001, landSpeed);
         } else {

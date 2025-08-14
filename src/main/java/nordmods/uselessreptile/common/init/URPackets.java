@@ -11,5 +11,7 @@ public class URPackets {
 
         PayloadTypeRegistry.playC2S().register(KeyInputC2SPacket.PACKET_ID, KeyInputC2SPacket.PACKET_CODEC);
         KeyInputC2SPacket.init();
+        PayloadTypeRegistry.playC2S().register(RequestLiftoffC2SPacket.PACKET_ID, RequestLiftoffC2SPacket.PACKET_CODEC);
+        RequestLiftoffC2SPacket.init();
     }
 }
