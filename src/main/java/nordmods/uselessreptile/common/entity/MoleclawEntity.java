@@ -208,7 +208,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (isTamingItem(itemStack) && !isTamed()) {
+        if (isTameable() && isTamingItem(itemStack)) {
             player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
             if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
             else setTamingProgress(getTamingProgress() - 1);

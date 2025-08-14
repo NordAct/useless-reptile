@@ -489,7 +489,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (!isTamed()) {
+        if (isTameable()) {
             if (hasSurrendered() && !getShouldBailOut() && getTamingProgress() <= 0 || player.isCreative() && isFavoriteFood(itemStack)) {
                 setTamedBy(player);
                 setPersistent();

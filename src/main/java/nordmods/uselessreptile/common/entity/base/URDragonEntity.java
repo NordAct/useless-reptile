@@ -98,7 +98,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected int primaryAttackDuration = 20;
     protected int secondaryAttackDuration = 20;
     protected int specialAttackDuration = 20;
-    protected int baseTamingProgress = 1;
+    protected int baseTamingProgress = -1;
     protected int eatFromInventoryTimer = 20;
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
@@ -253,7 +253,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (coords.length == 0) setHomePoint(getBlockPos());
         else setHomePoint(new BlockPos(coords[0], coords[1], coords[2]));
 
-        if (!isTamed()) setTamingProgress(tag.getInt("TamingProgress", baseTamingProgress));
+        if (!isTamed()) setTamingProgress(tag.getInt("TamingProgress", getBaseTamingProgress()));
         else setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound", ""));
 
         setIsSitting(tag.getBoolean("Sitting", false));
@@ -354,8 +354,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
         entityData = new PassiveData(false);
-        setTamingProgress(baseTamingProgress);
         DragonSpawnUtil.assignAvailableVariant(this, spawnReason);
+        setTamingProgress(getBaseTamingProgress());
         setHomePoint(getBlockPos());
         return super.initialize(world, difficulty, spawnReason, entityData);
     }
@@ -1084,6 +1084,14 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         float dPitch = Math.abs(getPitch() - pitch);
         return dPitch < pitchTolerance
                 && dYaw % 360 < yawTolerance;
+    }
+
+    public int getBaseTamingProgress() {
+        return DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld()).baseTamingProgress().orElse(baseTamingProgress);
+    }
+
+    public boolean isTameable() {
+        return !isTamed() && getTamingProgress() < 0;
     }
 
     protected class JukeboxEventListener implements GameEventListener {

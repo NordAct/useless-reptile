@@ -74,6 +74,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         primaryAttackDuration = 12;
         canNavigateInFluids = true;
         ticksUntilHeal = 400;
+        baseTamingProgress = 1;
     }
 
     public boolean isHunting() {
@@ -236,7 +237,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
 
-        if (isTamingItem(itemStack) && !isTamed()) {
+        if (isTameable() && isTamingItem(itemStack)) {
             player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
             setTamedBy(player);
             getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
