@@ -39,11 +39,13 @@ import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFoll
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.item.FluteItem;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
@@ -327,6 +329,31 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     @Override
     public String getDefaultVariant() {
         return "blue";
+    }
+
+    @Override
+    public boolean isSaddle(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean isHelmet(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean isChestplate(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean isTailArmor(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public @NotNull DragonInventory createInventory() {
+        return new DragonInventory(this, DragonInventory.StorageSize.NO_INVENTORY, false, false, false);
     }
 
     @Override

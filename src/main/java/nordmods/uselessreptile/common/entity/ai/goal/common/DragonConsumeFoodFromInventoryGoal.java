@@ -31,15 +31,15 @@ public class DragonConsumeFoodFromInventoryGoal extends Goal {
             for (int i = DragonInventory.INVENTORY_START_INDEX; i <= dragon.getInventory().size(); i++) {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
                 if (dragon.isFavoriteFood(itemStack)) {
+                    beforeItemConsumed(itemStack);
                     dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value());
-                    afterItemConsumed(itemStack);
                     break;
                 }
             }
         }
     }
 
-    protected void afterItemConsumed(ItemStack stack) {
+    protected void beforeItemConsumed(ItemStack stack) {
         dragon.heal(dragon.getHealthRegenerationFromFood());
     }
 

@@ -1,10 +1,7 @@
 package nordmods.uselessreptile.common.gui;
 
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.item.BannerItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
@@ -13,68 +10,35 @@ import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class URDragonScreenHandler extends ScreenHandler {
-
-    protected final Inventory inventory;
+public class URDragonScreenHandler extends ScreenHandler {
+    protected final DragonInventory inventory;
     protected final DragonInventory.StorageSize storageSize;
+    public static final int SLOT_SIDE = 18;
+    public static final int ENTITY_WINDOW_SIDE = 54;
+    public static final int EDGE_OFFSET = 8;
 
-    protected URDragonScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, Inventory inventory, DragonInventory.StorageSize storageSize, boolean hasSaddle, boolean hasArmor, boolean hasBanner) {
+    public URDragonScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, DragonInventory inventory) {
         super(type, syncId);
-
         this.inventory = inventory;
-        this.storageSize = storageSize;
+        this.storageSize = inventory.storageSize;
         inventory.onOpen(playerInventory.player);
 
-        if (hasSaddle) {
-            this.addSlot(new Slot(inventory, 0, 8, 18) {
-                public boolean canInsert(ItemStack stack) {
-                    return isSaddleItem(stack) && !this.hasStack();
-                }
-                public int getMaxItemCount() {
-                    return 1;
-                }
+        if (inventory.hasSaddle) {
+            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.SADDLE_INDEX, EDGE_OFFSET, SLOT_SIDE) {
                 public boolean canTakeItems(PlayerEntity playerEntity) {
                     return !(playerEntity.getVehicle() instanceof URRideableDragonEntity);
                 }
             });
         }
 
-        if (hasArmor) {
-            this.addSlot(new Slot(inventory, 1, 8+54+18, 18) {
-                public boolean canInsert(ItemStack stack) {
-                    return !hasStack() && canEquip(EquipmentSlot.HEAD, stack);
-                }
-                public int getMaxItemCount() {
-                    return 1;
-                }
-            });
-            this.addSlot(new Slot(inventory, 2, 8+54+18, 18*2) {
-                public boolean canInsert(ItemStack stack) {
-                    return !hasStack() && canEquip(EquipmentSlot.CHEST, stack);
-                }
-                public int getMaxItemCount() {
-                    return 1;
-                }
-            });
-            this.addSlot(new Slot(inventory, 3, 8+54+18, 18*3) {
-                public boolean canInsert(ItemStack stack) {
-                    return !this.hasStack() && canEquip(EquipmentSlot.LEGS, stack);
-                }
-                public int getMaxItemCount() {
-                    return 1;
-                }
-            });
+        if (inventory.hasArmor) {
+            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.HELMET_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE));
+            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.CHESTPLATE_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *2));
+            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.TAIL_ARMOR_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *3));
         }
 
-        if (hasBanner) {
-            this.addSlot(new Slot(inventory, 4, 8, 18*2) {
-                public boolean canInsert(ItemStack stack) {
-                    return stack.getItem() instanceof BannerItem && !this.hasStack();
-                }
-                public int getMaxItemCount() {
-                    return 1;
-                }
-            });
+        if (inventory.hasBanner) {
+            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.BANNER_INDEX, EDGE_OFFSET, SLOT_SIDE *2));
         }
 
         //dragon storage
@@ -83,8 +47,8 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
             for (int i = 0; i < size; i++) {
                 int column = i / 3;
                 int row = i % 3;
-                int offset = hasArmor ? 2 : 1;
-                this.addSlot(new Slot(inventory, 5 + i, 8+54+18*offset+18*column, 18+18*row));
+                int offset = inventory.hasArmor ? 2 : 1;
+                this.addSlot(new Slot(inventory, DragonInventory.INVENTORY_START_INDEX + i, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE *offset+ SLOT_SIDE *column, SLOT_SIDE + SLOT_SIDE *row));
             }
         }
 
@@ -93,18 +57,18 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
         int j;
         for (i = 0; i < 3; i++) {
             for (j = 0; j < 9; j++) {
-                this.addSlot(new Slot(playerInventory, i * 9 + j + 9, 8 + j * 18, 102 + i * 18 - 18));
+                this.addSlot(new Slot(playerInventory, i * 9 + j + 9, EDGE_OFFSET + j * SLOT_SIDE, 102 + i * SLOT_SIDE - SLOT_SIDE));
             }
         }
         for (j = 0; j < 9; j++) {
-            this.addSlot(new Slot(playerInventory, j, 8 + j * 18, 142));
+            this.addSlot(new Slot(playerInventory, j, EDGE_OFFSET + j * SLOT_SIDE, 142));
         }
     }
 
     @Override
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
-        this.inventory.onClose(player);
+        inventory.onClose(player);
     }
 
     @Override
@@ -134,6 +98,23 @@ public abstract class URDragonScreenHandler extends ScreenHandler {
         return newStack;
     }
 
-    protected abstract boolean canEquip(EquipmentSlot equipmentSlot, ItemStack item);
-    protected abstract boolean isSaddleItem(ItemStack itemStack);
+    public static class DragonEquipmentSlot extends Slot {
+        public DragonEquipmentSlot(DragonInventory inventory, int index, int x, int y) {
+            super(inventory, index, x, y);
+        }
+
+        @Override
+        public boolean canInsert(ItemStack stack) {
+            return getInventory().canInsertInSlot(stack, getIndex());
+        }
+
+        @Override
+        public int getMaxItemCount() {
+            return 1;
+        }
+
+        public DragonInventory getInventory() {
+            return (DragonInventory) inventory;
+        }
+    }
 }

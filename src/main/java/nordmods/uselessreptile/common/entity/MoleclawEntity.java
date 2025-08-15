@@ -39,10 +39,13 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
-import nordmods.uselessreptile.common.gui.MoleclawScreenHandler;
+import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URScreenHandlers;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
 import software.bernie.geckolib.animatable.processing.AnimationController;
@@ -67,7 +70,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
         pitchLimitGround = 50;
         baseTamingProgress = 64;
         ticksUntilHeal = 400;
-        inventory = new DragonInventory(DragonInventory.StorageSize.LARGE, true, true, true);
     }
 
     public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
@@ -194,14 +196,38 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     @Override
-    public boolean isSaddleItem(ItemStack itemStack) {
+    public boolean isSaddle(ItemStack itemStack) {
         return itemStack.isIn(URTags.MOLECLAW_SADDLES);
+    }
+
+    @Override
+    public boolean isHelmet(ItemStack itemStack) {
+        return itemStack.isIn(URTags.MOLECLAW_HELMETS);
+    }
+
+    @Override
+    public boolean isChestplate(ItemStack itemStack) {
+        return itemStack.isIn(URTags.MOLECLAW_CHESTPLATES);
+    }
+
+    @Override
+    public boolean isTailArmor(ItemStack itemStack) {
+        return itemStack.isIn(URTags.MOLECLAW_TAIL_ARMOR);
+    }
+
+    @Override
+    public @NotNull DragonInventory createInventory() {
+        return createInventory(this);
+    }
+
+    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
+        return new DragonInventory(dragon, DragonInventory.StorageSize.LARGE, true, true, true);
     }
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
         if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
-        return MoleclawScreenHandler.createScreenHandler(syncId, inv, inventory);
+        return new URDragonScreenHandler(URScreenHandlers.MOLECLAW_INVENTORY, syncId, inv, getInventory());
     }
 
     @Override

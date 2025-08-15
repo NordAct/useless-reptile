@@ -186,12 +186,12 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     @Override
     public void updateEquipment() {
         super.updateEquipment();
-        ItemStack saddle = inventory.getStack(0);
+        ItemStack saddle = getInventory().getStack(0);
         equipStack(EquipmentSlot.SADDLE, saddle);
     }
 
     public boolean hasSaddle() {
-        return inventory != null && isSaddleItem(inventory.getStack(0));
+        return getInventory() != null && isSaddle(getInventory().getStack(0));
     }
 
     protected void updateRiderBonus(boolean hasRider) {
@@ -221,8 +221,6 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public int vortexHornCapacity() {
         return 3;
     }
-
-    public abstract boolean isSaddleItem(ItemStack itemStack);
 
     public boolean hasVerticalInput() {
         return false;

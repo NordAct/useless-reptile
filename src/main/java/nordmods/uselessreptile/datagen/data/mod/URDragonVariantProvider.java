@@ -49,6 +49,7 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("wyvern/" + name),
                 UselessReptile.id("wyvern"),
                 Optional.empty(),
+                Optional.empty(),
                 Optional.empty()
         );
         addCustomNameEntry(getId(id, name), variant);
@@ -108,6 +109,7 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("wyvern/" + name),
                 UselessReptile.id("wyvern"),
                 Optional.of(UselessReptile.id("wyvern/default")),
+                Optional.empty(),
                 Optional.empty()
         );
         addEntry(getId(id, name), variant);
@@ -122,6 +124,7 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("moleclaw/" + name),
                 UselessReptile.id("moleclaw"),
                 Optional.of(UselessReptile.id("moleclaw/" + (rare ? "rare" : "default"))),
+                Optional.empty(),
                 Optional.empty()
         );
         addEntry(getId(id, name), variant);
@@ -136,6 +139,7 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("river_pikehorn/" + name),
                 UselessReptile.id("empty"),
                 Optional.of(UselessReptile.id("river_pikehorn/default")),
+                Optional.empty(),
                 Optional.empty()
         );
         addEntry(getId(id, name), variant);
@@ -150,6 +154,7 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("lightning_chaser/" + name),
                 UselessReptile.id("lightning_chaser"),
                 Optional.of(UselessReptile.id("lightning_chaser/" + name)),
+                Optional.empty(),
                 Optional.empty()
         );
         addEntry(getId(id, name), variant);
@@ -164,6 +169,7 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("magmamuncher/" + name),
                 UselessReptile.id("empty"),
                 Optional.of(UselessReptile.id("magmamuncher/default")),
+                Optional.empty(),
                 Optional.empty()
         );
         addEntry(getId(id, name), variant);

@@ -18,6 +18,7 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.constant.DataTickets;
@@ -62,14 +63,53 @@ public class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     }
 
     protected void drawSaddle(DrawContext context) {
-        if (entity.getInventory().hasSaddle) context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7, j + 35 - 18, 0, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty() ? 0 : 18), 18, 18, 256, 256); //saddle
+        if (entity.getInventory().hasSaddle)
+            context.drawTexture( //saddle
+                    RenderPipelines.GUI_TEXTURED,
+                    TEXTURE,
+                    i + 7,
+                    j + 35 - URDragonScreenHandler.SLOT_SIDE,
+                    0,
+                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    URDragonScreenHandler.SLOT_SIDE,
+                    URDragonScreenHandler.SLOT_SIDE,
+                    256, 256);
     }
 
     protected void drawArmor(DrawContext context) {
         if (entity.getInventory().hasArmor) {
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7 + 18 + 54, j + 35 - 18, 18, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : 18), 18, 18, 256, 256); //head
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7 + 18 + 54, j + 35, 18 * 2, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() ? 0 : 18), 18, 18, 256, 256); //body
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7 + 18 + 54, j + 35 + 18, 18 * 3, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty() ? 0 : 18), 18, 18, 256, 256); //tail
+            context.drawTexture( //head
+                    RenderPipelines.GUI_TEXTURED,
+                    TEXTURE,
+                    i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
+                    j + 35 -  URDragonScreenHandler.SLOT_SIDE,
+                    URDragonScreenHandler.SLOT_SIDE,
+                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    URDragonScreenHandler.SLOT_SIDE,
+                    URDragonScreenHandler.SLOT_SIDE,
+                    256, 256
+            );
+            context.drawTexture( //body
+                    RenderPipelines.GUI_TEXTURED,
+                    TEXTURE,
+                    i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
+                    j + 35,  URDragonScreenHandler.SLOT_SIDE * 2,
+                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    URDragonScreenHandler.SLOT_SIDE,
+                    URDragonScreenHandler.SLOT_SIDE,
+                    256, 256
+            );
+            context.drawTexture( //tail
+                    RenderPipelines.GUI_TEXTURED,
+                    TEXTURE,
+                    i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
+                    j + 35 +  URDragonScreenHandler.SLOT_SIDE,
+                    URDragonScreenHandler.SLOT_SIDE * 3,
+                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    URDragonScreenHandler.SLOT_SIDE,
+                    URDragonScreenHandler.SLOT_SIDE,
+                    256, 256
+            );
         }
     }
 
@@ -105,11 +145,32 @@ public class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
 
     protected void drawStorage(DrawContext context) {
         int size = entity.getInventory().storageSize.getSize()/3;
-        int offset = entity.getInventory().hasArmor ? 1 : 0;
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 79 + 18 * offset, j + 17, 0, this.backgroundHeight, size * 18, 54, 256, 256);
+        int offset = entity.getInventory().hasArmor ? 2 : 1;
+        context.drawTexture(
+                RenderPipelines.GUI_TEXTURED,
+                TEXTURE,
+                i + 7 + URDragonScreenHandler.ENTITY_WINDOW_SIDE + URDragonScreenHandler.SLOT_SIDE * offset,
+                j + 17,
+                0,
+                this.backgroundHeight,
+                size * URDragonScreenHandler.SLOT_SIDE,
+                URDragonScreenHandler.ENTITY_WINDOW_SIDE,
+                256, 256
+        );
     }
 
     protected void drawBanner(DrawContext context) {
-        if (entity.getInventory().hasBanner) context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i + 7, j + 35, 18 * 4, backgroundHeight + 54 - (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty() ? 0 : 18), 18, 18,  256, 256); //banner
+        if (entity.getInventory().hasBanner)
+            context.drawTexture( //banner
+                    RenderPipelines.GUI_TEXTURED,
+                    TEXTURE,
+                    i + 7,
+                    j + 35,
+                    URDragonScreenHandler.SLOT_SIDE * 4,
+                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    URDragonScreenHandler.SLOT_SIDE,
+                    URDragonScreenHandler.SLOT_SIDE,
+                    256, 256
+            );
     }
 }

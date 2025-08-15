@@ -22,8 +22,8 @@ public class MagmamuncherConsumeFoodFromInventoryGoal extends DragonConsumeFoodF
     }
 
     @Override
-    protected void afterItemConsumed(ItemStack stack) {
-        super.afterItemConsumed(stack);
+    protected void beforeItemConsumed(ItemStack stack) {
+        super.beforeItemConsumed(stack);
         if (dragon.getOwner() == dragon.getVehicle() && dragon.getOwner() != null) {
             dragon.getOwner().addStatusEffect(
                     new StatusEffectInstance(

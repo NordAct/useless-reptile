@@ -25,10 +25,7 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.inventory.InventoryChangedListener;
 import net.minecraft.inventory.StackReference;
 import net.minecraft.inventory.StackWithSlot;
-import net.minecraft.item.Instrument;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.item.PotionItem;
+import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -75,6 +72,7 @@ import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URPacketHelper;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -111,7 +109,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected final EntityGameEventHandler<HornUsedEventListener> hornUsedEventHandler = new EntityGameEventHandler<>(new HornUsedEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.INSTRUMENT_USED.value().notificationRadius()));
     protected @Nullable BlockPos jukeboxPos;
-    protected DragonInventory inventory = new DragonInventory(DragonInventory.StorageSize.NO_INVENTORY, false, false, false);
+    private final DragonInventory inventory;
     public boolean shouldFollow = false;
     protected Text defaultDisplayName;
     private HashMap<String, SoundInfo> soundInfoHolder = new HashMap<>();
@@ -124,6 +122,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         navigation = new DragonNavigation(this, world);
         lookControl = new DragonLookControl(this);
         moveControl = new LandDragonMoveControl<>(this);
+        inventory = createInventory();
         inventory.addListener(this);
     }
 
@@ -479,7 +478,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             }
 
             if (itemStack.getItem() instanceof PotionItem potionItem && player.isSneaking()) {
-                DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(player, itemStack);
+                ItemStack original = itemStack.copy();
                 potionItem.finishUsing(itemStack, getWorld(), this);
                 playSound(SoundEvents.ENTITY_GENERIC_DRINK.value(), 1, 1);
                 if (!player.isCreative()) { //checking for emptiness for case if somehow potion stack size is more than 1
@@ -487,6 +486,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                     if (itemStack.isEmpty()) player.setStackInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
                     else player.giveItemStack(new ItemStack(Items.GLASS_BOTTLE));
                 }
+                DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(player, original);
                 return ActionResult.SUCCESS;
             }
 
@@ -866,6 +866,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return inventory.getStack(slot);
     }
 
+    public boolean setStackFromSlot(int slot, ItemStack stack) {
+        if (inventory == null || slot >= inventory.size()) return false;
+        inventory.setStack(slot, stack);
+        return true;
+    }
+
     public boolean canNavigateInFluids() {
         return canNavigateInFluids;
     }
@@ -1000,13 +1006,14 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound) {
-        DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, itemStack);
+        ItemStack original = itemStack.copy();
         if (itemStack.getComponents().contains(DataComponentTypes.CONSUMABLE))
             itemStack.getComponents().get(DataComponentTypes.CONSUMABLE).finishConsumption(getWorld(), this, itemStack);
         else if (offering != null && !offering.isInCreativeMode()) {
             itemStack.decrement(1);
             if (sound != null) getWorld().playSound(this, getX(), getY(), getZ(), sound, getSoundCategory());
         }
+        DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, original);
         return itemStack;
     }
 
@@ -1091,8 +1098,23 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public boolean isTameable() {
-        return !isTamed() && getTamingProgress() < 0;
+        return !isTamed() && getTamingProgress() >= 0;
     }
+
+    public abstract boolean isSaddle(ItemStack itemStack);
+
+    public abstract boolean isHelmet(ItemStack itemStack);
+
+    public abstract boolean isChestplate(ItemStack itemStack);
+
+    public abstract boolean isTailArmor(ItemStack itemStack);
+
+    public boolean isBanner(ItemStack itemStack) {
+        return itemStack.getItem() instanceof BannerItem;
+    }
+
+    @NotNull
+    public abstract DragonInventory createInventory();
 
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;

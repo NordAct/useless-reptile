@@ -36,17 +36,16 @@ import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
-import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
-import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URPotions;
-import nordmods.uselessreptile.common.init.URStatusEffects;
-import nordmods.uselessreptile.common.init.URTags;
+import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
+import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -79,7 +78,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         pitchLimitAir = 20;
         ticksUntilHeal = 200;
         sprintSpeedModifier = 1.2f;
-        inventory = new DragonInventory(DragonInventory.StorageSize.SMALL, false, true, true);
     }
 
     @Override
@@ -228,8 +226,32 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public boolean isSaddleItem(ItemStack itemStack) {
+    public boolean isSaddle(ItemStack itemStack) {
         return itemStack.isIn(URTags.WYVERN_SADDLES);
+    }
+
+    @Override
+    public boolean isHelmet(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean isChestplate(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean isTailArmor(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public @NotNull DragonInventory createInventory() {
+        return createInventory(this);
+    }
+
+    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
+        return new DragonInventory(dragon, DragonInventory.StorageSize.SMALL, false, true, true);
     }
 
     @Override
@@ -343,11 +365,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (!getWorld().isClient()) {
-            GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
-            return WyvernScreenHandler.createScreenHandler(syncId, inv, inventory);
-        }
-        return null;
+        if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+        return new URDragonScreenHandler(URScreenHandlers.WYVERN_INVENTORY, syncId, inv, getInventory());
     }
 
     @Override

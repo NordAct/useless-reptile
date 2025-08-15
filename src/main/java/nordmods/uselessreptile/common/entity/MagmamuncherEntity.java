@@ -44,11 +44,13 @@ import nordmods.uselessreptile.common.entity.ai.navigation.MagmamuncherNavigatio
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.gui.MagmamuncherScreenHandler;
+import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
+import nordmods.uselessreptile.common.init.URScreenHandlers;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
@@ -69,7 +71,6 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         super(entityType, world);
         baseTamingProgress = 12;
         sprintSpeedModifier = 1.3f;
-        inventory = new DragonInventory(DragonInventory.StorageSize.SMALL, false, false, false);
         setPathfindingPenalty(PathNodeType.DAMAGE_FIRE, 0);
         setPathfindingPenalty(PathNodeType.DANGER_FIRE, 0);
         navigation = new MagmamuncherNavigation(this, getWorld());
@@ -98,11 +99,8 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (!getWorld().isClient()) {
-            GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
-            return MagmamuncherScreenHandler.createScreenHandler(syncId, inv, inventory);
-        }
-        return null;
+        if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+        return new URDragonScreenHandler(URScreenHandlers.MAGMAMUNCHER_INVENTORY, syncId, inv, getInventory());
     }
 
     @Override
@@ -284,4 +282,34 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().magmamuncherGriefing.canTamedBreak() : URConfig.getConfig().magmamuncherGriefing.canUntamedBreak();
         return shouldBreakBlocks &&  world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
     }
+
+    @Override
+    public boolean isSaddle(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean isHelmet(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean isChestplate(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public boolean isTailArmor(ItemStack itemStack) {
+        return false;
+    }
+
+    @Override
+    public @NotNull DragonInventory createInventory() {
+        return createInventory(this);
+    }
+
+    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
+        return new DragonInventory(dragon, DragonInventory.StorageSize.SMALL, false, false, false);
+    }
+
 }
