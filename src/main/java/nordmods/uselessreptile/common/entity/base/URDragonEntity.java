@@ -665,7 +665,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected float getMovementSpeedModifier() {
-        double baseSpeed = getAttributeBaseValue(EntityAttributes.MOVEMENT_SPEED);
+        double baseSpeed = getBaseGroundSpeed();
         double speed = getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
         return (float) (speed / baseSpeed);
     }

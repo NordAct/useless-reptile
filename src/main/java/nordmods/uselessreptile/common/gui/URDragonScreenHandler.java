@@ -24,7 +24,7 @@ public class URDragonScreenHandler extends ScreenHandler {
         inventory.onOpen(playerInventory.player);
 
         if (inventory.hasSaddle) {
-            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.SADDLE_INDEX, EDGE_OFFSET, SLOT_SIDE) {
+            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.SADDLE_INDEX, EDGE_OFFSET, SLOT_SIDE) {
                 public boolean canTakeItems(PlayerEntity playerEntity) {
                     return !(playerEntity.getVehicle() instanceof URRideableDragonEntity);
                 }
@@ -32,13 +32,13 @@ public class URDragonScreenHandler extends ScreenHandler {
         }
 
         if (inventory.hasArmor) {
-            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.HELMET_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE));
-            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.CHESTPLATE_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *2));
-            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.TAIL_ARMOR_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *3));
+            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.HELMET_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE));
+            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.CHESTPLATE_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *2));
+            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.TAIL_ARMOR_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *3));
         }
 
         if (inventory.hasBanner) {
-            this.addSlot(new DragonEquipmentSlot(inventory, DragonInventory.BANNER_INDEX, EDGE_OFFSET, SLOT_SIDE *2));
+            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.BANNER_INDEX, EDGE_OFFSET, SLOT_SIDE *2));
         }
 
         //dragon storage
@@ -48,21 +48,11 @@ public class URDragonScreenHandler extends ScreenHandler {
                 int column = i / 3;
                 int row = i % 3;
                 int offset = inventory.hasArmor ? 2 : 1;
-                this.addSlot(new Slot(inventory, DragonInventory.INVENTORY_START_INDEX + i, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE *offset+ SLOT_SIDE *column, SLOT_SIDE + SLOT_SIDE *row));
+                addSlot(new Slot(inventory, DragonInventory.INVENTORY_START_INDEX + i, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE *offset+ SLOT_SIDE *column, SLOT_SIDE + SLOT_SIDE *row));
             }
         }
 
-        //Draws player inv + hotbar
-        int i;
-        int j;
-        for (i = 0; i < 3; i++) {
-            for (j = 0; j < 9; j++) {
-                this.addSlot(new Slot(playerInventory, i * 9 + j + 9, EDGE_OFFSET + j * SLOT_SIDE, 102 + i * SLOT_SIDE - SLOT_SIDE));
-            }
-        }
-        for (j = 0; j < 9; j++) {
-            this.addSlot(new Slot(playerInventory, j, EDGE_OFFSET + j * SLOT_SIDE, 142));
-        }
+        addPlayerSlots(playerInventory, EDGE_OFFSET, 84);
     }
 
     @Override
