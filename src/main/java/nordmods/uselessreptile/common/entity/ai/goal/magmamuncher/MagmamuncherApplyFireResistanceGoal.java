@@ -8,17 +8,17 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.sound.SoundEvent;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.entity.ai.goal.common.DragonConsumeFoodFromInventoryGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonConsumeItemFromInventoryGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class MagmamuncherConsumeFoodFromInventoryGoal extends DragonConsumeFoodFromInventoryGoal {
-    public MagmamuncherConsumeFoodFromInventoryGoal(URDragonEntity dragon) {
+public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromInventoryGoal {
+    public MagmamuncherApplyFireResistanceGoal(URDragonEntity dragon) {
         super(dragon);
     }
 
     @Override
     public boolean canStart() {
-        return super.canStart() || isOwnerOnFire();
+        return isOwnerOnFire();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class MagmamuncherConsumeFoodFromInventoryGoal extends DragonConsumeFoodF
 
     @Override
     protected boolean canConsume() {
-        return super.canConsume() || isOwnerOnFire();
+        return isOwnerOnFire();
     }
 
     private boolean isOwnerOnFire() {
@@ -61,5 +61,10 @@ public class MagmamuncherConsumeFoodFromInventoryGoal extends DragonConsumeFoodF
                 && dragon.getOwner().getRecentDamageSource() != null
                 && dragon.getOwner().getRecentDamageSource().isIn(DamageTypeTags.IS_FIRE)
                 && !dragon.getOwner().hasStatusEffect(StatusEffects.FIRE_RESISTANCE);
+    }
+
+    @Override
+    protected boolean isConsumableItem(ItemStack stack) {
+        return dragon.getWorld().getFuelRegistry().isFuel(stack);
     }
 }

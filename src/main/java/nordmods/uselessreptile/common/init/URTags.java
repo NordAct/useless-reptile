@@ -44,6 +44,7 @@ public class URTags {
     public static final TagKey<Item> MOLECLAW_FOOD = register(RegistryKeys.ITEM, "moleclaw_food");
     public static final TagKey<Item> RIVER_PIKEHORN_FOOD = register(RegistryKeys.ITEM, "river_pikehorn_food");
     public static final TagKey<Item> LIGHTNING_CHASER_FOOD = register(RegistryKeys.ITEM, "lightning_chaser_food");
+    public static final TagKey<Item> MAGMAMUNCHER_FOOD = register(RegistryKeys.ITEM, "magmamuncher_food");
 
     public static final TagKey<DimensionType> DEPLETED_MAGMA_REGENERATES = register(RegistryKeys.DIMENSION_TYPE, "depleted_magma_regenerates");
 

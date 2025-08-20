@@ -83,7 +83,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         goalSelector.add(2, new MoleclawEscapeLightGoal(this));
         goalSelector.add(2, new DragonCallBackGoal(this));
         goalSelector.add(3, new SitGoal(this));
-        goalSelector.add(4, new DragonConsumeFoodFromInventoryGoal(this));
+        goalSelector.add(4, new DragonConsumeItemFromInventoryGoal(this));
         goalSelector.add(8, new MoleclawAttackGoal(this, 512));
         goalSelector.add(9, new DragonReturnToHomePoint(this));
         goalSelector.add(10, new DragonWanderAroundGoal(this));

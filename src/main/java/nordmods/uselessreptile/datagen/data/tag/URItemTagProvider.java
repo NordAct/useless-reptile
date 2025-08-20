@@ -86,6 +86,9 @@ public class URItemTagProvider extends FabricTagProvider.ItemTagProvider{
                 .addOptionalTag(ItemTags.FISHES.id());
         getTagBuilder(URTags.MOLECLAW_FOOD)
                 .add(Items.BEETROOT.getRegistryEntry().registryKey().getValue());
+        getTagBuilder(URTags.MAGMAMUNCHER_FOOD)
+                .add(Items.MAGMA_BLOCK.getRegistryEntry().registryKey().getValue())
+                .add(Items.MAGMA_CREAM.getRegistryEntry().registryKey().getValue());
 
         //Dragon taming items
         getTagBuilder(URTags.WYVERN_TAMING_ITEM)

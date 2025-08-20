@@ -6,10 +6,10 @@ import net.minecraft.sound.SoundEvents;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 
-public class DragonConsumeFoodFromInventoryGoal extends Goal {
+public class DragonConsumeItemFromInventoryGoal extends Goal {
     protected final URDragonEntity dragon;
 
-    public DragonConsumeFoodFromInventoryGoal(URDragonEntity dragon) {
+    public DragonConsumeItemFromInventoryGoal(URDragonEntity dragon) {
         this.dragon = dragon;
     }
 
@@ -30,7 +30,7 @@ public class DragonConsumeFoodFromInventoryGoal extends Goal {
         if (canConsume()) {
             for (int i = DragonInventory.INVENTORY_START_INDEX; i <= dragon.getInventory().size(); i++) {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
-                if (dragon.isFavoriteFood(itemStack)) {
+                if (isConsumableItem(itemStack)) {
                     beforeItemConsumed(itemStack);
                     dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value());
                     break;
@@ -45,5 +45,9 @@ public class DragonConsumeFoodFromInventoryGoal extends Goal {
 
     protected boolean canConsume() {
         return dragon.getEatFromInventoryTimer() == 0;
+    }
+
+    protected boolean isConsumableItem(ItemStack stack) {
+        return dragon.isFavoriteFood(stack);
     }
 }

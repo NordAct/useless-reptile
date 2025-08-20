@@ -85,7 +85,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         goalSelector.add(1, new SwimGoal(this));
         goalSelector.add(2, new FlyingDragonCallBackGoal<>(this));
         goalSelector.add(3, new SitGoal(this));
-        goalSelector.add(4, new DragonConsumeFoodFromInventoryGoal(this));
+        goalSelector.add(4, new DragonConsumeItemFromInventoryGoal(this));
         goalSelector.add(6, new WyvernAttackGoal(this, 512));
         goalSelector.add(7, new FlyingDragonFlyDownGoal<>(this, 30));
         goalSelector.add(8, new DragonReturnToHomePoint(this));

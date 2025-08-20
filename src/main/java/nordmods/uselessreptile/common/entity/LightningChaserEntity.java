@@ -111,7 +111,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         goalSelector.add(1, new SwimGoal(this));
         goalSelector.add(2, new FlyingDragonCallBackGoal<>(this));
         goalSelector.add(3, new SitGoal(this));
-        goalSelector.add(4, new DragonConsumeFoodFromInventoryGoal(this));
+        goalSelector.add(4, new DragonConsumeItemFromInventoryGoal(this));
         goalSelector.add(5, new LightningChaserAttackGoal(this));
         goalSelector.add(6, new LightningChaserRoamAroundGoal(this));
         goalSelector.add(6, new LightningChaserBailOutGoal(this));
