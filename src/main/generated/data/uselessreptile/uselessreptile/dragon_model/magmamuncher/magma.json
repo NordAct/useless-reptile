@@ -1,0 +1,35 @@
+{
+  "model_data": {
+    "animation": "uselessreptile:entity/magmamuncher/magmamuncher",
+    "model": "uselessreptile:entity/magmamuncher/magmamuncher",
+    "texture": "uselessreptile:entity/magmamuncher/magma"
+  },
+  "sounds": [
+    {
+      "id": "minecraft:block.netherrack.step",
+      "name": "step",
+      "pitch": 0.8,
+      "volume": 0.25
+    },
+    {
+      "id": "uselessreptile:river_pikehorn.attack",
+      "name": "attack"
+    },
+    {
+      "id": "uselessreptile:river_pikehorn.ambient",
+      "name": "idle"
+    },
+    {
+      "id": "uselessreptile:river_pikehorn.hurt",
+      "name": "hurt"
+    },
+    {
+      "id": "uselessreptile:river_pikehorn.death",
+      "name": "death"
+    },
+    {
+      "id": "minecraft:item.firecharge.use",
+      "name": "apply_fire_resistance"
+    }
+  ]
+}

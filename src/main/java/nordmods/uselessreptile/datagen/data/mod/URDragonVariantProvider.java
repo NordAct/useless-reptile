@@ -98,6 +98,7 @@ public class URDragonVariantProvider implements DataProvider {
         addRiverPikehorn("dark_teal");
 
         addMagmamuncher("netherrack");
+        addMagmamuncher("magma");
     }
 
     protected void addWyvern(String name) {

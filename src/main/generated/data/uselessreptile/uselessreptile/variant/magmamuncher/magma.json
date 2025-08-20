@@ -1,0 +1,7 @@
+{
+  "dragon_model": "uselessreptile:magmamuncher/magma",
+  "equipment": "uselessreptile:empty",
+  "id": "uselessreptile:magmamuncher",
+  "name": "magma",
+  "spawn_conditions": "uselessreptile:magmamuncher/default"
+}

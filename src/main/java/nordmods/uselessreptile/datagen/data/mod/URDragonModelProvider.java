@@ -71,6 +71,7 @@ public class URDragonModelProvider implements DataProvider {
         addRiverPikehorn("dark_teal");
 
         addMagmamuncher("netherrack");
+        addMagmamuncher("magma");
     }
 
     protected ModelData getModelData(Identifier id, String variant, boolean cull) {
