@@ -329,6 +329,15 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.dragonMadness = val)
                 .customController(BooleanController::new)
                 .build();
+        Option<Float> magmamuncherFireResistanceTimeMultiplier = Option.<Float>createBuilder()
+                .name(Text.translatable("config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier"))
+                .description(OptionDescription.createBuilder()
+                        .text(Text.translatable("config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier.@Tooltip")).build())
+                .binding(config.magmamuncherFireResistanceTimeMultiplier,
+                        () -> config.magmamuncherFireResistanceTimeMultiplier,
+                        val -> config.magmamuncherFireResistanceTimeMultiplier = val)
+                .customController(opt -> new FloatFieldController(opt, 0, Float.MAX_VALUE))
+                .build();
 
         inWorldSpawnGroup.option(naturalWyvernSpawn);
         inWorldSpawnGroup.option(naturalMoleclawSpawn);
@@ -359,6 +368,7 @@ public class ModMenuIntegration implements ModMenuApi {
         dragonBehaviourGroup.option(blockDropChance);
         dragonBehaviourGroup.option(allowDragonTeleport);
         dragonBehaviourGroup.option(dragonMadness);
+        dragonBehaviourGroup.option(magmamuncherFireResistanceTimeMultiplier);
 
         gameplayCategory.group(inWorldSpawnGroup.build());
         gameplayCategory.group(spawnGroupsGroup.build());

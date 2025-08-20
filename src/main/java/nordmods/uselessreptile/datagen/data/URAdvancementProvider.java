@@ -39,7 +39,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
 
         AdvancementEntry root = Advancement.Builder.createUntelemetered()
                 .display(URItems.WYVERN_SKIN,
-                        Text.literal("Useless Reptile"),
+                        Text.translatable("advancement.uselessreptile.root"),
                         Text.translatable("advancement.uselessreptile.root.desc"),
                         Identifier.of("minecraft:textures/block/dirt.png"),
                         AdvancementFrame.TASK,
@@ -96,6 +96,19 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .parent(tameWyvern)
                 .build(UselessReptile.id("dragon/gather_acid"));
 
+        AdvancementEntry magmamuncherApplyFireResistance = Advancement.Builder.createUntelemetered()
+                .display(Items.LAVA_BUCKET,
+                        Text.translatable("advancement.uselessreptile.magmamuncher_apply_fire_resistance"),
+                        Text.translatable("advancement.uselessreptile.magmamuncher_apply_fire_resistance.desc"),
+                        null,
+                        AdvancementFrame.TASK,
+                        true,
+                        true,
+                        false)
+                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .parent(tameMagmamuncher)
+                .build(UselessReptile.id("dragon/magmamuncher_apply_fire_resistance"));
+
         consumer.accept(root);
         consumer.accept(tameWyvern);
         consumer.accept(tameMoleclaw);
@@ -105,6 +118,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         consumer.accept(useFlute);
         consumer.accept(moleclawHelmet);
         consumer.accept(gatherAcid);
+        consumer.accept(magmamuncherApplyFireResistance);
     }
 
     private static AdvancementEntry tamingAdvancementEntry(RegistryWrapper.WrapperLookup registryLookup,EntityType<? extends Entity> type, AdvancementEntry parent) {

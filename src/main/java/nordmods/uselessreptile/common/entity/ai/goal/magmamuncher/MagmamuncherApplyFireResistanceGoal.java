@@ -6,7 +6,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.DamageTypeTags;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.DragonConsumeItemFromInventoryGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -18,7 +20,7 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
 
     @Override
     public boolean canStart() {
-        return isOwnerOnFire();
+        return URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier > 0 && isOwnerOnFire();
     }
 
     @Override
@@ -46,6 +48,9 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
                     0,
                     10
             );
+            if (dragon.getOwner() instanceof ServerPlayerEntity player) {
+                dragon.grantTriggerableAdvancement(player, UselessReptile.id("dragon/magmamuncher_apply_fire_resistance")); //todo make datadriven... some day
+            }
             dragon.getServer().getPlayerManager().sendToAll(packet);
         }
     }

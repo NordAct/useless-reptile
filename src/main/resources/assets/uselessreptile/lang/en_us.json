@@ -149,6 +149,7 @@
     "config.uselessreptile.option.naturalMagmamuncherSpawn": "Natural Magmamuncher Spawn",
     "config.uselessreptile.option.magmamuncherMinGroupSize": "Magmamuncher Minimum Group Size",
     "config.uselessreptile.option.magmamuncherMaxGroupSize": "Magmamuncher Max Group Size",
+    "config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier": "Fire Resistance from Magmamuncher Time Multiplier",
 
     "config.uselessreptile.requires_restart.@Tooltip" : "\nChanging this option requires game restart",
     "config.uselessreptile.group.spawnGroups.@Tooltip" : "Capacities of spawn groups added by this mod",
@@ -204,6 +205,7 @@
     "config.uselessreptile.option.upDownCameraControl.@Tooltip": "Allows using camera pitch for up/down input for flying dragons",
     "config.uselessreptile.option.upDownCameraPitchThreshold.@Tooltip": "Defines minimal deviation of camera pitch for up/down input to be active",
     "config.uselessreptile.option.magmamuncherBasePrimaryAttackCooldown.@Tooltip": "Melee attack cooldown (in ticks)",
+    "config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier.@Tooltip": "Defines for how long fire resistance from Magmamuncher consuming fuel item will last.\nSetting value to 0 will disable this feature",
 
     "effect.uselessreptile.acid": "Acid",
     "effect.uselessreptile.shock": "Shock",
@@ -218,6 +220,9 @@
     "advancement.uselessreptile.tame_river_pikehorn": "Unicorns are Real",
     "advancement.uselessreptile.use_flute": "The Pied Piper",
     "advancement.uselessreptile.tame_lightning_chaser": "Thunderstruck",
+    "advancement.uselessreptile.tame_magmamuncher": "A Friend from Hell",
+    "advancement.uselessreptile.magmamuncher_apply_fire_resistance": "Fighting Fire with Fire",
+    "advancement.uselessreptile.root": "Useless Reptile (check advancements to progress)",
 
     "advancement.uselessreptile.root.desc": "Here be Dragons!",
     "advancement.uselessreptile.gather_acid.desc": "Gather acid with bottle from Swamp Wyvern",
@@ -227,6 +232,8 @@
     "advancement.uselessreptile.tame_river_pikehorn.desc": "Tame River Pikehorn with Tropical Fish within the bucket",
     "advancement.uselessreptile.use_flute.desc": "Use Flute to command your River Pikehorns",
     "advancement.uselessreptile.tame_lightning_chaser.desc": "Tame Lightning Chaser by challenging it in a battle (Tip: you'll need a Trident with Channelling)",
+    "advancement.uselessreptile.tame_magmamuncher.desc": "Tame Magmamuncher with Blaze Rods",
+    "advancement.uselessreptile.magmamuncher_apply_fire_resistance.desc": "Give Magmamuncher some fuel to save you from being set on fire",
 
     "tag.item.uselessreptile.moleclaw_chestplates": "Moleclaw Chestplates",
     "tag.item.uselessreptile.moleclaw_tail_armor": "Moleclaw Tail Armor",

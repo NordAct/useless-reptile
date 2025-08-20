@@ -1,0 +1,25 @@
+{
+  "parent": "uselessreptile:dragon/tame_magmamuncher",
+  "criteria": {
+    "triggered_from_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.magmamuncher_apply_fire_resistance.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:lava_bucket"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.magmamuncher_apply_fire_resistance"
+    }
+  },
+  "requirements": [
+    [
+      "triggered_from_code"
+    ]
+  ]
+}

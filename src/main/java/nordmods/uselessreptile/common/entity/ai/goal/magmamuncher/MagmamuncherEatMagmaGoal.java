@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
-//todo drop when magma is eaten
+
 public class MagmamuncherEatMagmaGoal extends Goal {
     private final MagmamuncherEntity entity;
     private int timer;

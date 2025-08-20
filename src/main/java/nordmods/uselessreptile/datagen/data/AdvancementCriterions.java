@@ -39,4 +39,8 @@ public class AdvancementCriterions {
     public static AdvancementCriterion<InventoryChangedCriterion.Conditions> obtainItem(RegistryEntryLookup<Item> registryEntryLookup, TagKey<Item> tag) {
         return Criteria.INVENTORY_CHANGED.create(InventoryChangedCriterion.Conditions.items(ItemPredicate.Builder.create().tag(registryEntryLookup, tag)).conditions());
     }
+
+    public static AdvancementCriterion<ImpossibleCriterion.Conditions> triggeredFromCode() {
+        return Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions());
+    }
 }

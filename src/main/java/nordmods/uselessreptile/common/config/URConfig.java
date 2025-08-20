@@ -69,8 +69,8 @@ public class URConfig {
     public boolean allowDragonTeleport = true;
     @SerialEntry
     public boolean dragonMadness = false;
-    @SerialEntry(comment = "Defines for how long fire resistance from Magmamuncher consuming fuel item will last")
-    public float magmamuncherFireResistanceTimeMultiplier = 0.125f;
+    @SerialEntry(comment = "Defines for how long fire resistance from Magmamuncher consuming fuel item will last.\n Setting value to 0 will disable this feature")
+    public float magmamuncherFireResistanceTimeMultiplier = 0.09375f;
 
     public static URConfig getConfig() {
         return CONFIG.instance();

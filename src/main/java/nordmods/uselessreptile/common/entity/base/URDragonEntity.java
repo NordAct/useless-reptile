@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.base;
 
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
+import net.minecraft.advancement.AdvancementEntry;
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
@@ -1111,6 +1112,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public boolean isBanner(ItemStack itemStack) {
         return itemStack.getItem() instanceof BannerItem;
+    }
+
+    public boolean grantTriggerableAdvancement(ServerPlayerEntity player, Identifier advancement) {
+        AdvancementEntry entry = player.getServer().getAdvancementLoader().get(advancement);
+        if (entry == null) return false;
+        return player.getAdvancementTracker().grantCriterion(entry, "triggered_from_code");
     }
 
     @NotNull
