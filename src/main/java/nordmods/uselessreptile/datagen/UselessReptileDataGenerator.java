@@ -3,6 +3,7 @@ package nordmods.uselessreptile.datagen;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import nordmods.uselessreptile.datagen.assets.URModelProvider;
+import nordmods.uselessreptile.datagen.assets.URSoundsProvider;
 import nordmods.uselessreptile.datagen.data.*;
 import nordmods.uselessreptile.datagen.data.mod.URDragonModelProvider;
 import nordmods.uselessreptile.datagen.data.mod.URDragonVariantProvider;
@@ -31,5 +32,6 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URDragonModelProvider::new);
 
         pack.addProvider(URModelProvider::new);
+        pack.addProvider(URSoundsProvider::new);
     }
 }

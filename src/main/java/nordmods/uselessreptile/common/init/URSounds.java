@@ -41,11 +41,11 @@ public class URSounds {
     public static final SoundEvent VORTEX_HORN_SPIT_OUT = register("vortex_horn.spit_out");
 
     private static SoundEvent register(String id) {
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(UselessReptile.id(id)));
+        return Registry.register(Registries.SOUND_EVENT, UselessReptile.id(id), SoundEvent.of(UselessReptile.id(id)));
     }
 
     private static SoundEvent register(String id, float distance) {
-        return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(UselessReptile.id(id), distance));
+        return Registry.register(Registries.SOUND_EVENT, UselessReptile.id(id), SoundEvent.of(UselessReptile.id(id), distance));
     }
 
     @SuppressWarnings("EmptyMethod")

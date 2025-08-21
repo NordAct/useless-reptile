@@ -13,7 +13,9 @@
       "count": 1,
       "id": "uselessreptile:wyvern_skin"
     },
-    "title": "Useless Reptile"
+    "title": {
+      "translate": "advancement.uselessreptile.root"
+    }
   },
   "requirements": [
     [
