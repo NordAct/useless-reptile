@@ -93,7 +93,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         ItemStack itemStack = player.getStackInHand(hand);
         if (isTamed() && isOwner(player) && !isInteractableItem(itemStack) && !player.isSneaking()) {
             if (!hasPassengers() && hasSaddle()) {
-                if (isSitting()) setIsSitting(false);
+                if (isSitting()) setSitting(false);
                 else if (!getWorld().isClient()) player.startRiding(this);
                 return ActionResult.SUCCESS;
             }

@@ -16,7 +16,7 @@ public class DragonWanderAroundGoal extends WanderAroundFarGoal {
     @Override
     public boolean canStart() {
         if (mob.isDancing()) return false;
-        if (mob.getIsSitting()) return false;
+        if (mob.isSitting()) return false;
         if (mob instanceof FlyingDragon flyingDragon)
             if (flyingDragon.isFlying()) return false;
         return super.canStart();

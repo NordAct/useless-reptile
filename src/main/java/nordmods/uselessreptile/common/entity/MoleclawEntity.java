@@ -140,7 +140,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
         event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
         event.controller().setAnimationSpeed(animationSpeed);
-        if (getIsSitting() && !isDancing() && !isPanicking()) return loopAnim("sit", event);
+        if (isSitting() && !isDancing() && !isPanicking()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
             if (isPanicking()) return loopAnim("panic", event);
             return loopAnim("walk", event);
@@ -171,7 +171,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!getIsSitting()) setHitboxModifiers(1, 1, 2.5f);
+        if (!isSitting()) setHitboxModifiers(1, 1, 2.5f);
         else setHitboxModifiers(0.75f, 1f, 2.5f);
         tryPanic();
 

@@ -128,7 +128,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
             return loopAnim("fly.idle", event);
         }
-        if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
+        if (isSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
         if (isDancing()) return loopAnim("dance", event);
@@ -407,7 +407,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
                     if (hitResult != null) setTarget((LivingEntity) hitResult.getEntity());
                 }
-                default -> shouldFollow = true;
+                case 3 -> setSitting(true);
+                case 4 -> setSitting(false);
+                default -> {
+                    if (!isSitting()) shouldFollow = true;
+                }
             }
 
             return true;

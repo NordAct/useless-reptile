@@ -36,7 +36,7 @@ public class LightningChaserBailOutGoal extends Goal {
     public void start() {
         updatePointOfInterest();
         entity.setSurrendered(false);
-        entity.setIsSitting(false);
+        entity.setSitting(false);
     }
 
     @Override

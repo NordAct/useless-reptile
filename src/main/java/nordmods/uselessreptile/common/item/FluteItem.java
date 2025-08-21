@@ -27,7 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+//todo textures and sound for sit down and stand up modes
 public class FluteItem extends Item {
+    private static final int MODE_AMOUNT = 5;
     public FluteItem(Settings settings) {
         super(settings);
         ItemStack itemStack = getDefaultStack();
@@ -39,11 +41,7 @@ public class FluteItem extends Item {
         ItemStack itemStack = user.getStackInHand(hand);
         int mode = getFluteMode(itemStack);
         if (user.isSneaking()) {
-            switch (mode) {
-                case 1 -> mode = 2;
-                case 2 -> mode = 0;
-                default -> mode = 1;
-            }
+            mode = getNextMode(mode);
             itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent((byte) mode));
 
             if (world.isClient() && user == MinecraftClient.getInstance().player) {
@@ -58,11 +56,7 @@ public class FluteItem extends Item {
             user.stopUsingItem();
             user.emitGameEvent(URGameEvents.FLUTE_USED);
         }
-        switch (mode) {
-            case 1 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 2, 1);
-            case 2 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 2, 1);
-            default -> world.playSoundFromEntityClient(user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 2, 1);
-        }
+        playFluteSound(world, user, mode);
         return ActionResult.SUCCESS;
     }
 
@@ -98,5 +92,17 @@ public class FluteItem extends Item {
 
     public int getFluteMode(ItemStack itemStack) {
         return itemStack.getComponents().get(URItems.FLUTE_MODE_COMPONENT).mode();
+    }
+
+    private int getNextMode(int currentMode) {
+        return (currentMode + 1) % MODE_AMOUNT;
+    }
+
+    private void playFluteSound(World world, PlayerEntity user, int mode) {
+        switch (mode) {
+            case 1 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 2, 1);
+            case 2 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 2, 1);
+            default -> world.playSoundFromEntityClient(user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 2, 1);
+        }
     }
 }

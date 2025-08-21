@@ -182,7 +182,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             return loopAnim("fly.idle", event);
         }
         if (hasSurrendered()) return loopAnim("surrender", event);
-        if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
+        if (isSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
         if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
@@ -332,7 +332,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             } else if (getHealth() / getMaxHealth() > 0.5) setSurrendered(false);
             if (hasSurrendered()) {
                 if (age % 200 == 0) heal(2);
-                setIsSitting(true);
+                setSitting(true);
                 removeAllPassengers();
             }
         }
@@ -706,7 +706,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 tail3Pos = new Vector3f(yawOffset * 2f, -2.5f , -2.5f);
             }
         } else {
-            if (getIsSitting()) {
+            if (isSitting()) {
                 wing1LeftPos = new Vector3f(1.5f, 0, 0.5f);
                 wing1LeftScale = new Vec2f(2, 1.5f);
 

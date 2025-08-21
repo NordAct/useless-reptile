@@ -153,7 +153,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
             return loopAnim("fly.idle", event);
         }
-        if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
+        if (isSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
         if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
@@ -438,7 +438,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 tail3Pos = new Vector3f(yawOffset * 2f, -0.2f , -3.2f + Math.abs(yawOffset) * 1);
             }
         } else {
-            if (getIsSitting()) {
+            if (isSitting()) {
                 wingLeftPos = new Vector3f(1.3333334f, 0, 0);
                 wingLeftScale = new Vec2f(1.5f, 2);
 

@@ -191,10 +191,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public boolean isMoving() {return getVelocity().getZ() != 0 || getVelocity().getX() != 0;}
 
-    public boolean getIsSitting() {return dataTracker.get(IS_SITTING);}
-    public void setIsSitting(boolean state) {
+    @Override
+    public boolean isSitting() {return dataTracker.get(IS_SITTING);}
+
+    @Override
+    public void setSitting(boolean state) {
         dataTracker.set(IS_SITTING, state);
-        setSitting(state);
+        super.setSitting(state);
         if (state) setTarget(null);
     }
 
@@ -234,7 +237,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (!isTamed()) tag.putInt("TamingProgress", getTamingProgress());
         else tag.putString("BoundedInstrumentSound", getBoundedInstrumentSound());
 
-        tag.putBoolean("Sitting", getIsSitting());
+        tag.putBoolean("Sitting", isSitting());
         if (inventory != null && isTamed()) {
             WriteView.ListAppender<StackWithSlot> listAppender = tag.getListAppender("Inventory", StackWithSlot.CODEC);
             for (int i = 0; i < inventory.size(); i++) {
@@ -256,7 +259,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (!isTamed()) setTamingProgress(tag.getInt("TamingProgress", getBaseTamingProgress()));
         else setBoundedInstrumentSound(tag.getString("BoundedInstrumentSound", ""));
 
-        setIsSitting(tag.getBoolean("Sitting", false));
+        setSitting(tag.getBoolean("Sitting", false));
 
         for (StackWithSlot stackWithSlot : tag.getTypedListView("Inventory", StackWithSlot.CODEC)) {
             if (stackWithSlot.isValidSlot(this.inventory.size())) {
@@ -503,9 +506,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             }
 
             if ((itemStack.isOf(Items.STICK) || isInstrument(itemStack)) && player.isSneaking()) {
-                if (isSitting()) setIsSitting(false);
+                if (isSitting()) setSitting(false);
                 else {
-                    setIsSitting(true);
+                    setSitting(true);
                     getNavigation().stop();
                 }
                 return ActionResult.SUCCESS;
@@ -1174,7 +1177,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             if (!stack.getComponents().contains(DataComponentTypes.INSTRUMENT)) return false;
 
             if (getInstrument(stack).equals(getBoundedInstrumentSound())) {
-                setIsSitting(false);
+                setSitting(false);
                 shouldFollow = true;
                 return true;
             }

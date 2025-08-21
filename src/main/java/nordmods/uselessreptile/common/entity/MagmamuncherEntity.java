@@ -120,7 +120,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
         event.controller().setAnimationSpeed(animationSpeed);
         if (hasVehicle()) return loopAnim("sit.head", event);
-        if (getIsSitting() && !isDancing()) return loopAnim("sit", event);
+        if (isSitting() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
         if (isEatingMagma()) return loopAnim("eat", event);

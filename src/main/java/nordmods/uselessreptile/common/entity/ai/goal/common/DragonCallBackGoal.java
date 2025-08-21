@@ -29,7 +29,7 @@ public class DragonCallBackGoal extends Goal {
         prevDistance = 0;
         proximityRange = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
         owner = entity.getOwner();
-        entity.setIsSitting(false);
+        entity.setSitting(false);
         entity.setTarget(null);
     }
 

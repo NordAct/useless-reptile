@@ -138,7 +138,7 @@ public class VortexHornItem extends GoatHornItem {
 
     protected boolean tryMassCatchOrRelease(ItemStack stack, PlayerEntity user, World world, Hand hand) {
         Box box = new Box(user.getBlockPos()).expand(2);
-        List<URDragonEntity> dragons = world.getEntitiesByClass(URDragonEntity.class, box, entity -> entity.getOwner() == user && !entity.getIsSitting());
+        List<URDragonEntity> dragons = world.getEntitiesByClass(URDragonEntity.class, box, entity -> entity.getOwner() == user && !entity.isSitting());
         int leastCapacity = 0;
         if (!dragons.isEmpty()) {
             leastCapacity = dragons.getFirst().vortexHornCapacity();
@@ -154,7 +154,7 @@ public class VortexHornItem extends GoatHornItem {
         } else {
             dragons.sort(Comparator.comparingDouble((dragon) -> dragon.squaredDistanceTo(dragon.getOwner())));
             for (URDragonEntity dragon : dragons) {
-                if (dragon.getIsSitting()) continue;
+                if (dragon.isSitting()) continue;
                 if (!tryCollectDragon(stack, user, dragon, hand, false)) break;
             }
             user.playSound(URSounds.VORTEX_HORN_SUCK_IN);
