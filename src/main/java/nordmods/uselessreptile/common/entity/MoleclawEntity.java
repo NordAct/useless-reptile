@@ -270,8 +270,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
         if (!canBreakBlocks()) return;
 
-        Box box = getSecondaryAttackBox();
-        Iterable<BlockPos> blocks = BlockPos.iterate((int) box.minX, (int) box.minY, (int) box.minZ, (int) box.maxX, (int) box.maxY, (int) box.maxZ);
+        Iterable<BlockPos> blocks = BlockPos.iterate(getSecondaryAttackBox());
         float maxMiningLevel = (float) getAttributeValue(URAttributes.MOLECLAW_MINING_LEVEL);
         if (hasStatusEffect(StatusEffects.STRENGTH)) maxMiningLevel += getStatusEffect(StatusEffects.STRENGTH).getAmplifier() + 1;
         if (hasStatusEffect(StatusEffects.WEAKNESS)) maxMiningLevel -= getStatusEffect(StatusEffects.WEAKNESS).getAmplifier() + 1;
@@ -307,11 +306,16 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public Box getSecondaryAttackBox() {
-        double x = -Math.sin(Math.toRadians(getYaw())) * 2;
-        double y = -Math.sin(Math.toRadians(getPitch()));
-        double z = Math.cos(Math.toRadians(getYaw())) * 2;
+        double halfWidth = getWidth() / 2f;
+        double x = -Math.sin(Math.toRadians(getYaw())) * halfWidth;
+        double y = 0;
+        if (canBeControlledByRider()) {
+            if (getPitch() > 25) y = -1;
+            if (getPitch() < -25) y = 1;
+        } else y = -Math.sin(Math.toRadians(getPitch()));
+        double z = Math.cos(Math.toRadians(getYaw())) * halfWidth;
         double heightIncrease = canBeControlledByRider() ? 2 : 1;
-        return new Box(getPos().getX() + x - 1.25, getPos().getY() + y + 0.5, getPos().getZ() + z - 1.25,
+        return new Box(getPos().getX() + x - 1.25, getPos().getY() + y, getPos().getZ() + z - 1.25,
                 getPos().getX() + x + 1.25, getPos().getY() + getHeight() + heightIncrease + y, getPos().getZ() + z + 1.25);
     }
 
