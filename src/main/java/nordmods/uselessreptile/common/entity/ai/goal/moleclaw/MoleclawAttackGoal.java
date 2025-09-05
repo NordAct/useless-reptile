@@ -60,7 +60,6 @@ public class MoleclawAttackGoal extends Goal {
     @Override
     public void tick() {
         entity.setSprinting(true);
-        entity.getLookControl().lookAt(target);
         entity.getNavigation().startMovingTo(target, 1);
 
         if (!entity.isMoving()) notMovingTimer++;

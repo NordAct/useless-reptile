@@ -60,7 +60,6 @@ public class PikehornAttackGoal extends Goal {
             return;
         }
         entity.setSprinting(true);
-        entity.getLookControl().lookAt(target);
         entity.getNavigation().startMovingTo(target, 1);
 
         if (entity.getPrimaryAttackCooldown() > 0 || !entity.getAttackBox().intersects(target.getBoundingBox())) return;

@@ -60,7 +60,6 @@ public class WyvernAttackGoal extends Goal {
             return;
         }
         entity.setSprinting(true);
-        entity.getLookControl().lookAt(target);
         double attackDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
         double distance = entity.squaredDistanceTo(target);
         entity.getNavigation().startMovingTo(target, 1);
