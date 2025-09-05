@@ -6,17 +6,18 @@ import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.*;
 import net.minecraft.client.render.item.model.ItemModel;
-import net.minecraft.client.render.item.model.RangeDispatchItemModel;
+import net.minecraft.client.render.item.model.SelectItemModel;
+import net.minecraft.client.render.item.property.select.ComponentSelectProperty;
 import net.minecraft.client.render.model.json.ModelVariant;
 import net.minecraft.item.Item;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.item_property.FluteModeProperty;
 import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.item.component.FluteComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -258,14 +259,13 @@ public class URModelProvider extends FabricModelProvider {
     }
 
     protected void registerFlute(ItemModelGenerator itemModelGenerator, Item item) {
-        int i = 0;
-        List<RangeDispatchItemModel.Entry> entries = new ArrayList<>();
+        List<SelectItemModel.SwitchCase<FluteComponent>> entries = new ArrayList<>();
         for (Map.Entry<String, Pair<SoundEvent, FluteItem.FluteAction>> entry :FluteItem.FLUTE_MODES.entrySet()) {
-            ItemModel.Unbaked mode = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_" + entry.getKey(), Models.HANDHELD));
-            entries.add(ItemModels.rangeDispatchEntry(mode, i));
-            i++;
+            String mode = entry.getKey();
+            ItemModel.Unbaked model = ItemModels.basic(itemModelGenerator.registerSubModel(item, "/" + mode, Models.HANDHELD));
+            entries.add(new SelectItemModel.SwitchCase<>(List.of(new FluteComponent(mode)), model));
         }
 
-        itemModelGenerator.output.accept(item, ItemModels.rangeDispatch(new FluteModeProperty(), entries.getFirst().model(), entries));
+        itemModelGenerator.output.accept(item, ItemModels.select(new ComponentSelectProperty<>(URItems.FLUTE_MODE_COMPONENT), entries));
     }
 }

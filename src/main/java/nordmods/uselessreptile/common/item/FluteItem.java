@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
-//todo textures and sound for sit down and stand up modes
 //todo expand functionality to other dragons
 public class FluteItem extends Item {
     public static final ImmutableSortedMap<String, Pair<SoundEvent, FluteAction>> FLUTE_MODES = createFluteModeMap();
@@ -50,13 +49,12 @@ public class FluteItem extends Item {
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
         ItemStack itemStack = user.getStackInHand(hand);
-        int mode = getFluteMode(itemStack);
         if (user.isSneaking()) {
-            mode = getNextMode(mode);
-            itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent((byte) mode));
+            String nextMode = getNextMode(itemStack);
+            itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent(nextMode));
 
             if (world.isClient() && user == MinecraftClient.getInstance().player) {
-                Text text = Text.translatable("tooltip.uselessreptile.flute." + getFluteModeName(mode));
+                Text text = Text.translatable("tooltip.uselessreptile.flute." + getFluteMode(itemStack));
                 MinecraftClient.getInstance().inGameHud.setOverlayMessage(text, false);
             }
             return ActionResult.SUCCESS;
@@ -67,7 +65,7 @@ public class FluteItem extends Item {
             user.stopUsingItem();
             user.emitGameEvent(URGameEvents.FLUTE_USED);
         }
-        world.playSoundFromEntityClient(user, getFluteSound(getFluteModeName(mode)), SoundCategory.PLAYERS, 2, 1);
+        world.playSoundFromEntityClient(user, getFluteSound(getFluteMode(itemStack)), SoundCategory.PLAYERS, 2, 1);
         return ActionResult.SUCCESS;
     }
 
@@ -80,8 +78,7 @@ public class FluteItem extends Item {
     @SuppressWarnings("deprecation")
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
-        int mode = getFluteMode(stack);
-        String tooltipString = "tooltip.uselessreptile.flute_mode" + mode;
+        String tooltipString = "tooltip.uselessreptile.flute_mode" + getFluteMode(stack);
 
         if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
         else for (Text text : getParsedText("tooltip.uselessreptile.flute")) textConsumer.accept(((MutableText) text).formatted(Formatting.GRAY));
@@ -101,25 +98,23 @@ public class FluteItem extends Item {
         return toReturn;
     }
 
-    public static int getFluteMode(ItemStack itemStack) {
-        return itemStack.getComponents().get(URItems.FLUTE_MODE_COMPONENT).mode();
-    }
-
-    public static int getNextMode(int currentMode) {
-        return (currentMode + 1) % FLUTE_MODES.size();
-    }
-
     public static SoundEvent getFluteSound(String mode) {
         Pair<SoundEvent, FluteAction> pair = FLUTE_MODES.get(mode);
         return pair != null ? pair.getLeft() : FLUTE_MODES.firstEntry().getValue().getLeft();
     }
 
-    public static String getFluteModeName(int mode) {
-        return FLUTE_MODES.keySet().stream().toList().get(mode);
+    public static String getFluteMode(ItemStack stack) {
+        return stack.getComponents().get(URItems.FLUTE_MODE_COMPONENT).mode();
     }
 
-    public static FluteAction getFluteModeAction(int mode) {
-        return FLUTE_MODES.values().stream().toList().get(mode).getRight();
+    public static FluteAction getFluteModeAction(ItemStack stack) {
+        return FLUTE_MODES.get(getFluteMode(stack)).getRight();
+    }
+
+    public static String getNextMode(ItemStack stack) {
+        int currentOrdinal = FLUTE_MODES.keySet().asList().indexOf(getFluteMode(stack));
+        int nextOrdinal = (currentOrdinal + 1) % FLUTE_MODES.size();
+        return FLUTE_MODES.keySet().asList().get(nextOrdinal);
     }
 
     private static ImmutableSortedMap<String, Pair<SoundEvent, FluteAction>>createFluteModeMap() {

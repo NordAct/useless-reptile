@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "uselessreptile:item/flute_stand_up"
+    "layer0": "uselessreptile:item/flute/stand_up"
   }
 }

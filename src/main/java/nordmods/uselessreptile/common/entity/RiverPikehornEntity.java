@@ -403,7 +403,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             if (!stack.isOf(URItems.FLUTE)) stack = player.getOffHandStack();
             if (!stack.isOf(URItems.FLUTE)) return false;
 
-            respondToFlute(FluteItem.getFluteModeAction(FluteItem.getFluteMode(stack)));
+            respondToFlute(FluteItem.getFluteModeAction(stack));
 
             return true;
         }

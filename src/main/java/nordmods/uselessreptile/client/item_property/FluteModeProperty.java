@@ -5,7 +5,6 @@ import net.minecraft.client.render.item.property.numeric.NumericProperty;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import nordmods.uselessreptile.common.init.URItems;
 import org.jetbrains.annotations.Nullable;
 
 public record FluteModeProperty() implements NumericProperty {
@@ -13,7 +12,7 @@ public record FluteModeProperty() implements NumericProperty {
 
     @Override
     public float getValue(ItemStack stack, @Nullable ClientWorld world, @Nullable LivingEntity holder, int seed) {
-        if (stack.contains(URItems.FLUTE_MODE_COMPONENT)) return stack.get(URItems.FLUTE_MODE_COMPONENT).mode();
+        //if (stack.contains(URItems.FLUTE_MODE_COMPONENT)) return stack.get(URItems.FLUTE_MODE_COMPONENT).mode();
         return 0;
     }
 

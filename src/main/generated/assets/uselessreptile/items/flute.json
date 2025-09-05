@@ -1,47 +1,44 @@
 {
   "model": {
-    "type": "minecraft:range_dispatch",
-    "entries": [
+    "type": "minecraft:select",
+    "cases": [
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute_call"
+          "model": "uselessreptile:item/flute/call"
         },
-        "threshold": 0.0
+        "when": "call"
       },
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute_gather"
+          "model": "uselessreptile:item/flute/gather"
         },
-        "threshold": 1.0
+        "when": "gather"
       },
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute_sit_down"
+          "model": "uselessreptile:item/flute/sit_down"
         },
-        "threshold": 2.0
+        "when": "sit_down"
       },
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute_stand_up"
+          "model": "uselessreptile:item/flute/stand_up"
         },
-        "threshold": 3.0
+        "when": "stand_up"
       },
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute_target"
+          "model": "uselessreptile:item/flute/target"
         },
-        "threshold": 4.0
+        "when": "target"
       }
     ],
-    "fallback": {
-      "type": "minecraft:model",
-      "model": "uselessreptile:item/flute_call"
-    },
-    "property": "uselessreptile:flute_mode"
+    "component": "uselessreptile:flute_mode",
+    "property": "minecraft:component"
   }
 }

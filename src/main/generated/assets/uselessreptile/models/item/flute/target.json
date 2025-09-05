@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/handheld",
   "textures": {
-    "layer0": "uselessreptile:item/flute_call"
+    "layer0": "uselessreptile:item/flute/target"
   }
 }
