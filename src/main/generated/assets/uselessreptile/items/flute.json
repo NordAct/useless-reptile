@@ -19,9 +19,23 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute_target"
+          "model": "uselessreptile:item/flute_sit_down"
         },
         "threshold": 2.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "uselessreptile:item/flute_stand_up"
+        },
+        "threshold": 3.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "uselessreptile:item/flute_target"
+        },
+        "threshold": 4.0
       }
     ],
     "fallback": {

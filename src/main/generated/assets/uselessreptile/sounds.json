@@ -50,6 +50,20 @@
     ],
     "subtitle": "subtitles.uselessreptile.flute"
   },
+  "flute.sit_down": {
+    "category": "neutral",
+    "sounds": [
+      "uselessreptile:flute/sit_down"
+    ],
+    "subtitle": "subtitles.uselessreptile.flute"
+  },
+  "flute.stand_up": {
+    "category": "neutral",
+    "sounds": [
+      "uselessreptile:flute/stand_up"
+    ],
+    "subtitle": "subtitles.uselessreptile.flute"
+  },
   "flute.target": {
     "category": "neutral",
     "sounds": [
@@ -126,6 +140,37 @@
       }
     ],
     "subtitle": "subtitles.uselessreptile.lightning_chaser.roar"
+  },
+  "magmamuncher.ambient": {
+    "category": "neutral",
+    "sounds": [
+      "uselessreptile:magmamuncher/idle1",
+      "uselessreptile:magmamuncher/idle2",
+      "uselessreptile:magmamuncher/idle3"
+    ],
+    "subtitle": "subtitles.uselessreptile.magmamuncher.ambient"
+  },
+  "magmamuncher.bite": {
+    "category": "neutral",
+    "sounds": [
+      "uselessreptile:magmamuncher/bite1",
+      "uselessreptile:magmamuncher/bite2"
+    ],
+    "subtitle": "subtitles.uselessreptile.dragon.bite"
+  },
+  "magmamuncher.death": {
+    "category": "neutral",
+    "sounds": [
+      "uselessreptile:magmamuncher/death"
+    ],
+    "subtitle": "subtitles.uselessreptile.river_pikehorn.death"
+  },
+  "magmamuncher.hurt": {
+    "category": "neutral",
+    "sounds": [
+      "uselessreptile:magmamuncher/hit"
+    ],
+    "subtitle": "subtitles.uselessreptile.magmamuncher.hurt"
   },
   "moleclaw.ambient": {
     "category": "neutral",

@@ -24,6 +24,8 @@ public class URSounds {
     public static final SoundEvent FLUTE_CALL = register("flute.call");
     public static final SoundEvent FLUTE_TARGET = register("flute.target");
     public static final SoundEvent FLUTE_GATHER = register("flute.gather");
+    public static final SoundEvent FLUTE_SIT_DOWN = register("flute.sit_down");
+    public static final SoundEvent FLUTE_STAND_UP = register("flute.stand_up");
     public static final SoundEvent PIKEHORN_ATTACK = register("river_pikehorn.attack");
     public static final SoundEvent PIKEHORN_AMBIENT = register("river_pikehorn.ambient");
     public static final SoundEvent PIKEHORN_HURT = register("river_pikehorn.hurt");
@@ -39,6 +41,10 @@ public class URSounds {
     public static final SoundEvent LIGHTNING_CHASER_DEATH = register("lightning_chaser.death");
     public static final SoundEvent VORTEX_HORN_SUCK_IN = register("vortex_horn.suck_in");
     public static final SoundEvent VORTEX_HORN_SPIT_OUT = register("vortex_horn.spit_out");
+    public static final SoundEvent MAGMAMUNCHER_BITE = register("magmamuncher.bite");
+    public static final SoundEvent MAGMAMUNCHER_AMBIENT = register("magmamuncher.ambient");
+    public static final SoundEvent MAGMAMUNCHER_HURT = register("magmamuncher.hurt");
+    public static final SoundEvent MAGMAMUNCHER_DEATH = register("magmamuncher.death");
 
     private static SoundEvent register(String id) {
         return Registry.register(Registries.SOUND_EVENT, UselessReptile.id(id), SoundEvent.of(UselessReptile.id(id)));

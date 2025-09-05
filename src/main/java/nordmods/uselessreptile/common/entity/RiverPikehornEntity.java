@@ -1,61 +1,60 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
-import net.minecraft.entity.ai.goal.SitGoal;
-import net.minecraft.entity.ai.goal.TrackOwnerAttackerGoal;
-import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraft.world.event.EntityPositionSource;
-import net.minecraft.world.event.GameEvent;
-import net.minecraft.world.event.PositionSource;
-import net.minecraft.world.event.listener.EntityGameEventHandler;
-import net.minecraft.world.event.listener.GameEventListener;
-import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.entity.ai.goal.common.*;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAttackGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFluteCallGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFollowGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
-import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
-import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
-import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URGameEvents;
-import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.item.FluteItem;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.animation.PlayState;
+        import net.minecraft.entity.*;
+        import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
+        import net.minecraft.entity.ai.goal.SitGoal;
+        import net.minecraft.entity.ai.goal.TrackOwnerAttackerGoal;
+        import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
+        import net.minecraft.entity.attribute.DefaultAttributeContainer;
+        import net.minecraft.entity.attribute.EntityAttributeInstance;
+        import net.minecraft.entity.attribute.EntityAttributeModifier;
+        import net.minecraft.entity.attribute.EntityAttributes;
+        import net.minecraft.entity.passive.TameableEntity;
+        import net.minecraft.entity.player.PlayerEntity;
+        import net.minecraft.entity.player.PlayerInventory;
+        import net.minecraft.item.ItemStack;
+        import net.minecraft.registry.entry.RegistryEntry;
+        import net.minecraft.screen.ScreenHandler;
+        import net.minecraft.server.world.ServerWorld;
+        import net.minecraft.sound.SoundEvents;
+        import net.minecraft.util.ActionResult;
+        import net.minecraft.util.Hand;
+        import net.minecraft.util.Identifier;
+        import net.minecraft.util.math.Box;
+        import net.minecraft.util.math.Vec3d;
+        import net.minecraft.world.World;
+        import net.minecraft.world.event.EntityPositionSource;
+        import net.minecraft.world.event.GameEvent;
+        import net.minecraft.world.event.PositionSource;
+        import net.minecraft.world.event.listener.EntityGameEventHandler;
+        import net.minecraft.world.event.listener.GameEventListener;
+        import nordmods.uselessreptile.UselessReptile;
+        import nordmods.uselessreptile.common.config.URConfig;
+        import nordmods.uselessreptile.common.entity.ai.goal.common.*;
+        import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAttackGoal;
+        import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFluteCallGoal;
+        import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFollowGoal;
+        import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
+        import nordmods.uselessreptile.common.entity.base.FluteListener;
+        import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
+        import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
+        import nordmods.uselessreptile.common.entity.misc.DragonInventory;
+        import nordmods.uselessreptile.common.init.URAttributes;
+        import nordmods.uselessreptile.common.init.URGameEvents;
+        import nordmods.uselessreptile.common.init.URItems;
+        import nordmods.uselessreptile.common.init.URTags;
+        import nordmods.uselessreptile.common.item.FluteItem;
+        import org.jetbrains.annotations.NotNull;
+        import org.jetbrains.annotations.Nullable;
+        import software.bernie.geckolib.animatable.GeoEntity;
+        import software.bernie.geckolib.animatable.manager.AnimatableManager;
+        import software.bernie.geckolib.animatable.processing.AnimationController;
+        import software.bernie.geckolib.animatable.processing.AnimationTest;
+        import software.bernie.geckolib.animation.PlayState;
 
-import java.util.function.BiConsumer;
+        import java.util.function.BiConsumer;
 
-public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMountDragon {
+public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMountDragon, FluteListener {
     private final int huntCooldown = 1200;
     private int huntTimer = getRandom().nextInt(huntCooldown);
     public boolean forceTargetInWater = false;
@@ -371,6 +370,16 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         return slot != EquipmentSlot.MAINHAND;
     }
 
+    @Override
+    public void startGathering() {
+        setIsHunting(true);
+    }
+
+    @Override
+    public void respondToFlute(FluteItem.FluteAction action) {
+        action.run(this);
+    }
+
     protected class FluteUsedEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -394,25 +403,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             if (!stack.isOf(URItems.FLUTE)) stack = player.getOffHandStack();
             if (!stack.isOf(URItems.FLUTE)) return false;
 
-            switch (((FluteItem)URItems.FLUTE).getFluteMode(stack)) {
-                case 1 -> setIsHunting(true);
-                case 2 -> {
-                    Vec3d rot = player.getRotationVec(1);
-                    EntityHitResult hitResult = ProjectileUtil
-                            .raycast(player,
-                                    player.getCameraPosVec(1),
-                                    player.getCameraPosVec(1).add(rot.multiply(range)),
-                                    player.getBoundingBox().stretch(rot.multiply(range)).expand(1.0, 1.0, 1.0),
-                                    entity -> entity instanceof LivingEntity && !entity.isSpectator() && entity.canHit(), range * range);
-
-                    if (hitResult != null) setTarget((LivingEntity) hitResult.getEntity());
-                }
-                case 3 -> setSitting(true);
-                case 4 -> setSitting(false);
-                default -> {
-                    if (!isSitting()) shouldFollow = true;
-                }
-            }
+            respondToFlute(FluteItem.getFluteModeAction(FluteItem.getFluteMode(stack)));
 
             return true;
         }

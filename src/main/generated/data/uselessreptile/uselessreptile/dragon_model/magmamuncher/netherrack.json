@@ -12,19 +12,19 @@
       "volume": 0.25
     },
     {
-      "id": "uselessreptile:river_pikehorn.attack",
-      "name": "attack"
+      "id": "uselessreptile:magmamuncher.bite",
+      "name": "bite"
     },
     {
-      "id": "uselessreptile:river_pikehorn.ambient",
+      "id": "uselessreptile:magmamuncher.ambient",
       "name": "idle"
     },
     {
-      "id": "uselessreptile:river_pikehorn.hurt",
+      "id": "uselessreptile:magmamuncher.hurt",
       "name": "hurt"
     },
     {
-      "id": "uselessreptile:river_pikehorn.death",
+      "id": "uselessreptile:magmamuncher.death",
       "name": "death"
     },
     {

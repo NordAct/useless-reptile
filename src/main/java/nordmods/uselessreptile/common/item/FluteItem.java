@@ -1,35 +1,46 @@
 package nordmods.uselessreptile.common.item;
 
+import com.google.common.collect.ImmutableSortedMap;
 import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.component.type.TooltipDisplayComponent;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.ProjectileUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.consume.UseAction;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
+import net.minecraft.util.Pair;
+import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.common.entity.base.FluteListener;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
 
 //todo textures and sound for sit down and stand up modes
+//todo expand functionality to other dragons
 public class FluteItem extends Item {
-    private static final int MODE_AMOUNT = 5;
+    public static final ImmutableSortedMap<String, Pair<SoundEvent, FluteAction>> FLUTE_MODES = createFluteModeMap();
     public FluteItem(Settings settings) {
         super(settings);
         ItemStack itemStack = getDefaultStack();
@@ -45,7 +56,7 @@ public class FluteItem extends Item {
             itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent((byte) mode));
 
             if (world.isClient() && user == MinecraftClient.getInstance().player) {
-                Text text = Text.translatable("tooltip.uselessreptile.flute_mode" + mode);
+                Text text = Text.translatable("tooltip.uselessreptile.flute." + getFluteModeName(mode));
                 MinecraftClient.getInstance().inGameHud.setOverlayMessage(text, false);
             }
             return ActionResult.SUCCESS;
@@ -56,7 +67,7 @@ public class FluteItem extends Item {
             user.stopUsingItem();
             user.emitGameEvent(URGameEvents.FLUTE_USED);
         }
-        playFluteSound(world, user, mode);
+        world.playSoundFromEntityClient(user, getFluteSound(getFluteModeName(mode)), SoundCategory.PLAYERS, 2, 1);
         return ActionResult.SUCCESS;
     }
 
@@ -90,19 +101,53 @@ public class FluteItem extends Item {
         return toReturn;
     }
 
-    public int getFluteMode(ItemStack itemStack) {
+    public static int getFluteMode(ItemStack itemStack) {
         return itemStack.getComponents().get(URItems.FLUTE_MODE_COMPONENT).mode();
     }
 
-    private int getNextMode(int currentMode) {
-        return (currentMode + 1) % MODE_AMOUNT;
+    public static int getNextMode(int currentMode) {
+        return (currentMode + 1) % FLUTE_MODES.size();
     }
 
-    private void playFluteSound(World world, PlayerEntity user, int mode) {
-        switch (mode) {
-            case 1 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 2, 1);
-            case 2 -> world.playSoundFromEntityClient(user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 2, 1);
-            default -> world.playSoundFromEntityClient(user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 2, 1);
-        }
+    public static SoundEvent getFluteSound(String mode) {
+        Pair<SoundEvent, FluteAction> pair = FLUTE_MODES.get(mode);
+        return pair != null ? pair.getLeft() : FLUTE_MODES.firstEntry().getValue().getLeft();
+    }
+
+    public static String getFluteModeName(int mode) {
+        return FLUTE_MODES.keySet().stream().toList().get(mode);
+    }
+
+    public static FluteAction getFluteModeAction(int mode) {
+        return FLUTE_MODES.values().stream().toList().get(mode).getRight();
+    }
+
+    private static ImmutableSortedMap<String, Pair<SoundEvent, FluteAction>>createFluteModeMap() {
+        HashMap<String, Pair<SoundEvent, FluteAction>> mutable = new HashMap<>();
+        mutable.put("call", new Pair<>(URSounds.FLUTE_CALL, dragon -> dragon.shouldFollow = true));
+        mutable.put("gather", new Pair<>(URSounds.FLUTE_GATHER, dragon -> {
+            if (dragon instanceof FluteListener gathererDragon) gathererDragon.startGathering();
+        }));
+        mutable.put("target", new Pair<>(URSounds.FLUTE_TARGET, dragon -> {
+            if (!(dragon.getOwner() instanceof PlayerEntity player)) return;
+
+            int range = URGameEvents.FLUTE_USED.value().notificationRadius();
+            Vec3d rot = player.getRotationVec(1);
+            EntityHitResult hitResult = ProjectileUtil
+                    .raycast(player,
+                            player.getCameraPosVec(1),
+                            player.getCameraPosVec(1).add(rot.multiply(range)),
+                            player.getBoundingBox().stretch(rot.multiply(range)).expand(1.0, 1.0, 1.0),
+                            entity -> entity instanceof LivingEntity && !entity.isSpectator() && entity.canHit(), range * range);
+
+            if (hitResult != null) dragon.setTarget((LivingEntity) hitResult.getEntity());
+        }));
+        mutable.put("sit_down", new Pair<>(URSounds.FLUTE_SIT_DOWN, dragon -> dragon.setSitting(true)));
+        mutable.put("stand_up", new Pair<>(URSounds.FLUTE_STAND_UP, dragon -> dragon.setSitting(false)));
+        return ImmutableSortedMap.copyOf(mutable);
+    }
+
+    public interface FluteAction {
+        void run(URDragonEntity dragon);
     }
 }

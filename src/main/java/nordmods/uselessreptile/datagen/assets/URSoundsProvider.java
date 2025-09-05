@@ -138,6 +138,16 @@ public class URSoundsProvider extends FabricSoundsProvider {
                         .subtitle("subtitles.uselessreptile.flute")
                         .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("flute/gather")))
         );
+        exporter.add(URSounds.FLUTE_SIT_DOWN,
+                SoundTypeBuilder.of()
+                        .subtitle("subtitles.uselessreptile.flute")
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("flute/sit_down")))
+        );
+        exporter.add(URSounds.FLUTE_STAND_UP,
+                SoundTypeBuilder.of()
+                        .subtitle("subtitles.uselessreptile.flute")
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("flute/stand_up")))
+        );
 
         exporter.add(URSounds.PIKEHORN_HURT,
                 SoundTypeBuilder.of()
@@ -234,6 +244,30 @@ public class URSoundsProvider extends FabricSoundsProvider {
                 SoundTypeBuilder.of()
                         .subtitle("subtitles.uselessreptile.vortex_horn.spit_out")
                         .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("vortex_horn/spit_out")))
+        );
+
+        exporter.add(URSounds.MAGMAMUNCHER_HURT,
+                SoundTypeBuilder.of()
+                        .subtitle("subtitles.uselessreptile.magmamuncher.hurt")
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/hit")))
+        );
+        exporter.add(URSounds.MAGMAMUNCHER_AMBIENT,
+                SoundTypeBuilder.of()
+                        .subtitle("subtitles.uselessreptile.magmamuncher.ambient")
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/idle1")))
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/idle2")))
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/idle3")))
+        );
+        exporter.add(URSounds.MAGMAMUNCHER_DEATH,
+                SoundTypeBuilder.of()
+                        .subtitle("subtitles.uselessreptile.river_pikehorn.death")
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/death")))
+        );
+        exporter.add(URSounds.MAGMAMUNCHER_BITE,
+                SoundTypeBuilder.of()
+                        .subtitle("subtitles.uselessreptile.dragon.bite") //TODO attack sounds
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/bite1")))
+                        .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/bite2")))
         );
     }
 

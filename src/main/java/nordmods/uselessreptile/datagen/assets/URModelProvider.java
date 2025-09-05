@@ -6,14 +6,21 @@ import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.*;
 import net.minecraft.client.render.item.model.ItemModel;
+import net.minecraft.client.render.item.model.RangeDispatchItemModel;
 import net.minecraft.client.render.model.json.ModelVariant;
 import net.minecraft.item.Item;
+import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.item_property.FluteModeProperty;
 import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.item.FluteItem;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -251,12 +258,14 @@ public class URModelProvider extends FabricModelProvider {
     }
 
     protected void registerFlute(ItemModelGenerator itemModelGenerator, Item item) {
-        ItemModel.Unbaked mode0 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_call", Models.HANDHELD));
-        ItemModel.Unbaked mode1 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_gather", Models.HANDHELD));
-        ItemModel.Unbaked mode2 = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_target", Models.HANDHELD));
-        itemModelGenerator.output.accept(item, ItemModels.rangeDispatch(new FluteModeProperty(), mode0,
-                ItemModels.rangeDispatchEntry(mode0, 0),
-                ItemModels.rangeDispatchEntry(mode1, 1),
-                ItemModels.rangeDispatchEntry(mode2, 2)));
+        int i = 0;
+        List<RangeDispatchItemModel.Entry> entries = new ArrayList<>();
+        for (Map.Entry<String, Pair<SoundEvent, FluteItem.FluteAction>> entry :FluteItem.FLUTE_MODES.entrySet()) {
+            ItemModel.Unbaked mode = ItemModels.basic(itemModelGenerator.registerSubModel(item, "_" + entry.getKey(), Models.HANDHELD));
+            entries.add(ItemModels.rangeDispatchEntry(mode, i));
+            i++;
+        }
+
+        itemModelGenerator.output.accept(item, ItemModels.rangeDispatch(new FluteModeProperty(), entries.getFirst().model(), entries));
     }
 }

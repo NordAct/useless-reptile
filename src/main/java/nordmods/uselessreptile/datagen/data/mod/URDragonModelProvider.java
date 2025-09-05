@@ -133,13 +133,13 @@ public class URDragonModelProvider implements DataProvider {
         addEntry(UREntities.LIGHTNING_CHASER_ENTITY, variant, Optional.of(sounds), true);
     }
 
-    protected void addMagmamuncher(String variant) { //TODO: magmamuncher sounds
+    protected void addMagmamuncher(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
         sounds.add(new DragonModel.Sound("step", SoundEvents.BLOCK_NETHERRACK_STEP.id(), Optional.of(0.25f), Optional.of(0.8f)));
-        sounds.add(new DragonModel.Sound("attack", URSounds.PIKEHORN_ATTACK.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.PIKEHORN_AMBIENT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.PIKEHORN_HURT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.PIKEHORN_DEATH.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("bite", URSounds.MAGMAMUNCHER_BITE.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.MAGMAMUNCHER_AMBIENT.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.MAGMAMUNCHER_HURT.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.MAGMAMUNCHER_DEATH.id(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModel.Sound("apply_fire_resistance", SoundEvents.ITEM_FIRECHARGE_USE.id(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.MAGMAMUNCHER_ENTITY, variant, Optional.of(sounds), true);
     }
