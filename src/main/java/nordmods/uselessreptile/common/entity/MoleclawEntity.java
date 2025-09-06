@@ -382,7 +382,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         if (isPanicking()) {
             if (panicSoundDelay == 0) {
                 SoundInfo soundInfo = getSoundInfo("panic");
-                if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume() ,soundInfo.pitch());
+                if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()));
                 panicSoundDelay = random.nextInt(41) + 60;
             }
             else panicSoundDelay--;

@@ -69,7 +69,7 @@ public class URModEvents {
                                     pos.getZ()));
                             URDragonEntity.SoundInfo soundInfo = lightningChaser.getSoundInfo("roar");
                             if (soundInfo != null)
-                                URPacketHelper.playSound(lightningChaser, SoundEvent.of(soundInfo.id()), lightningChaser.getSoundCategory(), soundInfo.volume(), soundInfo.pitch(), 1);
+                                URPacketHelper.playSound(lightningChaser, SoundEvent.of(soundInfo.id()), lightningChaser.getSoundCategory(), soundInfo.volume(), lightningChaser.getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()), 1);
                         }
                         playerTimer.useless_reptile$setTimer(URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown);
                         break;

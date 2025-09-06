@@ -34,7 +34,7 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
                     )
             );
             URDragonEntity.SoundInfo info = dragon.getSoundInfo("apply_fire_resistance");
-            if (info != null) dragon.getWorld().playSound(dragon, dragon.getX(), dragon.getY(), dragon.getZ(), SoundEvent.of(info.id()), dragon.getSoundCategory(), info.volume(), info.pitch());
+            if (info != null) dragon.getWorld().playSound(dragon, dragon.getX(), dragon.getY(), dragon.getZ(), SoundEvent.of(info.id()), dragon.getSoundCategory(), info.volume(), dragon.getRandom().nextTriangular(info.pitch(), info.pitchDeviation()));
             ParticleS2CPacket packet = new ParticleS2CPacket(
                     ParticleTypes.FLAME,
                     false,

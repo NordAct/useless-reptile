@@ -88,6 +88,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -114,7 +115,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     private final DragonInventory inventory;
     public boolean shouldFollow = false;
     protected Text defaultDisplayName;
-    private HashMap<String, SoundInfo> soundInfoHolder = new HashMap<>();
+    public static final Map<EntityType<?>, Map<String ,Map<String, SoundInfo>>> SOUND_INFO_HOLDER = new HashMap<>();
     public static final Identifier VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
     public static final Identifier SPEED_MODIFIER_BONUS = UselessReptile.id("speed_modifier");
 
@@ -277,7 +278,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         super.onTrackedDataSet(data);
         if (CUSTOM_NAME.equals(data) || VARIANT.equals(data)) {
             assetCache.cleanCache();
-            soundInfoHolder = new HashMap<>();
         }
         if (VARIANT.equals(data)) {
             removeVariantModifiers();
@@ -321,33 +321,63 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     @Nullable
     public SoundInfo getSoundInfo(String name) {
-        if (!soundInfoHolder.containsKey(name)) {
-            DragonModel model = DragonVariantUtil.getDragonModelData(getDragonId(), hasCustomName() ? getCustomName().getString() : null, getVariant(), getWorld());
-            if (model != null) {
-                if (model.sounds().isPresent()) {
-                    DragonModel.Sound sound = model.sounds().get().stream()
-                            .filter(s -> s.name().equals(name))
-                            .findFirst()
-                            .orElse(null);
-
-                    if (sound != null) soundInfoHolder.put(name, new SoundInfo(sound.id(), sound.volume().orElse(1f), sound.pitch().orElse(1f)));
-                    else {
-                        UselessReptile.LOGGER.warn("Sound {} is not defined for {} ({}) of variant {}.", name, getName().getString(), getDragonId(), getVariant());
-                        soundInfoHolder.put(name, null);
-                    }
-                } else {
-                    UselessReptile.LOGGER.warn("Could not find sound {} for {} ({}) of variant {} as no sounds are defined.", name, getName().getString(), getDragonId(), getVariant());
-                    soundInfoHolder.put(name, null);
+        Map<String ,Map<String, SoundInfo>> variantMap = SOUND_INFO_HOLDER.get(getType());
+        if (variantMap != null) {
+            Map<String, SoundInfo> soundMap = variantMap.get(getVariant());
+            if (soundMap != null) {
+                if (soundMap.containsKey(name)) return soundMap.get(name);
+                else {
+                    SoundInfo info = createSoundInfo(name);
+                    soundMap.put(name, info);
+                    return info;
                 }
+            } else {
+                soundMap = new HashMap<>();
+                SoundInfo info = createSoundInfo(name);
+                soundMap.put(name, info);
+                variantMap.put(getVariant(), soundMap);
+                return info;
+            }
+        } else {
+            variantMap = new HashMap<>();
+            Map<String, SoundInfo> soundMap = new HashMap<>();
+            SoundInfo info = createSoundInfo(name);
+            soundMap.put(name, info);
+            variantMap.put(getVariant(), soundMap);
+            SOUND_INFO_HOLDER.put(getType(), variantMap);
+            return info;
+        }
+    }
+
+    private SoundInfo createSoundInfo(String name) {
+        DragonModel model = DragonVariantUtil.getDragonModelData(getDragonId(), hasCustomName() ? getCustomName().getString() : null, getVariant(), getWorld());
+        if (model != null) {
+            if (model.sounds().isPresent()) {
+                DragonModel.Sound sound = model.sounds().get().stream()
+                        .filter(s -> s.name().equals(name))
+                        .findFirst()
+                        .orElse(null);
+
+                if (sound != null) return new SoundInfo(
+                        sound.id(),
+                        sound.volume().orElse(1f),
+                        sound.pitch().orElse(1f),
+                        sound.pitchDeviation().orElse(0.125f)
+                );
+                else {
+                    UselessReptile.LOGGER.warn("Sound {} is not defined for {} ({}) of variant {}.", name, getName().getString(), getDragonId(), getVariant());
+                }
+            } else {
+                UselessReptile.LOGGER.warn("Could not find sound {} for {} ({}) of variant {} as no sounds are defined.", name, getName().getString(), getDragonId(), getVariant());
             }
         }
-        return soundInfoHolder.get(name);
+        return null;
     }
 
 
     protected <ENTITY extends GeoEntity> void soundHandler(KeyFrameEvent<ENTITY, SoundKeyframeData> event) {
         SoundInfo soundInfo = getSoundInfo(event.keyframeData().getSound());
-        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
+        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()));
     }
 
     @Override
@@ -803,7 +833,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public void playAmbientSound() {
         SoundInfo soundInfo = getSoundInfo("idle");
-        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
+        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()));
     }
 
     @Override
@@ -818,14 +848,14 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         SoundInfo soundInfo = getSoundInfo("hurt");
         if (soundInfo != null) {
             ambientSoundChance = -getMinAmbientSoundDelay();
-            playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
+            playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()));
         }
     }
 
     @Override
     protected SoundEvent getDeathSound() {
         SoundInfo soundInfo = getSoundInfo("death");
-        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), soundInfo.pitch());
+        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()));
         return null;
     }
 
@@ -1203,5 +1233,5 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         }
     }
 
-    public record SoundInfo(Identifier id, float volume, float pitch) {}
+    public record SoundInfo(Identifier id, float volume, float pitch, float pitchDeviation) { }
 }

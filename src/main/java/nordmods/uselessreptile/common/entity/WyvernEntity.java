@@ -22,7 +22,6 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.stat.Stats;
@@ -374,7 +373,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         if (isFlying()) {
             SoundInfo soundInfo = getSoundInfo("bite");
             if (soundInfo != null)
-                URPacketHelper.playSound(this, SoundEvent.of(soundInfo.id()), SoundCategory.NEUTRAL, soundInfo.volume(), soundInfo.pitch(), 3);
+                URPacketHelper.playSound(this, SoundEvent.of(soundInfo.id()), getSoundCategory(), soundInfo.volume(), getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()), 3);
         }
         if (target != null && !getPassengerList().contains(target)) {
             Box targetBox = target.getBoundingBox();

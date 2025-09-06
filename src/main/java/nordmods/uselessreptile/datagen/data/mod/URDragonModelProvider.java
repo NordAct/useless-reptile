@@ -83,64 +83,64 @@ public class URDragonModelProvider implements DataProvider {
 
     protected void addWyvern(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", URSounds.WYVERN_STEP.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(2f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.7f)));
-        sounds.add(new DragonModel.Sound("shoot", SoundEvents.ENTITY_ENDER_DRAGON_SHOOT.id(), Optional.of(2f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("bite", URSounds.WYVERN_BITE.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.WYVERN_AMBIENT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.WYVERN_HURT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.WYVERN_DEATH.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", URSounds.WYVERN_STEP.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(2f), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.7f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("shoot", SoundEvents.ENTITY_ENDER_DRAGON_SHOOT.id(), Optional.of(2f), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("bite", URSounds.WYVERN_BITE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.WYVERN_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.WYVERN_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.WYVERN_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.WYVERN_ENTITY, variant, Optional.of(sounds), true);
     }
 
     protected void addMoleclaw(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", URSounds.DRAGON_STEP.id(), Optional.empty(), Optional.of(0.7f)));
-        sounds.add(new DragonModel.Sound("attack_strong", URSounds.MOLECLAW_STRONG_ATTACK.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("attack", URSounds.MOLECLAW_ATTACK.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.MOLECLAW_AMBIENT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.MOLECLAW_HURT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.MOLECLAW_DEATH.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("panic", URSounds.MOLECLAW_PANICKING.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", URSounds.DRAGON_STEP.id(), Optional.empty(), Optional.of(0.7f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("attack_strong", URSounds.MOLECLAW_STRONG_ATTACK.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("attack", URSounds.MOLECLAW_ATTACK.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.MOLECLAW_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.MOLECLAW_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.MOLECLAW_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("panic", URSounds.MOLECLAW_PANICKING.id(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.MOLECLAW_ENTITY, variant, Optional.of(sounds), false);
     }
 
     protected void addRiverPikehorn(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", SoundEvents.ENTITY_CHICKEN_STEP.id(), Optional.of(0.5f), Optional.of(0.8f)));
-        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(0.7f), Optional.of(1.2f)));
-        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.empty(), Optional.of(1.2f)));
-        sounds.add(new DragonModel.Sound("attack", URSounds.PIKEHORN_ATTACK.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.PIKEHORN_AMBIENT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.PIKEHORN_HURT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.PIKEHORN_DEATH.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", SoundEvents.ENTITY_CHICKEN_STEP.id(), Optional.of(0.5f), Optional.of(0.8f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(0.7f), Optional.of(1.2f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.empty(), Optional.of(1.2f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("attack", URSounds.PIKEHORN_ATTACK.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.PIKEHORN_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.PIKEHORN_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.PIKEHORN_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.RIVER_PIKEHORN_ENTITY, variant, Optional.of(sounds), true);
     }
 
     protected void addLightningChaser(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", URSounds.DRAGON_STEP.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(2f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.6f)));
-        sounds.add(new DragonModel.Sound("flap_heavy", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.5f)));
-        sounds.add(new DragonModel.Sound("bite", URSounds.LIGHTNING_CHASER_BITE.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.LIGHTNING_CHASER_AMBIENT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("roar", URSounds.LIGHTNING_CHASER_DISTANT_ROAR.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("accept_challenge", URSounds.LIGHTNING_CHASER_ACCEPT_CHALLENGE.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.LIGHTNING_CHASER_HURT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.LIGHTNING_CHASER_DEATH.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", URSounds.DRAGON_STEP.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(2f), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.6f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("flap_heavy", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.5f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("bite", URSounds.LIGHTNING_CHASER_BITE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.LIGHTNING_CHASER_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("roar", URSounds.LIGHTNING_CHASER_DISTANT_ROAR.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("accept_challenge", URSounds.LIGHTNING_CHASER_ACCEPT_CHALLENGE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.LIGHTNING_CHASER_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.LIGHTNING_CHASER_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.LIGHTNING_CHASER_ENTITY, variant, Optional.of(sounds), true);
     }
 
     protected void addMagmamuncher(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", SoundEvents.BLOCK_NETHERRACK_STEP.id(), Optional.of(0.25f), Optional.of(0.8f)));
-        sounds.add(new DragonModel.Sound("bite", URSounds.MAGMAMUNCHER_BITE.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.MAGMAMUNCHER_AMBIENT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.MAGMAMUNCHER_HURT.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.MAGMAMUNCHER_DEATH.id(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("apply_fire_resistance", SoundEvents.ITEM_FIRECHARGE_USE.id(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", SoundEvents.BLOCK_NETHERRACK_STEP.id(), Optional.of(0.25f), Optional.of(0.8f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("bite", URSounds.MAGMAMUNCHER_BITE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.MAGMAMUNCHER_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.MAGMAMUNCHER_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.MAGMAMUNCHER_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("apply_fire_resistance", SoundEvents.ITEM_FIRECHARGE_USE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.MAGMAMUNCHER_ENTITY, variant, Optional.of(sounds), true);
     }
 

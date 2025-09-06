@@ -25,6 +25,7 @@ public abstract class ResourceReloadLoggerMixin {
         if (MinecraftClient.getInstance().world != null) {
             MinecraftClient.getInstance().world.getEntities().forEach(entity -> {
                 if (entity instanceof URDragonEntity dragon) dragon.getAssetCache().cleanCache();
+                URDragonEntity.SOUND_INFO_HOLDER.clear();
             });
         }
     }
