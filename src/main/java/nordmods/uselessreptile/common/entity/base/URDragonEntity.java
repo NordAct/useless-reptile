@@ -68,6 +68,7 @@ import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
+import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
@@ -597,7 +598,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 currentYaw -= getRotationSpeed();
                 if (!getWorld().isClient()) setTurningState((byte)1);
             }
-            else currentYaw = destinationYaw;
+            else {
+                currentYaw = destinationYaw;
+                if (!getWorld().isClient() && isMoving()) setTurningState((byte)0);
+            }
         } else {
             if (!getWorld().isClient()) setTurningState((byte)0);
         }
@@ -687,8 +691,22 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void tick() {
         super.tick();
-        if (!getWorld().isClient()) updateRotationProgress();
+        if (!getWorld().isClient()) {
+            updateRotationProgress();
+        }
         else updateAnimationSpeed();
+
+        if (this instanceof ShooterDragon shooterDragon) {
+            shooterDragon.setShootingPoint(
+                    new ShootingPoint(
+                            shooterDragon.getShootingPointAnchor(),
+                            getRotationVector(
+                                    shooterDragon.getShootingPointDesiredPitch(),
+                                    shooterDragon.getShootingPointDesiredYaw()
+                            )
+                    )
+            );
+        }
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
         if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
@@ -1091,8 +1109,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
         if (yaw < 0) yaw += 360;
-        float dYaw = Math.abs(getYaw() % 360 - yaw);
-        float dPitch = Math.abs(getPitch() - pitch);
+        float dYaw = Math.abs(MathHelper.wrapDegrees((this instanceof ShooterDragon shooterDragon ? shooterDragon.getShootingPointYaw() : getYaw()) - yaw));
+        float dPitch = Math.abs((this instanceof ShooterDragon shooterDragon ? shooterDragon.getShootingPointPitch() : getPitch()) - pitch);
         return dPitch < pitchTolerance
                 && dYaw % 360 < yawTolerance;
     }

@@ -66,7 +66,9 @@ public class WyvernAttackGoal extends Goal {
         boolean doesCollide = entity.getAttackBox().intersects(target.getBoundingBox());
 
         if (!doesCollide && entity.getPrimaryAttackCooldown() == 0 && (distance > attackDistance * 4 || !target.isOnGround() || distance < attackDistance && entity.getY() - target.getY() >= 1)) {
-            if (entity.getLookControl().isLookingAtTarget()) entity.shoot();
+            entity.getLookControl().lookAt(target);
+            if (entity.getLookControl().isLookingAtTarget())
+                entity.shoot();
         }
 
         if (entity.getSecondaryAttackCooldown() > 0) return;

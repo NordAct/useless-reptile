@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.VertexRendering;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.state.EntityHitbox;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
@@ -13,6 +14,8 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.RotationAxis;
+import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.model.DragonEqupmentModel;
@@ -23,7 +26,9 @@ import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.init.URTags;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -108,6 +113,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
         renderState.addGeckolibData(URDataTickets.DRAGON_VARIANT, animatable.getVariant());
         renderState.addGeckolibData(URDataTickets.DRAGON_NAME, animatable.getCustomName());
         renderState.addGeckolibData(URDataTickets.DRAGON_ASSET_CACHE, animatable.getAssetCache());
+        if (animatable instanceof ShooterDragon shooterDragon) renderState.addGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
 
         EntityEquipment map = new EntityEquipment();
         for (EquipmentSlot slot : EquipmentSlot.values()) map.put(slot, animatable.getEquippedStack(slot));
@@ -151,6 +157,22 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
                         0.25f
                 ));
             }
+        }
+    }
+
+    @Override
+    public void actuallyRender(R renderState, MatrixStack poseStack, BakedGeoModel model, @Nullable RenderLayer renderType,
+                               VertexConsumerProvider bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
+        super.actuallyRender(renderState, poseStack, model, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
+        if (renderState.hitbox != null && renderState.hasGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT)) {
+            poseStack.push();
+            poseStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180 + renderState.bodyYaw));
+            VertexConsumer buf = bufferSource.getBuffer(RenderLayer.getLines());
+            ShootingPoint point = renderState.getGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT);
+            Vec3d pos = point.pos().subtract(new Vec3d(renderState.x, renderState.y, renderState.z));
+            Vec3d rot = point.rotation();
+            VertexRendering.drawVector(poseStack, buf, pos.toVector3f(), rot.multiply(5.0), -0x00FFF1);
+            poseStack.pop();
         }
     }
 }

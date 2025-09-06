@@ -69,7 +69,6 @@ public class LightningChaserAttackGoal extends Goal {
             return;
         }
         entity.setSprinting(true);
-        entity.getLookControl().lookAt(target.getX(), target.getY(), target.getZ());
 
         double distance = entity.squaredDistanceTo(target);
         double yDiff = target.getY() - entity.getY();
@@ -77,7 +76,10 @@ public class LightningChaserAttackGoal extends Goal {
         boolean canSee = entity.canBreakBlocks() || entity.getVisibilityCache().canSee(target);
         boolean canDamage = !target.isInvulnerableTo((ServerWorld) target.getWorld(), entity.getDamageSources().create(DamageTypes.LIGHTNING_BOLT, entity)) && canSee;
         double desiredY = target.getY() + (canDamage ? 2 : 0) + target.getHeight();
+        if (entity.isOnGround() && !entity.getVisibilityCache().canSee(target) && canDamage) entity.forceFlightNextTick();
 
+        if (entity.getNavigation().isIdle())
+            entity.getLookControl().lookAt(target);
         if (distance < MIN_DISTANCE_SQUARED && canDamage) { //too close
             entity.getNavigation().stop();
             entity.getMoveControl().moveBack();
@@ -94,7 +96,6 @@ public class LightningChaserAttackGoal extends Goal {
                 }
             }
         } else if (distance < MAX_DISTANCE_SQUARED && canDamage) { //within range
-            entity.getNavigation().stop();
             if (!entity.getLookControl().canLookAtTarget()) {
                 double distanceXZ = Math.pow(target.getX() - entity.getX(), 2) * Math.pow(target.getZ() - entity.getZ(), 2);
                 double divergence = Math.max(0, (distanceXZ - MAX_DISTANCE_SQUARED / 8f) * 0.25);

@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.navigation;
 
+import io.github.flemmli97.debugutils.utils.DebuggingPackets;
 import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.pathing.BirdNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeType;
@@ -40,7 +41,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
         //        ServerPlayNetworking.send(player, new DebugPathCustomPayload(entity.getId(), currentPath, nodeReachProximity));
         //    });
         //}
-        //DebuggingPackets.sendPathfindingPacket(entity.getWorld(), entity, currentPath, nodeReachProximity);
+        DebuggingPackets.sendPathfindingPacket(entity.getWorld(), entity, currentPath, nodeReachProximity);
     }
 
     @Override

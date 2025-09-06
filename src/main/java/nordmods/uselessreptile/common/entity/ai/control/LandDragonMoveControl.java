@@ -1,8 +1,10 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.util.math.MathHelper;
+import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public class LandDragonMoveControl <T extends URDragonEntity> extends MoveControl {
@@ -29,17 +31,27 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
         double diffY = targetY - entity.getY();
         double diffZ = targetZ - entity.getZ();
         double distanceSquared = diffX * diffX + diffY * diffY + diffZ * diffZ;
-        float destinationYaw = (float)(MathHelper.atan2(diffZ, diffX) * 57.2957763671875D) - 90.0F;
+        float destinationYaw = (float)(MathHelper.atan2(diffZ, diffX) * MathHelper.DEGREES_PER_RADIAN) - 90.0F;
+        float destinationPitch = entity.getPitch();
+        if (entity.getTarget() != null && entity instanceof ShooterDragon shooterDragon) {
+            Entity target = entity.getTarget();
+            double diffTargetX = target.getX() - shooterDragon.getShootingPoint().pos().x;
+            double diffTargetY = target.getY() - shooterDragon.getShootingPoint().pos().y;
+            double diffTargetZ = target.getZ() - shooterDragon.getShootingPoint().pos().z;
+            double distanceTargetXZ = Math.sqrt(diffTargetX * diffTargetX + diffTargetZ * diffTargetZ);
+            destinationPitch = wrapDegrees(
+                    entity.getPitch(),
+                    (float)(-(MathHelper.atan2(diffTargetY, distanceTargetXZ) * MathHelper.DEGREES_PER_RADIAN)),
+                    entity.getPitchLimit()
+            );
+        }
         entity.setMovingBackwards(false);
-
+        entity.setRotation(destinationYaw, destinationPitch);
         float speed = getMovementSpeed();
-
         switch (state) {
             case STRAFE -> { //there's no strafe for dragons, but it's used for backwards movement
                 state = State.WAIT;
                 entity.setMovingBackwards(true);
-
-                entity.setRotation(destinationYaw, entity.getPitch());
                 entity.setMovementSpeed(-speed);
             }
             case MOVE_TO -> {
@@ -52,7 +64,6 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
                 if (entity.isLookingAtDirection(entity.getPitch(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2)) || entity.getLookControl().isLookingAtTarget()) {
                     entity.setMovementSpeed(speed);
                 } else entity.setForwardSpeed(0.0F);
-                entity.setRotation(destinationYaw, entity.getPitch());
             }
             case JUMPING -> {
                 entity.setMovementSpeed(speed);

@@ -8,6 +8,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
+import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
@@ -23,6 +24,7 @@ public class URDataTickets {
     public static final DataTicket<UUID> DRAGON_UUID = DataTicket.create("ur_dragon_uuid", UUID.class);
     public static final DataTicket<Boolean> DRAGON_IS_RIDING_PLAYER = DataTicket.create("ur_dragon_is_riding_player", Boolean.class);
     public static final DataTicket<Boolean> DRAGON_SHOULD_RENDER_TO_CLIENT = DataTicket.create("ur_dragon_should_render_to_client", Boolean.class);
+    public static final DataTicket<ShootingPoint> DRAGON_SHOOTING_POINT = DataTicket.create("ur_dragon_shooting_point", ShootingPoint.class);
     //equipment data for rendering
     public static final DataTicket<AssetCache> EQUIPMENT_ASSET_CACHE = DataTicket.create("ur_equipment_asset_cache", AssetCache.class);
     public static final DataTicket<DragonAssetCache> DRAGON_ASSET_CACHE = DataTicket.create("ur_dragon_asset_cache", DragonAssetCache.class); //also utilized for passenger rendering
