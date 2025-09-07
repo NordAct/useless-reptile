@@ -4,5 +4,14 @@
   "equipment": "uselessreptile:empty",
   "id": "uselessreptile:river_pikehorn",
   "name": "blue",
-  "spawn_conditions": "uselessreptile:river_pikehorn/default"
+  "spawn_conditions": "uselessreptile:river_pikehorn/default",
+  "taming_items": [
+    {
+      "item": "minecraft:tropical_fish_bucket",
+      "taming_progress_increase": [
+        1,
+        1
+      ]
+    }
+  ]
 }

@@ -4,5 +4,14 @@
   "equipment": "uselessreptile:moleclaw",
   "id": "uselessreptile:moleclaw",
   "name": "albino",
-  "spawn_conditions": "uselessreptile:moleclaw/rare"
+  "spawn_conditions": "uselessreptile:moleclaw/rare",
+  "taming_items": [
+    {
+      "item": "minecraft:beetroot",
+      "taming_progress_increase": [
+        1,
+        2
+      ]
+    }
+  ]
 }

@@ -2,10 +2,12 @@ package nordmods.uselessreptile.common.init;
 
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -116,15 +118,32 @@ public class URModEvents {
     }
 
     private static void onItemConsumedEvents() {
-        DragonOnItemConsumedEvent.EVENT.register((user, itemStack) -> {
-            if (itemStack.isIn(ConventionalItemTags.ENTITY_WATER_BUCKETS)) {
-                if (user instanceof PlayerEntity player && !player.isCreative()) player.giveItemStack(Items.WATER_BUCKET.getDefaultStack());
-                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(Items.WATER_BUCKET.getDefaultStack());
-                return;
+        DragonOnItemConsumedEvent.EVENT.register((user, original, remainder, hand) -> {
+            if (original.isIn(ConventionalItemTags.ENTITY_WATER_BUCKETS)) {
+                ItemStack toGive = Items.WATER_BUCKET.getDefaultStack();
+                if (user instanceof PlayerEntity player && !player.isCreative()) {
+                    if (!remainder.isEmpty() || !player.getStackInHand(hand).isEmpty()) player.giveItemStack(toGive);
+                    else player.setStackInHand(hand, toGive);
+                }
+                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
             }
-            if (!itemStack.getItem().getRecipeRemainder().isEmpty()) {
-                if (user instanceof PlayerEntity player && !player.isCreative()) player.giveItemStack(itemStack.getItem().getRecipeRemainder());
-                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(itemStack.getItem().getRecipeRemainder());
+
+            if (!original.getItem().getRecipeRemainder().isEmpty()) {
+                ItemStack toGive = original.getItem().getRecipeRemainder();
+                if (user instanceof PlayerEntity player && !player.isCreative()) {
+                    if (!remainder.isEmpty() || !player.getStackInHand(hand).isEmpty()) player.giveItemStack(toGive);
+                    else player.setStackInHand(hand, toGive);
+                }
+                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
+            }
+
+            if (original.get(DataComponentTypes.USE_REMAINDER) != null) {
+                ItemStack toGive = original.get(DataComponentTypes.USE_REMAINDER).convertInto();
+                if (user instanceof PlayerEntity player && !player.isCreative()) {
+                    if (!remainder.isEmpty() || !player.getStackInHand(hand).isEmpty()) player.giveItemStack(toGive);
+                    else player.setStackInHand(hand, toGive);
+                }
+                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
             }
         });
     }

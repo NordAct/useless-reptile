@@ -4,5 +4,21 @@
   "equipment": "uselessreptile:wyvern",
   "id": "uselessreptile:wyvern",
   "name": "brown",
-  "spawn_conditions": "uselessreptile:wyvern/default"
+  "spawn_conditions": "uselessreptile:wyvern/default",
+  "taming_items": [
+    {
+      "item": "minecraft:chicken",
+      "taming_progress_increase": [
+        1,
+        2
+      ]
+    },
+    {
+      "item": "minecraft:cooked_chicken",
+      "taming_progress_increase": [
+        1,
+        1
+      ]
+    }
+  ]
 }

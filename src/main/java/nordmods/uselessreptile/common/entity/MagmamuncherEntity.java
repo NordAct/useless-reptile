@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.entity;
 
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
@@ -26,16 +25,14 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
-import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherApplyFireResistanceGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherEatMagmaGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MagmamuncherNavigation;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
@@ -80,11 +77,6 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     @Override
     public boolean isFavoriteFood(ItemStack itemStack) {
         return itemStack.isIn(URTags.MAGMAMUNCHER_FOOD);
-    }
-
-    @Override
-    public boolean isTamingItem(ItemStack itemStack) {
-        return itemStack.isIn(URTags.MAGMAMUNCHER_TAMING_ITEM);
     }
 
     @Override
@@ -228,29 +220,6 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         } else {
             eatingMagmaProgress = 0;
         }
-    }
-
-    @Override
-    public ActionResult interactMob(PlayerEntity player, Hand hand) {
-        ItemStack itemStack = player.getStackInHand(hand);
-
-        if (isTameable() && isTamingItem(itemStack)) {
-            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
-            if (random.nextInt(5) == 0) setTamingProgress(getTamingProgress() - 3);
-            if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
-            else setTamingProgress(getTamingProgress() - 1);
-            if (player.isCreative()) setTamingProgress(0);
-            if (getTamingProgress() <= 0) {
-                setTamedBy(player);
-                getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
-            } else {
-                getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
-            }
-            setPersistent();
-            return ActionResult.SUCCESS;
-        }
-
-        return super.interactMob(player, hand);
     }
 
     public void attackMelee(LivingEntity target) {

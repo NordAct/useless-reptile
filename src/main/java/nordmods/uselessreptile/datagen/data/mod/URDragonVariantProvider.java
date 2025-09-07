@@ -5,12 +5,14 @@ import net.minecraft.data.DataOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
 import net.minecraft.entity.EntityType;
+import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.dynamic.Codecs;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.init.UREntities;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -50,7 +52,8 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("wyvern"),
                 Optional.empty(),
                 Optional.empty(),
-                -1
+                -1,
+                Optional.empty()
         );
         addCustomNameEntry(getId(id, name), variant);
     }
@@ -111,7 +114,19 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("wyvern"),
                 Optional.of(UselessReptile.id("wyvern/default")),
                 Optional.empty(),
-                128
+                128,
+                Optional.of(
+                        List.of(
+                                new DragonVariant.TamingItem(
+                                        new Codecs.TagEntryId(Items.CHICKEN.getRegistryEntry().registryKey().getValue(), false),
+                                        new com.mojang.datafixers.util.Pair<>(1, 2)
+                                ),
+                                new DragonVariant.TamingItem(
+                                        new Codecs.TagEntryId(Items.COOKED_CHICKEN.getRegistryEntry().registryKey().getValue(), false),
+                                        new com.mojang.datafixers.util.Pair<>(1, 1)
+                                )
+                        )
+                )
         );
         addEntry(getId(id, name), variant);
     }
@@ -126,7 +141,15 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("moleclaw"),
                 Optional.of(UselessReptile.id("moleclaw/" + (rare ? "rare" : "default"))),
                 Optional.empty(),
-                64
+                64,
+                Optional.of(
+                        List.of(
+                                new DragonVariant.TamingItem(
+                                        new Codecs.TagEntryId(Items.BEETROOT.getRegistryEntry().registryKey().getValue(), false),
+                                        new com.mojang.datafixers.util.Pair<>(1, 2)
+                                )
+                        )
+                )
         );
         addEntry(getId(id, name), variant);
     }
@@ -141,7 +164,15 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("empty"),
                 Optional.of(UselessReptile.id("river_pikehorn/default")),
                 Optional.empty(),
-                1
+                1,
+                Optional.of(
+                        List.of(
+                                new DragonVariant.TamingItem(
+                                        new Codecs.TagEntryId(Items.TROPICAL_FISH_BUCKET.getRegistryEntry().registryKey().getValue(), false),
+                                        new com.mojang.datafixers.util.Pair<>(1, 1)
+                                )
+                        )
+                )
         );
         addEntry(getId(id, name), variant);
     }
@@ -156,7 +187,8 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("lightning_chaser"),
                 Optional.of(UselessReptile.id("lightning_chaser/" + name)),
                 Optional.empty(),
-                3
+                3,
+                Optional.empty()
         );
         addEntry(getId(id, name), variant);
     }
@@ -171,7 +203,15 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("empty"),
                 Optional.of(UselessReptile.id("magmamuncher/default")),
                 Optional.empty(),
-                12
+                12,
+                Optional.of(
+                        List.of(
+                                new DragonVariant.TamingItem(
+                                        new Codecs.TagEntryId(Items.BLAZE_ROD.getRegistryEntry().registryKey().getValue(), false),
+                                        new com.mojang.datafixers.util.Pair<>(1, 3)
+                                )
+                        )
+                )
         );
         addEntry(getId(id, name), variant);
     }

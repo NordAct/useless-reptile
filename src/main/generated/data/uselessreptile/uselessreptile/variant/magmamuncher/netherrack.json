@@ -4,5 +4,14 @@
   "equipment": "uselessreptile:empty",
   "id": "uselessreptile:magmamuncher",
   "name": "netherrack",
-  "spawn_conditions": "uselessreptile:magmamuncher/default"
+  "spawn_conditions": "uselessreptile:magmamuncher/default",
+  "taming_items": [
+    {
+      "item": "minecraft:blaze_rod",
+      "taming_progress_increase": [
+        1,
+        3
+      ]
+    }
+  ]
 }

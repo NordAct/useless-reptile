@@ -21,9 +21,6 @@ import net.minecraft.screen.ScreenHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -229,27 +226,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
         return new URDragonScreenHandler(URScreenHandlers.MOLECLAW_INVENTORY, syncId, inv, getInventory());
     }
 
-    @Override
-    public ActionResult interactMob(PlayerEntity player, Hand hand) {
-        ItemStack itemStack = player.getStackInHand(hand);
-
-        if (isTameable() && isTamingItem(itemStack)) {
-            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
-            if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
-            else setTamingProgress(getTamingProgress() - 1);
-            if (player.isCreative()) setTamingProgress(0);
-            if (getTamingProgress() <= 0) {
-                setTamedBy(player);
-                getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
-            } else {
-                getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
-            }
-            setPersistent();
-            return ActionResult.SUCCESS;
-        }
-        return super.interactMob(player, hand);
-    }
-
     public void meleeAttack() {
         if (!(getWorld() instanceof ServerWorld world)) return;
         List<Entity> targets = world.getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
@@ -391,11 +367,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
     @Override
     public boolean isFavoriteFood(ItemStack itemStack){
         return itemStack.isIn(URTags.MOLECLAW_FOOD);
-    }
-
-    @Override
-    public boolean isTamingItem(ItemStack itemStack){
-        return itemStack.isIn(URTags.MOLECLAW_TAMING_ITEM);
     }
 
     @Override

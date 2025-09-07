@@ -4,5 +4,14 @@
   "equipment": "uselessreptile:moleclaw",
   "id": "uselessreptile:moleclaw",
   "name": "black",
-  "spawn_conditions": "uselessreptile:moleclaw/default"
+  "spawn_conditions": "uselessreptile:moleclaw/default",
+  "taming_items": [
+    {
+      "item": "minecraft:beetroot",
+      "taming_progress_increase": [
+        1,
+        2
+      ]
+    }
+  ]
 }

@@ -295,22 +295,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
-
-        if (isTameable() && isTamingItem(itemStack)) {
-            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value()));
-            if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
-            else setTamingProgress(getTamingProgress() - 1);
-            if (player.isCreative()) setTamingProgress(0);
-            if (getTamingProgress() <= 0) {
-                setTamedBy(player);
-                getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
-            } else {
-                getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
-            }
-            setPersistent();
-            return ActionResult.SUCCESS;
-        }
-
         if (isTamed()) {
             if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwner(player)) {
                 Item bottle = itemStack.getItem();
@@ -318,7 +302,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 potion.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(URPotions.ACID));
                 player.incrementStat(Stats.USED.getOrCreateStat(bottle));
                 getWorld().playSoundClient(SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
-                player.setStackInHand(hand, consumeGivenItem(player, itemStack));
+                consumeGivenItem(player, itemStack, SoundEvents.ITEM_BOTTLE_FILL, hand);
                 player.giveItemStack(potion);
                 return ActionResult.SUCCESS;
             }
@@ -410,11 +394,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     @Override
     public boolean isFavoriteFood(ItemStack itemStack){
         return itemStack.isIn(URTags.WYVERN_FOOD);
-    }
-
-    @Override
-    public boolean isTamingItem(ItemStack itemStack){
-        return itemStack.isIn(URTags.WYVERN_TAMING_ITEM);
     }
 
     @Override

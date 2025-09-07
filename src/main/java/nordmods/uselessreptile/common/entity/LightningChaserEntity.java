@@ -538,11 +538,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         return itemStack.isIn(URTags.LIGHTNING_CHASER_FOOD);
     }
 
-    @Override
-    public boolean isTamingItem(ItemStack itemStack){
-        return false;
-    }
-
     public boolean getShouldBailOut() {
         return shouldBailOut;
     }

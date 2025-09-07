@@ -265,7 +265,7 @@ public class URSoundsProvider extends FabricSoundsProvider {
         );
         exporter.add(URSounds.MAGMAMUNCHER_BITE,
                 SoundTypeBuilder.of()
-                        .subtitle("subtitles.uselessreptile.dragon.bite") //TODO attack sounds
+                        .subtitle("subtitles.uselessreptile.dragon.bite")
                         .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/bite1")))
                         .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("magmamuncher/bite2")))
         );

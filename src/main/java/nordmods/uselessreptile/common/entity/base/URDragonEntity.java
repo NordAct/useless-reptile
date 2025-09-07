@@ -30,6 +30,7 @@ import net.minecraft.item.*;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -45,6 +46,7 @@ import net.minecraft.text.TranslatableTextContent;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
@@ -496,9 +498,26 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public ActionResult interactMob(PlayerEntity player, Hand hand) {
         ItemStack itemStack = player.getStackInHand(hand);
+        if (isTameable()) {
+            DragonVariant.TamingItem tamingItem = getTamingItem(itemStack);
+            if (tamingItem != null) {
+                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value(), hand);
+                if (player.isCreative()) setTamingProgress(0);
+                else setTamingProgress(getTamingProgress() - random.nextBetween(tamingItem.tamingProgressIncrease().getFirst(), tamingItem.tamingProgressIncrease().getSecond()));
+                if (getTamingProgress() <= 0) {
+                    setTamedBy(player);
+                    getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
+                } else {
+                    getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
+                }
+                setPersistent();
+                return ActionResult.SUCCESS;
+            }
+        }
+
         if (isTamed()) {
             if (isFavoriteFood(itemStack) && getHealth() != getAttributeValue(EntityAttributes.MAX_HEALTH)) {
-                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value());
+                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value(), hand);
                 heal(getHealthRegenerationFromFood());
                 return ActionResult.SUCCESS;
             }
@@ -514,13 +533,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             if (itemStack.getItem() instanceof PotionItem potionItem && player.isSneaking()) {
                 ItemStack original = itemStack.copy();
                 potionItem.finishUsing(itemStack, getWorld(), this);
-                playSound(SoundEvents.ENTITY_GENERIC_DRINK.value(), 1, 1);
-                if (!player.isCreative()) { //checking for emptiness for case if somehow potion stack size is more than 1
-                    itemStack.decrement(1);
-                    if (itemStack.isEmpty()) player.setStackInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
-                    else player.giveItemStack(new ItemStack(Items.GLASS_BOTTLE));
-                }
-                DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(player, original);
+                consumeGivenItem(player, original, SoundEvents.ENTITY_GENERIC_DRINK.value(), hand);
                 return ActionResult.SUCCESS;
             }
 
@@ -897,7 +910,21 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return false;
     }
 
-    public abstract boolean isTamingItem(ItemStack itemStack);
+    @Nullable
+    public DragonVariant.TamingItem getTamingItem(ItemStack itemStack) {
+        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld());
+        if (variant != null) {
+            return variant.tamingItems().orElse(List.of()).stream()
+                    .filter(tamingItem -> {
+                        Codecs.TagEntryId entryId = tamingItem.item();
+                        if (entryId.tag()) return itemStack.isIn(TagKey.of(RegistryKeys.ITEM, entryId.id()));
+                        return entryId.id().equals(itemStack.getItem().getRegistryEntry().registryKey().getValue());
+                    })
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
+    }
 
     public float getHealthRegenerationFromFood() {
         return (float) getAttributeValue(URAttributes.DRAGON_REGENERATION_FROM_FOOD);
@@ -1052,11 +1079,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         else dropStack(world, itemStack);
     }
 
-    public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack) {
-        return consumeGivenItem(offering,itemStack, null);
-    }
-
-    public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound) {
+    public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound, @Nullable Hand hand) {
         ItemStack original = itemStack.copy();
         if (itemStack.getComponents().contains(DataComponentTypes.CONSUMABLE))
             itemStack.getComponents().get(DataComponentTypes.CONSUMABLE).finishConsumption(getWorld(), this, itemStack);
@@ -1064,7 +1087,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             itemStack.decrement(1);
             if (sound != null) getWorld().playSound(this, getX(), getY(), getZ(), sound, getSoundCategory());
         }
-        DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, original);
+        DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, original, itemStack, hand);
         return itemStack;
     }
 

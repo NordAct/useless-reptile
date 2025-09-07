@@ -32,7 +32,7 @@ public class DragonConsumeItemFromInventoryGoal extends Goal {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
                 if (isConsumableItem(itemStack)) {
                     beforeItemConsumed(itemStack);
-                    dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value());
+                    dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value(), null);
                     break;
                 }
             }

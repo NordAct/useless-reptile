@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.common.dragon_variant;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.EntityType;
@@ -8,6 +9,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Registry;
 import net.minecraft.storage.NbtReadView;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
+import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.World;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -15,14 +18,15 @@ import nordmods.uselessreptile.common.init.URRegistryKeys;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
 
 //TODO:
 //  hunt targets
 //  untamed targets
 //  tamed targets
-//  taming items
 //  per slot equipment items
 //  healing/food items
 //  effect immunities
@@ -37,7 +41,8 @@ public record DragonVariant(
         Identifier dragonEquipment,
         Optional<Identifier> spawnConditions,
         Optional<Identifier> variantAttributeModifiers,
-        int baseTamingProgress
+        int baseTamingProgress,
+        Optional<List<TamingItem>> tamingItems
 ) {
     public static final Codec<DragonVariant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
@@ -47,7 +52,8 @@ public record DragonVariant(
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
                     Identifier.CODEC.optionalFieldOf("spawn_conditions").forGetter(DragonVariant::spawnConditions),
                     Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(DragonVariant::variantAttributeModifiers),
-                    Codec.INT.fieldOf("base_taming_progress").forGetter(DragonVariant::baseTamingProgress))
+                    Codec.INT.fieldOf("base_taming_progress").forGetter(DragonVariant::baseTamingProgress),
+                    TamingItem.CODEC.listOf().optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems))
             .apply(instance, DragonVariant::new));
 
     public static final Codec<DragonVariant> CODEC_NO_SERVER_INFO = RecordCodecBuilder.create(instance -> instance.group(
@@ -55,8 +61,26 @@ public record DragonVariant(
                     Codec.STRING.fieldOf("name").forGetter(DragonVariant::name),
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
                     Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
-                    Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment))
-            .apply(instance, (id, variant, displayNameKey, dragonModelData, dragonEquipment) -> new DragonVariant(id, variant, displayNameKey, dragonModelData, dragonEquipment, Optional.empty(), Optional.empty(), 0)));
+                    Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
+                    TamingItem.CODEC.listOf().optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems))
+            .apply(instance, (
+                    id,
+                    variant,
+                    displayNameKey,
+                    dragonModelData,
+                    dragonEquipment,
+                    tamingItemList
+                    ) -> new DragonVariant(
+                            id,
+                            variant,
+                            displayNameKey,
+                            dragonModelData,
+                            dragonEquipment,
+                            Optional.empty(),
+                            Optional.empty(),
+                            0,
+                            tamingItemList)
+            ));
 
     @NotNull
     public static DragonVariant getDefaultVariant(Identifier dragonId, World world) {
@@ -99,5 +123,27 @@ public record DragonVariant(
         if (dragonVariant != null) return dragonVariant;
 
         return getDefaultVariant(dragonId, world);
+    }
+
+    public record TamingItem(Codecs.TagEntryId item, Pair<Integer, Integer> tamingProgressIncrease) {
+        private static final Codec<Pair<Integer, Integer>> PAIR_CODEC = Codec.pair(
+                Codecs.NON_NEGATIVE_INT.fieldOf("min").codec(),
+                Codecs.POSITIVE_INT.fieldOf("max").codec()
+        );
+        private static final Codec<Pair<Integer, Integer>> WITH_ALTERNATIVE = Codec.withAlternative(
+                Codec.INT_STREAM
+                        .comapFlatMap(
+                                stream -> Util.decodeFixedLengthArray(stream, 2).map(values -> new Pair<>(values[0], values[1])),
+                                pair -> IntStream.of(pair.getFirst(), pair.getSecond())
+                        )
+                        .stable(),
+                PAIR_CODEC
+        );
+
+        public static final Codec<TamingItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                        Codecs.TAG_ENTRY_ID.fieldOf("item").forGetter(TamingItem::item),
+                        WITH_ALTERNATIVE.fieldOf("taming_progress_increase").forGetter(TamingItem::tamingProgressIncrease)
+                ).apply(instance, TamingItem::new)
+        );
     }
 }
