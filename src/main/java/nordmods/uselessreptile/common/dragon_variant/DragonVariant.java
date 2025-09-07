@@ -37,7 +37,7 @@ public record DragonVariant(
         Identifier dragonEquipment,
         Optional<Identifier> spawnConditions,
         Optional<Identifier> variantAttributeModifiers,
-        Optional<Integer> baseTamingProgress
+        int baseTamingProgress
 ) {
     public static final Codec<DragonVariant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
@@ -47,7 +47,7 @@ public record DragonVariant(
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
                     Identifier.CODEC.optionalFieldOf("spawn_conditions").forGetter(DragonVariant::spawnConditions),
                     Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(DragonVariant::variantAttributeModifiers),
-                    Codec.INT.optionalFieldOf("base_taming_progress").forGetter(DragonVariant::baseTamingProgress))
+                    Codec.INT.fieldOf("base_taming_progress").forGetter(DragonVariant::baseTamingProgress))
             .apply(instance, DragonVariant::new));
 
     public static final Codec<DragonVariant> CODEC_NO_SERVER_INFO = RecordCodecBuilder.create(instance -> instance.group(
@@ -56,7 +56,7 @@ public record DragonVariant(
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
                     Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment))
-            .apply(instance, (id, variant, displayNameKey, dragonModelData, dragonEquipment) -> new DragonVariant(id, variant, displayNameKey, dragonModelData, dragonEquipment, Optional.empty(), Optional.empty(), Optional.empty())));
+            .apply(instance, (id, variant, displayNameKey, dragonModelData, dragonEquipment) -> new DragonVariant(id, variant, displayNameKey, dragonModelData, dragonEquipment, Optional.empty(), Optional.empty(), 0)));
 
     @NotNull
     public static DragonVariant getDefaultVariant(Identifier dragonId, World world) {

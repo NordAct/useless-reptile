@@ -75,7 +75,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         primaryAttackDuration = 12;
         canNavigateInFluids = true;
         ticksUntilHeal = 400;
-        baseTamingProgress = 1;
     }
 
     public boolean isHunting() {

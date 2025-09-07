@@ -68,7 +68,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
         navigation = new MoleclawNavigation(this, world);
 
         pitchLimitGround = 50;
-        baseTamingProgress = 64;
         ticksUntilHeal = 400;
     }
 

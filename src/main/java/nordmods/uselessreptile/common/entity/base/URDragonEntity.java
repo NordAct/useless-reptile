@@ -99,7 +99,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected int primaryAttackDuration = 20;
     protected int secondaryAttackDuration = 20;
     protected int specialAttackDuration = 20;
-    protected int baseTamingProgress = -1;
     protected int eatFromInventoryTimer = 20;
     protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
@@ -1146,7 +1145,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public int getBaseTamingProgress() {
-        return DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld()).baseTamingProgress().orElse(baseTamingProgress);
+        return DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld()).baseTamingProgress();
     }
 
     public boolean isTameable() {

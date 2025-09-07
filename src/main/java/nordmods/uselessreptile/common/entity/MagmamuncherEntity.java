@@ -66,7 +66,6 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
 
     public MagmamuncherEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
-        baseTamingProgress = 12;
         sprintSpeedModifier = 1.3f;
         setPathfindingPenalty(PathNodeType.DAMAGE_FIRE, 0);
         setPathfindingPenalty(PathNodeType.DANGER_FIRE, 0);

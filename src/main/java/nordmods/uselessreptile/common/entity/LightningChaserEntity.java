@@ -101,7 +101,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);
         experiencePoints = 20;
-        baseTamingProgress = 3;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         ticksUntilHeal = 500;

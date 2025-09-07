@@ -75,7 +75,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         super(entityType, world);
         experiencePoints = 20;
 
-        baseTamingProgress = 128;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         ticksUntilHeal = 200;
