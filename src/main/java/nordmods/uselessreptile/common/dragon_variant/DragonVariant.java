@@ -28,7 +28,6 @@ import java.util.stream.IntStream;
 //  untamed targets
 //  tamed targets
 //  per slot equipment items
-//  healing/food items
 //  effect immunities
 //  damage immunities
 
@@ -42,7 +41,8 @@ public record DragonVariant(
         Optional<Identifier> spawnConditions,
         Optional<Identifier> variantAttributeModifiers,
         int baseTamingProgress,
-        Optional<List<TamingItem>> tamingItems
+        Optional<List<TamingItem>> tamingItems,
+        Optional<List<FoodItem>> foodItems
 ) {
     public static final Codec<DragonVariant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
@@ -53,7 +53,8 @@ public record DragonVariant(
                     Identifier.CODEC.optionalFieldOf("spawn_conditions").forGetter(DragonVariant::spawnConditions),
                     Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(DragonVariant::variantAttributeModifiers),
                     Codec.INT.fieldOf("base_taming_progress").forGetter(DragonVariant::baseTamingProgress),
-                    TamingItem.CODEC.listOf().optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems))
+                    TamingItem.CODEC.listOf().optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
+                    FoodItem.CODEC.listOf().optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
             .apply(instance, DragonVariant::new));
 
     public static final Codec<DragonVariant> CODEC_NO_SERVER_INFO = RecordCodecBuilder.create(instance -> instance.group(
@@ -62,14 +63,16 @@ public record DragonVariant(
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
                     Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
-                    TamingItem.CODEC.listOf().optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems))
+                    TamingItem.CODEC.listOf().optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
+                    FoodItem.CODEC.listOf().optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
             .apply(instance, (
                     id,
                     variant,
                     displayNameKey,
                     dragonModelData,
                     dragonEquipment,
-                    tamingItemList
+                    tamingItemList,
+                    foodItemList
                     ) -> new DragonVariant(
                             id,
                             variant,
@@ -79,7 +82,9 @@ public record DragonVariant(
                             Optional.empty(),
                             Optional.empty(),
                             0,
-                            tamingItemList)
+                            tamingItemList,
+                            foodItemList
+                    )
             ));
 
     @NotNull
@@ -144,6 +149,14 @@ public record DragonVariant(
                         Codecs.TAG_ENTRY_ID.fieldOf("item").forGetter(TamingItem::item),
                         WITH_ALTERNATIVE.fieldOf("taming_progress_increase").forGetter(TamingItem::tamingProgressIncrease)
                 ).apply(instance, TamingItem::new)
+        );
+    }
+
+    public record FoodItem(Codecs.TagEntryId item, int healingAmount) {
+        public static final Codec<FoodItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                        Codecs.TAG_ENTRY_ID.fieldOf("item").forGetter(FoodItem::item),
+                        Codecs.NON_NEGATIVE_INT.fieldOf("healing_amount").forGetter(FoodItem::healingAmount)
+                ).apply(instance, FoodItem::new)
         );
     }
 }

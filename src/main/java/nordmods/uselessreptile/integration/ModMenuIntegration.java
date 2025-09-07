@@ -700,15 +700,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.wyvernVerticalSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Float> wyvernRegenerationFromFood = Option.<Float>createBuilder()
-                .name(Text.translatable(URAttributes.DRAGON_REGENERATION_FROM_FOOD.value().getTranslationKey()))
-                .description(OptionDescription.createBuilder()
-                        .text(Text.translatable("config.uselessreptile.option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.wyvernRegenerationFromFood,
-                        () -> config.wyvernRegenerationFromFood,
-                        val -> config.wyvernRegenerationFromFood = val)
-                .customController(FloatFieldController::new)
-                .build();
 
         wyvernAttributesGroup.option(wyvernDamage);
         wyvernAttributesGroup.option(wyvernKnockback);
@@ -717,7 +708,6 @@ public class ModMenuIntegration implements ModMenuApi {
         wyvernAttributesGroup.option(wyvernHealth);
         wyvernAttributesGroup.option(wyvernArmor);
         wyvernAttributesGroup.option(wyvernArmorToughness);
-        wyvernAttributesGroup.option(wyvernRegenerationFromFood);
         wyvernAttributesGroup.option(wyvernGroundSpeed);
         wyvernAttributesGroup.option(wyvernFlyingSpeed);
         wyvernAttributesGroup.option(wyvernVerticalSpeed);
@@ -814,15 +804,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.moleclawRotationSpeedGround = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Float> moleclawRegenerationFromFood = Option.<Float>createBuilder()
-                .name(Text.translatable(URAttributes.DRAGON_REGENERATION_FROM_FOOD.value().getTranslationKey()))
-                .description(OptionDescription.createBuilder()
-                        .text(Text.translatable("config.uselessreptile.option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.moleclawRegenerationFromFood,
-                        () -> config.moleclawRegenerationFromFood,
-                        val -> config.moleclawRegenerationFromFood = val)
-                .customController(FloatFieldController::new)
-                .build();
 
         moleclawAttributesGroup.option(moleclawDamage);
         moleclawAttributesGroup.option(moleclawKnockback);
@@ -831,7 +812,6 @@ public class ModMenuIntegration implements ModMenuApi {
         moleclawAttributesGroup.option(moleclawHealth);
         moleclawAttributesGroup.option(moleclawArmor);
         moleclawAttributesGroup.option(moleclawArmorToughness);
-        moleclawAttributesGroup.option(moleclawRegenerationFromFood);
         moleclawAttributesGroup.option(moleclawGroundSpeed);
         moleclawAttributesGroup.option(moleclawRotationSpeedGround);
         category.group(moleclawAttributesGroup.build());
@@ -951,15 +931,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.riverPikehornVerticalSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Float> riverPikehornRegenerationFromFood = Option.<Float>createBuilder()
-                .name(Text.translatable(URAttributes.DRAGON_REGENERATION_FROM_FOOD.value().getTranslationKey()))
-                .description(OptionDescription.createBuilder()
-                        .text(Text.translatable("config.uselessreptile.option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.riverPikehornRegenerationFromFood,
-                        () -> config.riverPikehornRegenerationFromFood,
-                        val -> config.riverPikehornRegenerationFromFood = val)
-                .customController(FloatFieldController::new)
-                .build();
 
         riverPikehornAttributesGroup.option(riverPikehornDamage);
         riverPikehornAttributesGroup.option(riverPikehornKnockback);
@@ -967,7 +938,6 @@ public class ModMenuIntegration implements ModMenuApi {
         riverPikehornAttributesGroup.option(riverPikehornHealth);
         riverPikehornAttributesGroup.option(riverPikehornArmor);
         riverPikehornAttributesGroup.option(riverPikehornArmorToughness);
-        riverPikehornAttributesGroup.option(riverPikehornRegenerationFromFood);
         riverPikehornAttributesGroup.option(riverPikehornGroundSpeed);
         riverPikehornAttributesGroup.option(riverPikehornFlyingSpeed);
         riverPikehornAttributesGroup.option(riverPikehornVerticalSpeed);
@@ -1109,15 +1079,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.lightningChaserVerticalSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Float> lightningChaserRegenerationFromFood = Option.<Float>createBuilder()
-                .name(Text.translatable(URAttributes.DRAGON_REGENERATION_FROM_FOOD.value().getTranslationKey()))
-                .description(OptionDescription.createBuilder()
-                        .text(Text.translatable("config.uselessreptile.option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.lightningChaserRegenerationFromFood,
-                        () -> config.lightningChaserRegenerationFromFood,
-                        val -> config.lightningChaserRegenerationFromFood = val)
-                .customController(FloatFieldController::new)
-                .build();
 
         lightningChaserAttributesGroup.option(lightningChaserDamage);
         lightningChaserAttributesGroup.option(lightningChaserKnockback);
@@ -1127,7 +1088,6 @@ public class ModMenuIntegration implements ModMenuApi {
         lightningChaserAttributesGroup.option(lightningChaserHealth);
         lightningChaserAttributesGroup.option(lightningChaserArmor);
         lightningChaserAttributesGroup.option(lightningChaserArmorToughness);
-        lightningChaserAttributesGroup.option(lightningChaserRegenerationFromFood);
         lightningChaserAttributesGroup.option(lightningChaserGroundSpeed);
         lightningChaserAttributesGroup.option(lightningChaserFlyingSpeed);
         lightningChaserAttributesGroup.option(lightningChaserVerticalSpeed);
@@ -1215,15 +1175,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.magmamuncherRotationSpeedGround = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Float> magmamuncherRegenerationFromFood = Option.<Float>createBuilder()
-                .name(Text.translatable(URAttributes.DRAGON_REGENERATION_FROM_FOOD.value().getTranslationKey()))
-                .description(OptionDescription.createBuilder()
-                        .text(Text.translatable("config.uselessreptile.option.dragonRegenerationFromFood.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.magmamuncherRegenerationFromFood,
-                        () -> config.magmamuncherRegenerationFromFood,
-                        val -> config.magmamuncherRegenerationFromFood = val)
-                .customController(FloatFieldController::new)
-                .build();
 
         magmamuncherAttributesGroup.option(magmamuncherDamage);
         magmamuncherAttributesGroup.option(magmamuncherKnockback);
@@ -1231,7 +1182,6 @@ public class ModMenuIntegration implements ModMenuApi {
         magmamuncherAttributesGroup.option(magmamuncherHealth);
         magmamuncherAttributesGroup.option(magmamuncherArmor);
         magmamuncherAttributesGroup.option(magmamuncherArmorToughness);
-        magmamuncherAttributesGroup.option(magmamuncherRegenerationFromFood);
         magmamuncherAttributesGroup.option(magmamuncherGroundSpeed);
         magmamuncherAttributesGroup.option(magmamuncherRotationSpeedGround);
         category.group(magmamuncherAttributesGroup.build());

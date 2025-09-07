@@ -123,7 +123,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         goalSelector.add(1, new SwimGoal(this));
         goalSelector.add(2, new FlyingDragonCallBackGoal<>(this));
         goalSelector.add(3, new SitGoal(this));
-        goalSelector.add(4, new DragonConsumeItemFromInventoryGoal(this));
+        goalSelector.add(4, new DragonEatFromInventoryGoal(this));
         goalSelector.add(6, new WyvernAttackGoal(this, 512));
         goalSelector.add(7, new FlyingDragonFlyDownGoal<>(this, 30));
         goalSelector.add(8, new DragonReturnToHomePoint(this));
@@ -151,8 +151,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().wyvernRotationSpeedGround)
                 .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().wyvernRotationSpeedAir)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().wyvernBasePrimaryAttackCooldown)
-                .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().wyvernBaseSecondaryAttackCooldown)
-                .add(URAttributes.DRAGON_REGENERATION_FROM_FOOD, attributes().wyvernRegenerationFromFood);
+                .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().wyvernBaseSecondaryAttackCooldown);
     }
 
     @Override
@@ -389,11 +388,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
         if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
         return new URDragonScreenHandler(URScreenHandlers.WYVERN_INVENTORY, syncId, inv, getInventory());
-    }
-
-    @Override
-    public boolean isFavoriteFood(ItemStack itemStack){
-        return itemStack.isIn(URTags.WYVERN_FOOD);
     }
 
     @Override

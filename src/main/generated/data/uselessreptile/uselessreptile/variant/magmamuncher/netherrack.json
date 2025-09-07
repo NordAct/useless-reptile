@@ -2,6 +2,16 @@
   "base_taming_progress": 12,
   "dragon_model": "uselessreptile:magmamuncher/netherrack",
   "equipment": "uselessreptile:empty",
+  "food_items": [
+    {
+      "healing_amount": 4,
+      "item": "minecraft:magma_block"
+    },
+    {
+      "healing_amount": 2,
+      "item": "minecraft:magma_cream"
+    }
+  ],
   "id": "uselessreptile:magmamuncher",
   "name": "netherrack",
   "spawn_conditions": "uselessreptile:magmamuncher/default",

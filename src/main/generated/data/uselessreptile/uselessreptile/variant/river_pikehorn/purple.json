@@ -2,6 +2,12 @@
   "base_taming_progress": 1,
   "dragon_model": "uselessreptile:river_pikehorn/purple",
   "equipment": "uselessreptile:empty",
+  "food_items": [
+    {
+      "healing_amount": 3,
+      "item": "#minecraft:fishes"
+    }
+  ],
   "id": "uselessreptile:river_pikehorn",
   "name": "purple",
   "spawn_conditions": "uselessreptile:river_pikehorn/default",

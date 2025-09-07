@@ -2,6 +2,12 @@
   "base_taming_progress": 64,
   "dragon_model": "uselessreptile:moleclaw/brown",
   "equipment": "uselessreptile:moleclaw",
+  "food_items": [
+    {
+      "healing_amount": 2,
+      "item": "#c:foods/vegetable"
+    }
+  ],
   "id": "uselessreptile:moleclaw",
   "name": "brown",
   "spawn_conditions": "uselessreptile:moleclaw/default",

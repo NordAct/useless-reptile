@@ -1,12 +1,14 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.data.DataOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.DataWriter;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.dynamic.Codecs;
@@ -53,6 +55,7 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 Optional.empty(),
                 -1,
+                Optional.empty(),
                 Optional.empty()
         );
         addCustomNameEntry(getId(id, name), variant);
@@ -126,6 +129,12 @@ public class URDragonVariantProvider implements DataProvider {
                                         new com.mojang.datafixers.util.Pair<>(1, 1)
                                 )
                         )
+                ),
+                Optional.of(
+                        List.of(
+                                new DragonVariant.FoodItem(new Codecs.TagEntryId(Items.CHICKEN.getRegistryEntry().registryKey().getValue(), false), 4),
+                                new DragonVariant.FoodItem(new Codecs.TagEntryId(Items.COOKED_CHICKEN.getRegistryEntry().registryKey().getValue(), false), 4)
+                        )
                 )
         );
         addEntry(getId(id, name), variant);
@@ -148,6 +157,11 @@ public class URDragonVariantProvider implements DataProvider {
                                         new Codecs.TagEntryId(Items.BEETROOT.getRegistryEntry().registryKey().getValue(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 2)
                                 )
+                        )
+                ),
+                Optional.of(
+                        List.of(
+                                new DragonVariant.FoodItem(new Codecs.TagEntryId(ConventionalItemTags.VEGETABLE_FOODS.id(), true), 2)
                         )
                 )
         );
@@ -172,6 +186,11 @@ public class URDragonVariantProvider implements DataProvider {
                                         new com.mojang.datafixers.util.Pair<>(1, 1)
                                 )
                         )
+                ),
+                Optional.of(
+                        List.of(
+                                new DragonVariant.FoodItem(new Codecs.TagEntryId(ItemTags.FISHES.id(), true), 3)
+                        )
                 )
         );
         addEntry(getId(id, name), variant);
@@ -188,7 +207,12 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.of(UselessReptile.id("lightning_chaser/" + name)),
                 Optional.empty(),
                 3,
-                Optional.empty()
+                Optional.empty(),
+                Optional.of(
+                        List.of(
+                                new DragonVariant.FoodItem(new Codecs.TagEntryId(ItemTags.MEAT.id(), true), 3)
+                        )
+                )
         );
         addEntry(getId(id, name), variant);
     }
@@ -210,6 +234,12 @@ public class URDragonVariantProvider implements DataProvider {
                                         new Codecs.TagEntryId(Items.BLAZE_ROD.getRegistryEntry().registryKey().getValue(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 3)
                                 )
+                        )
+                ),
+                Optional.of(
+                        List.of(
+                                new DragonVariant.FoodItem(new Codecs.TagEntryId(Items.MAGMA_BLOCK.getRegistryEntry().registryKey().getValue(), false), 4),
+                                new DragonVariant.FoodItem(new Codecs.TagEntryId(Items.MAGMA_CREAM.getRegistryEntry().registryKey().getValue(), false), 2)
                         )
                 )
         );

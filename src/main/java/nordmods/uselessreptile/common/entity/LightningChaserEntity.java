@@ -112,7 +112,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         goalSelector.add(1, new SwimGoal(this));
         goalSelector.add(2, new FlyingDragonCallBackGoal<>(this));
         goalSelector.add(3, new SitGoal(this));
-        goalSelector.add(4, new DragonConsumeItemFromInventoryGoal(this));
+        goalSelector.add(4, new DragonEatFromInventoryGoal(this));
         goalSelector.add(5, new LightningChaserAttackGoal(this));
         goalSelector.add(6, new LightningChaserRoamAroundGoal(this));
         goalSelector.add(6, new LightningChaserBailOutGoal(this));
@@ -234,8 +234,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().lightningChaserRotationSpeedAir)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().lightningChaserBasePrimaryAttackCooldown)
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().lightningChaserBaseSecondaryAttackCooldown)
-                .add(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN, attributes().lightningChaserBaseSpecialAttackCooldown)
-                .add(URAttributes.DRAGON_REGENERATION_FROM_FOOD, attributes().lightningChaserRegenerationFromFood);
+                .add(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN, attributes().lightningChaserBaseSpecialAttackCooldown);
     }
 
     @Override
@@ -511,7 +510,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (isTameable()) {
-            if (hasSurrendered() && !getShouldBailOut() && getTamingProgress() <= 0 || player.isCreative() && isFavoriteFood(itemStack)) {
+            if (hasSurrendered() && !getShouldBailOut() && getTamingProgress() <= 0 || player.isCreative() && getFoodItem(itemStack) != null) {
                 setTamedBy(player);
                 setPersistent();
                 setSurrendered(false);
@@ -531,11 +530,6 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     public boolean startRiding(Entity entity, boolean force) {
         if (hasSurrendered()) return false;
         return super.startRiding(entity, force);
-    }
-
-    @Override
-    public boolean isFavoriteFood(ItemStack itemStack){
-        return itemStack.isIn(URTags.LIGHTNING_CHASER_FOOD);
     }
 
     public boolean getShouldBailOut() {

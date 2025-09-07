@@ -2,6 +2,12 @@
   "base_taming_progress": 3,
   "dragon_model": "uselessreptile:lightning_chaser/brown",
   "equipment": "uselessreptile:lightning_chaser",
+  "food_items": [
+    {
+      "healing_amount": 3,
+      "item": "#minecraft:meat"
+    }
+  ],
   "id": "uselessreptile:lightning_chaser",
   "name": "brown",
   "spawn_conditions": "uselessreptile:lightning_chaser/brown"

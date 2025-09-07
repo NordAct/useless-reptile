@@ -42,7 +42,6 @@ import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URScreenHandlers;
-import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -72,11 +71,6 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     @Override
     protected float getBaseGroundSpeed() {
         return BASE_GROUND_SPEED;
-    }
-
-    @Override
-    public boolean isFavoriteFood(ItemStack itemStack) {
-        return itemStack.isIn(URTags.MAGMAMUNCHER_FOOD);
     }
 
     @Override
@@ -145,8 +139,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
                 .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().magmamuncherArmorToughness)
                 .add(EntityAttributes.MOVEMENT_SPEED, attributes().magmamuncherGroundSpeed)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().magmamuncherRotationSpeedGround)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().magmamuncherBasePrimaryAttackCooldown)
-                .add(URAttributes.DRAGON_REGENERATION_FROM_FOOD, attributes().magmamuncherRegenerationFromFood);
+                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().magmamuncherBasePrimaryAttackCooldown);
     }
 
     @Override
@@ -166,7 +159,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         goalSelector.add(1, new DragonCallBackGoal(this));
         goalSelector.add(2, new SitGoal(this));
         goalSelector.add(3, new MagmamuncherApplyFireResistanceGoal(this));
-        goalSelector.add(4, new DragonConsumeItemFromInventoryGoal(this));
+        goalSelector.add(4, new DragonEatFromInventoryGoal(this));
         goalSelector.add(5, new MagmamuncherAttackGoal(this, 4096));
         goalSelector.add(6, new MagmamuncherEatMagmaGoal(this));
         goalSelector.add(8, new DragonWanderAroundGoal(this));

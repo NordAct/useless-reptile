@@ -28,6 +28,7 @@ import net.minecraft.world.event.listener.EntityGameEventHandler;
 import net.minecraft.world.event.listener.GameEventListener;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFluteCallGoal;
@@ -40,7 +41,6 @@ import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.item.FluteItem;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -159,8 +159,9 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
             ItemStack itemStack = getMainHandStack();
             if (!itemStack.isEmpty() && --eatTimer <= 0) {
-                if (isFavoriteFood(itemStack)) {
-                    heal(getHealthRegenerationFromFood());
+                DragonVariant.FoodItem foodItem = getFoodItem(itemStack);
+                if (foodItem != null) {
+                    heal(foodItem.healingAmount());
                     equipStack(EquipmentSlot.MAINHAND, consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value(), null));
                 } else dropStack(world, itemStack);
                 stopHunt();
@@ -209,8 +210,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().riverPikehornBaseAccelerationDuration)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().riverPikehornRotationSpeedGround)
                 .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().riverPikehornRotationSpeedAir)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().riverPikehornBasePrimaryAttackCooldown)
-                .add(URAttributes.DRAGON_REGENERATION_FROM_FOOD, attributes().riverPikehornRegenerationFromFood);
+                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().riverPikehornBasePrimaryAttackCooldown);
     }
 
     @Override
@@ -241,7 +241,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     @Override
     protected void loot(ServerWorld world, ItemEntity item) {
         if (isOwnerClose()) return;
-        if (getEquippedStack(EquipmentSlot.MAINHAND).isEmpty() && isFavoriteFood(item.getStack())
+        if (getEquippedStack(EquipmentSlot.MAINHAND).isEmpty() && getFoodItem(item.getStack()) != null
                 || getEquippedStack(EquipmentSlot.MAINHAND).isOf(item.getStack().getItem()) && item.getStack().getComponents().equals(getEquippedStack(EquipmentSlot.MAINHAND).getComponents())) {
             triggerItemPickedUpByEntityCriteria(item);
             ItemStack itemStack = item.getStack();
@@ -290,11 +290,6 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         huntTimer = huntCooldown + getRandom().nextInt(huntCooldown / 2);
         eatTimer = eatCooldown + getRandom().nextInt(eatCooldown / 2);
         setInAirTimer(getMaxInAirTimer());
-    }
-
-    @Override
-    public boolean isFavoriteFood(ItemStack itemStack) {
-        return itemStack.isIn(URTags.RIVER_PIKEHORN_FOOD);
     }
 
     @Override

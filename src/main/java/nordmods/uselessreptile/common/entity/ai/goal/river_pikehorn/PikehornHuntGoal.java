@@ -63,7 +63,7 @@ public class PikehornHuntGoal extends Goal {
             Box box = entity.getBoundingBox().expand(20);
             List<ItemEntity> drops = entity.getWorld().getEntitiesByClass(ItemEntity.class, box.withMinY(box.minY - 20), (item) -> {
                 ItemStack itemStack = item.getStack();
-                return entity.isFavoriteFood(itemStack) && item.isAlive() && !item.cannotPickup();
+                return entity.getFoodItem(itemStack) != null && item.isAlive() && !item.cannotPickup();
             });
 
             if (!drops.isEmpty()) entity.getNavigation().startMovingTo(drops.getFirst(), 1);

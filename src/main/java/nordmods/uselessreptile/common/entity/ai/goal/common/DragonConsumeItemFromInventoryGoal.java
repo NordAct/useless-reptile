@@ -6,17 +6,11 @@ import net.minecraft.sound.SoundEvents;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 
-public class DragonConsumeItemFromInventoryGoal extends Goal {
+public abstract class DragonConsumeItemFromInventoryGoal extends Goal {
     protected final URDragonEntity dragon;
 
     public DragonConsumeItemFromInventoryGoal(URDragonEntity dragon) {
         this.dragon = dragon;
-    }
-
-    @Override
-    public boolean canStart() {
-        if (!dragon.isTamed()) return false;
-        return dragon.getHealth() < dragon.getMaxHealth();
     }
 
     @Override
@@ -26,7 +20,6 @@ public class DragonConsumeItemFromInventoryGoal extends Goal {
 
     @Override
     public void tick() {
-        dragon.tickEatFromInventoryTimer();
         if (canConsume()) {
             for (int i = DragonInventory.INVENTORY_START_INDEX; i <= dragon.getInventory().size(); i++) {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
@@ -39,15 +32,9 @@ public class DragonConsumeItemFromInventoryGoal extends Goal {
         }
     }
 
-    protected void beforeItemConsumed(ItemStack stack) {
-        dragon.heal(dragon.getHealthRegenerationFromFood());
-    }
+    protected abstract void beforeItemConsumed(ItemStack stack);
 
-    protected boolean canConsume() {
-        return dragon.getEatFromInventoryTimer() == 0;
-    }
+    protected abstract boolean canConsume();
 
-    protected boolean isConsumableItem(ItemStack stack) {
-        return dragon.isFavoriteFood(stack);
-    }
+    protected abstract boolean isConsumableItem(ItemStack stack);
 }

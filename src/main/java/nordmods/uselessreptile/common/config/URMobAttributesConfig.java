@@ -33,7 +33,6 @@ public class URMobAttributesConfig {
             Rotation speeds: [0;180]
             Attack cooldowns: [0;2048]
             Acceleration duration: [0;2048]
-            Regeneration from food: [0;1024]
             Attack cooldowns and acceleration duration are measured in ticks, rotation speeds - in degrees. Movement speed is measured in corgi-sized meteors
             
             SWAMP WYVERN ATTRIBUTES\s""")
@@ -62,8 +61,6 @@ public class URMobAttributesConfig {
     public float wyvernRotationSpeedAir = 4;
     @SerialEntry
     public float wyvernVerticalSpeed = 0.4f;
-    @SerialEntry
-    public float wyvernRegenerationFromFood = 4;
 
     @SerialEntry(comment = "MOLECLAW ATTRIBUTES")
     public float moleclawDamage = 8.0f;
@@ -83,8 +80,6 @@ public class URMobAttributesConfig {
     public int moleclawBasePrimaryAttackCooldown = 60;
     @SerialEntry
     public float moleclawRotationSpeedGround = 6;
-    @SerialEntry
-    public float moleclawRegenerationFromFood = 2;
 
     @SerialEntry(comment = "RIVER PIKEHORN ATTRIBUTES")
     public float riverPikehornDamage = 3.0f;
@@ -110,8 +105,6 @@ public class URMobAttributesConfig {
     public float riverPikehornRotationSpeedAir = 16;
     @SerialEntry
     public float riverPikehornVerticalSpeed = 0.2f;
-    @SerialEntry
-    public float riverPikehornRegenerationFromFood = 3;
 
     @SerialEntry(comment = "LIGHTNING CHASER ATTRIBUTES")
     public float lightningChaserDamage = 6.0f;
@@ -141,8 +134,6 @@ public class URMobAttributesConfig {
     public float lightningChaserRotationSpeedAir = 7;
     @SerialEntry
     public float lightningChaserVerticalSpeed = 0.3f;
-    @SerialEntry
-    public float lightningChaserRegenerationFromFood = 4;
 
     @SerialEntry(comment = "MAGMAMUNCHER ATTRIBUTES")
     public float magmamuncherDamage = 4.0f;
@@ -160,8 +151,6 @@ public class URMobAttributesConfig {
     public int magmamuncherBasePrimaryAttackCooldown = 30;
     @SerialEntry
     public float magmamuncherRotationSpeedGround = 20;
-    @SerialEntry
-    public float magmamuncherRegenerationFromFood = 4;
 
     public static URMobAttributesConfig getConfig() {
         return CONFIG.instance();

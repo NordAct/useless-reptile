@@ -25,7 +25,6 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
 
     @Override
     protected void beforeItemConsumed(ItemStack stack) {
-        super.beforeItemConsumed(stack);
         if (dragon.getOwner() == dragon.getVehicle() && dragon.getOwner() != null) {
             dragon.getOwner().addStatusEffect(
                     new StatusEffectInstance(

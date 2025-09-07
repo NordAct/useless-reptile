@@ -413,7 +413,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN)
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN)
-                .add(URAttributes.DRAGON_REGENERATION_FROM_FOOD)
                 .add(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN);
 
     }
@@ -516,10 +515,13 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         }
 
         if (isTamed()) {
-            if (isFavoriteFood(itemStack) && getHealth() != getAttributeValue(EntityAttributes.MAX_HEALTH)) {
-                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value(), hand);
-                heal(getHealthRegenerationFromFood());
-                return ActionResult.SUCCESS;
+            if (getHealth() != getMaxHealth()) {
+                DragonVariant.FoodItem foodItem = getFoodItem(itemStack);
+                if (foodItem != null) {
+                    consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value(), hand);
+                    heal(foodItem.healingAmount());
+                    return ActionResult.SUCCESS;
+                }
             }
         }
 
@@ -589,7 +591,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected boolean isInteractableItem(ItemStack itemStack) {
-        return itemStack.isOf(Items.POTION) || itemStack.isOf(Items.STICK) || isInstrument(itemStack) || isFavoriteFood(itemStack);
+        return itemStack.isOf(Items.POTION) || itemStack.isOf(Items.STICK) || isInstrument(itemStack);
     }
 
     public boolean isInstrument(ItemStack itemStack) {
@@ -903,7 +905,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         }
     }
 
-    public abstract boolean isFavoriteFood(ItemStack itemStack);
+    public boolean isFavoriteFood(ItemStack itemStack) {
+        return false;
+    }
 
     @Override
     public boolean isBreedingItem(ItemStack stack) {
@@ -926,8 +930,20 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return null;
     }
 
-    public float getHealthRegenerationFromFood() {
-        return (float) getAttributeValue(URAttributes.DRAGON_REGENERATION_FROM_FOOD);
+    @Nullable
+    public DragonVariant.FoodItem getFoodItem(ItemStack itemStack) {
+        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld());
+        if (variant != null) {
+            return variant.foodItems().orElse(List.of()).stream()
+                    .filter(tamingItem -> {
+                        Codecs.TagEntryId entryId = tamingItem.item();
+                        if (entryId.tag()) return itemStack.isIn(TagKey.of(RegistryKeys.ITEM, entryId.id()));
+                        return entryId.id().equals(itemStack.getItem().getRegistryEntry().registryKey().getValue());
+                    })
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
     }
 
     public void tickEatFromInventoryTimer() {

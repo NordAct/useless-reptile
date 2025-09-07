@@ -4,7 +4,6 @@ import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.item.Items;
 import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.ItemTags;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URTags;
 
@@ -76,18 +75,5 @@ public class URItemTagProvider extends FabricTagProvider.ItemTagProvider{
                 .addOptionalTag(URTags.WYVERN_SADDLES.id())
                 .addOptionalTag(URTags.LIGHTNING_CHASER_SADDLES.id())
                 .addOptionalTag(URTags.MOLECLAW_SADDLES.id());
-
-        //Dragon food
-        getTagBuilder(URTags.LIGHTNING_CHASER_FOOD)
-                .addOptionalTag(ItemTags.MEAT.id());
-        getTagBuilder(URTags.WYVERN_FOOD)
-                .add(Items.CHICKEN.getRegistryEntry().registryKey().getValue());
-        getTagBuilder(URTags.RIVER_PIKEHORN_FOOD)
-                .addOptionalTag(ItemTags.FISHES.id());
-        getTagBuilder(URTags.MOLECLAW_FOOD)
-                .add(Items.BEETROOT.getRegistryEntry().registryKey().getValue());
-        getTagBuilder(URTags.MAGMAMUNCHER_FOOD)
-                .add(Items.MAGMA_BLOCK.getRegistryEntry().registryKey().getValue())
-                .add(Items.MAGMA_CREAM.getRegistryEntry().registryKey().getValue());
     }
 }

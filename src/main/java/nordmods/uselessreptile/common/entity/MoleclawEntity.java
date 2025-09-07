@@ -79,7 +79,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
         goalSelector.add(2, new MoleclawEscapeLightGoal(this));
         goalSelector.add(2, new DragonCallBackGoal(this));
         goalSelector.add(3, new SitGoal(this));
-        goalSelector.add(4, new DragonConsumeItemFromInventoryGoal(this));
+        goalSelector.add(4, new DragonEatFromInventoryGoal(this));
         goalSelector.add(8, new MoleclawAttackGoal(this, 512));
         goalSelector.add(9, new DragonReturnToHomePoint(this));
         goalSelector.add(10, new DragonWanderAroundGoal(this));
@@ -111,7 +111,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().moleclawRotationSpeedGround)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().moleclawBasePrimaryAttackCooldown)
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().moleclawBaseSecondaryAttackCooldown)
-                .add(URAttributes.DRAGON_REGENERATION_FROM_FOOD, attributes().moleclawRegenerationFromFood)
                 .add(URAttributes.MOLECLAW_MINING_LEVEL, 0);
 
     }
@@ -362,11 +361,6 @@ public class MoleclawEntity extends URRideableDragonEntity {
             }
             else panicSoundDelay--;
         } else panicSoundDelay = 2;
-    }
-
-    @Override
-    public boolean isFavoriteFood(ItemStack itemStack){
-        return itemStack.isIn(URTags.MOLECLAW_FOOD);
     }
 
     @Override
