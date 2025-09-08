@@ -2,22 +2,16 @@
   "base_taming_progress": 64,
   "dragon_model": "uselessreptile:moleclaw/albino",
   "equipment": "uselessreptile:moleclaw",
-  "food_items": [
-    {
-      "healing_amount": 2,
-      "item": "#c:foods/vegetable"
-    }
-  ],
+  "food_items": {
+    "#c:foods/vegetable": 2
+  },
   "id": "uselessreptile:moleclaw",
   "name": "albino",
   "spawn_conditions": "uselessreptile:moleclaw/rare",
-  "taming_items": [
-    {
-      "item": "minecraft:beetroot",
-      "taming_progress_increase": [
-        1,
-        2
-      ]
-    }
-  ]
+  "taming_items": {
+    "minecraft:beetroot": [
+      1,
+      2
+    ]
+  }
 }

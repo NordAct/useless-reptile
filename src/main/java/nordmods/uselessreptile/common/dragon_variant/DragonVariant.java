@@ -18,6 +18,7 @@ import nordmods.uselessreptile.common.init.URRegistryKeys;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -53,8 +54,8 @@ public record DragonVariant(
                     Identifier.CODEC.optionalFieldOf("spawn_conditions").forGetter(DragonVariant::spawnConditions),
                     Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(DragonVariant::variantAttributeModifiers),
                     Codec.INT.fieldOf("base_taming_progress").forGetter(DragonVariant::baseTamingProgress),
-                    TamingItem.CODEC.listOf().optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
-                    FoodItem.CODEC.listOf().optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
+                    TamingItem.LIST_CODEC.optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
+                    FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
             .apply(instance, DragonVariant::new));
 
     public static final Codec<DragonVariant> CODEC_NO_SERVER_INFO = RecordCodecBuilder.create(instance -> instance.group(
@@ -63,8 +64,8 @@ public record DragonVariant(
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
                     Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
-                    TamingItem.CODEC.listOf().optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
-                    FoodItem.CODEC.listOf().optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
+                    TamingItem.LIST_CODEC.optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
+                    FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
             .apply(instance, (
                     id,
                     variant,
@@ -135,7 +136,7 @@ public record DragonVariant(
                 Codecs.NON_NEGATIVE_INT.fieldOf("min").codec(),
                 Codecs.POSITIVE_INT.fieldOf("max").codec()
         );
-        private static final Codec<Pair<Integer, Integer>> WITH_ALTERNATIVE = Codec.withAlternative(
+        private static final Codec<Pair<Integer, Integer>> PAIR_WITH_ALTERNATIVE = Codec.withAlternative(
                 Codec.INT_STREAM
                         .comapFlatMap(
                                 stream -> Util.decodeFixedLengthArray(stream, 2).map(values -> new Pair<>(values[0], values[1])),
@@ -147,16 +148,44 @@ public record DragonVariant(
 
         public static final Codec<TamingItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         Codecs.TAG_ENTRY_ID.fieldOf("item").forGetter(TamingItem::item),
-                        WITH_ALTERNATIVE.fieldOf("taming_progress_increase").forGetter(TamingItem::tamingProgressIncrease)
+                        PAIR_WITH_ALTERNATIVE.fieldOf("taming_progress_increase").forGetter(TamingItem::tamingProgressIncrease)
                 ).apply(instance, TamingItem::new)
+        );
+
+        public static final Codec<List<TamingItem>> LIST_CODEC = Codec.withAlternative(
+                Codec.unboundedMap(Codecs.TAG_ENTRY_ID, PAIR_WITH_ALTERNATIVE).xmap(tagEntryIdIntegerMap ->
+                        tagEntryIdIntegerMap
+                                .entrySet()
+                                .stream()
+                                .map(entry -> new TamingItem(entry.getKey(), entry.getValue()))
+                                .toList(), list -> {
+                    HashMap<Codecs.TagEntryId, Pair<Integer, Integer>> map = new HashMap<>();
+                    list.forEach(tamingItem -> map.put(tamingItem.item(), tamingItem.tamingProgressIncrease()));
+                    return map;
+                }),
+                CODEC.listOf()
         );
     }
 
-    public record FoodItem(Codecs.TagEntryId item, int healingAmount) {
+    public record FoodItem(Codecs.TagEntryId item, Integer healingAmount) {
         public static final Codec<FoodItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         Codecs.TAG_ENTRY_ID.fieldOf("item").forGetter(FoodItem::item),
                         Codecs.NON_NEGATIVE_INT.fieldOf("healing_amount").forGetter(FoodItem::healingAmount)
                 ).apply(instance, FoodItem::new)
+        );
+
+        public static final Codec<List<FoodItem>> LIST_CODEC = Codec.withAlternative(
+                Codec.unboundedMap(Codecs.TAG_ENTRY_ID, Codecs.NON_NEGATIVE_INT).xmap(tagEntryIdIntegerMap ->
+                        tagEntryIdIntegerMap
+                                .entrySet()
+                                .stream()
+                                .map(entry -> new FoodItem(entry.getKey(), entry.getValue()))
+                                .toList(), list -> {
+                    HashMap<Codecs.TagEntryId, Integer> map = new HashMap<>();
+                    list.forEach(foodItem -> map.put(foodItem.item(), foodItem.healingAmount()));
+                    return map;
+                }),
+                CODEC.listOf()
         );
     }
 }

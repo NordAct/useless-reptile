@@ -1,24 +1,29 @@
 package nordmods.uselessreptile.common.dragon_variant.spawn;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Util;
 import net.minecraft.util.dynamic.Codecs;
 import net.minecraft.world.biome.Biome;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.IntStream;
 
-public record DragonSpawnConditions(int weight,
-                                     @NotNull Optional<List<Codecs.TagEntryId>> allowedBiomes,
-                                     @NotNull Optional<List<Codecs.TagEntryId>> bannedBiomes,
-                                     @NotNull Optional<List<Codecs.TagEntryId>> allowedBlocks,
-                                     @NotNull Optional<List<Codecs.TagEntryId>> bannedBlocks,
-                                     @NotNull Optional<AltitudeRestriction> altitudeRestriction) {
+public record DragonSpawnConditions(
+        int weight,
+        Optional<List<Codecs.TagEntryId>> allowedBiomes,
+        Optional<List<Codecs.TagEntryId>> bannedBiomes,
+        Optional<List<Codecs.TagEntryId>> allowedBlocks,
+        Optional<List<Codecs.TagEntryId>> bannedBlocks,
+        Optional<AltitudeRestriction> altitudeRestriction
+) {
 
     public static final Codec<DragonSpawnConditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(DragonSpawnConditions::weight),
@@ -29,18 +34,36 @@ public record DragonSpawnConditions(int weight,
                     AltitudeRestriction.CODEC.optionalFieldOf("altitude").forGetter(DragonSpawnConditions::altitudeRestriction))
             .apply(instance, (DragonSpawnConditions::new)));
 
-    public record AltitudeRestriction(Optional<Integer> min, Optional<Integer> max) {
-        public static final Codec<AltitudeRestriction> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                        Codec.INT.optionalFieldOf("min").forGetter(altitudeRestriction -> altitudeRestriction.min),
-                        Codec.INT.optionalFieldOf("max").forGetter(altitudeRestriction -> altitudeRestriction.max))
-                .apply(instance, AltitudeRestriction::new));
+    public record AltitudeRestriction(Pair<Optional<Integer>, Optional<Integer>> range) {
+        public AltitudeRestriction(Optional<Integer> min, Optional<Integer> max) {
+            this(new Pair<>(min, max));
+        }
+
+        public static final Codec<Pair<Optional<Integer>, Optional<Integer>>> PAIR_CODEC = Codec.withAlternative(
+                Codec.pair(
+                        Codec.INT.optionalFieldOf("min").codec(),
+                        Codec.INT.optionalFieldOf("max").codec()
+                ),
+                Codec.INT_STREAM
+                        .comapFlatMap(
+                                stream -> Util.decodeFixedLengthArray(stream, 2).map(values -> new com.mojang.datafixers.util.Pair<>(Optional.of(values[0]), Optional.of(values[1]))),
+                                pair -> IntStream.of(pair.getFirst().orElse(Integer.MIN_VALUE), pair.getSecond().orElse(Integer.MAX_VALUE))
+                        )
+                        .stable()
+        );
+
+        public static final Codec<AltitudeRestriction> CODEC = PAIR_CODEC
+                .comapFlatMap(
+                        range1 -> DataResult.success(new AltitudeRestriction(range1)),
+                        AltitudeRestriction::range
+                ).stable();
 
         public int getMin() {
-            return min.orElse(Integer.MIN_VALUE);
+            return range.getFirst().orElse(Integer.MIN_VALUE);
         }
 
         public int getMax() {
-            return max.orElse(Integer.MAX_VALUE);
+            return range.getSecond().orElse(Integer.MAX_VALUE);
         }
     }
 

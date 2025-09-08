@@ -2,33 +2,21 @@
   "base_taming_progress": 128,
   "dragon_model": "uselessreptile:wyvern/green",
   "equipment": "uselessreptile:wyvern",
-  "food_items": [
-    {
-      "healing_amount": 4,
-      "item": "minecraft:chicken"
-    },
-    {
-      "healing_amount": 4,
-      "item": "minecraft:cooked_chicken"
-    }
-  ],
+  "food_items": {
+    "minecraft:chicken": 4,
+    "minecraft:cooked_chicken": 4
+  },
   "id": "uselessreptile:wyvern",
   "name": "green",
   "spawn_conditions": "uselessreptile:wyvern/default",
-  "taming_items": [
-    {
-      "item": "minecraft:chicken",
-      "taming_progress_increase": [
-        1,
-        2
-      ]
-    },
-    {
-      "item": "minecraft:cooked_chicken",
-      "taming_progress_increase": [
-        1,
-        1
-      ]
-    }
-  ]
+  "taming_items": {
+    "minecraft:chicken": [
+      1,
+      2
+    ],
+    "minecraft:cooked_chicken": [
+      1,
+      1
+    ]
+  }
 }

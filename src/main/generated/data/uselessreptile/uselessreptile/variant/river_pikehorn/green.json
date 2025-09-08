@@ -2,22 +2,16 @@
   "base_taming_progress": 1,
   "dragon_model": "uselessreptile:river_pikehorn/green",
   "equipment": "uselessreptile:empty",
-  "food_items": [
-    {
-      "healing_amount": 3,
-      "item": "#minecraft:fishes"
-    }
-  ],
+  "food_items": {
+    "#minecraft:fishes": 3
+  },
   "id": "uselessreptile:river_pikehorn",
   "name": "green",
   "spawn_conditions": "uselessreptile:river_pikehorn/default",
-  "taming_items": [
-    {
-      "item": "minecraft:tropical_fish_bucket",
-      "taming_progress_increase": [
-        1,
-        1
-      ]
-    }
-  ]
+  "taming_items": {
+    "minecraft:tropical_fish_bucket": [
+      1,
+      1
+    ]
+  }
 }
