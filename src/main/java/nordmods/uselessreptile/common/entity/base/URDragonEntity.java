@@ -591,7 +591,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected boolean isInteractableItem(ItemStack itemStack) {
-        return itemStack.isOf(Items.POTION) || itemStack.isOf(Items.STICK) || isInstrument(itemStack);
+        return itemStack.isOf(Items.POTION) || itemStack.isOf(Items.STICK) || isInstrument(itemStack) || getFoodItem(itemStack) != null;
     }
 
     public boolean isInstrument(ItemStack itemStack) {
@@ -903,10 +903,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             }
 
         }
-    }
-
-    public boolean isFavoriteFood(ItemStack itemStack) {
-        return false;
     }
 
     @Override

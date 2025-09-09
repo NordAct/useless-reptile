@@ -30,7 +30,7 @@ public class URRegistryKeys {
         DynamicRegistries.register(DRAGON_SPAWN_CONDITIONS, DragonSpawnConditions.CODEC.listOf());
         DynamicRegistries.register(DRAGON_VARIANT_ATTRIBUTE_MODIFIERS, EntityAttributeModifier.CODEC.listOf());
         DynamicRegistries.registerSynced(DRAGON_VARIANT, DragonVariant.CODEC, DragonVariant.CODEC_NO_SERVER_INFO);
-        DynamicRegistries.registerSynced(DRAGON_VARIANT_CUSTOM_NAME, DragonVariant.CODEC_NO_SERVER_INFO);
+        DynamicRegistries.registerSynced(DRAGON_VARIANT_CUSTOM_NAME, DragonVariant.CODEC_CUSTOM_NAME);
 
         DynamicRegistrySetupCallback.EVENT.register(registryView -> {
             DynamicRegistryManager registryManager = registryView.asDynamicRegistryManager();

@@ -31,6 +31,7 @@ import java.util.stream.IntStream;
 //  per slot equipment items
 //  effect immunities
 //  damage immunities
+//  potentially move all attributes to variant file
 
 //TODO also move custom name registry to clientside
 public record DragonVariant(
@@ -85,6 +86,30 @@ public record DragonVariant(
                             0,
                             tamingItemList,
                             foodItemList
+                    )
+            ));
+
+    public static final Codec<DragonVariant> CODEC_CUSTOM_NAME = RecordCodecBuilder.create(instance -> instance.group(
+                    Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
+                    Codec.STRING.fieldOf("name").forGetter(DragonVariant::name),
+                    Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
+                    Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment))
+            .apply(instance, (
+                            id,
+                            variant,
+                            dragonModelData,
+                            dragonEquipment
+                    ) -> new DragonVariant(
+                            id,
+                            variant,
+                    Optional.empty(),
+                            dragonModelData,
+                            dragonEquipment,
+                            Optional.empty(),
+                            Optional.empty(),
+                            0,
+                    Optional.empty(),
+                    Optional.empty()
                     )
             ));
 

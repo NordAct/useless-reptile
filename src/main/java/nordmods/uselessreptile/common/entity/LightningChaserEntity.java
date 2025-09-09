@@ -428,7 +428,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
-        if (lightning.getChanneler() != null && getTamingProgress() > 0) setTamingProgress(getTamingProgress() - 1);
+        if (isTameable() && lightning.getChanneler() != null && getTamingProgress() > 0) setTamingProgress(getTamingProgress() - 1);
         addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 400, 3));
         addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 400, 1));
         addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 400, 1));
