@@ -13,7 +13,13 @@ public record DragonEquipment(Optional<Identifier> parent, List<Equipment>equipm
                     Equipment.CODEC.listOf().fieldOf("equipment").forGetter(DragonEquipment::equipment))
             .apply(instance, DragonEquipment::new));
 
-
+    //TODO
+    // allow specifying slot and attribute modifiers
+    // make dragons use equipment lists for defining what they can equip instead of tags
+    // make tooltip that will display for which variant which attributes it'll increase
+    //      tooltip should be scrollable (like pages) and group based on display name and similarity of attribute modifiers
+    // add types for equipment (armor and saddle) to make for saddle possible to configure amount of passengers and their positions
+    // rework passenger renderer to make multiple passengers possible
     public record Equipment(Identifier item, ModelData modelData) {
         public static final Codec<Equipment> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         Identifier.CODEC.fieldOf("item").forGetter(Equipment::item),

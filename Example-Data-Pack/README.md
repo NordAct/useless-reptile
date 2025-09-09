@@ -148,9 +148,11 @@ Fields:
 - `banned_biomes` - (optional) blacklist of biomes where variant can't appear. If not specified, variant can appear anywhere where it can appear
 - `allowed_blocks` - (optional) whitelist of blocks where variant can appear. If not specified, variant can appear on any block
 - `banned_blocks` - (optional) blacklist of blocks where variant can't appear. If not specified, variant can appear anywhere where it can appear
-- `altitude` - (optional) Y coordinate range where variant can appear
-  - `min` - (optional) minimal world height for variant to appear. If not specified, no limit on min Y
-  - `max` - (optional) maximum world height up to which variant can appear. If not specified, no limit on min Y
+- `altitude` - (optional) Y coordinate range where variant can appear. Can be defined in 2 ways:
+  - As an integer array of size of 2, where first number represents minimal world height and second represents maximum world height (`[min, max]`)
+  - As object:
+    - `min` - (optional) minimal world height for variant to appear. If not specified, no limit on min Y
+    - `max` - (optional) maximum world height up to which variant can appear. If not specified, no limit on min Y
 
 To add spawn entry, you have to at least specify `weight`. You probably also should add `allowed_biomes` if you don't want to end up with your custom variant spawning absolutely everywhere (although this field is optional).
 File names for spawn entries don't matter. You also can create subfolders within folder of the dragon for which you are adding spawns.

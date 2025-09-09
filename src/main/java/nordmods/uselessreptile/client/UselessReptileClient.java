@@ -11,7 +11,6 @@ public class UselessReptileClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         URClientConfig.init();
-        URItemProperties.init();
         URRenderers.init();
         URKeybinds.init();
         URScreens.init();

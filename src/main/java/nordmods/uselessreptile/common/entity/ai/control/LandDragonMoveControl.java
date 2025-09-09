@@ -31,8 +31,8 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
         double diffY = targetY - entity.getY();
         double diffZ = targetZ - entity.getZ();
         double distanceSquared = diffX * diffX + diffY * diffY + diffZ * diffZ;
-        float destinationYaw = (float)(MathHelper.atan2(diffZ, diffX) * MathHelper.DEGREES_PER_RADIAN) - 90.0F;
-        float destinationPitch = entity.getPitch();
+        float destinationYaw;
+        float destinationPitch;
         if (entity.getTarget() != null && entity instanceof ShooterDragon shooterDragon) {
             Entity target = entity.getTarget();
             double diffTargetX = target.getX() - shooterDragon.getShootingPoint().pos().x;
@@ -44,10 +44,15 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
                     (float)(-(MathHelper.atan2(diffTargetY, distanceTargetXZ) * MathHelper.DEGREES_PER_RADIAN)),
                     entity.getPitchLimit()
             );
+            destinationYaw = (float)(MathHelper.atan2(diffTargetZ, diffTargetX) * MathHelper.DEGREES_PER_RADIAN) - 90.0F;
+        } else {
+            destinationYaw = (float)(MathHelper.atan2(diffZ, diffX) * MathHelper.DEGREES_PER_RADIAN) - 90.0F;
+            destinationPitch = entity.getPitch();
         }
         entity.setMovingBackwards(false);
-        entity.setRotation(destinationYaw, destinationPitch);
         float speed = getMovementSpeed();
+        entity.setRotation(destinationYaw, destinationPitch);
+
         switch (state) {
             case STRAFE -> { //there's no strafe for dragons, but it's used for backwards movement
                 state = State.WAIT;
@@ -61,7 +66,7 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
                     entity.setForwardSpeed(0.0F);
                     return;
                 }
-                if (entity.isLookingAtDirection(entity.getPitch(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2)) || entity.getLookControl().isLookingAtTarget()) {
+                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getPitch(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
                     entity.setMovementSpeed(speed);
                 } else entity.setForwardSpeed(0.0F);
             }

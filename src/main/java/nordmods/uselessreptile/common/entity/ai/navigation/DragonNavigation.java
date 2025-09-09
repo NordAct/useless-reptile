@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.entity.ai.navigation;
 
-import io.github.flemmli97.debugutils.utils.DebuggingPackets;
 import net.minecraft.entity.ai.NavigationConditions;
 import net.minecraft.entity.ai.control.MoveControl;
 import net.minecraft.entity.ai.pathing.MobNavigation;
@@ -38,13 +37,8 @@ public class DragonNavigation extends MobNavigation {
         }
         checkTimeouts(getPos());
 
-        //TODO pathfinding debug option
-        //if (currentPath != null) {
-        //    entity.getServer().getPlayerManager().getPlayerList().forEach(player -> {
-        //        ServerPlayNetworking.send(player, new DebugPathCustomPayload(entity.getId(), currentPath, nodeReachProximity));
-        //    });
-        //}
-        DebuggingPackets.sendPathfindingPacket(entity.getWorld(), entity, currentPath, nodeReachProximity);
+        //TODO debug code
+        //DebuggingPackets.sendPathfindingPacket(entity.getWorld(), entity, currentPath, nodeReachProximity);
     }
 
     @Override
