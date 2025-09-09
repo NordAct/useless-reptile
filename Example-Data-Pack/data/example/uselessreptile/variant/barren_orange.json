@@ -4,5 +4,37 @@
   "equipment": "example:barren",
   "dragon_model": "example:barren_orange",
   "spawn_conditions": "example:barren_orange",
-  "display_name_key": "entity.example.wyvern.barren"
+  "display_name_key": "entity.example.wyvern.barren",
+  "base_taming_progress": 130,
+  "taming_items": [
+    {
+      "item": "minecraft:beef",
+      "taming_progress_increase": [1, 2]
+    },
+    {
+      "item": "minecraft:cooked_beef",
+      "taming_progress_increase": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  ],
+  "food_items": [
+    {
+      "item": "minecraft:beef",
+      "healing_amount": 8
+    },
+    {
+      "item": "minecraft:cooked_beef",
+      "healing_amount": 8
+    },
+    {
+      "item": "minecraft:porkchop",
+      "healing_amount": 8
+    },
+    {
+      "item": "minecraft:cooked_porkchop",
+      "healing_amount": 8
+    }
+  ]
 }

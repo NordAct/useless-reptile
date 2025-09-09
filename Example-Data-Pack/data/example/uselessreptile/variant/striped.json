@@ -1,8 +1,15 @@
 {
+  "id": "uselessreptile:river_pikehorn",
+  "name": "striped",
   "equipment": "uselessreptile:empty",
   "dragon_model": "example:striped",
   "spawn_conditions": "uselessreptile:river_pikehorn/default",
-  "id": "uselessreptile:river_pikehorn",
-  "name": "striped",
-  "attribute_modifiers": "example:striped"
+  "attribute_modifiers": "example:striped",
+  "base_taming_progress": 1,
+  "food_items": {
+    "#minecraft:fishes": 3
+  },
+  "taming_items": {
+    "minecraft:tropical_fish_bucket": [1, 1]
+  }
 }

@@ -23,6 +23,7 @@ Example data pack adds following:
 - `Barren Brown`, `Barren Orange`, `Ender` have some sounds altered, `striped` and `Battleworn` have different pitch and volume to default sounds
 - `Barren Brown` and `Barren Orange` can spawn in badlands biomes on different altitudes. `Barren Brown` also can spawn in savannas. `Ender` spawns in End biomes. `striped` spawns alongside normal Pikehorns
 - `striped` has attribute modifiers that decrease its size and health
+- `Barren Brown` and `Barren Orange` showcase different ways of declaring taming and food items
 
 To summon specific variant (if it's not accessible only via custom name), you can use following command `/summon uselessreptile:dragon_id ~ ~ ~ {Variant:"VARIANT NAME"}`, where `uselessreptile:dragon_id` - entity id of the dragon, `VARIANT NAME` - name of the variant.
 
@@ -37,7 +38,19 @@ Fields:
 - `spawn_conditions` - (optional) id of spawn conditions file, located in `uselessreptile/spawn_conditions` within data
 - `attribute_modifiers` - (optional) id of attribute modifiers file, located in `uselessreptile/attribute_modifiers` within data
 - `display_name_key` - (optional) localisation key for display name of the variant. Note that it'll only be visible if entity does not have custom name
-
+- `base_taming_progress` - base taming progress for variant. Setting this to -1 will make variant untameable. Should be a positive number, as taming progress works by going down each time certain condition is met (i.e. giving dragon right taming item) until it reaches 0
+- `taming_items` - list of items that can be used for taming the variant. Technically optional, but not specifying those makes variant technically untameable. List entries can be specified in 2 ways:
+  - By specifying entry as a pair of `"key": value`, where `key` is either item tag or item id and value is an array of 2 integer numbers, where 1st number represents minimal possible taming progress decrease and second is maximum possible decrease (`[min, max]`)
+  - By specifying entry as object with following fields:
+    - `item` - either item tag or item id
+    - `taming_progress_increase` - either an array of 2 integer numbers, where 1st number represents minimal possible taming progress decrease and second is maximum possible decrease (`[min, max]`) or an object with following fields:
+      - `min` - minimal possible taming progress decrease
+      - `max` - maximum possible taming progress decrease
+- `food_items` - list of items that can be used to heal dragon. For some dragons may be used for other activities (i.e. River Pikehorn will seek its food items when fishing). Technically optional, but leaving this empty will make dragon impossible to be healed with food. List entries can be specified in 2 ways:
+  - By specifying entry as a pair of `"key": value`, where `key` is either item tag or item id and value is a positive integer number that represents amount of health that will be restored when dragon consumes the food item
+  - By specifying entry as object with following fields:
+    - `item` - either item tag or item id 
+    - `healing_amount` - amount of health that will be restored when dragon consumes the food item
 
 ## `custom_name` file structure
 Technically just a stripped version of variant.
