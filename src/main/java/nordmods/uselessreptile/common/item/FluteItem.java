@@ -54,7 +54,7 @@ public class FluteItem extends Item {
             itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent(nextMode));
 
             if (world.isClient() && user == MinecraftClient.getInstance().player) {
-                Text text = Text.translatable("tooltip.uselessreptile.flute." + getFluteMode(itemStack));
+                Text text = Text.translatable("tooltip.uselessreptile.flute_mode." + getFluteMode(itemStack));
                 MinecraftClient.getInstance().inGameHud.setOverlayMessage(text, false);
             }
             return ActionResult.SUCCESS;
@@ -78,12 +78,10 @@ public class FluteItem extends Item {
     @SuppressWarnings("deprecation")
     @Override
     public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
-        String tooltipString = "tooltip.uselessreptile.flute_mode" + getFluteMode(stack);
-
-        if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
+                if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
         else for (Text text : getParsedText("tooltip.uselessreptile.flute")) textConsumer.accept(((MutableText) text).formatted(Formatting.GRAY));
-
-        textConsumer.accept(Text.translatable(tooltipString).formatted(Formatting.GRAY));
+        String tooltipString = "tooltip.uselessreptile.flute_mode";
+        textConsumer.accept(Text.translatable(tooltipString, Text.translatable(tooltipString + "." + getFluteMode(stack))).formatted(Formatting.GRAY));
     }
 
     private static List<Text> getParsedText(String key) {
