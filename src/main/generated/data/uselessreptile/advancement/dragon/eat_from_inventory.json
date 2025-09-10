@@ -1,0 +1,25 @@
+{
+  "parent": "uselessreptile:dragon/sit_down_dragon",
+  "criteria": {
+    "triggered_from_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.eat_from_inventory.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:chicken"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.eat_from_inventory"
+    }
+  },
+  "requirements": [
+    [
+      "triggered_from_code"
+    ]
+  ]
+}

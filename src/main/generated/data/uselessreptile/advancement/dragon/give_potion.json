@@ -1,0 +1,30 @@
+{
+  "parent": "uselessreptile:dragon/eat_from_inventory",
+  "criteria": {
+    "triggered_from_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.give_potion.desc"
+    },
+    "icon": {
+      "components": {
+        "minecraft:potion_contents": {
+          "potion": "minecraft:strength"
+        }
+      },
+      "count": 1,
+      "id": "minecraft:potion"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.give_potion"
+    }
+  },
+  "requirements": [
+    [
+      "triggered_from_code"
+    ]
+  ]
+}

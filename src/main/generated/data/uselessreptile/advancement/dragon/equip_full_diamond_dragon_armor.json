@@ -1,0 +1,26 @@
+{
+  "parent": "uselessreptile:dragon/sit_down_dragon",
+  "criteria": {
+    "triggered_from_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.equip_full_diamond_dragon_armor.desc"
+    },
+    "frame": "goal",
+    "icon": {
+      "count": 1,
+      "id": "uselessreptile:dragon_helmet_diamond"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.equip_full_diamond_dragon_armor"
+    }
+  },
+  "requirements": [
+    [
+      "triggered_from_code"
+    ]
+  ]
+}

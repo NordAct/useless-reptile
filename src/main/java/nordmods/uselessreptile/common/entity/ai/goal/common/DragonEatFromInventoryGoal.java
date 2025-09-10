@@ -1,6 +1,8 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public class DragonEatFromInventoryGoal extends DragonConsumeItemFromInventoryGoal{
@@ -23,6 +25,8 @@ public class DragonEatFromInventoryGoal extends DragonConsumeItemFromInventoryGo
     @Override
     protected void beforeItemConsumed(ItemStack stack) {
         dragon.heal(dragon.getFoodItem(stack).healingAmount());
+        if (dragon.getOwner() instanceof ServerPlayerEntity serverPlayer)
+            URDragonEntity.grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/eat_from_inventory"));
     }
 
     @Override

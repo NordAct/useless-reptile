@@ -1,0 +1,32 @@
+{
+  "parent": "uselessreptile:dragon/use_horn",
+  "criteria": {
+    "get_vortex_horn": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#uselessreptile:vortex_horns"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.get_vortex_horn.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "uselessreptile:vortex_horn"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.get_vortex_horn"
+    }
+  },
+  "requirements": [
+    [
+      "get_vortex_horn"
+    ]
+  ]
+}

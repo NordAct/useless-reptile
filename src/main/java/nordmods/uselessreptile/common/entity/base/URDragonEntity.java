@@ -471,6 +471,20 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
             ItemStack banner = inventory.getStack(4);
             equipStack(EquipmentSlot.OFFHAND, banner);
+
+            if (getOwner() instanceof ServerPlayerEntity serverPlayer) { //TODO i really should unhardcode this...
+                if ((head.isOf(URItems.DRAGON_HELMET_DIAMOND) || head.isOf(URItems.MOLECLAW_HELMET_DIAMOND))
+                        && body.isOf(URItems.DRAGON_CHESTPLATE_DIAMOND)
+                        && tail.isOf(URItems.DRAGON_TAIL_ARMOR_DIAMOND)) {
+                    grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/equip_full_diamond_dragon_armor"));
+                }
+
+                if ((head.isOf(URItems.DRAGON_HELMET_NETHERITE) || head.isOf(URItems.MOLECLAW_HELMET_NETHERITE))
+                        && body.isOf(URItems.DRAGON_CHESTPLATE_NETHERITE)
+                        && tail.isOf(URItems.DRAGON_TAIL_ARMOR_NETHERITE)) {
+                    grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/equip_full_netherite_dragon_armor"));
+                }
+            }
         }
     }
 
@@ -535,6 +549,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 ItemStack original = itemStack.copy();
                 potionItem.finishUsing(itemStack, getWorld(), this);
                 consumeGivenItem(player, original, SoundEvents.ENTITY_GENERIC_DRINK.value(), hand);
+                if (player instanceof ServerPlayerEntity serverPlayer)
+                    grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/give_potion"));
                 return ActionResult.SUCCESS;
             }
 
@@ -554,6 +570,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 else {
                     setSitting(true);
                     getNavigation().stop();
+                    if (player instanceof ServerPlayerEntity serverPlayer)
+                        grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/sit_down_dragon"));
                 }
                 return ActionResult.SUCCESS;
             }
@@ -1187,8 +1205,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public boolean isBanner(ItemStack itemStack) {
         return itemStack.getItem() instanceof BannerItem;
     }
-
-    public boolean grantTriggerableAdvancement(ServerPlayerEntity player, Identifier advancement) {
+    //todo make those advancements datadriven... some day somehow
+    public static boolean grantTriggerableAdvancement(ServerPlayerEntity player, Identifier advancement) {
         AdvancementEntry entry = player.getServer().getAdvancementLoader().get(advancement);
         if (entry == null) return false;
         return player.getAdvancementTracker().grantCriterion(entry, "triggered_from_code");
@@ -1250,6 +1268,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             if (getInstrument(stack).equals(getBoundedInstrumentSound())) {
                 setSitting(false);
                 shouldFollow = true;
+                if (player instanceof ServerPlayerEntity serverPlayer)
+                    grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/use_horn"));
                 return true;
             }
             return false;

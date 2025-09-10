@@ -48,7 +48,7 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
                     10
             );
             if (dragon.getOwner() instanceof ServerPlayerEntity player) {
-                dragon.grantTriggerableAdvancement(player, UselessReptile.id("dragon/magmamuncher_apply_fire_resistance")); //todo make datadriven... some day
+                URDragonEntity.grantTriggerableAdvancement(player, UselessReptile.id("dragon/magmamuncher_apply_fire_resistance"));
             }
             dragon.getServer().getPlayerManager().sendToAll(packet);
         }

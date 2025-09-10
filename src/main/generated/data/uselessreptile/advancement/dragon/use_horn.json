@@ -1,0 +1,25 @@
+{
+  "parent": "uselessreptile:dragon/sit_down_dragon",
+  "criteria": {
+    "triggered_from_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.use_horn.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:goat_horn"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.use_horn"
+    }
+  },
+  "requirements": [
+    [
+      "triggered_from_code"
+    ]
+  ]
+}

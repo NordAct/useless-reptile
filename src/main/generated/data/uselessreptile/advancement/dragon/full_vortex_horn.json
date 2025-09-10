@@ -1,0 +1,26 @@
+{
+  "parent": "uselessreptile:dragon/get_vortex_horn",
+  "criteria": {
+    "triggered_from_code": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.full_vortex_horn.desc"
+    },
+    "frame": "challenge",
+    "icon": {
+      "count": 1,
+      "id": "uselessreptile:diamond_vortex_horn"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.full_vortex_horn"
+    }
+  },
+  "requirements": [
+    [
+      "triggered_from_code"
+    ]
+  ]
+}

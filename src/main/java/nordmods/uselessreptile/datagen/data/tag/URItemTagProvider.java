@@ -75,5 +75,13 @@ public class URItemTagProvider extends FabricTagProvider.ItemTagProvider{
                 .addOptionalTag(URTags.WYVERN_SADDLES.id())
                 .addOptionalTag(URTags.LIGHTNING_CHASER_SADDLES.id())
                 .addOptionalTag(URTags.MOLECLAW_SADDLES.id());
+
+        //other items
+        getTagBuilder(URTags.VORTEX_HORNS)
+                .add(URItems.VORTEX_HORN.getRegistryEntry().registryKey().getValue())
+                .add(URItems.IRON_VORTEX_HORN.getRegistryEntry().registryKey().getValue())
+                .add(URItems.GOLD_VORTEX_HORN.getRegistryEntry().registryKey().getValue())
+                .add(URItems.DIAMOND_VORTEX_HORN.getRegistryEntry().registryKey().getValue())
+                .add(URItems.NETHERITE_VORTEX_HORN.getRegistryEntry().registryKey().getValue());
     }
 }

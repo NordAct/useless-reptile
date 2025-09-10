@@ -13,6 +13,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.potion.Potions;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKeys;
@@ -41,7 +42,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .display(URItems.WYVERN_SKIN,
                         Text.translatable("advancement.uselessreptile.root"),
                         Text.translatable("advancement.uselessreptile.root.desc"),
-                        Identifier.of("minecraft:textures/block/dirt.png"),
+                        Identifier.of("minecraft:block/dirt"),
                         AdvancementFrame.TASK,
                         true,
                         true,
@@ -92,7 +93,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         true,
                         true,
                         false)
-                .criterion("obtain_item", AdvancementCriterions.obtainItem(registryEntryLookup, potion))
+                .criterion("obtain_item", AdvancementCriterions.obtainItem(registryEntryLookup, ComponentMap.EMPTY, potion))
                 .parent(tameWyvern)
                 .build(UselessReptile.id("dragon/gather_acid"));
 
@@ -109,6 +110,112 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .parent(tameMagmamuncher)
                 .build(UselessReptile.id("dragon/magmamuncher_apply_fire_resistance"));
 
+        AdvancementEntry sitDownDragon = Advancement.Builder.createUntelemetered()
+                .display(Items.STICK,
+                        Text.translatable("advancement.uselessreptile.sit_down_dragon"),
+                        Text.translatable("advancement.uselessreptile.sit_down_dragon.desc"),
+                        null,
+                        AdvancementFrame.TASK,
+                        true,
+                        true,
+                        false)
+                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .parent(root)
+                .build(UselessReptile.id("dragon/sit_down_dragon"));
+
+        AdvancementEntry useHorn = Advancement.Builder.createUntelemetered()
+                .display(Items.GOAT_HORN,
+                        Text.translatable("advancement.uselessreptile.use_horn"),
+                        Text.translatable("advancement.uselessreptile.use_horn.desc"),
+                        null,
+                        AdvancementFrame.TASK,
+                        true,
+                        true,
+                        false)
+                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .parent(sitDownDragon)
+                .build(UselessReptile.id("dragon/use_horn"));
+
+        AdvancementEntry equipFullDiamondDragonArmor = Advancement.Builder.createUntelemetered()
+                .display(URItems.DRAGON_HELMET_DIAMOND,
+                        Text.translatable("advancement.uselessreptile.equip_full_diamond_dragon_armor"),
+                        Text.translatable("advancement.uselessreptile.equip_full_diamond_dragon_armor.desc"),
+                        null,
+                        AdvancementFrame.GOAL,
+                        true,
+                        true,
+                        false)
+                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .parent(sitDownDragon)
+                .build(UselessReptile.id("dragon/equip_full_diamond_dragon_armor"));
+
+        AdvancementEntry equipFullNetheriteDragonArmor = Advancement.Builder.createUntelemetered()
+                .display(URItems.DRAGON_HELMET_NETHERITE,
+                        Text.translatable("advancement.uselessreptile.equip_full_netherite_dragon_armor"),
+                        Text.translatable("advancement.uselessreptile.equip_full_netherite_dragon_armor.desc"),
+                        null,
+                        AdvancementFrame.CHALLENGE,
+                        true,
+                        true,
+                        false)
+                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .parent(equipFullDiamondDragonArmor)
+                .build(UselessReptile.id("dragon/equip_full_netherite_dragon_armor"));
+
+        AdvancementEntry getVortexHorn = Advancement.Builder.createUntelemetered()
+                .display(URItems.VORTEX_HORN,
+                        Text.translatable("advancement.uselessreptile.get_vortex_horn"),
+                        Text.translatable("advancement.uselessreptile.get_vortex_horn.desc"),
+                        null,
+                        AdvancementFrame.TASK,
+                        true,
+                        true,
+                        false)
+                .criterion("get_vortex_horn", AdvancementCriterions.obtainItem(registryEntryLookup, URTags.VORTEX_HORNS))
+                .parent(useHorn)
+                .build(UselessReptile.id("dragon/get_vortex_horn"));
+
+        AdvancementEntry fullVortexHorn = Advancement.Builder.createUntelemetered()
+                .display(URItems.DIAMOND_VORTEX_HORN,
+                        Text.translatable("advancement.uselessreptile.full_vortex_horn"),
+                        Text.translatable("advancement.uselessreptile.full_vortex_horn.desc"),
+                        null,
+                        AdvancementFrame.CHALLENGE,
+                        true,
+                        true,
+                        false)
+                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .parent(getVortexHorn)
+                .build(UselessReptile.id("dragon/full_vortex_horn"));
+
+        AdvancementEntry eatFromInventory = Advancement.Builder.createUntelemetered()
+                .display(Items.CHICKEN,
+                        Text.translatable("advancement.uselessreptile.eat_from_inventory"),
+                        Text.translatable("advancement.uselessreptile.eat_from_inventory.desc"),
+                        null,
+                        AdvancementFrame.TASK,
+                        true,
+                        true,
+                        false)
+                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .parent(sitDownDragon)
+                .build(UselessReptile.id("dragon/eat_from_inventory"));
+
+        ItemStack potion1 = new ItemStack(Items.POTION);
+        potion1.applyComponentsFrom(ComponentMap.builder().add(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(Potions.STRENGTH)).build());
+        AdvancementEntry givePotion = Advancement.Builder.createUntelemetered()
+                .display(potion1,
+                        Text.translatable("advancement.uselessreptile.give_potion"),
+                        Text.translatable("advancement.uselessreptile.give_potion.desc"),
+                        null,
+                        AdvancementFrame.TASK,
+                        true,
+                        true,
+                        false)
+                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .parent(eatFromInventory)
+                .build(UselessReptile.id("dragon/give_potion"));
+
         consumer.accept(root);
         consumer.accept(tameWyvern);
         consumer.accept(tameMoleclaw);
@@ -119,6 +226,15 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         consumer.accept(moleclawHelmet);
         consumer.accept(gatherAcid);
         consumer.accept(magmamuncherApplyFireResistance);
+        consumer.accept(sitDownDragon);
+        consumer.accept(useHorn);
+        consumer.accept(equipFullDiamondDragonArmor);
+        consumer.accept(equipFullNetheriteDragonArmor);
+        consumer.accept(getVortexHorn);
+        consumer.accept(fullVortexHorn);
+        consumer.accept(sitDownDragon);
+        consumer.accept(eatFromInventory);
+        consumer.accept(givePotion);
     }
 
     private static AdvancementEntry tamingAdvancementEntry(RegistryWrapper.WrapperLookup registryLookup,EntityType<? extends Entity> type, AdvancementEntry parent) {

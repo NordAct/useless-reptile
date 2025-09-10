@@ -35,6 +35,8 @@ public class URTags {
 
     public static final TagKey<Item> WYVERN_SADDLES = register(RegistryKeys.ITEM, "wyvern_saddles");
 
+    public static final TagKey<Item> VORTEX_HORNS = register(RegistryKeys.ITEM, "vortex_horns");
+
     public static final TagKey<DimensionType> DEPLETED_MAGMA_REGENERATES = register(RegistryKeys.DIMENSION_TYPE, "depleted_magma_regenerates");
 
     private static<T> TagKey<T> register(RegistryKey<? extends Registry<T>> registryKey, String id) {

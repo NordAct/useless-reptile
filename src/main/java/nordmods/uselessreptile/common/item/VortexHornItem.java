@@ -18,6 +18,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.ActionResult;
@@ -29,6 +30,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.init.URItems;
@@ -56,18 +58,27 @@ public class VortexHornItem extends GoatHornItem {
             if (tryCollectDragon(stack, user, dragon, hand, true)) {
                 user.stopUsingItem();
                 user.playSound(URSounds.VORTEX_HORN_SUCK_IN);
+                if (getMaxCapacity() >= ((VortexHornItem)URItems.DIAMOND_VORTEX_HORN).getMaxCapacity() && getCurrentCapacity(stack) == getMaxCapacity()) {
+                    if (user instanceof ServerPlayerEntity serverPlayer)
+                        URDragonEntity.grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/full_vortex_horn"));
+                }
                 return ActionResult.SUCCESS;
             }
         }
         return super.useOnEntity(stack, user, entity, hand);
     }
 
-    //TODO fix multipart entity rotation desyncs
     @Override
     public ActionResult use(World world, PlayerEntity user, Hand hand) {
         ItemStack stack = user.getStackInHand(hand);
         if (user.isSneaking()) {
-            if (tryMassCatchOrRelease(stack, user, world, hand)) return ActionResult.SUCCESS;
+            if (tryMassCatchOrRelease(stack, user, world, hand)) {
+                if (getMaxCapacity() >= ((VortexHornItem)URItems.DIAMOND_VORTEX_HORN).getMaxCapacity() && getCurrentCapacity(stack) == getMaxCapacity()) {
+                    if (user instanceof ServerPlayerEntity serverPlayer)
+                        URDragonEntity.grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/full_vortex_horn"));
+                }
+                return ActionResult.SUCCESS;
+            }
         }
         if (getPartParent(user) instanceof URDragonEntity dragon) {
             useOnEntity(stack, user, dragon, hand);
@@ -113,8 +124,8 @@ public class VortexHornItem extends GoatHornItem {
         if (stack.getComponents().contains(URItems.DRAGON_STORAGE_COMPONENT)) {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
             if (dataComponent != null) {
-                boolean full = getCurrentCapacity(stack) >= maxCapacity;
-                textConsumer.accept(Text.translatable("tooltip.uselessreptile.vortex_horn.capacity",getCurrentCapacity(stack) , maxCapacity).formatted(full ? Formatting.YELLOW : Formatting.GRAY));
+                boolean full = getCurrentCapacity(stack) >= getMaxCapacity();
+                textConsumer.accept(Text.translatable("tooltip.uselessreptile.vortex_horn.capacity",getCurrentCapacity(stack) , getMaxCapacity()).formatted(full ? Formatting.YELLOW : Formatting.GRAY));
                 if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
                 else {
                     textConsumer.accept(Text.translatable("tooltip.uselessreptile.vortex_horn.contained_dragons"));
@@ -252,7 +263,7 @@ public class VortexHornItem extends GoatHornItem {
         return null;
     }
 
-    protected int getMaxCapacity() {
+    public int getMaxCapacity() {
         return maxCapacity;
     }
 }

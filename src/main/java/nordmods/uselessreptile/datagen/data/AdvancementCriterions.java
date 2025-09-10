@@ -2,6 +2,7 @@ package nordmods.uselessreptile.datagen.data;
 
 import net.minecraft.advancement.AdvancementCriterion;
 import net.minecraft.advancement.criterion.*;
+import net.minecraft.component.ComponentMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
@@ -12,8 +13,10 @@ import net.minecraft.predicate.entity.EntityPredicate;
 import net.minecraft.predicate.item.ItemPredicate;
 import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.tag.TagKey;
+import net.minecraft.util.Util;
 
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 public class AdvancementCriterions {
@@ -29,11 +32,21 @@ public class AdvancementCriterions {
         return Criteria.CONSUME_ITEM.create(ConsumeItemCriterion.Conditions.predicate(ItemPredicate.Builder.create().items(registryEntryLookup, item)).conditions());
     }
 
-    public static AdvancementCriterion<InventoryChangedCriterion.Conditions> obtainItem(RegistryEntryLookup<Item> registryEntryLookup, ItemStack itemStack) {
+    public static AdvancementCriterion<InventoryChangedCriterion.Conditions> obtainItem(RegistryEntryLookup<Item> registryEntryLookup, ComponentMap ignored, ItemStack... itemStacks) {
         return Criteria.INVENTORY_CHANGED.create(new InventoryChangedCriterion.Conditions(Optional.empty(),
-                InventoryChangedCriterion.Conditions.Slots.ANY,
-                List.of(ItemPredicate.Builder.create().items(registryEntryLookup, itemStack.getItem()).components(ComponentsPredicate.Builder.create().exact(ComponentMapPredicate.of(itemStack.getComponents())).build()).build())
-                ));
+                InventoryChangedCriterion.Conditions.Slots.ANY, Util.make(new ArrayList<>(), list -> {
+                    Arrays.stream(itemStacks).forEach(itemStack -> {
+                        list.add(
+                                ItemPredicate.Builder.create()
+                                        .items(registryEntryLookup, itemStack.getItem())
+                                        .components(ComponentsPredicate.Builder.create()
+                                                .exact(ComponentMapPredicate.of(itemStack
+                                                        .getComponents().filtered(componentType -> !ignored.contains(componentType))))
+                                                .build())
+                                        .build());
+                    });
+                }))
+        );
     }
 
     public static AdvancementCriterion<InventoryChangedCriterion.Conditions> obtainItem(RegistryEntryLookup<Item> registryEntryLookup, TagKey<Item> tag) {
