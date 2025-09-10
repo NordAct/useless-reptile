@@ -225,4 +225,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public boolean hasVerticalInput() {
         return false;
     }
+
+    @Override
+    public boolean canBeLeashed() {
+        return false;
+    }
 }
