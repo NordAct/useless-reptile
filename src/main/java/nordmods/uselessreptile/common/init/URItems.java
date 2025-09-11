@@ -57,11 +57,11 @@ public class URItems {
     public static final Item LIGHTNING_CHASER_SPAWN_EGG = registerItem("lightning_chaser_spawn_egg", settings -> new SpawnEggItem(UREntities.LIGHTNING_CHASER_ENTITY, settings));
     public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", settings -> new SpawnEggItem(UREntities.MAGMAMUNCHER_ENTITY, settings));
     public static final Item FLUTE = registerItem("flute", settings -> new FluteItem(settings.maxCount(1).component(FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT)));
-    public static final Item VORTEX_HORN = registerItem("vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings), 1));
-    public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings), 3));
-    public static final Item GOLD_VORTEX_HORN = registerItem("gold_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings), 6));
-    public static final Item DIAMOND_VORTEX_HORN = registerItem("diamond_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings), 9));
-    public static final Item NETHERITE_VORTEX_HORN = registerItem("netherite_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings), 15));
+    public static final Item VORTEX_HORN = registerItem("vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 1)));
+    public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 3)));
+    public static final Item GOLD_VORTEX_HORN = registerItem("gold_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 6)));
+    public static final Item DIAMOND_VORTEX_HORN = registerItem("diamond_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 9)));
+    public static final Item NETHERITE_VORTEX_HORN = registerItem("netherite_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 15)));
 
     public static final RegistryKey<ItemGroup> UR_ITEM_GROUP = RegistryKey.of(RegistryKeys.ITEM_GROUP, UselessReptile.id("item_group"));
 
@@ -139,10 +139,10 @@ public class URItems {
                         GoatHornItem.getStackForInstrument(item, instrument)).forEach((stack) -> entries.add(stack, visibility)));
     }
 
-    private static Item.Settings createVortexHornItemSettings(Item.Settings settings) {
+    private static Item.Settings createVortexHornItemSettings(Item.Settings settings, int maxCapacity) {
         return settings.maxCount(1)
                 .component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT)
-                .component(VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT);
+                .component(VORTEX_HORN_CAPACITY_COMPONENT, new VortexHornCapacityComponent(0, maxCapacity));
     }
 }
 

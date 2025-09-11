@@ -225,7 +225,7 @@
   "advancement.uselessreptile.tame_lightning_chaser": "Thunderstruck",
   "advancement.uselessreptile.tame_magmamuncher": "A Friend from Hell",
   "advancement.uselessreptile.magmamuncher_apply_fire_resistance": "Fighting Fire with Fire",
-  "advancement.uselessreptile.root": "Useless Reptile (check advancements to progress)",
+  "advancement.uselessreptile.root": "Useless Reptile",
   "advancement.uselessreptile.sit_down_dragon": "Sit!",
   "advancement.uselessreptile.use_horn": "Can you hear me?",
   "advancement.uselessreptile.equip_full_diamond_dragon_armor": "Decked Out",
@@ -250,7 +250,7 @@
   "advancement.uselessreptile.equip_full_diamond_dragon_armor.desc": "Equip full set of diamond dragon armor on your dragon",
   "advancement.uselessreptile.equip_full_netherite_dragon_armor.desc": "Equip full set of netherite dragon armor on your dragon and question yourself why",
   "advancement.uselessreptile.get_vortex_horn.desc": "Obtain Vortex Horn... to your friends misfortune (if you have any)",
-  "advancement.uselessreptile.full_vortex_horn.desc": "Fill Diamond or Netherite Vortex Horn to max capacity",
+  "advancement.uselessreptile.full_vortex_horn.desc": "Fill Netherite Vortex Horn to max capacity",
   "advancement.uselessreptile.eat_from_inventory.desc": "Put food in dragon's inventory and let it eat the food",
   "advancement.uselessreptile.give_potion.desc": "Give your dragon a potion",
 

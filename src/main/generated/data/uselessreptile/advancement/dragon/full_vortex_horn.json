@@ -1,8 +1,21 @@
 {
   "parent": "uselessreptile:dragon/get_vortex_horn",
   "criteria": {
-    "triggered_from_code": {
-      "trigger": "minecraft:impossible"
+    "get_full_horn": {
+      "conditions": {
+        "items": [
+          {
+            "components": {
+              "uselessreptile:vortex_horn_capacity": [
+                15,
+                15
+              ]
+            },
+            "items": "uselessreptile:netherite_vortex_horn"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
     }
   },
   "display": {
@@ -12,7 +25,7 @@
     "frame": "challenge",
     "icon": {
       "count": 1,
-      "id": "uselessreptile:diamond_vortex_horn"
+      "id": "uselessreptile:netherite_vortex_horn"
     },
     "title": {
       "translate": "advancement.uselessreptile.full_vortex_horn"
@@ -20,7 +33,7 @@
   },
   "requirements": [
     [
-      "triggered_from_code"
+      "get_full_horn"
     ]
   ]
 }

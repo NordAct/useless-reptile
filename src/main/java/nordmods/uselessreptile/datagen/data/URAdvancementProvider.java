@@ -25,6 +25,8 @@ import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.init.URTags;
+import nordmods.uselessreptile.common.item.VortexHornItem;
+import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
@@ -175,8 +177,19 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .parent(useHorn)
                 .build(UselessReptile.id("dragon/get_vortex_horn"));
 
+        ItemStack vortexHorn = URItems.NETHERITE_VORTEX_HORN.getDefaultStack();
+        ComponentMap netheriteVortexHornStorage = ComponentMap.builder()
+                .add(
+                        URItems.VORTEX_HORN_CAPACITY_COMPONENT,
+                        new VortexHornCapacityComponent(
+                                ((VortexHornItem)vortexHorn.getItem()).getMaxCapacity(vortexHorn)
+                                , ((VortexHornItem)vortexHorn.getItem()).getMaxCapacity(vortexHorn)
+                        )
+                ).build();
+        vortexHorn.applyComponentsFrom(netheriteVortexHornStorage);
+
         AdvancementEntry fullVortexHorn = Advancement.Builder.createUntelemetered()
-                .display(URItems.DIAMOND_VORTEX_HORN,
+                .display(URItems.NETHERITE_VORTEX_HORN,
                         Text.translatable("advancement.uselessreptile.full_vortex_horn"),
                         Text.translatable("advancement.uselessreptile.full_vortex_horn.desc"),
                         null,
@@ -184,7 +197,13 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         true,
                         true,
                         false)
-                .criterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
+                .criterion("get_full_horn", AdvancementCriterions
+                        .obtainItem(
+                                registryEntryLookup,
+                                vortexHorn.getDefaultComponents().filtered(componentType -> componentType != URItems.VORTEX_HORN_CAPACITY_COMPONENT),
+                                vortexHorn
+                        )
+                )
                 .parent(getVortexHorn)
                 .build(UselessReptile.id("dragon/full_vortex_horn"));
 
