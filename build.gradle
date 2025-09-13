@@ -54,11 +54,12 @@ dependencies {
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
-    modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1-1.21.5") //added localy
+    //added locally, compiled from https://github.com/NordAct/Primitive-Multipart-Entities/tree/1.21.5
+    modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:1.1.1-1.21.5")
 
     //test mods
     //modRuntimeOnly("dev.isxander:controlify:2.1.1+1.21.5-fabric")
-    modImplementation("maven.modrinth:debugutils:1.21.8-1.0.9-fabric")
+    //modImplementation("maven.modrinth:debugutils:1.21.8-1.0.9-fabric")
 }
 
 processResources {
