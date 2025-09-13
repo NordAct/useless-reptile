@@ -125,7 +125,7 @@ publishMods {
     type = BETA
     displayName = "Useless Reptile ${project.version}"
     modLoaders.add("fabric")
-    dryRun = true
+    //dryRun = true
 
     curseforge {
         projectId = "677634"
