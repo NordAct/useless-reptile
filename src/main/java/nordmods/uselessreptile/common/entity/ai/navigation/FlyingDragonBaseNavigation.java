@@ -1,7 +1,8 @@
 package nordmods.uselessreptile.common.entity.ai.navigation;
 
 import net.minecraft.entity.ai.NavigationConditions;
-import net.minecraft.entity.ai.pathing.*;
+import net.minecraft.entity.ai.pathing.BirdNavigation;
+import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -9,10 +10,6 @@ import net.minecraft.world.World;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Set;
-
 
 public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & FlyingDragon> extends BirdNavigation {
     protected final T entity;
@@ -35,13 +32,6 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
         entity.setPathfindingPenalty(PathNodeType.WATER_BORDER, !entity.hasTargetInWater() ? 8 : 0);
 
         tickCount++;
-
-        //TODO pathfinding debug option
-        //if (currentPath != null) {
-        //    entity.getServer().getPlayerManager().getPlayerList().forEach(player -> {
-        //        ServerPlayNetworking.send(player, new DebugPathCustomPayload(entity.getId(), currentPath, nodeReachProximity));
-        //    });
-        //}
     }
 
     @Override
@@ -111,15 +101,4 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
     protected FlyingDragonMoveControl<T> getMoveControl() {
         return (FlyingDragonMoveControl<T>) entity.getMoveControl();
     }
-
-    @Override
-    @Nullable
-    protected Path findPathToAny(Set<BlockPos> positions, int range, boolean useHeadPos, int distance, float followRange) {
-        positions.stream().findFirst().ifPresent(pos -> {
-            if (pos.equals(BlockPos.ORIGIN)) throw new IllegalStateException("How the fuck");
-        });
-
-        return super.findPathToAny(positions, range, useHeadPos, distance, followRange);
-    }
 }
-

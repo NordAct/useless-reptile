@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity.base;
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
@@ -43,7 +42,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.util.function.BooleanBiFunction;
-import net.minecraft.util.math.*;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -59,6 +61,7 @@ import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
+import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -597,11 +600,21 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void tick() {
         super.tick();
-        if (!getWorld().isClient()) updateRotationProgress();
+        if (!getWorld().isClient()) {
+            updateRotationProgress();
+        }
+        else updateAnimationSpeed();
 
-        animationSpeed = getMovementSpeedModifier();
-        if (this instanceof FlyingDragon flyingDragon && !flyingDragon.isFlying() || !(this instanceof FlyingDragon)) {
-            animationSpeed *= attributes().dragonGroundSpeedMultiplier * getAttributeValue(EntityAttributes.GENERIC_MOVEMENT_SPEED) / getBaseGroundSpeed();
+        if (this instanceof ShooterDragon shooterDragon) {
+            shooterDragon.setShootingPoint(
+                    new ShootingPoint(
+                            shooterDragon.getShootingPointAnchor(),
+                            getRotationVector(
+                                    shooterDragon.getShootingPointDesiredPitch(),
+                                    shooterDragon.getShootingPointDesiredYaw()
+                            )
+                    )
+            );
         }
 
         if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
@@ -628,6 +641,17 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 }
             } else getLookControl().setLockRotation(false);
         }
+
+        if (!getWorld().isClient() && age % 20 == 0) {
+            boolean jukeboxReachable = false;
+            if (jukeboxPos != null) jukeboxReachable = jukeboxPos.isWithinDistance(getBlockPos(), 9);
+            if (jukeboxReachable) updateJukeboxPos(jukeboxPos, true);
+            else updateJukeboxPos(null, false);
+        }
+    }
+
+    protected void updateAnimationSpeed() {
+        animationSpeed = MathHelper.lerp(1f/getWorld().getTickManager().getTickRate(), animationSpeed, getMovementSpeedModifier());
     }
 
     protected abstract float getBaseGroundSpeed();
@@ -909,11 +933,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
         if (yaw < 0) yaw += 360;
-        float dYaw = Math.abs(getYaw() % 360 - yaw);
-        float dPitch = Math.abs(getPitch() - pitch);
+        float dYaw = Math.abs(MathHelper.wrapDegrees((this instanceof ShooterDragon shooterDragon ? shooterDragon.getShootingPointYaw() : getYaw()) - yaw));
+        float dPitch = Math.abs((this instanceof ShooterDragon shooterDragon ? shooterDragon.getShootingPointPitch() : getPitch()) - pitch);
         return dPitch < pitchTolerance
-                && dYaw < yawTolerance;
+                && dYaw % 360 < yawTolerance;
     }
+
 
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
@@ -930,17 +955,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         @Override
         public boolean listen(ServerWorld world, RegistryEntry<GameEvent> event, GameEvent.Emitter emitter, Vec3d emitterPos) {
-            Vec3i vec3i;
-            if (emitterPos != null) vec3i = new Vec3i((int) emitterPos.x, (int) emitterPos.y, (int) emitterPos.z);
-            else return false;
-
-            boolean isJukebox = false;
-            if (jukeboxPos != null) isJukebox = world.getBlockState(jukeboxPos).isOf(Blocks.JUKEBOX);
-            if (event == GameEvent.JUKEBOX_PLAY) {
-                updateJukeboxPos(new BlockPos(vec3i), true);
+            if (event.matches(GameEvent.JUKEBOX_PLAY)) {
+                updateJukeboxPos(BlockPos.ofFloored(emitterPos), true);
                 return true;
-            } else if (event == GameEvent.JUKEBOX_STOP_PLAY || !isJukebox) {
-                updateJukeboxPos(new BlockPos(vec3i), false);
+            } else if (event.matches(GameEvent.JUKEBOX_STOP_PLAY)) {
+                updateJukeboxPos(BlockPos.ofFloored(emitterPos), false);
                 return true;
             } else {
                 return false;

@@ -5,7 +5,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.ai.FuzzyPositions;
-import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.passive.FishEntity;
 import net.minecraft.item.ItemStack;
@@ -76,10 +75,14 @@ public class PikehornHuntGoal extends Goal {
                     if (aboveWater(huntSpot)) {
                         huntSpot = adjustToWater(huntSpot);
                         //checking if dragon is close to it or found target
-                        FishEntity target = entity.getWorld().getClosestEntity(FishEntity.class,
-                                TargetPredicate.DEFAULT, null,
-                                entity.getX(), entity.getY(), entity.getZ(),
-                                box.withMinY(box.minY - 30));
+                        List<FishEntity> list = entity.getWorld().getEntitiesByClass(FishEntity.class,  box.withMinY(box.minY - 30), entity::canTarget);
+                        FishEntity target = null;
+                        if (!list.isEmpty()) {
+                            target = list.getFirst();
+                            for (FishEntity entry : list) {
+                                if (entity.squaredDistanceTo(entry) < entity.squaredDistanceTo(target)) target = entry;
+                            }
+                        }
                         if (target != null) fish = target;
                         if (closeToSpot && target == null) {
                             findFishyPlace(30);
@@ -97,7 +100,7 @@ public class PikehornHuntGoal extends Goal {
                     entity.getLookControl().lookAt(fish);
                     entity.getNavigation().startMovingTo(fish, 1);
                     if (entity.getPrimaryAttackCooldown() > 0) return;
-                    if (entity.doesCollide(entity.getAttackBox(), fish.getBoundingBox())) entity.attackMelee(fish);
+                    if (entity.getAttackBox().intersects(fish.getBoundingBox())) entity.attackMelee(fish);
                 }
             }
         } else {

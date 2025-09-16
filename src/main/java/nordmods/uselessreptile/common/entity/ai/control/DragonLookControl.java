@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.entity.ai.control;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.control.LookControl;
 import net.minecraft.util.math.MathHelper;
+import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.Optional;
@@ -27,9 +28,7 @@ public class DragonLookControl extends LookControl {
     public boolean isLookingAtTarget(float pitchTolerance, float yawTolerance) {
         float pitch = getTargetPitch().orElse(0f);
         float yaw = getTargetYaw().orElse(0f);
-
-        return Math.abs(entity.getPitch() - pitch) < pitchTolerance
-                && Math.abs((entity.getYawWithAdjustment() - yaw) % 360) < yawTolerance;
+        return entity.isLookingAtDirection(pitch, yaw, pitchTolerance, yawTolerance);
     }
 
     public boolean canLookAtTarget() {
@@ -43,6 +42,7 @@ public class DragonLookControl extends LookControl {
 
     @Override
     public void tick() {
+        if (entity.hasControllingPassenger()) return;
         if (lockRotation) return;
         if (lookAtTimer > 0) {
             --lookAtTimer;
@@ -50,20 +50,32 @@ public class DragonLookControl extends LookControl {
                 float pitch = getTargetPitch().orElse(0f);
                 entity.setRotation(yaw, pitch);
             });
-        } else {
-            entity.setHeadYaw(changeAngle(entity.getHeadYaw(),entity.getBodyYaw(), entity.getRotationSpeed()));
         }
-
-        entity.setHeadYaw(MathHelper.clampAngle(entity.getHeadYaw(),entity.getBodyYaw(), entity.getRotationSpeed()));
     }
 
     @Override
     public Optional<Float> getTargetPitch() {
+        if (entity instanceof ShooterDragon shooterDragon) {
+            double x = this.x - shooterDragon.getShootingPoint().pos().getX();
+            double y = this.y - shooterDragon.getShootingPoint().pos().getY();
+            double z = this.z - shooterDragon.getShootingPoint().pos().getZ();
+            double distZX = Math.sqrt(x * x + z * z);
+            return !(Math.abs(y) > 1.0E-5F) && !(Math.abs(distZX) > 1.0E-5F) ?
+                    Optional.empty()
+                    : Optional.of((float)(-(MathHelper.atan2(y, distZX) * 180 / Math.PI)));
+        }
         return super.getTargetPitch();
     }
 
     @Override
     public Optional<Float> getTargetYaw() {
+        if (entity instanceof ShooterDragon shooterDragon) {
+            double x = this.x - shooterDragon.getShootingPoint().pos().getX();
+            double z = this.z - shooterDragon.getShootingPoint().pos().getZ();
+            return !(Math.abs(x) > 1.0E-5F) && !(Math.abs(z) > 1.0E-5F)
+                    ? Optional.empty()
+                    : Optional.of((float)(MathHelper.atan2(z, x) * 180 /Math.PI) - 90);
+        }
         return super.getTargetYaw();
     }
 

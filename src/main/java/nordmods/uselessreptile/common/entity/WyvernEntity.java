@@ -31,14 +31,17 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
+import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
 import nordmods.uselessreptile.common.gui.WyvernScreenHandler;
 import nordmods.uselessreptile.common.init.*;
@@ -53,7 +56,7 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
-public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity {
+public class WyvernEntity extends URRideableFlyingDragonEntity implements MultipartEntity, ShooterDragon {
 
     private final URDragonPart wingLeft = new URDragonPart(this);
     private final URDragonPart wingRight = new URDragonPart(this);
@@ -63,6 +66,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     private final URDragonPart tail2 = new URDragonPart(this);
     private final URDragonPart tail3 = new URDragonPart(this);
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
+    private ShootingPoint shootingPoint = new ShootingPoint(getPos(), getRotationVector());
 
     public static float BASE_GROUND_SPEED = 0.2f;
 
@@ -213,6 +217,34 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         return !(type == URStatusEffects.ACID || type == StatusEffects.POISON || type == StatusEffects.HUNGER);
     }
 
+
+    @Override
+    public void setShootingPoint(ShootingPoint point) {
+        shootingPoint = point;
+    }
+
+    @Override
+    public ShootingPoint getShootingPoint() {
+        return shootingPoint;
+    }
+
+    @Override
+    public Vec3d getShootingPointAnchor() {
+        return head
+                .getPos()
+                .add(0, head.getHeight() / 2f, 0);
+    }
+
+    @Override
+    public float getShootingPointDesiredPitch() {
+        return getPitch();
+    }
+
+    @Override
+    public float getShootingPointDesiredYaw() {
+        return getYawWithAdjustment();
+    }
+
     @Override
     public void tick() {
         super.tick();
@@ -304,17 +336,17 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     public void shoot() {
         if (getWorld().isClient()) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        float yaw = getYawWithAdjustment();
         for (int i = 0; i < 5; ++i) {
             AcidBlastEntity projectileEntity = new AcidBlastEntity(getWorld(), this);
-            projectileEntity.setPosition(head.getX(), head.getY(), head.getZ());
-            projectileEntity.setVelocity(this, getPitch(), yaw, 0.5f, 3.0f, 5.0f);
+            projectileEntity.setPosition(getShootingPoint().pos());
+            Vec3d rot = getShootingPoint().rotation().multiply(0.5f);
+            projectileEntity.setVelocity(rot.x, rot.y, rot.z, 3.0f, 5.0f);
             getWorld().spawnEntity(projectileEntity);
         }
     }
 
     public float getYawProgressLimit() {
-        return 90;
+        return 55;
     }
 
     public void meleeAttack(LivingEntity target) {

@@ -17,7 +17,7 @@ public class MoleclawAttackGoal extends Goal {
     public MoleclawAttackGoal(MoleclawEntity entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
-        setControls(EnumSet.of(Goal.Control.MOVE, Goal.Control.LOOK));
+        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
     }
 
     @Override
@@ -60,7 +60,6 @@ public class MoleclawAttackGoal extends Goal {
     @Override
     public void tick() {
         entity.setSprinting(true);
-        entity.getLookControl().lookAt(target);
         entity.getNavigation().startMovingTo(target, 1);
 
         if (!entity.isMoving()) notMovingTimer++;
@@ -75,7 +74,7 @@ public class MoleclawAttackGoal extends Goal {
         }
 
         if (entity.getSecondaryAttackCooldown() > 0) return;
-        boolean doesCollide = entity.doesCollide(entity.getAttackBox(), target.getBoundingBox());
+        boolean doesCollide = entity.getAttackBox().intersects(target.getBoundingBox());
         if (doesCollide) entity.scheduleNormalAttack();
     }
 }

@@ -14,7 +14,7 @@ public class WyvernAttackGoal extends Goal {
     public WyvernAttackGoal(WyvernEntity entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
-        setControls(EnumSet.of(Control.MOVE, Goal.Control.LOOK));
+        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
     }
 
     @Override
@@ -60,14 +60,15 @@ public class WyvernAttackGoal extends Goal {
             return;
         }
         entity.setSprinting(true);
-        entity.getLookControl().lookAt(target);
         double attackDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
         double distance = entity.squaredDistanceTo(target);
         entity.getNavigation().startMovingTo(target, 1);
-        boolean doesCollide = entity.doesCollide(entity.getAttackBox(), target.getBoundingBox());
+        boolean doesCollide = entity.getAttackBox().intersects(target.getBoundingBox());
 
         if (!doesCollide && entity.getPrimaryAttackCooldown() == 0 && (distance > attackDistance * 4 || !target.isOnGround() || distance < attackDistance && entity.getY() - target.getY() >= 1)) {
-            if (entity.getLookControl().isLookingAtTarget()) entity.shoot();
+            entity.getLookControl().lookAt(target);
+            if (entity.getLookControl().isLookingAtTarget())
+                entity.shoot();
         }
 
         if (entity.getSecondaryAttackCooldown() > 0) return;

@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkSectionPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.chunk.ChunkStatus;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;
 
@@ -35,7 +36,7 @@ public class LightningChaserBailOutGoal extends Goal {
     public void start() {
         updatePointOfInterest();
         entity.setSurrendered(false);
-        entity.setIsSitting(false);
+        entity.setSitting(false);
     }
 
     @Override
@@ -47,6 +48,7 @@ public class LightningChaserBailOutGoal extends Goal {
     @Override
     public void tick() {
         entity.getNavigation().startMovingTo(pointOfInterest.getX(), pointOfInterest.getY(), pointOfInterest.getZ(), 1);
+        if (entity.squaredDistanceTo(new Vec3d(pointOfInterest.getX(), entity.getY(), pointOfInterest.getZ())) < 16) updatePointOfInterest();
         timeout++;
     }
 
