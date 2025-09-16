@@ -37,9 +37,11 @@ public class FluteItem extends Item {
         ItemStack itemStack = user.getStackInHand(hand);
         int mode = getFluteMode(itemStack);
         if (user.isSneaking()) {
-            switch (mode) {
+            switch (mode) { //I rewrote that in 0.11.0, just couldn't be bothered backporting
                 case 1 -> mode = 2;
-                case 2 -> mode = 0;
+                case 2 -> mode = 3;
+                case 3 -> mode = 4;
+                case 4 -> mode = 0;
                 default -> mode = 1;
             }
             itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent((byte) mode));
@@ -57,6 +59,8 @@ public class FluteItem extends Item {
             switch (mode) {
                 case 1 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_GATHER, SoundCategory.PLAYERS, 2, 1);
                 case 2 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_TARGET, SoundCategory.PLAYERS, 2, 1);
+                case 3 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_STAND_UP, SoundCategory.PLAYERS, 2, 1);
+                case 4 -> world.playSoundFromEntity(null, user, URSounds.FLUTE_SIT_DOWN, SoundCategory.PLAYERS, 2, 1);
                 default -> world.playSoundFromEntity(null, user, URSounds.FLUTE_CALL, SoundCategory.PLAYERS, 2, 1);
             }
             user.emitGameEvent(URGameEvents.FLUTE_USED);

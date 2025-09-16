@@ -12,6 +12,18 @@
         "uselessreptile:flute_mode": 2
       },
       "model": "uselessreptile:item/flute/flute_target"
+    },
+    {
+      "predicate": {
+        "uselessreptile:flute_mode": 3
+      },
+      "model": "uselessreptile:item/flute/flute_stand_up"
+    },
+    {
+      "predicate": {
+        "uselessreptile:flute_mode": 4
+      },
+      "model": "uselessreptile:item/flute/flute_sit_down"
     }
   ]
 }

@@ -399,6 +399,8 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
                     if (hitResult != null) setTarget((LivingEntity) hitResult.getEntity());
                 }
+                case 3 -> setIsSitting(false);
+                case 4 -> setIsSitting(true);
             }
 
             return true;

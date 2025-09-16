@@ -218,6 +218,18 @@
       }
     ]
   },
+  "flute.sit_down": {
+    "sounds": [
+      "uselessreptile:flute/sit_down"
+    ],
+    "subtitle": "subtitles.uselessreptile.flute"
+  },
+  "flute.stand_up": {
+    "sounds": [
+      "uselessreptile:flute/stand_up"
+    ],
+    "subtitle": "subtitles.uselessreptile.flute"
+  },
   "river_pikehorn.ambient": {
     "subtitle": "subtitles.uselessreptile.river_pikehorn.ambient",
     "sounds": [

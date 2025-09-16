@@ -23,6 +23,8 @@ public class URSounds {
     public static final SoundEvent FLUTE_CALL = register("flute.call");
     public static final SoundEvent FLUTE_TARGET = register("flute.target");
     public static final SoundEvent FLUTE_GATHER = register("flute.gather");
+    public static final SoundEvent FLUTE_SIT_DOWN = register("flute.sit_down");
+    public static final SoundEvent FLUTE_STAND_UP = register("flute.stand_up");
     public static final SoundEvent PIKEHORN_ATTACK = register("river_pikehorn.attack");
     public static final SoundEvent PIKEHORN_AMBIENT = register("river_pikehorn.ambient");
     public static final SoundEvent PIKEHORN_HURT = register("river_pikehorn.hurt");
