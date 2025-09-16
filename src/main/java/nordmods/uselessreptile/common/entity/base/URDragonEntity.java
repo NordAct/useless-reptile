@@ -384,7 +384,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         ItemStack itemStack = player.getStackInHand(hand);
         if (isTamed()) {
             if (isFavoriteFood(itemStack) && getHealth() != getAttributeValue(EntityAttributes.GENERIC_MAX_HEALTH)) {
-                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT);
+                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT, hand);
                 heal(getHealthRegenerationFromFood());
                 return ActionResult.SUCCESS;
             }
@@ -392,19 +392,15 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
         if (isTamed() && isOwner(player)) {
             if (this instanceof HeadMountDragon && player.isSneaking() && itemStack.isEmpty()) {
+                detachLeash();
                 startRiding(player);
                 return ActionResult.SUCCESS;
             }
 
             if (itemStack.getItem() instanceof PotionItem potionItem && player.isSneaking()) {
-                DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(player, itemStack);
-                potionItem.finishUsing(itemStack, getWorld(), this);
-                playSound(SoundEvents.ENTITY_GENERIC_DRINK, 1, 1);
-                if (!player.isCreative()) { //checking for emptiness for case if somehow potion stack size is more than 1
-                    itemStack.decrement(1);
-                    if (itemStack.isEmpty()) player.setStackInHand(hand, new ItemStack(Items.GLASS_BOTTLE));
-                    else player.giveItemStack(new ItemStack(Items.GLASS_BOTTLE));
-                }
+                //ItemStack original = itemStack.copy();
+                //potionItem.finishUsing(itemStack, getWorld(), this);
+                consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_DRINK, hand);
                 return ActionResult.SUCCESS;
             }
 
@@ -413,7 +409,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 if (!getBoundedInstrumentSound().equals(sound)) setBoundedInstrumentSound(sound);
                 else setBoundedInstrumentSound("");
                 Text instrumentSound = Text.translatable(getBoundedInstrumentSound().isEmpty() ?
-                        "other.uselessreptile.none" : getInstrumentSoundKey(Identifier.of(getBoundedInstrumentSound())));
+                        "other.uselessreptile.none" : getBoundedInstrumentSound()); //might fetch keys for non-vanilla instruments incorrectly
                 if (!getWorld().isClient()) player.sendMessage(Text.translatable("other.uselessreptile.sound_respond", getName(), instrumentSound), true);
                 if (getWorld().isClient()) player.playSound(SoundEvents.BLOCK_COMPARATOR_CLICK, 0.2f, 2);
                 return ActionResult.SUCCESS;
@@ -509,7 +505,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 currentYaw -= getRotationSpeed();
                 if (!getWorld().isClient()) setTurningState((byte)1);
             }
-            else currentYaw = destinationYaw;
+            else {
+                currentYaw = destinationYaw;
+                if (!getWorld().isClient() && isMoving()) setTurningState((byte)0);
+            }
         } else {
             if (!getWorld().isClient()) setTurningState((byte)0);
         }
@@ -885,17 +884,17 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         else dropStack(itemStack);
     }
 
-    public ItemStack consumeGivenItem(@Nullable LivingEntity user, ItemStack itemStack) {
-        return consumeGivenItem(user,itemStack, null);
-    }
-
-    public ItemStack consumeGivenItem(@Nullable LivingEntity user, ItemStack itemStack, @Nullable SoundEvent sound) {
-        DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(user, itemStack);
-        tryApplyFoodEffects(itemStack);
-        if (user == null || !user.isInCreativeMode()) itemStack.decrement(1);
-        if (sound != null) playSound(sound, 1, 1);
+    public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound, @Nullable Hand hand) {
+        ItemStack original = itemStack.copy();
+        if (offering != null && !offering.isInCreativeMode()) {
+            itemStack.finishUsing(getWorld(), this);
+            if (original.getCount() == itemStack.getCount()) itemStack.decrement(1);
+            if (sound != null) getWorld().playSound(null, getBlockPos(), sound, getSoundCategory());
+        }
+        DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, original, itemStack, hand);
         return itemStack;
     }
+
 
     @Override
     public boolean shouldSave() {
@@ -907,10 +906,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public void remove(RemovalReason reason) {
         super.remove(reason);
         if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner && reason.shouldDestroy()) owner.setHeadMountDragon(new NbtCompound());
-    }
-
-    public void tryApplyFoodEffects(ItemStack itemStack) {
-        if (itemStack.getComponents().contains(DataComponentTypes.FOOD)) applyFoodEffects(itemStack.getComponents().get(DataComponentTypes.FOOD));
     }
 
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame

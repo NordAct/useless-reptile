@@ -294,7 +294,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (isTamingItem(itemStack) && !isTamed()) {
-            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
+            consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT, hand);
             if (random.nextInt(3) == 0) setTamingProgress(getTamingProgress() - 2);
             else setTamingProgress(getTamingProgress() - 1);
             if (player.isCreative()) setTamingProgress(0);
@@ -314,8 +314,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 ItemStack potion = new ItemStack(Items.POTION);
                 potion.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(URPotions.ACID));
                 player.incrementStat(Stats.USED.getOrCreateStat(bottle));
-                getWorld().playSound(player, player.getBlockPos(), SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
-                player.setStackInHand(hand, consumeGivenItem(player, itemStack));
+                consumeGivenItem(player, itemStack, SoundEvents.ITEM_BOTTLE_FILL, hand);
                 player.giveItemStack(potion);
                 return ActionResult.SUCCESS;
             }

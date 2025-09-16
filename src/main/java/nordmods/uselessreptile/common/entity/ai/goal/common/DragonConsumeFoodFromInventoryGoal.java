@@ -31,7 +31,7 @@ public class DragonConsumeFoodFromInventoryGoal extends Goal {
             for (int i = 0; i <= URDragonScreenHandler.maxStorageSize; i++) {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
                 if (dragon.isFavoriteFood(itemStack)) {
-                    dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT);
+                    dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT, null);
                     dragon.heal(dragon.getHealthRegenerationFromFood());
                     break;
                 }

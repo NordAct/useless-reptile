@@ -6,7 +6,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.item.PotionItem;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.BlockTags;
@@ -21,8 +23,8 @@ import nordmods.uselessreptile.common.event.DragonEquipmentTooltipEntryEvent;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.network.URPacketHelper;
-import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 import nordmods.uselessreptile.common.util.dragon_spawn.DragonSpawnUtil;
+import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -112,17 +114,44 @@ public class URModEvents {
         });
     }
 
+
     private static void onItemConsumedEvents() {
-        DragonOnItemConsumedEvent.EVENT.register((user, itemStack) -> {
-            if (itemStack.isIn(ConventionalItemTags.ENTITY_WATER_BUCKETS)) {
-                if (user instanceof PlayerEntity player && !player.isCreative()) player.giveItemStack(Items.WATER_BUCKET.getDefaultStack());
-                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(Items.WATER_BUCKET.getDefaultStack());
-                return;
+        DragonOnItemConsumedEvent.EVENT.register((user, original, remainder, hand) -> {
+            if (original.isIn(ConventionalItemTags.ENTITY_WATER_BUCKETS)) {
+                ItemStack toGive = Items.WATER_BUCKET.getDefaultStack();
+                if (user instanceof PlayerEntity player && !player.isCreative()) {
+                    if (!remainder.isEmpty() || !player.getStackInHand(hand).isEmpty()) player.giveItemStack(toGive);
+                    else player.setStackInHand(hand, toGive);
+                }
+                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
             }
-            if (itemStack.getItem().hasRecipeRemainder()) {
-                if (user instanceof PlayerEntity player && !player.isCreative()) player.giveItemStack(itemStack.getItem().getRecipeRemainder().getDefaultStack());
-                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(itemStack.getItem().getRecipeRemainder().getDefaultStack());
+
+            if (original.getItem().hasRecipeRemainder()) {
+                ItemStack toGive = original.getItem().getRecipeRemainder(original);
+                if (user instanceof PlayerEntity player && !player.isCreative()) {
+                    if (!remainder.isEmpty() || !player.getStackInHand(hand).isEmpty()) player.giveItemStack(toGive);
+                    else player.setStackInHand(hand, toGive);
+                }
+                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
             }
+
+            if (original.getItem() instanceof PotionItem) {
+                ItemStack toGive = Items.GLASS_BOTTLE.getDefaultStack();
+                if (user instanceof PlayerEntity player && !player.isCreative()) {
+                    if (!remainder.isEmpty() || !player.getStackInHand(hand).isEmpty()) player.giveItemStack(toGive);
+                    else player.setStackInHand(hand, toGive);
+                }
+                if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
+            }
+
+            //if (original.get(DataComponentTypes.USE_REMAINDER) != null) {
+            //    ItemStack toGive = original.get(DataComponentTypes.USE_REMAINDER).convertInto();
+            //    if (user instanceof PlayerEntity player && !player.isCreative()) {
+            //        if (!remainder.isEmpty() || !player.getStackInHand(hand).isEmpty()) player.giveItemStack(toGive);
+            //        else player.setStackInHand(hand, toGive);
+            //    }
+            //    if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
+            //}
         });
     }
 }

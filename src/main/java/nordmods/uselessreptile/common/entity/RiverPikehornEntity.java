@@ -194,7 +194,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             if (!itemStack.isEmpty() && --eatTimer <= 0) {
                 if (isFavoriteFood(itemStack)) {
                     heal(getHealthRegenerationFromFood());
-                    equipStack(EquipmentSlot.MAINHAND, consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
+                    equipStack(EquipmentSlot.MAINHAND, consumeGivenItem(this, itemStack, SoundEvents.ENTITY_GENERIC_EAT, null));
                 } else dropStack(itemStack);
                 stopHunt();
             }
@@ -257,7 +257,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         ItemStack itemStack = player.getStackInHand(hand);
 
         if (isTamingItem(itemStack) && !isTamed()) {
-            player.setStackInHand(hand, consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT));
+            consumeGivenItem(player, itemStack, SoundEvents.ENTITY_GENERIC_EAT, hand);
             setOwner(player);
             getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
             setPersistent();
