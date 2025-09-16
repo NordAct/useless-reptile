@@ -8,7 +8,6 @@ import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.EnchantmentEffectComponentTypes;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.EntityNavigation;
 import net.minecraft.entity.ai.pathing.PathNodeType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -861,7 +860,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         return getWorld().isSpaceEmpty(this, getBoundingBox().offset(blockPos));
     }
 
-    @Override //tamed big dragons should not be leashable for performance reasons (their pathfinding keeps obliterating TPS)
+    @Override
     public boolean canBeLeashed() {
         return isTamed();
     }
@@ -919,16 +918,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public DragonAssetCache getAssetCache() {
         return assetCache;
-    }
-
-    @Override
-    public void onShortLeashTick(Entity entity) {
-        if (this.shouldFollowLeash() && !this.isPanicking()) {
-            goalSelector.enableControl(Goal.Control.MOVE);
-            float distance = this.distanceTo(entity);
-            Vec3d vec3d = new Vec3d(entity.getX() - getX(), entity.getY() - getY(), entity.getZ() - getZ()).normalize().multiply(Math.max(distance - 2.0F, 0.0F));
-            getNavigation().startMovingAlong(getNavigation().findPathTo(BlockPos.ofFloored(getX() + vec3d.x, getY() + vec3d.y, getZ() + vec3d.z), 0, 16), getFollowLeashSpeed());
-        }
     }
 
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {

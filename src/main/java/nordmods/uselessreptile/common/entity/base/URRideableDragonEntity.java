@@ -215,4 +215,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     public boolean hasVerticalInput() {
         return false;
     }
+
+    @Override //tamed big dragons should not be leashable for performance reasons (their pathfinding keeps obliterating TPS)
+    public boolean canBeLeashed() {
+        return false;
+    }
 }
