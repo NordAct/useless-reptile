@@ -35,7 +35,7 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
             if (vec3i != null) {
                 BlockPos blockPos = new BlockPos(vec3i.getX(), (int) (vec3i.getY() + mob.getEyeHeight(mob.getPose())), vec3i.getZ());
                 BlockPos blockPos1 = new BlockPos(vec3i.getX(), vec3i.getY(), vec3i.getZ());
-                boolean canFit = mob.getWorld().getBlockState(blockPos1.up(1)).isAir() && mob.getWorld().getBlockState(blockPos1.up(2)).isAir();
+                boolean canFit = mob.getEntityWorld().getBlockState(blockPos1.up(1)).isAir() && mob.getEntityWorld().getBlockState(blockPos1.up(2)).isAir();
                 double distanceToCurrent = mob.squaredDistanceTo(vec3d);
                 if (MoleclawEntity.getLightAtPos(blockPos, mob) <= light && canFit && distanceToCurrent < distance) {
                     darkestSpot = vec3i;
@@ -52,7 +52,7 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
                 Vec3i vec3i = vec3d != null ? new Vec3i((int) vec3d.x, (int) vec3d.y, (int) vec3d.z) : null;
                 if (vec3i != null) {
                     BlockPos blockPos1 = new BlockPos((int) vec3d.x, (int) vec3d.y, (int) vec3d.z);
-                    boolean canFit = mob.getWorld().getBlockState(blockPos1.up(1)).isAir() && mob.getWorld().getBlockState(blockPos1.up(2)).isAir();
+                    boolean canFit = mob.getEntityWorld().getBlockState(blockPos1.up(1)).isAir() && mob.getEntityWorld().getBlockState(blockPos1.up(2)).isAir();
                     if (canFit) {
                         darkestSpot = vec3i;
                         break;
@@ -85,7 +85,7 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
         timer++;
 
         if (timer >= nextStrongAttackTimer && mob.getPrimaryAttackCooldown() == 0) {
-            for (VoxelShape shape : mob.getWorld().getBlockCollisions(mob, mob.getSecondaryAttackBox())) {
+            for (VoxelShape shape : mob.getEntityWorld().getBlockCollisions(mob, mob.getSecondaryAttackBox())) {
                 if (!shape.isEmpty()) {
                     mob.scheduleStrongAttack();
                     timer = 0;

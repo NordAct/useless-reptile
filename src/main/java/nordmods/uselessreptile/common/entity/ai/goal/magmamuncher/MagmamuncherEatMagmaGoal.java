@@ -68,12 +68,12 @@ public class MagmamuncherEatMagmaGoal extends Goal {
         if (entity.isEatingMagma()) entity.lookAt(EntityAnchorArgumentType.EntityAnchor.EYES, entity.getMagmaBlockPos().toCenterPos());
 
         BlockPos targetPos = entity.getMagmaBlockPos();
-        double dist = targetPos.toCenterPos().squaredDistanceTo(entity.getPos());
+        double dist = targetPos.toCenterPos().squaredDistanceTo(entity.getEntityPos());
         if (dist < MagmamuncherEntity.DISTANCE_TO_EAT * MagmamuncherEntity.DISTANCE_TO_EAT && entity.getLookControl().isLookingAtTarget()) {
             entity.setEatingMagma(true);
         }
         targetPos = targetPos.offset(offset);
-        if (!entity.getWorld().getBlockState(entity.getMagmaBlockPos()).getBlock().equals(Blocks.MAGMA_BLOCK)) {
+        if (!entity.getEntityWorld().getBlockState(entity.getMagmaBlockPos()).getBlock().equals(Blocks.MAGMA_BLOCK)) {
             entity.setMagmaBlockPos(BlockPos.ORIGIN);
             offset = null;
             return;
@@ -82,7 +82,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
         if (entity.getNavigation().isIdle()) {
             //bandaid fix for a dumbass not getting close enough to eat its magma
             if (dist > MagmamuncherEntity.DISTANCE_TO_EAT * MagmamuncherEntity.DISTANCE_TO_EAT && dist < 3) {
-                entity.addVelocity(targetPos.toCenterPos().subtract(entity.getPos()).normalize().multiply(0.1));
+                entity.addVelocity(targetPos.toCenterPos().subtract(entity.getEntityPos()).normalize().multiply(0.1));
                 return;
             } else if (entity.getNavigation().getTargetPos() != null && entity.getNavigation().getTargetPos().getY() < entity.getMagmaBlockPos().getY()) {
                 invalidPos.add(entity.getMagmaBlockPos());
@@ -107,7 +107,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
             int newDist = dx + dy * (dy > 1 ? 2 : 0) + dz;
             if (newDist > dist) continue;
 
-            if (!(entity.getWorld().getBlockState(blockPos).getBlock().equals(Blocks.MAGMA_BLOCK))) continue;
+            if (!(entity.getEntityWorld().getBlockState(blockPos).getBlock().equals(Blocks.MAGMA_BLOCK))) continue;
 
             offset = null;
             if (entity.getPathfindingPenalty(entity.getNavigation().getNodeMaker().getDefaultNodeType(entity, blockPos.up())) == 0)

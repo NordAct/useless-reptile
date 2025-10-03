@@ -94,7 +94,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
         if (isTamed() && isOwner(player) && !isInteractableItem(itemStack) && !player.isSneaking()) {
             if (!hasPassengers() && hasSaddle()) {
                 if (isSitting()) setSitting(false);
-                else if (!getWorld().isClient()) player.startRiding(this);
+                else if (!getEntityWorld().isClient()) player.startRiding(this);
                 return ActionResult.SUCCESS;
             }
         }
@@ -104,13 +104,13 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
     @Override
     public boolean isLogicalSideForUpdatingMovement() {
         if (canBeControlledByRider()
-                && (getControllingPassenger() instanceof PlayerEntity player && player.isMainPlayer() || !getWorld().isClient())) return true;
+                && (getControllingPassenger() instanceof PlayerEntity player && player.isMainPlayer() || !getEntityWorld().isClient())) return true;
         return super.isLogicalSideForUpdatingMovement();
     }
 
     @Override
     public void travel(Vec3d movementInput) {
-        if (getWorld() instanceof ServerWorld) {
+        if (getEntityWorld() instanceof ServerWorld) {
             boolean hasRider = canBeControlledByRider();
             updateRiderBonus(hasRider);
             getLookControl().setLockRotation(hasRider);
@@ -143,7 +143,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
     @Override
     protected void tickControlled(PlayerEntity rider, Vec3d movementInput) {
-        if (getWorld().isClient() && getControllingPassenger() instanceof ClientPlayerEntity player) {
+        if (getEntityWorld().isClient() && getControllingPassenger() instanceof ClientPlayerEntity player) {
             boolean isSprintPressed = player.input.playerInput.sprint();
             boolean isMoveForwardPressed = player.input.playerInput.forward();
             boolean isJumpPressed = (player.input.playerInput.jump())
@@ -151,13 +151,13 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
                         && hasVerticalInput()
                         && player.getPitch() < -URClientConfig.getConfig().upDownCameraPitchThreshold);
             boolean isMoveBackPressed = player.input.playerInput.backward();
-            boolean isDownPressed = (URKeybinds.flyDownKey.isUnbound() ? isSprintPressed : URKeybinds.flyDownKey.isPressed())
+            boolean isDownPressed = URKeybinds.FLY_DOWN_KEY.isPressed()
                     || (URClientConfig.getConfig().upDownCameraControl
                         && hasVerticalInput()
                         && player.getPitch() > URClientConfig.getConfig().upDownCameraPitchThreshold);
-            boolean isSecondaryAttackPressed = URKeybinds.secondaryAttackKey.isPressed();
-            boolean isPrimaryAttackPressed = URKeybinds.primaryAttackKey.isPressed();
-            boolean freeLook = URKeybinds.freeLookKey.isPressed();
+            boolean isSecondaryAttackPressed = URKeybinds.SECONDARY_ATTACK_KEY.isPressed();
+            boolean isPrimaryAttackPressed = URKeybinds.PRIMARY_ATTACK_KEY.isPressed();
+            boolean freeLook = URKeybinds.FREE_LOOK_KEY.isPressed();
 
             if (isSprintPressed != isSprintPressed()
                     || isMoveForwardPressed != isMoveForwardPressed()
@@ -207,7 +207,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
 
     @Override
     public void openInventory(PlayerEntity player) {
-        if (!getWorld().isClient() && canBeControlledByRider() && isOwner(player)) {
+        if (!getEntityWorld().isClient() && canBeControlledByRider() && isOwner(player)) {
             GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
             player.openHandledScreen(this);
         }

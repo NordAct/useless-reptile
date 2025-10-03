@@ -1,10 +1,11 @@
 package nordmods.uselessreptile.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import nordmods.uselessreptile.client.renderer.layers.DragonPassengerLayer;
@@ -25,8 +26,8 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
     @Unique
     private static final Quaternionf EMPTY = new Quaternionf();
 
-    @Inject(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(value = "HEAD"), cancellable = true)
-    private void cancelRender(S livingEntityRenderState, MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int i, CallbackInfo ci) {
+    @Inject(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/command/OrderedRenderCommandQueue;Lnet/minecraft/client/render/state/CameraRenderState;)V", at = @At(value = "HEAD"), cancellable = true)
+    private void cancelRender(S livingEntityRenderState, MatrixStack matrixStack, OrderedRenderCommandQueue orderedRenderCommandQueue, CameraRenderState cameraRenderState, CallbackInfo ci) {
         if (livingEntityRenderState instanceof DragonPassengerOwner owner && owner.isRidingDragon())
             if (DragonPassengerLayer.PASSENGERS.contains(owner.getUUID())) ci.cancel();
     }

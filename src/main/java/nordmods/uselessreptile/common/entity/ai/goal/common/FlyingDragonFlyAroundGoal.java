@@ -36,7 +36,7 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
         float height = mob.getHeightMod() + 0.5f;
         int adjustment = 0;
         for (int y = 0; y < height; y++) {
-            BlockState blockState = mob.getWorld().getBlockState(destination.up(y));
+            BlockState blockState = mob.getEntityWorld().getBlockState(destination.up(y));
             if (!blockState.getFluidState().isEmpty()) {
                 adjustment = 3 + y;
                 break;
@@ -56,7 +56,7 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
             BlockPos fuzz = FuzzyPositions.localFuzz(mob.getRandom(), range, 20);
             if (fuzz.toCenterPos().length() < 10) continue;
             BlockPos result = mob.getBlockPos().add(fuzz);
-            if (mob.getWorld().getBlockState(result).isAir() && mob.getWorld().getBlockState(result.down()).isAir()) {
+            if (mob.getEntityWorld().getBlockState(result).isAir() && mob.getEntityWorld().getBlockState(result.down()).isAir()) {
                 div = result;
                 break;
             }

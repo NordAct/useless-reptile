@@ -30,7 +30,7 @@ public class FlyingDragonFlyDownGoal<T extends URDragonEntity & FlyingDragon> ex
     @Nullable
     private BlockPos landingSpot() {
         if (mob.getY() > 320) return returnToNormalHeight();
-        World world = mob.getWorld();
+        World world = mob.getEntityWorld();
 
         Optional<BlockPos> closest = BlockPos.findClosest(mob.getBlockPos(), range, 320,
                 (blockPos -> {
@@ -52,7 +52,7 @@ public class FlyingDragonFlyDownGoal<T extends URDragonEntity & FlyingDragon> ex
     }
 
     private boolean isFullCube(BlockPos blockPos) {
-        return mob.getWorld().getBlockState(blockPos).isFullCube(mob.getWorld(), blockPos);
+        return mob.getEntityWorld().getBlockState(blockPos).isFullCube(mob.getEntityWorld(), blockPos);
     }
 
     private boolean checkUnder(BlockPos blockPos) {

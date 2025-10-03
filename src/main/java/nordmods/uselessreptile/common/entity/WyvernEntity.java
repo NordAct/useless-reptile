@@ -67,7 +67,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     private final URDragonPart tail2 = new URDragonPart(this);
     private final URDragonPart tail3 = new URDragonPart(this);
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
-    private ShootingPoint shootingPoint = new ShootingPoint(getPos(), getRotationVector());
+    private ShootingPoint shootingPoint = new ShootingPoint(getEntityPos(), getRotationVector());
 
     public static final float BASE_GROUND_SPEED = 0.2f;
 
@@ -80,14 +80,6 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         ticksUntilHeal = 200;
         sprintSpeedModifier = 1.2f;
     }
-
-    //public static final TrackedData<ShootingPoint> SHOOTING_POINT = DataTracker.registerData(WyvernEntity.class, URTrackedDataHandlers.SHOOTING_POINT);
-//
-    //@Override
-    //protected void initDataTracker(DataTracker.Builder builder) {
-    //    super.initDataTracker(builder);
-    //    builder.add(SHOOTING_POINT, new ShootingPoint(getPos(), getRotationVector(getPitch(), getYaw())));
-    //}
 
     @Override
     public void setShootingPoint(ShootingPoint point) {
@@ -104,7 +96,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     @Override
     public Vec3d getShootingPointAnchor() {
         return head
-                .getPos()
+                .getEntityPos()
                 .add(0, head.getHeight() / 2f, 0);
     }
 
@@ -300,7 +292,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 ItemStack potion = new ItemStack(Items.POTION);
                 potion.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(URPotions.ACID));
                 player.incrementStat(Stats.USED.getOrCreateStat(bottle));
-                getWorld().playSoundClient(SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
+                getEntityWorld().playSoundClient(SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
                 consumeGivenItem(player, itemStack, SoundEvents.ITEM_BOTTLE_FILL, hand);
                 player.giveItemStack(potion);
                 return ActionResult.SUCCESS;
@@ -320,14 +312,14 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     public void shoot() {
-        if (getWorld().isClient()) return;
+        if (getEntityWorld().isClient()) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
         for (int i = 0; i < 5; ++i) {
-            AcidBlastEntity projectileEntity = new AcidBlastEntity(getWorld(), this);
+            AcidBlastEntity projectileEntity = new AcidBlastEntity(getEntityWorld(), this);
             projectileEntity.setPosition(getShootingPoint().pos());
             Vec3d rot = getShootingPoint().rotation().multiply(0.5f);
             projectileEntity.setVelocity(rot.x, rot.y, rot.z, 3.0f, 5.0f);
-            getWorld().spawnEntity(projectileEntity);
+            getEntityWorld().spawnEntity(projectileEntity);
         }
     }
 
@@ -336,7 +328,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     public void meleeAttack() {
-        if (!(getWorld() instanceof ServerWorld world)) return;
+        if (!(getEntityWorld() instanceof ServerWorld world)) return;
         List<Entity> list = world.getOtherEntities(
                 this,
                 getAttackBox(),
@@ -369,8 +361,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         double x = -Math.sin(Math.toRadians(getYaw())) * modifier;
         double z = Math.cos(Math.toRadians(getYaw())) * modifier;
         double y = isFlying() ? -2 : 0;
-        return new Box(getPos().getX() + x - getWidthMod() / 1.5, getPos().getY() + y, getPos().getZ() + z - getWidthMod() / 1.5,
-                getPos().getX() + x + getWidthMod() / 1.5, getPos().getY() + getHeight() + 1, getPos().getZ() + z + getWidthMod() / 1.5);
+        return new Box(getEntityPos().getX() + x - getWidthMod() / 1.5, getEntityPos().getY() + y, getEntityPos().getZ() + z - getWidthMod() / 1.5,
+                getEntityPos().getX() + x + getWidthMod() / 1.5, getEntityPos().getY() + getHeight() + 1, getEntityPos().getZ() + z + getWidthMod() / 1.5);
     }
 
     @Override
@@ -386,7 +378,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+        if (!getEntityWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
         return new URDragonScreenHandler(URScreenHandlers.WYVERN_INVENTORY, syncId, inv, getInventory());
     }
 

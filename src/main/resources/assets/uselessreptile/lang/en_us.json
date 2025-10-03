@@ -60,7 +60,7 @@
   "entity.uselessreptile.lightning_chaser": "Lightning Chaser",
   "entity.uselessreptile.magmamuncher": "Magmamuncher",
 
-  "key.category.uselessreptile": "Useless Reptile Controls",
+  "key.category.uselessreptile.main": "Useless Reptile Controls",
   "key.uselessreptile.primaryAttackKey": "Primary Attack",
   "key.uselessreptile.secondaryAttackKey": "Secondary Attack",
   "key.uselessreptile.flyDownKey": "Fly Down",

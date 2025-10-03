@@ -9,11 +9,11 @@ import nordmods.uselessreptile.common.network.LiftoffParticlesS2CPacket;
 public class LiftoffParticlesPacket {
     public static void init() {
         ClientPlayNetworking.registerGlobalReceiver(LiftoffParticlesS2CPacket.PACKET_ID, (packet, context) -> {
-            Entity entity = context.player().getWorld().getEntityById(packet.id());
+            Entity entity = context.player().getEntityWorld().getEntityById(packet.id());
             if (entity instanceof URDragonEntity dragon) {
                 float span = dragon.getWidthMod()/2;
                 for (int i = 0; i < 25 * span; i++)
-                    context.player().getWorld().addParticleClient(ParticleTypes.CLOUD,
+                    context.player().getEntityWorld().addParticleClient(ParticleTypes.CLOUD,
                             dragon.getX(), dragon.getY() + 1, dragon.getZ(),
                             context.player().getRandom().nextGaussian() * 0.1 * span,
                             -Math.abs(context.player().getRandom().nextGaussian()) * 0.05 * span,

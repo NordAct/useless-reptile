@@ -221,12 +221,12 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+        if (!getEntityWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
         return new URDragonScreenHandler(URScreenHandlers.MOLECLAW_INVENTORY, syncId, inv, getInventory());
     }
 
     public void meleeAttack() {
-        if (!(getWorld() instanceof ServerWorld world)) return;
+        if (!(getEntityWorld() instanceof ServerWorld world)) return;
         List<Entity> targets = world.getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob: targets) {
             Box targetBox = mob.getBoundingBox();
@@ -235,8 +235,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     public void strongAttack() {
-        if (!(getWorld() instanceof ServerWorld world)) return;
-        List<Entity> targets = getWorld().getOtherEntities(this, getSecondaryAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        if (!(getEntityWorld() instanceof ServerWorld world)) return;
+        List<Entity> targets = getEntityWorld().getOtherEntities(this, getSecondaryAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
         if (!targets.isEmpty()) for (Entity mob : targets) {
             Box targetBox = mob.getBoundingBox();
             if (targetBox.intersects(getSecondaryAttackBox())) tryAttack(world, mob);
@@ -264,7 +264,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     @Override
     public boolean canBreakBlocks() {
-        if (!(getWorld() instanceof ServerWorld world)) return false;
+        if (!(getEntityWorld() instanceof ServerWorld world)) return false;
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().moleclawGriefing.canTamedBreak() : URConfig.getConfig().moleclawGriefing.canUntamedBreak();
         return shouldBreakBlocks &&  world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
     }
@@ -274,8 +274,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
         Vec3d rotationVec = getRotationVector(0, getYaw());
         double x = rotationVec.x * 2;
         double z = rotationVec.z * 2;
-        return new Box(getPos().getX() + x - 1.5, getPos().getY(), getPos().getZ() + z - 1.5,
-                getPos().getX() + x + 1.5, getPos().getY() + getHeight(), getPos().getZ() + z + 1.5);
+        return new Box(getEntityPos().getX() + x - 1.5, getEntityPos().getY(), getEntityPos().getZ() + z - 1.5,
+                getEntityPos().getX() + x + 1.5, getEntityPos().getY() + getHeight(), getEntityPos().getZ() + z + 1.5);
     }
 
     @Override
@@ -289,8 +289,8 @@ public class MoleclawEntity extends URRideableDragonEntity {
         } else y = -Math.sin(Math.toRadians(getPitch()));
         double z = Math.cos(Math.toRadians(getYaw())) * halfWidth;
         double heightIncrease = canBeControlledByRider() ? 2 : 1;
-        return new Box(getPos().getX() + x - 1.25, getPos().getY() + y, getPos().getZ() + z - 1.25,
-                getPos().getX() + x + 1.25, getPos().getY() + getHeight() + heightIncrease + y, getPos().getZ() + z + 1.25);
+        return new Box(getEntityPos().getX() + x - 1.25, getEntityPos().getY() + y, getEntityPos().getZ() + z - 1.25,
+                getEntityPos().getX() + x + 1.25, getEntityPos().getY() + getHeight() + heightIncrease + y, getEntityPos().getZ() + z + 1.25);
     }
 
     @Override
@@ -313,7 +313,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     public static int getLightAtPos(BlockPos blockPos, LivingEntity entity) {
-        World world = entity.getWorld();
+        World world = entity.getEntityWorld();
         int lightLevelBlock = world.getLightLevel(LightType.BLOCK, blockPos);
         int lightLevelSky = world.getLightLevel(LightType.SKY, blockPos);
         long timeOfDay = world.getTimeOfDay() % 24000;

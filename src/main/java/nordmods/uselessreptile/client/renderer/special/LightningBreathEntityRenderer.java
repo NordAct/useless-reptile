@@ -2,9 +2,10 @@ package nordmods.uselessreptile.client.renderer.special;
 
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
@@ -30,7 +31,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
     }
 
     @Override
-    public void render(LightningBreathEntityRenderState state, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light) {
+    public void render(LightningBreathEntityRenderState state, MatrixStack matrices, OrderedRenderCommandQueue queue, CameraRenderState cameraState) {
         int length = state.length;
         if (length < 1) return;
 
@@ -39,7 +40,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
             for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
                 LightningBreathEntity.LightningBreathBolt.Segment current = lightningBreathBolt.segments.get(i);
                 RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
-                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE)),
+                        RenderLayer.getEntityTranslucentEmissive(TEXTURE),
                         new Vector3f(current.startPoint()).add(0, 0.1f, 0),
                         new Vector3f(current.startPoint()).add(0, -0.1f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.1f, 0),
@@ -47,7 +48,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
                         state.alpha, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
                         0, 1, 0, 1);
                 RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
-                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE)),
+                        RenderLayer.getEntityTranslucentEmissive(TEXTURE),
                         new Vector3f(current.startPoint()).add(0, -0.2f, 0),
                         new Vector3f(current.startPoint()).add(0, 0.2f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.2f, 0),
@@ -55,7 +56,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
                         state.alpha / 1.5f, 1, 1, 1, LightmapTextureManager.MAX_LIGHT_COORDINATE,
                         0, 1, 0, 1);
                 RenderUtil.renderQuad(matrices.peek().getPositionMatrix(), matrices.peek(),
-                        vertexConsumers.getBuffer(RenderLayer.getEntityTranslucentEmissive(TEXTURE)),
+                        RenderLayer.getEntityTranslucentEmissive(TEXTURE),
                         new Vector3f(current.startPoint()).add(0, -0.3f, 0),
                         new Vector3f(current.startPoint()).add(0, 0.3f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.3f, 0),

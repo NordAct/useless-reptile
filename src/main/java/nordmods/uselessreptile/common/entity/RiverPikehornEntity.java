@@ -84,7 +84,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
 
     @Override
     public void updateEventHandler(BiConsumer<EntityGameEventHandler<?>, ServerWorld> callback) {
-        if (getWorld() instanceof ServerWorld serverWorld) callback.accept(fluteUsedEventHandler, serverWorld);
+        if (getEntityWorld() instanceof ServerWorld serverWorld) callback.accept(fluteUsedEventHandler, serverWorld);
         super.updateEventHandler(callback);
     }
 
@@ -154,7 +154,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
         if (getVehicle() instanceof PlayerEntity) setHitboxModifiers(0.7f, 0.6f, 0);
         else setHitboxModifiers(0.7f, 0.8f, 0);
 
-        if (!isTamed() && getWorld() instanceof ServerWorld world) {
+        if (!isTamed() && getEntityWorld() instanceof ServerWorld world) {
             if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
 
             ItemStack itemStack = getMainHandStack();
@@ -170,14 +170,14 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             getEquippedStack(EquipmentSlot.MAINHAND);
         }
 
-        if (!getWorld().isClient()) {
+        if (!getEntityWorld().isClient()) {
             if (isSubmergedInWater()) {
                 setSwimming(true);
                 setFlying(true);
             } else setSwimming(false);
         }
 
-        if (getWorld() instanceof ServerWorld world) dropLootToOwner(world);
+        if (getEntityWorld() instanceof ServerWorld world) dropLootToOwner(world);
     }
 
     @Override
@@ -232,7 +232,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     }
 
     public void attackMelee(LivingEntity target) {
-        if (!(getWorld() instanceof ServerWorld world)) return;
+        if (!(getEntityWorld() instanceof ServerWorld world)) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
         tryAttack(world, target);
@@ -270,11 +270,11 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     }
 
     private void dropLootToOwner(ServerWorld world) {
-        if (!isTamed() || !isOwnerClose() || getWorld().isClient()) return;
+        if (!isTamed() || !isOwnerClose() || getEntityWorld().isClient()) return;
         ItemStack stack = getEquippedStack(EquipmentSlot.MAINHAND).copy();
         if (!stack.isEmpty()) {
             ItemEntity item = dropStack(world, stack);
-            if (item != null) item.setVelocity(getOwner().getPos().subtract(getPos()).normalize().multiply(0.2));
+            if (item != null) item.setVelocity(getOwner().getEntityPos().subtract(getEntityPos()).normalize().multiply(0.2));
             getEquippedStack(EquipmentSlot.MAINHAND).decrement(stack.getCount());
             setIsHunting(false);
         }

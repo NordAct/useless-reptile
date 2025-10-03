@@ -287,7 +287,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     private void applyVariantModifiers() {
-        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld());
+        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getEntityWorld());
         if (variant == null) {
             UselessReptile.LOGGER.warn("Couldn't find any info on variant {} ({}), thus variant modifiers cannot be set", getVariant(), getDragonId());
             return;
@@ -350,7 +350,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     private SoundInfo createSoundInfo(String name) {
-        DragonModel model = DragonVariantUtil.getDragonModelData(getDragonId(), hasCustomName() ? getCustomName().getString() : null, getVariant(), getWorld());
+        DragonModel model = DragonVariantUtil.getDragonModelData(getDragonId(), hasCustomName() ? getCustomName().getString() : null, getVariant(), getEntityWorld());
         if (model != null) {
             if (model.sounds().isPresent()) {
                 DragonModel.Sound sound = model.sounds().get().stream()
@@ -438,7 +438,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     @Override
     public void updateEventHandler(BiConsumer<EntityGameEventHandler<?>, ServerWorld> callback) {
-        if (getWorld() instanceof ServerWorld serverWorld) {
+        if (getEntityWorld() instanceof ServerWorld serverWorld) {
             callback.accept(this.jukeboxEventHandler, serverWorld);
             callback.accept(this.hornUsedEventHandler, serverWorld);
         }
@@ -496,7 +496,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public void onEquipStack(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack) {
         boolean empty = newStack.isEmpty() && oldStack.isEmpty();
         if (!empty && !ItemStack.areItemsAndComponentsEqual(oldStack, newStack) && !firstUpdate) {
-            if (!getWorld().isClient() && isArmorSlot(slot))
+            if (!getEntityWorld().isClient() && isArmorSlot(slot))
                 URPacketHelper.playSound(this, SoundEvents.ITEM_ARMOR_EQUIP_GENERIC.value(), getSoundCategory(), 1, 1, 6);
         }
         super.onEquipStack(slot, oldStack, newStack);
@@ -518,9 +518,9 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 else setTamingProgress(getTamingProgress() - random.nextBetween(tamingItem.tamingProgressIncrease().getFirst(), tamingItem.tamingProgressIncrease().getSecond()));
                 if (getTamingProgress() <= 0) {
                     setTamedBy(player);
-                    getWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
+                    getEntityWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
                 } else {
-                    getWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
+                    getEntityWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
                 }
                 setPersistent();
                 return ActionResult.SUCCESS;
@@ -547,7 +547,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
             if (itemStack.getItem() instanceof PotionItem potionItem && player.isSneaking()) {
                 ItemStack original = itemStack.copy();
-                potionItem.finishUsing(itemStack, getWorld(), this);
+                potionItem.finishUsing(itemStack, getEntityWorld(), this);
                 consumeGivenItem(player, original, SoundEvents.ENTITY_GENERIC_DRINK.value(), hand);
                 if (player instanceof ServerPlayerEntity serverPlayer)
                     grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/give_potion"));
@@ -560,8 +560,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
                 else setBoundedInstrumentSound("");
                 Text instrumentSound = Text.translatable(getBoundedInstrumentSound().isEmpty() ?
                         "other.uselessreptile.none" : getBoundedInstrumentSound()); //might fetch keys for non-vanilla instruments incorrectly
-                if (!getWorld().isClient()) player.sendMessage(Text.translatable("other.uselessreptile.sound_respond", getName(), instrumentSound), true);
-                if (getWorld().isClient()) player.playSound(SoundEvents.BLOCK_COMPARATOR_CLICK, 0.2f, 2);
+                if (!getEntityWorld().isClient()) player.sendMessage(Text.translatable("other.uselessreptile.sound_respond", getName(), instrumentSound), true);
+                if (getEntityWorld().isClient()) player.playSound(SoundEvents.BLOCK_COMPARATOR_CLICK, 0.2f, 2);
                 return ActionResult.SUCCESS;
             }
 
@@ -577,7 +577,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             }
 
             if (player.isSneaking() && inventory.size() > 0) {
-                if (!getWorld().isClient())
+                if (!getEntityWorld().isClient())
                     player.openHandledScreen(this);
                 return ActionResult.SUCCESS;
             }
@@ -586,8 +586,8 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     @Override
-    public boolean startRiding(Entity entity, boolean force) {
-        boolean result = super.startRiding(entity, force);
+    public boolean startRiding(Entity entity, boolean force, boolean event) {
+        boolean result = super.startRiding(entity, force, event);
         if (this instanceof HeadMountDragon && result && entity instanceof HeadMountDragonOwner owner) {
             NbtWriteView nbtWriteView = NbtWriteView.create(UselessReptile.ERROR_REPORTER, entity.getRegistryManager());
             saveSelfData(nbtWriteView);
@@ -617,7 +617,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     public String getInstrument(ItemStack itemStack) {
         if (!itemStack.getComponents().contains(DataComponentTypes.INSTRUMENT)) return "";
-        Optional<RegistryEntry<Instrument>> instrument = itemStack.getComponents().get(DataComponentTypes.INSTRUMENT).getInstrument(getWorld().getRegistryManager());
+        Optional<RegistryEntry<Instrument>> instrument = itemStack.getComponents().get(DataComponentTypes.INSTRUMENT).getInstrument(getEntityWorld().getRegistryManager());
         if (instrument.isPresent()) {
             boolean translatable = instrument.get().value().description().getContent() instanceof TranslatableTextContent;
             return translatable ? ((TranslatableTextContent) instrument.get().value().description().getContent()).getKey() : ((PlainTextContent)instrument.get().value().description().getContent()).string();
@@ -626,7 +626,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public void playSound(SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) getWorld().playSoundClient(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
+        if (!isSilent()) getEntityWorld().playSoundClient(getX(), getY(),getZ(), sound, SoundCategory.NEUTRAL, volume, pitch,true);
     }
 
     public float getWidthModTransSpeed() {
@@ -653,18 +653,18 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
             if (yawDiff < -getRotationSpeed()) {
                 currentYaw += getRotationSpeed();
-                if (!getWorld().isClient()) setTurningState((byte)2);
+                if (!getEntityWorld().isClient()) setTurningState((byte)2);
             }
             else if (yawDiff > getRotationSpeed()) {
                 currentYaw -= getRotationSpeed();
-                if (!getWorld().isClient()) setTurningState((byte)1);
+                if (!getEntityWorld().isClient()) setTurningState((byte)1);
             }
             else {
                 currentYaw = destinationYaw;
-                if (!getWorld().isClient() && isMoving()) setTurningState((byte)0);
+                if (!getEntityWorld().isClient() && isMoving()) setTurningState((byte)0);
             }
         } else {
-            if (!getWorld().isClient()) setTurningState((byte)0);
+            if (!getEntityWorld().isClient()) setTurningState((byte)0);
         }
         lastYaw = bodyYaw = getYaw();
         super.setRotation(currentYaw, MathHelper.clamp(pitch, -getPitchLimit(), getPitchLimit()));
@@ -752,7 +752,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void tick() {
         super.tick();
-        if (!getWorld().isClient()) {
+        if (!getEntityWorld().isClient()) {
             updateRotationProgress();
         }
         else updateAnimationSpeed();
@@ -782,7 +782,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             if (getVehicle() instanceof PlayerEntity player) {
                 if (!player.isAlive()) stopRiding();
                 getLookControl().setLockRotation(true);
-                if (getWorld().isClient()) {
+                if (getEntityWorld().isClient()) {
                     lastYaw = getYaw();
                     setYaw(player.getYaw());
                     byte turnState = 0;
@@ -794,7 +794,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
             } else getLookControl().setLockRotation(false);
         }
 
-        if (!getWorld().isClient() && age % 20 == 0) {
+        if (!getEntityWorld().isClient() && age % 20 == 0) {
             boolean jukeboxReachable = false;
             if (jukeboxPos != null) jukeboxReachable = jukeboxPos.isWithinDistance(getBlockPos(), 9);
             if (jukeboxReachable) updateJukeboxPos(jukeboxPos, true);
@@ -803,7 +803,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     protected void updateAnimationSpeed() {
-        animationSpeed = MathHelper.lerp(1f/getWorld().getTickManager().getTickRate(), animationSpeed, getMovementSpeedModifier());
+        animationSpeed = MathHelper.lerp(1f/getEntityWorld().getTickManager().getTickRate(), animationSpeed, getMovementSpeedModifier());
     }
 
     @Override
@@ -929,7 +929,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     @Nullable
     public DragonVariant.TamingItem getTamingItem(ItemStack itemStack) {
-        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld());
+        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getEntityWorld());
         if (variant != null) {
             return variant.tamingItems().orElse(List.of()).stream()
                     .filter(tamingItem -> {
@@ -945,7 +945,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
 
     @Nullable
     public DragonVariant.FoodItem getFoodItem(ItemStack itemStack) {
-        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld());
+        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getEntityWorld());
         if (variant != null) {
             return variant.foodItems().orElse(List.of()).stream()
                     .filter(tamingItem -> {
@@ -984,7 +984,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public boolean hasTargetInWater() {
-        return (navigation.getTargetPos() != null && getWorld().getBlockState(navigation.getTargetPos()).isLiquid()
+        return (navigation.getTargetPos() != null && getEntityWorld().getBlockState(navigation.getTargetPos()).isLiquid()
                     || getTarget() != null && getTarget().isSubmergedInWater())
                 && canNavigateInFluids;
     }
@@ -1054,11 +1054,11 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public abstract String getDefaultVariant();
 
     public final boolean isBlockProtected(BlockPos blockPos) {
-        BlockState blockState = getWorld().getBlockState(blockPos);
+        BlockState blockState = getEntityWorld().getBlockState(blockPos);
         PlayerEntity rider = getOwner() instanceof URRideableDragonEntity dragon && dragon.canBeControlledByRider() ?
                 (PlayerEntity) getControllingPassenger() : null;
         GameProfile gameProfile = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
-        return blockState.isIn(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(getWorld(), blockPos, gameProfile, rider);
+        return blockState.isIn(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(getEntityWorld(), blockPos, gameProfile, rider);
     }
 
     public boolean canBreakBlocks() {
@@ -1074,12 +1074,12 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     protected boolean canTeleportTo(BlockPos pos) {
         PathNodeType pathNodeType = getNavigation().getNodeMaker().getDefaultNodeType(this, pos);
         if (getPathfindingPenalty(pathNodeType) != 0) return false;
-        if (getWorld().getBlockState(pos.down()).getCollisionShape(getWorld(), pos.down()).isEmpty()) {
+        if (getEntityWorld().getBlockState(pos.down()).getCollisionShape(getEntityWorld(), pos.down()).isEmpty()) {
             if (this instanceof FlyingDragon flyingDragon) flyingDragon.setFlying(true);
             else return false;
         }
         BlockPos blockPos = pos.subtract(getBlockPos());
-        return getWorld().isSpaceEmpty(this, getBoundingBox().offset(blockPos));
+        return getEntityWorld().isSpaceEmpty(this, getBoundingBox().offset(blockPos));
     }
 
     @Override
@@ -1103,7 +1103,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public void giveItemStack(ItemStack itemStack) {
-        if (!(getWorld() instanceof ServerWorld world)) return;
+        if (!(getEntityWorld() instanceof ServerWorld world)) return;
         if (inventory.canInsert(itemStack)) inventory.addStack(itemStack);
         else dropStack(world, itemStack);
     }
@@ -1111,10 +1111,10 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound, @Nullable Hand hand) {
         ItemStack original = itemStack.copy();
         if (itemStack.getComponents().contains(DataComponentTypes.CONSUMABLE))
-            itemStack.getComponents().get(DataComponentTypes.CONSUMABLE).finishConsumption(getWorld(), this, itemStack);
+            itemStack.getComponents().get(DataComponentTypes.CONSUMABLE).finishConsumption(getEntityWorld(), this, itemStack);
         else if (offering != null && !offering.isInCreativeMode()) {
             itemStack.decrement(1);
-            if (sound != null) getWorld().playSound(this, getX(), getY(), getZ(), sound, getSoundCategory());
+            if (sound != null) getEntityWorld().playSound(this, getX(), getY(), getZ(), sound, getSoundCategory());
         }
         DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, original, itemStack, hand);
         return itemStack;
@@ -1135,7 +1135,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     protected Text getDefaultName() {
         if (defaultDisplayName == null) {
-            DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld());
+            DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), getEntityWorld());
             if (variant != null && variant.displayNameKey().isPresent()) defaultDisplayName = Text.translatable(variant.displayNameKey().get());
             if (defaultDisplayName == null) defaultDisplayName = super.getDefaultName();
         }
@@ -1187,7 +1187,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
 
     public int getBaseTamingProgress() {
-        return DragonVariant.getByVariant(getDragonId(), getVariant(), getWorld()).baseTamingProgress();
+        return DragonVariant.getByVariant(getDragonId(), getVariant(), getEntityWorld()).baseTamingProgress();
     }
 
     public boolean isTameable() {
@@ -1207,7 +1207,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     }
     //todo make those advancements datadriven... some day somehow
     public static boolean grantTriggerableAdvancement(ServerPlayerEntity player, Identifier advancement) {
-        AdvancementEntry entry = player.getServer().getAdvancementLoader().get(advancement);
+        AdvancementEntry entry = player.getEntityWorld().getServer().getAdvancementLoader().get(advancement);
         if (entry == null) return false;
         return player.getAdvancementTracker().grantCriterion(entry, "triggered_from_code");
     }

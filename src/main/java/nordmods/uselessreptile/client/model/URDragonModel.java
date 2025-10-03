@@ -157,9 +157,8 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
         RenderLayer renderType = assetCache.getRenderTypeCache();
         if (renderType != null) return renderType;
 
-        LivingEntityRenderState livingOwnerState = (LivingEntityRenderState)renderState;
         Identifier dragonId = renderState.getGeckolibData(URDataTickets.DRAGON_ID);
-        String name = livingOwnerState.customName != null ? livingOwnerState.customName.getString() : null;
+        String name = renderState.getGeckolibData(URDataTickets.DRAGON_NAME) != null ? renderState.getGeckolibData(URDataTickets.DRAGON_NAME).getString() : null;
         String variant = renderState.getGeckolibData(URDataTickets.DRAGON_VARIANT);
 
         DragonModel data  = DragonVariantUtil.getDragonModelData(

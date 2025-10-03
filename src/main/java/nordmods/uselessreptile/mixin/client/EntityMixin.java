@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-    @Inject(method = "startRiding(Lnet/minecraft/entity/Entity;Z)Z", at = @At("TAIL"))
-    private void setThirdPersonPerspective(Entity entity, boolean force, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "startRiding(Lnet/minecraft/entity/Entity;ZZ)Z", at = @At("TAIL"))
+    private void setThirdPersonPerspective(Entity entity, boolean force, boolean emitEvent, CallbackInfoReturnable<Boolean> cir) {
         if (!URClientConfig.getConfig().autoThirdPerson) return;
         ClientPlayerEntity player = MinecraftClient.getInstance().player;
         if (player == null) return;

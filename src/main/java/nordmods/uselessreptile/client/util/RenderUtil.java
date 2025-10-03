@@ -2,21 +2,25 @@ package nordmods.uselessreptile.client.util;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.EntityRenderDispatcher;
+import net.minecraft.client.render.entity.EntityRenderManager;
 import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class RenderUtil {
-    public static void renderQuad(
-            Matrix4f positionMatrix, MatrixStack.Entry normalMatrix, VertexConsumer vertices,
+    public static void renderQuad( //todo test if it works
+            Matrix4f positionMatrix, MatrixStack.Entry normalMatrix, RenderLayer layer,
             Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3,
             float a, float r, float g, float b, int light,
             float minU, float maxU, float minV, float maxV
     ) {
+        VertexConsumer vertices = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers().getBuffer(layer);
+
         vertices.vertex(positionMatrix, v0.x, v0.y, v0.z) //00
                 .color(r, g, b, a).texture(minU, minV)
                 .overlay(OverlayTexture.DEFAULT_UV)
@@ -40,11 +44,15 @@ public class RenderUtil {
     }
 
     public static <E extends Entity> EntityRenderer<? super E, ?> getEntityRenderer(E entityIn) {
-        EntityRenderDispatcher manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        EntityRenderManager manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
         return manager.getRenderer(entityIn);
     }
 
     public static float getTickDelta(boolean ignoreFreeze) {
         return MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(ignoreFreeze);
+    }
+
+    public static CameraRenderState getCameraRenderState() {
+        return MinecraftClient.getInstance().gameRenderer.getEntityRenderStates().cameraRenderState;
     }
 }

@@ -112,12 +112,12 @@ public class VortexHornItem extends GoatHornItem {
             if (dataComponent != null) {
                 boolean full = getCurrentCapacity(stack) >= getMaxCapacity(stack);
                 textConsumer.accept(Text.translatable("tooltip.uselessreptile.vortex_horn.capacity",getCurrentCapacity(stack) , getMaxCapacity(stack)).formatted(full ? Formatting.YELLOW : Formatting.GRAY));
-                if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow().getHandle(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
+                if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
                 else {
                     textConsumer.accept(Text.translatable("tooltip.uselessreptile.vortex_horn.contained_dragons"));
                     for (NbtComponent nbtComponent : dataComponent.entityData()) {
                         NbtCompound nbt = nbtComponent.copyNbt();
-                        if (nbtComponent.contains("CustomName")) {
+                        if (nbt.contains("CustomName")) {
                             Text customName = nbt.get("CustomName", TextCodecs.CODEC).orElse(Text.empty());
                             textConsumer.accept(customName);
                         } else {
@@ -163,11 +163,11 @@ public class VortexHornItem extends GoatHornItem {
     protected boolean tryCollectDragon(ItemStack stack, PlayerEntity user, URDragonEntity dragon, Hand hand, boolean capacityWarning) {
         int dragonCapacity = dragon.vortexHornCapacity();
         if (getCurrentCapacity(stack) + dragonCapacity > getMaxCapacity(stack)) {
-            if (capacityWarning && !user.getWorld().isClient()) user.sendMessage(Text.translatable("other.uselessreptile.not_enough_capacity"), true);
+            if (capacityWarning && !user.getEntityWorld().isClient()) user.sendMessage(Text.translatable("other.uselessreptile.not_enough_capacity"), true);
             return false;
         }
 
-        if (user.getWorld().isClient()) return true;
+        if (user.getEntityWorld().isClient()) return true;
 
         dragon.stopRiding();
         dragon.removeAllPassengers();
@@ -181,7 +181,7 @@ public class VortexHornItem extends GoatHornItem {
             appliedComponent = new URDragonDataStorageComponent(dragons);
         } else appliedComponent = URDragonDataStorageComponent.DEFAULT;
         stack.set(URItems.DRAGON_STORAGE_COMPONENT, appliedComponent);
-        VortexHornCapacityComponent capacityComponent = new VortexHornCapacityComponent(getCurrentCapacityDragonStorage(stack, user.getWorld()), getMaxCapacity(stack));
+        VortexHornCapacityComponent capacityComponent = new VortexHornCapacityComponent(getCurrentCapacityDragonStorage(stack, user.getEntityWorld()), getMaxCapacity(stack));
         stack.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, capacityComponent);
         user.setStackInHand(hand, stack);
 
@@ -221,7 +221,7 @@ public class VortexHornItem extends GoatHornItem {
     }
 
     protected void spawnCloud(Entity dragon) {
-        MinecraftServer server = dragon.getServer();
+        MinecraftServer server = dragon.getEntityWorld().getServer();
         if (server != null) {
             double x = dragon.getX();
             double y = dragon.getY();
@@ -230,7 +230,7 @@ public class VortexHornItem extends GoatHornItem {
             float offsetXZ = dragon.getWidth() / 2f;
             ParticleS2CPacket packet = new ParticleS2CPacket(ParticleTypes.CLOUD, false, false,
                     x, y, z, offsetXZ , offsetY, offsetXZ, 0, 20);
-            server.getPlayerManager().sendToAround(null, x, y + offsetY, z, 128, dragon.getWorld().getRegistryKey(), packet);
+            server.getPlayerManager().sendToAround(null, x, y + offsetY, z, 128, dragon.getEntityWorld().getRegistryKey(), packet);
         }
     }
 

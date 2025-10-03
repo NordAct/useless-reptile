@@ -66,7 +66,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
 
     @Inject(method = "remove", at = @At("TAIL"))
     private void removeHeadMountDragon(RemovalReason reason, CallbackInfo ci) {
-        if (!headMountDragon.isEmpty() && getWorld() instanceof ServerWorld world) {
+        if (!headMountDragon.isEmpty() && getEntityWorld() instanceof ServerWorld world) {
             if (!reason.shouldDestroy()) {
                 EntityType.getEntityFromData(NbtReadView.create(UselessReptile.ERROR_REPORTER, world.getRegistryManager(), headMountDragon), world, SpawnReason.LOAD).ifPresent(dragon -> {
                     dragon.remove(reason);

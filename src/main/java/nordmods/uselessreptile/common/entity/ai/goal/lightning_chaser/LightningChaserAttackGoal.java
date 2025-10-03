@@ -74,7 +74,7 @@ public class LightningChaserAttackGoal extends Goal {
         double yDiff = target.getY() - entity.getY();
         if (yDiff > entity.getHeight() && !entity.isFlying()) entity.startToFly();
         boolean canSee = entity.canBreakBlocks() || entity.getVisibilityCache().canSee(target);
-        boolean canDamage = !target.isInvulnerableTo((ServerWorld) target.getWorld(), entity.getDamageSources().create(DamageTypes.LIGHTNING_BOLT, entity)) && canSee;
+        boolean canDamage = !target.isInvulnerableTo((ServerWorld) target.getEntityWorld(), entity.getDamageSources().create(DamageTypes.LIGHTNING_BOLT, entity)) && canSee;
         double desiredY = target.getY() + (canDamage ? 2 : 0) + target.getHeight();
         if (entity.isOnGround() && !entity.getVisibilityCache().canSee(target) && canDamage) entity.forceFlightNextTick();
 
@@ -144,14 +144,14 @@ public class LightningChaserAttackGoal extends Goal {
         if (entity.getSpecialAttackCooldown() > 0) return false;
         if (!entity.isFlying()) return false;
         double attackDistance = ShockwaveSphereEntity.MAX_RADIUS * ShockwaveSphereEntity.MAX_RADIUS * 0.49;
-        List<Entity> projectiles = entity.getWorld().getOtherEntities(entity, new Box(entity.getBlockPos()).expand(attackDistance * 2), c -> c instanceof ProjectileEntity projectile && projectile.getOwner() == target && !projectile.getVelocity().equals(Vec3d.ZERO));
+        List<Entity> projectiles = entity.getEntityWorld().getOtherEntities(entity, new Box(entity.getBlockPos()).expand(attackDistance * 2), c -> c instanceof ProjectileEntity projectile && projectile.getOwner() == target && !projectile.getVelocity().equals(Vec3d.ZERO));
         if (!projectiles.isEmpty()) {
             entity.triggerShockwave();
             return true;
         }
         double distance = entity.squaredDistanceTo(target);
         if (attackDistance < distance) return false;
-        if (ExplosionImpl.calculateReceivedDamage(entity.getPos(), target) < 0.1) return false;
+        if (ExplosionImpl.calculateReceivedDamage(entity.getEntityPos(), target) < 0.1) return false;
         entity.triggerShockwave();
         attackCooldown = 40;
         return true;

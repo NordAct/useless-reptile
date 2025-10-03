@@ -27,7 +27,7 @@ public record KeyInputC2SPacket(
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (packet, context) -> {
-            Entity entity = context.player().getWorld().getEntityById(packet.id);
+            Entity entity = context.player().getEntityWorld().getEntityById(packet.id);
             if (entity instanceof URRideableDragonEntity dragon && dragon.canBeControlledByRider() && context.player().getVehicle() == entity) {
                 dragon.updateInputs(packet.forward, packet.back, packet.jump, packet.down, packet.secondaryAttack, packet.primaryAttack, packet.sprint, packet.freeLook);
             }

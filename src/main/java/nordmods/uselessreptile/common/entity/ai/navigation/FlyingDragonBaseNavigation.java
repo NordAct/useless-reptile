@@ -25,7 +25,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
     @Override
     public void tick() {
-        boolean isFullBlock = entity.getSteppingBlockState().isFullCube(entity.getWorld(), entity.getSteppingPos());
+        boolean isFullBlock = entity.getSteppingBlockState().isFullCube(entity.getEntityWorld(), entity.getSteppingPos());
         if (NavigationConditions.isSolidAt(entity, entity.getBlockPos()) && isFullBlock) entity.getJumpControl().setActive();
         if (entity.isTouchingWater() && entity.getFluidHeight(FluidTags.WATER) > entity.getSwimHeight() && !entity.hasTargetInWater() || entity.isInLava())
             startToFly(jumpCount > 9 || entity.isInLava());
@@ -61,7 +61,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
             nodeChecked = false;
         }
 
-        if (currentTarget.distanceTo(getTargetPos().toCenterPos()) > entity.getPos().distanceTo(getTargetPos().toCenterPos())) recalculatePath();
+        if (currentTarget.distanceTo(getTargetPos().toCenterPos()) > entity.getEntityPos().distanceTo(getTargetPos().toCenterPos())) recalculatePath();
     }
 
     protected boolean shouldJumpToNextNode(Vec3d currentPos) {

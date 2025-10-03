@@ -60,7 +60,7 @@
   "entity.uselessreptile.lightning_chaser": "Ловец молний",
   "entity.uselessreptile.magmamuncher": "Магмаед",
 
-  "key.category.uselessreptile": "Useless Reptile - Управление",
+  "key.category.uselessreptile.main": "Useless Reptile - Управление",
   "key.uselessreptile.primaryAttackKey": "Основная атака",
   "key.uselessreptile.secondaryAttackKey": "Вторичная атака",
   "key.uselessreptile.flyDownKey": "Лететь вниз",

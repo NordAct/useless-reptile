@@ -46,7 +46,7 @@ public record DragonSpawnConditions(
                 ),
                 Codec.INT_STREAM
                         .comapFlatMap(
-                                stream -> Util.decodeFixedLengthArray(stream, 2).map(values -> new com.mojang.datafixers.util.Pair<>(Optional.of(values[0]), Optional.of(values[1]))),
+                                stream -> Util.decodeFixedLengthArray(stream, 2).map(values -> new Pair<>(Optional.of(values[0]), Optional.of(values[1]))),
                                 pair -> IntStream.of(pair.getFirst().orElse(Integer.MIN_VALUE), pair.getSecond().orElse(Integer.MAX_VALUE))
                         )
                         .stable()

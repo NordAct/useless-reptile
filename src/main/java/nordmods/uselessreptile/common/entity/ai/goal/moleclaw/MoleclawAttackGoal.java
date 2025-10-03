@@ -66,7 +66,7 @@ public class MoleclawAttackGoal extends Goal {
         else notMovingTimer = 0;
         if (notMovingTimer >= nextStrongAttackTimer && entity.getPrimaryAttackCooldown() == 0) {
             int any = 0;
-            for (VoxelShape ignored : entity.getWorld().getBlockCollisions(null, entity.getSecondaryAttackBox())) any++;
+            for (VoxelShape ignored : entity.getEntityWorld().getBlockCollisions(null, entity.getSecondaryAttackBox())) any++;
             if (any > 0) {
                 entity.scheduleStrongAttack();
                 nextStrongAttackTimer = entity.getRandom().nextInt(21) + 40;

@@ -56,10 +56,10 @@ public class LightningChaserBailOutGoal extends Goal {
         int dist = 512;
         BlockPos pos;
         do {
-            pos = BlockPos.ofFloored(entity.getRotationVector(0, entity.getYaw()).multiply(dist).add(entity.getPos()));
+            pos = BlockPos.ofFloored(entity.getRotationVector(0, entity.getYaw()).multiply(dist).add(entity.getEntityPos()));
             int x = ChunkSectionPos.getSectionCoord(pos.getX());
             int z = ChunkSectionPos.getSectionCoord(pos.getZ());
-            if (entity.getWorld().getChunk(x, z, ChunkStatus.SURFACE, false) != null) break;
+            if (entity.getEntityWorld().getChunk(x, z, ChunkStatus.SURFACE, false) != null) break;
             dist -= 16;
         } while (true);
         pointOfInterest = new BlockPos(pos.getX(), 256, pos.getX());

@@ -119,7 +119,7 @@ public record DragonVariant(
         nbtCompound.putString("id", dragonId.toString());
         URDragonEntity dragon = (URDragonEntity) EntityType.getEntityFromData(NbtReadView.create(UselessReptile.ERROR_REPORTER, world.getRegistryManager(), nbtCompound), world, SpawnReason.TRIGGERED).get();
         dragon.discard();
-        return dragon.getWorld().getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT)
+        return dragon.getEntityWorld().getRegistryManager().getOrThrow(URRegistryKeys.DRAGON_VARIANT)
                 .stream()
                 .filter(dragonVariant -> dragonVariant.dragonId().equals(dragon.getDragonId()) && dragonVariant.name().equals(dragon.getDefaultVariant()))
                 .findFirst()

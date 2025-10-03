@@ -61,7 +61,7 @@ public class PikehornHuntGoal extends Goal {
         if (!hasFish() && !tooManyCalls() && entity.forceTargetInWater) {
             //lookup for dropped fish first
             Box box = entity.getBoundingBox().expand(20);
-            List<ItemEntity> drops = entity.getWorld().getEntitiesByClass(ItemEntity.class, box.withMinY(box.minY - 20), (item) -> {
+            List<ItemEntity> drops = entity.getEntityWorld().getEntitiesByClass(ItemEntity.class, box.withMinY(box.minY - 20), (item) -> {
                 ItemStack itemStack = item.getStack();
                 return entity.getFoodItem(itemStack) != null && item.isAlive() && !item.cannotPickup();
             });
@@ -76,7 +76,7 @@ public class PikehornHuntGoal extends Goal {
                     if (aboveWater(huntSpot)) {
                         huntSpot = adjustToWater(huntSpot);
                         //checking if dragon is close to it or found target
-                        List<FishEntity> list = entity.getWorld().getEntitiesByClass(FishEntity.class,  box.withMinY(box.minY - 30), entity::canTarget);
+                        List<FishEntity> list = entity.getEntityWorld().getEntitiesByClass(FishEntity.class,  box.withMinY(box.minY - 30), entity::canTarget);
                         FishEntity target = null;
                         if (!list.isEmpty()) {
                             target = list.getFirst();
@@ -90,7 +90,7 @@ public class PikehornHuntGoal extends Goal {
                             closeToSpot = false;
                         } else {
                             //if not close to the spot, move to it closer
-                            double distance = huntSpot.getSquaredDistance(entity.getPos());
+                            double distance = huntSpot.getSquaredDistance(entity.getEntityPos());
                             if (distance < 32) closeToSpot = true;
                             else entity.getNavigation().startMovingTo(huntSpot.getX(), huntSpot.getY(), huntSpot.getZ(), 1);
                         }
@@ -124,7 +124,7 @@ public class PikehornHuntGoal extends Goal {
         float height = entity.getHeightMod() + 0.5f;
         int adjustment = 0;
         for (int y = 0; y < height; y++) {
-            BlockState blockState = entity.getWorld().getBlockState(destination.up(y));
+            BlockState blockState = entity.getEntityWorld().getBlockState(destination.up(y));
             if (!blockState.getFluidState().isEmpty()) {
                 adjustment = y;
                 break;
@@ -139,7 +139,7 @@ public class PikehornHuntGoal extends Goal {
         for (int i = 0; i < 5; i++) {
             BlockPos fuzz = FuzzyPositions.localFuzz(entity.getRandom(), radius, 5);
             BlockPos result = entity.getBlockPos().add(fuzz);
-            if (entity.getWorld().getBlockState(result).isAir()) {
+            if (entity.getEntityWorld().getBlockState(result).isAir()) {
                 div = result;
                 break;
             }
@@ -149,7 +149,7 @@ public class PikehornHuntGoal extends Goal {
     }
 
     private boolean biomeHasFish(BlockPos blockPos) {
-        World world = entity.getWorld();
+        World world = entity.getEntityWorld();
         Biome biome = world.getBiome(blockPos).value();
         List<Weighted<SpawnSettings.SpawnEntry>> entries = biome.getSpawnSettings().getSpawnEntries(SpawnGroup.WATER_AMBIENT).getEntries();
         return !entries.isEmpty();
@@ -158,7 +158,7 @@ public class PikehornHuntGoal extends Goal {
     //check if spot is above water
     private boolean aboveWater(BlockPos blockPos) {
         BlockPos pos = new BlockPos(blockPos);
-        World world = entity.getWorld();
+        World world = entity.getEntityWorld();
 
         while (world.getBlockState(pos).isOf(Blocks.AIR) && pos.getY() > -64) pos = pos.down();
         return world.getBlockState(pos).isOf(Blocks.WATER);
@@ -184,7 +184,7 @@ public class PikehornHuntGoal extends Goal {
     private BlockPos adjustToWater(BlockPos blockPos) {
         if (!aboveWater(blockPos)) return blockPos;
         BlockPos pos = new BlockPos(blockPos);
-        World world = entity.getWorld();
+        World world = entity.getEntityWorld();
 
         while (!world.getBlockState(pos).isOf(Blocks.WATER) && pos.getY() > -64) pos = pos.down();
         return pos.up(3);

@@ -11,18 +11,18 @@ import net.minecraft.util.math.random.CheckedRandom;
 
 public class URPacketHelper {
     public static void playSound(LivingEntity entity, SoundEvent sound, SoundCategory category, float volume, float pitch, int span) {
-        if (entity.getServer() == null) return;
+        if (entity.getEntityWorld().getServer() == null) return;
         BlockPos pos = entity.getBlockPos();
         PlaySoundS2CPacket packet = new PlaySoundS2CPacket(RegistryEntry.of(sound), category, pos.getX(), pos.getY(), pos.getZ(), volume, pitch, entity.getRandom().nextInt(span));
 
-        entity.getServer().getPlayerManager().sendToAll(packet);
+        entity.getEntityWorld().getServer().getPlayerManager().sendToAll(packet);
     }
 
     public static void playSound(Entity entity, SoundEvent sound, SoundCategory category, float volume, float pitch, int span) {
-        if (entity.getServer() == null) return;
+        if (entity.getEntityWorld().getServer() == null) return;
         BlockPos pos = entity.getBlockPos();
         PlaySoundS2CPacket packet = new PlaySoundS2CPacket(RegistryEntry.of(sound), category, pos.getX(), pos.getY(), pos.getZ(), volume, pitch, new CheckedRandom(entity.getId()).nextInt(span));
 
-        entity.getServer().getPlayerManager().sendToAll(packet);
+        entity.getEntityWorld().getServer().getPlayerManager().sendToAll(packet);
     }
 }

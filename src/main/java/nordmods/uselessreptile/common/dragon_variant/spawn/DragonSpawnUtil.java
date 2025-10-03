@@ -44,7 +44,7 @@ public class DragonSpawnUtil {
 
     public static void assignAvailableVariant(URDragonEntity entity, SpawnReason spawnReason) {
         BlockPos pos = entity.getBlockPos();
-        WorldAccess world = entity.getWorld();
+        WorldAccess world = entity.getEntityWorld();
         Identifier id = entity.getDragonId();
         Stream<DragonVariant> variantStream = getAvailableVariants(world, pos, id);
         boolean canWarn = spawnReason == SpawnReason.NATURAL
@@ -52,7 +52,7 @@ public class DragonSpawnUtil {
                 || spawnReason == SpawnReason.CHUNK_GENERATION
                 || spawnReason == SpawnReason.BREEDING;
 
-        DynamicRegistryManager registryManager = entity.getWorld().getRegistryManager();
+        DynamicRegistryManager registryManager = entity.getEntityWorld().getRegistryManager();
 
         List<Pair<String, Integer>> variants = new ArrayList<>();
         variantStream.forEach(variant -> {

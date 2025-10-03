@@ -22,7 +22,7 @@ public class LightningChaserRoamAroundGoal extends Goal {
     @Override
     public boolean canStart() {
         if (entity.isTamed()) return false;
-        return (entity.isChallenger() || entity.getWorld().isThundering()) && !entity.getShouldBailOut() && !entity.hasSurrendered() && entity.getTarget() == null;
+        return (entity.isChallenger() || entity.getEntityWorld().isThundering()) && !entity.getShouldBailOut() && !entity.hasSurrendered() && entity.getTarget() == null;
     }
 
     @Override
@@ -33,7 +33,7 @@ public class LightningChaserRoamAroundGoal extends Goal {
 
     private BlockPos getRoamingSpot() {
         BlockPos pos = entity.getHomePoint();
-        return new BlockPos(pos.getX(), entity.getWorld().getTopY(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ()) + 40, pos.getZ());
+        return new BlockPos(pos.getX(), entity.getEntityWorld().getTopY(Heightmap.Type.WORLD_SURFACE, pos.getX(), pos.getZ()) + 40, pos.getZ());
     }
 
     @Override

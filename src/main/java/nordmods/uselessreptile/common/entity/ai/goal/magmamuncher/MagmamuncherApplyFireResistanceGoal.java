@@ -29,11 +29,11 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
             dragon.getOwner().addStatusEffect(
                     new StatusEffectInstance(
                             StatusEffects.FIRE_RESISTANCE,
-                            (int) (dragon.getWorld().getFuelRegistry().getFuelTicks(stack) * URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier)
+                            (int) (dragon.getEntityWorld().getFuelRegistry().getFuelTicks(stack) * URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier)
                     )
             );
             URDragonEntity.SoundInfo info = dragon.getSoundInfo("apply_fire_resistance");
-            if (info != null) dragon.getWorld().playSound(dragon, dragon.getX(), dragon.getY(), dragon.getZ(), SoundEvent.of(info.id()), dragon.getSoundCategory(), info.volume(), dragon.getRandom().nextTriangular(info.pitch(), info.pitchDeviation()));
+            if (info != null) dragon.getEntityWorld().playSound(dragon, dragon.getX(), dragon.getY(), dragon.getZ(), SoundEvent.of(info.id()), dragon.getSoundCategory(), info.volume(), dragon.getRandom().nextTriangular(info.pitch(), info.pitchDeviation()));
             ParticleS2CPacket packet = new ParticleS2CPacket(
                     ParticleTypes.FLAME,
                     false,
@@ -50,7 +50,7 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
             if (dragon.getOwner() instanceof ServerPlayerEntity player) {
                 URDragonEntity.grantTriggerableAdvancement(player, UselessReptile.id("dragon/magmamuncher_apply_fire_resistance"));
             }
-            dragon.getServer().getPlayerManager().sendToAll(packet);
+            dragon.getEntityWorld().getServer().getPlayerManager().sendToAll(packet);
         }
     }
 
@@ -69,6 +69,6 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
 
     @Override
     protected boolean isConsumableItem(ItemStack stack) {
-        return dragon.getWorld().getFuelRegistry().isFuel(stack);
+        return dragon.getEntityWorld().getFuelRegistry().isFuel(stack);
     }
 }

@@ -51,11 +51,11 @@ public class URItems {
     public static final Item MOLECLAW_HELMET_GOLD = registerItem("moleclaw_helmet_gold", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 3, 0, settings));
     public static final Item MOLECLAW_HELMET_DIAMOND = registerItem("moleclaw_helmet_diamond", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 4, 0, settings));
     public static final Item MOLECLAW_HELMET_NETHERITE = registerItem("moleclaw_helmet_netherite", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 5, 2, settings));
-    public static final Item WYVERN_SPAWN_EGG = registerItem("wyvern_spawn_egg", settings -> new SpawnEggItem(UREntities.WYVERN_ENTITY, settings));
-    public static final Item MOLECLAW_SPAWN_EGG = registerItem("moleclaw_spawn_egg", settings -> new SpawnEggItem(UREntities.MOLECLAW_ENTITY, settings));
-    public static final Item RIVER_PIKEHORN_SPAWN_EGG = registerItem("river_pikehorn_spawn_egg", settings -> new SpawnEggItem(UREntities.RIVER_PIKEHORN_ENTITY, settings));
-    public static final Item LIGHTNING_CHASER_SPAWN_EGG = registerItem("lightning_chaser_spawn_egg", settings -> new SpawnEggItem(UREntities.LIGHTNING_CHASER_ENTITY, settings));
-    public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", settings -> new SpawnEggItem(UREntities.MAGMAMUNCHER_ENTITY, settings));
+    public static final Item WYVERN_SPAWN_EGG = registerItem("wyvern_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.WYVERN_ENTITY)));
+    public static final Item MOLECLAW_SPAWN_EGG = registerItem("moleclaw_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.MOLECLAW_ENTITY)));
+    public static final Item RIVER_PIKEHORN_SPAWN_EGG = registerItem("river_pikehorn_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.RIVER_PIKEHORN_ENTITY)));
+    public static final Item LIGHTNING_CHASER_SPAWN_EGG = registerItem("lightning_chaser_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.LIGHTNING_CHASER_ENTITY)));
+    public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.MAGMAMUNCHER_ENTITY)));
     public static final Item FLUTE = registerItem("flute", settings -> new FluteItem(settings.maxCount(1).component(FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT)));
     public static final Item VORTEX_HORN = registerItem("vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 1)));
     public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 3)));

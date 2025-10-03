@@ -1,6 +1,8 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.item.ItemRenderState;
+import net.minecraft.client.render.item.ItemRenderer;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
@@ -22,6 +24,8 @@ public class BannerRenderLayer<T extends GeoAnimatable, R extends GeoRenderState
     public BannerRenderLayer(GeoRenderer<T, Void, R> renderer) {
         super(renderer);
     }
+    //todo wait for geckolib
+    private final ItemRenderState itemRenderState = new ItemRenderState();
 
     @Override
     public void addPerBoneRender(R renderState, BakedGeoModel model, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
@@ -38,7 +42,7 @@ public class BannerRenderLayer<T extends GeoAnimatable, R extends GeoRenderState
 
             if (stack != null && !stack.isEmpty()) {
                 RenderUtil.translateAndRotateMatrixForBone(matrixStackIn, bone);
-                MinecraftClient.getInstance().getItemRenderer().renderItem(stack, ItemDisplayContext.NONE, packedLight, packedOverlay, matrixStackIn, bufferSource, ClientUtil.getLevel(),
+                ItemRenderer.renderItem(stack, ItemDisplayContext.NONE, packedLight, packedOverlay, matrixStackIn, bufferSource, ClientUtil.getLevel(),
                         renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID).intValue());
             }
         });

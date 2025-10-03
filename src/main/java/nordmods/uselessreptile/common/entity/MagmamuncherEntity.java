@@ -65,7 +65,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         sprintSpeedModifier = 1.3f;
         setPathfindingPenalty(PathNodeType.DAMAGE_FIRE, 0);
         setPathfindingPenalty(PathNodeType.DANGER_FIRE, 0);
-        navigation = new MagmamuncherNavigation(this, getWorld());
+        navigation = new MagmamuncherNavigation(this, getEntityWorld());
     }
 
     @Override
@@ -81,7 +81,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     @Nullable
     @Override
     public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (!getWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+        if (!getEntityWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
         return new URDragonScreenHandler(URScreenHandlers.MAGMAMUNCHER_INVENTORY, syncId, inv, getInventory());
     }
 
@@ -195,20 +195,20 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     private void checkIfEatingMagma() {
         if (isEatingMagma()) {
             BlockPos pos = getMagmaBlockPos();
-            if (!getWorld().isClient() &&
-                    (getWorld().getBlockState(pos).getBlock() != Blocks.MAGMA_BLOCK
-                            || pos.toCenterPos().squaredDistanceTo(getPos()) >= DISTANCE_TO_EAT * DISTANCE_TO_EAT)) {
+            if (!getEntityWorld().isClient() &&
+                    (getEntityWorld().getBlockState(pos).getBlock() != Blocks.MAGMA_BLOCK
+                            || pos.toCenterPos().squaredDistanceTo(getEntityPos()) >= DISTANCE_TO_EAT * DISTANCE_TO_EAT)) {
                 setEatingMagma(false);
-            } else if (!getWorld().isClient() && ++eatingMagmaProgress >= MAX_EATING_MAGMA_PROGRESS) {
+            } else if (!getEntityWorld().isClient() && ++eatingMagmaProgress >= MAX_EATING_MAGMA_PROGRESS) {
                 setEatingMagma(false);
                 eatMagmaCooldown = MagmamuncherEntity.EAT_MAGMA_COOLDOWN_AVERAGE + getRandom().nextBetween(-20 * 10, 20 * 10);
                 eatingMagmaProgress = 0;
-                getWorld().setBlockState(pos, URBlocks.DEPLETED_MAGMA.getDefaultState());
-                getWorld().playSoundClient(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, SoundEvents.BLOCK_NETHERRACK_BREAK, getSoundCategory(), 1, 1, true);
-                forEachGiftedItem((ServerWorld) getWorld(), MAGMA_EATEN_TABLE, this::dropStack);
-            } else if (getWorld().isClient() && age % 10 == 0) {
-                getWorld().addBlockBreakParticles(pos, Blocks.MAGMA_BLOCK.getDefaultState());
-                getWorld().playSoundClient(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, SoundEvents.BLOCK_NETHERRACK_HIT, getSoundCategory(), 1, 1, true);
+                getEntityWorld().setBlockState(pos, URBlocks.DEPLETED_MAGMA.getDefaultState());
+                getEntityWorld().playSoundClient(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, SoundEvents.BLOCK_NETHERRACK_BREAK, getSoundCategory(), 1, 1, true);
+                forEachGiftedItem((ServerWorld) getEntityWorld(), MAGMA_EATEN_TABLE, this::dropStack);
+            } else if (getEntityWorld().isClient() && age % 10 == 0) {
+                getEntityWorld().addBlockBreakParticles(pos, Blocks.MAGMA_BLOCK.getDefaultState());
+                getEntityWorld().playSoundClient(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, SoundEvents.BLOCK_NETHERRACK_HIT, getSoundCategory(), 1, 1, true);
             }
         } else {
             eatingMagmaProgress = 0;
@@ -216,7 +216,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     }
 
     public void attackMelee(LivingEntity target) {
-        if (!(getWorld() instanceof ServerWorld world)) return;
+        if (!(getEntityWorld() instanceof ServerWorld world)) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
         EntityAttributeModifier modifier = new EntityAttributeModifier(UselessReptile.id("magma_cube_bonus"), 1, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
@@ -237,7 +237,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
 
     @Override
     public boolean canBreakBlocks() {
-        if (!(getWorld() instanceof ServerWorld world)) return false;
+        if (!(getEntityWorld() instanceof ServerWorld world)) return false;
         boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().magmamuncherGriefing.canTamedBreak() : URConfig.getConfig().magmamuncherGriefing.canUntamedBreak();
         return shouldBreakBlocks &&  world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
     }

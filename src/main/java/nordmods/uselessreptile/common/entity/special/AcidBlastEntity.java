@@ -37,14 +37,14 @@ public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, Pr
 
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
-        if (!getWorld().isClient()) spawnEffectCloud();
+        if (!getEntityWorld().isClient()) spawnEffectCloud();
         super.onBlockHit(blockHitResult);
         discard();
     }
 
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
-        if (!(getWorld() instanceof ServerWorld world)) return;
+        if (!(getEntityWorld() instanceof ServerWorld world)) return;
         Entity target = entityHitResult.getEntity();
         target.damage(world, target.getDamageSources().create(URDamageTypes.ACID, getOwner()), getResultingDamage());
         spawnEffectCloud();
@@ -55,7 +55,7 @@ public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, Pr
     }
 
     private void spawnEffectCloud() {
-        AreaEffectCloudEntity areaEffectCloudEntity = new AreaEffectCloudEntity(getWorld(), getX(), getY(), getZ());
+        AreaEffectCloudEntity areaEffectCloudEntity = new AreaEffectCloudEntity(getEntityWorld(), getX(), getY(), getZ());
         Entity entity = getOwner();
         if (entity instanceof LivingEntity livingEntity) areaEffectCloudEntity.setOwner(livingEntity);
         playSound(URSounds.ACID_SPLASH, 1, 1);
@@ -65,7 +65,7 @@ public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, Pr
         areaEffectCloudEntity.setRadiusGrowth(0.1f);
         areaEffectCloudEntity.addEffect(new StatusEffectInstance(URStatusEffects.ACID, 10, 1));
         areaEffectCloudEntity.setSilent(true);
-        getWorld().spawnEntity(areaEffectCloudEntity);
+        getEntityWorld().spawnEntity(areaEffectCloudEntity);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, Pr
     @Override
     public void tick() {
         super.tick();
-        if (getWorld().isClient()) spawnEffectParticles(8, COLOR);
+        if (getEntityWorld().isClient()) spawnEffectParticles(8, COLOR);
     }
 
     @Override

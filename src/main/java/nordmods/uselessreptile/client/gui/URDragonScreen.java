@@ -38,7 +38,7 @@ public class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     public URDragonScreen(T handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
         PlayerEntity player = inventory.player;
-        entity = (URDragonEntity) player.getWorld().getEntityById(entityToRenderID);
+        entity = (URDragonEntity) player.getEntityWorld().getEntityById(entityToRenderID);
     }
 
     @Override

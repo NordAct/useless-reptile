@@ -23,7 +23,7 @@ public class DragonNavigation extends MobNavigation {
     public void tick() {
         if (entity.hasControllingPassenger() || entity.hasVehicle() || entity.isSitting()) return;
 
-        boolean isFullBlock = entity.getSteppingBlockState().isFullCube(entity.getWorld(), entity.getSteppingPos());
+        boolean isFullBlock = entity.getSteppingBlockState().isFullCube(entity.getEntityWorld(), entity.getSteppingPos());
         if (NavigationConditions.isSolidAt(entity, entity.getBlockPos()) && isFullBlock) entity.getJumpControl().setActive();
         entity.setPathfindingPenalty(PathNodeType.WATER, !entity.hasTargetInWater() ? 8 : 0);
         entity.setPathfindingPenalty(PathNodeType.WATER_BORDER, !entity.hasTargetInWater() ? 8 : 0);
@@ -38,7 +38,7 @@ public class DragonNavigation extends MobNavigation {
         checkTimeouts(getPos());
 
         //TODO debug code
-        //DebuggingPackets.sendPathfindingPacket(entity.getWorld(), entity, currentPath, nodeReachProximity);
+        //DebuggingPackets.sendPathfindingPacket(entity.getEntityWorld(), entity, currentPath, nodeReachProximity);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DragonNavigation extends MobNavigation {
             nodeChecked = false;
         }
 
-        if (currentTarget.distanceTo(getTargetPos().toCenterPos()) > entity.getPos().distanceTo(getTargetPos().toCenterPos())) recalculatePath();
+        if (currentTarget.distanceTo(getTargetPos().toCenterPos()) > entity.getEntityPos().distanceTo(getTargetPos().toCenterPos())) recalculatePath();
     }
 
     protected boolean shouldJumpToNextNode(Vec3d currentPos) {

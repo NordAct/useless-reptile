@@ -66,7 +66,7 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
     @Override
     protected void onEntityHit(EntityHitResult entityHitResult) {
         super.onEntityHit(entityHitResult);
-        if (!(getWorld() instanceof ServerWorld serverWorld)) return;
+        if (!(getEntityWorld() instanceof ServerWorld serverWorld)) return;
         Entity target = entityHitResult.getEntity();
         DamageSource source = getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner());
         if (target instanceof LivingEntity livingEntity && livingEntity.isInvulnerableTo(serverWorld, source)) return;
@@ -89,7 +89,7 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
         super.tick();
         tryPlaySpawnSound();
         if (++age <= MAX_AGE) {
-            List<Entity> targets = getWorld().getOtherEntities(this, getBoundingBox(), this::canTarget);
+            List<Entity> targets = getEntityWorld().getOtherEntities(this, getBoundingBox(), this::canTarget);
             for (Entity target : targets) {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
                 onEntityHit(entityHitResult);
@@ -101,18 +101,18 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
             float harnessLimit = 3;
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {
-                BlockState blockState = getWorld().getBlockState(blockPos);
+                BlockState blockState = getEntityWorld().getBlockState(blockPos);
                 if (getOwner() instanceof URDragonEntity dragon && dragon.isBlockProtected(blockPos)) continue;
-                float hardness = blockState.getHardness(getWorld(), blockPos);
+                float hardness = blockState.getHardness(getEntityWorld(), blockPos);
                 if (hardness < 0) continue;
                 if (hardness == 0 || blockState.isIn(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)) {
                     boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
-                    getWorld().breakBlock(blockPos, shouldDrop, this);
+                    getEntityWorld().breakBlock(blockPos, shouldDrop, this);
                     continue;
                 }
                 harnessLimit -= hardness;
                 if (harnessLimit < 0) break;
-                FallingBlockEntity fallingBlockEntity = FallingBlockEntity.spawnFromBlock(getWorld(), blockPos, blockState);
+                FallingBlockEntity fallingBlockEntity = FallingBlockEntity.spawnFromBlock(getEntityWorld(), blockPos, blockState);
                 fallingBlockEntities.add(fallingBlockEntity);
             }
             List<FallingBlockEntity> sorted = new ArrayList<>();
@@ -189,7 +189,7 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
         Vec3d rot = owner.getRotationVector(pitch, yaw);
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreathEntity firstSegment = null;
-        World world = owner.getWorld();
+        World world = owner.getEntityWorld();
 
         for (int i = 1; i <= LightningBreathEntity.MAX_LENGTH; i++) {
             LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(world, owner);

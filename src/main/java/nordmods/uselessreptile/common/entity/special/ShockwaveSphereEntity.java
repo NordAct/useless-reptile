@@ -54,7 +54,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
         tryPlaySpawnSound();
         prevRadius = currentRadius;
         if (currentRadius <= MAX_RADIUS) {
-            List<Entity> targets = getWorld().getOtherEntities(this, getBoundingBox().expand(currentRadius + 3), this::canTarget);
+            List<Entity> targets = getEntityWorld().getOtherEntities(this, getBoundingBox().expand(currentRadius + 3), this::canTarget);
             for (Entity target : targets) {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
                 onEntityHit(entityHitResult);
@@ -74,10 +74,10 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
 
         if (exposure > 0) {
             target.playSound(URSounds.SHOCKWAVE_HIT, 1, 1 / exposure);
-            Vec3d vec3d = target.getPos().subtract(getEyePos());
+            Vec3d vec3d = target.getEntityPos().subtract(getEyePos());
             double lengthMod = currentRadius / vec3d.length();
             target.addVelocityInternal(vec3d.normalize().multiply(POWER * lengthMod * exposure));
-            if (target instanceof LivingEntity livingEntity && livingEntity.getWorld() instanceof ServerWorld world) {
+            if (target instanceof LivingEntity livingEntity && livingEntity.getEntityWorld() instanceof ServerWorld world) {
                 livingEntity.addStatusEffect(new StatusEffectInstance(URStatusEffects.SHOCK, (int) (100 * MathHelper.clamp(lengthMod, 1, 2) * exposure), 0, false, false), getOwner());
                 livingEntity.damage(world, getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (getResultingDamage() * MathHelper.clamp(lengthMod, 1, 2)));
             }
@@ -90,7 +90,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
             affected.add(target);
             return false;
         }
-        if (getEyePos().distanceTo(target.getPos()) > currentRadius + target.getWidth()/2) return false;
+        if (getEyePos().distanceTo(target.getEntityPos()) > currentRadius + target.getWidth()/2) return false;
         if (target instanceof EntityPart part) target = part.owner;
         Entity owner = getOwner();
         LivingEntity ownerOwner = owner instanceof Tameable tameable ? tameable.getOwner() : null;
@@ -109,7 +109,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
 
     @Override
     public double getEyeY() {
-        return getPos().y + getHeight()/2f;
+        return getEntityPos().y + getHeight()/2f;
     }
 
     @Override

@@ -42,7 +42,7 @@ public abstract class URMovingProjectile extends PersistentProjectileEntity {
 
     @Override
     public void playSound(SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) getWorld().playSoundClient(getX(), getY(),getZ(), sound, getOwner() != null ? getOwner().getSoundCategory() : SoundCategory.NEUTRAL, volume, pitch,true);
+        if (!isSilent()) getEntityWorld().playSoundClient(getX(), getY(),getZ(), sound, getOwner() != null ? getOwner().getSoundCategory() : SoundCategory.NEUTRAL, volume, pitch,true);
     }
 
 
@@ -57,7 +57,7 @@ public abstract class URMovingProjectile extends PersistentProjectileEntity {
         float g = (color >> 8 & 0xFF) / 255f;
         float b = (color & 0xFF) / 255f;
         for (int j = 0; j < amount; ++j) {
-            getWorld().addParticleClient(TintedParticleEffect.create(ParticleTypes.ENTITY_EFFECT, r, g, b), getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), r, g, b);
+            getEntityWorld().addParticleClient(TintedParticleEffect.create(ParticleTypes.ENTITY_EFFECT, r, g, b), getParticleX(0.5), getRandomBodyY(), getParticleZ(0.5), r, g, b);
         }
     }
 }
