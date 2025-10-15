@@ -181,8 +181,8 @@ public class URDragonModel<T extends URDragonEntity> extends GeoModel<T> {
     }
 
     @Override
-    public void prepareForRenderPass(T animatable, GeoRenderState renderState) {
+    public void prepareForRenderPass(T animatable, GeoRenderState renderState, float partialTick) {
         if (renderState.hasGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT) && !renderState.getGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT)) return;
-        super.prepareForRenderPass(animatable, renderState);
+        super.prepareForRenderPass(animatable, renderState, partialTick);
     }
 }

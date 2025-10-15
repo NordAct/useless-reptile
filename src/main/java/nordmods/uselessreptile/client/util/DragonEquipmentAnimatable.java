@@ -11,8 +11,8 @@ import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.Map;
 
@@ -49,6 +49,6 @@ public class DragonEquipmentAnimatable implements GeoAnimatable, AssetCahceOwner
 
     @Override
     public double getTick(Object object) {
-        return RenderUtil.getCurrentTick();
+        return ClientUtil.getCurrentTick();
     }
 }

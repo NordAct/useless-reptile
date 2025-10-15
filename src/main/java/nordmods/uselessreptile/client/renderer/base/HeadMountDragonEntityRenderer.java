@@ -1,11 +1,10 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.RotationAxis;
@@ -21,29 +20,29 @@ public abstract class HeadMountDragonEntityRenderer<T extends URDragonEntity & H
     }
 
     @Override
-    public void defaultRender(R renderState, MatrixStack poseStack, VertexConsumerProvider bufferSource, RenderLayer renderType, VertexConsumer buffer) {
+    public void submitRenderTasks(R renderState, MatrixStack poseStack, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState) {
         if (renderState.getGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER)) {
             if (HeadMountDragonFeatureRenderer.ON_HEAD.contains(renderState.getGeckolibData(URDataTickets.DRAGON_UUID)))
                 return;
             else if (!renderState.getGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT))
                 return;
         }
-        super.defaultRender(renderState, poseStack, bufferSource, renderType, buffer);
+        super.submitRenderTasks(renderState, poseStack, renderTasks, cameraState);
     }
 
     @Override
-    protected void applyRotations(R renderState, MatrixStack poseStack, float nativeScale) {
+    protected void applyRotations(R renderState, MatrixStack poseStack, float nativeScale, CameraRenderState cameraState) {
         if (renderState.getGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER)) {
             if (renderState.flipUpsideDown) {
                 poseStack.translate(0, (renderState.height + 0.1f) / nativeScale, 0);
                 poseStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f));
             }
-        } else super.applyRotations(renderState, poseStack, nativeScale);
+        } else super.applyRotations(renderState, poseStack, nativeScale, cameraState);
     }
 
     @Override
-    public void addRenderData(T animatable, Void relatedObject, R renderState) {
-        super.addRenderData(animatable, relatedObject, renderState);
+    public void addRenderData(T animatable, Void relatedObject, R renderState, float tickDelta) {
+        super.addRenderData(animatable, relatedObject, renderState, tickDelta);
         renderState.addGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER, animatable.getVehicle() instanceof PlayerEntity);
         renderState.addGeckolibData(URDataTickets.DRAGON_UUID, animatable.getUuid());
         renderState.addGeckolibData(

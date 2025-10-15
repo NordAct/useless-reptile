@@ -1,16 +1,15 @@
 package nordmods.uselessreptile.client.renderer;
 
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.renderer.base.URRideableDragonEntityRenderer;
 import nordmods.uselessreptile.common.entity.WyvernEntity;
 import nordmods.uselessreptile.common.init.URTags;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
@@ -21,9 +20,10 @@ public class WyvernEntityRenderer<R extends LivingEntityRenderState & GeoRenderS
     }
 
     @Override
-    public void preRender(R renderState, MatrixStack poseStack, BakedGeoModel model, @Nullable VertexConsumerProvider bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
+    public void preRender(R renderState, MatrixStack poseStack, BakedGeoModel model, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState,
+                          int packedLight, int packedOverlay, int renderColor) {
         updateSaddle(renderState);
-        super.preRender(renderState, poseStack, model, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
+        super.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
     }
 
     protected void updateSaddle (R renderState) {
@@ -31,8 +31,8 @@ public class WyvernEntityRenderer<R extends LivingEntityRenderState & GeoRenderS
     }
 
     @Override
-    public void addRenderData(WyvernEntity animatable, Void relatedObject, R renderState) {
-        super.addRenderData(animatable, relatedObject, renderState);
+    public void addRenderData(WyvernEntity animatable, Void relatedObject, R renderState, float tickDelta) {
+        super.addRenderData(animatable, relatedObject, renderState, tickDelta);
         renderState.addGeckolibData(URDataTickets.DRAGON_HAS_SADDLE, animatable.getEquippedStack(EquipmentSlot.SADDLE).isIn(URTags.WYVERN_SADDLES));
     }
 }

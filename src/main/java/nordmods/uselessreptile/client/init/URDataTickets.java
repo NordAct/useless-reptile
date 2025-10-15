@@ -12,6 +12,7 @@ import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import software.bernie.geckolib.constant.dataticket.DataTicket;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
+import java.util.HashMap;
 import java.util.UUID;
 
 public class URDataTickets {
@@ -31,6 +32,7 @@ public class URDataTickets {
     public static final DataTicket<Identifier> EQUIPMENT_ITEM_ID = DataTicket.create("ur_equipment_item_id", Identifier.class);
     public static final DataTicket<EntityEquipment> DRAGON_EQIPMENT = DataTicket.create("ur_dragon_equipment", EntityEquipment.class);
     public static final DataTicket<GeoRenderState> DRAGON_RENDER_STATE = DataTicket.create("ur_dragon_render_state", GeoRenderState.class);
+    public static final DataTicket<HashMap> DRAGON_BONES = DataTicket.create("ur_dragon_bones", HashMap.class); //string and OwnerBoneTransforms
     //passenger(rider) data for rendering
     public static final DataTicket<Boolean> PASSENGER_SHOULD_RENDER_TO_CLIENT = DataTicket.create("ur_passenger_should_render_to_client", Boolean.class);
     public static final DataTicket<EntityRenderState> PASSENGER_RENDER_STATE = DataTicket.create("ur_passenger_render_state", EntityRenderState.class); //required for passenger render layer

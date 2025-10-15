@@ -1,10 +1,9 @@
 package nordmods.uselessreptile.client.renderer;
 
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.renderer.base.URRideableDragonEntityRenderer;
@@ -26,8 +25,9 @@ public class LightningChaserEntityRenderer<R extends LivingEntityRenderState & G
         shadowRadius = 1.5f;
     }
 
-    public void renderRecursively(R renderState, MatrixStack poseStack, GeoBone bone, RenderLayer renderType, VertexConsumerProvider bufferSource, VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-        super.renderRecursively(renderState, poseStack, bone, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
+    public void renderBone(R renderState, MatrixStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+                           int packedLight, int packedOverlay, int renderColor) {
+        super.renderBone(renderState, poseStack, bone, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
         if (bone.getName().equals("head")) {
             Vector3d vector3d = bone.getLocalPosition();
             headPos.put(renderState.getGeckolibData(URDataTickets.DRAGON_UUID), new Vector3f((float) vector3d.x, (float) vector3d.y, (float) vector3d.z));
@@ -35,8 +35,8 @@ public class LightningChaserEntityRenderer<R extends LivingEntityRenderState & G
     }
 
     @Override
-    public void addRenderData(LightningChaserEntity animatable, Void relatedObject, R renderState) {
-        super.addRenderData(animatable, relatedObject, renderState);
+    public void addRenderData(LightningChaserEntity animatable, Void relatedObject, R renderState, float tickDelta) {
+        super.addRenderData(animatable, relatedObject, renderState, tickDelta);
         renderState.addGeckolibData(URDataTickets.DRAGON_UUID, animatable.getUuid());
     }
 }

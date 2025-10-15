@@ -2,48 +2,40 @@ package nordmods.uselessreptile.client.renderer.base;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.VertexRendering;
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
+import net.minecraft.client.render.command.RenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.state.EntityHitbox;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EntityEquipment;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Box;
-import net.minecraft.util.math.RotationAxis;
-import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.model.DragonEqupmentModel;
 import nordmods.uselessreptile.client.model.URDragonModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.renderer.special.SaddleEquipmentRenderer;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
-import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.init.URTags;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
-
-import java.util.Map;
 
 public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends LivingEntityRenderState & GeoRenderState> extends GeoEntityRenderer<T, R> {
     private final DragonEquipmentRenderer dragonEquipmentRenderer = new DragonEquipmentRenderer();
     private final SaddleEquipmentRenderer saddleEquipmentRenderer = new SaddleEquipmentRenderer();
     public URDragonEntityRenderer(EntityRendererFactory.Context renderManager) {
         super(renderManager, new URDragonModel<>());
-        addRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE)));
+        withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE)));
     }
 
     @Override
@@ -52,13 +44,15 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     }
 
     @Override
-    public void postRender(R dragonRenderState, MatrixStack poseStack, BakedGeoModel model, VertexConsumerProvider bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-        super.postRender(dragonRenderState, poseStack, model, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
+    public void postRender(R dragonRenderState, MatrixStack poseStack, BakedGeoModel model, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState,
+                           int packedLight, int packedOverlay, int renderColor) {
+        super.postRender(dragonRenderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
         if (!ResourceUtil.isResourceReloadFinished) return;
 
         DragonAssetCache dragonAssetCache = dragonRenderState.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE);
         EntityEquipment equipment = dragonRenderState.getGeckolibData(URDataTickets.DRAGON_EQIPMENT);
 
+        float tickDelta = dragonRenderState.getGeckolibData(DataTickets.PARTIAL_TICK);
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             ItemStack itemStack = equipment.get(slot);
             if (itemStack == null || itemStack.isEmpty()) {
@@ -70,45 +64,16 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
             if (dragonEquipmentAnimatable == null || dragonEquipmentAnimatable.item != itemStack.getItem()) {
                 dragonEquipmentAnimatable = new DragonEquipmentAnimatable(dragonRenderState, itemStack.getItem());
                 dragonAssetCache.setEquipmentAnimatable(slot, dragonEquipmentAnimatable);
-            } else dragonEquipmentAnimatable.ownerRenderState = dragonRenderState;
+            }
 
             DragonEquipmentRenderer usedRenderer = itemStack.isIn(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
-            GeoRenderState temp = new GeoRenderState.Impl();
-            usedRenderer.addRenderData(dragonEquipmentAnimatable, null, temp);
-
-            Identifier id = usedRenderer.getGeoModel().getModelResource(temp);
-            if (id == DragonEqupmentModel.DEFAULT_MODEL) continue;
-            BakedGeoModel bakedEquipmentModel = usedRenderer.getGeoModel().getBakedModel(id);
-
-            id = usedRenderer.getGeoModel().getTextureResource(temp);
-            Map<String, GeoBone> equipmentBones = dragonEquipmentAnimatable.equipmentBones;
-            if (equipmentBones.isEmpty()) getEquipmentBones(equipmentBones, bakedEquipmentModel);
-
-            getGeoModel().getAnimationProcessor().getRegisteredBones().forEach(bone -> {
-                GeoBone equipmentBone = equipmentBones.get(bone.getName());
-                if (equipmentBone != null) {
-                    equipmentBone.updateScale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
-                    equipmentBone.updateRotation(bone.getRotX(), bone.getRotY(), bone.getRotZ());
-                    equipmentBone.updatePosition(bone.getPosX(), bone.getPosY(), bone.getPosZ());
-                }
-            });
-
-            RenderLayer renderType = usedRenderer.getGeoModel().getRenderType(temp, id);
-            usedRenderer.render(poseStack, dragonEquipmentAnimatable, bufferSource, renderType, bufferSource.getBuffer(renderType), packedLight, RenderUtil.getTickDelta(false));
+            usedRenderer.submit(poseStack, dragonEquipmentAnimatable, getGeoModel(), renderTasks, cameraState, packedLight, tickDelta);
         }
     }
 
-    private void addChildren(Map<String, GeoBone> equipmentBones, GeoBone bone) {
-        equipmentBones.put(bone.getName(), bone);
-        for (GeoBone child : bone.getChildBones()) addChildren(equipmentBones, child);
-    }
-
-    private void getEquipmentBones(Map<String, GeoBone> equipmentBones, BakedGeoModel model) {
-        for (GeoBone bone : model.topLevelBones()) addChildren(equipmentBones, bone);
-    }
 
     @Override
-    public void addRenderData(T animatable, Void relatedObject, R renderState) {
+    public void addRenderData(T animatable, Void relatedObject, R renderState, float partialTick) {
         renderState.addGeckolibData(URDataTickets.DRAGON_ID, animatable.getDragonId());
         renderState.addGeckolibData(URDataTickets.DRAGON_VARIANT, animatable.getVariant());
         renderState.addGeckolibData(URDataTickets.DRAGON_NAME, animatable.getCustomName());
@@ -161,18 +126,18 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     }
 
     @Override
-    public void actuallyRender(R renderState, MatrixStack poseStack, BakedGeoModel model, @Nullable RenderLayer renderType,
-                               VertexConsumerProvider bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, int packedLight, int packedOverlay, int renderColor) {
-        super.actuallyRender(renderState, poseStack, model, renderType, bufferSource, buffer, isReRender, packedLight, packedOverlay, renderColor);
-        if (renderState.hitbox != null && renderState.hasGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT)) {
-            poseStack.push();
-            poseStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180 + renderState.bodyYaw));
-            VertexConsumer buf = bufferSource.getBuffer(RenderLayer.getLines());
-            ShootingPoint point = renderState.getGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT);
-            Vec3d pos = point.pos().subtract(new Vec3d(renderState.x, renderState.y, renderState.z));
-            Vec3d rot = point.rotation();
-            VertexRendering.drawVector(poseStack, buf, pos.toVector3f(), rot.multiply(5.0), -0x00FFF1);
-            poseStack.pop();
-        }
+    public void buildRenderTask(R renderState, MatrixStack poseStack, BakedGeoModel model, RenderCommandQueue renderTasks, CameraRenderState cameraState, @Nullable RenderLayer renderType,
+                                int packedLight, int packedOverlay, int renderColor) {
+        super.buildRenderTask(renderState, poseStack, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor);
+        //if (renderState.hitbox != null && renderState.hasGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT)) { //todo fix shooting point renderer
+        //    poseStack.push();
+        //    poseStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180 + renderState.bodyYaw));
+        //    VertexConsumer buf = bufferSource.getBuffer(RenderLayer.getLines());
+        //    ShootingPoint point = renderState.getGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT);
+        //    Vec3d pos = point.pos().subtract(new Vec3d(renderState.x, renderState.y, renderState.z));
+        //    Vec3d rot = point.rotation();
+        //    VertexRendering.drawVector(poseStack, buf, pos.toVector3f(), rot.multiply(5.0), -0x00FFF1);
+        //    poseStack.pop();
+        //}
     }
 }

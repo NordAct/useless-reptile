@@ -1,15 +1,16 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
+import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRender;
@@ -22,14 +23,14 @@ import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 //todo wait for geckolib
-public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends GeoRenderState> extends GeoRenderLayer<T, Void, R> {
+public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     public static final Set<UUID> PASSENGERS = new HashSet<>();
     private final BiFunction<R, GeoBone, ? extends EntityRenderState> passengerRenderStateGetter;
     private final BiFunction<R, GeoBone, EntityRenderer<? extends Entity, EntityRenderState>> passengerRenderGetter;
     private final BiFunction<R, GeoBone, UUID> passengerUUIDGetter;
     private final String boneName;
 
-    public DragonPassengerLayer(GeoRenderer<T, Void, R> entityRendererIn, BiFunction<R, GeoBone, ? extends EntityRenderState> passengerRenderStateGetter, BiFunction<R, GeoBone, EntityRenderer<? extends Entity, EntityRenderState>> passengerRenderGetter, BiFunction<R, GeoBone, UUID> passengerUUIDGetter, String boneName) {
+    public DragonPassengerLayer(GeoRenderer<T, O, R> entityRendererIn, BiFunction<R, GeoBone, ? extends EntityRenderState> passengerRenderStateGetter, BiFunction<R, GeoBone, EntityRenderer<? extends Entity, EntityRenderState>> passengerRenderGetter, BiFunction<R, GeoBone, UUID> passengerUUIDGetter, String boneName) {
         super(entityRendererIn);
         this.passengerRenderStateGetter = passengerRenderStateGetter;
         this.passengerRenderGetter = passengerRenderGetter;
@@ -37,7 +38,7 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends
         this.boneName = boneName;
     }
 
-    public DragonPassengerLayer(GeoRenderer<T, Void, R> entityRendererIn) {
+    public DragonPassengerLayer(GeoRenderer<T, O, R> entityRendererIn) {
         this(entityRendererIn,
                 (state, bone) -> {
             if (!bone.getName().equals("rider")) return null;
@@ -55,11 +56,14 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends
     }
 
     @Override
-    public void addPerBoneRender(R renderState, BakedGeoModel model, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
-        model.getBone(boneName).ifPresent(bone -> renderForBone(renderState, bone, consumer));
+    public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+        model.getBone(boneName).ifPresent(bone ->
+                consumer.accept(bone, ((renderState1, poseStack, bone1, renderTasks, cameraState, packedLight, packedOverlay, renderColor) -> {
+                    renderForBone(renderState, bone, consumer, renderTasks, cameraState);
+                })));
     }
 
-    protected void renderForBone(R renderState, GeoBone bone, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
+    protected void renderForBone(R renderState, GeoBone bone, BiConsumer<GeoBone, PerBoneRender<R>> consumer, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraRenderState) {
         consumer.accept(bone, (renderState2, matrixStackIn, bone2, renderType, bufferSource,
                 packedLight, packedOverlay, renderColor) -> {
             GeoRenderState ownerState = getOwnerRenderState(renderState);
@@ -78,10 +82,11 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, R extends
             RenderUtil.translateToPivotPoint(matrixStackIn, bone);
             matrixStackIn.scale(scale, scale, scale);
             passengerState.displayName = null;
-            renderer.render(passengerState,
+            renderer.render(
+                    passengerState,
                     matrixStackIn,
-                    bufferSource,
-                    ownerState.getGeckolibData(DataTickets.PACKED_LIGHT)
+                    renderTasks,
+                    cameraRenderState
             );
             PASSENGERS.add(passengerUUID);
             matrixStackIn.pop();

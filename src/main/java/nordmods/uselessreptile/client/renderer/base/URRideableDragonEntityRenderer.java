@@ -16,8 +16,8 @@ public class URRideableDragonEntityRenderer<T extends URRideableDragonEntity, R 
     }
 
     @Override
-    public void addRenderData(T animatable, Void relatedObject, R renderState) {
-        super.addRenderData(animatable, relatedObject, renderState);
+    public void addRenderData(T animatable, Void relatedObject, R renderState, float tickDelta) {
+        super.addRenderData(animatable, relatedObject, renderState, tickDelta);
         Entity passenger = animatable.getFirstPassenger();
         if (passenger != null) {
             renderState.addGeckolibData(
