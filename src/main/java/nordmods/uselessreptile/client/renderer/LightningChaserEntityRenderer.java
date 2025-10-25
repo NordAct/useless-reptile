@@ -25,9 +25,9 @@ public class LightningChaserEntityRenderer<R extends LivingEntityRenderState & G
         shadowRadius = 1.5f;
     }
 
-    public void renderBone(R renderState, MatrixStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState, boolean skipBoneTasks,
+    public void renderBone(R renderState, MatrixStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
                            int packedLight, int packedOverlay, int renderColor) {
-        super.renderBone(renderState, poseStack, bone, buffer, cameraState, skipBoneTasks, packedLight, packedOverlay, renderColor);
+        super.renderBone(renderState, poseStack, bone, buffer, cameraState, packedLight, packedOverlay, renderColor);
         if (bone.getName().equals("head")) {
             Vector3d vector3d = bone.getLocalPosition();
             headPos.put(renderState.getGeckolibData(URDataTickets.DRAGON_UUID), new Vector3f((float) vector3d.x, (float) vector3d.y, (float) vector3d.z));

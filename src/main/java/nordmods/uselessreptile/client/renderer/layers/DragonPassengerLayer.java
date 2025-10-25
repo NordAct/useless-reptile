@@ -5,6 +5,7 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.render.state.CameraRenderState;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.init.URDataTickets;
@@ -59,13 +60,11 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R exte
     public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
         model.getBone(boneName).ifPresent(bone ->
                 consumer.accept(bone, ((renderState1, poseStack, bone1, renderTasks, cameraState, packedLight, packedOverlay, renderColor) -> {
-                    renderForBone(renderState, bone, consumer, renderTasks, cameraState);
+                    renderForBone(renderState, bone, poseStack, renderTasks, cameraState);
                 })));
     }
 
-    protected void renderForBone(R renderState, GeoBone bone, BiConsumer<GeoBone, PerBoneRender<R>> consumer, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraRenderState) {
-        consumer.accept(bone, (renderState2, matrixStackIn, bone2, renderType, bufferSource,
-                packedLight, packedOverlay, renderColor) -> {
+    protected void renderForBone(R renderState, GeoBone bone, MatrixStack matrixStackIn, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraRenderState) {
             GeoRenderState ownerState = getOwnerRenderState(renderState);
             if (!ownerState.getGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT)) return;
             EntityRenderState passengerState = passengerRenderStateGetter.apply(renderState, bone);
@@ -90,7 +89,6 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R exte
             );
             PASSENGERS.add(passengerUUID);
             matrixStackIn.pop();
-        });
     }
 
     protected static GeoRenderState getOwnerRenderState(GeoRenderState renderState) {

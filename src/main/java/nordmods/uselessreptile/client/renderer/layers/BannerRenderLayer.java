@@ -4,6 +4,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.item.ItemRenderState;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemDisplayContext;
 import net.minecraft.item.ItemStack;
@@ -30,23 +31,23 @@ public class BannerRenderLayer<T extends GeoAnimatable, O, R extends GeoRenderSt
     public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
         model.getBone("banner").ifPresent(bone ->
                 consumer.accept(bone, (renderState1, poseStack, bone1, renderTasks, cameraState, packedLight, packedOverlay, renderColor) ->
-                        renderForBone(renderState, bone, consumer, renderTasks)));
+                        renderForBone(renderState, bone, poseStack, renderTasks, packedLight)));
     }
 
 
-    protected void renderForBone(R renderState, GeoBone bone, BiConsumer<GeoBone, PerBoneRender<R>> consumer, OrderedRenderCommandQueue renderTasks) {
-        consumer.accept(bone, (renderState2, matrixStackIn, bone2, renderType, bufferSource,
-                               packedLight, packedOverlay, renderColor) -> {
+    protected void renderForBone(R renderState, GeoBone bone, MatrixStack matrixStackIn, OrderedRenderCommandQueue renderTasks, int packedLight) {
             GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
             if (ownerState == null) return;
             ItemStack stack = ownerState.getGeckolibData(URDataTickets.DRAGON_EQIPMENT).get(EquipmentSlot.OFFHAND);
 
             if (stack != null && !stack.isEmpty()) {
                 RenderUtil.translateAndRotateMatrixForBone(matrixStackIn, bone);
+                //bone.transformToBone(matrixStackIn);
+
+                //matrixStackIn.scale(16f, 16f, 16f);
                 ItemRenderState stackRenderState = new ItemRenderState();
                 MinecraftClient.getInstance().getItemModelManager().clearAndUpdate(stackRenderState, stack, ItemDisplayContext.NONE, ClientUtil.getLevel(), null, renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID).intValue());
                 stackRenderState.render(matrixStackIn, renderTasks, packedLight, OverlayTexture.DEFAULT_UV, 0);
             }
-        });
     }
 }

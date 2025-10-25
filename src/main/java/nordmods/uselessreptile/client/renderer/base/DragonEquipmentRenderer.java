@@ -19,7 +19,7 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable, GeoModel<?>, GeoRenderState> { //related object - dragon model and render state
+public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable, GeoModel<?>, GeoRenderState> { //related object - dragon model
     public DragonEquipmentRenderer() {
         super(new DragonEqupmentModel());
         withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE)));
