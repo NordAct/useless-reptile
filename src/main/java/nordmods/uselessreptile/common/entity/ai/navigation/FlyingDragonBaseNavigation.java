@@ -33,9 +33,6 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
         entity.setPathfindingPenalty(PathNodeType.WATER_BORDER, !entity.hasTargetInWater() ? 8 : 0);
 
         tickCount++;
-
-        //TODO debug code
-        //DebuggingPackets.sendPathfindingPacket(entity.getWorld(), entity, currentPath, nodeReachProximity);
     }
 
     @Override

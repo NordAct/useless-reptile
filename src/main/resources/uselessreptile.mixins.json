@@ -10,7 +10,7 @@
     "common.LightningEntityMixin",
     "common.LivingEntityMixin",
     "common.PlayerEntityMixin",
-    "common.PlayerManagerMixin",
+    "common.PrepareSpawnTaskMixin",
     "common.ServerPlayerEntityMixin",
     "common.ServerWorldMixin",
     "common.SpawnGroupMixin"

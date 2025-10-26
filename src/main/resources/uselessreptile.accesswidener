@@ -1,6 +1,4 @@
 accessWidener	v2 named
-accessible class net/minecraft/client/resource/ResourceReloadLogger$ReloadState
-accessible field net/minecraft/client/resource/ResourceReloadLogger$ReloadState finished Z
 accessible field net/minecraft/entity/Entity CUSTOM_NAME Lnet/minecraft/entity/data/TrackedData;
 accessible method net/minecraft/entity/mob/MobEntity getAttackBox ()Lnet/minecraft/util/math/Box;
 accessible method net/minecraft/data/recipe/ShapedRecipeJsonBuilder <init> (Lnet/minecraft/registry/RegistryEntryLookup;Lnet/minecraft/recipe/book/RecipeCategory;Lnet/minecraft/item/ItemConvertible;I)V

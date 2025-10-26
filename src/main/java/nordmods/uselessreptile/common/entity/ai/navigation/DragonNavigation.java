@@ -36,9 +36,6 @@ public class DragonNavigation extends MobNavigation {
             moveOrStop(target);
         }
         checkTimeouts(getPos());
-
-        //TODO debug code
-        //DebuggingPackets.sendPathfindingPacket(entity.getEntityWorld(), entity, currentPath, nodeReachProximity);
     }
 
     @Override
