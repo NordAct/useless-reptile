@@ -74,18 +74,17 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeJsonBuilder {
 
     @Override
     public void offerTo(RecipeExporter exporter, RegistryKey<Recipe<?>> recipeKey) {
-        RawShapedRecipe rawShapedRecipe = validate(recipeKey);
-        Advancement.Builder builder = exporter.getAdvancementBuilder().criterion("has_the_recipe", RecipeUnlockedCriterion.create(recipeKey)).rewards(AdvancementRewards.Builder.recipe(recipeKey)).criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
+        RawShapedRecipe rawShapedRecipe = RawShapedRecipe.create(this.inputs, this.pattern);
+        Advancement.Builder builder = exporter
+                .getAdvancementBuilder()
+                .criterion(
+                        "has_the_recipe",
+                        RecipeUnlockedCriterion.create(recipeKey)
+                )
+                .rewards(AdvancementRewards.Builder.recipe(recipeKey))
+                .criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
         criteria.forEach(builder::criterion);
         VortexHornRecipe shapedRecipe = new VortexHornRecipe(Objects.requireNonNullElse(group, ""), CraftingRecipeJsonBuilder.toCraftingCategory(category), rawShapedRecipe, new ItemStack(output, count), showNotification);
         exporter.accept(recipeKey, shapedRecipe, builder.build(recipeKey.getValue().withPrefixedPath("recipes/" + category.getName() + "/")));
-    }
-
-    private RawShapedRecipe validate(RegistryKey<Recipe<?>> recipeKey) {
-        if (this.criteria.isEmpty()) {
-            throw new IllegalStateException("No way of obtaining recipe " + recipeKey.getValue());
-        } else {
-            return RawShapedRecipe.create(this.inputs, this.pattern);
-        }
     }
 }

@@ -8,6 +8,7 @@ import net.minecraft.data.recipe.RecipeGenerator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKeys;
@@ -70,7 +71,19 @@ public class URRecipeProvider extends FabricRecipeProvider {
                 offerVortexHornRecipe(this, registryEntryLookup, exporter, URItems.GOLD_VORTEX_HORN, URItems.IRON_VORTEX_HORN, ConventionalItemTags.GOLD_INGOTS);
                 offerVortexHornRecipe(this, registryEntryLookup, exporter, URItems.DIAMOND_VORTEX_HORN, URItems.GOLD_VORTEX_HORN, ConventionalItemTags.DIAMOND_GEMS);
 
-                offerNetheriteUpgradeRecipe(URItems.DIAMOND_VORTEX_HORN, RecipeCategory.TOOLS, URItems.NETHERITE_VORTEX_HORN);
+                VortexHornSmithingRecipeJsonBuilder.create(
+                        Ingredient.ofItem(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.ofItem(URItems.DIAMOND_VORTEX_HORN),
+                        ingredientFromTag(ItemTags.NETHERITE_TOOL_MATERIALS),
+                        RecipeCategory.TOOLS,
+                        URItems.NETHERITE_VORTEX_HORN
+                        )
+                        .criterion(
+                                "has_netherite_ingot",
+                                conditionsFromTag(ItemTags.NETHERITE_TOOL_MATERIALS)
+                        )
+                        .offerTo(this.exporter, getItemPath(URItems.NETHERITE_VORTEX_HORN) + "_smithing");
+
                 offerNetheriteUpgradeRecipe(URItems.DRAGON_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_HELMET_NETHERITE);
                 offerNetheriteUpgradeRecipe(URItems.DRAGON_CHESTPLATE_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_CHESTPLATE_NETHERITE);
                 offerNetheriteUpgradeRecipe(URItems.DRAGON_TAIL_ARMOR_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_TAIL_ARMOR_NETHERITE);

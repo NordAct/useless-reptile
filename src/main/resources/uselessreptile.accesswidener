@@ -10,5 +10,13 @@ accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder group Ljava/l
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder showNotification Z
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder inputs Ljava/util/Map;
 accessible field net/minecraft/data/recipe/ShapedRecipeJsonBuilder pattern Ljava/util/List;
+accessible field net/minecraft/data/recipe/SmithingTransformRecipeJsonBuilder criteria Ljava/util/Map;
+accessible field net/minecraft/data/recipe/SmithingTransformRecipeJsonBuilder template Lnet/minecraft/recipe/Ingredient;
+accessible field net/minecraft/data/recipe/SmithingTransformRecipeJsonBuilder base Lnet/minecraft/recipe/Ingredient;
+accessible field net/minecraft/data/recipe/SmithingTransformRecipeJsonBuilder addition Lnet/minecraft/recipe/Ingredient;
+accessible field net/minecraft/data/recipe/SmithingTransformRecipeJsonBuilder result Lnet/minecraft/item/Item;
+accessible field net/minecraft/data/recipe/SmithingTransformRecipeJsonBuilder category Lnet/minecraft/recipe/book/RecipeCategory;
+accessible field net/minecraft/recipe/ShapedRecipe raw Lnet/minecraft/recipe/RawShapedRecipe;
+accessible field net/minecraft/recipe/ShapedRecipe result Lnet/minecraft/item/ItemStack;
 extendable method net/minecraft/entity/passive/TameableEntity canTeleportTo (Lnet/minecraft/util/math/BlockPos;)Z
 extendable method net/minecraft/entity/Entity isLogicalSideForUpdatingMovement ()Z
