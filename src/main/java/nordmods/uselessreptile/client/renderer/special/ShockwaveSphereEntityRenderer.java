@@ -5,18 +5,18 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RotationAxis;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.state.ShockwaveSpereEntityRenderState;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import org.joml.Vector3f;
 
-public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity, ShockwaveSpereEntityRenderState> {
+public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity, ShockwaveSphereEntityRenderer.ShockwaveSpereEntityRenderState> {
     private static final Identifier TEXTURE = UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
     private static final int SPHERE_ROWS = 16;
 
@@ -96,5 +96,10 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
         float alpha = MathHelper.clamp(1f - (state.age < 3 ? 0 : state.radius / ShockwaveSphereEntity.MAX_RADIUS), 0f, 1f);
         state.alpha = MathHelper.lerp(tickDelta, entity.prevAlpha, alpha);
         entity.prevAlpha = state.alpha;
+    }
+
+    public static class ShockwaveSpereEntityRenderState extends EntityRenderState {
+        public float alpha = 1;
+        public float radius;
     }
 }

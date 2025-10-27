@@ -5,6 +5,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
@@ -12,14 +13,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.renderer.LightningChaserEntityRenderer;
-import nordmods.uselessreptile.client.state.LightningBreathEntityRenderState;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import org.joml.Random;
 import org.joml.Vector3f;
 
 //reference: https://habr.com/ru/articles/230483/
-public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreathEntity, LightningBreathEntityRenderState> {
+public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreathEntity, LightningBreathEntityRenderer.LightningBreathEntityRenderState> {
     private static final Identifier TEXTURE = UselessReptile.id("textures/entity/lightning_breath/beam.png");
     public LightningBreathEntityRenderer(EntityRendererFactory.Context ctx) {
         super(ctx);
@@ -114,6 +114,12 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
         }
 
         state.lightningBreathBolts = entity.lightningBreathBolts;
+    }
+
+    public static class LightningBreathEntityRenderState extends EntityRenderState {
+        public int length;
+        public float alpha = 1;
+        public LightningBreathEntity.LightningBreathBolt[] lightningBreathBolts = new LightningBreathEntity.LightningBreathBolt[0];
     }
 }
 
