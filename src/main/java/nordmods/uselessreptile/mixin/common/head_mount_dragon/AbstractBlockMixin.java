@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.common;
+package nordmods.uselessreptile.mixin.common.head_mount_dragon;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.BlockState;

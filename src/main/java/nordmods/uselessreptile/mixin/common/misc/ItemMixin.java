@@ -1,26 +1,20 @@
-package nordmods.uselessreptile.mixin.common;
+package nordmods.uselessreptile.mixin.common.misc;
 
 import net.minecraft.component.type.TooltipDisplayComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
 import net.minecraft.util.Colors;
 import nordmods.uselessreptile.client.config.URClientConfig;
-import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.event.DragonEquipmentTooltipEntryEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,16 +33,6 @@ public abstract class ItemMixin {
         textConsumer.accept(Text.translatable("tooltip.uselessreptile.can_be_equipped_by").withColor(Colors.LIGHT_GRAY));
         for (EntityType<?> entityType : entries) {
             textConsumer.accept(Text.literal("- ").withColor(Colors.LIGHT_GRAY).append(Text.translatable(entityType.getTranslationKey()).withColor(Colors.LIGHT_GRAY)));
-        }
-    }
-
-    @Inject(method = "useOnBlock", at = @At("HEAD"), cancellable = true)
-    private void putDragonAssOff(ItemUsageContext context, CallbackInfoReturnable<ActionResult> cir) {
-        PlayerEntity player = context.getPlayer();
-        if (player != null && player.isSneaking() && player.getFirstPassenger() instanceof HeadMountDragon headMountDragon && headMountDragon instanceof URDragonEntity dragon) {
-            dragon.stopRiding();
-            dragon.setPosition(context.getBlockPos().up().toCenterPos());
-            cir.setReturnValue(ActionResult.SUCCESS);
         }
     }
 }

@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.client;
+package nordmods.uselessreptile.mixin.client.camera;
 
 import net.minecraft.client.render.Camera;
 import net.minecraft.entity.Entity;

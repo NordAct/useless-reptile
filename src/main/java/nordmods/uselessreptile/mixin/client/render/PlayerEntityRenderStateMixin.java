@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.client;
+package nordmods.uselessreptile.mixin.client.render;
 
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.state.EntityRenderState;

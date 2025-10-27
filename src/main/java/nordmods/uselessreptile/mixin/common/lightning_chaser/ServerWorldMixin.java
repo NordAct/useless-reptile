@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.common;
+package nordmods.uselessreptile.mixin.common.lightning_chaser;
 
 import net.minecraft.server.world.ServerWorld;
 import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;

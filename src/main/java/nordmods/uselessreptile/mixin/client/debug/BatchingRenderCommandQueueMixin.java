@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.client;
+package nordmods.uselessreptile.mixin.client.debug;
 
 import net.minecraft.client.render.command.BatchingRenderCommandQueue;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;

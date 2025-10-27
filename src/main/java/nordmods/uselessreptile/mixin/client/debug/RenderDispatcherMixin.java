@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.client;
+package nordmods.uselessreptile.mixin.client.debug;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.render.VertexConsumerProvider;

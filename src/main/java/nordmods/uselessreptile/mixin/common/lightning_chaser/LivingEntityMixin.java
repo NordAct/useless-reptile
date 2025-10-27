@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.common;
+package nordmods.uselessreptile.mixin.common.lightning_chaser;
 
 import net.minecraft.entity.LivingEntity;
 import nordmods.uselessreptile.common.entity.LightningChaserEntity;

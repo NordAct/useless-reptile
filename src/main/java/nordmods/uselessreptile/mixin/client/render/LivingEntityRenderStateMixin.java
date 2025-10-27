@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.client;
+package nordmods.uselessreptile.mixin.client.render;
 
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import nordmods.uselessreptile.client.util.duck.DragonPassengerRenderState;

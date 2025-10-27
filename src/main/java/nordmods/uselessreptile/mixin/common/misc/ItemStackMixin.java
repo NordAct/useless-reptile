@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.common;
+package nordmods.uselessreptile.mixin.common.misc;
 
 import net.minecraft.component.ComponentMap;
 import net.minecraft.component.DataComponentTypes;

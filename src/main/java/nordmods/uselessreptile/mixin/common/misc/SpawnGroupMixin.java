@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.mixin.common;
+package nordmods.uselessreptile.mixin.common.misc;
 
 import net.minecraft.entity.SpawnGroup;
 import nordmods.uselessreptile.common.util.URSpawnGroup;
