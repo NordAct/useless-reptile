@@ -1,9 +1,8 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.render.command.BatchingRenderCommandQueue;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.command.RenderCommandQueue;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.state.EntityHitbox;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
@@ -24,7 +23,6 @@ import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URTags;
-import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -41,6 +39,17 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     @Override
     protected float getShadowRadius(R state) {
         return super.getShadowRadius(state) * state.baseScale;
+    }
+
+    @Override
+    public void preRender(R renderState, MatrixStack poseStack, BakedGeoModel model, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState,
+                           int packedLight, int packedOverlay, int renderColor) {
+        super.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+        if (renderState.hitbox != null && renderState.hasGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT) //mayhaps I should move this to mixin
+                && renderTasks instanceof OrderedRenderCommandQueue orderedRenderCommandQueue
+                && orderedRenderCommandQueue.getBatchingQueue(0) instanceof BatchingRenderCommandQueue queue) {
+            queue.useless_reptile$submitShootingPoint(poseStack, renderState, renderState.getGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT));
+        }
     }
 
     @Override
@@ -123,21 +132,5 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
                 ));
             }
         }
-    }
-
-    @Override
-    public void buildRenderTask(R renderState, MatrixStack poseStack, BakedGeoModel model, RenderCommandQueue renderTasks, CameraRenderState cameraState, @Nullable RenderLayer renderType,
-                                int packedLight, int packedOverlay, int renderColor) {
-        super.buildRenderTask(renderState, poseStack, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor);
-        //if (renderState.hitbox != null && renderState.hasGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT)) { //todo fix shooting point renderer
-        //    poseStack.push();
-        //    poseStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(180 + renderState.bodyYaw));
-        //    VertexConsumer buf = bufferSource.getBuffer(RenderLayer.getLines());
-        //    ShootingPoint point = renderState.getGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT);
-        //    Vec3d pos = point.pos().subtract(new Vec3d(renderState.x, renderState.y, renderState.z));
-        //    Vec3d rot = point.rotation();
-        //    VertexRendering.drawVector(poseStack, buf, pos.toVector3f(), rot.multiply(5.0), -0x00FFF1);
-        //    poseStack.pop();
-        //}
     }
 }

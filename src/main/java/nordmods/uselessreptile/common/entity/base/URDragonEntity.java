@@ -591,7 +591,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (this instanceof HeadMountDragon && result && entity instanceof HeadMountDragonOwner owner) {
             NbtWriteView nbtWriteView = NbtWriteView.create(UselessReptile.ERROR_REPORTER, entity.getRegistryManager());
             saveSelfData(nbtWriteView);
-            owner.setHeadMountDragon(nbtWriteView.getNbt());
+            owner.useless_reptile$setHeadMountDragon(nbtWriteView.getNbt());
             setPortalCooldown(0);
         }
         return result;
@@ -601,7 +601,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public void stopRiding() {
         if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner) {
             if (owner instanceof ServerPlayerEntity player && player.isDisconnected()) return;
-            owner.setHeadMountDragon(new NbtCompound());
+            owner.useless_reptile$setHeadMountDragon(new NbtCompound());
             setYaw(((Entity) owner).getYaw() + 180f);
         }
         super.stopRiding();
@@ -1129,7 +1129,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     @Override
     public void remove(RemovalReason reason) {
         super.remove(reason);
-        if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner && reason.shouldDestroy()) owner.setHeadMountDragon(new NbtCompound());
+        if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner && reason.shouldDestroy()) owner.useless_reptile$setHeadMountDragon(new NbtCompound());
     }
 
     @Override

@@ -12,7 +12,7 @@ import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.RenderUtil;
-import nordmods.uselessreptile.client.util.duck.HeadMountDragonOwner;
+import nordmods.uselessreptile.client.util.duck.HeadMountDragonRenderState;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -29,10 +29,10 @@ public class HeadMountDragonFeatureRenderer extends FeatureRenderer<PlayerEntity
 
     @Override
     public void render(MatrixStack matrices, OrderedRenderCommandQueue queue, int light, PlayerEntityRenderState state, float limbAngle, float limbDistancee) {
-        if (state instanceof HeadMountDragonOwner owner) {
-            GeoRenderState dragonState = owner.getHeadMountDragonRenderState();
+        if (state instanceof HeadMountDragonRenderState owner) {
+            GeoRenderState dragonState = owner.useless_reptile$getHeadMountDragonRenderState();
             if (dragonState == null) return;
-            EntityRenderer<URDragonEntity, EntityRenderState> renderer = ((HeadMountDragonOwner<URDragonEntity, EntityRenderState>) state).getHeadMountDragonRenderer();
+            EntityRenderer<URDragonEntity, EntityRenderState> renderer = state.useless_reptile$getHeadMountDragonRenderer();
             if (dragonState.getGeckolibData(DataTickets.INVISIBLE_TO_PLAYER)) return;
             UUID dragonUUID = dragonState.getGeckolibData(URDataTickets.DRAGON_UUID);
             ON_HEAD.remove(dragonUUID);

@@ -11,15 +11,6 @@
   "contact": {
     "homepage": "https://discord.gg/JjYE4vEf3s"
   },
-
-  "custom": {
-    "modmenu": {
-      "links": {
-        "modmenu.discord": "https://discord.gg/JjYE4vEf3s"
-      }
-    }
-  },
-
   "license": "All Rights Reserved",
   "icon": "assets/uselessreptile/icon.png",
 
@@ -49,8 +40,26 @@
     "fabricloader": ">=0.15",
     "fabric-api": "*",
     "java": ">=17",
-    "minecraft": ">=1.21",
-    "geckolib": ">=4.5.8",
-    "yet_another_config_lib_v3": ">=3.2.0"
+    "minecraft": ">=1.21.9",
+    "geckolib": "*",
+    "yet_another_config_lib_v3": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/JjYE4vEf3s"
+      }
+    },
+
+    "loom:injected_interfaces": {
+      "net/minecraft/class_11788": ["nordmods/uselessreptile/client/util/duck/ShootingPointCommandRendererHelper"],
+      "net/minecraft/class_10055": ["nordmods/uselessreptile/client/util/duck/HeadMountDragonRenderState"],
+      "net/minecraft/class_10042": ["nordmods/uselessreptile/client/util/duck/DragonPassengerRenderState"],
+      "net/minecraft/class_1657": [
+        "nordmods/uselessreptile/common/util/duck/LightningChaserSpawnTimer",
+        "nordmods/uselessreptile/common/util/duck/HeadMountDragonOwner"
+      ],
+      "net/minecraft/class_3218": ["nordmods/uselessreptile/common/util/duck/LightningChaserSpawnTimer"]
+    }
   }
 }

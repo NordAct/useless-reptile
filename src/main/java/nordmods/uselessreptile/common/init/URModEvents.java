@@ -25,7 +25,6 @@ import nordmods.uselessreptile.common.event.DragonEquipmentTooltipEntryEvent;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.network.URPacketHelper;
-import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +40,15 @@ public class URModEvents {
     private static void spawnLightningChaser() {
         //Lightning Chaser spawn event
         ServerTickEvents.START_WORLD_TICK.register(world -> {
-            if (world instanceof LightningChaserSpawnTimer worldTimer && world.isThundering()) {
+            if (world.isThundering()) {
                 if (!world.getGameRules().getBoolean(GameRules.DO_MOB_SPAWNING)) return;
-                if (worldTimer.useless_reptile$getTimer() > 0) {
-                    worldTimer.useless_reptile$setTimer(worldTimer.useless_reptile$getTimer() - 1);
+                if (world.useless_reptile$getTimer() > 0) {
+                    world.useless_reptile$setTimer(world.useless_reptile$getTimer() - 1);
                     return;
                 }
                 for (ServerPlayerEntity player : world.getPlayers()) {
-                    if (!(player instanceof LightningChaserSpawnTimer playerTimer)) continue;
                     if (player.getY() < 62) continue;
-                    if (playerTimer.useless_reptile$getTimer() > 0) continue;
+                    if (player.useless_reptile$getTimer() > 0) continue;
                     if (URConfig.getConfig().lightningChaserThunderstormSpawnChance >= player.getRandom().nextFloat() * 100) {
                         double cos = Math.cos(Math.toRadians(player.getHeadYaw() + 180)); //Lightning Chaser will always spawn behind the player
                         double sin = Math.sin(Math.toRadians(player.getHeadYaw() + 180));
@@ -60,7 +58,7 @@ public class URModEvents {
                                 (int) (pos.getZ() + cos * 128));
                         while (!world.getBlockState(spawnPos).isAir()) spawnPos = spawnPos.up();
                         if (DragonSpawnUtil.getAvailableVariants(world, spawnPos, EntityType.getId(UREntities.LIGHTNING_CHASER_ENTITY)).findFirst().isEmpty()) {
-                            worldTimer.useless_reptile$setTimer(1200);
+                            world.useless_reptile$setTimer(1200);
                             return;
                         }
                         LightningChaserEntity lightningChaser = UREntities.LIGHTNING_CHASER_ENTITY.spawn(world, spawnPos, SpawnReason.EVENT);
@@ -73,11 +71,11 @@ public class URModEvents {
                             if (soundInfo != null)
                                 URPacketHelper.playSound(lightningChaser, SoundEvent.of(soundInfo.id()), lightningChaser.getSoundCategory(), soundInfo.volume(), lightningChaser.getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()), 1);
                         }
-                        playerTimer.useless_reptile$setTimer(URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown);
+                        player.useless_reptile$setTimer(URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown);
                         break;
                     }
                 }
-                worldTimer.useless_reptile$setTimer(1200);
+                world.useless_reptile$setTimer(1200);
             }
         });
     }

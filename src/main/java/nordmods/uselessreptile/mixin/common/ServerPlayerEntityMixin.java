@@ -4,7 +4,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
-import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -18,7 +17,6 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntityMixin {
 
     @Inject(method = "copyFrom(Lnet/minecraft/server/network/ServerPlayerEntity;Z)V", at = @At("TAIL"))
     private void copySemaData(ServerPlayerEntity oldPlayer, boolean alive, CallbackInfo ci) {
-        LightningChaserSpawnTimer oldData = (LightningChaserSpawnTimer) oldPlayer;
-        useless_reptile$setTimer(oldData.useless_reptile$getTimer());
+        useless_reptile$setTimer(oldPlayer.useless_reptile$getTimer());
     }
 }

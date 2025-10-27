@@ -38,7 +38,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
     @Inject(method = "readCustomData", at = @At("TAIL"))
     private void readFromNbt(ReadView view, CallbackInfo ci) {
         useless_reptile$setTimer(view.getInt("LightningChaserSpawnCooldown", URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown));
-        setHeadMountDragon(view.read("HeadMountDragon", NbtCompound.CODEC).orElse(headMountDragon));
+        useless_reptile$setHeadMountDragon(view.read("HeadMountDragon", NbtCompound.CODEC).orElse(headMountDragon));
     }
 
     public int useless_reptile$getTimer() {
@@ -54,13 +54,13 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Lightnin
     }
 
     @Override
-    public void setHeadMountDragon(@NotNull NbtCompound state) {
+    public void useless_reptile$setHeadMountDragon(@NotNull NbtCompound state) {
         headMountDragon = state;
     }
 
     @Override
     @NotNull
-    public NbtCompound getHeadMountDragon() {
+    public NbtCompound useless_reptile$getHeadMountDragon() {
         return headMountDragon;
     }
 

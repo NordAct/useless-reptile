@@ -16,6 +16,7 @@
     "common.SpawnGroupMixin"
   ],
   "client": [
+    "client.BatchingRenderCommandQueueMixin",
     "client.CameraMixin",
     "client.EntityMixin",
     "client.InGameHudMixin",
@@ -24,6 +25,7 @@
     "client.LivingEntityRenderStateMixin",
     "client.PlayerEntityRendererMixin",
     "client.PlayerEntityRenderStateMixin",
+    "client.RenderDispatcherMixin",
     "client.ResourceReloadLoggerMixin",
     "client.StatusEffectsDisplayMixin"
   ],

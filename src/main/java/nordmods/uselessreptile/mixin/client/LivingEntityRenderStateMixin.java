@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.mixin.client;
 
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import nordmods.uselessreptile.client.util.duck.DragonPassengerOwner;
+import nordmods.uselessreptile.client.util.duck.DragonPassengerRenderState;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -9,27 +9,27 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.UUID;
 
 @Mixin(LivingEntityRenderState.class)
-public abstract class LivingEntityRenderStateMixin implements DragonPassengerOwner {
+public abstract class LivingEntityRenderStateMixin implements DragonPassengerRenderState {
     @Unique private boolean isRidingDragon;
     @Unique @Nullable private UUID uuid;
 
     @Override
-    public boolean isRidingDragon() {
+    public boolean useless_reptile$isRidingDragon() {
         return isRidingDragon;
     }
 
     @Override
-    public void setRidingDragon(boolean state) {
+    public void useless_reptile$setRidingDragon(boolean state) {
         isRidingDragon = state;
     }
 
     @Override
-    public @Nullable UUID getUUID() {
+    public @Nullable UUID useless_reptile$getUUID() {
         return uuid;
     }
 
     @Override
-    public void setUUID(UUID state) {
+    public void useless_reptile$setUUID(UUID state) {
         uuid = state;
     }
 }
