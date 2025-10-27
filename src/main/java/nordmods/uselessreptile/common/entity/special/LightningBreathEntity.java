@@ -154,6 +154,7 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
 
     private boolean canTarget(Entity target) {
         if (target instanceof EntityPart part) target = part.owner;
+        if (target.getType().isIn(URTags.DRAGON_IMMUNE)) return false;
         Entity owner = getOwner();
         LivingEntity ownerOwner = owner instanceof Tameable tameable ? tameable.getOwner() : null;
         if (target == ownerOwner) return false;

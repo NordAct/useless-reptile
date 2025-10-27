@@ -1,3 +1,5 @@
 - 1.21.10 port
 - Now fly down key is bound to left ctrl by default. If you moving from previous game versions, make sure to bind it
 - Fix Vortex Horns preserving original max capacity when upgrading the horn
+- Now dragon attacks should no longer destroy dropped items
+- Added entity type tag `uselessreptile:dragon_immune` to specify entity types that cannot be damaged by dragons
