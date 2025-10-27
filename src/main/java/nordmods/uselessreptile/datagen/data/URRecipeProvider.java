@@ -15,6 +15,7 @@ import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +83,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
                                 "has_netherite_ingot",
                                 conditionsFromTag(ItemTags.NETHERITE_TOOL_MATERIALS)
                         )
-                        .offerTo(this.exporter, getItemPath(URItems.NETHERITE_VORTEX_HORN) + "_smithing");
+                        .offerTo(this.exporter, UselessReptile.id(getItemPath(URItems.NETHERITE_VORTEX_HORN) + "_smithing").toString());
 
                 offerNetheriteUpgradeRecipe(URItems.DRAGON_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_HELMET_NETHERITE);
                 offerNetheriteUpgradeRecipe(URItems.DRAGON_CHESTPLATE_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_CHESTPLATE_NETHERITE);
