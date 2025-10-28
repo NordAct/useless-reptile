@@ -23,7 +23,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-//todo wait for geckolib
+
 public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     public static final Set<UUID> PASSENGERS = new HashSet<>();
     private final BiFunction<R, GeoBone, ? extends EntityRenderState> passengerRenderStateGetter;
