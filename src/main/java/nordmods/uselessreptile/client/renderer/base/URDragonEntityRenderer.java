@@ -33,7 +33,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     private final SaddleEquipmentRenderer saddleEquipmentRenderer = new SaddleEquipmentRenderer();
     public URDragonEntityRenderer(EntityRendererFactory.Context renderManager) {
         super(renderManager, new URDragonModel<>());
-        withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE)));
+        withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE), 1));
     }
 
     @Override

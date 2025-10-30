@@ -18,9 +18,11 @@ import java.util.function.Function;
 
 public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     private final Function<R, ? extends AssetCache> assetCahceGetter;
-    public URGlowingLayer(software.bernie.geckolib.renderer.base.GeoRenderer<T, O, R> entityRendererIn, Function<R, ? extends AssetCache> assetCahceGetter) {
+    private final int renderOrder;
+    public URGlowingLayer(software.bernie.geckolib.renderer.base.GeoRenderer<T, O, R> entityRendererIn, Function<R, ? extends AssetCache> assetCahceGetter, int renderOrder) {
         super(entityRendererIn);
         this.assetCahceGetter = assetCahceGetter;
+        this.renderOrder = renderOrder;
     }
 
     @Override
@@ -41,7 +43,7 @@ public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner, O, R exte
         }
 
         RenderLayer renderLayer =  RenderLayer.getEyes(id);
-        this.renderer.buildRenderTask(renderState, poseStack, bakedModel, this.renderer.getGeoModel(), renderTasks.getBatchingQueue(1), cameraState, renderLayer, packedLight, packedOverlay, renderColor, null);
+        this.renderer.buildRenderTask(renderState, poseStack, bakedModel, this.renderer.getGeoModel(), renderTasks.getBatchingQueue(renderOrder), cameraState, renderLayer, packedLight, packedOverlay, renderColor, null);
     }
 
     protected Identifier getGlowingTexture(R state) {

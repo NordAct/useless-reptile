@@ -1,6 +1,8 @@
 package nordmods.uselessreptile.client.renderer.base;
 
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
+import net.minecraft.client.render.command.RenderCommandQueue;
 import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.registry.Registries;
@@ -9,12 +11,14 @@ import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.model.DragonEqupmentModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +26,7 @@ import java.util.Map;
 public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable, GeoModel<?>, GeoRenderState> { //related object - dragon model
     public DragonEquipmentRenderer() {
         super(new DragonEqupmentModel());
-        withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE)));
+        withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE), 2));
     }
 
     @Override
@@ -65,7 +69,7 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
             Map<String, GeoBone> equipmentBones = animatable.equipmentBones;
             if (equipmentBones.isEmpty()) {
                 BakedGeoModel bakedEquipmentModel = getGeoModel().getBakedModel(id);
-                getEquipmentBones(equipmentBones, bakedEquipmentModel);
+                for (GeoBone bone : bakedEquipmentModel.topLevelBones()) addChildren(equipmentBones, bone);
             }
 
             relatedObject.getAnimationProcessor().getRegisteredBones().forEach(bone -> {
@@ -84,16 +88,21 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
         renderState.addGeckolibData(URDataTickets.DRAGON_BONES, transforms);
     }
 
-    public record OwnerBoneTransforms(Vector3f pos, Vector3f scale, Vector3f rot) {
-    }
-
-
     private void addChildren(Map<String, GeoBone> equipmentBones, GeoBone bone) {
         equipmentBones.put(bone.getName(), bone);
         for (GeoBone child : bone.getChildBones()) addChildren(equipmentBones, child);
     }
 
-    private void getEquipmentBones(Map<String, GeoBone> equipmentBones, BakedGeoModel model) {
-        for (GeoBone bone : model.topLevelBones()) addChildren(equipmentBones, bone);
+    @Override //mitigation for some transparency issues
+    public void buildRenderTask(GeoRenderState renderState, MatrixStack poseStack, BakedGeoModel bakedModel, GeoModel<DragonEquipmentAnimatable> model, RenderCommandQueue renderTasks, CameraRenderState cameraState, @Nullable RenderLayer renderType,
+                                 int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<GeoRenderState> modelPositioner) {
+        if (renderTasks instanceof OrderedRenderCommandQueue queue) {
+            super.buildRenderTask(renderState, poseStack, bakedModel, model, queue.getBatchingQueue(1), cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
+            return;
+        }
+        super.buildRenderTask(renderState, poseStack, bakedModel, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
+    }
+
+    public record OwnerBoneTransforms(Vector3f pos, Vector3f scale, Vector3f rot) {
     }
 }
