@@ -3,7 +3,6 @@
     {
       "item": "minecraft:saddle",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/wyvern/saddle",
         "texture": "uselessreptile:entity/wyvern/saddle"
       }

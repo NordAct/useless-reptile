@@ -3,7 +3,6 @@
     {
       "item": "minecraft:saddle",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/saddle",
         "texture": "uselessreptile:entity/moleclaw/saddle"
       }
@@ -11,7 +10,6 @@
     {
       "item": "uselessreptile:dragon_helmet_iron",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
         "texture": "uselessreptile:entity/moleclaw/armor_iron"
       }
@@ -19,7 +17,6 @@
     {
       "item": "uselessreptile:dragon_helmet_gold",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
         "texture": "uselessreptile:entity/moleclaw/armor_gold"
       }
@@ -27,7 +24,6 @@
     {
       "item": "uselessreptile:dragon_helmet_diamond",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
         "texture": "uselessreptile:entity/moleclaw/armor_diamond"
       }
@@ -35,7 +31,6 @@
     {
       "item": "uselessreptile:dragon_helmet_netherite",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
         "texture": "uselessreptile:entity/moleclaw/armor_netherite"
       }
@@ -43,7 +38,6 @@
     {
       "item": "uselessreptile:dragon_chestplate_iron",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/chestplate",
         "texture": "uselessreptile:entity/moleclaw/armor_iron"
       }
@@ -51,7 +45,6 @@
     {
       "item": "uselessreptile:dragon_chestplate_gold",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/chestplate",
         "texture": "uselessreptile:entity/moleclaw/armor_gold"
       }
@@ -59,7 +52,6 @@
     {
       "item": "uselessreptile:dragon_chestplate_diamond",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/chestplate",
         "texture": "uselessreptile:entity/moleclaw/armor_diamond"
       }
@@ -67,7 +59,6 @@
     {
       "item": "uselessreptile:dragon_chestplate_netherite",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/chestplate",
         "texture": "uselessreptile:entity/moleclaw/armor_netherite"
       }
@@ -75,7 +66,6 @@
     {
       "item": "uselessreptile:dragon_tail_armor_iron",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/tail_armor",
         "texture": "uselessreptile:entity/moleclaw/armor_iron"
       }
@@ -83,7 +73,6 @@
     {
       "item": "uselessreptile:dragon_tail_armor_gold",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/tail_armor",
         "texture": "uselessreptile:entity/moleclaw/armor_gold"
       }
@@ -91,7 +80,6 @@
     {
       "item": "uselessreptile:dragon_tail_armor_diamond",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/tail_armor",
         "texture": "uselessreptile:entity/moleclaw/armor_diamond"
       }
@@ -99,7 +87,6 @@
     {
       "item": "uselessreptile:dragon_tail_armor_netherite",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/tail_armor",
         "texture": "uselessreptile:entity/moleclaw/armor_netherite"
       }
@@ -107,7 +94,6 @@
     {
       "item": "uselessreptile:moleclaw_helmet_iron",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
         "texture": "uselessreptile:entity/moleclaw/moleclaw_helmet_iron",
         "translucent": true
@@ -116,7 +102,6 @@
     {
       "item": "uselessreptile:moleclaw_helmet_gold",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
         "texture": "uselessreptile:entity/moleclaw/moleclaw_helmet_gold",
         "translucent": true
@@ -125,7 +110,6 @@
     {
       "item": "uselessreptile:moleclaw_helmet_diamond",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
         "texture": "uselessreptile:entity/moleclaw/moleclaw_helmet_diamond",
         "translucent": true
@@ -134,7 +118,6 @@
     {
       "item": "uselessreptile:moleclaw_helmet_netherite",
       "model_data": {
-        "cull": false,
         "model": "uselessreptile:entity/moleclaw/helmet",
         "texture": "uselessreptile:entity/moleclaw/moleclaw_helmet_netherite",
         "translucent": true

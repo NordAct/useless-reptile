@@ -7,13 +7,12 @@ import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonEquipment;
-import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
@@ -170,15 +169,13 @@ public class DragonEqupmentModel extends GeoModel<DragonEquipmentAnimatable> {
                 MinecraftClient.getInstance().world,
                 itemId
         );
-        if (data != null) {
-            ModelData modelData = data.modelData();
-            if (modelData.translucent()) renderType = RenderLayer.getEntityTranslucent(texture); //all translucent models can't have culling
-            else renderType = modelData.cull() ? RenderLayer.getEntityCutout(texture) : RenderLayer.getEntityCutoutNoCull(texture);
+        if (data != null && data.modelData().translucent()) {
+            renderType = RenderLayer.createArmorTranslucent(texture);
             assetCache.setRenderTypeCache(renderType);
             return renderType;
         }
 
-        renderType = RenderLayer.getEntityCutout(texture);
+        renderType = RenderLayer.getArmorCutoutNoCull(texture);
         assetCache.setRenderTypeCache(renderType);
         return renderType;
     }

@@ -4,3 +4,4 @@
 - Now dragon attacks should no longer destroy dropped items
 - Added entity type tag `uselessreptile:dragon_immune` to specify entity types that cannot be damaged by dragons
 - Dragons no longer have seizures when trying to look around while standing still
+- Culling is no longer supported for dragon equipment

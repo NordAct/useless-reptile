@@ -107,7 +107,6 @@ Fields:
       - `texture` - id of texture file, located in `textures` within assets
       - `model` - id of model file, located in `geckolib/models` within assets
       - `animation` - (optional) id of model file, located in `geckolib/animations` within assets. Currently supports only one animation with name `idle` and with no sounds or other effects. If not specified, will use placeholder file (`uselessreptile:geckolib/animations/entity/empty.json`) with empty animation.
-      - `cull` - (optional) specifies if model should cull its faces. If not specified, defaults to `true`
       - `translucent` - (optional) specifies if model can have translucent pixels. If not specified, defaults to `false`. If set to `true`, culling will be disabled regardless of what's specified in `cull`
 
 Note that for dragon to be able to use item as equipment it has to be added in specific tag.
