@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
-import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
 import net.minecraft.client.render.state.CameraRenderState;
@@ -23,6 +22,8 @@ public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner, O, R exte
         super(entityRendererIn);
         this.assetCahceGetter = assetCahceGetter;
     }
+
+    @Override
     public void submitRenderTask(R renderState, MatrixStack poseStack, BakedGeoModel bakedModel, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState,
                                  int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
         if (URClientConfig.getConfig().disableEmissiveTextures) return;
@@ -39,8 +40,8 @@ public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner, O, R exte
             }
         }
 
-        RenderLayer renderLayer =  RenderLayer.getEyes(id);//OverlayTexture.DEFAULT_UV
-        renderer.buildRenderTask(renderState, poseStack, bakedModel, renderTasks.getBatchingQueue(1), cameraState, renderLayer, LightmapTextureManager.MAX_LIGHT_COORDINATE, packedOverlay, renderColor);
+        RenderLayer renderLayer =  RenderLayer.getEyes(id);
+        this.renderer.buildRenderTask(renderState, poseStack, bakedModel, this.renderer.getGeoModel(), renderTasks.getBatchingQueue(1), cameraState, renderLayer, packedLight, packedOverlay, renderColor, null);
     }
 
     protected Identifier getGlowingTexture(R state) {

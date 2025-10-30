@@ -12,7 +12,9 @@ import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.renderer.special.HeadMountDragonFeatureRenderer;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
+import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 
 public abstract class HeadMountDragonEntityRenderer<T extends URDragonEntity & HeadMountDragon, R extends LivingEntityRenderState & GeoRenderState> extends URDragonEntityRenderer<T, R> {
     public HeadMountDragonEntityRenderer(EntityRendererFactory.Context renderManager) {
@@ -20,14 +22,14 @@ public abstract class HeadMountDragonEntityRenderer<T extends URDragonEntity & H
     }
 
     @Override
-    public void submitRenderTasks(R renderState, MatrixStack poseStack, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState) {
+    public void submitRenderTasks(R renderState, MatrixStack poseStack, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState, @Nullable RenderModelPositioner<R> modelPositioner) {
         if (renderState.getGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER)) {
             if (HeadMountDragonFeatureRenderer.ON_HEAD.contains(renderState.getGeckolibData(URDataTickets.DRAGON_UUID)))
                 return;
             else if (!renderState.getGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT))
                 return;
         }
-        super.submitRenderTasks(renderState, poseStack, renderTasks, cameraState);
+        super.submitRenderTasks(renderState, poseStack, renderTasks, cameraState, modelPositioner);
     }
 
     @Override

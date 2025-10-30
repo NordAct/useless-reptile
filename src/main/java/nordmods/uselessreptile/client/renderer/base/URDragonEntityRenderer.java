@@ -76,7 +76,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
             }
 
             DragonEquipmentRenderer usedRenderer = itemStack.isIn(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
-            usedRenderer.submit(poseStack, dragonEquipmentAnimatable, getGeoModel(), renderTasks, cameraState, packedLight, tickDelta);
+            usedRenderer.submit(poseStack, dragonEquipmentAnimatable, getGeoModel(), renderTasks, cameraState, packedLight, tickDelta, null);
         }
     }
 
