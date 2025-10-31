@@ -18,6 +18,7 @@ import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.init.URStatusEffects;
+import nordmods.uselessreptile.common.init.URTags;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +91,7 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
             affected.add(target);
             return false;
         }
+        if (target.getType().isIn(URTags.DRAGON_IMMUNE)) return false;
         if (getEyePos().distanceTo(target.getPos()) > currentRadius + target.getWidth()/2) return false;
         if (target instanceof EntityPart part) target = part.owner;
         Entity owner = getOwner();

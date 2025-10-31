@@ -470,7 +470,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 getAttackBox(),
                 entity -> !getPassengerList().contains(entity)
                         && !entity.isPartOf(this)
-                        && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity)));
+                        && !entity.getType().isIn(URTags.DRAGON_IMMUNE)
+                        && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity))
+        );
         Entity target = null;
         if (!list.isEmpty()) {
             target = list.getFirst();

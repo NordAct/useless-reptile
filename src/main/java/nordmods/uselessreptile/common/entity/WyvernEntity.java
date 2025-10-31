@@ -342,7 +342,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 getAttackBox(),
                 entity -> !getPassengerList().contains(entity)
                         && !entity.isPartOf(this)
-                        && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity)));
+                        && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity))
+                        && !entity.getType().isIn(URTags.DRAGON_IMMUNE));
         Entity target = null;
         if (!list.isEmpty()) {
             target = list.getFirst();

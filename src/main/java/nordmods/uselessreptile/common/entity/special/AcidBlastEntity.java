@@ -10,10 +10,7 @@ import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.world.World;
-import nordmods.uselessreptile.common.init.URDamageTypes;
-import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URSounds;
-import nordmods.uselessreptile.common.init.URStatusEffects;
+import nordmods.uselessreptile.common.init.*;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
@@ -46,7 +43,7 @@ public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, Pr
     protected void onEntityHit(EntityHitResult entityHitResult) {
         if (!(getWorld() instanceof ServerWorld world)) return;
         Entity target = entityHitResult.getEntity();
-        target.damage(world, target.getDamageSources().create(URDamageTypes.ACID, getOwner()), getResultingDamage());
+        if (!target.getType().isIn(URTags.DRAGON_IMMUNE)) target.damage(world, target.getDamageSources().create(URDamageTypes.ACID, getOwner()), getResultingDamage());
         spawnEffectCloud();
         super.onEntityHit(entityHitResult);
         if (target instanceof LivingEntity entity) entity.addStatusEffect(new StatusEffectInstance(URStatusEffects.ACID, 60, 1));

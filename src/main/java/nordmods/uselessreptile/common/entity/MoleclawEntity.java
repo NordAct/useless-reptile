@@ -227,7 +227,14 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     public void meleeAttack() {
         if (!(getWorld() instanceof ServerWorld world)) return;
-        List<Entity> targets = world.getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        List<Entity> targets = getWorld()
+                .getOtherEntities(
+                        this,
+                        getAttackBox(),
+                        entity -> !getPassengerList().contains(entity)
+                                && !entity.getType().isIn(URTags.DRAGON_IMMUNE)
+                                && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity))
+                );
         if (!targets.isEmpty()) for (Entity mob: targets) {
             Box targetBox = mob.getBoundingBox();
             if (targetBox.intersects(getAttackBox())) tryAttack(world, mob);
@@ -236,7 +243,14 @@ public class MoleclawEntity extends URRideableDragonEntity {
 
     public void strongAttack() {
         if (!(getWorld() instanceof ServerWorld world)) return;
-        List<Entity> targets = getWorld().getOtherEntities(this, getSecondaryAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        List<Entity> targets = getWorld()
+                .getOtherEntities(
+                        this,
+                        getSecondaryAttackBox(),
+                        entity -> !getPassengerList().contains(entity)
+                                && !entity.getType().isIn(URTags.DRAGON_IMMUNE)
+                                && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity))
+                );
         if (!targets.isEmpty()) for (Entity mob : targets) {
             Box targetBox = mob.getBoundingBox();
             if (targetBox.intersects(getSecondaryAttackBox())) tryAttack(world, mob);

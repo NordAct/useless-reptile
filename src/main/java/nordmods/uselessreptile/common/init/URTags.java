@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.common.init;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -38,6 +39,8 @@ public class URTags {
     public static final TagKey<Item> VORTEX_HORNS = register(RegistryKeys.ITEM, "vortex_horns");
 
     public static final TagKey<DimensionType> DEPLETED_MAGMA_REGENERATES = register(RegistryKeys.DIMENSION_TYPE, "depleted_magma_regenerates");
+
+    public static final TagKey<EntityType<?>> DRAGON_IMMUNE = register(RegistryKeys.ENTITY_TYPE, "dragon_immune");
 
     private static<T> TagKey<T> register(RegistryKey<? extends Registry<T>> registryKey, String id) {
         return TagKey.of(registryKey, UselessReptile.id(id));

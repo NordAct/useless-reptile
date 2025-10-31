@@ -25,6 +25,7 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URDamageTypeProvider::new);
         pack.addProvider(UREntityLootTableProvider::new);
         pack.addProvider(URBlockLootTableGenerator::new);
+        pack.addProvider(UREntityTypeTagProvider::new);
 
         pack.addProvider(UREquipmentProvider::new);
         pack.addProvider(URDragonVariantProvider::new);
