@@ -10,10 +10,12 @@ import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.Items;
+import net.minecraft.recipe.Ingredient;
 import net.minecraft.recipe.book.RecipeCategory;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.registry.tag.TagKey;
+import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
 import org.jetbrains.annotations.Nullable;
@@ -66,7 +68,19 @@ public class URRecipeProvider extends FabricRecipeProvider {
         offerVortexHornRecipe(exporter, URItems.GOLD_VORTEX_HORN, URItems.IRON_VORTEX_HORN, ConventionalItemTags.GOLD_INGOTS);
         offerVortexHornRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, URItems.GOLD_VORTEX_HORN, ConventionalItemTags.DIAMOND_GEMS);
 
-        RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DIAMOND_VORTEX_HORN, RecipeCategory.TOOLS, URItems.NETHERITE_VORTEX_HORN);
+        VortexHornSmithingRecipeJsonBuilder.create(
+                        Ingredient.ofItems(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                        Ingredient.ofItems(URItems.DIAMOND_VORTEX_HORN),
+                        Ingredient.fromTag(ConventionalItemTags.NETHERITE_INGOTS),
+                        RecipeCategory.TOOLS,
+                        URItems.NETHERITE_VORTEX_HORN
+                )
+                .criterion(
+                        "has_netherite_ingot",
+                        conditionsFromTag(ConventionalItemTags.NETHERITE_INGOTS)
+                )
+                .offerTo(exporter, UselessReptile.id(getItemPath(URItems.NETHERITE_VORTEX_HORN) + "_smithing").toString());
+
         RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_HELMET_NETHERITE);
         RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_CHESTPLATE_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_CHESTPLATE_NETHERITE);
         RecipeProvider.offerNetheriteUpgradeRecipe(exporter, URItems.DRAGON_TAIL_ARMOR_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_TAIL_ARMOR_NETHERITE);

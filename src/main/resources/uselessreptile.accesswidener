@@ -10,5 +10,15 @@ accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder count 
 accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder criteria Ljava/util/Map;
 accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder group Ljava/lang/String;
 accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder showNotification Z
+accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder inputs Ljava/util/Map;
+accessible field net/minecraft/data/server/recipe/ShapedRecipeJsonBuilder pattern Ljava/util/List;
+accessible field net/minecraft/data/server/recipe/SmithingTransformRecipeJsonBuilder criteria Ljava/util/Map;
+accessible field net/minecraft/data/server/recipe/SmithingTransformRecipeJsonBuilder template Lnet/minecraft/recipe/Ingredient;
+accessible field net/minecraft/data/server/recipe/SmithingTransformRecipeJsonBuilder base Lnet/minecraft/recipe/Ingredient;
+accessible field net/minecraft/data/server/recipe/SmithingTransformRecipeJsonBuilder addition Lnet/minecraft/recipe/Ingredient;
+accessible field net/minecraft/data/server/recipe/SmithingTransformRecipeJsonBuilder result Lnet/minecraft/item/Item;
+accessible field net/minecraft/data/server/recipe/SmithingTransformRecipeJsonBuilder category Lnet/minecraft/recipe/book/RecipeCategory;
+accessible field net/minecraft/recipe/ShapedRecipe raw Lnet/minecraft/recipe/RawShapedRecipe;
+accessible field net/minecraft/recipe/ShapedRecipe result Lnet/minecraft/item/ItemStack;
 accessible method net/minecraft/entity/LivingEntity applyFoodEffects (Lnet/minecraft/component/type/FoodComponent;)V
 extendable method net/minecraft/entity/passive/TameableEntity canTeleportTo (Lnet/minecraft/util/math/BlockPos;)Z

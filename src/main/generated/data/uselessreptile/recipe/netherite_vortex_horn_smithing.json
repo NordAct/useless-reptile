@@ -1,7 +1,7 @@
 {
-  "type": "minecraft:smithing_transform",
+  "type": "uselessreptile:vortex_horn_smithing",
   "addition": {
-    "item": "minecraft:netherite_ingot"
+    "tag": "c:ingots/netherite"
   },
   "base": {
     "item": "uselessreptile:diamond_vortex_horn"
