@@ -68,7 +68,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
     private ShootingPoint shootingPoint = new ShootingPoint(getPos(), getRotationVector());
 
-    public static float BASE_GROUND_SPEED = 0.2f;
+    public static final float BASE_GROUND_SPEED = 0.2f;
 
     public WyvernEntity(EntityType<? extends URRideableFlyingDragonEntity> entityType, World world) {
         super(entityType, world);

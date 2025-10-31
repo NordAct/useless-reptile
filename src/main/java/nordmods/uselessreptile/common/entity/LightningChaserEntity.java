@@ -60,12 +60,10 @@ import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import nordmods.uselessreptile.common.gui.LightningChaserScreenHandler;
-import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URGameEvents;
-import nordmods.uselessreptile.common.init.URSounds;
-import nordmods.uselessreptile.common.init.URTags;
+import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.URPacketHelper;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -75,6 +73,7 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
+import java.util.List;
 import java.util.function.BiConsumer;
 
 public class LightningChaserEntity extends URRideableFlyingDragonEntity implements MultipartEntity, ShooterDragon {
@@ -98,8 +97,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     protected final EntityGameEventHandler<LightningStrikeEventListener> lightningStrikeEventHandler = new EntityGameEventHandler<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
     private ShootingPoint shootingPoint = new ShootingPoint(getPos(), getRotationVector());
-
-    public static float BASE_GROUND_SPEED = 0.25f;
+    public static final float BASE_GROUND_SPEED = 0.25f;
 
     public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
         super(entityType, world);

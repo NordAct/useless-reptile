@@ -450,6 +450,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner) {
             if (owner instanceof ServerPlayerEntity player && player.isDisconnected()) return;
             owner.setHeadMountDragon(new NbtCompound());
+            setYaw(((Entity) owner).getYaw() + 180f);
         }
         super.stopRiding();
     }
@@ -694,6 +695,7 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
     public boolean canTarget(@Nullable LivingEntity target) {
         if (target == null) return false;
         if (isSitting()) return false;
+        if (target.getType().isIn(URTags.DRAGON_IMMUNE)) return false;
         if (getOwner() != null && target instanceof TameableEntity tameable && tameable.getOwner() == getOwner()) return false;
         return super.canTarget(target);
     }
@@ -894,7 +896,6 @@ public abstract class URDragonEntity extends TameableEntity implements GeoEntity
         DragonOnItemConsumedEvent.EVENT.invoker().onItemConsumed(offering, original, itemStack, hand);
         return itemStack;
     }
-
 
     @Override
     public boolean shouldSave() {

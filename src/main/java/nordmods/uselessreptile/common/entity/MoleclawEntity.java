@@ -60,7 +60,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     public static final float defaultHeight = 2.9f;
     private int panicSoundDelay = 0;
 
-    public static float BASE_GROUND_SPEED = 0.25f;
+    public static final float BASE_GROUND_SPEED = 0.25f;
 
     public MoleclawEntity(EntityType<? extends URRideableDragonEntity> entityType, World world) {
         super(entityType, world);
@@ -240,7 +240,14 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     public void meleeAttack() {
-        List<Entity> targets = getWorld().getOtherEntities(this, getAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        List<Entity> targets = getWorld()
+                .getOtherEntities(
+                        this,
+                        getAttackBox(),
+                        entity -> !getPassengerList().contains(entity)
+                                && !entity.getType().isIn(URTags.DRAGON_IMMUNE)
+                                && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity))
+                );
         if (!targets.isEmpty()) for (Entity mob: targets) {
             Box targetBox = mob.getBoundingBox();
             if (doesCollide(targetBox, getAttackBox())) tryAttack(mob);
@@ -248,7 +255,14 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     public void strongAttack() {
-        List<Entity> targets = getWorld().getOtherEntities(this, getSecondaryAttackBox(), livingEntity -> !getPassengerList().contains(livingEntity));
+        List<Entity> targets = getWorld()
+                .getOtherEntities(
+                        this,
+                        getSecondaryAttackBox(),
+                        entity -> !getPassengerList().contains(entity)
+                                && !entity.getType().isIn(URTags.DRAGON_IMMUNE)
+                                && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity))
+                );
         if (!targets.isEmpty()) for (Entity mob : targets) {
             Box targetBox = mob.getBoundingBox();
             if (doesCollide(targetBox, getSecondaryAttackBox())) tryAttack(mob);
