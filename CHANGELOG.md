@@ -1,4 +1,5 @@
 - Fix Vortex Horns preserving original max capacity when upgrading the horn
+- (1.21.1 only) Netherite Vortex Horn no longer looses info about dragons inside when upgrading from diamond
 - Now dragon attacks should no longer destroy dropped items
 - Added entity type tag `uselessreptile:dragon_immune` to specify entity types that cannot be damaged by dragons
 - Dragons no longer have seizures when trying to look around while standing still
