@@ -19,13 +19,8 @@ import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponen
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 
 public class VortexHornRecipe extends ShapedRecipe {
-    private final RawShapedRecipe raw;
-    private final ItemStack result;
-
     public VortexHornRecipe(String group, CraftingRecipeCategory category, RawShapedRecipe raw, ItemStack result, boolean showNotification) {
         super(group, category, raw, result, showNotification);
-        this.raw = raw;
-        this.result = result;
     }
 
     @Override
@@ -35,7 +30,9 @@ public class VortexHornRecipe extends ShapedRecipe {
             ItemStack result = this.result.copy();
             result.set(DataComponentTypes.INSTRUMENT, instrument.get(DataComponentTypes.INSTRUMENT));
             result.set(URItems.DRAGON_STORAGE_COMPONENT, instrument.getOrDefault(URItems.DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT));
-            result.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, instrument.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT));
+            VortexHornCapacityComponent original = instrument.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT);
+            VortexHornCapacityComponent next = result.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT);
+            result.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, new VortexHornCapacityComponent(original.currentCapacity(), next.maxCapacity()));
             return result;
         }
         return ItemStack.EMPTY;

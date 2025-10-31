@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:smithing_transform",
+  "type": "uselessreptile:vortex_horn_smithing",
   "addition": "#minecraft:netherite_tool_materials",
   "base": "uselessreptile:diamond_vortex_horn",
   "result": {
