@@ -74,6 +74,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
                 dragonEquipmentAnimatable = new DragonEquipmentAnimatable(dragonRenderState, itemStack.getItem());
                 dragonAssetCache.setEquipmentAnimatable(slot, dragonEquipmentAnimatable);
             }
+            dragonEquipmentAnimatable.ownerRenderState = dragonRenderState;
 
             DragonEquipmentRenderer usedRenderer = itemStack.isIn(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
             usedRenderer.submit(poseStack, dragonEquipmentAnimatable, getGeoModel(), renderTasks, cameraState, packedLight, tickDelta, null);
