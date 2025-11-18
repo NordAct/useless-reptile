@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser;
 
-import nordmods.uselessreptile.common.entity.LightningChaserEntity;
+import nordmods.uselessreptile.common.entity.LightningChaser;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
@@ -10,11 +10,11 @@ import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.phys.Vec3;
 
 public class LightningChaserBailOutGoal extends Goal {
-    private final LightningChaserEntity entity;
+    private final LightningChaser entity;
     private BlockPos pointOfInterest;
     private int timeout = 0;
 
-    public LightningChaserBailOutGoal(LightningChaserEntity entity) {
+    public LightningChaserBailOutGoal(LightningChaser entity) {
         this.entity = entity;
         setFlags(EnumSet.allOf(Flag.class));
     }

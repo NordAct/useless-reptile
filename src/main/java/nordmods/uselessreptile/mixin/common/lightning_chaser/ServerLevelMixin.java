@@ -1,0 +1,22 @@
+package nordmods.uselessreptile.mixin.common.lightning_chaser;
+
+import net.minecraft.server.level.ServerLevel;
+import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
+
+@Mixin(ServerLevel.class)
+public abstract class ServerLevelMixin implements LightningChaserSpawnTimer {
+    @Unique
+    private int spawnTimer = 600;
+
+    @Override
+    public int useless_reptile$getTimer() {
+        return spawnTimer;
+    }
+
+    @Override
+    public void useless_reptile$setTimer(int state) {
+        spawnTimer = state;
+    }
+}

@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser;
 
-import nordmods.uselessreptile.common.entity.LightningChaserEntity;
+import nordmods.uselessreptile.common.entity.LightningChaser;
 
 import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
@@ -9,12 +9,12 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 
 public class LightningChaserRoamAroundGoal extends Goal {
-    private final LightningChaserEntity entity;
+    private final LightningChaser entity;
     private BlockPos spot;
     private BlockPos pointPos;
     private int currentPoint = 0;
 
-    public LightningChaserRoamAroundGoal(LightningChaserEntity entity) {
+    public LightningChaserRoamAroundGoal(LightningChaser entity) {
         this.entity = entity;
         setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
     }

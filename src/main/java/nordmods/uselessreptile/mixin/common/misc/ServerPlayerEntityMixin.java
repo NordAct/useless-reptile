@@ -4,14 +4,14 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
-import nordmods.uselessreptile.mixin.common.lightning_chaser.PlayerEntityMixin;
+import nordmods.uselessreptile.mixin.common.lightning_chaser.PlayerMixin;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerPlayer.class)
-public abstract class ServerPlayerEntityMixin extends PlayerEntityMixin {
+public abstract class ServerPlayerEntityMixin extends PlayerMixin {
     private ServerPlayerEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }

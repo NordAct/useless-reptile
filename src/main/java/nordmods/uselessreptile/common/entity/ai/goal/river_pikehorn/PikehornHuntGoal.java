@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
-import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
+import nordmods.uselessreptile.common.entity.RiverPikehorn;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -22,14 +22,14 @@ import net.minecraft.world.phys.AABB;
 
 public class PikehornHuntGoal extends Goal {
 
-    private final RiverPikehornEntity entity;
+    private final RiverPikehorn entity;
     private AbstractFish fish;
     private BlockPos huntSpot;
     private boolean closeToSpot = false;
     private int calls;
     private BlockPos startingPos;
 
-    public PikehornHuntGoal(RiverPikehornEntity entity) {
+    public PikehornHuntGoal(RiverPikehorn entity) {
         this.entity = entity;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }

@@ -4,13 +4,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.phys.Vec3;
-import nordmods.uselessreptile.common.entity.MoleclawEntity;
+import nordmods.uselessreptile.common.entity.Moleclaw;
 
 public class MoleclawNavigation extends DragonNavigation {
 
-    private final MoleclawEntity entity;
+    private final Moleclaw entity;
 
-    public MoleclawNavigation(MoleclawEntity mobEntity, Level world) {
+    public MoleclawNavigation(Moleclaw mobEntity, Level world) {
         super(mobEntity, world);
         this.entity = mobEntity;
     }

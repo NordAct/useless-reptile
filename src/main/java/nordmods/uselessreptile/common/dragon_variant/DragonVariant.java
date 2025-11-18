@@ -5,7 +5,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.init.URRegistryKeys;
+import nordmods.uselessreptile.common.init.URResourceKeys;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -119,7 +119,7 @@ public record DragonVariant(
         nbtCompound.putString("id", dragonId.toString());
         URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), nbtCompound), world, EntitySpawnReason.TRIGGERED).get();
         dragon.discard();
-        return dragon.level().registryAccess().lookupOrThrow(URRegistryKeys.DRAGON_VARIANT)
+        return dragon.level().registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT)
                 .stream()
                 .filter(dragonVariant -> dragonVariant.dragonId().equals(dragon.getDragonId()) && dragonVariant.name().equals(dragon.getDefaultVariant()))
                 .findFirst()
@@ -128,7 +128,7 @@ public record DragonVariant(
 
     @Nullable
     public static DragonVariant getByVariant(ResourceLocation dragonId, String variant, Level world) {
-        Registry<DragonVariant> registry = world.registryAccess().lookupOrThrow(URRegistryKeys.DRAGON_VARIANT);
+        Registry<DragonVariant> registry = world.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT);
         return registry.stream()
                 .filter(dragonVariant -> dragonVariant.dragonId().equals(dragonId) && dragonVariant.name().equals(variant))
                 .findFirst()
@@ -137,7 +137,7 @@ public record DragonVariant(
 
     @Nullable
     public static DragonVariant getByCustomName(ResourceLocation dragonId, String name, Level world) {
-        Registry<DragonVariant> registry = world.registryAccess().lookupOrThrow(URRegistryKeys.DRAGON_VARIANT_CUSTOM_NAME);
+        Registry<DragonVariant> registry = world.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT_CUSTOM_NAME);
         return registry.stream()
                 .filter(dragonVariant -> dragonVariant.dragonId().equals(dragonId) && dragonVariant.name().equals(name))
                 .findFirst()

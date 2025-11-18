@@ -19,12 +19,12 @@ import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
-import nordmods.uselessreptile.common.entity.LightningChaserEntity;
+import nordmods.uselessreptile.common.entity.LightningChaser;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.event.DragonEquipmentTooltipEntryEvent;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
-import nordmods.uselessreptile.common.network.URPacketHelper;
+import nordmods.uselessreptile.common.network.URNetworkHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class URModEvents {
                             world.useless_reptile$setTimer(1200);
                             return;
                         }
-                        LightningChaserEntity lightningChaser = UREntities.LIGHTNING_CHASER_ENTITY.spawn(world, spawnPos, EntitySpawnReason.EVENT);
+                        LightningChaser lightningChaser = UREntities.LIGHTNING_CHASER_ENTITY.spawn(world, spawnPos, EntitySpawnReason.EVENT);
                         if (lightningChaser != null) {
                             lightningChaser.setFlying(true);
                             lightningChaser.setHomePoint(new BlockPos(pos.getX(),
@@ -69,7 +69,7 @@ public class URModEvents {
                                     pos.getZ()));
                             URDragonEntity.SoundInfo soundInfo = lightningChaser.getSoundInfo("roar");
                             if (soundInfo != null)
-                                URPacketHelper.playSound(lightningChaser, SoundEvent.createVariableRangeEvent(soundInfo.id()), lightningChaser.getSoundSource(), soundInfo.volume(), lightningChaser.getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()), 1);
+                                URNetworkHelper.playSound(lightningChaser, SoundEvent.createVariableRangeEvent(soundInfo.id()), lightningChaser.getSoundSource(), soundInfo.volume(), lightningChaser.getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()), 1);
                         }
                         player.useless_reptile$setTimer(URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown);
                         break;

@@ -2,12 +2,12 @@ package nordmods.uselessreptile.common.entity.ai.goal.moleclaw;
 
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
-import nordmods.uselessreptile.common.entity.MoleclawEntity;
+import nordmods.uselessreptile.common.entity.Moleclaw;
 
 public class MoleclawUntamedTargetGoal<T extends LivingEntity>  extends NonTameRandomTargetGoal<T> {
 
-    private final MoleclawEntity mob;
-    public MoleclawUntamedTargetGoal(MoleclawEntity tameable, Class targetClass) {
+    private final Moleclaw mob;
+    public MoleclawUntamedTargetGoal(Moleclaw tameable, Class targetClass) {
         super(tameable, targetClass, true, null);
         mob = tameable;
     }

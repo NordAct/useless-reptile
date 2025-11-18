@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.goal.magmamuncher;
 
-import nordmods.uselessreptile.common.entity.MagmamuncherEntity;
+import nordmods.uselessreptile.common.entity.Magmamuncher;
 
 import java.util.ArrayList;
 import java.util.EnumSet;
@@ -15,12 +15,12 @@ import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
 
 public class MagmamuncherEatMagmaGoal extends Goal {
-    private final MagmamuncherEntity entity;
+    private final Magmamuncher entity;
     private int timer;
     private Direction offset = null;
     private final List<BlockPos> invalidPos = new ArrayList<>();
 
-    public MagmamuncherEatMagmaGoal(MagmamuncherEntity entity) {
+    public MagmamuncherEatMagmaGoal(Magmamuncher entity) {
         this.entity = entity;
         setFlags(EnumSet.of(Flag.MOVE));
     }
@@ -51,7 +51,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
     @Override
     public void stop() {
         timer = 0;
-        entity.eatMagmaCooldown = MagmamuncherEntity.EAT_MAGMA_COOLDOWN_AVERAGE + entity.getRandom().nextIntBetweenInclusive(-20*10, 20*10);
+        entity.eatMagmaCooldown = Magmamuncher.EAT_MAGMA_COOLDOWN_AVERAGE + entity.getRandom().nextIntBetweenInclusive(-20*10, 20*10);
         entity.setMagmaBlockPos(BlockPos.ZERO);
         entity.setEatingMagma(false);
         invalidPos.clear();
@@ -69,7 +69,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
 
         BlockPos targetPos = entity.getMagmaBlockPos();
         double dist = targetPos.getCenter().distanceToSqr(entity.position());
-        if (dist < MagmamuncherEntity.DISTANCE_TO_EAT * MagmamuncherEntity.DISTANCE_TO_EAT && entity.getLookControl().isLookingAtTarget()) {
+        if (dist < Magmamuncher.DISTANCE_TO_EAT * Magmamuncher.DISTANCE_TO_EAT && entity.getLookControl().isLookingAtTarget()) {
             entity.setEatingMagma(true);
         }
         targetPos = targetPos.relative(offset);
@@ -81,7 +81,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
         entity.getNavigation().moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1);
         if (entity.getNavigation().isDone()) {
             //bandaid fix for a dumbass not getting close enough to eat its magma
-            if (dist > MagmamuncherEntity.DISTANCE_TO_EAT * MagmamuncherEntity.DISTANCE_TO_EAT && dist < 3) {
+            if (dist > Magmamuncher.DISTANCE_TO_EAT * Magmamuncher.DISTANCE_TO_EAT && dist < 3) {
                 entity.push(targetPos.getCenter().subtract(entity.position()).normalize().scale(0.1));
                 return;
             } else if (entity.getNavigation().getTargetPos() != null && entity.getNavigation().getTargetPos().getY() < entity.getMagmaBlockPos().getY()) {

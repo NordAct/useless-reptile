@@ -3,10 +3,11 @@ package nordmods.uselessreptile.common.event;
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.level.block.state.BlockState;
+import nordmods.uselessreptile.common.entity.Moleclaw;
 import nordmods.uselessreptile.common.init.URModEvents;
 
 /**
- * Gets mining level for a block to check if {@link nordmods.uselessreptile.common.entity.MoleclawEntity} is able to break it.
+ * Gets mining level for a block to check if {@link Moleclaw} is able to break it.
  * If several events propose different levels, highest value will be returned.
  * For usage example refer to {@link URModEvents#getDefaultBlockMiningLevelForMoleclaw()}
  */

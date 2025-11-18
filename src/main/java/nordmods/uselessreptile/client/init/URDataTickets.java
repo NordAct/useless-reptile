@@ -4,10 +4,8 @@ import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityEquipment;
 import net.minecraft.world.phys.Vec3;
-import nordmods.uselessreptile.client.renderer.base.DragonEquipmentRenderer;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
@@ -34,11 +32,11 @@ public class URDataTickets {
     public static final DataTicket<ResourceLocation> EQUIPMENT_ITEM_ID = DataTicket.create("ur_equipment_item_id", ResourceLocation.class);
     public static final DataTicket<EntityEquipment> DRAGON_EQIPMENT = DataTicket.create("ur_dragon_equipment", EntityEquipment.class);
     public static final DataTicket<GeoRenderState> DRAGON_RENDER_STATE = DataTicket.create("ur_dragon_render_state", GeoRenderState.class);
-    public static final DataTicket<HashMap<String, DragonEquipmentRenderer.OwnerBoneTransforms>> DRAGON_BONES = DataTicket.create("ur_dragon_bones", HashMap.class); //string and OwnerBoneTransforms
+    public static final DataTicket<HashMap> DRAGON_BONES = DataTicket.create("ur_dragon_bones", HashMap.class); //string and OwnerBoneTransforms
     //passenger(rider) data for rendering
     public static final DataTicket<Boolean> PASSENGER_SHOULD_RENDER_TO_CLIENT = DataTicket.create("ur_passenger_should_render_to_client", Boolean.class);
     public static final DataTicket<EntityRenderState> PASSENGER_RENDER_STATE = DataTicket.create("ur_passenger_render_state", EntityRenderState.class); //required for passenger render layer
-    public static final DataTicket<EntityRenderer<? extends Entity, EntityRenderState>> PASSENGER_RENDER = DataTicket.create("ur_passenger_render_state", EntityRenderer.class); //ditto
+    public static final DataTicket<EntityRenderer> PASSENGER_RENDER = DataTicket.create("ur_passenger_render_state", EntityRenderer.class); //ditto
     public static final DataTicket<UUID> PASSENGER_UUID = DataTicket.create("ur_passenger_uuid", UUID.class); //also ditto
     public static final DataTicket<Vec3> PASSENGER_ATTACHMENT_POS = DataTicket.create("ur_passenger_vehicle_attachment_pos", Vec3.class); //you got me
 }

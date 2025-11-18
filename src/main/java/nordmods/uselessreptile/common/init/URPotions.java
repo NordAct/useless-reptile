@@ -14,19 +14,19 @@ public class URPotions extends Potions {
 
     public static final Holder.Reference<Potion> ACID = Registry.registerForHolder(BuiltInRegistries.POTION,
             UselessReptile.id("acid"),
-            new Potion("acid", new MobEffectInstance(URStatusEffects.ACID, 200, 1)) {
+            new Potion("acid", new MobEffectInstance(URMobEffect.ACID, 200, 1)) {
                 @Override
                 public boolean hasInstantEffects() {return false;}
             });
     public static final Holder.Reference<Potion> LONG_ACID = Registry.registerForHolder(BuiltInRegistries.POTION,
             UselessReptile.id("long_acid"),
-            new Potion("long_acid", new MobEffectInstance(URStatusEffects.ACID, 400, 1)) {
+            new Potion("long_acid", new MobEffectInstance(URMobEffect.ACID, 400, 1)) {
                 @Override
                 public boolean hasInstantEffects() {return false;}
             });
     public static final Holder.Reference<Potion> STRONG_ACID = Registry.registerForHolder(BuiltInRegistries.POTION,
             UselessReptile.id("strong_acid"),
-            new Potion("strong_acid", new MobEffectInstance(URStatusEffects.ACID, 200, 3)) {
+            new Potion("strong_acid", new MobEffectInstance(URMobEffect.ACID, 200, 3)) {
                 @Override
                 public boolean hasInstantEffects() {return false;}
             });

@@ -33,18 +33,18 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
     public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                           int packedLight, int packedOverlay, int renderColor) {
         renderState.getGeckolibData(URDataTickets.DRAGON_BONES).forEach((parentBone, transform) -> {
-            model.getBone(parentBone).ifPresent(bone -> {
-                Vector3f rot = transform.rot;
+            model.getBone((String) parentBone).ifPresent(bone -> {
+                Vector3f rot = ((OwnerBoneTransforms)transform).rot;
                 bone.setRotX(rot.x);
                 bone.setRotY(rot.y);
                 bone.setRotZ(rot.z);
 
-                Vector3f pos = transform.pos;
+                Vector3f pos = ((OwnerBoneTransforms)transform).pos;
                 bone.setPosX(pos.x);
                 bone.setPosY(pos.y);
                 bone.setPosZ(pos.z);
 
-                Vector3f scale = transform.scale;
+                Vector3f scale = ((OwnerBoneTransforms)transform).scale;
                 bone.setScaleX(scale.x);
                 bone.setScaleY(scale.y);
                 bone.setScaleZ(scale.z);

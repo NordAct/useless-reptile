@@ -31,7 +31,7 @@ import net.minecraft.world.phys.HitResult;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 import org.jetbrains.annotations.NotNull;
@@ -53,7 +53,7 @@ public class VortexHornItem extends InstrumentItem {
         if (entity instanceof URDragonEntity dragon && dragon.getOwner() == user && !user.isShiftKeyDown()) {
             if (tryCollectDragon(stack, user, dragon, hand, true)) {
                 user.releaseUsingItem();
-                user.makeSound(URSounds.VORTEX_HORN_SUCK_IN);
+                user.makeSound(URSoundEvent.VORTEX_HORN_SUCK_IN);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -95,7 +95,7 @@ public class VortexHornItem extends InstrumentItem {
 
             if (tryCreateDragon(stack, user, world, hand, pos)) {
                 user.releaseUsingItem();
-                user.makeSound(URSounds.VORTEX_HORN_SPIT_OUT);
+                user.makeSound(URSoundEvent.VORTEX_HORN_SPIT_OUT);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -145,7 +145,7 @@ public class VortexHornItem extends InstrumentItem {
             URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
             if (dataComponent != null && getCurrentCapacity(stack) > 0) {
                 for (int i = 0; i < dataComponent.entityData().size(); i++) tryCreateDragon(stack, user, world, hand, user.blockPosition());
-                user.makeSound(URSounds.VORTEX_HORN_SPIT_OUT);
+                user.makeSound(URSoundEvent.VORTEX_HORN_SPIT_OUT);
                 return true;
             }
         } else {
@@ -154,7 +154,7 @@ public class VortexHornItem extends InstrumentItem {
                 if (dragon.isOrderedToSit()) continue;
                 if (!tryCollectDragon(stack, user, dragon, hand, false)) break;
             }
-            user.makeSound(URSounds.VORTEX_HORN_SUCK_IN);
+            user.makeSound(URSoundEvent.VORTEX_HORN_SUCK_IN);
             return true;
         }
         return false;

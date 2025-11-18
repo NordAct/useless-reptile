@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.*;
+import nordmods.uselessreptile.common.network.URPayloadHandlers;
 
 @Environment(EnvType.CLIENT)
 public class UselessReptileClient implements ClientModInitializer {
@@ -12,8 +13,8 @@ public class UselessReptileClient implements ClientModInitializer {
     public void onInitializeClient() {
         URClientConfig.init();
         URRenderers.init();
-        URKeybinds.init();
+        URKeyMappings.init();
         URScreens.init();
-        URPacketEvents.init();
+        URPayloadHandlers.initClient();
     }
 }

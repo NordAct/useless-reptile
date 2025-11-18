@@ -29,7 +29,7 @@ import nordmods.uselessreptile.common.entity.base.FluteListener;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
 import org.jetbrains.annotations.NotNull;
 
@@ -118,11 +118,11 @@ public class FluteItem extends Item {
 
     private static ImmutableSortedMap<String, Tuple<SoundEvent, FluteAction>>createFluteModeMap() {
         HashMap<String, Tuple<SoundEvent, FluteAction>> mutable = new HashMap<>();
-        mutable.put("call", new Tuple<>(URSounds.FLUTE_CALL, dragon -> dragon.shouldFollow = true));
-        mutable.put("gather", new Tuple<>(URSounds.FLUTE_GATHER, dragon -> {
+        mutable.put("call", new Tuple<>(URSoundEvent.FLUTE_CALL, dragon -> dragon.shouldFollow = true));
+        mutable.put("gather", new Tuple<>(URSoundEvent.FLUTE_GATHER, dragon -> {
             if (dragon instanceof FluteListener gathererDragon) gathererDragon.startGathering();
         }));
-        mutable.put("target", new Tuple<>(URSounds.FLUTE_TARGET, dragon -> {
+        mutable.put("target", new Tuple<>(URSoundEvent.FLUTE_TARGET, dragon -> {
             if (!(dragon.getOwner() instanceof Player player)) return;
 
             int range = URGameEvents.FLUTE_USED.value().notificationRadius();
@@ -136,8 +136,8 @@ public class FluteItem extends Item {
 
             if (hitResult != null) dragon.setTarget((LivingEntity) hitResult.getEntity());
         }));
-        mutable.put("sit_down", new Tuple<>(URSounds.FLUTE_SIT_DOWN, dragon -> dragon.setOrderedToSit(true)));
-        mutable.put("stand_up", new Tuple<>(URSounds.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(false)));
+        mutable.put("sit_down", new Tuple<>(URSoundEvent.FLUTE_SIT_DOWN, dragon -> dragon.setOrderedToSit(true)));
+        mutable.put("stand_up", new Tuple<>(URSoundEvent.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(false)));
         return ImmutableSortedMap.copyOf(mutable);
     }
 

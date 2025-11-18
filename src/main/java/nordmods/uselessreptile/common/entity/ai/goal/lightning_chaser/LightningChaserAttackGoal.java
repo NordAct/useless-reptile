@@ -1,8 +1,8 @@
 package nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser;
 
-import nordmods.uselessreptile.common.entity.LightningChaserEntity;
-import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
-import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
+import nordmods.uselessreptile.common.entity.LightningChaser;
+import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
+import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -22,13 +22,13 @@ import net.minecraft.world.phys.Vec3;
 
 public class LightningChaserAttackGoal extends Goal {
 
-    private final LightningChaserEntity entity;
+    private final LightningChaser entity;
     private LivingEntity target;
     private int attackCooldown = 20;
     private static final int MIN_DISTANCE_SQUARED = 80;
-    private static final int MAX_DISTANCE_SQUARED = (int) (LightningBreathEntity.MAX_LENGTH * LightningBreathEntity.MAX_LENGTH * 0.81f);
+    private static final int MAX_DISTANCE_SQUARED = (int) (LightningBreath.MAX_LENGTH * LightningBreath.MAX_LENGTH * 0.81f);
 
-    public LightningChaserAttackGoal(LightningChaserEntity entity) {
+    public LightningChaserAttackGoal(LightningChaser entity) {
         this.entity = entity;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
@@ -143,7 +143,7 @@ public class LightningChaserAttackGoal extends Goal {
     private boolean tryShockwaveAttack() {
         if (entity.getSpecialAttackCooldown() > 0) return false;
         if (!entity.isFlying()) return false;
-        double attackDistance = ShockwaveSphereEntity.MAX_RADIUS * ShockwaveSphereEntity.MAX_RADIUS * 0.49;
+        double attackDistance = ShockwaveSphere.MAX_RADIUS * ShockwaveSphere.MAX_RADIUS * 0.49;
         List<Entity> projectiles = entity.level().getEntities(entity, new AABB(entity.blockPosition()).inflate(attackDistance * 2), c -> c instanceof Projectile projectile && projectile.getOwner() == target && !projectile.getDeltaMovement().equals(Vec3.ZERO));
         if (!projectiles.isEmpty()) {
             entity.triggerShockwave();

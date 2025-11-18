@@ -25,10 +25,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
-import nordmods.uselessreptile.client.init.URKeybinds;
+import nordmods.uselessreptile.client.init.URKeyMappings;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
-import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
-import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
+import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
+import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
@@ -152,13 +152,13 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                         && hasVerticalInput()
                         && player.getXRot() < -URClientConfig.getConfig().upDownCameraPitchThreshold);
             boolean isMoveBackPressed = player.input.keyPresses.backward();
-            boolean isDownPressed = URKeybinds.FLY_DOWN_KEY.isDown()
+            boolean isDownPressed = URKeyMappings.FLY_DOWN_KEY.isDown()
                     || (URClientConfig.getConfig().upDownCameraControl
                         && hasVerticalInput()
                         && player.getXRot() > URClientConfig.getConfig().upDownCameraPitchThreshold);
-            boolean isSecondaryAttackPressed = URKeybinds.SECONDARY_ATTACK_KEY.isDown();
-            boolean isPrimaryAttackPressed = URKeybinds.PRIMARY_ATTACK_KEY.isDown();
-            boolean freeLook = URKeybinds.FREE_LOOK_KEY.isDown();
+            boolean isSecondaryAttackPressed = URKeyMappings.SECONDARY_ATTACK_KEY.isDown();
+            boolean isPrimaryAttackPressed = URKeyMappings.PRIMARY_ATTACK_KEY.isDown();
+            boolean freeLook = URKeyMappings.FREE_LOOK_KEY.isDown();
 
             if (isSprintPressed != isSprintPressed()
                     || isMoveForwardPressed != isMoveForwardPressed()
@@ -170,7 +170,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                     || freeLook != freeLook()
             ) {
                 ClientPlayNetworking.send(
-                        new KeyInputC2SPacket(isJumpPressed,
+                        new KeyInputPayload(isJumpPressed,
                                 isMoveForwardPressed,
                                 isMoveBackPressed,
                                 isSprintPressed,
@@ -209,7 +209,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     @Override
     public void openCustomInventoryScreen(Player player) {
         if (!level().isClientSide() && canBeControlledByRider() && isOwnedBy(player)) {
-            GUIEntityToRenderS2CPacket.send((ServerPlayer) player, this);
+            GUIEntityToRenderPayload.send((ServerPlayer) player, this);
             player.openMenu(this);
         }
     }

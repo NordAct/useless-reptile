@@ -1,13 +1,6 @@
 package nordmods.uselessreptile.mixin.common.head_mount_dragon;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import nordmods.uselessreptile.UselessReptile;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Optional;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.server.level.ServerLevel;
@@ -17,6 +10,13 @@ import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.ValueInput;
+import nordmods.uselessreptile.UselessReptile;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Optional;
 
 @Mixin(targets = "net.minecraft.server.network.config.PrepareSpawnTask$Ready")
 public abstract class PrepareSpawnTaskMixin {

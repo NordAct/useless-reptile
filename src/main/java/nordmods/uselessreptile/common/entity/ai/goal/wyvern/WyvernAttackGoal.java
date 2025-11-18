@@ -1,17 +1,17 @@
 package nordmods.uselessreptile.common.entity.ai.goal.wyvern;
 
-import nordmods.uselessreptile.common.entity.WyvernEntity;
+import nordmods.uselessreptile.common.entity.Wyvern;
 
 import java.util.EnumSet;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 public class WyvernAttackGoal extends Goal {
-    private final WyvernEntity entity;
+    private final Wyvern entity;
     private LivingEntity target;
     private final double maxSearchDistance;
 
-    public WyvernAttackGoal(WyvernEntity entity, double maxSearchDistance) {
+    public WyvernAttackGoal(Wyvern entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));

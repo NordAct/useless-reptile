@@ -6,15 +6,15 @@ import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import nordmods.uselessreptile.common.entity.MoleclawEntity;
+import nordmods.uselessreptile.common.entity.Moleclaw;
 
 public class MoleclawEscapeLightGoal extends PanicGoal {
 
-    private final MoleclawEntity mob;
+    private final Moleclaw mob;
     private int timer = 0;
     private int nextStrongAttackTimer = 60;
 
-    public MoleclawEscapeLightGoal(MoleclawEntity mob) {
+    public MoleclawEscapeLightGoal(Moleclaw mob) {
         super(mob, 1);
         this.mob = mob;
     }
@@ -37,16 +37,16 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
                 BlockPos blockPos1 = new BlockPos(vec3i.getX(), vec3i.getY(), vec3i.getZ());
                 boolean canFit = mob.level().getBlockState(blockPos1.above(1)).isAir() && mob.level().getBlockState(blockPos1.above(2)).isAir();
                 double distanceToCurrent = mob.distanceToSqr(vec3d);
-                if (MoleclawEntity.getLightAtPos(blockPos, mob) <= light && canFit && distanceToCurrent < distance) {
+                if (Moleclaw.getLightAtPos(blockPos, mob) <= light && canFit && distanceToCurrent < distance) {
                     darkestSpot = vec3i;
-                    light = MoleclawEntity.getLightAtPos(blockPos, mob);
+                    light = Moleclaw.getLightAtPos(blockPos, mob);
                     distance = distanceToCurrent;
                 }
             }
         }
         if (darkestSpot == null)  return false;
 
-        if (distance < 0.5 && MoleclawEntity.getLightAtPos(mob.blockPosition(), mob) == MoleclawEntity.getLightAtPos(new BlockPos(darkestSpot), mob)) {
+        if (distance < 0.5 && Moleclaw.getLightAtPos(mob.blockPosition(), mob) == Moleclaw.getLightAtPos(new BlockPos(darkestSpot), mob)) {
             for (int i = 30; i > 0; i--) {
                 Vec3 vec3d = DefaultRandomPos.getPos(this.mob, 10, 3);
                 Vec3i vec3i = vec3d != null ? new Vec3i((int) vec3d.x, (int) vec3d.y, (int) vec3d.z) : null;

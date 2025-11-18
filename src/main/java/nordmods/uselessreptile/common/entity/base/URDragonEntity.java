@@ -89,7 +89,7 @@ import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
-import nordmods.uselessreptile.common.network.URPacketHelper;
+import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -310,7 +310,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
         }
 
         variant.variantAttributeModifiers().ifPresent(id -> {
-            List<AttributeModifier> modifiers = registryAccess().lookupOrThrow(URRegistryKeys.DRAGON_VARIANT_ATTRIBUTE_MODIFIERS).getValue(id);
+            List<AttributeModifier> modifiers = registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT_ATTRIBUTE_MODIFIERS).getValue(id);
             if (modifiers != null) modifiers.forEach(entityAttributeModifier -> {
                 Attribute attribute = registryAccess().lookupOrThrow(Registries.ATTRIBUTE).getValue(entityAttributeModifier.id());
                 if (attribute != null) {
@@ -513,7 +513,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
         boolean empty = newStack.isEmpty() && oldStack.isEmpty();
         if (!empty && !ItemStack.isSameItemSameComponents(oldStack, newStack) && !firstTick) {
             if (!level().isClientSide() && doesEmitEquipEvent(slot))
-                URPacketHelper.playSound(this, SoundEvents.ARMOR_EQUIP_GENERIC.value(), getSoundSource(), 1, 1, 6);
+                URNetworkHelper.playSound(this, SoundEvents.ARMOR_EQUIP_GENERIC.value(), getSoundSource(), 1, 1, 6);
         }
         super.onEquipItem(slot, oldStack, newStack);
     }
@@ -745,7 +745,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
         float mod = 1;
         if (hasEffect(MobEffects.SLOWNESS)) mod *= (float) (1 + 0.1 * (getEffect(MobEffects.SLOWNESS).getAmplifier() + 1));
         if (hasEffect(MobEffects.SPEED)) mod *= (float) (1 - 0.1 * Mth.clamp(getEffect(MobEffects.SPEED).getAmplifier() + 1, 1, 9));
-        if (hasEffect(URStatusEffects.SHOCK)) mod /= 2;
+        if (hasEffect(URMobEffect.SHOCK)) mod /= 2;
         return mod;
     }
 

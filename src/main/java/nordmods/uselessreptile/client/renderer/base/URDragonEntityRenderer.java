@@ -14,9 +14,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.model.URDragonModel;
+import nordmods.uselessreptile.client.model.URDragonEntityModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
-import nordmods.uselessreptile.client.renderer.special.SaddleEquipmentRenderer;
+import nordmods.uselessreptile.client.renderer.projectile.SaddleEquipmentRenderer;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import nordmods.uselessreptile.client.util.ResourceUtil;
@@ -32,7 +32,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
     private final DragonEquipmentRenderer dragonEquipmentRenderer = new DragonEquipmentRenderer();
     private final SaddleEquipmentRenderer saddleEquipmentRenderer = new SaddleEquipmentRenderer();
     public URDragonEntityRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new URDragonModel<>());
+        super(renderManager, new URDragonEntityModel<>());
         withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE), 1));
     }
 

@@ -23,7 +23,7 @@ import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.util.URSpawnGroup;
+import nordmods.uselessreptile.common.util.URMobCategory;
 
 @Environment(EnvType.CLIENT)
 public class ModMenuIntegration implements ModMenuApi {
@@ -55,7 +55,7 @@ public class ModMenuIntegration implements ModMenuApi {
         }
         entries = entries.substring(0, entries.length() - 2);
 
-        return Component.translatable("config.uselessreptile.option.spawnGroupCapacity.@Tooltip", entries);
+        return Component.translatable("config.uselessreptile.option.categoryCapacity.@Tooltip", entries);
     }
 
     private static void saveAll() {
@@ -77,9 +77,9 @@ public class ModMenuIntegration implements ModMenuApi {
                 .description(OptionDescription.createBuilder()
                         .text(Component.translatable("config.uselessreptile.group.inWorldSpawn.@Tooltip")).build());
         OptionGroup.Builder spawnGroupsGroup = OptionGroup.createBuilder()
-                .name(Component.translatable("config.uselessreptile.group.spawnGroups"))
+                .name(Component.translatable("config.uselessreptile.group.mobCategories"))
                 .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.group.spawnGroups.@Tooltip")).build());
+                        .text(Component.translatable("config.uselessreptile.group.mobCategories.@Tooltip")).build());
         OptionGroup.Builder groupSizeGroup = OptionGroup.createBuilder()
                 .name(Component.translatable("config.uselessreptile.group.groupSize"))
                 .description(OptionDescription.createBuilder()
@@ -157,30 +157,30 @@ public class ModMenuIntegration implements ModMenuApi {
                 .build();
 
         Option<Integer> dragonSpawnGroupCapacity = Option.<Integer>createBuilder()
-                .name(Component.translatable("config.uselessreptile.option.dragonSpawnGroupCapacity"))
+                .name(Component.translatable("config.uselessreptile.option.dragonCategoryCapacity"))
                 .description(OptionDescription.createBuilder()
-                        .text(spawnGroupTooltip(URSpawnGroup.DRAGON.spawnGroup), requiresRestart()).build())
-                .binding(defaults.dragonSpawnGroupCapacity,
-                        () -> config.dragonSpawnGroupCapacity,
-                        val -> config.dragonSpawnGroupCapacity = val)
+                        .text(spawnGroupTooltip(URMobCategory.DRAGON.mobCategory), requiresRestart()).build())
+                .binding(defaults.dragonCategoryCapacity,
+                        () -> config.dragonCategoryCapacity,
+                        val -> config.dragonCategoryCapacity = val)
                 .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
                 .build();
         Option<Integer> smallDragonSpawnGroupCapacity = Option.<Integer>createBuilder()
-                .name(Component.translatable("config.uselessreptile.option.smallDragonSpawnGroupCapacity"))
+                .name(Component.translatable("config.uselessreptile.option.smallDragonCategoryCapacity"))
                 .description(OptionDescription.createBuilder()
-                        .text(spawnGroupTooltip(URSpawnGroup.SMALL_DRAGON.spawnGroup), requiresRestart()).build())
-                .binding(defaults.smallDragonSpawnGroupCapacity,
-                        () -> config.smallDragonSpawnGroupCapacity,
-                        val -> config.smallDragonSpawnGroupCapacity = val)
+                        .text(spawnGroupTooltip(URMobCategory.SMALL_DRAGON.mobCategory), requiresRestart()).build())
+                .binding(defaults.smallDragonCategoryCapacity,
+                        () -> config.smallDragonCategoryCapacity,
+                        val -> config.smallDragonCategoryCapacity = val)
                 .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
                 .build();
         Option<Integer> undergroundDragonSpawnGroupCapacity = Option.<Integer>createBuilder()
-                .name(Component.translatable("config.uselessreptile.option.undergroundDragonSpawnGroupCapacity"))
+                .name(Component.translatable("config.uselessreptile.option.undergroundDragonCategoryCapacity"))
                 .description(OptionDescription.createBuilder()
-                        .text(spawnGroupTooltip(URSpawnGroup.UNDERGROUND_DRAGON.spawnGroup), requiresRestart()).build())
-                .binding(defaults.undergroundDragonSpawnGroupCapacity,
-                        () -> config.undergroundDragonSpawnGroupCapacity,
-                        val -> config.undergroundDragonSpawnGroupCapacity = val)
+                        .text(spawnGroupTooltip(URMobCategory.UNDERGROUND_DRAGON.mobCategory), requiresRestart()).build())
+                .binding(defaults.undergroundDragonCategoryCapacity,
+                        () -> config.undergroundDragonCategoryCapacity,
+                        val -> config.undergroundDragonCategoryCapacity = val)
                 .customController(opt -> new IntegerFieldController(opt, 0, Integer.MAX_VALUE))
                 .build();
 

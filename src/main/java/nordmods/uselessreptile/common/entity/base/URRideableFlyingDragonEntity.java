@@ -25,8 +25,8 @@ import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.network.LiftoffParticlesS2CPacket;
-import nordmods.uselessreptile.common.network.RequestLiftoffC2SPacket;
+import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
+import nordmods.uselessreptile.common.network.c2s.RequestLiftoffPayload;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntity implements FlyingDragon {
@@ -98,7 +98,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
                         jumpWasPressed = true;
                         flyUpWindow = 10;
                     } else {
-                        ClientPlayNetworking.send(new RequestLiftoffC2SPacket(getId()));
+                        ClientPlayNetworking.send(new RequestLiftoffPayload(getId()));
                         flyUpWindow = 0;
                     }
                 } else if (!isJumpPressed() && jumpWasPressed) jumpWasPressed = false;
@@ -262,7 +262,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         if (level() instanceof ServerLevel world) {
             setAccelerationDuration(getAccelerationDuration() / 10);
             setFlying(true);
-            for (ServerPlayer player : PlayerLookup.tracking(world, blockPosition())) LiftoffParticlesS2CPacket.send(player, this);
+            for (ServerPlayer player : PlayerLookup.tracking(world, blockPosition())) LiftoffParticlesPayload.send(player, this);
         }
     }
 

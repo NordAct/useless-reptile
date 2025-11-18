@@ -18,7 +18,7 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.gui.URDragonScreenHandler;
+import nordmods.uselessreptile.common.gui.URDragonMenu;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.constant.DataTickets;
@@ -68,11 +68,11 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
                     i + 7,
-                    j + 35 - URDragonScreenHandler.SLOT_SIDE,
+                    j + 35 - URDragonMenu.SLOT_SIDE,
                     0,
-                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.FEET).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
-                    URDragonScreenHandler.SLOT_SIDE,
-                    URDragonScreenHandler.SLOT_SIDE,
+                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.FEET).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                    URDragonMenu.SLOT_SIDE,
+                    URDragonMenu.SLOT_SIDE,
                     256, 256);
     }
 
@@ -81,33 +81,33 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
             context.blit( //head
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
-                    i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
-                    j + 35 -  URDragonScreenHandler.SLOT_SIDE,
-                    URDragonScreenHandler.SLOT_SIDE,
-                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
-                    URDragonScreenHandler.SLOT_SIDE,
-                    URDragonScreenHandler.SLOT_SIDE,
+                    i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                    j + 35 -  URDragonMenu.SLOT_SIDE,
+                    URDragonMenu.SLOT_SIDE,
+                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                    URDragonMenu.SLOT_SIDE,
+                    URDragonMenu.SLOT_SIDE,
                     256, 256
             );
             context.blit( //body
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
-                    i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
-                    j + 35,  URDragonScreenHandler.SLOT_SIDE * 2,
-                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
-                    URDragonScreenHandler.SLOT_SIDE,
-                    URDragonScreenHandler.SLOT_SIDE,
+                    i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                    j + 35,  URDragonMenu.SLOT_SIDE * 2,
+                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                    URDragonMenu.SLOT_SIDE,
+                    URDragonMenu.SLOT_SIDE,
                     256, 256
             );
             context.blit( //tail
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
-                    i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
-                    j + 35 +  URDragonScreenHandler.SLOT_SIDE,
-                    URDragonScreenHandler.SLOT_SIDE * 3,
-                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
-                    URDragonScreenHandler.SLOT_SIDE,
-                    URDragonScreenHandler.SLOT_SIDE,
+                    i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                    j + 35 +  URDragonMenu.SLOT_SIDE,
+                    URDragonMenu.SLOT_SIDE * 3,
+                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                    URDragonMenu.SLOT_SIDE,
+                    URDragonMenu.SLOT_SIDE,
                     256, 256
             );
         }
@@ -149,12 +149,12 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         context.blit(
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
-                i + 7 + URDragonScreenHandler.ENTITY_WINDOW_SIDE + URDragonScreenHandler.SLOT_SIDE * offset,
+                i + 7 + URDragonMenu.ENTITY_WINDOW_SIDE + URDragonMenu.SLOT_SIDE * offset,
                 j + 17,
                 0,
                 this.imageHeight,
-                size * URDragonScreenHandler.SLOT_SIDE,
-                URDragonScreenHandler.ENTITY_WINDOW_SIDE,
+                size * URDragonMenu.SLOT_SIDE,
+                URDragonMenu.ENTITY_WINDOW_SIDE,
                 256, 256
         );
     }
@@ -166,10 +166,10 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
                     TEXTURE,
                     i + 7,
                     j + 35,
-                    URDragonScreenHandler.SLOT_SIDE * 4,
-                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.OFFHAND).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
-                    URDragonScreenHandler.SLOT_SIDE,
-                    URDragonScreenHandler.SLOT_SIDE,
+                    URDragonMenu.SLOT_SIDE * 4,
+                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.OFFHAND).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                    URDragonMenu.SLOT_SIDE,
+                    URDragonMenu.SLOT_SIDE,
                     256, 256
             );
     }

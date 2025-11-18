@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
 import net.minecraft.world.entity.LivingEntity;
-import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
+import nordmods.uselessreptile.common.entity.RiverPikehorn;
 import nordmods.uselessreptile.common.entity.ai.goal.common.FlyingDragonCallBackGoal;
 
-public class PikehornFollowGoal extends FlyingDragonCallBackGoal<RiverPikehornEntity> {
+public class PikehornFollowGoal extends FlyingDragonCallBackGoal<RiverPikehorn> {
     private static final int TOLERANCE_DISTANCE_SQUARED = 256;
 
-    public PikehornFollowGoal(RiverPikehornEntity entity) {
+    public PikehornFollowGoal(RiverPikehorn entity) {
         super(entity);
     }
 

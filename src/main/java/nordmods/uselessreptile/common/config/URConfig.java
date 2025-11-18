@@ -31,12 +31,12 @@ public class URConfig {
     public int lightningChaserThunderstormSpawnChance = 10;
     @SerialEntry(comment = "Amount of time (in ticks) that must pass before Lightning Chaser can attempt to spawn near the same player")
     public int lightningChaserThunderstormSpawnTimerCooldown = 24000;
-    @SerialEntry(comment = "SPAWN GROUP CAPACITIES")
-    public int dragonSpawnGroupCapacity = 2;
+    @SerialEntry(comment = "MOB CATEGORIES CAPACITIES")
+    public int dragonCategoryCapacity = 2;
     @SerialEntry
-    public int smallDragonSpawnGroupCapacity = 12;
+    public int smallDragonCategoryCapacity = 12;
     @SerialEntry
-    public int undergroundDragonSpawnGroupCapacity = 6;
+    public int undergroundDragonCategoryCapacity = 6;
     @SerialEntry(comment = "GROUP SIZES")
     public int wyvernMinGroupSize = 1;
     @SerialEntry

@@ -3,7 +3,7 @@ package nordmods.uselessreptile.common.dragon_variant.spawn;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.init.URRegistryKeys;
+import nordmods.uselessreptile.common.init.URResourceKeys;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public class DragonSpawnUtil {
 
         List<Tuple<String, Integer>> variants = new ArrayList<>();
         variantStream.forEach(variant -> {
-            registryManager.lookupOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get()).forEach(conditions -> {
+            registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get()).forEach(conditions -> {
                 if (checkConditions(conditions, world, pos)) variants.add(new Tuple<>(variant.name(), conditions.weight()));
             });
         });
@@ -84,7 +84,7 @@ public class DragonSpawnUtil {
     public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, ResourceLocation dragonId) {
         RegistryAccess registryManager = world.registryAccess();
         return getAllVariants(world, dragonId).filter(variant -> {
-           for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get())) {
+           for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get())) {
                if (checkConditions(conditions, world, pos)) return true;
            }
            return false;
@@ -98,11 +98,11 @@ public class DragonSpawnUtil {
      */
     public static Stream<DragonVariant> getAllVariants(LevelAccessor world, ResourceLocation dragonId) {
         RegistryAccess registryManager = world.registryAccess();
-        return registryManager.lookupOrThrow(URRegistryKeys.DRAGON_VARIANT).stream()
+        return registryManager.lookupOrThrow(URResourceKeys.DRAGON_VARIANT).stream()
                 .filter(variant -> variant.dragonId().equals(dragonId))
                 .filter(variant -> {
                     if (variant.spawnConditions().isPresent()) {
-                        List<DragonSpawnConditions> conditionsList = registryManager.lookupOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get());
+                        List<DragonSpawnConditions> conditionsList = registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get());
                         if (conditionsList == null) return false;
                         for (DragonSpawnConditions conditions : conditionsList) if (conditions.weight() > 0) return true;
                     }

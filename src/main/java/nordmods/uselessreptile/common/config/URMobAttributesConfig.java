@@ -46,7 +46,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float wyvernArmorToughness = 2.0f;
     @SerialEntry
-    public float wyvernGroundSpeed = WyvernEntity.BASE_GROUND_SPEED;
+    public float wyvernGroundSpeed = Wyvern.BASE_GROUND_SPEED;
     @SerialEntry
     public float wyvernFlyingSpeed = 0.7f;
     @SerialEntry
@@ -73,7 +73,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float moleclawArmorToughness = 4.0f;
     @SerialEntry
-    public float moleclawGroundSpeed = MoleclawEntity.BASE_GROUND_SPEED;
+    public float moleclawGroundSpeed = Moleclaw.BASE_GROUND_SPEED;
     @SerialEntry
     public int moleclawBaseSecondaryAttackCooldown = 30;
     @SerialEntry
@@ -92,7 +92,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float riverPikehornArmorToughness = 0f;
     @SerialEntry
-    public float riverPikehornGroundSpeed = RiverPikehornEntity.BASE_GROUND_SPEED;
+    public float riverPikehornGroundSpeed = RiverPikehorn.BASE_GROUND_SPEED;
     @SerialEntry
     public float riverPikehornFlyingSpeed = 0.8f;
     @SerialEntry
@@ -117,7 +117,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float lightningChaserArmorToughness = 6.0f;
     @SerialEntry
-    public float lightningChaserGroundSpeed = LightningChaserEntity.BASE_GROUND_SPEED;
+    public float lightningChaserGroundSpeed = LightningChaser.BASE_GROUND_SPEED;
     @SerialEntry
     public float lightningChaserFlyingSpeed = 0.9f;
     @SerialEntry
@@ -146,7 +146,7 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float magmamuncherArmorToughness = 0;
     @SerialEntry
-    public float magmamuncherGroundSpeed = MagmamuncherEntity.BASE_GROUND_SPEED;
+    public float magmamuncherGroundSpeed = Magmamuncher.BASE_GROUND_SPEED;
     @SerialEntry
     public int magmamuncherBasePrimaryAttackCooldown = 30;
     @SerialEntry

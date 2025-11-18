@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.goal.moleclaw;
 
-import nordmods.uselessreptile.common.entity.MoleclawEntity;
+import nordmods.uselessreptile.common.entity.Moleclaw;
 
 import java.util.EnumSet;
 import net.minecraft.world.entity.LivingEntity;
@@ -8,13 +8,13 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MoleclawAttackGoal extends Goal {
-    private final MoleclawEntity entity;
+    private final Moleclaw entity;
     private LivingEntity target;
     private final double maxSearchDistance;
     private int notMovingTimer = 0;
     private int nextStrongAttackTimer = 60;
 
-    public MoleclawAttackGoal(MoleclawEntity entity, double maxSearchDistance) {
+    public MoleclawAttackGoal(Moleclaw entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));

@@ -1,17 +1,17 @@
 package nordmods.uselessreptile.common.entity.ai.goal.magmamuncher;
 
-import nordmods.uselessreptile.common.entity.MagmamuncherEntity;
+import nordmods.uselessreptile.common.entity.Magmamuncher;
 
 import java.util.EnumSet;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 public class MagmamuncherAttackGoal extends Goal {
-    private final MagmamuncherEntity entity;
+    private final Magmamuncher entity;
     private LivingEntity target;
     private final double maxSearchDistance;
 
-    public MagmamuncherAttackGoal(MagmamuncherEntity entity, double maxSearchDistance) {
+    public MagmamuncherAttackGoal(Magmamuncher entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));

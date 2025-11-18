@@ -1,17 +1,17 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
-import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
+import nordmods.uselessreptile.common.entity.RiverPikehorn;
 
 import java.util.EnumSet;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 
 public class PikehornAttackGoal extends Goal {
-    private final RiverPikehornEntity entity;
+    private final RiverPikehorn entity;
     private LivingEntity target;
     private final double maxSearchDistance;
 
-    public PikehornAttackGoal(RiverPikehornEntity entity, double maxSearchDistance) {
+    public PikehornAttackGoal(RiverPikehorn entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
