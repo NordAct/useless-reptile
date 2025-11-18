@@ -1,22 +1,27 @@
 package nordmods.uselessreptile.common.entity.special;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.*;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.item.FallingBlockEntity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -31,56 +36,56 @@ import org.joml.Vector3f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LightningBreathEntity extends ProjectileEntity implements ProjectileDamageHelper {
+public class LightningBreathEntity extends Projectile implements ProjectileDamageHelper {
     private boolean spawnSoundPlayed = false;
-    private int age;
+    private int tickCount;
     public static final int MAX_AGE = 10;
     public static final int MAX_LENGTH = 50;
     public float prevAlpha = 0.5f;
     public final LightningBreathBolt[] lightningBreathBolts = new LightningBreathBolt[5];
 
-    public LightningBreathEntity(EntityType<? extends ProjectileEntity> entityType, World world, Entity owner) {
+    public LightningBreathEntity(EntityType<? extends Projectile> entityType, Level world, Entity owner) {
         super(entityType, world);
-        age = 0;
+        tickCount = 0;
         setOwner(owner);
     }
 
-    public LightningBreathEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
+    public LightningBreathEntity(EntityType<? extends Projectile> entityType, Level world) {
         this(entityType, world, null);
     }
 
-    public LightningBreathEntity(World world, Entity owner) {
+    public LightningBreathEntity(Level world, Entity owner) {
         this(UREntities.LIGHTNING_BREATH_ENTITY, world, owner);
     }
 
-    public static final TrackedData<Integer> BEAM_LENGTH = DataTracker.registerData(LightningBreathEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    public static final EntityDataAccessor<Integer> BEAM_LENGTH = SynchedEntityData.defineId(LightningBreathEntity.class, EntityDataSerializers.INT);
 
-    public void setBeamLength(int state) {dataTracker.set(BEAM_LENGTH, state);}
-    public int getBeamLength() {return dataTracker.get(BEAM_LENGTH);}
+    public void setBeamLength(int state) {entityData.set(BEAM_LENGTH, state);}
+    public int getBeamLength() {return entityData.get(BEAM_LENGTH);}
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        builder.add(BEAM_LENGTH, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        builder.define(BEAM_LENGTH, 0);
     }
 
     @Override
-    protected void onEntityHit(EntityHitResult entityHitResult) {
-        super.onEntityHit(entityHitResult);
-        if (!(getEntityWorld() instanceof ServerWorld serverWorld)) return;
+    protected void onHitEntity(EntityHitResult entityHitResult) {
+        super.onHitEntity(entityHitResult);
+        if (!(level() instanceof ServerLevel serverWorld)) return;
         Entity target = entityHitResult.getEntity();
-        DamageSource source = getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner());
+        DamageSource source = damageSources().source(DamageTypes.LIGHTNING_BOLT, getOwner());
         if (target instanceof LivingEntity livingEntity && livingEntity.isInvulnerableTo(serverWorld, source)) return;
-        if (target.damage(serverWorld, source, getResultingDamage())) {
+        if (target.hurtServer(serverWorld, source, getResultingDamage())) {
             target.playSound(URSounds.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
             boolean wasOnFireBefore = target.isOnFire();
-            LightningEntity fakeLightningSoINoNullPointerExceptionWouldHappenIHope = new LightningEntity(EntityType.LIGHTNING_BOLT, serverWorld);
-            target.onStruckByLightning(serverWorld, fakeLightningSoINoNullPointerExceptionWouldHappenIHope);
+            LightningBolt fakeLightningSoINoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityType.LIGHTNING_BOLT, serverWorld);
+            target.thunderHit(serverWorld, fakeLightningSoINoNullPointerExceptionWouldHappenIHope);
             if (!wasOnFireBefore) {
-                target.setFireTicks(0);
-                target.setOnFire(false);
+                target.setRemainingFireTicks(0);
+                target.setSharedFlagOnFire(false);
             }
             if (target instanceof LivingEntity livingEntity)
-                livingEntity.addStatusEffect(new StatusEffectInstance(URStatusEffects.SHOCK, 400, 0, false, false), getOwner());
+                livingEntity.addEffect(new MobEffectInstance(URStatusEffects.SHOCK, 400, 0, false, false), getOwner());
         }
     }
 
@@ -88,31 +93,31 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
     public void tick() {
         super.tick();
         tryPlaySpawnSound();
-        if (++age <= MAX_AGE) {
-            List<Entity> targets = getEntityWorld().getOtherEntities(this, getBoundingBox(), this::canTarget);
+        if (++tickCount <= MAX_AGE) {
+            List<Entity> targets = level().getEntities(this, getBoundingBox(), this::canTarget);
             for (Entity target : targets) {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
-                onEntityHit(entityHitResult);
+                onHitEntity(entityHitResult);
             }
 
             if (getOwner() instanceof URDragonEntity dragon && !dragon.canBreakBlocks()) return;
 
-            Iterable<BlockPos> blocks = BlockPos.iterateOutwards(getBlockPos(), 2, 1, 2);
+            Iterable<BlockPos> blocks = BlockPos.withinManhattan(blockPosition(), 2, 1, 2);
             float harnessLimit = 3;
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {
-                BlockState blockState = getEntityWorld().getBlockState(blockPos);
+                BlockState blockState = level().getBlockState(blockPos);
                 if (getOwner() instanceof URDragonEntity dragon && dragon.isBlockProtected(blockPos)) continue;
-                float hardness = blockState.getHardness(getEntityWorld(), blockPos);
+                float hardness = blockState.getDestroySpeed(level(), blockPos);
                 if (hardness < 0) continue;
-                if (hardness == 0 || blockState.isIn(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)) {
+                if (hardness == 0 || blockState.is(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)) {
                     boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
-                    getEntityWorld().breakBlock(blockPos, shouldDrop, this);
+                    level().destroyBlock(blockPos, shouldDrop, this);
                     continue;
                 }
                 harnessLimit -= hardness;
                 if (harnessLimit < 0) break;
-                FallingBlockEntity fallingBlockEntity = FallingBlockEntity.spawnFromBlock(getEntityWorld(), blockPos, blockState);
+                FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(level(), blockPos, blockState);
                 fallingBlockEntities.add(fallingBlockEntity);
             }
             List<FallingBlockEntity> sorted = new ArrayList<>();
@@ -133,13 +138,13 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
             }
 
             sorted.forEach(fallingBlockEntity -> {
-                Vec3d velocity = getBlockPos()
-                        .toCenterPos()
-                        .subtract(fallingBlockEntity.getBlockPos().toCenterPos())
+                Vec3 velocity = blockPosition()
+                        .getCenter()
+                        .subtract(fallingBlockEntity.blockPosition().getCenter())
                         .add(getRandom().nextFloat() - 0.5f, 1, getRandom().nextFloat() - 0.5f)
                         .normalize()
-                        .multiply(0.75);
-                fallingBlockEntity.setVelocity(velocity);
+                        .scale(0.75);
+                fallingBlockEntity.setDeltaMovement(velocity);
             });
             if (!sorted.isEmpty()) discard();
         } else discard();
@@ -154,17 +159,17 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
 
     private boolean canTarget(Entity target) {
         if (target instanceof EntityPart part) target = part.owner;
-        if (target.getType().isIn(URTags.DRAGON_IMMUNE)) return false;
+        if (target.getType().is(URTags.DRAGON_IMMUNE)) return false;
         Entity owner = getOwner();
-        LivingEntity ownerOwner = owner instanceof Tameable tameable ? tameable.getOwner() : null;
+        LivingEntity ownerOwner = owner instanceof OwnableEntity tameable ? tameable.getOwner() : null;
         if (target == ownerOwner) return false;
-        if (target instanceof Tameable tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
+        if (target instanceof OwnableEntity tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
 
         return true;
     }
 
     @Override
-    public boolean shouldSave() {
+    public boolean shouldBeSaved() {
         return false;
     }
 
@@ -172,7 +177,7 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
     public boolean shouldRender(double cameraX, double cameraY, double cameraZ) {
         return true;
     }
-    public boolean shouldRender(double distance) {
+    public boolean shouldRenderAtSqrDistance(double distance) {
         return true;
     }
 
@@ -186,29 +191,29 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
         return 2;
     }
 
-    public static void createBeam(@NotNull Entity owner, float pitch, float yaw, Vec3d startPos) {
-        Vec3d rot = owner.getRotationVector(pitch, yaw);
+    public static void createBeam(@NotNull Entity owner, float pitch, float yaw, Vec3 startPos) {
+        Vec3 rot = owner.calculateViewVector(pitch, yaw);
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreathEntity firstSegment = null;
-        World world = owner.getEntityWorld();
+        Level world = owner.level();
 
         for (int i = 1; i <= LightningBreathEntity.MAX_LENGTH; i++) {
             LightningBreathEntity lightningBreathEntity = new LightningBreathEntity(world, owner);
-            lightningBreathEntity.setPosition(startPos.add(rot.multiply(i)));
-            lightningBreathEntity.setVelocity(Vec3d.ZERO);
+            lightningBreathEntity.setPos(startPos.add(rot.scale(i)));
+            lightningBreathEntity.setDeltaMovement(Vec3.ZERO);
             lightningBreathEntity.setOwner(owner);
-            world.spawnEntity(lightningBreathEntity);
+            world.addFreshEntity(lightningBreathEntity);
             if (i == 1) firstSegment = lightningBreathEntity;
 
             ids.add(lightningBreathEntity.getId());
 
-            Box box = lightningBreathEntity.getBoundingBox().shrink(0.5f, 0.5f, 0.5f);
-            boolean collides = BlockPos.stream(box).noneMatch(pos -> {
+            AABB box = lightningBreathEntity.getBoundingBox().contract(0.5f, 0.5f, 0.5f);
+            boolean collides = BlockPos.betweenClosedStream(box).noneMatch(pos -> {
                 BlockState blockState = world.getBlockState(pos);
-                return blockState.isIn(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS) || blockState.getHardness(world, pos) == 0;
-            }) || !world.getOtherEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
-                LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof Tameable tameable ? tameable.getOwner() : null;
-                if (entity instanceof Tameable tameable && tameable.getOwner() != null && tameable.getOwner() == ownerOwner)
+                return blockState.is(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS) || blockState.getDestroySpeed(world, pos) == 0;
+            }) || !world.getEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
+                LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof OwnableEntity tameable ? tameable.getOwner() : null;
+                if (entity instanceof OwnableEntity tameable && tameable.getOwner() != null && tameable.getOwner() == ownerOwner)
                     return false;
                 if (owner.getControllingPassenger() == entity) return false;
                 return entity instanceof LivingEntity;
@@ -221,8 +226,8 @@ public class LightningBreathEntity extends ProjectileEntity implements Projectil
         int[] array = new int[ids.size()];
         for (int i = 0; i < ids.size(); i++) array[i] = ids.get(i);
 
-        if (world instanceof ServerWorld serverWorld)
-            for (ServerPlayerEntity player : PlayerLookup.tracking(serverWorld, owner.getBlockPos()))
+        if (world instanceof ServerLevel serverWorld)
+            for (ServerPlayer player : PlayerLookup.tracking(serverWorld, owner.blockPosition()))
                 SyncLightningBreathRotationsS2CPacket.send(player, array, pitch, yaw);
     }
 

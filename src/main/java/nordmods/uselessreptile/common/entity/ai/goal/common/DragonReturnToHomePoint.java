@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import net.minecraft.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 public class DragonReturnToHomePoint extends Goal {
     private final URDragonEntity entity;
@@ -11,21 +11,21 @@ public class DragonReturnToHomePoint extends Goal {
 
     public DragonReturnToHomePoint(URDragonEntity entity) {
         this.entity = entity;
-        setControls(EnumSet.of(Control.MOVE, Control.LOOK, Control.JUMP));
+        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
     @Override
-    public boolean canStart() {
-        return entity.isTamed() && entity.squaredDistanceTo(entity.getHomePoint().toCenterPos()) > toleranceDistance * toleranceDistance;
+    public boolean canUse() {
+        return entity.isTame() && entity.distanceToSqr(entity.getHomePoint().getCenter()) > toleranceDistance * toleranceDistance;
     }
 
     @Override
-    public boolean shouldContinue(){
-        return entity.squaredDistanceTo(entity.getHomePoint().toCenterPos()) > toleranceDistance * toleranceDistance / 2f;
+    public boolean canContinueToUse(){
+        return entity.distanceToSqr(entity.getHomePoint().getCenter()) > toleranceDistance * toleranceDistance / 2f;
     }
 
     @Override
     public void tick() {
-        entity.getNavigation().startMovingTo(entity.getHomePoint().getX(), entity.getHomePoint().getY(), entity.getHomePoint().getZ(), 1);
+        entity.getNavigation().moveTo(entity.getHomePoint().getX(), entity.getHomePoint().getY(), entity.getHomePoint().getZ(), 1);
     }
 }

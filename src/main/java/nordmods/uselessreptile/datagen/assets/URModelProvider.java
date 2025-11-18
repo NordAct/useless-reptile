@@ -5,14 +5,23 @@ import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.minecraft.client.data.*;
-import net.minecraft.client.render.item.model.ItemModel;
-import net.minecraft.client.render.item.model.SelectItemModel;
-import net.minecraft.client.render.item.property.select.ComponentSelectProperty;
-import net.minecraft.client.render.model.json.ModelVariant;
-import net.minecraft.item.Item;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
+import net.minecraft.client.data.models.BlockModelGenerators;
+import net.minecraft.client.data.models.ItemModelGenerators;
+import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
+import net.minecraft.client.data.models.model.ItemModelUtils;
+import net.minecraft.client.data.models.model.ModelInstance;
+import net.minecraft.client.data.models.model.ModelLocationUtils;
+import net.minecraft.client.data.models.model.ModelTemplate;
+import net.minecraft.client.data.models.model.ModelTemplates;
+import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.item.ItemModel;
+import net.minecraft.client.renderer.item.SelectItemModel;
+import net.minecraft.client.renderer.item.properties.select.ComponentContents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.item.Item;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URItems;
@@ -31,42 +40,42 @@ public class URModelProvider extends FabricModelProvider {
     }
 
     @Override
-    public void generateBlockStateModels(BlockStateModelGenerator blockStateModelGenerator) {
-        ModelVariant modelVariant = new ModelVariant(Identifier.of("block/netherrack"));
-        blockStateModelGenerator.blockStateCollector
+    public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
+        Variant modelVariant = new Variant(ResourceLocation.parse("block/netherrack"));
+        blockStateModelGenerator.blockStateOutput
                 .accept(
-                        VariantsBlockModelDefinitionCreator.of(
+                        MultiVariantGenerator.dispatch(
                                 URBlocks.DEPLETED_MAGMA,
-                                BlockStateModelGenerator.createWeightedVariant(
+                                BlockModelGenerators.variants(
                                         modelVariant,
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_X_90),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_X_180),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_X_270),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_90),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_90.then(BlockStateModelGenerator.ROTATE_X_90)),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_90.then(BlockStateModelGenerator.ROTATE_X_180)),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_90.then(BlockStateModelGenerator.ROTATE_X_270)),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_180),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_180.then(BlockStateModelGenerator.ROTATE_X_90)),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_180.then(BlockStateModelGenerator.ROTATE_X_180)),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_180.then(BlockStateModelGenerator.ROTATE_X_270)),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_270),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_270.then(BlockStateModelGenerator.ROTATE_X_90)),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_270.then(BlockStateModelGenerator.ROTATE_X_180)),
-                                        modelVariant.with(BlockStateModelGenerator.ROTATE_Y_270.then(BlockStateModelGenerator.ROTATE_X_270))
+                                        modelVariant.with(BlockModelGenerators.X_ROT_90),
+                                        modelVariant.with(BlockModelGenerators.X_ROT_180),
+                                        modelVariant.with(BlockModelGenerators.X_ROT_270),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_90),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_90.then(BlockModelGenerators.X_ROT_90)),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_90.then(BlockModelGenerators.X_ROT_180)),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_90.then(BlockModelGenerators.X_ROT_270)),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_180),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_180.then(BlockModelGenerators.X_ROT_90)),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_180.then(BlockModelGenerators.X_ROT_180)),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_180.then(BlockModelGenerators.X_ROT_270)),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_270),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_270.then(BlockModelGenerators.X_ROT_90)),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_270.then(BlockModelGenerators.X_ROT_180)),
+                                        modelVariant.with(BlockModelGenerators.Y_ROT_270.then(BlockModelGenerators.X_ROT_270))
                                 )
                         )
                 );
     }
 
     @Override
-    public void generateItemModels(ItemModelGenerator itemModelGenerator) {
-        itemModelGenerator.register(URItems.WYVERN_SKIN, Models.GENERATED);
-        itemModelGenerator.register(URItems.WYVERN_SPAWN_EGG, Models.GENERATED);
-        itemModelGenerator.register(URItems.LIGHTNING_CHASER_SPAWN_EGG, Models.GENERATED);
-        itemModelGenerator.register(URItems.MOLECLAW_SPAWN_EGG, Models.GENERATED);
-        itemModelGenerator.register(URItems.RIVER_PIKEHORN_SPAWN_EGG, Models.GENERATED);
-        itemModelGenerator.register(URItems.MAGMAMUNCHER_SPAWN_EGG, Models.GENERATED);
+    public void generateItemModels(ItemModelGenerators itemModelGenerator) {
+        itemModelGenerator.generateFlatItem(URItems.WYVERN_SKIN, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(URItems.WYVERN_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(URItems.LIGHTNING_CHASER_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(URItems.MOLECLAW_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(URItems.RIVER_PIKEHORN_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(URItems.MAGMAMUNCHER_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
 
         registerVortexHorn(itemModelGenerator, URItems.VORTEX_HORN);
         registerVortexHorn(itemModelGenerator, URItems.IRON_VORTEX_HORN);
@@ -94,11 +103,11 @@ public class URModelProvider extends FabricModelProvider {
         registerFlute(itemModelGenerator, URItems.FLUTE);
     }
 
-    protected static Model item(String parent, TextureKey... requiredTextureKeys) {
-        return new Model(Optional.of(Identifier.of("item/" + parent)), Optional.empty(), requiredTextureKeys);
+    protected static ModelTemplate item(String parent, TextureSlot... requiredTextureKeys) {
+        return new ModelTemplate(Optional.of(ResourceLocation.parse("item/" + parent)), Optional.empty(), requiredTextureKeys);
     }
 
-    protected void generateDragonArmor(Item item, Identifier texture,  BiConsumer<Identifier, ModelSupplier> modelCollector) {
+    protected void generateDragonArmor(Item item, ResourceLocation texture,  BiConsumer<ResourceLocation, ModelInstance> modelCollector) {
         JsonArray translation = new JsonArray();
         translation.add(0);
         translation.add(-0.4);
@@ -116,7 +125,7 @@ public class URModelProvider extends FabricModelProvider {
         JsonObject display = new JsonObject();
         display.add("thirdperson_righthand", thirdpersonRighthand);
 
-        modelCollector.accept(ModelIds.getItemModelId(item), () -> {
+        modelCollector.accept(ModelLocationUtils.getModelLocation(item), () -> {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("parent", "minecraft:item/generated");
             JsonObject jsonObject2 = new JsonObject();
@@ -127,12 +136,12 @@ public class URModelProvider extends FabricModelProvider {
         });
     }
 
-    protected void registerDragonArmorModel(ItemModelGenerator itemModelGenerator, Item item, Identifier texture) {
-        generateDragonArmor(item, texture, itemModelGenerator.modelCollector);
-        itemModelGenerator.register(item);
+    protected void registerDragonArmorModel(ItemModelGenerators itemModelGenerator, Item item, ResourceLocation texture) {
+        generateDragonArmor(item, texture, itemModelGenerator.modelOutput);
+        itemModelGenerator.declareCustomModelItem(item);
     }
 
-    protected void generateVotexHorn(Item item, BiConsumer<Identifier, ModelSupplier> modelCollector) {
+    protected void generateVotexHorn(Item item, BiConsumer<ResourceLocation, ModelInstance> modelCollector) {
         JsonArray translation;
         JsonArray rotation;
         JsonArray scale;
@@ -176,19 +185,19 @@ public class URModelProvider extends FabricModelProvider {
         display.add("firstperson_righthand", firstpersonRighthand);
         display.add("firstperson_lefthand", firstpersonLefthand);
 
-        Identifier itemID = item.getRegistryEntry().registryKey().getValue();
-        modelCollector.accept(ModelIds.getItemModelId(item), () -> {
+        ResourceLocation itemID = item.builtInRegistryHolder().key().location();
+        modelCollector.accept(ModelLocationUtils.getModelLocation(item), () -> {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("parent", "minecraft:item/generated");
             JsonObject jsonObject2 = new JsonObject();
-            jsonObject2.addProperty("layer0", Identifier.of(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
+            jsonObject2.addProperty("layer0", ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
             jsonObject.add("textures", jsonObject2);
             jsonObject.add("display", display);
             return jsonObject;
         });
     }
 
-    protected void generateTootingVotexHorn(Item item, BiConsumer<Identifier, ModelSupplier> modelCollector) {
+    protected void generateTootingVotexHorn(Item item, BiConsumer<ResourceLocation, ModelInstance> modelCollector) {
         JsonArray translation;
         JsonArray rotation;
         JsonArray scale;
@@ -228,26 +237,26 @@ public class URModelProvider extends FabricModelProvider {
         display.add("firstperson_righthand", firstpersonRighthand);
         display.add("firstperson_lefthand", firstpersonLefthand);
 
-        Identifier itemID = item.getRegistryEntry().registryKey().getValue();
-        modelCollector.accept(Identifier.of(itemID.getNamespace(), "item/tooting_" + itemID.getPath()), () -> {
+        ResourceLocation itemID = item.builtInRegistryHolder().key().location();
+        modelCollector.accept(ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/tooting_" + itemID.getPath()), () -> {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("parent", "minecraft:item/generated");
             JsonObject jsonObject2 = new JsonObject();
-            jsonObject2.addProperty("layer0", Identifier.of(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
+            jsonObject2.addProperty("layer0", ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
             jsonObject.add("textures", jsonObject2);
             jsonObject.add("display", display);
             return jsonObject;
         });
     }
 
-    protected void registerVortexHorn(ItemModelGenerator itemModelGenerator, Item item) {
-        generateVotexHorn(item, itemModelGenerator.modelCollector);
-        generateTootingVotexHorn(item, itemModelGenerator.modelCollector);
+    protected void registerVortexHorn(ItemModelGenerators itemModelGenerator, Item item) {
+        generateVotexHorn(item, itemModelGenerator.modelOutput);
+        generateTootingVotexHorn(item, itemModelGenerator.modelOutput);
 
-        Identifier itemID = item.getRegistryEntry().registryKey().getValue();
-        ItemModel.Unbaked unbaked = ItemModels.basic(Identifier.of(itemID.getNamespace(), "item/" + itemID.getPath()));
-        ItemModel.Unbaked unbaked2 = ItemModels.basic(Identifier.of(itemID.getNamespace(), "item/tooting_" + itemID.getPath()));
-        itemModelGenerator.registerCondition(item, ItemModels.usingItemProperty(), unbaked2, unbaked);
+        ResourceLocation itemID = item.builtInRegistryHolder().key().location();
+        ItemModel.Unbaked unbaked = ItemModelUtils.plainModel(ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/" + itemID.getPath()));
+        ItemModel.Unbaked unbaked2 = ItemModelUtils.plainModel(ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/tooting_" + itemID.getPath()));
+        itemModelGenerator.generateBooleanDispatch(item, ItemModelUtils.isUsingItem(), unbaked2, unbaked);
     }
 
     private JsonArray updateValues(double x, double y, double z) {
@@ -258,14 +267,14 @@ public class URModelProvider extends FabricModelProvider {
         return array;
     }
 
-    protected void registerFlute(ItemModelGenerator itemModelGenerator, Item item) {
+    protected void registerFlute(ItemModelGenerators itemModelGenerator, Item item) {
         List<SelectItemModel.SwitchCase<FluteComponent>> entries = new ArrayList<>();
-        for (Map.Entry<String, Pair<SoundEvent, FluteItem.FluteAction>> entry :FluteItem.FLUTE_MODES.entrySet()) {
+        for (Map.Entry<String, Tuple<SoundEvent, FluteItem.FluteAction>> entry :FluteItem.FLUTE_MODES.entrySet()) {
             String mode = entry.getKey();
-            ItemModel.Unbaked model = ItemModels.basic(itemModelGenerator.registerSubModel(item, "/" + mode, Models.HANDHELD));
+            ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModelGenerator.createFlatItemModel(item, "/" + mode, ModelTemplates.FLAT_HANDHELD_ITEM));
             entries.add(new SelectItemModel.SwitchCase<>(List.of(new FluteComponent(mode)), model));
         }
 
-        itemModelGenerator.output.accept(item, ItemModels.select(new ComponentSelectProperty<>(URItems.FLUTE_MODE_COMPONENT), entries));
+        itemModelGenerator.itemModelOutput.accept(item, ItemModelUtils.select(new ComponentContents<>(URItems.FLUTE_MODE_COMPONENT), entries));
     }
 }

@@ -1,41 +1,41 @@
 package nordmods.uselessreptile.common.entity.ai.navigation;
 
-import net.minecraft.entity.ai.pathing.PathNode;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.pathfinder.Node;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
 
 public class MoleclawNavigation extends DragonNavigation {
 
     private final MoleclawEntity entity;
 
-    public MoleclawNavigation(MoleclawEntity mobEntity, World world) {
+    public MoleclawNavigation(MoleclawEntity mobEntity, Level world) {
         super(mobEntity, world);
         this.entity = mobEntity;
     }
 
     @Override
-    protected void continueFollowingPath() {
-        if (currentPath == null) return;
-        super.continueFollowingPath();
+    protected void followThePath() {
+        if (path == null) return;
+        super.followThePath();
     }
 
-    protected boolean shouldJumpToNextNode(Vec3d currentPos) {
-        if (currentPath == null) return false;
-        return super.shouldJumpToNextNode(currentPos);
+    protected boolean shouldTargetNextNodeInDirection(Vec3 currentPos) {
+        if (path == null) return false;
+        return super.shouldTargetNextNodeInDirection(currentPos);
     }
 
     @Override
-    protected void adjustPath() {
-        if (currentPath == null) return;
+    protected void trimPath() {
+        if (path == null) return;
 
-        super.adjustPath();
+        super.trimPath();
         if (!entity.isPanicking() && !entity.hasLightProtection()) {
-            for (int i = 0; i < this.currentPath.getLength(); ++i) {
-                PathNode pathNode = this.currentPath.getNode(i);
+            for (int i = 0; i < this.path.getNodeCount(); ++i) {
+                Node pathNode = this.path.getNode(i);
                 if (entity.isTooBrightAtPos(new BlockPos(pathNode.x, pathNode.y, pathNode.z))) {
-                    this.currentPath.setLength(i);
+                    this.path.truncateNodes(i);
                     return;
                 }
             }

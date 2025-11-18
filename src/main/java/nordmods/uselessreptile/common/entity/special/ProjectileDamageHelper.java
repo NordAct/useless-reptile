@@ -1,17 +1,17 @@
 package nordmods.uselessreptile.common.entity.special;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Ownable;
-import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TraceableEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 
 
 /**
  * Helper interface for easier damage calculation for projectiles
  */
-public interface ProjectileDamageHelper extends Ownable {
+public interface ProjectileDamageHelper extends TraceableEntity {
     default float getResultingDamage() {
-        if (getOwner() instanceof LivingEntity livingEntity && livingEntity.getAttributes().hasAttribute(EntityAttributes.ATTACK_DAMAGE))
-            return (float) (livingEntity.getAttributeValue(EntityAttributes.ATTACK_DAMAGE) * getDamageScaling());
+        if (getOwner() instanceof LivingEntity livingEntity && livingEntity.getAttributes().hasAttribute(Attributes.ATTACK_DAMAGE))
+            return (float) (livingEntity.getAttributeValue(Attributes.ATTACK_DAMAGE) * getDamageScaling());
         return getDefaultDamage();
     }
 

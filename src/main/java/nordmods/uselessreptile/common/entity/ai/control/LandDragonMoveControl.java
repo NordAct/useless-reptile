@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
@@ -16,20 +16,20 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
     }
 
     public void moveBack() {
-        state = State.STRAFE;
+        operation = Operation.STRAFE;
     }
 
     public void notMove() {
-        state = State.WAIT;
+        operation = Operation.WAIT;
     }
 
     @Override
     public void tick() {
-        if (entity.hasControllingPassenger() || entity.hasVehicle()) return;
+        if (entity.hasControllingPassenger() || entity.isPassenger()) return;
 
-        double diffX = targetX - entity.getX();
-        double diffY = targetY - entity.getY();
-        double diffZ = targetZ - entity.getZ();
+        double diffX = wantedX - entity.getX();
+        double diffY = wantedY - entity.getY();
+        double diffZ = wantedZ - entity.getZ();
         double distanceSquared = diffX * diffX + diffY * diffY + diffZ * diffZ;
         float destinationYaw;
         float destinationPitch;
@@ -39,50 +39,50 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
             double diffTargetY = target.getY() - shooterDragon.getShootingPoint().pos().y;
             double diffTargetZ = target.getZ() - shooterDragon.getShootingPoint().pos().z;
             double distanceTargetXZ = Math.sqrt(diffTargetX * diffTargetX + diffTargetZ * diffTargetZ);
-            destinationPitch = wrapDegrees(
-                    entity.getPitch(),
-                    (float)(-(MathHelper.atan2(diffTargetY, distanceTargetXZ) * MathHelper.DEGREES_PER_RADIAN)),
+            destinationPitch = rotlerp(
+                    entity.getXRot(),
+                    (float)(-(Mth.atan2(diffTargetY, distanceTargetXZ) * Mth.RAD_TO_DEG)),
                     entity.getPitchLimit()
             );
-            destinationYaw = (float)(MathHelper.atan2(diffTargetZ, diffTargetX) * MathHelper.DEGREES_PER_RADIAN) - 90.0F;
+            destinationYaw = (float)(Mth.atan2(diffTargetZ, diffTargetX) * Mth.RAD_TO_DEG) - 90.0F;
         } else {
-            destinationYaw = (float)(MathHelper.atan2(diffZ, diffX) * MathHelper.DEGREES_PER_RADIAN) - 90.0F;
-            destinationPitch = entity.getPitch();
+            destinationYaw = (float)(Mth.atan2(diffZ, diffX) * Mth.RAD_TO_DEG) - 90.0F;
+            destinationPitch = entity.getXRot();
         }
         entity.setMovingBackwards(false);
         float speed = getMovementSpeed();
-        entity.setRotation(destinationYaw, destinationPitch);
+        entity.setRot(destinationYaw, destinationPitch);
 
-        switch (state) {
+        switch (operation) {
             case STRAFE -> { //there's no strafe for dragons, but it's used for backwards movement
-                state = State.WAIT;
+                operation = Operation.WAIT;
                 entity.setMovingBackwards(true);
-                entity.setMovementSpeed(-speed);
+                entity.setSpeed(-speed);
             }
             case MOVE_TO -> {
-                state = State.WAIT;
+                operation = Operation.WAIT;
                 if (distanceSquared < 2.500000277905201E-7D) {
-                    entity.setUpwardSpeed(0.0F);
-                    entity.setForwardSpeed(0.0F);
+                    entity.setYya(0.0F);
+                    entity.setZza(0.0F);
                     return;
                 }
-                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getPitch(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
-                    entity.setMovementSpeed(speed);
-                } else entity.setForwardSpeed(0.0F);
+                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getXRot(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
+                    entity.setSpeed(speed);
+                } else entity.setZza(0.0F);
             }
             case JUMPING -> {
-                entity.setMovementSpeed(speed);
-                if (entity.isOnGround()) state = State.WAIT;
+                entity.setSpeed(speed);
+                if (entity.onGround()) operation = Operation.WAIT;
             }
             default -> {
-                entity.setUpwardSpeed(0.0F);
-                entity.setForwardSpeed(0.0F);
+                entity.setYya(0.0F);
+                entity.setZza(0.0F);
                 entity.setMovingBackwards(entity.isMoving());
             }
         }
     }
 
     private float getMovementSpeed() {
-        return (float) entity.getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+        return (float) entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
     }
 }

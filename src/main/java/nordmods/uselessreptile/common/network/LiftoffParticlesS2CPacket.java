@@ -1,27 +1,27 @@
 package nordmods.uselessreptile.common.network;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public record LiftoffParticlesS2CPacket(int id) implements CustomPayload {
-    public static final Identifier ID = UselessReptile.id("liftoff_particles");
-    public static final Id<LiftoffParticlesS2CPacket> PACKET_ID = new Id<>(ID);
-    public static final PacketCodec<RegistryByteBuf, LiftoffParticlesS2CPacket> PACKET_CODEC = PacketCodecs.INTEGER.xmap(LiftoffParticlesS2CPacket::new, LiftoffParticlesS2CPacket::id).cast();
+public record LiftoffParticlesS2CPacket(int id) implements CustomPacketPayload {
+    public static final ResourceLocation ID = UselessReptile.id("liftoff_particles");
+    public static final Type<LiftoffParticlesS2CPacket> PACKET_ID = new Type<>(ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, LiftoffParticlesS2CPacket> PACKET_CODEC = ByteBufCodecs.INT.map(LiftoffParticlesS2CPacket::new, LiftoffParticlesS2CPacket::id).cast();
 
-    public static <T extends URDragonEntity & FlyingDragon> void send(ServerPlayerEntity player, T dragon) {
+    public static <T extends URDragonEntity & FlyingDragon> void send(ServerPlayer player, T dragon) {
         ServerPlayNetworking.send(player, new LiftoffParticlesS2CPacket(dragon.getId()));
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return PACKET_ID;
     }
 }

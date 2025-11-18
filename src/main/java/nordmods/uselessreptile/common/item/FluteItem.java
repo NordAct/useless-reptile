@@ -1,30 +1,7 @@
 package nordmods.uselessreptile.common.item;
 
 import com.google.common.collect.ImmutableSortedMap;
-import net.minecraft.advancement.criterion.Criteria;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.I18n;
-import net.minecraft.client.util.InputUtil;
-import net.minecraft.component.type.TooltipDisplayComponent;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileUtil;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.consume.UseAction;
-import net.minecraft.item.tooltip.TooltipType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Pair;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import com.mojang.blaze3d.platform.InputConstants;
 import nordmods.uselessreptile.common.entity.base.FluteListener;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URGameEvents;
@@ -36,69 +13,92 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Consumer;
+import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 
 //todo expand functionality to other dragons
 public class FluteItem extends Item {
-    public static final ImmutableSortedMap<String, Pair<SoundEvent, FluteAction>> FLUTE_MODES = createFluteModeMap();
-    public FluteItem(Settings settings) {
+    public static final ImmutableSortedMap<String, Tuple<SoundEvent, FluteAction>> FLUTE_MODES = createFluteModeMap();
+    public FluteItem(Properties settings) {
         super(settings);
-        ItemStack itemStack = getDefaultStack();
+        ItemStack itemStack = getDefaultInstance();
         itemStack.set(URItems.FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT);
     }
 
     @Override
-    public ActionResult use(World world, PlayerEntity user, Hand hand) {
-        ItemStack itemStack = user.getStackInHand(hand);
-        if (user.isSneaking()) {
+    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+        ItemStack itemStack = user.getItemInHand(hand);
+        if (user.isShiftKeyDown()) {
             String nextMode = getNextMode(itemStack);
             itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent(nextMode));
 
-            if (world.isClient() && user == MinecraftClient.getInstance().player) {
-                Text text = Text.translatable("tooltip.uselessreptile.flute_mode." + getFluteMode(itemStack));
-                MinecraftClient.getInstance().inGameHud.setOverlayMessage(text, false);
+            if (world.isClientSide() && user == Minecraft.getInstance().player) {
+                Component text = Component.translatable("tooltip.uselessreptile.flute_mode." + getFluteMode(itemStack));
+                Minecraft.getInstance().gui.setOverlayMessage(text, false);
             }
-            return ActionResult.SUCCESS;
+            return InteractionResult.SUCCESS;
         }
-        user.getItemCooldownManager().set(itemStack, 40);
-        if (user instanceof ServerPlayerEntity serverPlayer) {
-            Criteria.CONSUME_ITEM.trigger(serverPlayer, itemStack);
-            user.stopUsingItem();
-            user.emitGameEvent(URGameEvents.FLUTE_USED);
+        user.getCooldowns().addCooldown(itemStack, 40);
+        if (user instanceof ServerPlayer serverPlayer) {
+            CriteriaTriggers.CONSUME_ITEM.trigger(serverPlayer, itemStack);
+            user.releaseUsingItem();
+            user.gameEvent(URGameEvents.FLUTE_USED);
         }
-        world.playSoundFromEntityClient(user, getFluteSound(getFluteMode(itemStack)), SoundCategory.PLAYERS, 2, 1);
-        return ActionResult.SUCCESS;
+        world.playLocalSound(user, getFluteSound(getFluteMode(itemStack)), SoundSource.PLAYERS, 2, 1);
+        return InteractionResult.SUCCESS;
     }
 
     @Override
-    public UseAction getUseAction(ItemStack stack) {
-        return UseAction.TOOT_HORN;
+    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+        return ItemUseAnimation.TOOT_HORN;
     }
 
 
     @SuppressWarnings("deprecation")
     @Override
-    public void appendTooltip(ItemStack stack, TooltipContext context, TooltipDisplayComponent displayComponent, Consumer<Text> textConsumer, TooltipType type) {
-                if (!InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), InputUtil.GLFW_KEY_LEFT_SHIFT)) textConsumer.accept(Text.translatable("tooltip.uselessreptile.hidden").formatted(Formatting.DARK_GRAY));
-        else for (Text text : getParsedText("tooltip.uselessreptile.flute")) textConsumer.accept(((MutableText) text).formatted(Formatting.GRAY));
+    public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type) {
+                if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT)) textConsumer.accept(Component.translatable("tooltip.uselessreptile.hidden").withStyle(ChatFormatting.DARK_GRAY));
+        else for (Component text : getParsedText("tooltip.uselessreptile.flute")) textConsumer.accept(((MutableComponent) text).withStyle(ChatFormatting.GRAY));
         String tooltipString = "tooltip.uselessreptile.flute_mode";
-        textConsumer.accept(Text.translatable(tooltipString, Text.translatable(tooltipString + "." + getFluteMode(stack))).formatted(Formatting.GRAY));
+        textConsumer.accept(Component.translatable(tooltipString, Component.translatable(tooltipString + "." + getFluteMode(stack))).withStyle(ChatFormatting.GRAY));
     }
 
-    private static List<Text> getParsedText(String key) {
-        List<Text> toReturn = new ArrayList<>();
+    private static List<Component> getParsedText(String key) {
+        List<Component> toReturn = new ArrayList<>();
 
-        if (I18n.hasTranslation(key)) {
-            String info = I18n.translate(key);
+        if (I18n.exists(key)) {
+            String info = I18n.get(key);
             String[] infoLines = info.split("\\r?\\n");
-            for (String infoLine : infoLines) toReturn.add(Text.literal(infoLine));
-        } else toReturn.add(Text.literal(I18n.translate(key)));
+            for (String infoLine : infoLines) toReturn.add(Component.literal(infoLine));
+        } else toReturn.add(Component.literal(I18n.get(key)));
 
         return toReturn;
     }
 
     public static SoundEvent getFluteSound(String mode) {
-        Pair<SoundEvent, FluteAction> pair = FLUTE_MODES.get(mode);
-        return pair != null ? pair.getLeft() : FLUTE_MODES.firstEntry().getValue().getLeft();
+        Tuple<SoundEvent, FluteAction> pair = FLUTE_MODES.get(mode);
+        return pair != null ? pair.getA() : FLUTE_MODES.firstEntry().getValue().getA();
     }
 
     public static String getFluteMode(ItemStack stack) {
@@ -106,7 +106,7 @@ public class FluteItem extends Item {
     }
 
     public static FluteAction getFluteModeAction(ItemStack stack) {
-        return FLUTE_MODES.get(getFluteMode(stack)).getRight();
+        return FLUTE_MODES.get(getFluteMode(stack)).getB();
     }
 
     public static String getNextMode(ItemStack stack) {
@@ -115,28 +115,28 @@ public class FluteItem extends Item {
         return FLUTE_MODES.keySet().asList().get(nextOrdinal);
     }
 
-    private static ImmutableSortedMap<String, Pair<SoundEvent, FluteAction>>createFluteModeMap() {
-        HashMap<String, Pair<SoundEvent, FluteAction>> mutable = new HashMap<>();
-        mutable.put("call", new Pair<>(URSounds.FLUTE_CALL, dragon -> dragon.shouldFollow = true));
-        mutable.put("gather", new Pair<>(URSounds.FLUTE_GATHER, dragon -> {
+    private static ImmutableSortedMap<String, Tuple<SoundEvent, FluteAction>>createFluteModeMap() {
+        HashMap<String, Tuple<SoundEvent, FluteAction>> mutable = new HashMap<>();
+        mutable.put("call", new Tuple<>(URSounds.FLUTE_CALL, dragon -> dragon.shouldFollow = true));
+        mutable.put("gather", new Tuple<>(URSounds.FLUTE_GATHER, dragon -> {
             if (dragon instanceof FluteListener gathererDragon) gathererDragon.startGathering();
         }));
-        mutable.put("target", new Pair<>(URSounds.FLUTE_TARGET, dragon -> {
-            if (!(dragon.getOwner() instanceof PlayerEntity player)) return;
+        mutable.put("target", new Tuple<>(URSounds.FLUTE_TARGET, dragon -> {
+            if (!(dragon.getOwner() instanceof Player player)) return;
 
             int range = URGameEvents.FLUTE_USED.value().notificationRadius();
-            Vec3d rot = player.getRotationVec(1);
+            Vec3 rot = player.getViewVector(1);
             EntityHitResult hitResult = ProjectileUtil
-                    .raycast(player,
-                            player.getCameraPosVec(1),
-                            player.getCameraPosVec(1).add(rot.multiply(range)),
-                            player.getBoundingBox().stretch(rot.multiply(range)).expand(1.0, 1.0, 1.0),
-                            entity -> entity instanceof LivingEntity && !entity.isSpectator() && entity.canHit(), range * range);
+                    .getEntityHitResult(player,
+                            player.getEyePosition(1),
+                            player.getEyePosition(1).add(rot.scale(range)),
+                            player.getBoundingBox().expandTowards(rot.scale(range)).inflate(1.0, 1.0, 1.0),
+                            entity -> entity instanceof LivingEntity && !entity.isSpectator() && entity.isPickable(), range * range);
 
             if (hitResult != null) dragon.setTarget((LivingEntity) hitResult.getEntity());
         }));
-        mutable.put("sit_down", new Pair<>(URSounds.FLUTE_SIT_DOWN, dragon -> dragon.setSitting(true)));
-        mutable.put("stand_up", new Pair<>(URSounds.FLUTE_STAND_UP, dragon -> dragon.setSitting(false)));
+        mutable.put("sit_down", new Tuple<>(URSounds.FLUTE_SIT_DOWN, dragon -> dragon.setOrderedToSit(true)));
+        mutable.put("stand_up", new Tuple<>(URSounds.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(false)));
         return ImmutableSortedMap.copyOf(mutable);
     }
 

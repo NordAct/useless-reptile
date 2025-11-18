@@ -1,15 +1,15 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.data.DataOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.util.Identifier;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
@@ -23,24 +23,24 @@ import java.util.concurrent.CompletableFuture;
 
 public class UREquipmentProvider implements DataProvider {
     protected final FabricDataOutput output;
-    private final DataOutput.PathResolver pathResolver;
-    private final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture;
-    private final Map<Identifier, DragonEquipment> holder = new HashMap<>();
+    private final PackOutput.PathProvider pathResolver;
+    private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
+    private final Map<ResourceLocation, DragonEquipment> holder = new HashMap<>();
 
-    public UREquipmentProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture) {
+    public UREquipmentProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/equipment");
+        this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/equipment");
         this.registryLookupFuture = registryLookupFuture;
     }
 
     @Override
-    public CompletableFuture<?> run(DataWriter writer) {
+    public CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach((key, val) -> {
-                Path path = this.pathResolver.resolveJson(key);
-                list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, DragonEquipment.CODEC, val, path));
+                Path path = this.pathResolver.json(key);
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonEquipment.CODEC, val, path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
@@ -54,7 +54,7 @@ public class UREquipmentProvider implements DataProvider {
         addCommonArmor(UREntities.LIGHTNING_CHASER_ENTITY);
         addCommonArmor(UREntities.MOLECLAW_ENTITY);
 
-        Identifier moleclawHelmet = UselessReptile.id("entity/moleclaw/helmet");
+        ResourceLocation moleclawHelmet = UselessReptile.id("entity/moleclaw/helmet");
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("entity/moleclaw/moleclaw_helmet_iron"), moleclawHelmet, true);
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("entity/moleclaw/moleclaw_helmet_gold"), moleclawHelmet, true);
         addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("entity/moleclaw/moleclaw_helmet_diamond"), moleclawHelmet, true);
@@ -62,29 +62,29 @@ public class UREquipmentProvider implements DataProvider {
         holder.put(UselessReptile.id("empty"), new DragonEquipment(Optional.empty(), List.of()));
     }
 
-    protected void addEntry(EntityType<? extends URDragonEntity> type, Item item, Identifier texture, Identifier model, boolean translucent) {
-        DragonEquipment.Equipment equipmentModelData = new DragonEquipment.Equipment(Registries.ITEM.getId(item), new ModelData(texture, model, Optional.empty(), true, translucent));
-        Identifier id = EntityType.getId(type);
+    protected void addEntry(EntityType<? extends URDragonEntity> type, Item item, ResourceLocation texture, ResourceLocation model, boolean translucent) {
+        DragonEquipment.Equipment equipmentModelData = new DragonEquipment.Equipment(BuiltInRegistries.ITEM.getKey(item), new ModelData(texture, model, Optional.empty(), true, translucent));
+        ResourceLocation id = EntityType.getKey(type);
         if (holder.containsKey(id)) holder.get(id).equipment().add(equipmentModelData);
         else holder.put(id, new DragonEquipment(Optional.empty(), new ArrayList<>(Collections.singleton(equipmentModelData))));
     }
 
     protected void addSaddle(EntityType<? extends URDragonEntity> type) {
-        Identifier id = EntityType.getId(type);
-        Identifier texture = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
-        Identifier model = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
+        ResourceLocation id = EntityType.getKey(type);
+        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
+        ResourceLocation model = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
         addEntry(type, Items.SADDLE, texture, model, false);
     }
 
     protected void addCommonArmor(EntityType<? extends URDragonEntity> type) {
-        Identifier id = EntityType.getId(type);
-        Identifier textureIron = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/armor_iron");
-        Identifier textureGold = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/armor_gold");
-        Identifier textureDiamond = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/armor_diamond");
-        Identifier textureNetherite = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/armor_netherite");
-        Identifier modelHelmet = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/helmet");
-        Identifier modelChestplate = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/chestplate");
-        Identifier modelTailArmor = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/tail_armor");
+        ResourceLocation id = EntityType.getKey(type);
+        ResourceLocation textureIron = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/armor_iron");
+        ResourceLocation textureGold = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/armor_gold");
+        ResourceLocation textureDiamond = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/armor_diamond");
+        ResourceLocation textureNetherite = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/armor_netherite");
+        ResourceLocation modelHelmet = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/helmet");
+        ResourceLocation modelChestplate = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/chestplate");
+        ResourceLocation modelTailArmor = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/tail_armor");
         addEntry(type, URItems.DRAGON_HELMET_IRON, textureIron, modelHelmet, false);
         addEntry(type, URItems.DRAGON_HELMET_GOLD, textureGold, modelHelmet, false);
         addEntry(type, URItems.DRAGON_HELMET_DIAMOND, textureDiamond, modelHelmet, false);

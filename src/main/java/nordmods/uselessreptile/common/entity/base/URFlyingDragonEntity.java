@@ -1,21 +1,21 @@
 package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
@@ -31,58 +31,58 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     private final FlyingDragonLandNavigation<URFlyingDragonEntity> landNavigation;
     private final FlyingDragonAirNavigation<URFlyingDragonEntity> airNavigation;
 
-    protected URFlyingDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
+    protected URFlyingDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         moveControl = new FlyingDragonMoveControl<>(this);
-        landNavigation = new FlyingDragonLandNavigation<>(this, getEntityWorld());
-        airNavigation = new FlyingDragonAirNavigation<>(this, getEntityWorld());
+        landNavigation = new FlyingDragonLandNavigation<>(this, level());
+        airNavigation = new FlyingDragonAirNavigation<>(this, level());
         navigation = landNavigation;
     }
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(FLYING, false);
-        builder.add(FLY_GLIDING, false);
-        builder.add(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
-        builder.add(IN_AIR_TIMER, 0);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(FLYING, false);
+        builder.define(FLY_GLIDING, false);
+        builder.define(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
+        builder.define(IN_AIR_TIMER, 0);
     }
 
-    public static final TrackedData<Boolean> FLYING = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> FLY_GLIDING = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Byte> TILT_STATE = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.BYTE);
-    public static final TrackedData<Integer> IN_AIR_TIMER = DataTracker.registerData(URFlyingDragonEntity.class, TrackedDataHandlerRegistry.INTEGER);
+    public static final EntityDataAccessor<Boolean> FLYING = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> FLY_GLIDING = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Byte> TILT_STATE = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BYTE);
+    public static final EntityDataAccessor<Integer> IN_AIR_TIMER = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.INT);
 
 
-    public int getInAirTimer() {return dataTracker.get(IN_AIR_TIMER);}
-    public void setInAirTimer(int state) {dataTracker.set(IN_AIR_TIMER, state);}
+    public int getInAirTimer() {return entityData.get(IN_AIR_TIMER);}
+    public void setInAirTimer(int state) {entityData.set(IN_AIR_TIMER, state);}
 
-    public boolean isFlyGliding() {return dataTracker.get(FLY_GLIDING);}
-    public void setFlyGliding (boolean state) {dataTracker.set(FLY_GLIDING, state);}
+    public boolean isFlyGliding() {return entityData.get(FLY_GLIDING);}
+    public void setFlyGliding (boolean state) {entityData.set(FLY_GLIDING, state);}
 
-    public boolean isFlying() {return dataTracker.get(FLYING);}
-    public void setFlying (boolean state) {dataTracker.set(FLYING, state);}
+    public boolean isFlying() {return entityData.get(FLYING);}
+    public void setFlying (boolean state) {entityData.set(FLYING, state);}
 
-    public byte getTiltState() {return dataTracker.get(TILT_STATE);}
-    public void setTiltState(byte state) {dataTracker.set(TILT_STATE, state);}
+    public byte getTiltState() {return entityData.get(TILT_STATE);}
+    public void setTiltState(byte state) {entityData.set(TILT_STATE, state);}
 
     @Override
-    public void writeCustomData(WriteView tag) {
-        super.writeCustomData(tag);
+    public void addAdditionalSaveData(ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
         tag.putBoolean("IsFlying", isFlying());
     }
 
     @Override
-    public void readCustomData(ReadView tag) {
-        super.readCustomData(tag);
-        setFlying(tag.getBoolean("IsFlying", false));
+    public void readAdditionalSaveData(ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        setFlying(tag.getBooleanOr("IsFlying", false));
     }
 
     @Override
-    public void onTrackedDataSet(TrackedData<?> data) {
-        super.onTrackedDataSet(data);
-        if (!getEntityWorld().isClient())
-            if (FLYING.equals(data)) getNavigation().recalculatePath();
+    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (!level().isClientSide())
+            if (FLYING.equals(data)) getNavigation().recomputePath();
     }
 
     @Override
@@ -105,17 +105,17 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     protected float getMovementSpeedModifier() {
         if (!isFlying()) return super.getMovementSpeedModifier();
-        double baseSpeed = getAttributeBaseValue(EntityAttributes.FLYING_SPEED);
-        double speed = getAttributeBaseValue(EntityAttributes.FLYING_SPEED);
+        double baseSpeed = getAttributeBaseValue(Attributes.FLYING_SPEED);
+        double speed = getAttributeBaseValue(Attributes.FLYING_SPEED);
         return (float) (speed / baseSpeed);
     }
 
     public void startToFly() {
-        jump();
-        if (getEntityWorld() instanceof ServerWorld world) {
+        jumpFromGround();
+        if (level() instanceof ServerLevel world) {
             setAccelerationDuration(getAccelerationDuration() / 10);
             setFlying(true);
-            for (ServerPlayerEntity player : PlayerLookup.tracking(world, getBlockPos())) LiftoffParticlesS2CPacket.send(player, this);
+            for (ServerPlayer player : PlayerLookup.tracking(world, blockPosition())) LiftoffParticlesS2CPacket.send(player, this);
         }
     }
 
@@ -128,7 +128,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         super.tick();
         updateTiltProgress();
 
-        if (!getEntityWorld().isClient()) {
+        if (!level().isClientSide()) {
             glideTimer--;
             float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
             setFlyGliding(accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9);
@@ -140,7 +140,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public void travel(Vec3d movementInput) {
+    public void travel(Vec3 movementInput) {
         if (!isAlive()) return;
         if (isFlying()) if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
         else setInAirTimer(0);
@@ -154,31 +154,31 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         if (isSprinting()) speedModifier = sprintSpeedModifier;
         else if (isMovingBackwards()) speedModifier = backwardSpeedModifier;
 
-        EntityAttributeInstance instance = isFlying() ?getAttributeInstance(EntityAttributes.FLYING_SPEED) : getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+        AttributeInstance instance = isFlying() ?getAttribute(Attributes.FLYING_SPEED) : getAttribute(Attributes.MOVEMENT_SPEED);
         if (speedModifier != 1f) {
-            EntityAttributeModifier modifier = new EntityAttributeModifier(SPEED_MODIFIER_BONUS, speedModifier - 1f, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            if (!instance.hasModifier(modifier.id())) instance.addTemporaryModifier(modifier);
-            else instance.updateModifier(modifier);
+            AttributeModifier modifier = new AttributeModifier(SPEED_MODIFIER_BONUS, speedModifier - 1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            if (!instance.hasModifier(modifier.id())) instance.addTransientModifier(modifier);
+            else instance.addOrUpdateTransientModifier(modifier);
         } else instance.removeModifier(SPEED_MODIFIER_BONUS);
 
-        float speed = isFlying() ? (float) getAttributeValue(EntityAttributes.FLYING_SPEED) : (float) getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
-        setMovementSpeed(speed * speedModifier);
+        float speed = isFlying() ? (float) getAttributeValue(Attributes.FLYING_SPEED) : (float) getAttributeValue(Attributes.MOVEMENT_SPEED);
+        setSpeed(speed * speedModifier);
 
-        if (!getEntityWorld().isClient() && (isOnGround() && !isSubmergedInWater() || hasVehicle()))
+        if (!level().isClientSide() && (onGround() && !isUnderWater() || isPassenger()))
              setFlying(false);
         setNoGravity(isFlying());
     }
 
     @Override
-    protected int computeFallDamage(double fallDistance, float damageMultiplier) {
+    protected int calculateFallDamage(double fallDistance, float damageMultiplier) {
         return 0;
     }
 
     @Override
-    public boolean handleFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
 
-    protected float getOffGroundSpeed() {
-        return getMovementSpeed() *  0.14f;
+    protected float getFlyingSpeed() {
+        return getSpeed() *  0.14f;
     }
 
     private void updateTiltProgress() {

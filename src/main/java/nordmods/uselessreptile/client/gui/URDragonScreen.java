@@ -1,19 +1,19 @@
 package nordmods.uselessreptile.client.gui;
 
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
+import com.mojang.math.Axis;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.RenderUtil;
@@ -24,8 +24,8 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-public class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
-    protected static final Identifier TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
+public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
+    protected static final ResourceLocation TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
     private int mouseX;
     private int mouseY;
     private final URDragonEntity entity;
@@ -35,17 +35,17 @@ public class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     protected float entityRenderSize = 12;
     protected Vector3f entityScreenOffset = new Vector3f();
 
-    public URDragonScreen(T handler, PlayerInventory inventory, Text title) {
+    public URDragonScreen(T handler, Inventory inventory, Component title) {
         super(handler, inventory, title);
-        PlayerEntity player = inventory.player;
-        entity = (URDragonEntity) player.getEntityWorld().getEntityById(entityToRenderID);
+        Player player = inventory.player;
+        entity = (URDragonEntity) player.level().getEntity(entityToRenderID);
     }
 
     @Override
-    protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        i = (width - backgroundWidth) / 2;
-        j = (height - backgroundHeight) / 2;
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0, 0, backgroundWidth, backgroundHeight, 256, 256);
+    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
+        i = (width - imageWidth) / 2;
+        j = (height - imageHeight) / 2;
+        context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0, 0, imageWidth, imageHeight, 256, 256);
         drawSaddle(context);
         drawBanner(context);
         drawArmor(context);
@@ -54,58 +54,58 @@ public class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
         renderBackground(context, mouseX, mouseY, delta);
         this.mouseX = mouseX;
         this.mouseY = mouseY;
         super.render(context, mouseX, mouseY, delta);
-        drawMouseoverTooltip(context, mouseX, mouseY);
+        renderTooltip(context, mouseX, mouseY);
     }
 
-    protected void drawSaddle(DrawContext context) {
+    protected void drawSaddle(GuiGraphics context) {
         if (entity.getInventory().hasSaddle)
-            context.drawTexture( //saddle
+            context.blit( //saddle
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
                     i + 7,
                     j + 35 - URDragonScreenHandler.SLOT_SIDE,
                     0,
-                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.FEET).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.FEET).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
                     URDragonScreenHandler.SLOT_SIDE,
                     URDragonScreenHandler.SLOT_SIDE,
                     256, 256);
     }
 
-    protected void drawArmor(DrawContext context) {
+    protected void drawArmor(GuiGraphics context) {
         if (entity.getInventory().hasArmor) {
-            context.drawTexture( //head
+            context.blit( //head
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
                     i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
                     j + 35 -  URDragonScreenHandler.SLOT_SIDE,
                     URDragonScreenHandler.SLOT_SIDE,
-                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.HEAD).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
                     URDragonScreenHandler.SLOT_SIDE,
                     URDragonScreenHandler.SLOT_SIDE,
                     256, 256
             );
-            context.drawTexture( //body
+            context.blit( //body
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
                     i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
                     j + 35,  URDragonScreenHandler.SLOT_SIDE * 2,
-                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.CHEST).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
                     URDragonScreenHandler.SLOT_SIDE,
                     URDragonScreenHandler.SLOT_SIDE,
                     256, 256
             );
-            context.drawTexture( //tail
+            context.blit( //tail
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
                     i + 7 + URDragonScreenHandler.SLOT_SIDE + URDragonScreenHandler.ENTITY_WINDOW_SIDE,
                     j + 35 +  URDragonScreenHandler.SLOT_SIDE,
                     URDragonScreenHandler.SLOT_SIDE * 3,
-                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.LEGS).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
                     URDragonScreenHandler.SLOT_SIDE,
                     URDragonScreenHandler.SLOT_SIDE,
                     256, 256
@@ -113,11 +113,11 @@ public class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
         }
     }
 
-    protected void drawEntity(DrawContext context) {
+    protected void drawEntity(GuiGraphics context) {
         if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, entityRenderSize, this.mouseX, this.mouseY, this.entity);
     }
 
-    private void drawEntity(DrawContext context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity) {
+    private void drawEntity(GuiGraphics context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity) {
         float centerX = (x1 + x2) / 2f;
         float centerY = (y1 + y2) / 2f;
         float dx = (float)Math.atan((centerX - mouseX) / 40f);
@@ -127,47 +127,47 @@ public class URDragonScreen<T extends ScreenHandler> extends HandledScreen<T> {
         context.enableScissor(x1, y1, x2, y2);
 
         EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
-        LivingEntityRenderState state = (LivingEntityRenderState) renderer.getAndUpdateRenderState(entity, tickDelta);
-        state.displayName = null;
+        LivingEntityRenderState state = (LivingEntityRenderState) renderer.createRenderState(entity, tickDelta);
+        state.nameTag = null;
         if (state instanceof GeoRenderState geoRenderState) {
             geoRenderState.addGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT, false);
-            geoRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, LightmapTextureManager.MAX_LIGHT_COORDINATE); //geckolib moment
+            geoRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, LightTexture.FULL_BRIGHT); //geckolib moment
         }
 
         Quaternionf rot = new Quaternionf();
-        Quaternionf cam = RotationAxis.POSITIVE_X.rotationDegrees(-dy * 20 + 180).mul(RotationAxis.POSITIVE_Y.rotationDegrees(-dx * 40 + state.bodyYaw));
+        Quaternionf cam = Axis.XP.rotationDegrees(-dy * 20 + 180).mul(Axis.YP.rotationDegrees(-dx * 40 + state.bodyRot));
         rot.mul(cam);
 
-        context.addEntity(state, size / state.baseScale, new Vector3f(0, state.height / 2f + 0.4f, 0).add(entityScreenOffset), rot, cam, x1, y1, x2, y2);
+        context.submitEntityRenderState(state, size / state.scale, new Vector3f(0, state.boundingBoxHeight / 2f + 0.4f, 0).add(entityScreenOffset), rot, cam, x1, y1, x2, y2);
 
         context.disableScissor();
     }
 
-    protected void drawStorage(DrawContext context) {
+    protected void drawStorage(GuiGraphics context) {
         int size = entity.getInventory().storageSize.getSize()/3;
         int offset = entity.getInventory().hasArmor ? 2 : 1;
-        context.drawTexture(
+        context.blit(
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
                 i + 7 + URDragonScreenHandler.ENTITY_WINDOW_SIDE + URDragonScreenHandler.SLOT_SIDE * offset,
                 j + 17,
                 0,
-                this.backgroundHeight,
+                this.imageHeight,
                 size * URDragonScreenHandler.SLOT_SIDE,
                 URDragonScreenHandler.ENTITY_WINDOW_SIDE,
                 256, 256
         );
     }
 
-    protected void drawBanner(DrawContext context) {
+    protected void drawBanner(GuiGraphics context) {
         if (entity.getInventory().hasBanner)
-            context.drawTexture( //banner
+            context.blit( //banner
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
                     i + 7,
                     j + 35,
                     URDragonScreenHandler.SLOT_SIDE * 4,
-                    backgroundHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getEquippedStack(EquipmentSlot.OFFHAND).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
+                    imageHeight + URDragonScreenHandler.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.OFFHAND).isEmpty() ? 0 : URDragonScreenHandler.SLOT_SIDE),
                     URDragonScreenHandler.SLOT_SIDE,
                     URDragonScreenHandler.SLOT_SIDE,
                     256, 256

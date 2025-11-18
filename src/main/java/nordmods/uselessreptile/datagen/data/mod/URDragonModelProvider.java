@@ -1,15 +1,15 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.data.DataOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModel;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.init.UREntities;
@@ -23,24 +23,24 @@ import java.util.concurrent.CompletableFuture;
 
 public class URDragonModelProvider implements DataProvider {
     protected final FabricDataOutput output;
-    private final DataOutput.PathResolver pathResolver;
-    private final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture;
-    private final List<Pair<Identifier, DragonModel>> holder = new ArrayList<>();
+    private final PackOutput.PathProvider pathResolver;
+    private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
+    private final List<Tuple<ResourceLocation, DragonModel>> holder = new ArrayList<>();
 
-    public URDragonModelProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture) {
+    public URDragonModelProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/dragon_model");
+        this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/dragon_model");
         this.registryLookupFuture = registryLookupFuture;
     }
 
     @Override
-    public CompletableFuture<?> run(DataWriter writer) {
+    public CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addSpawnEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach(entry -> {
-                Path path = pathResolver.resolveJson(entry.getLeft());
-                list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, DragonModel.CODEC, entry.getRight(), path));
+                Path path = pathResolver.json(entry.getA());
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonModel.CODEC, entry.getB(), path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
@@ -74,90 +74,90 @@ public class URDragonModelProvider implements DataProvider {
         addMagmamuncher("magma");
     }
 
-    protected ModelData getModelData(Identifier id, String variant, boolean cull) {
-        Identifier texture = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/" + variant);
-        Identifier model = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/" + id.getPath());
-        Identifier animation = Identifier.of(id.getNamespace(), "entity/" + id.getPath() + "/" + id.getPath());
+    protected ModelData getModelData(ResourceLocation id, String variant, boolean cull) {
+        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/" + variant);
+        ResourceLocation model = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/" + id.getPath());
+        ResourceLocation animation = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/" + id.getPath());
         return new ModelData(texture, model, Optional.of(animation), cull, false);
     }
 
     protected void addWyvern(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", URSounds.WYVERN_STEP.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(2f), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.7f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("shoot", SoundEvents.ENTITY_ENDER_DRAGON_SHOOT.id(), Optional.of(2f), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("bite", URSounds.WYVERN_BITE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.WYVERN_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.WYVERN_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.WYVERN_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", URSounds.WYVERN_STEP.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.location(), Optional.of(2f), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.of(3f), Optional.of(0.7f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("shoot", SoundEvents.ENDER_DRAGON_SHOOT.location(), Optional.of(2f), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("bite", URSounds.WYVERN_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.WYVERN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.WYVERN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.WYVERN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.WYVERN_ENTITY, variant, Optional.of(sounds), true);
     }
 
     protected void addMoleclaw(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", URSounds.DRAGON_STEP.id(), Optional.empty(), Optional.of(0.7f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("attack_strong", URSounds.MOLECLAW_STRONG_ATTACK.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("attack", URSounds.MOLECLAW_ATTACK.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.MOLECLAW_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.MOLECLAW_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.MOLECLAW_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("panic", URSounds.MOLECLAW_PANICKING.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", URSounds.DRAGON_STEP.location(), Optional.empty(), Optional.of(0.7f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("attack_strong", URSounds.MOLECLAW_STRONG_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("attack", URSounds.MOLECLAW_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.MOLECLAW_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.MOLECLAW_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.MOLECLAW_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("panic", URSounds.MOLECLAW_PANICKING.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.MOLECLAW_ENTITY, variant, Optional.of(sounds), false);
     }
 
     protected void addRiverPikehorn(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", SoundEvents.ENTITY_CHICKEN_STEP.id(), Optional.of(0.5f), Optional.of(0.8f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(0.7f), Optional.of(1.2f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.empty(), Optional.of(1.2f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("attack", URSounds.PIKEHORN_ATTACK.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.PIKEHORN_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.PIKEHORN_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.PIKEHORN_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", SoundEvents.CHICKEN_STEP.location(), Optional.of(0.5f), Optional.of(0.8f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.location(), Optional.of(0.7f), Optional.of(1.2f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.empty(), Optional.of(1.2f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("attack", URSounds.PIKEHORN_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.PIKEHORN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.PIKEHORN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.PIKEHORN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.RIVER_PIKEHORN_ENTITY, variant, Optional.of(sounds), true);
     }
 
     protected void addLightningChaser(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", URSounds.DRAGON_STEP.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.id(), Optional.of(2f), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.6f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("flap_heavy", SoundEvents.ENTITY_ENDER_DRAGON_FLAP.id(), Optional.of(3f), Optional.of(0.5f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("bite", URSounds.LIGHTNING_CHASER_BITE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.LIGHTNING_CHASER_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("roar", URSounds.LIGHTNING_CHASER_DISTANT_ROAR.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("accept_challenge", URSounds.LIGHTNING_CHASER_ACCEPT_CHALLENGE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.LIGHTNING_CHASER_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.LIGHTNING_CHASER_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", URSounds.DRAGON_STEP.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("woosh", URSounds.DRAGON_WOOSH.location(), Optional.of(2f), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("flap", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.of(3f), Optional.of(0.6f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("flap_heavy", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.of(3f), Optional.of(0.5f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("bite", URSounds.LIGHTNING_CHASER_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.LIGHTNING_CHASER_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("roar", URSounds.LIGHTNING_CHASER_DISTANT_ROAR.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("accept_challenge", URSounds.LIGHTNING_CHASER_ACCEPT_CHALLENGE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.LIGHTNING_CHASER_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.LIGHTNING_CHASER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.LIGHTNING_CHASER_ENTITY, variant, Optional.of(sounds), true);
     }
 
     protected void addMagmamuncher(String variant) {
         List<DragonModel.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModel.Sound("step", SoundEvents.BLOCK_NETHERRACK_STEP.id(), Optional.of(0.25f), Optional.of(0.8f), Optional.empty()));
-        sounds.add(new DragonModel.Sound("bite", URSounds.MAGMAMUNCHER_BITE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("idle", URSounds.MAGMAMUNCHER_AMBIENT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("hurt", URSounds.MAGMAMUNCHER_HURT.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("death", URSounds.MAGMAMUNCHER_DEATH.id(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModel.Sound("apply_fire_resistance", SoundEvents.ITEM_FIRECHARGE_USE.id(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("step", SoundEvents.NETHERRACK_STEP.location(), Optional.of(0.25f), Optional.of(0.8f), Optional.empty()));
+        sounds.add(new DragonModel.Sound("bite", URSounds.MAGMAMUNCHER_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("idle", URSounds.MAGMAMUNCHER_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("hurt", URSounds.MAGMAMUNCHER_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("death", URSounds.MAGMAMUNCHER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModel.Sound("apply_fire_resistance", SoundEvents.FIRECHARGE_USE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.MAGMAMUNCHER_ENTITY, variant, Optional.of(sounds), true);
     }
 
-    protected void addEntry(Identifier id, DragonModel variant) {
-        holder.add(new Pair<>(id, variant));
+    protected void addEntry(ResourceLocation id, DragonModel variant) {
+        holder.add(new Tuple<>(id, variant));
     }
 
-    protected void addEntry(Identifier dragonId, String variant, Optional<List<DragonModel.Sound>> sounds, boolean cull) {
+    protected void addEntry(ResourceLocation dragonId, String variant, Optional<List<DragonModel.Sound>> sounds, boolean cull) {
         addEntry(id(dragonId, variant), new DragonModel(getModelData(dragonId, variant, cull), sounds));
     }
 
     protected void addEntry(EntityType<? extends Entity> entityType, String variant, Optional<List<DragonModel.Sound>> sounds, boolean cull) {
-        addEntry(EntityType.getId(entityType), variant, sounds, cull);
+        addEntry(EntityType.getKey(entityType), variant, sounds, cull);
     }
 
-    protected Identifier id(Identifier dragonId, String variant) {
-        return Identifier.of(dragonId.getNamespace(), dragonId.getPath() + "/" + variant);
+    protected ResourceLocation id(ResourceLocation dragonId, String variant) {
+        return ResourceLocation.fromNamespaceAndPath(dragonId.getNamespace(), dragonId.getPath() + "/" + variant);
     }
 
     @Override

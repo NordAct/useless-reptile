@@ -4,14 +4,6 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.client.option.Perspective;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URRenderPipelines;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
@@ -27,51 +19,59 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import net.minecraft.client.CameraType;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.ARGB;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 
-@Mixin(InGameHud.class)
+@Mixin(Gui.class)
 public abstract class InGameHudMixin {
     @Unique private float prevStrength;
-    @Shadow @Final private MinecraftClient client;
+    @Shadow @Final private Minecraft minecraft;
 
-    @WrapOperation(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/option/Perspective;isFirstPerson()Z"))
-    private boolean render(Perspective instance, Operation<Boolean> original) {
-        if (URClientConfig.getConfig().enableCrosshair && MinecraftClient.getInstance().player.getVehicle() instanceof URRideableDragonEntity) return true;
+    @WrapOperation(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z"))
+    private boolean render(CameraType instance, Operation<Boolean> original) {
+        if (URClientConfig.getConfig().enableCrosshair && Minecraft.getInstance().player.getVehicle() instanceof URRideableDragonEntity) return true;
         return original.call(instance);
     }
 
-    @Inject(method = "renderStatusEffectOverlay", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
-    private void yeetShockEffect(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci, @Local LocalRef<Collection<StatusEffectInstance>> localRef) {
-        List<StatusEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));
-        copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffectType().equals(URStatusEffects.SHOCK));
+    @Inject(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
+    private void yeetShockEffect(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
+        List<MobEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));
+        copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffect().equals(URStatusEffects.SHOCK));
         localRef.set(copy);
     }
 
-    @Inject(method = "renderMiscOverlays", at = @At("TAIL"))
-    private void renderShockOverlay(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        if (client.player.hasStatusEffect(URStatusEffects.SHOCK)) {
-            float strength = MathHelper.clamp(client.player.getStatusEffect(URStatusEffects.SHOCK).getDuration()/100f, 0f, 1f);
-            renderShockOverlay(context, strength, tickCounter.getTickProgress(false));
+    @Inject(method = "renderCameraOverlays", at = @At("TAIL"))
+    private void renderShockOverlay(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+        if (minecraft.player.hasEffect(URStatusEffects.SHOCK)) {
+            float strength = Mth.clamp(minecraft.player.getEffect(URStatusEffects.SHOCK).getDuration()/100f, 0f, 1f);
+            renderShockOverlay(context, strength, tickCounter.getGameTimeDeltaPartialTick(false));
             prevStrength = strength;
         } else prevStrength = 1f;
     }
 
     @Unique
-    private void renderShockOverlay(DrawContext context, float strength, float tickDelta) {
-        int width = context.getScaledWindowWidth();
-        int height = context.getScaledWindowHeight();
+    private void renderShockOverlay(GuiGraphics context, float strength, float tickDelta) {
+        int width = context.guiWidth();
+        int height = context.guiHeight();
 
-        context.getMatrices().pushMatrix();
-        float scale = MathHelper.clamp(1.5f - MathHelper.lerp(tickDelta, prevStrength, strength), 1f, 2f);
-        context.getMatrices().translate(width/2f, height/2f);
-        context.getMatrices().scale(scale, scale);
-        context.getMatrices().translate(-width/2f, -height/2f);
+        context.pose().pushMatrix();
+        float scale = Mth.clamp(1.5f - Mth.lerp(tickDelta, prevStrength, strength), 1f, 2f);
+        context.pose().translate(width/2f, height/2f);
+        context.pose().scale(scale, scale);
+        context.pose().translate(-width/2f, -height/2f);
 
         float r = 0.72f * strength;
         float g = 0.82f * strength;
         float b = 0.9f * strength;
-        int color = ColorHelper.fromFloats(1.0F, r, g, b);
-        context.drawTexture(URRenderPipelines.GUI_SHOCK_OVERLAY, InGameHud.NAUSEA_TEXTURE, 0, 0, 0, 0, width, height, width, height, color);
+        int color = ARGB.colorFromFloat(1.0F, r, g, b);
+        context.blit(URRenderPipelines.GUI_SHOCK_OVERLAY, Gui.NAUSEA_LOCATION, 0, 0, 0, 0, width, height, width, height, color);
 
-        context.getMatrices().popMatrix();
+        context.pose().popMatrix();
     }
 }

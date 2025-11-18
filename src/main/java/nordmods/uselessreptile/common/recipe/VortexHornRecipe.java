@@ -3,32 +3,32 @@ package nordmods.uselessreptile.common.recipe;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.recipe.RawShapedRecipe;
-import net.minecraft.recipe.RecipeSerializer;
-import net.minecraft.recipe.ShapedRecipe;
-import net.minecraft.recipe.book.CraftingRecipeCategory;
-import net.minecraft.recipe.input.CraftingRecipeInput;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URRecipeSerializers;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 
 public class VortexHornRecipe extends ShapedRecipe {
-    public VortexHornRecipe(String group, CraftingRecipeCategory category, RawShapedRecipe raw, ItemStack result, boolean showNotification) {
+    public VortexHornRecipe(String group, CraftingBookCategory category, ShapedRecipePattern raw, ItemStack result, boolean showNotification) {
         super(group, category, raw, result, showNotification);
     }
 
     @Override
-    public ItemStack craft(CraftingRecipeInput input, RegistryWrapper.WrapperLookup lookup) {
+    public ItemStack assemble(CraftingInput input, HolderLookup.Provider lookup) {
         ItemStack instrument = getInstrumentStack(input);
         if (!instrument.isEmpty()) {
             ItemStack result = this.result.copy();
-            result.set(DataComponentTypes.INSTRUMENT, instrument.get(DataComponentTypes.INSTRUMENT));
+            result.set(DataComponents.INSTRUMENT, instrument.get(DataComponents.INSTRUMENT));
             result.set(URItems.DRAGON_STORAGE_COMPONENT, instrument.getOrDefault(URItems.DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT));
             VortexHornCapacityComponent original = instrument.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT);
             VortexHornCapacityComponent next = result.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT);
@@ -43,11 +43,11 @@ public class VortexHornRecipe extends ShapedRecipe {
         return URRecipeSerializers.VORTEX_HORN;
     }
 
-    protected ItemStack getInstrumentStack(CraftingRecipeInput craftingRecipeInput) {
-        for (int x = 0; x < raw.getWidth(); x++)
-            for (int y = 0; y < raw.getHeight(); y++) {
-                ItemStack stack = craftingRecipeInput.getStackInSlot(x, y);
-                if (stack.contains(DataComponentTypes.INSTRUMENT)) return stack;
+    protected ItemStack getInstrumentStack(CraftingInput craftingRecipeInput) {
+        for (int x = 0; x < pattern.width(); x++)
+            for (int y = 0; y < pattern.height(); y++) {
+                ItemStack stack = craftingRecipeInput.getItem(x, y);
+                if (stack.has(DataComponents.INSTRUMENT)) return stack;
             }
         return ItemStack.EMPTY;
     }
@@ -55,36 +55,36 @@ public class VortexHornRecipe extends ShapedRecipe {
     public static class Serializer implements RecipeSerializer<VortexHornRecipe> {
         public static final MapCodec<VortexHornRecipe> CODEC = RecordCodecBuilder.mapCodec((instance) ->
                 instance.group(
-                        Codec.STRING.optionalFieldOf("group", "").forGetter(ShapedRecipe::getGroup),
-                        CraftingRecipeCategory.CODEC.fieldOf("category").orElse(CraftingRecipeCategory.MISC).forGetter(ShapedRecipe::getCategory),
-                        RawShapedRecipe.CODEC.forGetter((recipe) -> recipe.raw),
-                        ItemStack.VALIDATED_CODEC.fieldOf("result").forGetter((recipe) -> recipe.result),
+                        Codec.STRING.optionalFieldOf("group", "").forGetter(ShapedRecipe::group),
+                        CraftingBookCategory.CODEC.fieldOf("category").orElse(CraftingBookCategory.MISC).forGetter(ShapedRecipe::category),
+                        ShapedRecipePattern.MAP_CODEC.forGetter((recipe) -> recipe.pattern),
+                        ItemStack.STRICT_CODEC.fieldOf("result").forGetter((recipe) -> recipe.result),
                         Codec.BOOL.optionalFieldOf("show_notification", true).forGetter(ShapedRecipe::showNotification))
                         .apply(instance, VortexHornRecipe::new));
-        public static final PacketCodec<RegistryByteBuf, VortexHornRecipe> PACKET_CODEC = PacketCodec.ofStatic(Serializer::write, Serializer::read);
+        public static final StreamCodec<RegistryFriendlyByteBuf, VortexHornRecipe> PACKET_CODEC = StreamCodec.of(nordmods.uselessreptile.common.recipe.VortexHornRecipe.Serializer::write, nordmods.uselessreptile.common.recipe.VortexHornRecipe.Serializer::read);
 
         public MapCodec<VortexHornRecipe> codec() {
             return CODEC;
         }
 
-        public PacketCodec<RegistryByteBuf, VortexHornRecipe> packetCodec() {
+        public StreamCodec<RegistryFriendlyByteBuf, VortexHornRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 
-        private static VortexHornRecipe read(RegistryByteBuf buf) {
-            String string = buf.readString();
-            CraftingRecipeCategory craftingRecipeCategory = buf.readEnumConstant(CraftingRecipeCategory.class);
-            RawShapedRecipe rawShapedRecipe = RawShapedRecipe.PACKET_CODEC.decode(buf);
-            ItemStack itemStack = ItemStack.PACKET_CODEC.decode(buf);
+        private static VortexHornRecipe read(RegistryFriendlyByteBuf buf) {
+            String string = buf.readUtf();
+            CraftingBookCategory craftingRecipeCategory = buf.readEnum(CraftingBookCategory.class);
+            ShapedRecipePattern rawShapedRecipe = ShapedRecipePattern.STREAM_CODEC.decode(buf);
+            ItemStack itemStack = ItemStack.STREAM_CODEC.decode(buf);
             boolean bl = buf.readBoolean();
             return new VortexHornRecipe(string, craftingRecipeCategory, rawShapedRecipe, itemStack, bl);
         }
 
-        private static void write(RegistryByteBuf buf, VortexHornRecipe recipe) {
-            buf.writeString(recipe.getGroup());
-            buf.writeEnumConstant(recipe.getCategory());
-            RawShapedRecipe.PACKET_CODEC.encode(buf, recipe.raw);
-            ItemStack.PACKET_CODEC.encode(buf, recipe.result);
+        private static void write(RegistryFriendlyByteBuf buf, VortexHornRecipe recipe) {
+            buf.writeUtf(recipe.group());
+            buf.writeEnum(recipe.category());
+            ShapedRecipePattern.STREAM_CODEC.encode(buf, recipe.pattern);
+            ItemStack.STREAM_CODEC.encode(buf, recipe.result);
             buf.writeBoolean(recipe.showNotification());
         }
     }

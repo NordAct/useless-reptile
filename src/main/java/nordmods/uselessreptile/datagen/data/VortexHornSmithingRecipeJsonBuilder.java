@@ -1,54 +1,54 @@
 package nordmods.uselessreptile.datagen.data;
 
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.advancement.AdvancementRequirements;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
-import net.minecraft.data.recipe.RecipeExporter;
-import net.minecraft.data.recipe.SmithingTransformRecipeJsonBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.TransmuteRecipeResult;
-import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.registry.RegistryKey;
 import nordmods.uselessreptile.common.recipe.VortexHornSmithingRecipe;
 
 import java.util.Optional;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.TransmuteResult;
 
-public class VortexHornSmithingRecipeJsonBuilder extends SmithingTransformRecipeJsonBuilder {
+public class VortexHornSmithingRecipeJsonBuilder extends SmithingTransformRecipeBuilder {
 
     public VortexHornSmithingRecipeJsonBuilder(Ingredient template, Ingredient base, Ingredient addition, RecipeCategory category, Item result) {
         super(template, base, addition, category, result);
     }
 
-    public static VortexHornSmithingRecipeJsonBuilder create(Ingredient template, Ingredient base, Ingredient addition, RecipeCategory category, Item result) {
+    public static VortexHornSmithingRecipeJsonBuilder smithing(Ingredient template, Ingredient base, Ingredient addition, RecipeCategory category, Item result) {
         return new VortexHornSmithingRecipeJsonBuilder(template, base, addition, category, result);
     }
 
     @Override
-    public VortexHornSmithingRecipeJsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion) {
-        return (VortexHornSmithingRecipeJsonBuilder) super.criterion(string, advancementCriterion);
+    public VortexHornSmithingRecipeJsonBuilder unlocks(String string, Criterion<?> advancementCriterion) {
+        return (VortexHornSmithingRecipeJsonBuilder) super.unlocks(string, advancementCriterion);
     }
 
     @Override
-    public void offerTo(RecipeExporter exporter, RegistryKey<Recipe<?>> recipeKey) {
+    public void save(RecipeOutput exporter, ResourceKey<Recipe<?>> recipeKey) {
         Advancement.Builder builder = exporter
-                .getAdvancementBuilder()
-                .criterion(
+                .advancement()
+                .addCriterion(
                         "has_the_recipe",
-                        RecipeUnlockedCriterion.create(recipeKey)
+                        RecipeUnlockedTrigger.unlocked(recipeKey)
                 )
                 .rewards(AdvancementRewards.Builder.recipe(recipeKey))
-                .criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
-        criteria.forEach(builder::criterion);
+                .requirements(AdvancementRequirements.Strategy.OR);
+        criteria.forEach(builder::addCriterion);
         VortexHornSmithingRecipe recipe = new VortexHornSmithingRecipe(
                 Optional.of(template),
                 base,
                 Optional.of(addition),
-                new TransmuteRecipeResult(result)
+                new TransmuteResult(result)
         );
-        exporter.accept(recipeKey, recipe, builder.build(recipeKey.getValue().withPrefixedPath("recipes/" + category.getName() + "/")));
+        exporter.accept(recipeKey, recipe, builder.build(recipeKey.location().withPrefix("recipes/" + category.getFolderName() + "/")));
     }
 }

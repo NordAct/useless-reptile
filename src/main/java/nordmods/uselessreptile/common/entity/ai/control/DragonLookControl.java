@@ -1,12 +1,12 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.control.LookControl;
-import net.minecraft.util.math.MathHelper;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.Optional;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.control.LookControl;
 
 public class DragonLookControl extends LookControl {
     protected final URDragonEntity entity;
@@ -17,7 +17,7 @@ public class DragonLookControl extends LookControl {
     }
 
     @Override
-    protected boolean shouldStayHorizontal() {
+    protected boolean resetXRotOnTick() {
         return false;
     }
 
@@ -26,8 +26,8 @@ public class DragonLookControl extends LookControl {
     }
 
     public boolean isLookingAtTarget(float pitchTolerance, float yawTolerance) {
-        float pitch = getTargetPitch().orElse(0f);
-        float yaw = getTargetYaw().orElse(0f);
+        float pitch = getXRotD().orElse(0f);
+        float yaw = getYRotD().orElse(0f);
         return entity.isLookingAtDirection(pitch, yaw, pitchTolerance, yawTolerance);
     }
 
@@ -36,7 +36,7 @@ public class DragonLookControl extends LookControl {
     }
 
     public boolean canLookAtTarget(float pitchTolerance) {
-        float pitch = getTargetPitch().orElse(0f);
+        float pitch = getXRotD().orElse(0f);
         return Math.abs(pitch) < pitchTolerance;
     }
 
@@ -44,39 +44,39 @@ public class DragonLookControl extends LookControl {
     public void tick() {
         if (entity.hasControllingPassenger()) return;
         if (lockRotation) return;
-        if (lookAtTimer > 0) {
-            --lookAtTimer;
-            getTargetYaw().ifPresent(yaw -> {
-                float pitch = getTargetPitch().orElse(0f);
-                entity.setRotation(yaw, pitch);
+        if (lookAtCooldown > 0) {
+            --lookAtCooldown;
+            getYRotD().ifPresent(yaw -> {
+                float pitch = getXRotD().orElse(0f);
+                entity.setRot(yaw, pitch);
             });
         }
     }
 
     @Override
-    public Optional<Float> getTargetPitch() {
+    public Optional<Float> getXRotD() {
         if (entity instanceof ShooterDragon shooterDragon) {
-            double x = this.x - shooterDragon.getShootingPoint().pos().getX();
-            double y = this.y - shooterDragon.getShootingPoint().pos().getY();
-            double z = this.z - shooterDragon.getShootingPoint().pos().getZ();
+            double x = this.wantedX - shooterDragon.getShootingPoint().pos().x();
+            double y = this.wantedY - shooterDragon.getShootingPoint().pos().y();
+            double z = this.wantedZ - shooterDragon.getShootingPoint().pos().z();
             double distZX = Math.sqrt(x * x + z * z);
             return !(Math.abs(y) > 1.0E-5F) && !(Math.abs(distZX) > 1.0E-5F) ?
                     Optional.empty()
-                    : Optional.of((float)(-(MathHelper.atan2(y, distZX) * 180 / Math.PI)));
+                    : Optional.of((float)(-(Mth.atan2(y, distZX) * 180 / Math.PI)));
         }
-        return super.getTargetPitch();
+        return super.getXRotD();
     }
 
     @Override
-    public Optional<Float> getTargetYaw() {
+    public Optional<Float> getYRotD() {
         if (entity instanceof ShooterDragon shooterDragon) {
-            double x = this.x - shooterDragon.getShootingPoint().pos().getX();
-            double z = this.z - shooterDragon.getShootingPoint().pos().getZ();
+            double x = this.wantedX - shooterDragon.getShootingPoint().pos().x();
+            double z = this.wantedZ - shooterDragon.getShootingPoint().pos().z();
             return !(Math.abs(x) > 1.0E-5F) && !(Math.abs(z) > 1.0E-5F)
                     ? Optional.empty()
-                    : Optional.of((float)(MathHelper.atan2(z, x) * 180 /Math.PI) - 90);
+                    : Optional.of((float)(Mth.atan2(z, x) * 180 /Math.PI) - 90);
         }
-        return super.getTargetYaw();
+        return super.getYRotD();
     }
 
     public void setLockRotation(boolean state) {
@@ -84,7 +84,7 @@ public class DragonLookControl extends LookControl {
     }
 
     @Override
-    public void lookAt(Entity target, float maxYawChange, float maxPitchChange) {
-        if (entity.getVisibilityCache().canSee(target)) super.lookAt(target, maxYawChange, maxPitchChange);
+    public void setLookAt(Entity target, float maxYawChange, float maxPitchChange) {
+        if (entity.getSensing().hasLineOfSight(target)) super.setLookAt(target, maxYawChange, maxPitchChange);
     }
 }

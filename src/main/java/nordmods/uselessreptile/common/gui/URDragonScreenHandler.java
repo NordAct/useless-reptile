@@ -1,31 +1,31 @@
 package nordmods.uselessreptile.common.gui;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.Slot;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import org.jetbrains.annotations.Nullable;
 
-public class URDragonScreenHandler extends ScreenHandler {
+public class URDragonScreenHandler extends AbstractContainerMenu {
     protected final DragonInventory inventory;
     protected final DragonInventory.StorageSize storageSize;
     public static final int SLOT_SIDE = 18;
     public static final int ENTITY_WINDOW_SIDE = 54;
     public static final int EDGE_OFFSET = 8;
 
-    public URDragonScreenHandler(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, DragonInventory inventory) {
+    public URDragonScreenHandler(@Nullable MenuType<?> type, int syncId, Inventory playerInventory, DragonInventory inventory) {
         super(type, syncId);
         this.inventory = inventory;
         this.storageSize = inventory.storageSize;
-        inventory.onOpen(playerInventory.player);
+        inventory.startOpen(playerInventory.player);
 
         if (inventory.hasSaddle) {
             addSlot(new DragonEquipmentSlot(inventory, DragonInventory.SADDLE_INDEX, EDGE_OFFSET, SLOT_SIDE) {
-                public boolean canTakeItems(PlayerEntity playerEntity) {
+                public boolean mayPickup(Player playerEntity) {
                     return !(playerEntity.getVehicle() instanceof URRideableDragonEntity);
                 }
             });
@@ -52,37 +52,37 @@ public class URDragonScreenHandler extends ScreenHandler {
             }
         }
 
-        addPlayerSlots(playerInventory, EDGE_OFFSET, 84);
+        addStandardInventorySlots(playerInventory, EDGE_OFFSET, 84);
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
-        super.onClosed(player);
-        inventory.onClose(player);
+    public void removed(Player player) {
+        super.removed(player);
+        inventory.stopOpen(player);
     }
 
     @Override
-    public boolean canUse(PlayerEntity player) {
-        return inventory.canPlayerUse(player);
+    public boolean stillValid(Player player) {
+        return inventory.stillValid(player);
     }
 
 
     @Override
-    public ItemStack quickMove(PlayerEntity player, int invSlot) {
+    public ItemStack quickMoveStack(Player player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = slots.get(invSlot);
-        if (slot != null && slot.hasStack()) {
-            ItemStack originalStack = slot.getStack();
+        if (slot != null && slot.hasItem()) {
+            ItemStack originalStack = slot.getItem();
             newStack = originalStack.copy();
-            if (invSlot < inventory.size()) {
-                if (!insertItem(originalStack, inventory.size(), this.slots.size(), true)) return ItemStack.EMPTY;
+            if (invSlot < inventory.getContainerSize()) {
+                if (!moveItemStackTo(originalStack, inventory.getContainerSize(), this.slots.size(), true)) return ItemStack.EMPTY;
             } else {
                 for (int i = 0; i < DragonInventory.getInventorySize(storageSize); i++)
-                    if (!insertItem(originalStack, i, inventory.size(), false)) return ItemStack.EMPTY;
+                    if (!moveItemStackTo(originalStack, i, inventory.getContainerSize(), false)) return ItemStack.EMPTY;
             }
 
-            if (originalStack.isEmpty()) slot.setStack(ItemStack.EMPTY);
-            else slot.markDirty();
+            if (originalStack.isEmpty()) slot.setByPlayer(ItemStack.EMPTY);
+            else slot.setChanged();
         }
 
         return newStack;
@@ -94,17 +94,17 @@ public class URDragonScreenHandler extends ScreenHandler {
         }
 
         @Override
-        public boolean canInsert(ItemStack stack) {
-            return getInventory().canInsertInSlot(stack, getIndex());
+        public boolean mayPlace(ItemStack stack) {
+            return getInventory().canInsertInSlot(stack, getContainerSlot());
         }
 
         @Override
-        public int getMaxItemCount() {
+        public int getMaxStackSize() {
             return 1;
         }
 
         public DragonInventory getInventory() {
-            return (DragonInventory) inventory;
+            return (DragonInventory) container;
         }
     }
 }

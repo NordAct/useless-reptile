@@ -1,51 +1,51 @@
 package nordmods.uselessreptile.common.block;
 
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalFluidTags;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.NetherrackBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.state.StateManager;
-import net.minecraft.state.property.IntProperty;
-import net.minecraft.state.property.Properties;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.WorldView;
+import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.NetherrackBlock;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import nordmods.uselessreptile.common.init.URTags;
 
 public class DepletedMagmaBlock extends NetherrackBlock {
-    public static final IntProperty AGE = Properties.AGE_2;
-    public DepletedMagmaBlock(Settings settings) {
+    public static final IntegerProperty AGE = BlockStateProperties.AGE_2;
+    public DepletedMagmaBlock(Properties settings) {
         super(settings);
-        setDefaultState(stateManager.getDefaultState().with(AGE, 0));
+        registerDefaultState(stateDefinition.any().setValue(AGE, 0));
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-        if (world.getDimensionEntry().isIn(URTags.DEPLETED_MAGMA_REGENERATES)) tickRegenerate(state, world, pos);
-        if (world.getBlockState(pos.down()).getFluidState().isIn(ConventionalFluidTags.LAVA)
-                || world.getBlockState(pos.up()).getFluidState().isIn(ConventionalFluidTags.LAVA)
-                || world.getBlockState(pos.north()).getFluidState().isIn(ConventionalFluidTags.LAVA)
-                || world.getBlockState(pos.south()).getFluidState().isIn(ConventionalFluidTags.LAVA)
-                || world.getBlockState(pos.east()).getFluidState().isIn(ConventionalFluidTags.LAVA)
-                || world.getBlockState(pos.west()).getFluidState().isIn(ConventionalFluidTags.LAVA)
+    protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+        if (world.dimensionTypeRegistration().is(URTags.DEPLETED_MAGMA_REGENERATES)) tickRegenerate(state, world, pos);
+        if (world.getBlockState(pos.below()).getFluidState().is(ConventionalFluidTags.LAVA)
+                || world.getBlockState(pos.above()).getFluidState().is(ConventionalFluidTags.LAVA)
+                || world.getBlockState(pos.north()).getFluidState().is(ConventionalFluidTags.LAVA)
+                || world.getBlockState(pos.south()).getFluidState().is(ConventionalFluidTags.LAVA)
+                || world.getBlockState(pos.east()).getFluidState().is(ConventionalFluidTags.LAVA)
+                || world.getBlockState(pos.west()).getFluidState().is(ConventionalFluidTags.LAVA)
         ) tickRegenerate(state, world, pos);
     }
 
-    private void tickRegenerate(BlockState state, ServerWorld world, BlockPos pos) {
-        int age = state.get(AGE);
-        if (age < Properties.AGE_2_MAX) world.setBlockState(pos, state.with(AGE, age + 1), Block.SKIP_REDRAW_AND_BLOCK_ENTITY_REPLACED_CALLBACK);
-        else world.setBlockState(pos, Blocks.MAGMA_BLOCK.getDefaultState());
+    private void tickRegenerate(BlockState state, ServerLevel world, BlockPos pos) {
+        int age = state.getValue(AGE);
+        if (age < BlockStateProperties.MAX_AGE_2) world.setBlock(pos, state.setValue(AGE, age + 1), Block.UPDATE_NONE);
+        else world.setBlockAndUpdate(pos, Blocks.MAGMA_BLOCK.defaultBlockState());
     }
 
     @Override
-    protected void appendProperties(StateManager.Builder<Block, BlockState> builder) {
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(AGE);
     }
 
-    protected ItemStack getPickStack(WorldView world, BlockPos pos, BlockState state, boolean includeData) {
-        return Blocks.NETHERRACK.asItem().getDefaultStack();
+    protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
+        return Blocks.NETHERRACK.asItem().getDefaultInstance();
     }
 }

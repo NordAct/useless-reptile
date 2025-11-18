@@ -1,13 +1,5 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.item.ItemRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemDisplayContext;
-import net.minecraft.item.ItemStack;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -19,8 +11,15 @@ import software.bernie.geckolib.renderer.base.PerBoneRender;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.RenderUtil;
-
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.function.BiConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
 
 public class BannerRenderLayer<T extends GeoAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     public BannerRenderLayer(GeoRenderer<T, O, R> renderer) {
@@ -35,7 +34,7 @@ public class BannerRenderLayer<T extends GeoAnimatable, O, R extends GeoRenderSt
     }
 
 
-    protected void renderForBone(R renderState, GeoBone bone, MatrixStack matrixStackIn, OrderedRenderCommandQueue renderTasks, int packedLight) {
+    protected void renderForBone(R renderState, GeoBone bone, PoseStack matrixStackIn, SubmitNodeCollector renderTasks, int packedLight) {
             GeoRenderState ownerState = renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
             if (ownerState == null) return;
             ItemStack stack = ownerState.getGeckolibData(URDataTickets.DRAGON_EQIPMENT).get(EquipmentSlot.OFFHAND);
@@ -45,9 +44,9 @@ public class BannerRenderLayer<T extends GeoAnimatable, O, R extends GeoRenderSt
                 //bone.transformToBone(matrixStackIn);
 
                 //matrixStackIn.scale(16f, 16f, 16f);
-                ItemRenderState stackRenderState = new ItemRenderState();
-                MinecraftClient.getInstance().getItemModelManager().clearAndUpdate(stackRenderState, stack, ItemDisplayContext.NONE, ClientUtil.getLevel(), null, renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID).intValue());
-                stackRenderState.render(matrixStackIn, renderTasks, packedLight, OverlayTexture.DEFAULT_UV, 0);
+                ItemStackRenderState stackRenderState = new ItemStackRenderState();
+                Minecraft.getInstance().getItemModelResolver().updateForTopItem(stackRenderState, stack, ItemDisplayContext.NONE, ClientUtil.getLevel(), null, renderState.getGeckolibData(DataTickets.ANIMATABLE_INSTANCE_ID).intValue());
+                stackRenderState.submit(matrixStackIn, renderTasks, packedLight, OverlayTexture.NO_OVERLAY, 0);
             }
     }
 }

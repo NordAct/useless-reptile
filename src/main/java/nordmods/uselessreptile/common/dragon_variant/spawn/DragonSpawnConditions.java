@@ -4,33 +4,32 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.block.Block;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Util;
-import net.minecraft.util.dynamic.Codecs;
-import net.minecraft.world.biome.Biome;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
+import net.minecraft.Util;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 
 public record DragonSpawnConditions(
         int weight,
-        Optional<List<Codecs.TagEntryId>> allowedBiomes,
-        Optional<List<Codecs.TagEntryId>> bannedBiomes,
-        Optional<List<Codecs.TagEntryId>> allowedBlocks,
-        Optional<List<Codecs.TagEntryId>> bannedBlocks,
+        Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBiomes,
+        Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBiomes,
+        Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBlocks,
+        Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBlocks,
         Optional<AltitudeRestriction> altitudeRestriction
 ) {
 
     public static final Codec<DragonSpawnConditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    Codecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(DragonSpawnConditions::weight),
-                    Codecs.TAG_ENTRY_ID.listOf().optionalFieldOf("allowed_biomes").forGetter(DragonSpawnConditions::allowedBiomes),
-                    Codecs.TAG_ENTRY_ID.listOf().optionalFieldOf("banned_biomes").forGetter(DragonSpawnConditions::bannedBiomes),
-                    Codecs.TAG_ENTRY_ID.listOf().optionalFieldOf("allowed_blocks").forGetter(DragonSpawnConditions::allowedBlocks),
-                    Codecs.TAG_ENTRY_ID.listOf().optionalFieldOf("banned_blocks").forGetter(DragonSpawnConditions::bannedBlocks),
+                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(DragonSpawnConditions::weight),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("allowed_biomes").forGetter(DragonSpawnConditions::allowedBiomes),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_biomes").forGetter(DragonSpawnConditions::bannedBiomes),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("allowed_blocks").forGetter(DragonSpawnConditions::allowedBlocks),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_blocks").forGetter(DragonSpawnConditions::bannedBlocks),
                     AltitudeRestriction.CODEC.optionalFieldOf("altitude").forGetter(DragonSpawnConditions::altitudeRestriction))
             .apply(instance, (DragonSpawnConditions::new)));
 
@@ -46,7 +45,7 @@ public record DragonSpawnConditions(
                 ),
                 Codec.INT_STREAM
                         .comapFlatMap(
-                                stream -> Util.decodeFixedLengthArray(stream, 2).map(values -> new Pair<>(Optional.of(values[0]), Optional.of(values[1]))),
+                                stream -> Util.fixedSize(stream, 2).map(values -> new Pair<>(Optional.of(values[0]), Optional.of(values[1]))),
                                 pair -> IntStream.of(pair.getFirst().orElse(Integer.MIN_VALUE), pair.getSecond().orElse(Integer.MAX_VALUE))
                         )
                         .stable()
@@ -76,10 +75,10 @@ public record DragonSpawnConditions(
     @SuppressWarnings("unused")
     public static class Builder {
         private Integer weight;
-        private List<Codecs.TagEntryId> allowedBiomes;
-        private List<Codecs.TagEntryId> bannedBiomes;
-        private List<Codecs.TagEntryId> allowedBlocks;
-        private List<Codecs.TagEntryId> bannedBlocks;
+        private List<ExtraCodecs.TagOrElementLocation> allowedBiomes;
+        private List<ExtraCodecs.TagOrElementLocation> bannedBiomes;
+        private List<ExtraCodecs.TagOrElementLocation> allowedBlocks;
+        private List<ExtraCodecs.TagOrElementLocation> bannedBlocks;
         private Integer minAltitude;
         private Integer maxAltitude;
 
@@ -87,10 +86,10 @@ public record DragonSpawnConditions(
 
         public DragonSpawnConditions build() {
             if (weight == null) throw new IllegalStateException("Weight must be specified");
-            Optional<List<Codecs.TagEntryId>> allowedBiomes = this.allowedBiomes != null ? Optional.of(this.allowedBiomes) : Optional.empty();
-            Optional<List<Codecs.TagEntryId>> bannedBiomes = this.bannedBiomes != null ? Optional.of(this.bannedBiomes) : Optional.empty();
-            Optional<List<Codecs.TagEntryId>> allowedBlocks = this.allowedBlocks != null ? Optional.of(this.allowedBlocks) : Optional.empty();
-            Optional<List<Codecs.TagEntryId>> bannedBlocks = this.bannedBlocks != null ? Optional.of(this.bannedBlocks) : Optional.empty();
+            Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBiomes = this.allowedBiomes != null ? Optional.of(this.allowedBiomes) : Optional.empty();
+            Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBiomes = this.bannedBiomes != null ? Optional.of(this.bannedBiomes) : Optional.empty();
+            Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBlocks = this.allowedBlocks != null ? Optional.of(this.allowedBlocks) : Optional.empty();
+            Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBlocks = this.bannedBlocks != null ? Optional.of(this.bannedBlocks) : Optional.empty();
             Optional<AltitudeRestriction> altitudeRestriction;
             if (this.minAltitude != null || this.maxAltitude != null) {
                 Optional<Integer> minAltitude = this.minAltitude != null ? Optional.of(this.minAltitude) : Optional.empty();
@@ -119,55 +118,55 @@ public record DragonSpawnConditions(
         }
 
         //allowed biomes
-        public Builder addAllowedBiome(RegistryKey<Biome> biomeRegistryKey) {
+        public Builder addAllowedBiome(ResourceKey<Biome> biomeRegistryKey) {
             if (allowedBiomes == null) allowedBiomes = new ArrayList<>();
-            allowedBiomes.add(new Codecs.TagEntryId(biomeRegistryKey.getValue(), false));
+            allowedBiomes.add(new ExtraCodecs.TagOrElementLocation(biomeRegistryKey.location(), false));
             return this;
         }
 
         public Builder addAllowedBiomeTag(TagKey<Biome> biomeTagKey) {
             if (allowedBiomes == null) allowedBiomes = new ArrayList<>();
-            allowedBiomes.add(new Codecs.TagEntryId(biomeTagKey.id(), true));
+            allowedBiomes.add(new ExtraCodecs.TagOrElementLocation(biomeTagKey.location(), true));
             return this;
         }
 
 
         //banned biomes
-        public Builder addBannedBiome(RegistryKey<Biome> biomeRegistryKey) {
+        public Builder addBannedBiome(ResourceKey<Biome> biomeRegistryKey) {
             if (bannedBiomes == null) bannedBiomes = new ArrayList<>();
-            bannedBiomes.add(new Codecs.TagEntryId(biomeRegistryKey.getValue(), false));
+            bannedBiomes.add(new ExtraCodecs.TagOrElementLocation(biomeRegistryKey.location(), false));
             return this;
         }
 
         public Builder addBannedBiomeTag(TagKey<Biome> biomeTagKey) {
             if (bannedBiomes == null) bannedBiomes = new ArrayList<>();
-            bannedBiomes.add(new Codecs.TagEntryId(biomeTagKey.id(), true));
+            bannedBiomes.add(new ExtraCodecs.TagOrElementLocation(biomeTagKey.location(), true));
             return this;
         }
 
         //allowed blocks
-        public Builder addAllowedBlock(RegistryKey<Block> blockRegistryKey) {
+        public Builder addAllowedBlock(ResourceKey<Block> blockRegistryKey) {
             if (allowedBlocks == null) allowedBlocks = new ArrayList<>();
-            allowedBlocks.add(new Codecs.TagEntryId(blockRegistryKey.getValue(), false));
+            allowedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockRegistryKey.location(), false));
             return this;
         }
 
         public Builder addAllowedBlockTag(TagKey<Block> blockTagKey) {
             if (allowedBlocks == null) allowedBlocks = new ArrayList<>();
-            allowedBlocks.add(new Codecs.TagEntryId(blockTagKey.id(), true));
+            allowedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockTagKey.location(), true));
             return this;
         }
 
         //banned blocks
-        public Builder addBannedBlock(RegistryKey<Block> blockRegistryKey) {
+        public Builder addBannedBlock(ResourceKey<Block> blockRegistryKey) {
             if (bannedBlocks == null) bannedBlocks = new ArrayList<>();
-            bannedBlocks.add(new Codecs.TagEntryId(blockRegistryKey.getValue(), false));
+            bannedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockRegistryKey.location(), false));
             return this;
         }
 
         public Builder addBannedBlockTag(TagKey<Block> blockTagKey) {
             if (bannedBlocks == null) bannedBlocks = new ArrayList<>();
-            bannedBlocks.add(new Codecs.TagEntryId(blockTagKey.id(), true));
+            bannedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockTagKey.location(), true));
             return this;
         }
     }

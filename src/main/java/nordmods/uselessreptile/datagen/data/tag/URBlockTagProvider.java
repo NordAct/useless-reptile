@@ -3,47 +3,47 @@ package nordmods.uselessreptile.datagen.data.tag;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
-import net.minecraft.block.Blocks;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.world.level.block.Blocks;
 import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URTags;
 
 import java.util.concurrent.CompletableFuture;
 
 public class URBlockTagProvider extends FabricTagProvider.BlockTagProvider {
-    public URBlockTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public URBlockTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-        getTagBuilder(URTags.DRAGON_UNBREAKABLE)
-                .addOptionalTag(BlockTags.AIR.id());
-        getTagBuilder(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)
-                .addOptionalTag(BlockTags.LEAVES.id())
-                .addOptionalTag(BlockTags.REPLACEABLE.id())
-                .addOptionalTag(BlockTags.FLOWERS.id())
-                .addOptionalTag(BlockTags.WOOL_CARPETS.id())
-                .addOptionalTag(BlockTags.WOOL.id())
-                .add(Blocks.MOSS_BLOCK.getRegistryEntry().registryKey().getValue())
-                .add(Blocks.MOSS_CARPET.getRegistryEntry().registryKey().getValue())
-                .add(Blocks.MUSHROOM_STEM.getRegistryEntry().registryKey().getValue())
-                .add(Blocks.BROWN_MUSHROOM_BLOCK.getRegistryEntry().registryKey().getValue())
-                .add(Blocks.RED_MUSHROOM_BLOCK.getRegistryEntry().registryKey().getValue())
-                .addOptionalTag(BlockTags.SNOW.id());
+    protected void addTags(HolderLookup.Provider wrapperLookup) {
+        getOrCreateRawBuilder(URTags.DRAGON_UNBREAKABLE)
+                .addOptionalTag(BlockTags.AIR.location());
+        getOrCreateRawBuilder(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)
+                .addOptionalTag(BlockTags.LEAVES.location())
+                .addOptionalTag(BlockTags.REPLACEABLE.location())
+                .addOptionalTag(BlockTags.FLOWERS.location())
+                .addOptionalTag(BlockTags.WOOL_CARPETS.location())
+                .addOptionalTag(BlockTags.WOOL.location())
+                .addElement(Blocks.MOSS_BLOCK.builtInRegistryHolder().key().location())
+                .addElement(Blocks.MOSS_CARPET.builtInRegistryHolder().key().location())
+                .addElement(Blocks.MUSHROOM_STEM.builtInRegistryHolder().key().location())
+                .addElement(Blocks.BROWN_MUSHROOM_BLOCK.builtInRegistryHolder().key().location())
+                .addElement(Blocks.RED_MUSHROOM_BLOCK.builtInRegistryHolder().key().location())
+                .addOptionalTag(BlockTags.SNOW.location());
 
-        getTagBuilder(BlockTags.INFINIBURN_END)
-                .add(URBlocks.DEPLETED_MAGMA.getRegistryEntry().registryKey().getValue());
-        getTagBuilder(BlockTags.INFINIBURN_NETHER)
-                .add(URBlocks.DEPLETED_MAGMA.getRegistryEntry().registryKey().getValue());
-        getTagBuilder(BlockTags.INFINIBURN_OVERWORLD)
-                .add(URBlocks.DEPLETED_MAGMA.getRegistryEntry().registryKey().getValue());
-        getTagBuilder(BlockTags.PICKAXE_MINEABLE)
-                .add(URBlocks.DEPLETED_MAGMA.getRegistryEntry().registryKey().getValue());
-        getTagBuilder(ConventionalBlockTags.NETHERRACKS)
-                .add(URBlocks.DEPLETED_MAGMA.getRegistryEntry().registryKey().getValue());
-        getTagBuilder(BlockTags.SCULK_REPLACEABLE)
-                .add(URBlocks.DEPLETED_MAGMA.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(BlockTags.INFINIBURN_END)
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+        getOrCreateRawBuilder(BlockTags.INFINIBURN_NETHER)
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+        getOrCreateRawBuilder(BlockTags.INFINIBURN_OVERWORLD)
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+        getOrCreateRawBuilder(BlockTags.MINEABLE_WITH_PICKAXE)
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+        getOrCreateRawBuilder(ConventionalBlockTags.NETHERRACKS)
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+        getOrCreateRawBuilder(BlockTags.SCULK_REPLACEABLE)
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
     }
 }

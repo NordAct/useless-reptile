@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.client.renderer.base;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.RotationAxis;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.world.entity.player.Player;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.renderer.special.HeadMountDragonFeatureRenderer;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
@@ -17,12 +17,12 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 
 public abstract class HeadMountDragonEntityRenderer<T extends URDragonEntity & HeadMountDragon, R extends LivingEntityRenderState & GeoRenderState> extends URDragonEntityRenderer<T, R> {
-    public HeadMountDragonEntityRenderer(EntityRendererFactory.Context renderManager) {
+    public HeadMountDragonEntityRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager);
     }
 
     @Override
-    public void submitRenderTasks(R renderState, MatrixStack poseStack, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState, @Nullable RenderModelPositioner<R> modelPositioner) {
+    public void submitRenderTasks(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderModelPositioner<R> modelPositioner) {
         if (renderState.getGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER)) {
             if (HeadMountDragonFeatureRenderer.ON_HEAD.contains(renderState.getGeckolibData(URDataTickets.DRAGON_UUID)))
                 return;
@@ -33,11 +33,11 @@ public abstract class HeadMountDragonEntityRenderer<T extends URDragonEntity & H
     }
 
     @Override
-    protected void applyRotations(R renderState, MatrixStack poseStack, float nativeScale, CameraRenderState cameraState) {
+    protected void applyRotations(R renderState, PoseStack poseStack, float nativeScale, CameraRenderState cameraState) {
         if (renderState.getGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER)) {
-            if (renderState.flipUpsideDown) {
-                poseStack.translate(0, (renderState.height + 0.1f) / nativeScale, 0);
-                poseStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180f));
+            if (renderState.isUpsideDown) {
+                poseStack.translate(0, (renderState.boundingBoxHeight + 0.1f) / nativeScale, 0);
+                poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
             }
         } else super.applyRotations(renderState, poseStack, nativeScale, cameraState);
     }
@@ -45,12 +45,12 @@ public abstract class HeadMountDragonEntityRenderer<T extends URDragonEntity & H
     @Override
     public void addRenderData(T animatable, Void relatedObject, R renderState, float tickDelta) {
         super.addRenderData(animatable, relatedObject, renderState, tickDelta);
-        renderState.addGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER, animatable.getVehicle() instanceof PlayerEntity);
-        renderState.addGeckolibData(URDataTickets.DRAGON_UUID, animatable.getUuid());
+        renderState.addGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER, animatable.getVehicle() instanceof Player);
+        renderState.addGeckolibData(URDataTickets.DRAGON_UUID, animatable.getUUID());
         renderState.addGeckolibData(
                 URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT,
-                !(animatable.getVehicle() instanceof PlayerEntity player
-                        && player == MinecraftClient.getInstance().player
-                        && MinecraftClient.getInstance().options.getPerspective().isFirstPerson()));
+                !(animatable.getVehicle() instanceof Player player
+                        && player == Minecraft.getInstance().player
+                        && Minecraft.getInstance().options.getCameraType().isFirstPerson()));
     }
 }

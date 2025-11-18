@@ -1,28 +1,28 @@
 package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.RideableInventory;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.HasCustomInventoryScreen;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeybinds;
@@ -30,134 +30,134 @@ import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
 
-public abstract class URRideableDragonEntity extends URDragonEntity implements RideableInventory {
-    public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
+public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
+    public static final ResourceLocation RIDER_BONUS = UselessReptile.id("rider_bonus");
 
-    protected URRideableDragonEntity(EntityType<? extends TameableEntity> entityType, World world) {
+    protected URRideableDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
     }
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(MOVE_FORWARD_PRESSED, false);
-        builder.add(MOVE_BACK_PRESSED, false);
-        builder.add(JUMP_PRESSED, false);
-        builder.add(MOVE_DOWN_PRESSED, false);
-        builder.add(SPRINT_PRESSED, false);
-        builder.add(SECONDARY_ATTACK_PRESSED, false);
-        builder.add(PRIMARY_ATTACK_PRESSED, false);
-        builder.add(FREE_LOOK, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(MOVE_FORWARD_PRESSED, false);
+        builder.define(MOVE_BACK_PRESSED, false);
+        builder.define(JUMP_PRESSED, false);
+        builder.define(MOVE_DOWN_PRESSED, false);
+        builder.define(SPRINT_PRESSED, false);
+        builder.define(SECONDARY_ATTACK_PRESSED, false);
+        builder.define(PRIMARY_ATTACK_PRESSED, false);
+        builder.define(FREE_LOOK, false);
     }
 
-    public static final TrackedData<Boolean> MOVE_FORWARD_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> MOVE_BACK_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> JUMP_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> MOVE_DOWN_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> SPRINT_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> SECONDARY_ATTACK_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> PRIMARY_ATTACK_PRESSED = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<Boolean> FREE_LOOK = DataTracker.registerData(URRideableDragonEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> MOVE_FORWARD_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> MOVE_BACK_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> JUMP_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> MOVE_DOWN_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> SPRINT_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> SECONDARY_ATTACK_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> PRIMARY_ATTACK_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> FREE_LOOK = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
 
     public void updateInputs(boolean forward, boolean back, boolean jump, boolean down, boolean isSecondaryAttackPressed, boolean isPrimaryAttackPressed, boolean sprint, boolean freeLook) {
-        dataTracker.set(MOVE_FORWARD_PRESSED, forward);
-        dataTracker.set(MOVE_BACK_PRESSED, back);
-        dataTracker.set(JUMP_PRESSED, jump);
-        dataTracker.set(MOVE_DOWN_PRESSED, down);
-        dataTracker.set(SECONDARY_ATTACK_PRESSED, isSecondaryAttackPressed);
-        dataTracker.set(PRIMARY_ATTACK_PRESSED, isPrimaryAttackPressed);
-        dataTracker.set(SPRINT_PRESSED, sprint);
-        dataTracker.set(FREE_LOOK, freeLook);
+        entityData.set(MOVE_FORWARD_PRESSED, forward);
+        entityData.set(MOVE_BACK_PRESSED, back);
+        entityData.set(JUMP_PRESSED, jump);
+        entityData.set(MOVE_DOWN_PRESSED, down);
+        entityData.set(SECONDARY_ATTACK_PRESSED, isSecondaryAttackPressed);
+        entityData.set(PRIMARY_ATTACK_PRESSED, isPrimaryAttackPressed);
+        entityData.set(SPRINT_PRESSED, sprint);
+        entityData.set(FREE_LOOK, freeLook);
     }
 
-    public boolean isMoveForwardPressed() {return dataTracker.get(MOVE_FORWARD_PRESSED);}
-    public boolean isMoveBackPressed() {return dataTracker.get(MOVE_BACK_PRESSED);}
-    public boolean isJumpPressed() {return dataTracker.get(JUMP_PRESSED);}
-    public boolean isDownPressed() {return dataTracker.get(MOVE_DOWN_PRESSED);}
-    public boolean isSprintPressed() {return dataTracker.get(SPRINT_PRESSED);}
-    public boolean isSecondaryAttackPressed() {return dataTracker.get(SECONDARY_ATTACK_PRESSED);}
-    public boolean isPrimaryAttackPressed() {return dataTracker.get(PRIMARY_ATTACK_PRESSED);}
-    public boolean freeLook() {return dataTracker.get(FREE_LOOK);}
+    public boolean isMoveForwardPressed() {return entityData.get(MOVE_FORWARD_PRESSED);}
+    public boolean isMoveBackPressed() {return entityData.get(MOVE_BACK_PRESSED);}
+    public boolean isJumpPressed() {return entityData.get(JUMP_PRESSED);}
+    public boolean isDownPressed() {return entityData.get(MOVE_DOWN_PRESSED);}
+    public boolean isSprintPressed() {return entityData.get(SPRINT_PRESSED);}
+    public boolean isSecondaryAttackPressed() {return entityData.get(SECONDARY_ATTACK_PRESSED);}
+    public boolean isPrimaryAttackPressed() {return entityData.get(PRIMARY_ATTACK_PRESSED);}
+    public boolean freeLook() {return entityData.get(FREE_LOOK);}
 
     @Override
     public LivingEntity getControllingPassenger() {
-        return getPassengerList().isEmpty() ? null : (LivingEntity) getPassengerList().getFirst();
+        return getPassengers().isEmpty() ? null : (LivingEntity) getPassengers().getFirst();
     }
 
     public boolean canBeControlledByRider() {
-        return getControllingPassenger() instanceof PlayerEntity;
+        return getControllingPassenger() instanceof Player;
     }
 
     @Override
-    public ActionResult interactMob(PlayerEntity player, Hand hand) {
-        ItemStack itemStack = player.getStackInHand(hand);
-        if (isTamed() && isOwner(player) && !isInteractableItem(itemStack) && !player.isSneaking()) {
-            if (!hasPassengers() && hasSaddle()) {
-                if (isSitting()) setSitting(false);
-                else if (!getEntityWorld().isClient()) player.startRiding(this);
-                return ActionResult.SUCCESS;
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
+        if (isTame() && isOwnedBy(player) && !isInteractableItem(itemStack) && !player.isShiftKeyDown()) {
+            if (!isVehicle() && hasSaddle()) {
+                if (isOrderedToSit()) setOrderedToSit(false);
+                else if (!level().isClientSide()) player.startRiding(this);
+                return InteractionResult.SUCCESS;
             }
         }
-        return super.interactMob(player, hand);
+        return super.mobInteract(player, hand);
     }
 
     @Override
-    public boolean isLogicalSideForUpdatingMovement() {
+    public boolean isLocalInstanceAuthoritative() {
         if (canBeControlledByRider()
-                && (getControllingPassenger() instanceof PlayerEntity player && player.isMainPlayer() || !getEntityWorld().isClient())) return true;
-        return super.isLogicalSideForUpdatingMovement();
+                && (getControllingPassenger() instanceof Player player && player.isLocalPlayer() || !level().isClientSide())) return true;
+        return super.isLocalInstanceAuthoritative();
     }
 
     @Override
-    public void travel(Vec3d movementInput) {
-        if (getEntityWorld() instanceof ServerWorld) {
+    public void travel(Vec3 movementInput) {
+        if (level() instanceof ServerLevel) {
             boolean hasRider = canBeControlledByRider();
             updateRiderBonus(hasRider);
             getLookControl().setLockRotation(hasRider);
-            if (hasRider) setHomePoint(getBlockPos());
+            if (hasRider) setHomePoint(blockPosition());
             else updateInputs(false, false, false, false, false, false, false, false);
         }
         super.travel(movementInput);
     }
 
-    public Vec3d updateMovementInput(PlayerEntity rider, Vec3d movementInput) {
-        forwardSpeed = 0;
-        if (isMoveForwardPressed()) forwardSpeed = 1;
-        if (isMoveBackPressed()) forwardSpeed = -1;
+    public Vec3 updateMovementInput(Player rider, Vec3 movementInput) {
+        zza = 0;
+        if (isMoveForwardPressed()) zza = 1;
+        if (isMoveBackPressed()) zza = -1;
 
-        double landSpeed = forwardSpeed * getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+        double landSpeed = zza * getAttributeValue(Attributes.MOVEMENT_SPEED);
         if (isSprintPressed()) setSprinting(true);
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         if (isMovingBackwards()) setSprinting(false);
         setRotation(rider);
-        setPitch(MathHelper.clamp(rider.getPitch(), -getPitchLimit(), getPitchLimit()));
-        if (isJumpPressed() && isOnGround()) jump();
+        setXRot(Mth.clamp(rider.getXRot(), -getPitchLimit(), getPitchLimit()));
+        if (isJumpPressed() && onGround()) jumpFromGround();
         //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
-        return new Vec3d(0, movementInput.y  - 0.001, landSpeed);
+        return new Vec3(0, movementInput.y  - 0.001, landSpeed);
     }
 
     @Override
-    protected Vec3d getControlledMovementInput(PlayerEntity rider, Vec3d movementInput) {
-        return super.getControlledMovementInput(rider, updateMovementInput(rider, movementInput));
+    protected Vec3 getRiddenInput(Player rider, Vec3 movementInput) {
+        return super.getRiddenInput(rider, updateMovementInput(rider, movementInput));
     }
 
     @Override
-    protected void tickControlled(PlayerEntity rider, Vec3d movementInput) {
-        if (getEntityWorld().isClient() && getControllingPassenger() instanceof ClientPlayerEntity player) {
-            boolean isSprintPressed = player.input.playerInput.sprint();
-            boolean isMoveForwardPressed = player.input.playerInput.forward();
-            boolean isJumpPressed = (player.input.playerInput.jump())
+    protected void tickRidden(Player rider, Vec3 movementInput) {
+        if (level().isClientSide() && getControllingPassenger() instanceof LocalPlayer player) {
+            boolean isSprintPressed = player.input.keyPresses.sprint();
+            boolean isMoveForwardPressed = player.input.keyPresses.forward();
+            boolean isJumpPressed = (player.input.keyPresses.jump())
                     || (URClientConfig.getConfig().upDownCameraControl
                         && hasVerticalInput()
-                        && player.getPitch() < -URClientConfig.getConfig().upDownCameraPitchThreshold);
-            boolean isMoveBackPressed = player.input.playerInput.backward();
-            boolean isDownPressed = URKeybinds.FLY_DOWN_KEY.isPressed()
+                        && player.getXRot() < -URClientConfig.getConfig().upDownCameraPitchThreshold);
+            boolean isMoveBackPressed = player.input.keyPresses.backward();
+            boolean isDownPressed = URKeybinds.FLY_DOWN_KEY.isDown()
                     || (URClientConfig.getConfig().upDownCameraControl
                         && hasVerticalInput()
-                        && player.getPitch() > URClientConfig.getConfig().upDownCameraPitchThreshold);
-            boolean isSecondaryAttackPressed = URKeybinds.SECONDARY_ATTACK_KEY.isPressed();
-            boolean isPrimaryAttackPressed = URKeybinds.PRIMARY_ATTACK_KEY.isPressed();
-            boolean freeLook = URKeybinds.FREE_LOOK_KEY.isPressed();
+                        && player.getXRot() > URClientConfig.getConfig().upDownCameraPitchThreshold);
+            boolean isSecondaryAttackPressed = URKeybinds.SECONDARY_ATTACK_KEY.isDown();
+            boolean isPrimaryAttackPressed = URKeybinds.PRIMARY_ATTACK_KEY.isDown();
+            boolean freeLook = URKeybinds.FREE_LOOK_KEY.isDown();
 
             if (isSprintPressed != isSprintPressed()
                     || isMoveForwardPressed != isMoveForwardPressed()
@@ -180,42 +180,42 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements R
                                 getId()));
             }
         }
-        super.tickControlled(rider, movementInput);
+        super.tickRidden(rider, movementInput);
     }
 
     @Override
     public void updateEquipment() {
         super.updateEquipment();
-        ItemStack saddle = getInventory().getStack(0);
-        equipStack(EquipmentSlot.SADDLE, saddle);
+        ItemStack saddle = getInventory().getItem(0);
+        setItemSlot(EquipmentSlot.SADDLE, saddle);
     }
 
     public boolean hasSaddle() {
-        return getInventory() != null && isSaddle(getInventory().getStack(0));
+        return getInventory() != null && isSaddle(getInventory().getItem(0));
     }
 
     protected void updateRiderBonus(boolean hasRider) {
         float mult = URMobAttributesConfig.getConfig().riddenDragonGroundSpeedMultiplier;
         if (mult == 1) return;
 
-        EntityAttributeInstance entityAttributeInstance = getAttributeInstance(EntityAttributes.MOVEMENT_SPEED);
+        AttributeInstance entityAttributeInstance = getAttribute(Attributes.MOVEMENT_SPEED);
         if (hasRider) {
             if (!entityAttributeInstance.hasModifier(RIDER_BONUS))
-                entityAttributeInstance.addTemporaryModifier(new EntityAttributeModifier(RIDER_BONUS, mult, EntityAttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+                entityAttributeInstance.addTransientModifier(new AttributeModifier(RIDER_BONUS, mult, AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
         } else entityAttributeInstance.removeModifier(RIDER_BONUS);
     }
 
     @Override
-    public void openInventory(PlayerEntity player) {
-        if (!getEntityWorld().isClient() && canBeControlledByRider() && isOwner(player)) {
-            GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
-            player.openHandledScreen(this);
+    public void openCustomInventoryScreen(Player player) {
+        if (!level().isClientSide() && canBeControlledByRider() && isOwnedBy(player)) {
+            GUIEntityToRenderS2CPacket.send((ServerPlayer) player, this);
+            player.openMenu(this);
         }
     }
 
-    protected void setRotation(PlayerEntity rider) {
-        if (freeLook()) setRotation(getYaw(), getPitch());
-        else setRotation(rider.getYaw(), rider.getPitch());
+    protected void setRotation(Player rider) {
+        if (freeLook()) setRot(getYRot(), getXRot());
+        else setRot(rider.getYRot(), rider.getXRot());
     }
 
     public int vortexHornCapacity() {

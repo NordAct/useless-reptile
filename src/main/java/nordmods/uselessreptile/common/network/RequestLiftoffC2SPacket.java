@@ -1,40 +1,40 @@
 package nordmods.uselessreptile.common.network;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 
-public record RequestLiftoffC2SPacket(int id) implements CustomPayload {
-    public static final Identifier ID = UselessReptile.id("request_liftoff");
-    public static final Id<RequestLiftoffC2SPacket> PACKET_ID = new Id<>(ID);
-    public static final PacketCodec<RegistryByteBuf, RequestLiftoffC2SPacket> PACKET_CODEC =
-            PacketCodec.ofStatic(RequestLiftoffC2SPacket::write, RequestLiftoffC2SPacket::read);
+public record RequestLiftoffC2SPacket(int id) implements CustomPacketPayload {
+    public static final ResourceLocation ID = UselessReptile.id("request_liftoff");
+    public static final Type<RequestLiftoffC2SPacket> PACKET_ID = new Type<>(ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, RequestLiftoffC2SPacket> PACKET_CODEC =
+            StreamCodec.of(RequestLiftoffC2SPacket::write, RequestLiftoffC2SPacket::read);
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (packet, context) -> {
-            Entity entity = context.player().getEntityWorld().getEntityById(packet.id);
+            Entity entity = context.player().level().getEntity(packet.id);
             if (entity instanceof URRideableFlyingDragonEntity dragon && !dragon.isFlying() && dragon.canBeControlledByRider() && context.player().getVehicle() == entity) {
                 dragon.startToFly();
             }
         });
     }
 
-    private static RequestLiftoffC2SPacket read(RegistryByteBuf buffer) {
+    private static RequestLiftoffC2SPacket read(RegistryFriendlyByteBuf buffer) {
         int id = buffer.readInt();
         return new RequestLiftoffC2SPacket(id);
     }
 
-    private static void write(RegistryByteBuf buf, RequestLiftoffC2SPacket packet) {
+    private static void write(RegistryFriendlyByteBuf buf, RequestLiftoffC2SPacket packet) {
         buf.writeInt(packet.id);
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return PACKET_ID;
     }
 }

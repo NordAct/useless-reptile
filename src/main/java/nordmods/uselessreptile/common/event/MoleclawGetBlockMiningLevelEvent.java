@@ -2,7 +2,7 @@ package nordmods.uselessreptile.common.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import nordmods.uselessreptile.common.init.URModEvents;
 
 /**

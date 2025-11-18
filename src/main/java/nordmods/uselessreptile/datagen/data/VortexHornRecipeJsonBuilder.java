@@ -1,55 +1,55 @@
 package nordmods.uselessreptile.datagen.data;
 
-import net.minecraft.advancement.Advancement;
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.advancement.AdvancementRequirements;
-import net.minecraft.advancement.AdvancementRewards;
-import net.minecraft.advancement.criterion.RecipeUnlockedCriterion;
-import net.minecraft.data.recipe.CraftingRecipeJsonBuilder;
-import net.minecraft.data.recipe.RecipeExporter;
-import net.minecraft.data.recipe.ShapedRecipeJsonBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemConvertible;
-import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Ingredient;
-import net.minecraft.recipe.RawShapedRecipe;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.book.RecipeCategory;
-import net.minecraft.registry.RegistryEntryLookup;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.tag.TagKey;
 import nordmods.uselessreptile.common.recipe.VortexHornRecipe;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
+import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.AdvancementRequirements;
+import net.minecraft.advancements.AdvancementRewards;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.data.recipes.RecipeBuilder;
+import net.minecraft.data.recipes.RecipeCategory;
+import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.ShapedRecipePattern;
+import net.minecraft.world.level.ItemLike;
 
-public class VortexHornRecipeJsonBuilder extends ShapedRecipeJsonBuilder {
+public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
 
-    public VortexHornRecipeJsonBuilder(RegistryEntryLookup<Item> registryLookup, RecipeCategory category, ItemConvertible output, int count) {
+    public VortexHornRecipeJsonBuilder(HolderGetter<Item> registryLookup, RecipeCategory category, ItemLike output, int count) {
         super(registryLookup, category, output, count);
     }
 
-    public static VortexHornRecipeJsonBuilder create(RegistryEntryLookup<Item> registryLookup, RecipeCategory category, ItemConvertible output) {
-        return create(registryLookup, category, output, 1);
+    public static VortexHornRecipeJsonBuilder shaped(HolderGetter<Item> registryLookup, RecipeCategory category, ItemLike output) {
+        return shaped(registryLookup, category, output, 1);
     }
 
-    public static VortexHornRecipeJsonBuilder create(RegistryEntryLookup<Item> registryLookup, RecipeCategory category, ItemConvertible output, int count) {
+    public static VortexHornRecipeJsonBuilder shaped(HolderGetter<Item> registryLookup, RecipeCategory category, ItemLike output, int count) {
         return new VortexHornRecipeJsonBuilder(registryLookup, category, output, count);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder input(Character c, TagKey<Item> tag) {
-        return (VortexHornRecipeJsonBuilder) super.input(c, tag);
+    public VortexHornRecipeJsonBuilder define(Character c, TagKey<Item> tag) {
+        return (VortexHornRecipeJsonBuilder) super.define(c, tag);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder input(Character c, ItemConvertible itemProvider) {
-        return (VortexHornRecipeJsonBuilder) super.input(c, itemProvider);
+    public VortexHornRecipeJsonBuilder define(Character c, ItemLike itemProvider) {
+        return (VortexHornRecipeJsonBuilder) super.define(c, itemProvider);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder input(Character c, Ingredient ingredient) {
-        return (VortexHornRecipeJsonBuilder) super.input(c, ingredient);
+    public VortexHornRecipeJsonBuilder define(Character c, Ingredient ingredient) {
+        return (VortexHornRecipeJsonBuilder) super.define(c, ingredient);
     }
 
     @Override
@@ -58,8 +58,8 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeJsonBuilder {
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder criterion(String string, AdvancementCriterion<?> advancementCriterion) {
-        return (VortexHornRecipeJsonBuilder) super.criterion(string, advancementCriterion);
+    public VortexHornRecipeJsonBuilder unlockedBy(String string, Criterion<?> advancementCriterion) {
+        return (VortexHornRecipeJsonBuilder) super.unlockedBy(string, advancementCriterion);
     }
 
     @Override
@@ -73,18 +73,18 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeJsonBuilder {
     }
 
     @Override
-    public void offerTo(RecipeExporter exporter, RegistryKey<Recipe<?>> recipeKey) {
-        RawShapedRecipe rawShapedRecipe = RawShapedRecipe.create(this.inputs, this.pattern);
+    public void save(RecipeOutput exporter, ResourceKey<Recipe<?>> recipeKey) {
+        ShapedRecipePattern rawShapedRecipe = ShapedRecipePattern.of(this.key, this.rows);
         Advancement.Builder builder = exporter
-                .getAdvancementBuilder()
-                .criterion(
+                .advancement()
+                .addCriterion(
                         "has_the_recipe",
-                        RecipeUnlockedCriterion.create(recipeKey)
+                        RecipeUnlockedTrigger.unlocked(recipeKey)
                 )
                 .rewards(AdvancementRewards.Builder.recipe(recipeKey))
-                .criteriaMerger(AdvancementRequirements.CriterionMerger.OR);
-        criteria.forEach(builder::criterion);
-        VortexHornRecipe shapedRecipe = new VortexHornRecipe(Objects.requireNonNullElse(group, ""), CraftingRecipeJsonBuilder.toCraftingCategory(category), rawShapedRecipe, new ItemStack(output, count), showNotification);
-        exporter.accept(recipeKey, shapedRecipe, builder.build(recipeKey.getValue().withPrefixedPath("recipes/" + category.getName() + "/")));
+                .requirements(AdvancementRequirements.Strategy.OR);
+        criteria.forEach(builder::addCriterion);
+        VortexHornRecipe shapedRecipe = new VortexHornRecipe(Objects.requireNonNullElse(group, ""), RecipeBuilder.determineBookCategory(category), rawShapedRecipe, new ItemStack(result, count), showNotification);
+        exporter.accept(recipeKey, shapedRecipe, builder.build(recipeKey.location().withPrefix("recipes/" + category.getFolderName() + "/")));
     }
 }

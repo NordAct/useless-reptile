@@ -1,28 +1,28 @@
 package nordmods.uselessreptile.common.network;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.CheckedRandom;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.network.protocol.game.ClientboundSoundPacket;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.levelgen.LegacyRandomSource;
 
 public class URPacketHelper {
-    public static void playSound(LivingEntity entity, SoundEvent sound, SoundCategory category, float volume, float pitch, int span) {
-        if (entity.getEntityWorld().getServer() == null) return;
-        BlockPos pos = entity.getBlockPos();
-        PlaySoundS2CPacket packet = new PlaySoundS2CPacket(RegistryEntry.of(sound), category, pos.getX(), pos.getY(), pos.getZ(), volume, pitch, entity.getRandom().nextInt(span));
+    public static void playSound(LivingEntity entity, SoundEvent sound, SoundSource category, float volume, float pitch, int span) {
+        if (entity.level().getServer() == null) return;
+        BlockPos pos = entity.blockPosition();
+        ClientboundSoundPacket packet = new ClientboundSoundPacket(Holder.direct(sound), category, pos.getX(), pos.getY(), pos.getZ(), volume, pitch, entity.getRandom().nextInt(span));
 
-        entity.getEntityWorld().getServer().getPlayerManager().sendToAll(packet);
+        entity.level().getServer().getPlayerList().broadcastAll(packet);
     }
 
-    public static void playSound(Entity entity, SoundEvent sound, SoundCategory category, float volume, float pitch, int span) {
-        if (entity.getEntityWorld().getServer() == null) return;
-        BlockPos pos = entity.getBlockPos();
-        PlaySoundS2CPacket packet = new PlaySoundS2CPacket(RegistryEntry.of(sound), category, pos.getX(), pos.getY(), pos.getZ(), volume, pitch, new CheckedRandom(entity.getId()).nextInt(span));
+    public static void playSound(Entity entity, SoundEvent sound, SoundSource category, float volume, float pitch, int span) {
+        if (entity.level().getServer() == null) return;
+        BlockPos pos = entity.blockPosition();
+        ClientboundSoundPacket packet = new ClientboundSoundPacket(Holder.direct(sound), category, pos.getX(), pos.getY(), pos.getZ(), volume, pitch, new LegacyRandomSource(entity.getId()).nextInt(span));
 
-        entity.getEntityWorld().getServer().getPlayerManager().sendToAll(packet);
+        entity.level().getServer().getPlayerList().broadcastAll(packet);
     }
 }

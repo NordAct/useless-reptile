@@ -1,17 +1,17 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.client.render.command.BatchingRenderCommandQueue;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.state.EntityHitbox;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.EntityEquipment;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.math.Box;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.SubmitNodeCollection;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.HitboxRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.world.entity.EntityEquipment;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.AABB;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.model.URDragonModel;
@@ -31,29 +31,29 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends LivingEntityRenderState & GeoRenderState> extends GeoEntityRenderer<T, R> {
     private final DragonEquipmentRenderer dragonEquipmentRenderer = new DragonEquipmentRenderer();
     private final SaddleEquipmentRenderer saddleEquipmentRenderer = new SaddleEquipmentRenderer();
-    public URDragonEntityRenderer(EntityRendererFactory.Context renderManager) {
+    public URDragonEntityRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new URDragonModel<>());
         withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE), 1));
     }
 
     @Override
     protected float getShadowRadius(R state) {
-        return super.getShadowRadius(state) * state.baseScale;
+        return super.getShadowRadius(state) * state.scale;
     }
 
     @Override
-    public void preRender(R renderState, MatrixStack poseStack, BakedGeoModel model, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState,
+    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                            int packedLight, int packedOverlay, int renderColor) {
         super.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
-        if (renderState.hitbox != null && renderState.hasGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT) //mayhaps I should move this to mixin
-                && renderTasks instanceof OrderedRenderCommandQueue orderedRenderCommandQueue
-                && orderedRenderCommandQueue.getBatchingQueue(0) instanceof BatchingRenderCommandQueue queue) {
+        if (renderState.hitboxesRenderState != null && renderState.hasGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT) //mayhaps I should move this to mixin
+                && renderTasks instanceof SubmitNodeCollector orderedRenderCommandQueue
+                && orderedRenderCommandQueue.order(0) instanceof SubmitNodeCollection queue) {
             queue.useless_reptile$submitShootingPoint(poseStack, renderState, renderState.getGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT));
         }
     }
 
     @Override
-    public void postRender(R dragonRenderState, MatrixStack poseStack, BakedGeoModel model, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState,
+    public void postRender(R dragonRenderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                            int packedLight, int packedOverlay, int renderColor) {
         super.postRender(dragonRenderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
         if (!ResourceUtil.isResourceReloadFinished) return;
@@ -76,7 +76,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
             }
             dragonEquipmentAnimatable.ownerRenderState = dragonRenderState;
 
-            DragonEquipmentRenderer usedRenderer = itemStack.isIn(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
+            DragonEquipmentRenderer usedRenderer = itemStack.is(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
             usedRenderer.submit(poseStack, dragonEquipmentAnimatable, getGeoModel(), renderTasks, cameraState, packedLight, tickDelta, null);
         }
     }
@@ -91,21 +91,21 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
         if (animatable instanceof ShooterDragon shooterDragon) renderState.addGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
 
         EntityEquipment map = new EntityEquipment();
-        for (EquipmentSlot slot : EquipmentSlot.values()) map.put(slot, animatable.getEquippedStack(slot));
+        for (EquipmentSlot slot : EquipmentSlot.values()) map.set(slot, animatable.getItemBySlot(slot));
         renderState.addGeckolibData(URDataTickets.DRAGON_EQIPMENT, map);
     }
 
     @Override
-    protected void appendHitboxes(T entity, ImmutableList.Builder<EntityHitbox> builder, float tickDelta) {
-        super.appendHitboxes(entity, builder, tickDelta);
+    protected void extractAdditionalHitboxes(T entity, ImmutableList.Builder<HitboxRenderState> builder, float tickDelta) {
+        super.extractAdditionalHitboxes(entity, builder, tickDelta);
         if (URClientConfig.getConfig().attackBoxesInDebug) {
             double x = -entity.getX();
             double y = -entity.getY();
             double z = -entity.getZ();
 
-            Box box = entity.getAttackBox();
+            AABB box = entity.getAttackBoundingBox();
             if (box != null) {
-                builder.add(new EntityHitbox(
+                builder.add(new HitboxRenderState(
                         box.minX + x,
                         box.minY + y,
                         box.minZ + z,
@@ -120,7 +120,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends
 
             box = entity.getSecondaryAttackBox();
             if (box != null) {
-                builder.add(new EntityHitbox(
+                builder.add(new HitboxRenderState(
                         box.minX + x,
                         box.minY + y,
                         box.minZ + z,

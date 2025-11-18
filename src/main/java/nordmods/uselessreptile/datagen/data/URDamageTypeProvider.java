@@ -1,12 +1,12 @@
 package nordmods.uselessreptile.datagen.data;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.data.DataOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
-import net.minecraft.entity.damage.DamageScaling;
-import net.minecraft.entity.damage.DamageType;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.data.PackOutput;
+import net.minecraft.world.damagesource.DamageScaling;
+import net.minecraft.world.damagesource.DamageType;
 import nordmods.uselessreptile.UselessReptile;
 
 import java.nio.file.Path;
@@ -18,24 +18,24 @@ import java.util.concurrent.CompletableFuture;
 
 public class URDamageTypeProvider implements DataProvider {
     protected final FabricDataOutput output;
-    private final DataOutput.PathResolver pathResolver;
-    private final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture;
+    private final PackOutput.PathProvider pathResolver;
+    private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
     private static final Set<DamageType> damageTypes = new HashSet<>();
 
-    public URDamageTypeProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture) {
+    public URDamageTypeProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "damage_type");
+        this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "damage_type");
         this.registryLookupFuture = registryLookupFuture;
     }
 
     @Override
-    public CompletableFuture<?> run(DataWriter writer) {
+    public CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
             damageTypes.forEach(entry -> {
-                Path path = this.pathResolver.resolveJson(UselessReptile.id(entry.msgId()));
-                list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, DamageType.CODEC, entry, path));
+                Path path = this.pathResolver.json(UselessReptile.id(entry.msgId()));
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, DamageType.DIRECT_CODEC, entry, path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });

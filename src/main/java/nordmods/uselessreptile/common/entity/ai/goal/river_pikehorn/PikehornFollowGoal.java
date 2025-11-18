@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import nordmods.uselessreptile.common.entity.ai.goal.common.FlyingDragonCallBackGoal;
 
@@ -12,16 +12,16 @@ public class PikehornFollowGoal extends FlyingDragonCallBackGoal<RiverPikehornEn
     }
 
     @Override
-    public boolean canStart() {
+    public boolean canUse() {
         if (entity.getTarget() != null || entity.forceTargetInWater) return false;
         LivingEntity owner = entity.getOwner();
         if (owner == null) return false;
-        double distance = entity.squaredDistanceTo(owner);
+        double distance = entity.distanceToSqr(owner);
         if (!entity.shouldFollow) {
             if (distance > TOLERANCE_DISTANCE_SQUARED && entity.getRandom().nextInt(TOLERANCE_DISTANCE_SQUARED) < distance - TOLERANCE_DISTANCE_SQUARED)
                 entity.shouldFollow = true;
             else return false;
         }
-        return super.canStart();
+        return super.canUse();
     }
 }

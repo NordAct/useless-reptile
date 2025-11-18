@@ -1,11 +1,11 @@
 package nordmods.uselessreptile.mixin.common.lightning_chaser;
 
-import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.level.ServerLevel;
 import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
-@Mixin(ServerWorld.class)
+@Mixin(ServerLevel.class)
 public abstract class ServerWorldMixin implements LightningChaserSpawnTimer {
     @Unique
     private int spawnTimer = 600;

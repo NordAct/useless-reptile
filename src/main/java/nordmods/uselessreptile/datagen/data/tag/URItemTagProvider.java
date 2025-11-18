@@ -2,86 +2,86 @@ package nordmods.uselessreptile.datagen.data.tag;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URTags;
 
 import java.util.concurrent.CompletableFuture;
 
 public class URItemTagProvider extends FabricTagProvider.ItemTagProvider{
-    public URItemTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> completableFuture) {
+    public URItemTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> completableFuture) {
         super(output, completableFuture, null);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
+    protected void addTags(HolderLookup.Provider wrapperLookup) {
         //Moleclaw armor items
-        getTagBuilder(URTags.PROTECTS_MOLECLAW_FROM_LIGHT)
-                .add(URItems.MOLECLAW_HELMET_IRON.getRegistryEntry().registryKey().getValue())
-                .add(URItems.MOLECLAW_HELMET_GOLD.getRegistryEntry().registryKey().getValue())
-                .add(URItems.MOLECLAW_HELMET_DIAMOND.getRegistryEntry().registryKey().getValue())
-                .add(URItems.MOLECLAW_HELMET_NETHERITE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.PROTECTS_MOLECLAW_FROM_LIGHT)
+                .addElement(URItems.MOLECLAW_HELMET_IRON.builtInRegistryHolder().key().location())
+                .addElement(URItems.MOLECLAW_HELMET_GOLD.builtInRegistryHolder().key().location())
+                .addElement(URItems.MOLECLAW_HELMET_DIAMOND.builtInRegistryHolder().key().location())
+                .addElement(URItems.MOLECLAW_HELMET_NETHERITE.builtInRegistryHolder().key().location());
 
-        getTagBuilder(URTags.MOLECLAW_CHESTPLATES)
-                .add(URItems.DRAGON_CHESTPLATE_IRON.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_CHESTPLATE_GOLD.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_CHESTPLATE_DIAMOND.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_CHESTPLATE_NETHERITE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.MOLECLAW_CHESTPLATES)
+                .addElement(URItems.DRAGON_CHESTPLATE_IRON.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_CHESTPLATE_GOLD.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_CHESTPLATE_DIAMOND.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_CHESTPLATE_NETHERITE.builtInRegistryHolder().key().location());
 
-        getTagBuilder(URTags.MOLECLAW_TAIL_ARMOR)
-                .add(URItems.DRAGON_TAIL_ARMOR_IRON.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_TAIL_ARMOR_GOLD.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_TAIL_ARMOR_DIAMOND.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_TAIL_ARMOR_NETHERITE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.MOLECLAW_TAIL_ARMOR)
+                .addElement(URItems.DRAGON_TAIL_ARMOR_IRON.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_TAIL_ARMOR_GOLD.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_TAIL_ARMOR_DIAMOND.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_TAIL_ARMOR_NETHERITE.builtInRegistryHolder().key().location());
 
-        getTagBuilder(URTags.MOLECLAW_HELMETS)
-                .add(URItems.DRAGON_HELMET_IRON.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_HELMET_GOLD.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_HELMET_DIAMOND.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_HELMET_NETHERITE.getRegistryEntry().registryKey().getValue())
-                .addTag(URTags.PROTECTS_MOLECLAW_FROM_LIGHT.id());
+        getOrCreateRawBuilder(URTags.MOLECLAW_HELMETS)
+                .addElement(URItems.DRAGON_HELMET_IRON.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_HELMET_GOLD.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_HELMET_DIAMOND.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_HELMET_NETHERITE.builtInRegistryHolder().key().location())
+                .addTag(URTags.PROTECTS_MOLECLAW_FROM_LIGHT.location());
 
         //Lightning chaser armor items
-        getTagBuilder(URTags.LIGHTNING_CHASER_CHESTPLATES)
-                .add(URItems.DRAGON_CHESTPLATE_IRON.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_CHESTPLATE_GOLD.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_CHESTPLATE_DIAMOND.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_CHESTPLATE_NETHERITE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.LIGHTNING_CHASER_CHESTPLATES)
+                .addElement(URItems.DRAGON_CHESTPLATE_IRON.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_CHESTPLATE_GOLD.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_CHESTPLATE_DIAMOND.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_CHESTPLATE_NETHERITE.builtInRegistryHolder().key().location());
 
-        getTagBuilder(URTags.LIGHTNING_CHASER_TAIL_ARMOR)
-                .add(URItems.DRAGON_TAIL_ARMOR_IRON.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_TAIL_ARMOR_GOLD.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_TAIL_ARMOR_DIAMOND.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_TAIL_ARMOR_NETHERITE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.LIGHTNING_CHASER_TAIL_ARMOR)
+                .addElement(URItems.DRAGON_TAIL_ARMOR_IRON.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_TAIL_ARMOR_GOLD.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_TAIL_ARMOR_DIAMOND.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_TAIL_ARMOR_NETHERITE.builtInRegistryHolder().key().location());
 
-        getTagBuilder(URTags.LIGHTNING_CHASER_HELMETS)
-                .add(URItems.DRAGON_HELMET_IRON.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_HELMET_GOLD.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_HELMET_DIAMOND.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DRAGON_HELMET_NETHERITE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.LIGHTNING_CHASER_HELMETS)
+                .addElement(URItems.DRAGON_HELMET_IRON.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_HELMET_GOLD.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_HELMET_DIAMOND.builtInRegistryHolder().key().location())
+                .addElement(URItems.DRAGON_HELMET_NETHERITE.builtInRegistryHolder().key().location());
 
         //Saddles
-        getTagBuilder(URTags.WYVERN_SADDLES)
-                .add(Items.SADDLE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.WYVERN_SADDLES)
+                .addElement(Items.SADDLE.builtInRegistryHolder().key().location());
 
-        getTagBuilder(URTags.LIGHTNING_CHASER_SADDLES)
-                .add(Items.SADDLE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.LIGHTNING_CHASER_SADDLES)
+                .addElement(Items.SADDLE.builtInRegistryHolder().key().location());
 
-        getTagBuilder(URTags.MOLECLAW_SADDLES)
-                .add(Items.SADDLE.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.MOLECLAW_SADDLES)
+                .addElement(Items.SADDLE.builtInRegistryHolder().key().location());
 
-        getTagBuilder(URTags.DRAGON_SADDLES)
-                .addOptionalTag(URTags.WYVERN_SADDLES.id())
-                .addOptionalTag(URTags.LIGHTNING_CHASER_SADDLES.id())
-                .addOptionalTag(URTags.MOLECLAW_SADDLES.id());
+        getOrCreateRawBuilder(URTags.DRAGON_SADDLES)
+                .addOptionalTag(URTags.WYVERN_SADDLES.location())
+                .addOptionalTag(URTags.LIGHTNING_CHASER_SADDLES.location())
+                .addOptionalTag(URTags.MOLECLAW_SADDLES.location());
 
         //other items
-        getTagBuilder(URTags.VORTEX_HORNS)
-                .add(URItems.VORTEX_HORN.getRegistryEntry().registryKey().getValue())
-                .add(URItems.IRON_VORTEX_HORN.getRegistryEntry().registryKey().getValue())
-                .add(URItems.GOLD_VORTEX_HORN.getRegistryEntry().registryKey().getValue())
-                .add(URItems.DIAMOND_VORTEX_HORN.getRegistryEntry().registryKey().getValue())
-                .add(URItems.NETHERITE_VORTEX_HORN.getRegistryEntry().registryKey().getValue());
+        getOrCreateRawBuilder(URTags.VORTEX_HORNS)
+                .addElement(URItems.VORTEX_HORN.builtInRegistryHolder().key().location())
+                .addElement(URItems.IRON_VORTEX_HORN.builtInRegistryHolder().key().location())
+                .addElement(URItems.GOLD_VORTEX_HORN.builtInRegistryHolder().key().location())
+                .addElement(URItems.DIAMOND_VORTEX_HORN.builtInRegistryHolder().key().location())
+                .addElement(URItems.NETHERITE_VORTEX_HORN.builtInRegistryHolder().key().location());
     }
 }

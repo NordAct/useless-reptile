@@ -1,10 +1,5 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
@@ -13,8 +8,12 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.function.Function;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.resources.ResourceLocation;
 
 public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     private final Function<R, ? extends AssetCache> assetCahceGetter;
@@ -26,14 +25,14 @@ public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner, O, R exte
     }
 
     @Override
-    public void submitRenderTask(R renderState, MatrixStack poseStack, BakedGeoModel bakedModel, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState,
+    public void submitRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                                  int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
         if (URClientConfig.getConfig().disableEmissiveTextures) return;
         if (!ResourceUtil.isResourceReloadFinished) return;
 
         AssetCache assetCache = assetCahceGetter.apply(renderState);
         if (!assetCache.hasGlowing()) return;
-        Identifier id = assetCache.getGlowLayerLocationCache();
+        ResourceLocation id = assetCache.getGlowLayerLocationCache();
         if (id == null) {
             id = getGlowingTexture(renderState);
             if (!ResourceUtil.doesExist(id, false)) {
@@ -42,14 +41,14 @@ public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner, O, R exte
             }
         }
 
-        RenderLayer renderLayer =  RenderLayer.getEyes(id);
-        this.renderer.buildRenderTask(renderState, poseStack, bakedModel, this.renderer.getGeoModel(), renderTasks.getBatchingQueue(renderOrder), cameraState, renderLayer, packedLight, packedOverlay, renderColor, null);
+        RenderType renderLayer =  RenderType.eyes(id);
+        this.renderer.buildRenderTask(renderState, poseStack, bakedModel, this.renderer.getGeoModel(), renderTasks.order(renderOrder), cameraState, renderLayer, packedLight, packedOverlay, renderColor, null);
     }
 
-    protected Identifier getGlowingTexture(R state) {
+    protected ResourceLocation getGlowingTexture(R state) {
         String namespace = getTextureResource(state).getNamespace();
         String path = getTextureResource(state).getPath().replace(".png", "_glowing.png");
-        Identifier id = Identifier.of(namespace, path);
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path);
         assetCahceGetter.apply(state).setGlowLayerLocationCache(id);
         return id;
     }

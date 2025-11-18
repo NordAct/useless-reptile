@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.mixin.client.debug;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.command.BatchingRenderCommandQueue;
-import net.minecraft.client.render.command.RenderDispatcher;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.SubmitNodeCollection;
+import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import nordmods.uselessreptile.client.util.ShootingPointCommandRenderer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,15 +13,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(RenderDispatcher.class)
+@Mixin(FeatureRenderDispatcher.class)
 public class RenderDispatcherMixin {
     @Shadow
     @Final
-    private VertexConsumerProvider.Immediate vertexConsumers;
+    private MultiBufferSource.BufferSource bufferSource;
     @Unique private final ShootingPointCommandRenderer shootingPointCommandRenderer = new ShootingPointCommandRenderer();
 
-    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/command/LayeredCustomCommandRenderer;render(Lnet/minecraft/client/render/command/BatchingRenderCommandQueue;)V"))
-    private void renderShootingPoins(CallbackInfo ci, @Local BatchingRenderCommandQueue batchingRenderCommandQueue) {
-        shootingPointCommandRenderer.render(batchingRenderCommandQueue, vertexConsumers);
+    @Inject(method = "renderAllFeatures", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/feature/ParticleFeatureRenderer;render(Lnet/minecraft/client/renderer/SubmitNodeCollection;)V"))
+    private void renderShootingPoins(CallbackInfo ci, @Local SubmitNodeCollection batchingRenderCommandQueue) {
+        shootingPointCommandRenderer.render(batchingRenderCommandQueue, bufferSource);
     }
 }

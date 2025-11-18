@@ -1,12 +1,12 @@
 package nordmods.uselessreptile.mixin.client.camera;
 
-import net.minecraft.client.render.Camera;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.RaycastContext;
+import net.minecraft.client.Camera;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import org.joml.Vector3f;
@@ -20,22 +20,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Camera.class)
 public abstract class CameraMixin {
 
-    @Shadow private Entity focusedEntity;
+    @Shadow private Entity entity;
 
-    @Shadow public abstract Vector3f getHorizontalPlane();
+    @Shadow public abstract Vector3f getLookVector();
 
-    @Shadow public abstract Vec3d getPos();
+    @Shadow public abstract Vec3 getPosition();
 
-    @Shadow private BlockView area;
+    @Shadow private BlockGetter level;
 
-    @Shadow protected abstract void moveBy(float f, float g, float h);
+    @Shadow protected abstract void move(float f, float g, float h);
 
     @Unique private static final int ROUNDS = 1000;
 
-    @Inject(method = "update", at = @At(value = "TAIL"))
-    public void offsetCameraDistance(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {
+    @Inject(method = "setup", at = @At(value = "TAIL"))
+    public void offsetCameraDistance(BlockGetter area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {
         if (!URClientConfig.getConfig().enableCameraOffset) return;
-        if (this.focusedEntity.getVehicle() instanceof URRideableDragonEntity dragonEntity && thirdPerson) {
+        if (this.entity.getVehicle() instanceof URRideableDragonEntity dragonEntity && thirdPerson) {
             float scale = focusedEntity instanceof  LivingEntity livingEntity ? livingEntity.getScale() : 1;
 
             float distanceToCameraOffset = -URClientConfig.getConfig().cameraDistanceOffset * dragonEntity.getScale() * scale;
@@ -53,17 +53,17 @@ public abstract class CameraMixin {
         float dx = x / ROUNDS;
         float dy = y / ROUNDS;
         float dz = z / ROUNDS;
-        double dl = new Vec3d(dx, dy, dz).length();
+        double dl = new Vec3(dx, dy, dz).length();
         for(int i = 0; i < ROUNDS; ++i) {
             float h = (float)((i & 1) * 2 - 1);
             float j = (float)((i >> 1 & 1) * 2 - 1);
             float k = (float)((i >> 2 & 1) * 2 - 1);
-            Vec3d vec3d = getPos().add(h * 0.1F, j * 0.1F, k * 0.1F);
-            Vec3d vec3d2 = vec3d.add((new Vec3d(getHorizontalPlane())).multiply(-dl));
-            HitResult hitResult = area.raycast(new RaycastContext(vec3d, vec3d2, RaycastContext.ShapeType.VISUAL, RaycastContext.FluidHandling.NONE, focusedEntity));
-            if (hitResult.getType() == HitResult.Type.MISS) moveBy(dx, dy, dz);
+            Vec3 vec3d = getPosition().add(h * 0.1F, j * 0.1F, k * 0.1F);
+            Vec3 vec3d2 = vec3d.add((new Vec3(getLookVector())).scale(-dl));
+            HitResult hitResult = level.clip(new ClipContext(vec3d, vec3d2, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, entity));
+            if (hitResult.getType() == HitResult.Type.MISS) move(dx, dy, dz);
             else {
-                moveBy(-dx, -dy, -dz);
+                move(-dx, -dy, -dz);
                 break;
             }
         }

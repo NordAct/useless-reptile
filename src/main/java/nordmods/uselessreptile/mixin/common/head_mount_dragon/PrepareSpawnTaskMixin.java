@@ -1,15 +1,6 @@
 package nordmods.uselessreptile.mixin.common.head_mount_dragon;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.ClientConnection;
-import net.minecraft.server.network.ConnectedClientData;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.storage.ReadView;
 import nordmods.uselessreptile.UselessReptile;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,28 +8,37 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.Connection;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.network.CommonListenerCookie;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
 
-@Mixin(targets = "net.minecraft.server.network.PrepareSpawnTask$PlayerSpawn")
+@Mixin(targets = "net.minecraft.server.network.config.PrepareSpawnTask$Ready")
 public abstract class PrepareSpawnTaskMixin {
     @Inject(
-            method = "onReady",
+            method = "spawn",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/server/PlayerManager;onPlayerConnect(Lnet/minecraft/network/ClientConnection;Lnet/minecraft/server/network/ServerPlayerEntity;Lnet/minecraft/server/network/ConnectedClientData;)V",
+                    target = "Lnet/minecraft/server/players/PlayerList;placeNewPlayer(Lnet/minecraft/network/Connection;Lnet/minecraft/server/level/ServerPlayer;Lnet/minecraft/server/network/CommonListenerCookie;)V",
                     shift = At.Shift.AFTER
             )
     )
-    private void spawnHeadMountDragon(ClientConnection connection, ConnectedClientData clientData, CallbackInfoReturnable<ServerPlayerEntity> cir, @Local Optional<ReadView> optional, @Local ServerPlayerEntity player) {
+    private void spawnHeadMountDragon(Connection connection, CommonListenerCookie clientData, CallbackInfoReturnable<ServerPlayer> cir, @Local Optional<ValueInput> optional, @Local ServerPlayer player) {
         optional.ifPresent(nbt -> {
-            ServerWorld serverWorld = player.getEntityWorld();
-            EntityType.getEntityFromData(
-                    NbtReadView.create(UselessReptile.ERROR_REPORTER,
-                            serverWorld.getRegistryManager(),
-                            nbt.read("HeadMountDragon", NbtCompound.CODEC).orElse(new NbtCompound())),
-                    serverWorld, SpawnReason.LOAD)
+            ServerLevel serverWorld = player.level();
+            EntityType.create(
+                    TagValueInput.create(UselessReptile.ERROR_REPORTER,
+                            serverWorld.registryAccess(),
+                            nbt.read("HeadMountDragon", CompoundTag.CODEC).orElse(new CompoundTag())),
+                    serverWorld, EntitySpawnReason.LOAD)
                     .ifPresent(dragon -> {
-                        serverWorld.tryLoadEntity(dragon);
-                        dragon.setPosition(player.getEntityPos());
+                        serverWorld.addWithUUID(dragon);
+                        dragon.setPos(player.position());
                         if (player.getFirstPassenger() == null) dragon.startRiding(player, true, true);
                     }
             );

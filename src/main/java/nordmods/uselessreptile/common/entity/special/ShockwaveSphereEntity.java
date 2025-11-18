@@ -1,19 +1,5 @@
 package nordmods.uselessreptile.common.entity.special;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.Tameable;
-import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.projectile.ProjectileEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
-import net.minecraft.world.explosion.ExplosionImpl;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSounds;
@@ -23,8 +9,22 @@ import nordmods.uselessreptile.common.init.URTags;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.ServerExplosion;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.Vec3;
 
-public class ShockwaveSphereEntity extends ProjectileEntity implements ProjectileDamageHelper {
+public class ShockwaveSphereEntity extends Projectile implements ProjectileDamageHelper {
     private float currentRadius = 0;
     private float prevRadius = 0;
     public static final float MAX_RADIUS = 40;
@@ -35,19 +35,19 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
     private boolean spawnSoundPlayed = false;
     public float prevAlpha = 1f;
 
-    public ShockwaveSphereEntity(EntityType<? extends ProjectileEntity> entityType, World world) {
+    public ShockwaveSphereEntity(EntityType<? extends Projectile> entityType, Level world) {
         super(entityType, world);
         setNoGravity(true);
         setInvulnerable(true);
-        setYaw(new Random(getId()).nextInt(360));
+        setYRot(new Random(getId()).nextInt(360));
     }
 
-    public ShockwaveSphereEntity(World world) {
+    public ShockwaveSphereEntity(Level world) {
         this(UREntities.SHOCKWAVE_SPHERE_ENTITY, world);
     }
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {}
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     @Override
     public void tick() {
@@ -55,10 +55,10 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
         tryPlaySpawnSound();
         prevRadius = currentRadius;
         if (currentRadius <= MAX_RADIUS) {
-            List<Entity> targets = getEntityWorld().getOtherEntities(this, getBoundingBox().expand(currentRadius + 3), this::canTarget);
+            List<Entity> targets = level().getEntities(this, getBoundingBox().inflate(currentRadius + 3), this::canTarget);
             for (Entity target : targets) {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
-                onEntityHit(entityHitResult);
+                onHitEntity(entityHitResult);
             }
             currentRadius += RADIUS_CHANGE_SPEED;
             prevAffected.clear();
@@ -68,22 +68,22 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
     }
 
     @Override
-    protected void onEntityHit(EntityHitResult entityHitResult) {
-        super.onEntityHit(entityHitResult);
+    protected void onHitEntity(EntityHitResult entityHitResult) {
+        super.onHitEntity(entityHitResult);
         Entity target = entityHitResult.getEntity();
-        float exposure = ExplosionImpl.calculateReceivedDamage(getEyePos(), target);
+        float exposure = ServerExplosion.getSeenPercent(getEyePosition(), target);
 
         if (exposure > 0) {
             target.playSound(URSounds.SHOCKWAVE_HIT, 1, 1 / exposure);
-            Vec3d vec3d = target.getEntityPos().subtract(getEyePos());
+            Vec3 vec3d = target.position().subtract(getEyePosition());
             double lengthMod = currentRadius / vec3d.length();
-            target.addVelocityInternal(vec3d.normalize().multiply(POWER * lengthMod * exposure));
-            if (target instanceof LivingEntity livingEntity && livingEntity.getEntityWorld() instanceof ServerWorld world) {
-                livingEntity.addStatusEffect(new StatusEffectInstance(URStatusEffects.SHOCK, (int) (100 * MathHelper.clamp(lengthMod, 1, 2) * exposure), 0, false, false), getOwner());
-                livingEntity.damage(world, getDamageSources().create(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (getResultingDamage() * MathHelper.clamp(lengthMod, 1, 2)));
+            target.addDeltaMovement(vec3d.normalize().scale(POWER * lengthMod * exposure));
+            if (target instanceof LivingEntity livingEntity && livingEntity.level() instanceof ServerLevel world) {
+                livingEntity.addEffect(new MobEffectInstance(URStatusEffects.SHOCK, (int) (100 * Mth.clamp(lengthMod, 1, 2) * exposure), 0, false, false), getOwner());
+                livingEntity.hurtServer(world, damageSources().source(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (getResultingDamage() * Mth.clamp(lengthMod, 1, 2)));
             }
         }
-        if (!(target instanceof ProjectileEntity)) affected.add(target);
+        if (!(target instanceof Projectile)) affected.add(target);
     }
 
     private boolean canTarget(Entity target) {
@@ -91,13 +91,13 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
             affected.add(target);
             return false;
         }
-        if (target.getType().isIn(URTags.DRAGON_IMMUNE)) return false;
-        if (getEyePos().distanceTo(target.getEntityPos()) > currentRadius + target.getWidth()/2) return false;
+        if (target.getType().is(URTags.DRAGON_IMMUNE)) return false;
+        if (getEyePosition().distanceTo(target.position()) > currentRadius + target.getBbWidth()/2) return false;
         if (target instanceof EntityPart part) target = part.owner;
         Entity owner = getOwner();
-        LivingEntity ownerOwner = owner instanceof Tameable tameable ? tameable.getOwner() : null;
+        LivingEntity ownerOwner = owner instanceof OwnableEntity tameable ? tameable.getOwner() : null;
         if (target == ownerOwner) return false;
-        if (target instanceof Tameable tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
+        if (target instanceof OwnableEntity tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
 
         return true;
     }
@@ -111,11 +111,11 @@ public class ShockwaveSphereEntity extends ProjectileEntity implements Projectil
 
     @Override
     public double getEyeY() {
-        return getEntityPos().y + getHeight()/2f;
+        return position().y + getBbHeight()/2f;
     }
 
     @Override
-    public boolean shouldSave() {
+    public boolean shouldBeSaved() {
         return false;
     }
 

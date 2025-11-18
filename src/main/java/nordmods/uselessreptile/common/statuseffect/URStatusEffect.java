@@ -1,15 +1,15 @@
 package nordmods.uselessreptile.common.statuseffect;
 
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectCategory;
-import net.minecraft.particle.ParticleEffect;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectCategory;
 
-public class URStatusEffect extends StatusEffect {
-    public URStatusEffect(StatusEffectCategory category, int color) {
+public class URStatusEffect extends MobEffect {
+    public URStatusEffect(MobEffectCategory category, int color) {
         super(category, color);
     }
 
-    public URStatusEffect(StatusEffectCategory category, int color, ParticleEffect particleEffect) {
+    public URStatusEffect(MobEffectCategory category, int color, ParticleOptions particleEffect) {
         super(category, color, particleEffect);
     }
 }

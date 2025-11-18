@@ -10,9 +10,9 @@ public class PikehornFluteCallGoal extends FlyingDragonCallBackGoal<RiverPikehor
     }
 
     @Override
-    public boolean canStart() {
-        if (entity.isSitting()) return false;
-        return super.canStart();
+    public boolean canUse() {
+        if (entity.isOrderedToSit()) return false;
+        return super.canUse();
     }
 
     @Override

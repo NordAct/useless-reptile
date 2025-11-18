@@ -1,47 +1,51 @@
 package nordmods.uselessreptile.datagen.data;
 
-import net.minecraft.advancement.AdvancementCriterion;
-import net.minecraft.advancement.criterion.*;
-import net.minecraft.component.ComponentMap;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.predicate.component.ComponentMapPredicate;
-import net.minecraft.predicate.component.ComponentsPredicate;
-import net.minecraft.predicate.entity.EntityPredicate;
-import net.minecraft.predicate.item.ItemPredicate;
-import net.minecraft.registry.RegistryEntryLookup;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Util;
-
+import net.minecraft.Util;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.ConsumeItemTrigger;
+import net.minecraft.advancements.critereon.DataComponentMatchers;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.ImpossibleTrigger;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
+import net.minecraft.advancements.critereon.ItemPredicate;
+import net.minecraft.advancements.critereon.PlayerTrigger;
+import net.minecraft.advancements.critereon.TameAnimalTrigger;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.component.DataComponentExactPredicate;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
 
 public class AdvancementCriterions {
-    public static AdvancementCriterion<TameAnimalCriterion.Conditions> entityTamedCondition(RegistryEntryLookup<EntityType<?>> registryEntryLookup, EntityType<? extends Entity> type) {
-        return Criteria.TAME_ANIMAL.create(TameAnimalCriterion.Conditions.create(EntityPredicate.Builder.create().type(registryEntryLookup, type)).conditions());
+    public static Criterion<TameAnimalTrigger.TriggerInstance> entityTamedCondition(HolderGetter<EntityType<?>> registryEntryLookup, EntityType<? extends Entity> type) {
+        return CriteriaTriggers.TAME_ANIMAL.createCriterion(TameAnimalTrigger.TriggerInstance.tamedAnimal(EntityPredicate.Builder.entity().of(registryEntryLookup, type)).triggerInstance());
     }
 
-    public static AdvancementCriterion<TickCriterion.Conditions> gameTickCondition() {
-        return Criteria.TICK.create(TickCriterion.Conditions.createTick().conditions());
+    public static Criterion<PlayerTrigger.TriggerInstance> gameTickCondition() {
+        return CriteriaTriggers.TICK.createCriterion(PlayerTrigger.TriggerInstance.tick().triggerInstance());
     }
 
-    public static AdvancementCriterion<ConsumeItemCriterion.Conditions> useItemCondition(RegistryEntryLookup<Item> registryEntryLookup, Item item) {
-        return Criteria.CONSUME_ITEM.create(ConsumeItemCriterion.Conditions.predicate(ItemPredicate.Builder.create().items(registryEntryLookup, item)).conditions());
+    public static Criterion<ConsumeItemTrigger.TriggerInstance> useItemCondition(HolderGetter<Item> registryEntryLookup, Item item) {
+        return CriteriaTriggers.CONSUME_ITEM.createCriterion(ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(registryEntryLookup, item)).triggerInstance());
     }
 
-    public static AdvancementCriterion<InventoryChangedCriterion.Conditions> obtainItem(RegistryEntryLookup<Item> registryEntryLookup, ComponentMap ignored, ItemStack... itemStacks) {
-        return Criteria.INVENTORY_CHANGED.create(new InventoryChangedCriterion.Conditions(Optional.empty(),
-                InventoryChangedCriterion.Conditions.Slots.ANY, Util.make(new ArrayList<>(), list -> {
+    public static Criterion<InventoryChangeTrigger.TriggerInstance> obtainItem(HolderGetter<Item> registryEntryLookup, DataComponentMap ignored, ItemStack... itemStacks) {
+        return CriteriaTriggers.INVENTORY_CHANGED.createCriterion(new InventoryChangeTrigger.TriggerInstance(Optional.empty(),
+                InventoryChangeTrigger.TriggerInstance.Slots.ANY, Util.make(new ArrayList<>(), list -> {
                     Arrays.stream(itemStacks).forEach(itemStack -> {
                         list.add(
-                                ItemPredicate.Builder.create()
-                                        .items(registryEntryLookup, itemStack.getItem())
-                                        .components(ComponentsPredicate.Builder.create()
-                                                .exact(ComponentMapPredicate.of(itemStack
-                                                        .getComponents().filtered(componentType -> !ignored.contains(componentType))))
+                                ItemPredicate.Builder.item()
+                                        .of(registryEntryLookup, itemStack.getItem())
+                                        .withComponents(DataComponentMatchers.Builder.components()
+                                                .exact(DataComponentExactPredicate.allOf(itemStack
+                                                        .getComponents().filter(componentType -> !ignored.has(componentType))))
                                                 .build())
                                         .build());
                     });
@@ -49,11 +53,11 @@ public class AdvancementCriterions {
         );
     }
 
-    public static AdvancementCriterion<InventoryChangedCriterion.Conditions> obtainItem(RegistryEntryLookup<Item> registryEntryLookup, TagKey<Item> tag) {
-        return Criteria.INVENTORY_CHANGED.create(InventoryChangedCriterion.Conditions.items(ItemPredicate.Builder.create().tag(registryEntryLookup, tag)).conditions());
+    public static Criterion<InventoryChangeTrigger.TriggerInstance> obtainItem(HolderGetter<Item> registryEntryLookup, TagKey<Item> tag) {
+        return CriteriaTriggers.INVENTORY_CHANGED.createCriterion(InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(registryEntryLookup, tag)).triggerInstance());
     }
 
-    public static AdvancementCriterion<ImpossibleCriterion.Conditions> triggeredFromCode() {
-        return Criteria.IMPOSSIBLE.create(new ImpossibleCriterion.Conditions());
+    public static Criterion<ImpossibleTrigger.TriggerInstance> triggeredFromCode() {
+        return CriteriaTriggers.IMPOSSIBLE.createCriterion(new ImpossibleTrigger.TriggerInstance());
     }
 }

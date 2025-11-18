@@ -1,53 +1,53 @@
 package nordmods.uselessreptile.client.util;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.util.Identifier;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 
 public class AssetCache {
-    private Identifier modelLocationCache;
-    private Identifier textureLocationCache;
-    private Identifier animationLocationCache;
-    private Identifier glowLayerLocationCache;
-    private RenderLayer renderTypeCache;
+    private ResourceLocation modelLocationCache;
+    private ResourceLocation textureLocationCache;
+    private ResourceLocation animationLocationCache;
+    private ResourceLocation glowLayerLocationCache;
+    private RenderType renderTypeCache;
     private boolean hasGlowing = true;
 
-    public Identifier getGlowLayerLocationCache() {
+    public ResourceLocation getGlowLayerLocationCache() {
         return glowLayerLocationCache;
     }
 
-    public void setGlowLayerLocationCache(Identifier state) {
+    public void setGlowLayerLocationCache(ResourceLocation state) {
         glowLayerLocationCache = state;
     }
 
-    public Identifier getModelLocationCache() {
+    public ResourceLocation getModelLocationCache() {
         return modelLocationCache;
     }
 
-    public void setModelLocationCache(Identifier state) {
+    public void setModelLocationCache(ResourceLocation state) {
         modelLocationCache = state;
     }
 
-    public Identifier getAnimationLocationCache() {
+    public ResourceLocation getAnimationLocationCache() {
         return animationLocationCache;
     }
 
-    public void setAnimationLocationCache(Identifier state) {
+    public void setAnimationLocationCache(ResourceLocation state) {
         animationLocationCache = state;
     }
 
-    public Identifier getTextureLocationCache() {
+    public ResourceLocation getTextureLocationCache() {
         return textureLocationCache;
     }
 
-    public void setTextureLocationCache(Identifier state) {
+    public void setTextureLocationCache(ResourceLocation state) {
         textureLocationCache = state;
     }
 
-    public RenderLayer getRenderTypeCache() {
+    public RenderType getRenderTypeCache() {
         return renderTypeCache;
     }
 
-    public void setRenderTypeCache(RenderLayer state) {
+    public void setRenderTypeCache(RenderType state) {
         renderTypeCache = state;
     }
 

@@ -3,30 +3,30 @@ package nordmods.uselessreptile.common.item.component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.component.type.NbtComponent;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
-import net.minecraft.storage.NbtWriteView;
-import net.minecraft.world.World;
 import nordmods.uselessreptile.UselessReptile;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueOutput;
 
-public record URDragonDataStorageComponent(List<NbtComponent> entityData) {
+public record URDragonDataStorageComponent(List<CustomData> entityData) {
     public static final Codec<URDragonDataStorageComponent> CODEC = RecordCodecBuilder.create(instance ->
             instance.group(
-                            NbtComponent.CODEC.listOf().fieldOf("dragons").forGetter(URDragonDataStorageComponent::entityData))
+                            CustomData.CODEC.listOf().fieldOf("dragons").forGetter(URDragonDataStorageComponent::entityData))
                     .apply(instance, URDragonDataStorageComponent::new));
 
-    public static final PacketCodec<ByteBuf, URDragonDataStorageComponent> PACKET_CODEC = PacketCodec.tuple(
-            NbtComponent.PACKET_CODEC.collect(PacketCodecs.toList()), URDragonDataStorageComponent::entityData,
+    public static final StreamCodec<ByteBuf, URDragonDataStorageComponent> PACKET_CODEC = StreamCodec.composite(
+            CustomData.STREAM_CODEC.apply(ByteBufCodecs.list()), URDragonDataStorageComponent::entityData,
             URDragonDataStorageComponent::new);
 
     public static final URDragonDataStorageComponent DEFAULT = new URDragonDataStorageComponent(List.of());
@@ -61,17 +61,17 @@ public record URDragonDataStorageComponent(List<NbtComponent> entityData) {
             "IsFlying",
             "leash");
 
-    public static NbtComponent createData(Entity entity) {
-        NbtWriteView nbtWriteView = NbtWriteView.create(UselessReptile.ERROR_REPORTER, entity.getRegistryManager());
-        entity.saveSelfData(nbtWriteView);
-        IGNORED_NBT.forEach(nbtWriteView::remove);
-        return NbtComponent.of(nbtWriteView.getNbt());
+    public static CustomData createData(Entity entity) {
+        TagValueOutput nbtWriteView = TagValueOutput.createWithContext(UselessReptile.ERROR_REPORTER, entity.registryAccess());
+        entity.saveAsPassenger(nbtWriteView);
+        IGNORED_NBT.forEach(nbtWriteView::discard);
+        return CustomData.of(nbtWriteView.buildResult());
     }
     @Nullable
-    public static Entity createEntity(NbtComponent nbtComponent, World world) {
+    public static Entity createEntity(CustomData nbtComponent, Level world) {
         Objects.requireNonNull(nbtComponent);
-        NbtCompound nbtCompound = nbtComponent.copyNbt();
+        CompoundTag nbtCompound = nbtComponent.copyTag();
         IGNORED_NBT.forEach(nbtCompound::remove);
-        return EntityType.loadEntityWithPassengers(nbtCompound, world, SpawnReason.SPAWN_ITEM_USE, (entityx) -> entityx);
+        return EntityType.loadEntityRecursive(nbtCompound, world, EntitySpawnReason.SPAWN_ITEM_USE, (entityx) -> entityx);
     }
 }

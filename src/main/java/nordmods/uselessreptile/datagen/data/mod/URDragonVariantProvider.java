@@ -2,16 +2,16 @@ package nordmods.uselessreptile.datagen.data.mod;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
-import net.minecraft.data.DataOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.dynamic.Codecs;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.init.UREntities;
@@ -23,29 +23,29 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class URDragonVariantProvider implements DataProvider {
-    private static final List<Pair<Identifier, DragonVariant>> holder = new ArrayList<>();
-    private static final List<Pair<Identifier, DragonVariant>> holderCustomName = new ArrayList<>();
+    private static final List<Tuple<ResourceLocation, DragonVariant>> holder = new ArrayList<>();
+    private static final List<Tuple<ResourceLocation, DragonVariant>> holderCustomName = new ArrayList<>();
     protected final FabricDataOutput output;
-    private final DataOutput.PathResolver pathResolver;
-    private final DataOutput.PathResolver pathResolverCustomName;
-    private final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture;
+    private final PackOutput.PathProvider pathResolver;
+    private final PackOutput.PathProvider pathResolverCustomName;
+    private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
 
-    public URDragonVariantProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture) {
+    public URDragonVariantProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/variant");
-        this.pathResolverCustomName = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/custom_name");
+        this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/variant");
+        this.pathResolverCustomName = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/custom_name");
         this.registryLookupFuture = registryLookupFuture;
     }
 
-    public void addEntry(Identifier id, DragonVariant variant) {
-        holder.add(new Pair<>(id, variant));
+    public void addEntry(ResourceLocation id, DragonVariant variant) {
+        holder.add(new Tuple<>(id, variant));
     }
 
-    public void addCustomNameEntry(Identifier id, DragonVariant variant) {
-        holderCustomName.add(new Pair<>(id, variant));
+    public void addCustomNameEntry(ResourceLocation id, DragonVariant variant) {
+        holderCustomName.add(new Tuple<>(id, variant));
     }
 
-    public void addCustomNameEntry(Identifier id, String name) {
+    public void addCustomNameEntry(ResourceLocation id, String name) {
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -63,17 +63,17 @@ public class URDragonVariantProvider implements DataProvider {
 
 
     @Override
-    public CompletableFuture<?> run(DataWriter writer) {
+    public CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach(variant -> {
-                Path path = pathResolver.resolveJson(variant.getLeft());
-                list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, DragonVariant.CODEC, variant.getRight(), path));
+                Path path = pathResolver.json(variant.getA());
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonVariant.CODEC, variant.getB(), path));
             });
             holderCustomName.forEach(variant -> {
-                Path path = pathResolverCustomName.resolveJson(variant.getLeft());
-                list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, DragonVariant.CODEC, variant.getRight(), path));
+                Path path = pathResolverCustomName.json(variant.getA());
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonVariant.CODEC, variant.getB(), path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
@@ -82,7 +82,7 @@ public class URDragonVariantProvider implements DataProvider {
     protected void addEntries() {
         addWyvern("green");
         addWyvern("brown");
-        addCustomNameEntry(EntityType.getId(UREntities.WYVERN_ENTITY), "jeb_");
+        addCustomNameEntry(EntityType.getKey(UREntities.WYVERN_ENTITY), "jeb_");
 
         addMoleclaw("black", false);
         addMoleclaw("brown", false);
@@ -108,7 +108,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addWyvern(String name) {
-        Identifier id = EntityType.getId(UREntities.WYVERN_ENTITY);
+        ResourceLocation id = EntityType.getKey(UREntities.WYVERN_ENTITY);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -121,19 +121,19 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.of(
                         List.of(
                                 new DragonVariant.TamingItem(
-                                        new Codecs.TagEntryId(Items.CHICKEN.getRegistryEntry().registryKey().getValue(), false),
+                                        new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().location(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 2)
                                 ),
                                 new DragonVariant.TamingItem(
-                                        new Codecs.TagEntryId(Items.COOKED_CHICKEN.getRegistryEntry().registryKey().getValue(), false),
+                                        new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().location(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 1)
                                 )
                         )
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new Codecs.TagEntryId(Items.CHICKEN.getRegistryEntry().registryKey().getValue(), false), 4),
-                                new DragonVariant.FoodItem(new Codecs.TagEntryId(Items.COOKED_CHICKEN.getRegistryEntry().registryKey().getValue(), false), 4)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().location(), false), 4),
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().location(), false), 4)
                         )
                 )
         );
@@ -141,7 +141,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addMoleclaw(String name, boolean rare) {
-        Identifier id = EntityType.getId(UREntities.MOLECLAW_ENTITY);
+        ResourceLocation id = EntityType.getKey(UREntities.MOLECLAW_ENTITY);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -154,14 +154,14 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.of(
                         List.of(
                                 new DragonVariant.TamingItem(
-                                        new Codecs.TagEntryId(Items.BEETROOT.getRegistryEntry().registryKey().getValue(), false),
+                                        new ExtraCodecs.TagOrElementLocation(Items.BEETROOT.builtInRegistryHolder().key().location(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 2)
                                 )
                         )
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new Codecs.TagEntryId(ConventionalItemTags.VEGETABLE_FOODS.id(), true), 2)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2)
                         )
                 )
         );
@@ -169,7 +169,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addRiverPikehorn(String name) {
-        Identifier id = EntityType.getId(UREntities.RIVER_PIKEHORN_ENTITY);
+        ResourceLocation id = EntityType.getKey(UREntities.RIVER_PIKEHORN_ENTITY);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -182,14 +182,14 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.of(
                         List.of(
                                 new DragonVariant.TamingItem(
-                                        new Codecs.TagEntryId(Items.TROPICAL_FISH_BUCKET.getRegistryEntry().registryKey().getValue(), false),
+                                        new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH_BUCKET.builtInRegistryHolder().key().location(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 1)
                                 )
                         )
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new Codecs.TagEntryId(ItemTags.FISHES.id(), true), 3)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3)
                         )
                 )
         );
@@ -197,7 +197,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addLightningChaser(String name) {
-        Identifier id = EntityType.getId(UREntities.LIGHTNING_CHASER_ENTITY);
+        ResourceLocation id = EntityType.getKey(UREntities.LIGHTNING_CHASER_ENTITY);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -210,7 +210,7 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new Codecs.TagEntryId(ItemTags.MEAT.id(), true), 3)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3)
                         )
                 )
         );
@@ -218,7 +218,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addMagmamuncher(String name) {
-        Identifier id = EntityType.getId(UREntities.MAGMAMUNCHER_ENTITY);
+        ResourceLocation id = EntityType.getKey(UREntities.MAGMAMUNCHER_ENTITY);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -231,23 +231,23 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.of(
                         List.of(
                                 new DragonVariant.TamingItem(
-                                        new Codecs.TagEntryId(Items.BLAZE_ROD.getRegistryEntry().registryKey().getValue(), false),
+                                        new ExtraCodecs.TagOrElementLocation(Items.BLAZE_ROD.builtInRegistryHolder().key().location(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 3)
                                 )
                         )
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new Codecs.TagEntryId(Items.MAGMA_BLOCK.getRegistryEntry().registryKey().getValue(), false), 4),
-                                new DragonVariant.FoodItem(new Codecs.TagEntryId(Items.MAGMA_CREAM.getRegistryEntry().registryKey().getValue(), false), 2)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().location(), false), 4),
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().location(), false), 2)
                         )
                 )
         );
         addEntry(getId(id, name), variant);
     }
 
-    protected Identifier getId(Identifier dragonId, String name) {
-        return Identifier.of(dragonId.getNamespace(), dragonId.getPath() + "/" + name);
+    protected ResourceLocation getId(ResourceLocation dragonId, String name) {
+        return ResourceLocation.fromNamespaceAndPath(dragonId.getNamespace(), dragonId.getPath() + "/" + name);
     }
 
     @Override

@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
@@ -17,15 +17,15 @@ public class DragonEatFromInventoryGoal extends DragonConsumeItemFromInventoryGo
     }
 
     @Override
-    public boolean canStart() {
-        if (!dragon.isTamed()) return false;
+    public boolean canUse() {
+        if (!dragon.isTame()) return false;
         return dragon.getHealth() < dragon.getMaxHealth();
     }
 
     @Override
     protected void beforeItemConsumed(ItemStack stack) {
         dragon.heal(dragon.getFoodItem(stack).healingAmount());
-        if (dragon.getOwner() instanceof ServerPlayerEntity serverPlayer)
+        if (dragon.getOwner() instanceof ServerPlayer serverPlayer)
             URDragonEntity.grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/eat_from_inventory"));
     }
 

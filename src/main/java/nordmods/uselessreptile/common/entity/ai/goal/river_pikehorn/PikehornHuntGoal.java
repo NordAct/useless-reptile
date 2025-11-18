@@ -1,29 +1,29 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.ItemEntity;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.entity.ai.FuzzyPositions;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.passive.FishEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.collection.Weighted;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.SpawnSettings;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumSet;
 import java.util.List;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.random.Weighted;
+import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.ai.util.RandomPos;
+import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.biome.MobSpawnSettings;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 
 public class PikehornHuntGoal extends Goal {
 
     private final RiverPikehornEntity entity;
-    private FishEntity fish;
+    private AbstractFish fish;
     private BlockPos huntSpot;
     private boolean closeToSpot = false;
     private int calls;
@@ -31,14 +31,14 @@ public class PikehornHuntGoal extends Goal {
 
     public PikehornHuntGoal(RiverPikehornEntity entity) {
         this.entity = entity;
-        setControls(EnumSet.of(Control.MOVE, Control.LOOK, Control.JUMP));
+        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
     @Override
-    public boolean canStart() {
+    public boolean canUse() {
         //locating the hunt spot
         if (!entity.isHunting() || entity.getTarget() != null) return false;
-        if (entity.isTamed() || startingPos == null) startingPos = entity.getOwner() != null ? entity.getOwner().getBlockPos() : entity.getHomePoint();
+        if (entity.isTame() || startingPos == null) startingPos = entity.getOwner() != null ? entity.getOwner().blockPosition() : entity.getHomePoint();
         if (huntSpot == null) findFishyPlace(50);
         return huntSpot != null && startingPos != null;
     }
@@ -60,28 +60,28 @@ public class PikehornHuntGoal extends Goal {
         if (isGoingToDrown()) entity.forceTargetInWater = false;
         if (!hasFish() && !tooManyCalls() && entity.forceTargetInWater) {
             //lookup for dropped fish first
-            Box box = entity.getBoundingBox().expand(20);
-            List<ItemEntity> drops = entity.getEntityWorld().getEntitiesByClass(ItemEntity.class, box.withMinY(box.minY - 20), (item) -> {
-                ItemStack itemStack = item.getStack();
-                return entity.getFoodItem(itemStack) != null && item.isAlive() && !item.cannotPickup();
+            AABB box = entity.getBoundingBox().inflate(20);
+            List<ItemEntity> drops = entity.level().getEntitiesOfClass(ItemEntity.class, box.setMinY(box.minY - 20), (item) -> {
+                ItemStack itemStack = item.getItem();
+                return entity.getFoodItem(itemStack) != null && item.isAlive() && !item.hasPickUpDelay();
             });
 
-            if (!drops.isEmpty()) entity.getNavigation().startMovingTo(drops.getFirst(), 1);
+            if (!drops.isEmpty()) entity.getNavigation().moveTo(drops.getFirst(), 1);
             else {
                 //check if fish is valid
-                if (fish != null && (fish.isDead() || fish.isRemoved())) fish = null;
+                if (fish != null && (fish.isDeadOrDying() || fish.isRemoved())) fish = null;
 
                 if (fish == null) {
                     //checking if it's above water
                     if (aboveWater(huntSpot)) {
                         huntSpot = adjustToWater(huntSpot);
                         //checking if dragon is close to it or found target
-                        List<FishEntity> list = entity.getEntityWorld().getEntitiesByClass(FishEntity.class,  box.withMinY(box.minY - 30), entity::canTarget);
-                        FishEntity target = null;
+                        List<AbstractFish> list = entity.level().getEntitiesOfClass(AbstractFish.class,  box.setMinY(box.minY - 30), entity::canAttack);
+                        AbstractFish target = null;
                         if (!list.isEmpty()) {
                             target = list.getFirst();
-                            for (FishEntity entry : list) {
-                                if (entity.squaredDistanceTo(entry) < entity.squaredDistanceTo(target)) target = entry;
+                            for (AbstractFish entry : list) {
+                                if (entity.distanceToSqr(entry) < entity.distanceToSqr(target)) target = entry;
                             }
                         }
                         if (target != null) fish = target;
@@ -90,33 +90,33 @@ public class PikehornHuntGoal extends Goal {
                             closeToSpot = false;
                         } else {
                             //if not close to the spot, move to it closer
-                            double distance = huntSpot.getSquaredDistance(entity.getEntityPos());
+                            double distance = huntSpot.distToCenterSqr(entity.position());
                             if (distance < 32) closeToSpot = true;
-                            else entity.getNavigation().startMovingTo(huntSpot.getX(), huntSpot.getY(), huntSpot.getZ(), 1);
+                            else entity.getNavigation().moveTo(huntSpot.getX(), huntSpot.getY(), huntSpot.getZ(), 1);
                         }
                     } else findFishyPlace(30);
 
                 } else {
                     //kill the fish
-                    entity.getLookControl().lookAt(fish);
-                    entity.getNavigation().startMovingTo(fish, 1);
+                    entity.getLookControl().setLookAt(fish);
+                    entity.getNavigation().moveTo(fish, 1);
                     if (entity.getPrimaryAttackCooldown() > 0) return;
-                    if (entity.getAttackBox().intersects(fish.getBoundingBox())) entity.attackMelee(fish);
+                    if (entity.getAttackBoundingBox().intersects(fish.getBoundingBox())) entity.attackMelee(fish);
                 }
             }
         } else {
-            if (entity.getAir() >= entity.getMaxAir() * 0.9 && !entity.forceTargetInWater) entity.forceTargetInWater = true;
+            if (entity.getAirSupply() >= entity.getMaxAirSupply() * 0.9 && !entity.forceTargetInWater) entity.forceTargetInWater = true;
             //else go back to starting pos
-            entity.getNavigation().startMovingTo(startingPos.getX(), startingPos.getY(), startingPos.getZ(), 1);
+            entity.getNavigation().moveTo(startingPos.getX(), startingPos.getY(), startingPos.getZ(), 1);
             if (entity.forceTargetInWater) {
-                double distance = entity.getBlockPos().getSquaredDistance(startingPos.up());
-                if (distance < entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f)) stopHunt();
+                double distance = entity.blockPosition().distSqr(startingPos.above());
+                if (distance < entity.getBbWidth() * 2.0f * (entity.getBbWidth() * 2.0f)) stopHunt();
             }
         }
     }
 
     private boolean hasFish() {
-        return !entity.getMainHandStack().isEmpty();
+        return !entity.getMainHandItem().isEmpty();
     }
 
     @Nullable
@@ -124,22 +124,22 @@ public class PikehornHuntGoal extends Goal {
         float height = entity.getHeightMod() + 0.5f;
         int adjustment = 0;
         for (int y = 0; y < height; y++) {
-            BlockState blockState = entity.getEntityWorld().getBlockState(destination.up(y));
+            BlockState blockState = entity.level().getBlockState(destination.above(y));
             if (!blockState.getFluidState().isEmpty()) {
                 adjustment = y;
                 break;
             }
         }
-        return destination.up(adjustment);
+        return destination.above(adjustment);
     }
 
     @Nullable
     protected BlockPos findRandomAirSpot(int radius) {
         BlockPos div = null;
         for (int i = 0; i < 5; i++) {
-            BlockPos fuzz = FuzzyPositions.localFuzz(entity.getRandom(), radius, 5);
-            BlockPos result = entity.getBlockPos().add(fuzz);
-            if (entity.getEntityWorld().getBlockState(result).isAir()) {
+            BlockPos fuzz = RandomPos.generateRandomDirection(entity.getRandom(), radius, 5);
+            BlockPos result = entity.blockPosition().offset(fuzz);
+            if (entity.level().getBlockState(result).isAir()) {
                 div = result;
                 break;
             }
@@ -149,19 +149,19 @@ public class PikehornHuntGoal extends Goal {
     }
 
     private boolean biomeHasFish(BlockPos blockPos) {
-        World world = entity.getEntityWorld();
+        Level world = entity.level();
         Biome biome = world.getBiome(blockPos).value();
-        List<Weighted<SpawnSettings.SpawnEntry>> entries = biome.getSpawnSettings().getSpawnEntries(SpawnGroup.WATER_AMBIENT).getEntries();
+        List<Weighted<MobSpawnSettings.SpawnerData>> entries = biome.getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
         return !entries.isEmpty();
     }
 
     //check if spot is above water
     private boolean aboveWater(BlockPos blockPos) {
         BlockPos pos = new BlockPos(blockPos);
-        World world = entity.getEntityWorld();
+        Level world = entity.level();
 
-        while (world.getBlockState(pos).isOf(Blocks.AIR) && pos.getY() > -64) pos = pos.down();
-        return world.getBlockState(pos).isOf(Blocks.WATER);
+        while (world.getBlockState(pos).is(Blocks.AIR) && pos.getY() > -64) pos = pos.below();
+        return world.getBlockState(pos).is(Blocks.WATER);
     }
 
     private void findFishyPlace(int radius) {
@@ -170,7 +170,7 @@ public class PikehornHuntGoal extends Goal {
         for (int i = 0; i < 20; i++) {
             BlockPos newSpot = findRandomAirSpot(radius);
             //make sure spot is in the biome that has fish and not too far from initial spot
-            if (newSpot != null && biomeHasFish(newSpot) && newSpot.getSquaredDistance(startingPos) < 4096) {
+            if (newSpot != null && biomeHasFish(newSpot) && newSpot.distSqr(startingPos) < 4096) {
                 huntSpot = newSpot;
                 spotFound = true;
                 break;
@@ -184,10 +184,10 @@ public class PikehornHuntGoal extends Goal {
     private BlockPos adjustToWater(BlockPos blockPos) {
         if (!aboveWater(blockPos)) return blockPos;
         BlockPos pos = new BlockPos(blockPos);
-        World world = entity.getEntityWorld();
+        Level world = entity.level();
 
-        while (!world.getBlockState(pos).isOf(Blocks.WATER) && pos.getY() > -64) pos = pos.down();
-        return pos.up(3);
+        while (!world.getBlockState(pos).is(Blocks.WATER) && pos.getY() > -64) pos = pos.below();
+        return pos.above(3);
     }
 
     //check if findFishyPlace() was called too many times
@@ -201,6 +201,6 @@ public class PikehornHuntGoal extends Goal {
     }
 
     private boolean isGoingToDrown() {
-        return entity.getAir() < entity.getMaxAir() / 10;
+        return entity.getAirSupply() < entity.getMaxAirSupply() / 10;
     }
 }

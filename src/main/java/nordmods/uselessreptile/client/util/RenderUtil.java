@@ -1,58 +1,58 @@
 package nordmods.uselessreptile.client.util;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.OverlayTexture;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.render.entity.EntityRenderManager;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class RenderUtil {
     public static void renderQuad( //todo test if it works
-            Matrix4f positionMatrix, MatrixStack.Entry normalMatrix, RenderLayer layer,
+            Matrix4f positionMatrix, PoseStack.Pose normalMatrix, RenderType layer,
             Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3,
             float a, float r, float g, float b, int light,
             float minU, float maxU, float minV, float maxV
     ) {
-        VertexConsumer vertices = MinecraftClient.getInstance().getBufferBuilders().getEntityVertexConsumers().getBuffer(layer);
+        VertexConsumer vertices = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(layer);
 
-        vertices.vertex(positionMatrix, v0.x, v0.y, v0.z) //00
-                .color(r, g, b, a).texture(minU, minV)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(light)
-                .normal(normalMatrix, 0.0F, 1.0F, 0.0F);
-        vertices.vertex(positionMatrix, v1.x, v1.y, v1.z) //10
-                .color(r, g, b, a).texture(maxU, minV)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(light)
-                .normal(normalMatrix, 0.0F, 1.0F, 0.0F);
-        vertices.vertex(positionMatrix, v2.x, v2.y, v2.z) //11
-                .color(r, g, b, a).texture(maxU, maxV)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(light)
-                .normal(normalMatrix, 0.0F, 1.0F, 0.0F);
-        vertices.vertex(positionMatrix, v3.x, v3.y, v3.z) //01
-                .color(r, g, b, a).texture(minU, maxV)
-                .overlay(OverlayTexture.DEFAULT_UV)
-                .light(light)
-                .normal(normalMatrix, 0.0F, 1.0F, 0.0F);
+        vertices.addVertex(positionMatrix, v0.x, v0.y, v0.z) //00
+                .setColor(r, g, b, a).setUv(minU, minV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(normalMatrix, 0.0F, 1.0F, 0.0F);
+        vertices.addVertex(positionMatrix, v1.x, v1.y, v1.z) //10
+                .setColor(r, g, b, a).setUv(maxU, minV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(normalMatrix, 0.0F, 1.0F, 0.0F);
+        vertices.addVertex(positionMatrix, v2.x, v2.y, v2.z) //11
+                .setColor(r, g, b, a).setUv(maxU, maxV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(normalMatrix, 0.0F, 1.0F, 0.0F);
+        vertices.addVertex(positionMatrix, v3.x, v3.y, v3.z) //01
+                .setColor(r, g, b, a).setUv(minU, maxV)
+                .setOverlay(OverlayTexture.NO_OVERLAY)
+                .setLight(light)
+                .setNormal(normalMatrix, 0.0F, 1.0F, 0.0F);
     }
 
     public static <E extends Entity> EntityRenderer<? super E, ?> getEntityRenderer(E entityIn) {
-        EntityRenderManager manager = MinecraftClient.getInstance().getEntityRenderDispatcher();
+        EntityRenderDispatcher manager = Minecraft.getInstance().getEntityRenderDispatcher();
         return manager.getRenderer(entityIn);
     }
 
     public static float getTickDelta(boolean ignoreFreeze) {
-        return MinecraftClient.getInstance().getRenderTickCounter().getTickProgress(ignoreFreeze);
+        return Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(ignoreFreeze);
     }
 
     public static CameraRenderState getCameraRenderState() {
-        return MinecraftClient.getInstance().gameRenderer.getEntityRenderStates().cameraRenderState;
+        return Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState;
     }
 }

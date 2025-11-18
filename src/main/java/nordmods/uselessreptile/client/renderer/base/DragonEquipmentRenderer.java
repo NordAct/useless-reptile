@@ -1,12 +1,5 @@
 package nordmods.uselessreptile.client.renderer.base;
 
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.command.RenderCommandQueue;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.registry.Registries;
-import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.model.DragonEqupmentModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
@@ -19,9 +12,15 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderModelPositioner;
-
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.HashMap;
 import java.util.Map;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 
 public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable, GeoModel<?>, GeoRenderState> { //related object - dragon model
     public DragonEquipmentRenderer() {
@@ -30,7 +29,7 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
     }
 
     @Override
-    public void preRender(GeoRenderState renderState, MatrixStack poseStack, BakedGeoModel model, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraState,
+    public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                           int packedLight, int packedOverlay, int renderColor) {
         renderState.getGeckolibData(URDataTickets.DRAGON_BONES).forEach((parentBone, transform) -> {
             model.getBone((String) parentBone).ifPresent(bone -> {
@@ -54,16 +53,16 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
     }
 
     @Override
-    public void adjustRenderPose(GeoRenderState renderState, MatrixStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
+    public void adjustRenderPose(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
     }
 
     @Override
     public void addRenderData(DragonEquipmentAnimatable animatable, GeoModel<?> relatedObject, GeoRenderState renderState, float partialTick) {
         renderState.addGeckolibData(URDataTickets.DRAGON_RENDER_STATE, animatable.ownerRenderState);
-        renderState.addGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID, Registries.ITEM.getId(animatable.item));
+        renderState.addGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID, BuiltInRegistries.ITEM.getKey(animatable.item));
         renderState.addGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE, animatable.getAssetCache());
 
-        Identifier id = getGeoModel().getModelResource(renderState);
+        ResourceLocation id = getGeoModel().getModelResource(renderState);
         HashMap<String, OwnerBoneTransforms> transforms = new HashMap<>();
         if (id != DragonEqupmentModel.DEFAULT_MODEL) {
             Map<String, GeoBone> equipmentBones = animatable.equipmentBones;
@@ -94,10 +93,10 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
     }
 
     @Override //mitigation for some transparency issues
-    public void buildRenderTask(GeoRenderState renderState, MatrixStack poseStack, BakedGeoModel bakedModel, GeoModel<DragonEquipmentAnimatable> model, RenderCommandQueue renderTasks, CameraRenderState cameraState, @Nullable RenderLayer renderType,
+    public void buildRenderTask(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel bakedModel, GeoModel<DragonEquipmentAnimatable> model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderType renderType,
                                  int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<GeoRenderState> modelPositioner) {
-        if (renderTasks instanceof OrderedRenderCommandQueue queue) {
-            super.buildRenderTask(renderState, poseStack, bakedModel, model, queue.getBatchingQueue(1), cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
+        if (renderTasks instanceof SubmitNodeCollector queue) {
+            super.buildRenderTask(renderState, poseStack, bakedModel, model, queue.order(1), cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
             return;
         }
         super.buildRenderTask(renderState, poseStack, bakedModel, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);

@@ -1,10 +1,10 @@
 package nordmods.uselessreptile.common.entity.ai.goal.wyvern;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.entity.WyvernEntity;
 
 import java.util.EnumSet;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 public class WyvernAttackGoal extends Goal {
     private final WyvernEntity entity;
@@ -14,7 +14,7 @@ public class WyvernAttackGoal extends Goal {
     public WyvernAttackGoal(WyvernEntity entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
-        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
+        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     @Override
@@ -24,21 +24,21 @@ public class WyvernAttackGoal extends Goal {
     }
 
     @Override
-    public boolean canStart() {
+    public boolean canUse() {
         if (entity.canBeControlledByRider()) return false;
-        if (!entity.canTarget(entity.getTarget())) {
+        if (!entity.canAttack(entity.getTarget())) {
             entity.setTarget(null);
             return false;
         }
         target = entity.getTarget();
-        return target != null && (entity.squaredDistanceTo(target) < maxSearchDistance);
+        return target != null && (entity.distanceToSqr(target) < maxSearchDistance);
     }
 
     @Override
-    public boolean shouldContinue() {
+    public boolean canContinueToUse() {
         if (target == null) return false;
         if (!target.isAlive()) return false;
-        return !entity.getNavigation().isIdle() || canStart();
+        return !entity.getNavigation().isDone() || canUse();
     }
 
     @Override
@@ -49,7 +49,7 @@ public class WyvernAttackGoal extends Goal {
     }
 
     @Override
-    public boolean shouldRunEveryTick() {
+    public boolean requiresUpdateEveryTick() {
         return true;
     }
 
@@ -60,13 +60,13 @@ public class WyvernAttackGoal extends Goal {
             return;
         }
         entity.setSprinting(true);
-        double attackDistance = entity.getWidth() * 2.0f * (entity.getWidth() * 2.0f);
-        double distance = entity.squaredDistanceTo(target);
-        entity.getNavigation().startMovingTo(target, 1);
-        boolean doesCollide = entity.getAttackBox().intersects(target.getBoundingBox());
+        double attackDistance = entity.getBbWidth() * 2.0f * (entity.getBbWidth() * 2.0f);
+        double distance = entity.distanceToSqr(target);
+        entity.getNavigation().moveTo(target, 1);
+        boolean doesCollide = entity.getAttackBoundingBox().intersects(target.getBoundingBox());
 
-        if (!doesCollide && entity.getPrimaryAttackCooldown() == 0 && (distance > attackDistance * 4 || !target.isOnGround() || distance < attackDistance && entity.getY() - target.getY() >= 1)) {
-            entity.getLookControl().lookAt(target);
+        if (!doesCollide && entity.getPrimaryAttackCooldown() == 0 && (distance > attackDistance * 4 || !target.onGround() || distance < attackDistance && entity.getY() - target.getY() >= 1)) {
+            entity.getLookControl().setLookAt(target);
             if (entity.getLookControl().isLookingAtTarget())
                 entity.shoot();
         }

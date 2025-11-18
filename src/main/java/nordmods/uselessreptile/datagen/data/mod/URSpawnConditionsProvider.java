@@ -3,15 +3,15 @@ package nordmods.uselessreptile.datagen.data.mod;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
-import net.minecraft.block.Blocks;
-import net.minecraft.data.DataOutput;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
-import net.minecraft.data.DataWriter;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.registry.tag.BlockTags;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.world.biome.BiomeKeys;
+import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.level.biome.Biomes;
+import net.minecraft.world.level.block.Blocks;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
 
@@ -23,30 +23,30 @@ import java.util.concurrent.CompletableFuture;
 
 public class URSpawnConditionsProvider implements DataProvider {
     protected final FabricDataOutput output;
-    private final DataOutput.PathResolver pathResolver;
-    private final CompletableFuture<RegistryWrapper.WrapperLookup> registryLookupFuture;
-    private final List<Pair<Identifier, List<DragonSpawnConditions>>> holder = new ArrayList<>();
+    private final PackOutput.PathProvider pathResolver;
+    private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
+    private final List<Tuple<ResourceLocation, List<DragonSpawnConditions>>> holder = new ArrayList<>();
 
-    public URSpawnConditionsProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public URSpawnConditionsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         this.output = output;
-        this.pathResolver = output.getResolver(DataOutput.OutputType.DATA_PACK, "uselessreptile/spawn_conditions");
+        this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/spawn_conditions");
         this.registryLookupFuture = registriesFuture;
     }
 
     @Override
-    public CompletableFuture<?> run(DataWriter writer) {
+    public CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addSpawnEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach(entry -> {
-                Path path = pathResolver.resolveJson(entry.getLeft());
-                list.add(DataProvider.writeCodecToPath(writer, registryLookupFuture, DragonSpawnConditions.CODEC.listOf(), entry.getRight(), path));
+                Path path = pathResolver.json(entry.getA());
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonSpawnConditions.CODEC.listOf(), entry.getB(), path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
     }
 
-    protected Identifier getId(String name) {
+    protected ResourceLocation getId(String name) {
         return UselessReptile.id(name);
     }
 
@@ -99,7 +99,7 @@ public class URSpawnConditionsProvider implements DataProvider {
         DragonSpawnConditions spawn = DragonSpawnConditions.builder()
                 .setWeight(weight)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_SWAMP)
-                .addBannedBiome(BiomeKeys.MANGROVE_SWAMP)
+                .addBannedBiome(Biomes.MANGROVE_SWAMP)
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
                 .build();
 
@@ -113,8 +113,8 @@ public class URSpawnConditionsProvider implements DataProvider {
                 .addAllowedBlockTag(ConventionalBlockTags.ORES)
                 .addAllowedBlockTag(BlockTags.STONE_ORE_REPLACEABLES)
                 .addAllowedBlockTag(BlockTags.DEEPSLATE_ORE_REPLACEABLES)
-                .addAllowedBlock(Blocks.DIRT.getRegistryEntry().registryKey())
-                .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
+                .addAllowedBlock(Blocks.DIRT.builtInRegistryHolder().key())
+                .addAllowedBlock(Blocks.GRAVEL.builtInRegistryHolder().key())
                 .build();
         addSpawn("moleclaw/" + name, Collections.singletonList(spawn));
     }
@@ -131,7 +131,7 @@ public class URSpawnConditionsProvider implements DataProvider {
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_ICY)
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
                 .addAllowedBlockTag(BlockTags.SAND)
-                .addAllowedBlock(Blocks.GRAVEL.getRegistryEntry().registryKey())
+                .addAllowedBlock(Blocks.GRAVEL.builtInRegistryHolder().key())
                 .setMinAltitude(62)
                 .build();
 
@@ -141,11 +141,11 @@ public class URSpawnConditionsProvider implements DataProvider {
     protected void addMagmamuncherEntry(String name, int weight) {
         DragonSpawnConditions spawn = DragonSpawnConditions.builder()
                 .setWeight(weight)
-                .addAllowedBiome(BiomeKeys.NETHER_WASTES)
+                .addAllowedBiome(Biomes.NETHER_WASTES)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_NETHER_FOREST)
                 .addAllowedBlockTag(ConventionalBlockTags.NETHERRACKS)
                 .addAllowedBlockTag(ConventionalBlockTags.GRAVELS)
-                .addAllowedBlock(Blocks.MAGMA_BLOCK.getRegistryEntry().registryKey())
+                .addAllowedBlock(Blocks.MAGMA_BLOCK.builtInRegistryHolder().key())
                 .setMinAltitude(26)
                 .setMaxAltitude(37)
                 .build();
@@ -153,7 +153,7 @@ public class URSpawnConditionsProvider implements DataProvider {
     }
 
     protected void addSpawn(String name, List<DragonSpawnConditions> conditions) {
-        holder.add(new Pair<>(getId(name), conditions));
+        holder.add(new Tuple<>(getId(name), conditions));
     }
 
     @Override

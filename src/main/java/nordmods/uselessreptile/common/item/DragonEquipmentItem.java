@@ -1,20 +1,20 @@
 package nordmods.uselessreptile.common.item;
 
-import net.minecraft.component.type.AttributeModifiersComponent;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 
 import java.util.function.Supplier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 
 public class DragonEquipmentItem extends Item {
 
-    public DragonEquipmentItem(Supplier<AttributeModifiersComponent> dragonEquipmentAttributes, Settings settings) {
-        super(settings.attributeModifiers(dragonEquipmentAttributes.get()));
+    public DragonEquipmentItem(Supplier<ItemAttributeModifiers> dragonEquipmentAttributes, Properties settings) {
+        super(settings.attributes(dragonEquipmentAttributes.get()));
     }
 
-    public static Identifier equipmentModifierID(EquipmentSlot equipmentSlot) {
+    public static ResourceLocation equipmentModifierID(EquipmentSlot equipmentSlot) {
         return switch (equipmentSlot) {
             case HEAD -> UselessReptile.id("dragon_head_equipment");
             case LEGS -> UselessReptile.id("dragon_leg_equipment");

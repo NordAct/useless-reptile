@@ -1,14 +1,14 @@
 package nordmods.uselessreptile.common.entity.ai.goal.moleclaw;
 
-import net.minecraft.entity.ai.NoPenaltyTargeting;
-import net.minecraft.entity.ai.goal.EscapeDangerGoal;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
-import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
+import net.minecraft.world.entity.ai.goal.PanicGoal;
+import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
 
-public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
+public class MoleclawEscapeLightGoal extends PanicGoal {
 
     private final MoleclawEntity mob;
     private int timer = 0;
@@ -20,23 +20,23 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
     }
 
     @Override
-    protected boolean isInDanger() {
+    protected boolean shouldPanic() {
         return mob.isPanicking() || this.mob.isOnFire();
     }
 
     @Override
-    protected boolean findTarget() {
+    protected boolean findRandomPosition() {
         Vec3i darkestSpot = null;
         int light = 30;
         double distance = 1000000;
         for (int i = 30; i > 0; i--) {
-            Vec3d vec3d = NoPenaltyTargeting.find(this.mob, 10, 3);
+            Vec3 vec3d = DefaultRandomPos.getPos(this.mob, 10, 3);
             Vec3i vec3i = vec3d != null ? new Vec3i((int) vec3d.x, (int) vec3d.y, (int) vec3d.z) : null;
             if (vec3i != null) {
                 BlockPos blockPos = new BlockPos(vec3i.getX(), (int) (vec3i.getY() + mob.getEyeHeight(mob.getPose())), vec3i.getZ());
                 BlockPos blockPos1 = new BlockPos(vec3i.getX(), vec3i.getY(), vec3i.getZ());
-                boolean canFit = mob.getEntityWorld().getBlockState(blockPos1.up(1)).isAir() && mob.getEntityWorld().getBlockState(blockPos1.up(2)).isAir();
-                double distanceToCurrent = mob.squaredDistanceTo(vec3d);
+                boolean canFit = mob.level().getBlockState(blockPos1.above(1)).isAir() && mob.level().getBlockState(blockPos1.above(2)).isAir();
+                double distanceToCurrent = mob.distanceToSqr(vec3d);
                 if (MoleclawEntity.getLightAtPos(blockPos, mob) <= light && canFit && distanceToCurrent < distance) {
                     darkestSpot = vec3i;
                     light = MoleclawEntity.getLightAtPos(blockPos, mob);
@@ -46,13 +46,13 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
         }
         if (darkestSpot == null)  return false;
 
-        if (distance < 0.5 && MoleclawEntity.getLightAtPos(mob.getBlockPos(), mob) == MoleclawEntity.getLightAtPos(new BlockPos(darkestSpot), mob)) {
+        if (distance < 0.5 && MoleclawEntity.getLightAtPos(mob.blockPosition(), mob) == MoleclawEntity.getLightAtPos(new BlockPos(darkestSpot), mob)) {
             for (int i = 30; i > 0; i--) {
-                Vec3d vec3d = NoPenaltyTargeting.find(this.mob, 10, 3);
+                Vec3 vec3d = DefaultRandomPos.getPos(this.mob, 10, 3);
                 Vec3i vec3i = vec3d != null ? new Vec3i((int) vec3d.x, (int) vec3d.y, (int) vec3d.z) : null;
                 if (vec3i != null) {
                     BlockPos blockPos1 = new BlockPos((int) vec3d.x, (int) vec3d.y, (int) vec3d.z);
-                    boolean canFit = mob.getEntityWorld().getBlockState(blockPos1.up(1)).isAir() && mob.getEntityWorld().getBlockState(blockPos1.up(2)).isAir();
+                    boolean canFit = mob.level().getBlockState(blockPos1.above(1)).isAir() && mob.level().getBlockState(blockPos1.above(2)).isAir();
                     if (canFit) {
                         darkestSpot = vec3i;
                         break;
@@ -62,9 +62,9 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
         }
 
         if (darkestSpot == null)  return false;
-        this.targetX = darkestSpot.getX();
-        this.targetY = darkestSpot.getY();
-        this.targetZ = darkestSpot.getZ();
+        this.posX = darkestSpot.getX();
+        this.posY = darkestSpot.getY();
+        this.posZ = darkestSpot.getZ();
         return true;
 
     }
@@ -75,8 +75,8 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
     }
 
     @Override
-    public boolean shouldContinue() {
-        return super.shouldContinue() && isInDanger();
+    public boolean canContinueToUse() {
+        return super.canContinueToUse() && shouldPanic();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class MoleclawEscapeLightGoal extends EscapeDangerGoal {
         timer++;
 
         if (timer >= nextStrongAttackTimer && mob.getPrimaryAttackCooldown() == 0) {
-            for (VoxelShape shape : mob.getEntityWorld().getBlockCollisions(mob, mob.getSecondaryAttackBox())) {
+            for (VoxelShape shape : mob.level().getBlockCollisions(mob, mob.getSecondaryAttackBox())) {
                 if (!shape.isEmpty()) {
                     mob.scheduleStrongAttack();
                     timer = 0;

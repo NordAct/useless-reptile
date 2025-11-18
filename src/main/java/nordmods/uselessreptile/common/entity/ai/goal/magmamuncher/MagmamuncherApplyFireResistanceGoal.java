@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.common.entity.ai.goal.magmamuncher;
 
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.packet.s2c.play.ParticleS2CPacket;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.registry.tag.DamageTypeTags;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.DragonConsumeItemFromInventoryGoal;
@@ -19,22 +19,22 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
     }
 
     @Override
-    public boolean canStart() {
+    public boolean canUse() {
         return URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier > 0 && isOwnerOnFire();
     }
 
     @Override
     protected void beforeItemConsumed(ItemStack stack) {
         if (dragon.getOwner() == dragon.getVehicle() && dragon.getOwner() != null) {
-            dragon.getOwner().addStatusEffect(
-                    new StatusEffectInstance(
-                            StatusEffects.FIRE_RESISTANCE,
-                            (int) (dragon.getEntityWorld().getFuelRegistry().getFuelTicks(stack) * URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier)
+            dragon.getOwner().addEffect(
+                    new MobEffectInstance(
+                            MobEffects.FIRE_RESISTANCE,
+                            (int) (dragon.level().fuelValues().burnDuration(stack) * URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier)
                     )
             );
             URDragonEntity.SoundInfo info = dragon.getSoundInfo("apply_fire_resistance");
-            if (info != null) dragon.getEntityWorld().playSound(dragon, dragon.getX(), dragon.getY(), dragon.getZ(), SoundEvent.of(info.id()), dragon.getSoundCategory(), info.volume(), dragon.getRandom().nextTriangular(info.pitch(), info.pitchDeviation()));
-            ParticleS2CPacket packet = new ParticleS2CPacket(
+            if (info != null) dragon.level().playSound(dragon, dragon.getX(), dragon.getY(), dragon.getZ(), SoundEvent.createVariableRangeEvent(info.id()), dragon.getSoundSource(), info.volume(), dragon.getRandom().triangle(info.pitch(), info.pitchDeviation()));
+            ClientboundLevelParticlesPacket packet = new ClientboundLevelParticlesPacket(
                     ParticleTypes.FLAME,
                     false,
                     false,
@@ -47,10 +47,10 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
                     0,
                     10
             );
-            if (dragon.getOwner() instanceof ServerPlayerEntity player) {
+            if (dragon.getOwner() instanceof ServerPlayer player) {
                 URDragonEntity.grantTriggerableAdvancement(player, UselessReptile.id("dragon/magmamuncher_apply_fire_resistance"));
             }
-            dragon.getEntityWorld().getServer().getPlayerManager().sendToAll(packet);
+            dragon.level().getServer().getPlayerList().broadcastAll(packet);
         }
     }
 
@@ -62,13 +62,13 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
     private boolean isOwnerOnFire() {
         return dragon.getOwner() != null
                 && dragon.getOwner() == dragon.getVehicle()
-                && dragon.getOwner().getRecentDamageSource() != null
-                && dragon.getOwner().getRecentDamageSource().isIn(DamageTypeTags.IS_FIRE)
-                && !dragon.getOwner().hasStatusEffect(StatusEffects.FIRE_RESISTANCE);
+                && dragon.getOwner().getLastDamageSource() != null
+                && dragon.getOwner().getLastDamageSource().is(DamageTypeTags.IS_FIRE)
+                && !dragon.getOwner().hasEffect(MobEffects.FIRE_RESISTANCE);
     }
 
     @Override
     protected boolean isConsumableItem(ItemStack stack) {
-        return dragon.getEntityWorld().getFuelRegistry().isFuel(stack);
+        return dragon.level().fuelValues().isFuel(stack);
     }
 }

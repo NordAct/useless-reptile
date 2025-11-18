@@ -1,47 +1,55 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
-import net.minecraft.entity.ai.goal.SitGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.random.Random;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
-import net.minecraft.world.event.EntityPositionSource;
-import net.minecraft.world.event.GameEvent;
-import net.minecraft.world.event.PositionSource;
-import net.minecraft.world.event.listener.EntityGameEventHandler;
-import net.minecraft.world.event.listener.GameEventListener;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityEvent;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.SpawnGroupData;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.world.level.gameevent.DynamicGameEventListener;
+import net.minecraft.world.level.gameevent.EntityPositionSource;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gameevent.GameEventListener;
+import net.minecraft.world.level.gameevent.PositionSource;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
@@ -81,7 +89,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private int bailOutTimer = 6000;
     private boolean shouldBailOut = false;
     private boolean isChallenger = false;
-    private static final Identifier THUNDERSTORM_BONUS = UselessReptile.id("thunderstorm_bonus");
+    private static final ResourceLocation THUNDERSTORM_BONUS = UselessReptile.id("thunderstorm_bonus");
     private final URDragonPart wing1Left = new URDragonPart(this);
     private final URDragonPart wing1Right = new URDragonPart(this);
     private final URDragonPart wing2Left = new URDragonPart(this);
@@ -93,14 +101,14 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     private final URDragonPart tail2 = new URDragonPart(this);
     private final URDragonPart tail3 = new URDragonPart(this);
     private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
-    protected final EntityGameEventHandler<LightningStrikeEventListener> lightningStrikeEventHandler = new EntityGameEventHandler<>(new LightningStrikeEventListener
-            (new EntityPositionSource(this, getStandingEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
-    private ShootingPoint shootingPoint = new ShootingPoint(getEntityPos(), getRotationVector());
+    protected final DynamicGameEventListener<LightningStrikeEventListener> lightningStrikeEventHandler = new DynamicGameEventListener<>(new LightningStrikeEventListener
+            (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
+    private ShootingPoint shootingPoint = new ShootingPoint(position(), getLookAngle());
     public static final float BASE_GROUND_SPEED = 0.25f;
 
-    public LightningChaserEntity(EntityType<? extends TameableEntity> entityType, World world) {
+    public LightningChaserEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
-        experiencePoints = 20;
+        xpReward = 20;
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         ticksUntilHeal = 500;
@@ -108,40 +116,40 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    protected void initGoals() {
-        goalSelector.add(1, new SwimGoal(this));
-        goalSelector.add(2, new FlyingDragonCallBackGoal<>(this));
-        goalSelector.add(3, new SitGoal(this));
-        goalSelector.add(4, new DragonEatFromInventoryGoal(this));
-        goalSelector.add(5, new LightningChaserAttackGoal(this));
-        goalSelector.add(6, new LightningChaserRoamAroundGoal(this));
-        goalSelector.add(6, new LightningChaserBailOutGoal(this));
-        goalSelector.add(7, new FlyingDragonFlyDownGoal<>(this, 60));
-        goalSelector.add(8, new DragonReturnToHomePoint(this));
-        goalSelector.add(9, new DragonWanderAroundGoal(this));
-        goalSelector.add(10, new FlyingDragonFlyAroundGoal<>(this, 30));
-        goalSelector.add(11, new DragonLookAroundGoal(this));
-        targetSelector.add(1, new LightningChaserRevengeGoal(this));
-        targetSelector.add(2, new AttackWithOwnerGoal(this));
-        if (URConfig.getConfig().dragonMadness) targetSelector.add(2, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
+    protected void registerGoals() {
+        goalSelector.addGoal(1, new FloatGoal(this));
+        goalSelector.addGoal(2, new FlyingDragonCallBackGoal<>(this));
+        goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
+        goalSelector.addGoal(4, new DragonEatFromInventoryGoal(this));
+        goalSelector.addGoal(5, new LightningChaserAttackGoal(this));
+        goalSelector.addGoal(6, new LightningChaserRoamAroundGoal(this));
+        goalSelector.addGoal(6, new LightningChaserBailOutGoal(this));
+        goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 60));
+        goalSelector.addGoal(8, new DragonReturnToHomePoint(this));
+        goalSelector.addGoal(9, new DragonWanderAroundGoal(this));
+        goalSelector.addGoal(10, new FlyingDragonFlyAroundGoal<>(this, 30));
+        goalSelector.addGoal(11, new DragonLookAroundGoal(this));
+        targetSelector.addGoal(1, new LightningChaserRevengeGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(2, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
 
     }
 
     @Override
-    public EntityData initialize(ServerWorldAccess world, LocalDifficulty difficulty, SpawnReason spawnReason, @Nullable EntityData entityData) {
-        if (spawnReason == SpawnReason.EVENT) isChallenger = true;
-        return super.initialize(world, difficulty, spawnReason, entityData);
+    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
+        if (spawnReason == EntitySpawnReason.EVENT) isChallenger = true;
+        return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
-    public static boolean canDragonSpawn(EntityType<? extends MobEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
+    public static boolean canDragonSpawn(EntityType<? extends Mob> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         if (world.getChunk(pos).getInhabitedTime() > 12000) return false;
         return URDragonEntity.canDragonSpawn(type, world, spawnReason, pos, random);
     }
 
     @Nullable
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (!getEntityWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        if (!level().isClientSide()) GUIEntityToRenderS2CPacket.send((ServerPlayer) player, this);
         return new URDragonScreenHandler(URScreenHandlers.LIGHTNING_CHASER_INVENTORY, syncId, inv, getInventory());
     }
 
@@ -183,10 +191,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             return loopAnim("fly.idle", event);
         }
         if (hasSurrendered()) return loopAnim("surrender", event);
-        if (isSitting() && !isDancing()) return loopAnim("sit", event);
+        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
-        if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
+        if (isDancing() && !isVehicle()) return loopAnim("dance", event);
         return loopAnim("idle", event);
     }
 
@@ -219,15 +227,15 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         return playAnim("attack.none", event);
     }
 
-    public static DefaultAttributeContainer.Builder createLightningChaserAttributes() {
+    public static AttributeSupplier.Builder createLightningChaserAttributes() {
         return createDragonAttributes()
-                .add(EntityAttributes.ATTACK_DAMAGE, attributes().lightningChaserDamage)
-                .add(EntityAttributes.ATTACK_KNOCKBACK, attributes().lightningChaserKnockback)
-                .add(EntityAttributes.MAX_HEALTH, attributes().lightningChaserHealth)
-                .add(EntityAttributes.ARMOR, attributes().lightningChaserArmor)
-                .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().lightningChaserArmorToughness)
-                .add(EntityAttributes.MOVEMENT_SPEED, attributes().lightningChaserGroundSpeed)
-                .add(EntityAttributes.FLYING_SPEED, attributes().lightningChaserFlyingSpeed)
+                .add(Attributes.ATTACK_DAMAGE, attributes().lightningChaserDamage)
+                .add(Attributes.ATTACK_KNOCKBACK, attributes().lightningChaserKnockback)
+                .add(Attributes.MAX_HEALTH, attributes().lightningChaserHealth)
+                .add(Attributes.ARMOR, attributes().lightningChaserArmor)
+                .add(Attributes.ARMOR_TOUGHNESS, attributes().lightningChaserArmorToughness)
+                .add(Attributes.MOVEMENT_SPEED, attributes().lightningChaserGroundSpeed)
+                .add(Attributes.FLYING_SPEED, attributes().lightningChaserFlyingSpeed)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().lightningChaserVerticalSpeed)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().lightningChaserBaseAccelerationDuration)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().lightningChaserRotationSpeedGround)
@@ -238,18 +246,18 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(SURRENDERED, false);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(SURRENDERED, false);
     }
-    public static final TrackedData<Boolean> SURRENDERED = DataTracker.registerData(LightningChaserEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public boolean hasSurrendered() {return dataTracker.get(SURRENDERED);}
-    public void setSurrendered(boolean state) {dataTracker.set(SURRENDERED, state);}
+    public static final EntityDataAccessor<Boolean> SURRENDERED = SynchedEntityData.defineId(LightningChaserEntity.class, EntityDataSerializers.BOOLEAN);
+    public boolean hasSurrendered() {return entityData.get(SURRENDERED);}
+    public void setSurrendered(boolean state) {entityData.set(SURRENDERED, state);}
 
     @Override
-    public void writeCustomData(WriteView tag) {
-        super.writeCustomData(tag);
-        if (!isTamed()) {
+    public void addAdditionalSaveData(ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
+        if (!isTame()) {
             tag.putInt("BailOutTimer", bailOutTimer);
             tag.putBoolean("HasSurrendered", hasSurrendered());
             tag.putBoolean("BailingOut", shouldBailOut);
@@ -258,25 +266,25 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public void readCustomData(ReadView tag) {
-        super.readCustomData(tag);
-        if (!isTamed()) {
-            bailOutTimer = tag.getInt("BailOutTimer", bailOutTimer);
-            setSurrendered(tag.getBoolean("HasSurrendered", false));
-            shouldBailOut = tag.getBoolean("BailingOut", false);
-            isChallenger = tag.getBoolean("IsChallenger", false);
+    public void readAdditionalSaveData(ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        if (!isTame()) {
+            bailOutTimer = tag.getIntOr("BailOutTimer", bailOutTimer);
+            setSurrendered(tag.getBooleanOr("HasSurrendered", false));
+            shouldBailOut = tag.getBooleanOr("BailingOut", false);
+            isChallenger = tag.getBooleanOr("IsChallenger", false);
         }
     }
 
     public void playAmbientSound() {
-        boolean playRoar = !isTamed() && isFlying() && getEntityWorld().isThundering() && !getShouldBailOut() && !hasSurrendered();
+        boolean playRoar = !isTame() && isFlying() && level().isThundering() && !getShouldBailOut() && !hasSurrendered();
         SoundInfo soundInfo = getSoundInfo(playRoar ? "roar" : "idle");
-        if (soundInfo != null) playSound(SoundEvent.of(soundInfo.id()), soundInfo.volume(), getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()));
+        if (soundInfo != null) playSound(SoundEvent.createVariableRangeEvent(soundInfo.id()), soundInfo.volume(), getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()));
     }
 
     @Override
-    public boolean isInvulnerableTo(ServerWorld world, DamageSource damageSource) {
-        if (damageSource.isOf(DamageTypes.LIGHTNING_BOLT)) return true;
+    public boolean isInvulnerableTo(ServerLevel world, DamageSource damageSource) {
+        if (damageSource.is(DamageTypes.LIGHTNING_BOLT)) return true;
         else return super.isInvulnerableTo(world, damageSource);
     }
 
@@ -320,9 +328,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
         updateThunderstormBonus();
 
-        if (!getEntityWorld().isClient() && !shouldBailOut) {
+        if (!level().isClientSide() && !shouldBailOut) {
             if (isChallenger) {
-                if (getTarget() == null && !isTamed()) {
+                if (getTarget() == null && !isTame()) {
                     if (bailOutTimer > 0) bailOutTimer--;
                     else {
                         setSurrendered(false);
@@ -331,9 +339,9 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 }
             } else if (getHealth() / getMaxHealth() > 0.5) setSurrendered(false);
             if (hasSurrendered()) {
-                if (age % 200 == 0) heal(2);
-                setSitting(true);
-                removeAllPassengers();
+                if (tickCount % 200 == 0) heal(2);
+                setOrderedToSit(true);
+                ejectPassengers();
             }
         }
 
@@ -349,22 +357,22 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     public boolean isSaddle(ItemStack itemStack) {
-        return itemStack.isIn(URTags.LIGHTNING_CHASER_SADDLES);
+        return itemStack.is(URTags.LIGHTNING_CHASER_SADDLES);
     }
 
     @Override
     public boolean isHelmet(ItemStack itemStack) {
-        return itemStack.isIn(URTags.LIGHTNING_CHASER_HELMETS);
+        return itemStack.is(URTags.LIGHTNING_CHASER_HELMETS);
     }
 
     @Override
     public boolean isChestplate(ItemStack itemStack) {
-        return itemStack.isIn(URTags.LIGHTNING_CHASER_CHESTPLATES);
+        return itemStack.is(URTags.LIGHTNING_CHASER_CHESTPLATES);
     }
 
     @Override
     public boolean isTailArmor(ItemStack itemStack) {
-        return itemStack.isIn(URTags.LIGHTNING_CHASER_TAIL_ARMOR);
+        return itemStack.is(URTags.LIGHTNING_CHASER_TAIL_ARMOR);
     }
 
     @Override
@@ -377,21 +385,21 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     private void updateThunderstormBonus() {
-        if (getEntityWorld().isClient()) return;
-        if (getEntityWorld().getLevelProperties().isThundering()) {
-            tryAddModifier(EntityAttributes.ARMOR, 4, EntityAttributeModifier.Operation.ADD_VALUE);
-            tryAddModifier(EntityAttributes.FLYING_SPEED, 0.2, EntityAttributeModifier.Operation.ADD_VALUE);
-            tryAddModifier(EntityAttributes.MOVEMENT_SPEED, 0.05, EntityAttributeModifier.Operation.ADD_VALUE);
-            tryAddModifier(EntityAttributes.ATTACK_DAMAGE, 2f, EntityAttributeModifier.Operation.ADD_VALUE);
-            tryAddModifier(URAttributes.DRAGON_ACCELERATION_DURATION, -0.33, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            tryAddModifier(URAttributes.DRAGON_VERTICAL_SPEED, 0.1, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            tryAddModifier(URAttributes.DRAGON_FLYING_ROTATION_SPEED, 0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-            tryAddModifier(URAttributes.DRAGON_GROUND_ROTATION_SPEED, 0.5, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        if (level().isClientSide()) return;
+        if (level().getLevelData().isThundering()) {
+            tryAddModifier(Attributes.ARMOR, 4, AttributeModifier.Operation.ADD_VALUE);
+            tryAddModifier(Attributes.FLYING_SPEED, 0.2, AttributeModifier.Operation.ADD_VALUE);
+            tryAddModifier(Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.ADD_VALUE);
+            tryAddModifier(Attributes.ATTACK_DAMAGE, 2f, AttributeModifier.Operation.ADD_VALUE);
+            tryAddModifier(URAttributes.DRAGON_ACCELERATION_DURATION, -0.33, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            tryAddModifier(URAttributes.DRAGON_VERTICAL_SPEED, 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            tryAddModifier(URAttributes.DRAGON_FLYING_ROTATION_SPEED, 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+            tryAddModifier(URAttributes.DRAGON_GROUND_ROTATION_SPEED, 0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
         } else {
-            removeModifier(EntityAttributes.ARMOR);
-            removeModifier(EntityAttributes.FLYING_SPEED);
-            removeModifier(EntityAttributes.MOVEMENT_SPEED);
-            removeModifier(EntityAttributes.ATTACK_DAMAGE);
+            removeModifier(Attributes.ARMOR);
+            removeModifier(Attributes.FLYING_SPEED);
+            removeModifier(Attributes.MOVEMENT_SPEED);
+            removeModifier(Attributes.ATTACK_DAMAGE);
             removeModifier(URAttributes.DRAGON_ACCELERATION_DURATION);
             removeModifier(URAttributes.DRAGON_VERTICAL_SPEED);
             removeModifier(URAttributes.DRAGON_FLYING_ROTATION_SPEED);
@@ -399,40 +407,40 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
         }
     }
 
-    private void tryAddModifier(RegistryEntry<EntityAttribute> entityAttribute, double bonus, EntityAttributeModifier.Operation operation) {
-        if (!getAttributeInstance(entityAttribute).hasModifier(THUNDERSTORM_BONUS))
-            getAttributeInstance(entityAttribute)
-                    .addTemporaryModifier(new EntityAttributeModifier(THUNDERSTORM_BONUS, bonus, operation));
+    private void tryAddModifier(Holder<Attribute> entityAttribute, double bonus, AttributeModifier.Operation operation) {
+        if (!getAttribute(entityAttribute).hasModifier(THUNDERSTORM_BONUS))
+            getAttribute(entityAttribute)
+                    .addTransientModifier(new AttributeModifier(THUNDERSTORM_BONUS, bonus, operation));
     }
 
-    private void removeModifier(RegistryEntry<EntityAttribute> entityAttribute) {
-        getAttributeInstance(entityAttribute).removeModifier(THUNDERSTORM_BONUS);
+    private void removeModifier(Holder<Attribute> entityAttribute) {
+        getAttribute(entityAttribute).removeModifier(THUNDERSTORM_BONUS);
     }
 
     @Override
-    public boolean damage(ServerWorld world, DamageSource damageSource, float amount) {
-        boolean toReturn = super.damage(world, damageSource, amount);
-        if (getHealth() / getMaxHealth() < 0.3 && !hasSurrendered() && (getTamingProgress() <= 0 || isTamed())) {
-            if (!isDead()) setHealth(getMaxHealth() * 0.3f);
+    public boolean hurtServer(ServerLevel world, DamageSource damageSource, float amount) {
+        boolean toReturn = super.hurtServer(world, damageSource, amount);
+        if (getHealth() / getMaxHealth() < 0.3 && !hasSurrendered() && (getTamingProgress() <= 0 || isTame())) {
+            if (!isDeadOrDying()) setHealth(getMaxHealth() * 0.3f);
             setInAirTimer(getMaxInAirTimer());
             setTarget(null);
             setSurrendered(true);
             setInAirTimer(getMaxInAirTimer());
-            if (damageSource.getAttacker() != null) setHomePoint(damageSource.getAttacker().getBlockPos());
-            else setHomePoint(getBlockPos());
-            URPacketHelper.playSound(this, URSounds.LIGHTNING_CHASER_SURRENDER, getSoundCategory(), 1, 1,1);
+            if (damageSource.getEntity() != null) setHomePoint(damageSource.getEntity().blockPosition());
+            else setHomePoint(blockPosition());
+            URPacketHelper.playSound(this, URSounds.LIGHTNING_CHASER_SURRENDER, getSoundSource(), 1, 1,1);
             if (isChallenger) bailOutTimer = 6000;
         }
         return toReturn;
     }
 
     @Override
-    public void onStruckByLightning(ServerWorld world, LightningEntity lightning) {
-        if (isTameable() && lightning.getChanneler() != null && getTamingProgress() > 0) setTamingProgress(getTamingProgress() - 1);
-        addStatusEffect(new StatusEffectInstance(StatusEffects.STRENGTH, 400, 3));
-        addStatusEffect(new StatusEffectInstance(StatusEffects.SPEED, 400, 1));
-        addStatusEffect(new StatusEffectInstance(StatusEffects.RESISTANCE, 400, 1));
-        addStatusEffect(new StatusEffectInstance(StatusEffects.FIRE_RESISTANCE, 400, 0));
+    public void thunderHit(ServerLevel world, LightningBolt lightning) {
+        if (isTameable() && lightning.getCause() != null && getTamingProgress() > 0) setTamingProgress(getTamingProgress() - 1);
+        addEffect(new MobEffectInstance(MobEffects.STRENGTH, 400, 3));
+        addEffect(new MobEffectInstance(MobEffects.SPEED, 400, 1));
+        addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 400, 1));
+        addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 400, 0));
         lightning.discard();
     }
 
@@ -450,12 +458,12 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     private void shockwave() {
-        ShockwaveSphereEntity shockwaveSphereEntity = new ShockwaveSphereEntity(getEntityWorld());
+        ShockwaveSphereEntity shockwaveSphereEntity = new ShockwaveSphereEntity(level());
         shockwaveSphereEntity.setOwner(this);
-        shockwaveSphereEntity.setPosition(getEntityPos().add(0, getHeightMod(), 0));
-        shockwaveSphereEntity.setVelocity(Vec3d.ZERO);
+        shockwaveSphereEntity.setPos(position().add(0, getHeightMod(), 0));
+        shockwaveSphereEntity.setDeltaMovement(Vec3.ZERO);
         shockwaveSphereEntity.setNoGravity(true);
-        getEntityWorld().spawnEntity(shockwaveSphereEntity);
+        level().addFreshEntity(shockwaveSphereEntity);
     }
 
     public void triggerShockwave() {
@@ -464,34 +472,34 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     public void meleeAttack() {
-        if (!(getEntityWorld() instanceof ServerWorld world)) return;
-        List<Entity> list = world.getOtherEntities(
+        if (!(level() instanceof ServerLevel world)) return;
+        List<Entity> list = world.getEntities(
                 this,
-                getAttackBox(),
-                entity -> !getPassengerList().contains(entity)
-                        && !entity.isPartOf(this)
-                        && !entity.getType().isIn(URTags.DRAGON_IMMUNE)
-                        && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity))
+                getAttackBoundingBox(),
+                entity -> !getPassengers().contains(entity)
+                        && !entity.is(this)
+                        && !entity.getType().is(URTags.DRAGON_IMMUNE)
+                        && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
         );
         Entity target = null;
         if (!list.isEmpty()) {
             target = list.getFirst();
             for (Entity entry : list) {
-                if (squaredDistanceTo(entry) < squaredDistanceTo(target)) target = entry;
+                if (distanceToSqr(entry) < distanceToSqr(target)) target = entry;
             }
         }
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
-        if (target != null && !getPassengerList().contains(target)) {
-            Box targetBox = target.getBoundingBox();
-            if (targetBox.intersects(getAttackBox())) tryAttack(world, target);
+        if (target != null && !getPassengers().contains(target)) {
+            AABB targetBox = target.getBoundingBox();
+            if (targetBox.intersects(getAttackBoundingBox())) doHurtTarget(world, target);
         }
     }
 
     @Override
-    public Box getAttackBox() {
-        Vec3d rotationVec = getRotationVector(0, getYaw()).multiply(2.5);
-        return getBoundingBox().offset(rotationVec);
+    public AABB getAttackBoundingBox() {
+        Vec3 rotationVec = calculateViewVector(0, getYRot()).scale(2.5);
+        return getBoundingBox().move(rotationVec);
     }
 
     @Override
@@ -499,7 +507,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
     @Override
     protected int getTicksUntilHeal() {
-        return getEntityWorld().isThundering() ? (int) (super.getTicksUntilHeal() * 0.5) : super.getTicksUntilHeal();
+        return level().isThundering() ? (int) (super.getTicksUntilHeal() * 0.5) : super.getTicksUntilHeal();
     }
 
     @Override
@@ -508,24 +516,24 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public ActionResult interactMob(PlayerEntity player, Hand hand) {
-        ItemStack itemStack = player.getStackInHand(hand);
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
 
         if (isTameable()) {
             if (hasSurrendered() && !getShouldBailOut() && getTamingProgress() <= 0 || player.isCreative() && getFoodItem(itemStack) != null) {
-                setTamedBy(player);
-                setPersistent();
+                tame(player);
+                setPersistenceRequired();
                 setSurrendered(false);
                 shouldBailOut = false;
                 isChallenger = false;
-                getEntityWorld().sendEntityStatus(this, EntityStatuses.ADD_POSITIVE_PLAYER_REACTION_PARTICLES);
-                return ActionResult.SUCCESS;
+                level().broadcastEntityEvent(this, EntityEvent.TAMING_SUCCEEDED);
+                return InteractionResult.SUCCESS;
             } else if (hasSurrendered() && getTamingProgress() > 0) {
-                getEntityWorld().sendEntityStatus(this, EntityStatuses.ADD_NEGATIVE_PLAYER_REACTION_PARTICLES);
-                return ActionResult.SUCCESS;
+                level().broadcastEntityEvent(this, EntityEvent.TAMING_FAILED);
+                return InteractionResult.SUCCESS;
             }
         }
-        return super.interactMob(player, hand);
+        return super.mobInteract(player, hand);
     }
 
     @Override
@@ -543,14 +551,14 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public int getLimitPerChunk() {
+    public int getMaxSpawnClusterSize() {
         return URConfig.getConfig().lightningChaserMaxGroupSize * 2;
     }
 
     @Override
-    public boolean canTarget(LivingEntity target) {
+    public boolean canAttack(LivingEntity target) {
         if (hasSurrendered() || getShouldBailOut()) return false;
-        return super.canTarget(target);
+        return super.canAttack(target);
     }
 
     @Override
@@ -564,13 +572,13 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public Vec3d getShootingPointAnchor() {
-        return head.getEntityPos().add(0, head.getHeight() / 2f, 0);
+    public Vec3 getShootingPointAnchor() {
+        return head.position().add(0, head.getBbHeight() / 2f, 0);
     }
 
     @Override
     public float getShootingPointDesiredPitch() {
-        return getPitch();
+        return getXRot();
     }
 
     @Override
@@ -587,20 +595,20 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             this.range = range;
         }
 
-        public PositionSource getPositionSource() {return this.positionSource;}
+        public PositionSource getListenerSource() {return this.positionSource;}
 
-        public int getRange() {return this.range;}
+        public int getListenerRadius() {return this.range;}
 
         @Override
-        public boolean listen(ServerWorld world, RegistryEntry<GameEvent> event, GameEvent.Emitter emitter, Vec3d emitterPos) {
+        public boolean handleGameEvent(ServerLevel world, Holder<GameEvent> event, GameEvent.Context emitter, Vec3 emitterPos) {
             if (event != URGameEvents.LIGHTNING_STRIKE_FAR) return false;
-            if (isTamed() || getTarget() != null) return false;
-            if (emitter.sourceEntity() instanceof LightningEntity lightning) {
-                PlayerEntity target = lightning.getChanneler();
+            if (isTame() || getTarget() != null) return false;
+            if (emitter.sourceEntity() instanceof LightningBolt lightning) {
+                Player target = lightning.getCause();
                 if (target != null) {
-                    if (!canTarget(target)) return false;
+                    if (!canAttack(target)) return false;
                     setTarget(target);
-                    URPacketHelper.playSound(LightningChaserEntity.this, URSounds.LIGHTNING_CHASER_ACCEPT_CHALLENGE, getSoundCategory(), 1, 1,1);
+                    URPacketHelper.playSound(LightningChaserEntity.this, URSounds.LIGHTNING_CHASER_ACCEPT_CHALLENGE, getSoundSource(), 1, 1,1);
                     return true;
                 }
             }
@@ -609,21 +617,21 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public void updateEventHandler(BiConsumer<EntityGameEventHandler<?>, ServerWorld> callback) {
-        if (getEntityWorld() instanceof ServerWorld serverWorld) callback.accept(lightningStrikeEventHandler, serverWorld);
-        super.updateEventHandler(callback);
+    public void updateDynamicGameEventListener(BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
+        if (level() instanceof ServerLevel serverWorld) callback.accept(lightningStrikeEventHandler, serverWorld);
+        super.updateDynamicGameEventListener(callback);
     }
 
     @Override
-    public float getWeaponDisableBlockingForSeconds() {
+    public float getSecondsToDisableBlocking() {
         return isSecondaryAttack() || isPrimaryAttack() ? 5.0F : 0f;
     }
 
     @Override
     public boolean canBreakBlocks() {
-        if (!(getEntityWorld() instanceof ServerWorld world)) return false;
-        boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().lightningChaserGriefing.canTamedBreak() : URConfig.getConfig().lightningChaserGriefing.canUntamedBreak();
-        return shouldBreakBlocks && world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
+        if (!(level() instanceof ServerLevel world)) return false;
+        boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().lightningChaserGriefing.canTamedBreak() : URConfig.getConfig().lightningChaserGriefing.canUntamedBreak();
+        return shouldBreakBlocks && world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
     }
 
     @Override
@@ -637,8 +645,8 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public boolean shouldSave() {
-        return super.shouldSave() && !shouldBailOut;
+    public boolean shouldBeSaved() {
+        return super.shouldBeSaved() && !shouldBailOut;
     }
 
     @Override
@@ -647,10 +655,10 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     public void updateChildParts() {
-        Vec2f wing1LeftScale;
-        Vec2f wing1RightScale;
-        Vec2f wing2LeftScale;
-        Vec2f wing2RightScale;
+        Vec2 wing1LeftScale;
+        Vec2 wing1RightScale;
+        Vec2 wing2LeftScale;
+        Vec2 wing2RightScale;
         
         Vector3f wing1LeftPos;
         Vector3f wing1RightPos;
@@ -670,28 +678,28 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             if (isMoving() && !isMovingBackwards() && !isSpecialAttack()) {
                 if (getTiltState() == 2) {
                     wing1LeftPos = new Vector3f(2, 0, 0.5f);
-                    wing1LeftScale = new Vec2f(1, 1.5f);
+                    wing1LeftScale = new Vec2(1, 1.5f);
 
                     wing2LeftPos = new Vector3f(2, 0, -0.5f);
-                    wing2LeftScale = new Vec2f(1, 1.5f);
+                    wing2LeftScale = new Vec2(1, 1.5f);
 
                     wing1RightPos = new Vector3f(-2, 0, 0.5f);
-                    wing1RightScale = new Vec2f(1, 1.5f);
+                    wing1RightScale = new Vec2(1, 1.5f);
 
                     wing2RightPos = new Vector3f(-2, 0, -0.5f);
-                    wing2RightScale = new Vec2f(1, 1.5f);
+                    wing2RightScale = new Vec2(1, 1.5f);
                 } else {
                     wing1LeftPos = new Vector3f(2.5f, 0, 0);
-                    wing1LeftScale = new Vec2f(1, 2.5f);
+                    wing1LeftScale = new Vec2(1, 2.5f);
 
                     wing2LeftPos = new Vector3f(5, 0, 0);
-                    wing2LeftScale = new Vec2f(1, 2.5f);
+                    wing2LeftScale = new Vec2(1, 2.5f);
 
                     wing1RightPos = new Vector3f(-2.5f, 0, 0);
-                    wing1RightScale = new Vec2f(1, 2.5f);
+                    wing1RightScale = new Vec2(1, 2.5f);
 
                     wing2RightPos = new Vector3f(-5, 0, 0);
-                    wing2RightScale = new Vec2f(1, 2.5f);
+                    wing2RightScale = new Vec2(1, 2.5f);
                 }
                 neck1Pos = new Vector3f(yawOffset * 0.25f, pitchOffset * 0.75f, 2f);
                 neck2Pos = new Vector3f(yawOffset * 0.75f, pitchOffset * 1, 2.75f - Math.abs(yawOffset) * 0.25f);
@@ -702,16 +710,16 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 tail3Pos = new Vector3f(yawOffset * 1.25f, -pitchOffset * 1.5f , -4 + Math.abs(yawOffset) * 0.25f);
             } else {
                 wing1LeftPos = new Vector3f(3, 0.75f, -0.5f);
-                wing1LeftScale = new Vec2f(1.5f, 3);
+                wing1LeftScale = new Vec2(1.5f, 3);
 
                 wing2LeftPos = new Vector3f(3.5f, 0.75f, -1);
-                wing2LeftScale = new Vec2f(1.5f, 2);
+                wing2LeftScale = new Vec2(1.5f, 2);
 
                 wing1RightPos = new Vector3f(-3, 0.75f, -0.5f);
-                wing1RightScale = new Vec2f(1.5f, 3);
+                wing1RightScale = new Vec2(1.5f, 3);
 
                 wing2RightPos = new Vector3f(-3.5f, 0.75f, -1);
-                wing2RightScale = new Vec2f(1.5f, 2);
+                wing2RightScale = new Vec2(1.5f, 2);
 
                 neck1Pos = new Vector3f(0, 3, 1);
                 neck2Pos = new Vector3f(yawOffset * 0.5f, 3, 1.5f);
@@ -722,18 +730,18 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
                 tail3Pos = new Vector3f(yawOffset * 2f, -2.5f , -2.5f);
             }
         } else {
-            if (isSitting()) {
+            if (isOrderedToSit()) {
                 wing1LeftPos = new Vector3f(1.5f, 0, 0.5f);
-                wing1LeftScale = new Vec2f(2, 1.5f);
+                wing1LeftScale = new Vec2(2, 1.5f);
 
                 wing2LeftPos = new Vector3f(1.75f, 0.75f, -0.5f);
-                wing2LeftScale = new Vec2f(1.5f, 1.5f);
+                wing2LeftScale = new Vec2(1.5f, 1.5f);
 
                 wing1RightPos = new Vector3f(-1.5f, 0, 0.5f);
-                wing1RightScale = new Vec2f(2, 1.5f);
+                wing1RightScale = new Vec2(2, 1.5f);
 
                 wing2RightPos = new Vector3f(-1.75f, 0.75f, -0.5f);
-                wing2RightScale = new Vec2f(1.5f, 1.5f);
+                wing2RightScale = new Vec2(1.5f, 1.5f);
 
                 if (hasSurrendered()) {
                     neck1Pos = new Vector3f(0, 1.6f, 1);
@@ -751,16 +759,16 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
 
             } else {
                 wing1LeftPos = new Vector3f(1.5f, 0, 0.5f);
-                wing1LeftScale = new Vec2f(2, 1.5f);
+                wing1LeftScale = new Vec2(2, 1.5f);
 
                 wing2LeftPos = new Vector3f(1.75f, 0.75f, -0.5f);
-                wing2LeftScale = new Vec2f(1.5f, 1.5f);
+                wing2LeftScale = new Vec2(1.5f, 1.5f);
 
                 wing1RightPos = new Vector3f(-1.5f, 0, 0.5f);
-                wing1RightScale = new Vec2f(2, 1.5f);
+                wing1RightScale = new Vec2(2, 1.5f);
 
                 wing2RightPos = new Vector3f(-1.75f, 0.75f, -0.5f);
-                wing2RightScale = new Vec2f(1.5f, 1.5f);
+                wing2RightScale = new Vec2(1.5f, 1.5f);
 
                 neck1Pos = new Vector3f(0, 2, 1);
                 neck2Pos = new Vector3f(yawOffset * 0.4f, 2.25f, 1.5f);

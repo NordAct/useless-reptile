@@ -1,35 +1,34 @@
 package nordmods.uselessreptile.common.init;
 
 import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
-import net.minecraft.entity.effect.StatusEffectInstance;
-
-import net.minecraft.item.Items;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.Potions;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.Potions;
 import nordmods.uselessreptile.UselessReptile;
 
 public class URPotions extends Potions {
 
-    public static final RegistryEntry.Reference<Potion> ACID = Registry.registerReference(Registries.POTION,
+    public static final Holder.Reference<Potion> ACID = Registry.registerForHolder(BuiltInRegistries.POTION,
             UselessReptile.id("acid"),
-            new Potion("acid", new StatusEffectInstance(URStatusEffects.ACID, 200, 1)) {
+            new Potion("acid", new MobEffectInstance(URStatusEffects.ACID, 200, 1)) {
                 @Override
-                public boolean hasInstantEffect() {return false;}
+                public boolean hasInstantEffects() {return false;}
             });
-    public static final RegistryEntry.Reference<Potion> LONG_ACID = Registry.registerReference(Registries.POTION,
+    public static final Holder.Reference<Potion> LONG_ACID = Registry.registerForHolder(BuiltInRegistries.POTION,
             UselessReptile.id("long_acid"),
-            new Potion("long_acid", new StatusEffectInstance(URStatusEffects.ACID, 400, 1)) {
+            new Potion("long_acid", new MobEffectInstance(URStatusEffects.ACID, 400, 1)) {
                 @Override
-                public boolean hasInstantEffect() {return false;}
+                public boolean hasInstantEffects() {return false;}
             });
-    public static final RegistryEntry.Reference<Potion> STRONG_ACID = Registry.registerReference(Registries.POTION,
+    public static final Holder.Reference<Potion> STRONG_ACID = Registry.registerForHolder(BuiltInRegistries.POTION,
             UselessReptile.id("strong_acid"),
-            new Potion("strong_acid", new StatusEffectInstance(URStatusEffects.ACID, 200, 3)) {
+            new Potion("strong_acid", new MobEffectInstance(URStatusEffects.ACID, 200, 3)) {
                 @Override
-                public boolean hasInstantEffect() {return false;}
+                public boolean hasInstantEffects() {return false;}
             });
 
     public static void init() {
@@ -38,8 +37,8 @@ public class URPotions extends Potions {
 
     private static void recipesRegister() {
         FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
-            builder.registerPotionRecipe(ACID, Items.GLOWSTONE_DUST,STRONG_ACID);
-            builder.registerPotionRecipe(ACID, Items.REDSTONE, LONG_ACID);
+            builder.addMix(ACID, Items.GLOWSTONE_DUST,STRONG_ACID);
+            builder.addMix(ACID, Items.REDSTONE, LONG_ACID);
         });
     }
 }

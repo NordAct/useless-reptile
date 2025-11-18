@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import net.minecraft.entity.ai.goal.RevengeGoal;
+import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class DragonRevengeGoal extends RevengeGoal {
+public class DragonRevengeGoal extends HurtByTargetGoal {
 
     private final URDragonEntity mob;
     public DragonRevengeGoal(URDragonEntity mob, Class<?>... noRevengeTypes) {
@@ -12,8 +12,8 @@ public class DragonRevengeGoal extends RevengeGoal {
     }
 
     @Override
-    public boolean canStart() {
-        if (super.canStart()) return mob.canTarget(mob.getAttacker());
+    public boolean canUse() {
+        if (super.canUse()) return mob.canAttack(mob.getLastHurtByMob());
         else return false;
     }
 }

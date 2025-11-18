@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.common.entity.misc;
 
-import net.minecraft.inventory.SimpleInventory;
-import net.minecraft.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 
-public class DragonInventory extends SimpleInventory {
+public class DragonInventory extends SimpleContainer {
     public static final int INVENTORY_START_INDEX = 5;
     public static final int SADDLE_INDEX = 0;
     public static final int HELMET_INDEX = 1;
@@ -47,15 +47,15 @@ public class DragonInventory extends SimpleInventory {
     }
 
     @Override
-    public boolean canInsert(ItemStack stack) {
-        for (int i = 0; i < size(); i++) {
+    public boolean canAddItem(ItemStack stack) {
+        for (int i = 0; i < getContainerSize(); i++) {
             if (canInsertInSlot(stack, i)) return true;
         }
         return false;
     }
 
     public boolean canInsertInSlot(ItemStack stack, int slot) {
-        ItemStack itemStack = heldStacks.get(slot);
+        ItemStack itemStack = items.get(slot);
         switch (slot) {
             case SADDLE_INDEX -> {
                 if (hasSaddle && itemStack.isEmpty() && isSaddle.apply(stack)) return true;
@@ -73,26 +73,26 @@ public class DragonInventory extends SimpleInventory {
                 if (hasBanner && itemStack.isEmpty() && isBanner.apply(stack)) return true;
             }
             default -> {
-                if (itemStack.isEmpty() || ItemStack.areItemsAndComponentsEqual(itemStack, stack) && itemStack.getCount() < itemStack.getMaxCount()) return true;
+                if (itemStack.isEmpty() || ItemStack.isSameItemSameComponents(itemStack, stack) && itemStack.getCount() < itemStack.getMaxStackSize()) return true;
             }
         }
         return false;
     }
 
     @Override
-    public ItemStack addStack(ItemStack stack) {
+    public ItemStack addItem(ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
         ItemStack itemStack = stack.copy();
-        for (int i = 0; i < size(); i++) {
+        for (int i = 0; i < getContainerSize(); i++) {
             if (canInsertInSlot(stack, i)) {
-                ItemStack target = getStack(i);
+                ItemStack target = getItem(i);
                 if (target.isEmpty()) {
-                    setStack(i, itemStack);
+                    setItem(i, itemStack);
                     return ItemStack.EMPTY;
                 }
                 else {
-                    transfer(itemStack, getStack(i));
+                    moveItemsBetweenStacks(itemStack, getItem(i));
                     if (itemStack.isEmpty()) return ItemStack.EMPTY;
                 }
             }
@@ -104,13 +104,13 @@ public class DragonInventory extends SimpleInventory {
         return storageSize.size + INVENTORY_START_INDEX;
     }
 
-    private void transfer(ItemStack source, ItemStack target) {
-        int i = getMaxCount(target);
+    private void moveItemsBetweenStacks(ItemStack source, ItemStack target) {
+        int i = getMaxStackSize(target);
         int j = Math.min(source.getCount(), i - target.getCount());
         if (j > 0) {
-            target.increment(j);
-            source.decrement(j);
-            markDirty();
+            target.grow(j);
+            source.shrink(j);
+            setChanged();
         }
     }
 

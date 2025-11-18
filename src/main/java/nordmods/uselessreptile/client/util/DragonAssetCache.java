@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.client.util;
 
-import net.minecraft.entity.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
+import net.minecraft.world.entity.EquipmentSlot;
 
 public class DragonAssetCache extends AssetCache {
     private HashMap<EquipmentSlot, DragonEquipmentAnimatable> equipmentAnimatablesMap = createEmptyEquipmentMap();

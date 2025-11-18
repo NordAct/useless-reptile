@@ -1,26 +1,26 @@
 package nordmods.uselessreptile.client.renderer.special;
 
-import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.EntityRendererFactory;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RotationAxis;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
 import org.joml.Vector3f;
 
 public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity, ShockwaveSphereEntityRenderer.ShockwaveSpereEntityRenderState> {
-    private static final Identifier TEXTURE = UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
+    private static final ResourceLocation TEXTURE = UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
     private static final int SPHERE_ROWS = 16;
 
-    public ShockwaveSphereEntityRenderer(EntityRendererFactory.Context ctx) {
+    public ShockwaveSphereEntityRenderer(EntityRendererProvider.Context ctx) {
         super(ctx);
     }
 
@@ -30,28 +30,28 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
     }
 
     @Override
-    public void render(ShockwaveSpereEntityRenderState state, MatrixStack matrixStack, OrderedRenderCommandQueue commandQueue, CameraRenderState cameraRenderState) {
-        matrixStack.push();
+    public void submit(ShockwaveSpereEntityRenderState state, PoseStack matrixStack, SubmitNodeCollector commandQueue, CameraRenderState cameraRenderState) {
+        matrixStack.pushPose();
 
-        RenderLayer layer = RenderLayer.getEntityTranslucentEmissive(TEXTURE, true);
+        RenderType layer = RenderType.entityTranslucentEmissive(TEXTURE, true);
 
-        matrixStack.push();
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.alpha / 2f * 180f));
-        renderSphere(matrixStack, layer, MathHelper.clamp(state.alpha - 0.2f, 0, 1), state.radius);
-        matrixStack.pop();
+        matrixStack.pushPose();
+        matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha / 2f * 180f));
+        renderSphere(matrixStack, layer, Mth.clamp(state.alpha - 0.2f, 0, 1), state.radius);
+        matrixStack.popPose();
 
-        matrixStack.push();
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(-state.alpha / 1.5f * 180f));
-        renderSphere(matrixStack, layer, MathHelper.clamp(state.alpha/1.5f - 0.1f, 0, 1), state.radius/1.5f);
-        matrixStack.pop();
+        matrixStack.pushPose();
+        matrixStack.mulPose(Axis.YP.rotationDegrees(-state.alpha / 1.5f * 180f));
+        renderSphere(matrixStack, layer, Mth.clamp(state.alpha/1.5f - 0.1f, 0, 1), state.radius/1.5f);
+        matrixStack.popPose();
 
-        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(state.alpha * 180f));
+        matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha * 180f));
         renderSphere(matrixStack, layer, state.alpha/2f, state.radius/2f);
 
-        matrixStack.pop();
+        matrixStack.popPose();
     }
 
-    private void renderSphere(MatrixStack matrixStack, RenderLayer renderLayer, float alpha, float radius) {
+    private void renderSphere(PoseStack matrixStack, RenderType renderLayer, float alpha, float radius) {
         float dPhi = (float) (-Math.PI / SPHERE_ROWS);
         float dTheta = (float) (-2 * Math.PI / SPHERE_ROWS);
 
@@ -74,9 +74,9 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
                 Vector3f v2 = getSphereDot(maxPhi, maxTheta, radius);
                 Vector3f v3 = getSphereDot(maxPhi, minTheta, radius);
 
-                RenderUtil.renderQuad(matrixStack.peek().getPositionMatrix(), matrixStack.peek(), renderLayer,
+                RenderUtil.renderQuad(matrixStack.last().pose(), matrixStack.last(), renderLayer,
                         v0, v1 ,v2 ,v3,
-                        alpha, 1, 1, 1,LightmapTextureManager.MAX_LIGHT_COORDINATE,
+                        alpha, 1, 1, 1,LightTexture.FULL_BRIGHT,
                         minU, maxU, minV, maxV);
             }
         }
@@ -90,11 +90,11 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
     }
 
     @Override
-    public void updateRenderState(ShockwaveSphereEntity entity, ShockwaveSpereEntityRenderState state, float tickDelta) {
-        super.updateRenderState(entity, state, tickDelta);
-        state.radius = MathHelper.lerp(tickDelta, entity.getPrevRadius(), entity.getCurrentRadius());
-        float alpha = MathHelper.clamp(1f - (state.age < 3 ? 0 : state.radius / ShockwaveSphereEntity.MAX_RADIUS), 0f, 1f);
-        state.alpha = MathHelper.lerp(tickDelta, entity.prevAlpha, alpha);
+    public void extractRenderState(ShockwaveSphereEntity entity, ShockwaveSpereEntityRenderState state, float tickDelta) {
+        super.extractRenderState(entity, state, tickDelta);
+        state.radius = Mth.lerp(tickDelta, entity.getPrevRadius(), entity.getCurrentRadius());
+        float alpha = Mth.clamp(1f - (state.ageInTicks < 3 ? 0 : state.radius / ShockwaveSphereEntity.MAX_RADIUS), 0f, 1f);
+        state.alpha = Mth.lerp(tickDelta, entity.prevAlpha, alpha);
         entity.prevAlpha = state.alpha;
     }
 

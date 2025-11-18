@@ -2,20 +2,20 @@ package nordmods.uselessreptile.datagen.assets;
 
 import net.fabricmc.fabric.api.client.datagen.v1.builder.SoundTypeBuilder;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricSoundsProvider;
-import net.minecraft.data.DataOutput;
-import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.PackOutput;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.URSounds;
 
 import java.util.concurrent.CompletableFuture;
 
 public class URSoundsProvider extends FabricSoundsProvider {
-    public URSoundsProvider(DataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
+    public URSoundsProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup registryLookup, SoundExporter exporter) {
+    protected void configure(HolderLookup.Provider registryLookup, SoundExporter exporter) {
         exporter.add(URSounds.DRAGON_WOOSH,
                 SoundTypeBuilder.of()
                         .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("common/woosh1")))

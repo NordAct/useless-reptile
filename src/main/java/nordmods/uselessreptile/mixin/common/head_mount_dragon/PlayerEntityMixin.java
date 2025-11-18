@@ -1,15 +1,15 @@
 package nordmods.uselessreptile.mixin.common.head_mount_dragon;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.storage.NbtReadView;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.world.World;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jetbrains.annotations.NotNull;
@@ -19,39 +19,39 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public abstract class PlayerEntityMixin extends LivingEntity implements HeadMountDragonOwner {
-    @Unique private NbtCompound headMountDragon = new NbtCompound();
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, World world) {
+    @Unique private CompoundTag headMountDragon = new CompoundTag();
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);
     }
 
-    @Inject(method = "writeCustomData", at = @At("TAIL"))
-    private void writeToNbt(WriteView view, CallbackInfo ci) {
-        if (!headMountDragon.isEmpty()) view.put("HeadMountDragon", NbtCompound.CODEC, headMountDragon);
+    @Inject(method = "addAdditionalSaveData", at = @At("TAIL"))
+    private void writeToNbt(ValueOutput view, CallbackInfo ci) {
+        if (!headMountDragon.isEmpty()) view.store("HeadMountDragon", CompoundTag.CODEC, headMountDragon);
     }
 
-    @Inject(method = "readCustomData", at = @At("TAIL"))
-    private void readFromNbt(ReadView view, CallbackInfo ci) {
-        useless_reptile$setHeadMountDragon(view.read("HeadMountDragon", NbtCompound.CODEC).orElse(headMountDragon));
+    @Inject(method = "readAdditionalSaveData", at = @At("TAIL"))
+    private void readFromNbt(ValueInput view, CallbackInfo ci) {
+        useless_reptile$setHeadMountDragon(view.read("HeadMountDragon", CompoundTag.CODEC).orElse(headMountDragon));
     }
 
     @Override
-    public void useless_reptile$setHeadMountDragon(@NotNull NbtCompound state) {
+    public void useless_reptile$setHeadMountDragon(@NotNull CompoundTag state) {
         headMountDragon = state;
     }
 
     @Override
     @NotNull
-    public NbtCompound useless_reptile$getHeadMountDragon() {
+    public CompoundTag useless_reptile$getHeadMountDragon() {
         return headMountDragon;
     }
 
     @Inject(method = "remove", at = @At("TAIL"))
     private void removeHeadMountDragon(RemovalReason reason, CallbackInfo ci) {
-        if (!headMountDragon.isEmpty() && getEntityWorld() instanceof ServerWorld world) {
+        if (!headMountDragon.isEmpty() && level() instanceof ServerLevel world) {
             if (!reason.shouldDestroy()) {
-                EntityType.getEntityFromData(NbtReadView.create(UselessReptile.ERROR_REPORTER, world.getRegistryManager(), headMountDragon), world, SpawnReason.LOAD).ifPresent(dragon -> {
+                EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), headMountDragon), world, EntitySpawnReason.LOAD).ifPresent(dragon -> {
                     dragon.remove(reason);
                 });
             }

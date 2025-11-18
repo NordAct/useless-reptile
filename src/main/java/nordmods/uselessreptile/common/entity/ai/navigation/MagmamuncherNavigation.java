@@ -1,36 +1,36 @@
 package nordmods.uselessreptile.common.entity.ai.navigation;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.ai.pathing.LandPathNodeMaker;
-import net.minecraft.entity.ai.pathing.PathContext;
-import net.minecraft.entity.ai.pathing.PathNodeNavigator;
-import net.minecraft.entity.ai.pathing.PathNodeType;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.pathfinder.PathfindingContext;
+import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public class MagmamuncherNavigation extends DragonNavigation {
-    public MagmamuncherNavigation(URDragonEntity mobEntity, World world) {
+    public MagmamuncherNavigation(URDragonEntity mobEntity, Level world) {
         super(mobEntity, world);
     }
 
     @Override
-    public boolean canJumpToNext(PathNodeType nodeType) {
-        return nodeType != PathNodeType.DANGER_OTHER && nodeType != PathNodeType.WALKABLE_DOOR;
+    public boolean canCutCorner(PathType nodeType) {
+        return nodeType != PathType.DANGER_OTHER && nodeType != PathType.WALKABLE_DOOR;
     }
 
     @Override
-    protected PathNodeNavigator createPathNodeNavigator(int range) {
-        this.nodeMaker = new MagmamuncherPathNodeMaker();
-        return new PathNodeNavigator(nodeMaker, range);
+    protected PathFinder createPathFinder(int range) {
+        this.nodeEvaluator = new MagmamuncherPathNodeMaker();
+        return new PathFinder(nodeEvaluator, range);
     }
 
-    public static class MagmamuncherPathNodeMaker extends LandPathNodeMaker {
+    public static class MagmamuncherPathNodeMaker extends WalkNodeEvaluator {
         @Override
-        public PathNodeType getDefaultNodeType(PathContext context, int x, int y, int z) {
+        public PathType getPathType(PathfindingContext context, int x, int y, int z) {
             BlockState blockState = context.getBlockState(new BlockPos(x, y, z));
-            return blockState.isOf(Blocks.MAGMA_BLOCK) ? PathNodeType.BLOCKED : super.getDefaultNodeType(context, x, y, z);
+            return blockState.is(Blocks.MAGMA_BLOCK) ? PathType.BLOCKED : super.getPathType(context, x, y, z);
         }
     }
 }

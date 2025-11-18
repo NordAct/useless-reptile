@@ -3,8 +3,8 @@ package nordmods.uselessreptile;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import net.minecraft.util.ErrorReporter;
-import net.minecraft.util.Identifier;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.ProblemReporter;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.init.*;
@@ -12,7 +12,7 @@ import org.slf4j.Logger;
 
 public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
     public static final Logger LOGGER = LogUtils.getLogger();
-    public static final ErrorReporter.Logging ERROR_REPORTER = new ErrorReporter.Logging(LOGGER);
+    public static final ProblemReporter.ScopedCollector ERROR_REPORTER = new ProblemReporter.ScopedCollector(LOGGER);
     public static final String MODID = "uselessreptile";
 
     @Override
@@ -40,7 +40,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
         URConfig.init();
     }
 
-    public static Identifier id(String id) {
-        return Identifier.of(MODID, id);
+    public static ResourceLocation id(String id) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, id);
     }
 }

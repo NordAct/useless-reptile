@@ -1,36 +1,40 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.minecraft.component.DataComponentTypes;
-import net.minecraft.component.type.PotionContentsComponent;
-import net.minecraft.entity.*;
-import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
-import net.minecraft.entity.ai.goal.SitGoal;
-import net.minecraft.entity.ai.goal.SwimGoal;
-import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.entity.passive.ChickenEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.stat.Stats;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Vec2f;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityDimensions;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.alchemy.PotionContents;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec2;
+import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -67,13 +71,13 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     private final URDragonPart tail2 = new URDragonPart(this);
     private final URDragonPart tail3 = new URDragonPart(this);
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
-    private ShootingPoint shootingPoint = new ShootingPoint(getEntityPos(), getRotationVector());
+    private ShootingPoint shootingPoint = new ShootingPoint(position(), getLookAngle());
 
     public static final float BASE_GROUND_SPEED = 0.2f;
 
-    public WyvernEntity(EntityType<? extends URRideableFlyingDragonEntity> entityType, World world) {
+    public WyvernEntity(EntityType<? extends URRideableFlyingDragonEntity> entityType, Level world) {
         super(entityType, world);
-        experiencePoints = 20;
+        xpReward = 20;
 
         pitchLimitGround = 50;
         pitchLimitAir = 20;
@@ -94,15 +98,15 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public Vec3d getShootingPointAnchor() {
+    public Vec3 getShootingPointAnchor() {
         return head
-                .getEntityPos()
-                .add(0, head.getHeight() / 2f, 0);
+                .position()
+                .add(0, head.getBbHeight() / 2f, 0);
     }
 
     @Override
     public float getShootingPointDesiredPitch() {
-        return getPitch();
+        return getXRot();
     }
 
     @Override
@@ -111,33 +115,33 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    protected void initGoals() {
-        goalSelector.add(1, new SwimGoal(this));
-        goalSelector.add(2, new FlyingDragonCallBackGoal<>(this));
-        goalSelector.add(3, new SitGoal(this));
-        goalSelector.add(4, new DragonEatFromInventoryGoal(this));
-        goalSelector.add(6, new WyvernAttackGoal(this, 512));
-        goalSelector.add(7, new FlyingDragonFlyDownGoal<>(this, 30));
-        goalSelector.add(8, new DragonReturnToHomePoint(this));
-        goalSelector.add(9, new DragonWanderAroundGoal(this));
-        goalSelector.add(9, new FlyingDragonFlyAroundGoal<>(this, 30));
-        goalSelector.add(10, new DragonLookAroundGoal(this));
-        targetSelector.add(6, new UntamedActiveTargetGoal<>(this, ChickenEntity.class, true, null));
-        targetSelector.add(5, new AttackWithOwnerGoal(this));
-        targetSelector.add(4, new DragonRevengeGoal(this));
-        if (URConfig.getConfig().dragonMadness) targetSelector.add(5, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
+    protected void registerGoals() {
+        goalSelector.addGoal(1, new FloatGoal(this));
+        goalSelector.addGoal(2, new FlyingDragonCallBackGoal<>(this));
+        goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
+        goalSelector.addGoal(4, new DragonEatFromInventoryGoal(this));
+        goalSelector.addGoal(6, new WyvernAttackGoal(this, 512));
+        goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 30));
+        goalSelector.addGoal(8, new DragonReturnToHomePoint(this));
+        goalSelector.addGoal(9, new DragonWanderAroundGoal(this));
+        goalSelector.addGoal(9, new FlyingDragonFlyAroundGoal<>(this, 30));
+        goalSelector.addGoal(10, new DragonLookAroundGoal(this));
+        targetSelector.addGoal(6, new NonTameRandomTargetGoal<>(this, Chicken.class, true, null));
+        targetSelector.addGoal(5, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(4, new DragonRevengeGoal(this));
+        if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(5, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
     }
 
-    public static DefaultAttributeContainer.Builder createWyvernAttributes() {
+    public static AttributeSupplier.Builder createWyvernAttributes() {
         return createDragonAttributes()
-                .add(EntityAttributes.ATTACK_DAMAGE, attributes().wyvernDamage)
-                .add(EntityAttributes.ATTACK_KNOCKBACK, attributes().wyvernKnockback)
-                .add(EntityAttributes.MAX_HEALTH, attributes().wyvernHealth)
-                .add(EntityAttributes.ARMOR, attributes().wyvernArmor)
-                .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().wyvernArmorToughness)
-                .add(EntityAttributes.MOVEMENT_SPEED, attributes().wyvernGroundSpeed)
-                .add(EntityAttributes.FLYING_SPEED, attributes().wyvernFlyingSpeed)
-                .add(EntityAttributes.JUMP_STRENGTH, 0.42 * 1.5)
+                .add(Attributes.ATTACK_DAMAGE, attributes().wyvernDamage)
+                .add(Attributes.ATTACK_KNOCKBACK, attributes().wyvernKnockback)
+                .add(Attributes.MAX_HEALTH, attributes().wyvernHealth)
+                .add(Attributes.ARMOR, attributes().wyvernArmor)
+                .add(Attributes.ARMOR_TOUGHNESS, attributes().wyvernArmorToughness)
+                .add(Attributes.MOVEMENT_SPEED, attributes().wyvernGroundSpeed)
+                .add(Attributes.FLYING_SPEED, attributes().wyvernFlyingSpeed)
+                .add(Attributes.JUMP_STRENGTH, 0.42 * 1.5)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().wyvernVerticalSpeed)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().wyvernBaseAccelerationDuration)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().wyvernRotationSpeedGround)
@@ -182,10 +186,10 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
             return loopAnim("fly.idle", event);
         }
-        if (isSitting() && !isDancing()) return loopAnim("sit", event);
+        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
-        if (isDancing() && !hasPassengers()) return loopAnim("dance", event);
+        if (isDancing() && !isVehicle()) return loopAnim("dance", event);
         return loopAnim("idle", event);
     }
 
@@ -211,9 +215,9 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public boolean canHaveStatusEffect(StatusEffectInstance effect) {
-        RegistryEntry<StatusEffect> type = effect.getEffectType();
-        return !(type == URStatusEffects.ACID || type == StatusEffects.POISON || type == StatusEffects.HUNGER);
+    public boolean canBeAffected(MobEffectInstance effect) {
+        Holder<MobEffect> type = effect.getEffect();
+        return !(type == URStatusEffects.ACID || type == MobEffects.POISON || type == MobEffects.HUNGER);
     }
 
     @Override
@@ -256,7 +260,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Override
     public boolean isSaddle(ItemStack itemStack) {
-        return itemStack.isIn(URTags.WYVERN_SADDLES);
+        return itemStack.is(URTags.WYVERN_SADDLES);
     }
 
     @Override
@@ -284,42 +288,42 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public ActionResult interactMob(PlayerEntity player, Hand hand) {
-        ItemStack itemStack = player.getStackInHand(hand);
-        if (isTamed()) {
-            if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwner(player)) {
+    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+        ItemStack itemStack = player.getItemInHand(hand);
+        if (isTame()) {
+            if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwnedBy(player)) {
                 Item bottle = itemStack.getItem();
                 ItemStack potion = new ItemStack(Items.POTION);
-                potion.set(DataComponentTypes.POTION_CONTENTS, new PotionContentsComponent(URPotions.ACID));
-                player.incrementStat(Stats.USED.getOrCreateStat(bottle));
-                getEntityWorld().playSoundClient(SoundEvents.ITEM_BOTTLE_FILL, player.getSoundCategory(), 1.0F, 1.0F);
-                consumeGivenItem(player, itemStack, SoundEvents.ITEM_BOTTLE_FILL, hand);
-                player.giveItemStack(potion);
-                return ActionResult.SUCCESS;
+                potion.set(DataComponents.POTION_CONTENTS, new PotionContents(URPotions.ACID));
+                player.awardStat(Stats.ITEM_USED.get(bottle));
+                level().playPlayerSound(SoundEvents.BOTTLE_FILL, player.getSoundSource(), 1.0F, 1.0F);
+                consumeGivenItem(player, itemStack, SoundEvents.BOTTLE_FILL, hand);
+                player.addItem(potion);
+                return InteractionResult.SUCCESS;
             }
         }
-        return super.interactMob(player, hand);
+        return super.mobInteract(player, hand);
     }
 
     @Override
-    public EntityDimensions getBaseDimensions(EntityPose pose) {
-        return super.getBaseDimensions(pose).withEyeHeight(getHeight() * 0.95f);
+    public EntityDimensions getDefaultDimensions(Pose pose) {
+        return super.getDefaultDimensions(pose).withEyeHeight(getBbHeight() * 0.95f);
     }
 
     @Override
-    public double getSwimHeight() {
+    public double getFluidJumpThreshold() {
         return 1;
     }
 
     public void shoot() {
-        if (getEntityWorld().isClient()) return;
+        if (level().isClientSide()) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
         for (int i = 0; i < 5; ++i) {
-            AcidBlastEntity projectileEntity = new AcidBlastEntity(getEntityWorld(), this);
-            projectileEntity.setPosition(getShootingPoint().pos());
-            Vec3d rot = getShootingPoint().rotation().multiply(0.5f);
-            projectileEntity.setVelocity(rot.x, rot.y, rot.z, 3.0f, 5.0f);
-            getEntityWorld().spawnEntity(projectileEntity);
+            AcidBlastEntity projectileEntity = new AcidBlastEntity(level(), this);
+            projectileEntity.setPos(getShootingPoint().pos());
+            Vec3 rot = getShootingPoint().rotation().scale(0.5f);
+            projectileEntity.shoot(rot.x, rot.y, rot.z, 3.0f, 5.0f);
+            level().addFreshEntity(projectileEntity);
         }
     }
 
@@ -328,19 +332,19 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     public void meleeAttack() {
-        if (!(getEntityWorld() instanceof ServerWorld world)) return;
-        List<Entity> list = world.getOtherEntities(
+        if (!(level() instanceof ServerLevel world)) return;
+        List<Entity> list = world.getEntities(
                 this,
-                getAttackBox(),
-                entity -> !getPassengerList().contains(entity)
-                        && !entity.isPartOf(this)
-                        && (entity instanceof LivingEntity livingEntity && canTarget(livingEntity) || !(entity instanceof LivingEntity))
-                        && !entity.getType().isIn(URTags.DRAGON_IMMUNE));
+                getAttackBoundingBox(),
+                entity -> !getPassengers().contains(entity)
+                        && !entity.is(this)
+                        && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
+                        && !entity.getType().is(URTags.DRAGON_IMMUNE));
         Entity target = null;
         if (!list.isEmpty()) {
             target = list.getFirst();
             for (Entity entry : list) {
-                if (squaredDistanceTo(entry) < squaredDistanceTo(target)) target = entry;
+                if (distanceToSqr(entry) < distanceToSqr(target)) target = entry;
             }
         }
         setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
@@ -348,22 +352,22 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
         if (isFlying()) {
             SoundInfo soundInfo = getSoundInfo("bite");
             if (soundInfo != null)
-                URPacketHelper.playSound(this, SoundEvent.of(soundInfo.id()), getSoundCategory(), soundInfo.volume(), getRandom().nextTriangular(soundInfo.pitch(), soundInfo.pitchDeviation()), 3);
+                URPacketHelper.playSound(this, SoundEvent.createVariableRangeEvent(soundInfo.id()), getSoundSource(), soundInfo.volume(), getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()), 3);
         }
-        if (target != null && !getPassengerList().contains(target)) {
-            Box targetBox = target.getBoundingBox();
-            if (targetBox.intersects(getAttackBox())) tryAttack(world, target);
+        if (target != null && !getPassengers().contains(target)) {
+            AABB targetBox = target.getBoundingBox();
+            if (targetBox.intersects(getAttackBoundingBox())) doHurtTarget(world, target);
         }
     }
 
     @Override
-    public Box getAttackBox() {
+    public AABB getAttackBoundingBox() {
         double modifier = isFlying() ? getWidthMod() / 2 : (getWidthMod() + 0.1);
-        double x = -Math.sin(Math.toRadians(getYaw())) * modifier;
-        double z = Math.cos(Math.toRadians(getYaw())) * modifier;
+        double x = -Math.sin(Math.toRadians(getYRot())) * modifier;
+        double z = Math.cos(Math.toRadians(getYRot())) * modifier;
         double y = isFlying() ? -2 : 0;
-        return new Box(getEntityPos().getX() + x - getWidthMod() / 1.5, getEntityPos().getY() + y, getEntityPos().getZ() + z - getWidthMod() / 1.5,
-                getEntityPos().getX() + x + getWidthMod() / 1.5, getEntityPos().getY() + getHeight() + 1, getEntityPos().getZ() + z + getWidthMod() / 1.5);
+        return new AABB(position().x() + x - getWidthMod() / 1.5, position().y() + y, position().z() + z - getWidthMod() / 1.5,
+                position().x() + x + getWidthMod() / 1.5, position().y() + getBbHeight() + 1, position().z() + z + getWidthMod() / 1.5);
     }
 
     @Override
@@ -378,13 +382,13 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
     @Nullable
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (!getEntityWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        if (!level().isClientSide()) GUIEntityToRenderS2CPacket.send((ServerPlayer) player, this);
         return new URDragonScreenHandler(URScreenHandlers.WYVERN_INVENTORY, syncId, inv, getInventory());
     }
 
     @Override
-    public int getLimitPerChunk() {
+    public int getMaxSpawnClusterSize() {
         return URConfig.getConfig().wyvernMaxGroupSize * 2;
     }
 
@@ -394,8 +398,8 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     public void updateChildParts() {
-        Vec2f wingLeftScale;
-        Vec2f wingRightScale;
+        Vec2 wingLeftScale;
+        Vec2 wingRightScale;
 
         Vector3f wingLeftPos;
         Vector3f wingRightPos;
@@ -412,16 +416,16 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
                 if (getTiltState() == 2) {
                     wingLeftPos = new Vector3f(2, 0, -0.5f);
-                    wingLeftScale = new Vec2f(1, 1.5f);
+                    wingLeftScale = new Vec2(1, 1.5f);
 
                     wingRightPos = new Vector3f(-2, 0, -0.5f);
-                    wingRightScale = new Vec2f(1, 1.5f);
+                    wingRightScale = new Vec2(1, 1.5f);
                 } else {
                     wingLeftPos = new Vector3f(2.5f, 0, -0.5f);
-                    wingLeftScale = new Vec2f(1, 2.5f);
+                    wingLeftScale = new Vec2(1, 2.5f);
 
                     wingRightPos = new Vector3f(-2.5f, 0, -0.5f);
-                    wingRightScale = new Vec2f(1, 2.5f);
+                    wingRightScale = new Vec2(1, 2.5f);
                 }
                 neckPos = new Vector3f(yawOffset * 0.5f, pitchOffset * 1, 1.75f);
                 headPos = new Vector3f(yawOffset * 1.25f, pitchOffset * 1.5f, 2.75f - Math.abs(yawOffset) * 0.5f);
@@ -430,10 +434,10 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 tail3Pos = new Vector3f(yawOffset * 2f, -pitchOffset * 1 , -4 + Math.abs(yawOffset) * 1);
             } else {
                 wingLeftPos = new Vector3f(3, 0, -0.5f);
-                wingLeftScale = new Vec2f(3, 3);
+                wingLeftScale = new Vec2(3, 3);
 
                 wingRightPos = new Vector3f(-3, 0, -0.5f);
-                wingRightScale = new Vec2f(3, 3);
+                wingRightScale = new Vec2(3, 3);
 
                 neckPos = new Vector3f(0, 3, 1);
                 headPos = new Vector3f(yawOffset, 3.1f, 1.9f);
@@ -442,12 +446,12 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
                 tail3Pos = new Vector3f(yawOffset * 2f, -0.2f , -3.2f + Math.abs(yawOffset) * 1);
             }
         } else {
-            if (isSitting()) {
+            if (isOrderedToSit()) {
                 wingLeftPos = new Vector3f(1.3333334f, 0, 0);
-                wingLeftScale = new Vec2f(1.5f, 2);
+                wingLeftScale = new Vec2(1.5f, 2);
 
                 wingRightPos = new Vector3f(-1.3333334f, 0, 0);
-                wingRightScale = new Vec2f(1.5f, 2);
+                wingRightScale = new Vec2(1.5f, 2);
 
                 neckPos = new Vector3f(0,  2.75f, 0.5f);
                 headPos = new Vector3f(0, 3, 1f);
@@ -457,10 +461,10 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
 
             } else {
                 wingLeftPos = new Vector3f(1, 0.5f, 0);
-                wingLeftScale = new Vec2f(2, 1.5f);
+                wingLeftScale = new Vec2(2, 1.5f);
 
                 wingRightPos = new Vector3f(-1, 0.5f, 0);
-                wingRightScale = new Vec2f(2, 1.5f);
+                wingRightScale = new Vec2(2, 1.5f);
 
                 neckPos = new Vector3f(0, 3, 1);
                 headPos = new Vector3f(yawOffset, 3.1f, 1.9f);

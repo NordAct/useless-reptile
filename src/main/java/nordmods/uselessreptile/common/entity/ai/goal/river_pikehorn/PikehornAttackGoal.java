@@ -1,10 +1,10 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.entity.RiverPikehornEntity;
 
 import java.util.EnumSet;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
 
 public class PikehornAttackGoal extends Goal {
     private final RiverPikehornEntity entity;
@@ -14,7 +14,7 @@ public class PikehornAttackGoal extends Goal {
     public PikehornAttackGoal(RiverPikehornEntity entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
-        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
+        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     @Override
@@ -23,22 +23,22 @@ public class PikehornAttackGoal extends Goal {
     }
 
     @Override
-    public boolean canStart() {
-        if (!entity.canTarget(entity.getTarget())) {
+    public boolean canUse() {
+        if (!entity.canAttack(entity.getTarget())) {
             entity.setTarget(null);
             return false;
         }
         target = entity.getTarget();
-        return target != null && (entity.squaredDistanceTo(target) < maxSearchDistance / (entity.isTamed() ? 1 : 8));
+        return target != null && (entity.distanceToSqr(target) < maxSearchDistance / (entity.isTame() ? 1 : 8));
     }
 
     @Override
-    public boolean shouldContinue() {
+    public boolean canContinueToUse() {
         if (target == null) return false;
         if (!target.isAlive()) {
             return false;
         }
-        return !entity.getNavigation().isIdle() || canStart();
+        return !entity.getNavigation().isDone() || canUse();
     }
 
     @Override
@@ -49,20 +49,20 @@ public class PikehornAttackGoal extends Goal {
     }
 
     @Override
-    public boolean shouldRunEveryTick() {
+    public boolean requiresUpdateEveryTick() {
         return true;
     }
 
     @Override
     public void tick() {
-        if (!shouldContinue() || target.isRemoved()) {
+        if (!canContinueToUse() || target.isRemoved()) {
             stop();
             return;
         }
         entity.setSprinting(true);
-        entity.getNavigation().startMovingTo(target, 1);
+        entity.getNavigation().moveTo(target, 1);
 
-        if (entity.getPrimaryAttackCooldown() > 0 || !entity.getAttackBox().intersects(target.getBoundingBox())) return;
+        if (entity.getPrimaryAttackCooldown() > 0 || !entity.getAttackBoundingBox().intersects(target.getBoundingBox())) return;
 
         entity.attackMelee(target);
     }

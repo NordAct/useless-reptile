@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.client.util;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.item.Item;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -15,6 +14,7 @@ import software.bernie.geckolib.util.ClientUtil;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.Map;
+import net.minecraft.world.item.Item;
 
 public class DragonEquipmentAnimatable implements GeoAnimatable, AssetCahceOwner {
     public GeoRenderState ownerRenderState;

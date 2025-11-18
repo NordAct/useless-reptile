@@ -1,15 +1,15 @@
 package nordmods.uselessreptile.common.entity.special;
 
-import net.minecraft.entity.AreaEffectCloudEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.hit.BlockHitResult;
-import net.minecraft.util.hit.EntityHitResult;
-import net.minecraft.world.World;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AreaEffectCloud;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import nordmods.uselessreptile.common.init.*;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -21,59 +21,59 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, ProjectileDamageHelper {
     private static final int COLOR = 0x99E416;
-    public AcidBlastEntity(EntityType<? extends AcidBlastEntity> entityType, World world) {
+    public AcidBlastEntity(EntityType<? extends AcidBlastEntity> entityType, Level world) {
         super(entityType, world);
         lifeLimit = 200;
     }
 
-    public AcidBlastEntity(World world, LivingEntity owner) {
+    public AcidBlastEntity(Level world, LivingEntity owner) {
         this(UREntities.ACID_BLAST_ENTITY, world);
         setOwner(owner);
-        pickupType = PickupPermission.DISALLOWED;
+        pickup = Pickup.DISALLOWED;
     }
 
     @Override
-    protected void onBlockHit(BlockHitResult blockHitResult) {
-        if (!getEntityWorld().isClient()) spawnEffectCloud();
-        super.onBlockHit(blockHitResult);
+    protected void onHitBlock(BlockHitResult blockHitResult) {
+        if (!level().isClientSide()) spawnEffectCloud();
+        super.onHitBlock(blockHitResult);
         discard();
     }
 
     @Override
-    protected void onEntityHit(EntityHitResult entityHitResult) {
-        if (!(getEntityWorld() instanceof ServerWorld world)) return;
+    protected void onHitEntity(EntityHitResult entityHitResult) {
+        if (!(level() instanceof ServerLevel world)) return;
         Entity target = entityHitResult.getEntity();
-        if (!target.getType().isIn(URTags.DRAGON_IMMUNE)) target.damage(world, target.getDamageSources().create(URDamageTypes.ACID, getOwner()), getResultingDamage());
+        if (!target.getType().is(URTags.DRAGON_IMMUNE)) target.hurtServer(world, target.damageSources().source(URDamageTypes.ACID, getOwner()), getResultingDamage());
         spawnEffectCloud();
-        super.onEntityHit(entityHitResult);
-        if (target instanceof LivingEntity entity) entity.addStatusEffect(new StatusEffectInstance(URStatusEffects.ACID, 60, 1));
+        super.onHitEntity(entityHitResult);
+        if (target instanceof LivingEntity entity) entity.addEffect(new MobEffectInstance(URStatusEffects.ACID, 60, 1));
         discard();
 
     }
 
     private void spawnEffectCloud() {
-        AreaEffectCloudEntity areaEffectCloudEntity = new AreaEffectCloudEntity(getEntityWorld(), getX(), getY(), getZ());
+        AreaEffectCloud areaEffectCloudEntity = new AreaEffectCloud(level(), getX(), getY(), getZ());
         Entity entity = getOwner();
         if (entity instanceof LivingEntity livingEntity) areaEffectCloudEntity.setOwner(livingEntity);
         playSound(URSounds.ACID_SPLASH, 1, 1);
         areaEffectCloudEntity.setRadius(1.0f);
         areaEffectCloudEntity.setDuration(20);
         areaEffectCloudEntity.setWaitTime(0);
-        areaEffectCloudEntity.setRadiusGrowth(0.1f);
-        areaEffectCloudEntity.addEffect(new StatusEffectInstance(URStatusEffects.ACID, 10, 1));
+        areaEffectCloudEntity.setRadiusPerTick(0.1f);
+        areaEffectCloudEntity.addEffect(new MobEffectInstance(URStatusEffects.ACID, 10, 1));
         areaEffectCloudEntity.setSilent(true);
-        getEntityWorld().spawnEntity(areaEffectCloudEntity);
+        level().addFreshEntity(areaEffectCloudEntity);
     }
 
     @Override
-    public boolean hasNoGravity() {
+    public boolean isNoGravity() {
         return true;
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (getEntityWorld().isClient()) spawnEffectParticles(8, COLOR);
+        if (level().isClientSide()) spawnEffectParticles(8, COLOR);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, Pr
     }
 
     @Override
-    protected SoundEvent getHitSound() {
+    protected SoundEvent getDefaultHitGroundSoundEvent() {
         return URSounds.ACID_SPLASH;
     }
 

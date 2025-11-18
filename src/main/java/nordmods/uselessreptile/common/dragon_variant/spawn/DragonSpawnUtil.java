@@ -1,17 +1,5 @@
 package nordmods.uselessreptile.common.dragon_variant.spawn;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.tag.TagKey;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.dynamic.Codecs;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldAccess;
-import net.minecraft.world.biome.Biome;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -20,71 +8,83 @@ import nordmods.uselessreptile.common.init.URRegistryKeys;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 
 public class DragonSpawnUtil {
-    public static boolean isBiomeInList(List<Codecs.TagEntryId> list, RegistryEntry<Biome> biome) {
-        for (Codecs.TagEntryId tagEntryId : list) {
+    public static boolean isBiomeInList(List<ExtraCodecs.TagOrElementLocation> list, Holder<Biome> biome) {
+        for (ExtraCodecs.TagOrElementLocation tagEntryId : list) {
             if (tagEntryId.tag()) {
-                if (biome.isIn(TagKey.of(RegistryKeys.BIOME, tagEntryId.id()))) return true;
-            } else if (biome.matchesId(tagEntryId.id())) return true;
+                if (biome.is(TagKey.create(Registries.BIOME, tagEntryId.id()))) return true;
+            } else if (biome.is(tagEntryId.id())) return true;
         }
 
         return false;
     }
 
-    public static boolean isBlockInList(List<Codecs.TagEntryId> list, RegistryEntry<Block> block) {
-        for (Codecs.TagEntryId tagEntryId : list) {
+    public static boolean isBlockInList(List<ExtraCodecs.TagOrElementLocation> list, Holder<Block> block) {
+        for (ExtraCodecs.TagOrElementLocation tagEntryId : list) {
             if (tagEntryId.tag()) {
-                if (block.isIn(TagKey.of(RegistryKeys.BLOCK, tagEntryId.id()))) return true;
-            } else if (block.matchesId(tagEntryId.id())) return true;
+                if (block.is(TagKey.create(Registries.BLOCK, tagEntryId.id()))) return true;
+            } else if (block.is(tagEntryId.id())) return true;
         }
 
         return false;
     }
 
-    public static void assignAvailableVariant(URDragonEntity entity, SpawnReason spawnReason) {
-        BlockPos pos = entity.getBlockPos();
-        WorldAccess world = entity.getEntityWorld();
-        Identifier id = entity.getDragonId();
+    public static void assignAvailableVariant(URDragonEntity entity, EntitySpawnReason spawnReason) {
+        BlockPos pos = entity.blockPosition();
+        LevelAccessor world = entity.level();
+        ResourceLocation id = entity.getDragonId();
         Stream<DragonVariant> variantStream = getAvailableVariants(world, pos, id);
-        boolean canWarn = spawnReason == SpawnReason.NATURAL
-                || spawnReason == SpawnReason.EVENT
-                || spawnReason == SpawnReason.CHUNK_GENERATION
-                || spawnReason == SpawnReason.BREEDING;
+        boolean canWarn = spawnReason == EntitySpawnReason.NATURAL
+                || spawnReason == EntitySpawnReason.EVENT
+                || spawnReason == EntitySpawnReason.CHUNK_GENERATION
+                || spawnReason == EntitySpawnReason.BREEDING;
 
-        DynamicRegistryManager registryManager = entity.getEntityWorld().getRegistryManager();
+        RegistryAccess registryManager = entity.level().registryAccess();
 
-        List<Pair<String, Integer>> variants = new ArrayList<>();
+        List<Tuple<String, Integer>> variants = new ArrayList<>();
         variantStream.forEach(variant -> {
-            registryManager.getOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).get(variant.spawnConditions().get()).forEach(conditions -> {
-                if (checkConditions(conditions, world, pos)) variants.add(new Pair<>(variant.name(), conditions.weight()));
+            registryManager.lookupOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get()).forEach(conditions -> {
+                if (checkConditions(conditions, world, pos)) variants.add(new Tuple<>(variant.name(), conditions.weight()));
             });
         });
 
         if (variants.isEmpty()) {
-            if (canWarn) UselessReptile.LOGGER.warn("Failed to set variant for {} at {} as none can spawn there. Setting default", entity.getName().getString(), entity.getBlockPos());
+            if (canWarn) UselessReptile.LOGGER.warn("Failed to set variant for {} at {} as none can spawn there. Setting default", entity.getName().getString(), entity.blockPosition());
             entity.setVariant(entity.getDefaultVariant());
             return;
         }
 
         int totalWeight = 0;
-        for (Pair<String, Integer> variant : variants) totalWeight += variant.getRight();
+        for (Tuple<String, Integer> variant : variants) totalWeight += variant.getB();
 
         int roll = entity.getRandom().nextInt(totalWeight);
         int previousBound = 0;
-        for (Pair<String, Integer> variant : variants) {
-            if (roll >= previousBound && roll < previousBound + variant.getRight()) {
-                entity.setVariant(variant.getLeft());
+        for (Tuple<String, Integer> variant : variants) {
+            if (roll >= previousBound && roll < previousBound + variant.getB()) {
+                entity.setVariant(variant.getA());
                 break;
             }
-            previousBound += variant.getRight();
+            previousBound += variant.getB();
         }
     }
 
-    public static Stream<DragonVariant> getAvailableVariants(WorldAccess world, BlockPos pos, Identifier dragonId) {
-        DynamicRegistryManager registryManager = world.getRegistryManager();
+    public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, ResourceLocation dragonId) {
+        RegistryAccess registryManager = world.registryAccess();
         return getAllVariants(world, dragonId).filter(variant -> {
-           for (DragonSpawnConditions conditions : registryManager.getOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).get(variant.spawnConditions().get())) {
+           for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get())) {
                if (checkConditions(conditions, world, pos)) return true;
            }
            return false;
@@ -96,13 +96,13 @@ public class DragonSpawnUtil {
      * @param dragonId Identifier of the dragon
      * @return Stream of all variants that can spawn naturally
      */
-    public static Stream<DragonVariant> getAllVariants(WorldAccess world, Identifier dragonId) {
-        DynamicRegistryManager registryManager = world.getRegistryManager();
-        return registryManager.getOrThrow(URRegistryKeys.DRAGON_VARIANT).stream()
+    public static Stream<DragonVariant> getAllVariants(LevelAccessor world, ResourceLocation dragonId) {
+        RegistryAccess registryManager = world.registryAccess();
+        return registryManager.lookupOrThrow(URRegistryKeys.DRAGON_VARIANT).stream()
                 .filter(variant -> variant.dragonId().equals(dragonId))
                 .filter(variant -> {
                     if (variant.spawnConditions().isPresent()) {
-                        List<DragonSpawnConditions> conditionsList = registryManager.getOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).get(variant.spawnConditions().get());
+                        List<DragonSpawnConditions> conditionsList = registryManager.lookupOrThrow(URRegistryKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get());
                         if (conditionsList == null) return false;
                         for (DragonSpawnConditions conditions : conditionsList) if (conditions.weight() > 0) return true;
                     }
@@ -110,7 +110,7 @@ public class DragonSpawnUtil {
                 });
     }
 
-    private static boolean checkConditions(DragonSpawnConditions conditions, WorldAccess world, BlockPos pos) {
+    private static boolean checkConditions(DragonSpawnConditions conditions, LevelAccessor world, BlockPos pos) {
         //altitude check
         if (conditions.altitudeRestriction().isPresent()) {
             DragonSpawnConditions.AltitudeRestriction restriction = conditions.altitudeRestriction().get();
@@ -118,26 +118,26 @@ public class DragonSpawnUtil {
         }
 
         //allowed tagEntries check (whitelist)
-        RegistryEntry<Biome> biome = world.getBiome(pos);
+        Holder<Biome> biome = world.getBiome(pos);
         if (conditions.allowedBiomes().isPresent()) {
-            List <Codecs.TagEntryId> list = conditions.allowedBiomes().get();
+            List <ExtraCodecs.TagOrElementLocation> list = conditions.allowedBiomes().get();
             if (!list.isEmpty() && !isBiomeInList(list, biome)) return false;
         }
         //banned tagEntries check (blacklist)
         if (conditions.bannedBiomes().isPresent()) {
-            List <Codecs.TagEntryId> list = conditions.bannedBiomes().get();
+            List <ExtraCodecs.TagOrElementLocation> list = conditions.bannedBiomes().get();
             if (!list.isEmpty() && isBiomeInList(list, biome)) return false;
         }
 
-        RegistryEntry<Block> block = world.getBlockState(pos.down()).getRegistryEntry();
+        Holder<Block> block = world.getBlockState(pos.below()).getBlockHolder();
         //allowed blocks check (whitelist)
         if (conditions.allowedBlocks().isPresent()) {
-            List <Codecs.TagEntryId> list = conditions.allowedBlocks().get();
+            List <ExtraCodecs.TagOrElementLocation> list = conditions.allowedBlocks().get();
             if (!list.isEmpty() && !isBlockInList(list, block)) return false;
         }
         //banned blocks check (blacklist)
         if (conditions.bannedBlocks().isPresent()) {
-            List <Codecs.TagEntryId> list = conditions.bannedBlocks().get();
+            List <ExtraCodecs.TagOrElementLocation> list = conditions.bannedBlocks().get();
             if (!list.isEmpty() && isBlockInList(list, block)) return false;
         }
 

@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.common.init;
 
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.SpawnGroup;
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.*;
 import nordmods.uselessreptile.common.entity.special.AcidBlastEntity;
@@ -27,11 +27,11 @@ public class UREntities {
     public static final EntityType<LightningChaserEntity> LIGHTNING_CHASER_ENTITY =
             register("lightning_chaser", getBuilder(URSpawnGroup.DRAGON.spawnGroup, LightningChaserEntity::new, 1, 1));
     public static final EntityType<AcidBlastEntity> ACID_BLAST_ENTITY =
-            register("acid_blast", getBuilder(SpawnGroup.MISC, AcidBlastEntity::new, 0.5f, 0.5f, true, false));
+            register("acid_blast", getBuilder(MobCategory.MISC, AcidBlastEntity::new, 0.5f, 0.5f, true, false));
     public static final EntityType<ShockwaveSphereEntity> SHOCKWAVE_SPHERE_ENTITY =
-            register("shockwave_sphere", getBuilder(SpawnGroup.MISC, ShockwaveSphereEntity::new, 1, 1, true, true));
+            register("shockwave_sphere", getBuilder(MobCategory.MISC, ShockwaveSphereEntity::new, 1, 1, true, true));
     public static final EntityType<LightningBreathEntity> LIGHTNING_BREATH_ENTITY =
-            register("lightning_breath", getBuilder(SpawnGroup.MISC, LightningBreathEntity::new, 1f, 1f, true, true));
+            register("lightning_breath", getBuilder(MobCategory.MISC, LightningBreathEntity::new, 1f, 1f, true, true));
     public static final EntityType<MagmamuncherEntity> MAGMAMUNCHER_ENTITY =
             register("magmamuncher", getBuilder(URSpawnGroup.SMALL_DRAGON.spawnGroup, MagmamuncherEntity::new, 1, 1, false, true));
 
@@ -45,17 +45,17 @@ public class UREntities {
     }
 
     private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> builder) {
-        return Registry.register(Registries.ENTITY_TYPE, UselessReptile.id(id), builder.build(RegistryKey.of(RegistryKeys.ENTITY_TYPE, UselessReptile.id(id))));
+        return Registry.register(BuiltInRegistries.ENTITY_TYPE, UselessReptile.id(id), builder.build(ResourceKey.create(Registries.ENTITY_TYPE, UselessReptile.id(id))));
     }
 
-    private static <T extends Entity> EntityType.Builder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon, boolean fireImmune) {
-        EntityType.Builder<T> builder = EntityType.Builder.create(entity, spawnGroup).dimensions(width, height).spawnableFarFromPlayer();
-        if (disableSummon) builder.disableSummon();
-        if (fireImmune) builder.makeFireImmune();
+    private static <T extends Entity> EntityType.Builder<T> getBuilder(MobCategory spawnGroup, EntityType.EntityFactory<T> entity, float width, float height, boolean disableSummon, boolean fireImmune) {
+        EntityType.Builder<T> builder = EntityType.Builder.of(entity, spawnGroup).sized(width, height).canSpawnFarFromPlayer();
+        if (disableSummon) builder.noSummon();
+        if (fireImmune) builder.fireImmune();
         return builder;
     }
 
-    private static <T extends Entity> EntityType.Builder<T> getBuilder(SpawnGroup spawnGroup, EntityType.EntityFactory<T> entity, float width, float height) {
+    private static <T extends Entity> EntityType.Builder<T> getBuilder(MobCategory spawnGroup, EntityType.EntityFactory<T> entity, float width, float height) {
         return getBuilder(spawnGroup, entity, width, height, false, false);
     }
 }

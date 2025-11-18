@@ -1,33 +1,38 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.*;
-import net.minecraft.entity.ai.pathing.PathNodeType;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.data.DataTracker;
-import net.minecraft.entity.data.TrackedData;
-import net.minecraft.entity.data.TrackedDataHandlerRegistry;
-import net.minecraft.entity.mob.MagmaCubeEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.loot.LootTable;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameRules;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
+import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.monster.MagmaCube;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.loot.LootTable;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -58,14 +63,14 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     private int eatingMagmaProgress;
     private static int MAX_EATING_MAGMA_PROGRESS = 20*5;
     public static final float DISTANCE_TO_EAT = 1.25f;
-    public static final RegistryKey<LootTable> MAGMA_EATEN_TABLE = RegistryKey.of(RegistryKeys.LOOT_TABLE, UselessReptile.id("entities/magmamuncher_from_magma"));
+    public static final ResourceKey<LootTable> MAGMA_EATEN_TABLE = ResourceKey.create(Registries.LOOT_TABLE, UselessReptile.id("entities/magmamuncher_from_magma"));
 
-    public MagmamuncherEntity(EntityType<? extends TameableEntity> entityType, World world) {
+    public MagmamuncherEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         sprintSpeedModifier = 1.3f;
-        setPathfindingPenalty(PathNodeType.DAMAGE_FIRE, 0);
-        setPathfindingPenalty(PathNodeType.DANGER_FIRE, 0);
-        navigation = new MagmamuncherNavigation(this, getEntityWorld());
+        setPathfindingMalus(PathType.DAMAGE_FIRE, 0);
+        setPathfindingMalus(PathType.DANGER_FIRE, 0);
+        navigation = new MagmamuncherNavigation(this, level());
     }
 
     @Override
@@ -80,8 +85,8 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
 
     @Nullable
     @Override
-    public ScreenHandler createMenu(int syncId, PlayerInventory inv, PlayerEntity player) {
-        if (!getEntityWorld().isClient()) GUIEntityToRenderS2CPacket.send((ServerPlayerEntity) player, this);
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        if (!level().isClientSide()) GUIEntityToRenderS2CPacket.send((ServerPlayer) player, this);
         return new URDragonScreenHandler(URScreenHandlers.MAGMAMUNCHER_INVENTORY, syncId, inv, getInventory());
     }
 
@@ -104,8 +109,8 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
         event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
         event.controller().setAnimationSpeed(animationSpeed);
-        if (hasVehicle()) return loopAnim("sit.head", event);
-        if (isSitting() && !isDancing()) return loopAnim("sit", event);
+        if (isPassenger()) return loopAnim("sit.head", event);
+        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
         if (event.isMoving()) return loopAnim("walk", event);
         event.controller().setAnimationSpeed(1);
         if (isEatingMagma()) return loopAnim("eat", event);
@@ -130,63 +135,63 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
         return playAnim("attack.none", event);
     }
 
-    public static DefaultAttributeContainer.Builder createMagmamuncherAttributes() {
+    public static AttributeSupplier.Builder createMagmamuncherAttributes() {
         return createDragonAttributes()
-                .add(EntityAttributes.ATTACK_DAMAGE, attributes().magmamuncherDamage)
-                .add(EntityAttributes.ATTACK_KNOCKBACK, attributes().magmamuncherKnockback)
-                .add(EntityAttributes.MAX_HEALTH, attributes().magmamuncherHealth)
-                .add(EntityAttributes.ARMOR, attributes().magmamuncherArmor)
-                .add(EntityAttributes.ARMOR_TOUGHNESS, attributes().magmamuncherArmorToughness)
-                .add(EntityAttributes.MOVEMENT_SPEED, attributes().magmamuncherGroundSpeed)
+                .add(Attributes.ATTACK_DAMAGE, attributes().magmamuncherDamage)
+                .add(Attributes.ATTACK_KNOCKBACK, attributes().magmamuncherKnockback)
+                .add(Attributes.MAX_HEALTH, attributes().magmamuncherHealth)
+                .add(Attributes.ARMOR, attributes().magmamuncherArmor)
+                .add(Attributes.ARMOR_TOUGHNESS, attributes().magmamuncherArmorToughness)
+                .add(Attributes.MOVEMENT_SPEED, attributes().magmamuncherGroundSpeed)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().magmamuncherRotationSpeedGround)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().magmamuncherBasePrimaryAttackCooldown);
     }
 
     @Override
-    protected void initDataTracker(DataTracker.Builder builder) {
-        super.initDataTracker(builder);
-        builder.add(EATING_MAGMA, false);
-        builder.add(MAGMA_POS, BlockPos.ORIGIN);
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(EATING_MAGMA, false);
+        builder.define(MAGMA_POS, BlockPos.ZERO);
     }
-    public static final TrackedData<Boolean> EATING_MAGMA = DataTracker.registerData(MagmamuncherEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
-    public static final TrackedData<BlockPos> MAGMA_POS = DataTracker.registerData(MagmamuncherEntity.class, TrackedDataHandlerRegistry.BLOCK_POS);
-    public boolean isEatingMagma() {return dataTracker.get(EATING_MAGMA);}
-    public void setEatingMagma(boolean state) {dataTracker.set(EATING_MAGMA, state);}
+    public static final EntityDataAccessor<Boolean> EATING_MAGMA = SynchedEntityData.defineId(MagmamuncherEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<BlockPos> MAGMA_POS = SynchedEntityData.defineId(MagmamuncherEntity.class, EntityDataSerializers.BLOCK_POS);
+    public boolean isEatingMagma() {return entityData.get(EATING_MAGMA);}
+    public void setEatingMagma(boolean state) {entityData.set(EATING_MAGMA, state);}
 
     @Override
-    protected void initGoals() {
-        goalSelector.add(0, new SwimGoal(this));
-        goalSelector.add(1, new DragonCallBackGoal(this));
-        goalSelector.add(2, new SitGoal(this));
-        goalSelector.add(3, new MagmamuncherApplyFireResistanceGoal(this));
-        goalSelector.add(4, new DragonEatFromInventoryGoal(this));
-        goalSelector.add(5, new MagmamuncherAttackGoal(this, 4096));
-        goalSelector.add(6, new MagmamuncherEatMagmaGoal(this));
-        goalSelector.add(8, new DragonWanderAroundGoal(this));
-        goalSelector.add(9, new DragonLookAroundGoal(this));
-        targetSelector.add(1, new DragonRevengeGoal(this));
-        targetSelector.add(2, new AttackWithOwnerGoal(this));
-        targetSelector.add(3, new TrackOwnerAttackerGoal(this));
-        if (URConfig.getConfig().dragonMadness) targetSelector.add(4, new UntamedActiveTargetGoal<>(this, PlayerEntity.class, true, null));
-        targetSelector.add(5, new ActiveTargetGoal<>(this, MagmaCubeEntity.class, true, null));
+    protected void registerGoals() {
+        goalSelector.addGoal(0, new FloatGoal(this));
+        goalSelector.addGoal(1, new DragonCallBackGoal(this));
+        goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
+        goalSelector.addGoal(3, new MagmamuncherApplyFireResistanceGoal(this));
+        goalSelector.addGoal(4, new DragonEatFromInventoryGoal(this));
+        goalSelector.addGoal(5, new MagmamuncherAttackGoal(this, 4096));
+        goalSelector.addGoal(6, new MagmamuncherEatMagmaGoal(this));
+        goalSelector.addGoal(8, new DragonWanderAroundGoal(this));
+        goalSelector.addGoal(9, new DragonLookAroundGoal(this));
+        targetSelector.addGoal(1, new DragonRevengeGoal(this));
+        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
+        if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
+        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MagmaCube.class, true, null));
     }
 
     @Override
-    public void writeCustomData(WriteView tag) {
-        super.writeCustomData(tag);
+    public void addAdditionalSaveData(ValueOutput tag) {
+        super.addAdditionalSaveData(tag);
         tag.putInt("EatMagmaCooldown", eatMagmaCooldown);
     }
 
     @Override
-    public void readCustomData(ReadView tag) {
-        super.readCustomData(tag);
-        eatMagmaCooldown = tag.getInt("EatMagmaCooldown", EAT_MAGMA_COOLDOWN_AVERAGE);
+    public void readAdditionalSaveData(ValueInput tag) {
+        super.readAdditionalSaveData(tag);
+        eatMagmaCooldown = tag.getIntOr("EatMagmaCooldown", EAT_MAGMA_COOLDOWN_AVERAGE);
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (getVehicle() instanceof PlayerEntity) setHitboxModifiers(0.35f, 0.6f, 0);
+        if (getVehicle() instanceof Player) setHitboxModifiers(0.35f, 0.6f, 0);
         else setHitboxModifiers(0.35f, 0.7f, 0);
         if (eatMagmaCooldown > 0) eatMagmaCooldown--;
         checkIfEatingMagma();
@@ -195,20 +200,20 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     private void checkIfEatingMagma() {
         if (isEatingMagma()) {
             BlockPos pos = getMagmaBlockPos();
-            if (!getEntityWorld().isClient() &&
-                    (getEntityWorld().getBlockState(pos).getBlock() != Blocks.MAGMA_BLOCK
-                            || pos.toCenterPos().squaredDistanceTo(getEntityPos()) >= DISTANCE_TO_EAT * DISTANCE_TO_EAT)) {
+            if (!level().isClientSide() &&
+                    (level().getBlockState(pos).getBlock() != Blocks.MAGMA_BLOCK
+                            || pos.getCenter().distanceToSqr(position()) >= DISTANCE_TO_EAT * DISTANCE_TO_EAT)) {
                 setEatingMagma(false);
-            } else if (!getEntityWorld().isClient() && ++eatingMagmaProgress >= MAX_EATING_MAGMA_PROGRESS) {
+            } else if (!level().isClientSide() && ++eatingMagmaProgress >= MAX_EATING_MAGMA_PROGRESS) {
                 setEatingMagma(false);
-                eatMagmaCooldown = MagmamuncherEntity.EAT_MAGMA_COOLDOWN_AVERAGE + getRandom().nextBetween(-20 * 10, 20 * 10);
+                eatMagmaCooldown = MagmamuncherEntity.EAT_MAGMA_COOLDOWN_AVERAGE + getRandom().nextIntBetweenInclusive(-20 * 10, 20 * 10);
                 eatingMagmaProgress = 0;
-                getEntityWorld().setBlockState(pos, URBlocks.DEPLETED_MAGMA.getDefaultState());
-                getEntityWorld().playSoundClient(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, SoundEvents.BLOCK_NETHERRACK_BREAK, getSoundCategory(), 1, 1, true);
-                forEachGiftedItem((ServerWorld) getEntityWorld(), MAGMA_EATEN_TABLE, this::dropStack);
-            } else if (getEntityWorld().isClient() && age % 10 == 0) {
-                getEntityWorld().addBlockBreakParticles(pos, Blocks.MAGMA_BLOCK.getDefaultState());
-                getEntityWorld().playSoundClient(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, SoundEvents.BLOCK_NETHERRACK_HIT, getSoundCategory(), 1, 1, true);
+                level().setBlockAndUpdate(pos, URBlocks.DEPLETED_MAGMA.defaultBlockState());
+                level().playLocalSound(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, SoundEvents.NETHERRACK_BREAK, getSoundSource(), 1, 1, true);
+                dropFromGiftLootTable((ServerLevel) level(), MAGMA_EATEN_TABLE, this::spawnAtLocation);
+            } else if (level().isClientSide() && tickCount % 10 == 0) {
+                level().addDestroyBlockEffect(pos, Blocks.MAGMA_BLOCK.defaultBlockState());
+                level().playLocalSound(pos.getX() + 0.5f, pos.getY(), pos.getZ() + 0.5f, SoundEvents.NETHERRACK_HIT, getSoundSource(), 1, 1, true);
             }
         } else {
             eatingMagmaProgress = 0;
@@ -216,30 +221,30 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     }
 
     public void attackMelee(LivingEntity target) {
-        if (!(getEntityWorld() instanceof ServerWorld world)) return;
+        if (!(level() instanceof ServerLevel world)) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
         setAttackType(random.nextInt(3)+1);
-        EntityAttributeModifier modifier = new EntityAttributeModifier(UselessReptile.id("magma_cube_bonus"), 1, EntityAttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        if (target instanceof MagmaCubeEntity) getAttributeInstance(EntityAttributes.ATTACK_DAMAGE).addTemporaryModifier(modifier);
-        if (tryAttack(world, target)) {
-            target.setOnFireFor((float) (0.75f * getAttributeValue(EntityAttributes.ATTACK_DAMAGE)));
+        AttributeModifier modifier = new AttributeModifier(UselessReptile.id("magma_cube_bonus"), 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
+        if (target instanceof MagmaCube) getAttribute(Attributes.ATTACK_DAMAGE).addTransientModifier(modifier);
+        if (doHurtTarget(world, target)) {
+            target.igniteForSeconds((float) (0.75f * getAttributeValue(Attributes.ATTACK_DAMAGE)));
         }
-        getAttributeInstance(EntityAttributes.ATTACK_DAMAGE).removeModifier(modifier);
+        getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(modifier);
     }
 
     public BlockPos getMagmaBlockPos() {
-        return dataTracker.get(MAGMA_POS);
+        return entityData.get(MAGMA_POS);
     }
 
     public void setMagmaBlockPos(BlockPos magmaBlockPos) {
-        dataTracker.set(MAGMA_POS, magmaBlockPos);
+        entityData.set(MAGMA_POS, magmaBlockPos);
     }
 
     @Override
     public boolean canBreakBlocks() {
-        if (!(getEntityWorld() instanceof ServerWorld world)) return false;
-        boolean shouldBreakBlocks = isTamed() ? URConfig.getConfig().magmamuncherGriefing.canTamedBreak() : URConfig.getConfig().magmamuncherGriefing.canUntamedBreak();
-        return shouldBreakBlocks &&  world.getGameRules().getBoolean(GameRules.DO_MOB_GRIEFING);
+        if (!(level() instanceof ServerLevel world)) return false;
+        boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().magmamuncherGriefing.canTamedBreak() : URConfig.getConfig().magmamuncherGriefing.canUntamedBreak();
+        return shouldBreakBlocks &&  world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
     }
 
     @Override

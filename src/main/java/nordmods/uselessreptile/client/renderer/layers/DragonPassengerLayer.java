@@ -1,13 +1,5 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.client.render.state.CameraRenderState;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.Vec3d;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -17,12 +9,19 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRender;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtil;
-
+import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 
 public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     public static final Set<UUID> PASSENGERS = new HashSet<>();
@@ -64,7 +63,7 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R exte
                 })));
     }
 
-    protected void renderForBone(R renderState, GeoBone bone, MatrixStack matrixStackIn, OrderedRenderCommandQueue renderTasks, CameraRenderState cameraRenderState) {
+    protected void renderForBone(R renderState, GeoBone bone, PoseStack matrixStackIn, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState) {
             GeoRenderState ownerState = getOwnerRenderState(renderState);
             if (!ownerState.getGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT)) return;
             EntityRenderState passengerState = passengerRenderStateGetter.apply(renderState, bone);
@@ -72,23 +71,23 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R exte
             EntityRenderer<? extends Entity, EntityRenderState> renderer = passengerRenderGetter.apply(renderState, bone);
             if (renderer == null) return;
 
-            matrixStackIn.push();
+            matrixStackIn.pushPose();
             UUID passengerUUID = passengerUUIDGetter.apply(renderState, bone);
             PASSENGERS.remove(passengerUUID);
-            Vec3d vec3d = ownerState.getGeckolibData(URDataTickets.PASSENGER_ATTACHMENT_POS);
-            float scale = 1/((LivingEntityRenderState)ownerState).baseScale;
+            Vec3 vec3d = ownerState.getGeckolibData(URDataTickets.PASSENGER_ATTACHMENT_POS);
+            float scale = 1/((LivingEntityRenderState)ownerState).scale;
             matrixStackIn.translate(vec3d.x * scale, -vec3d.y * scale, vec3d.z * scale);
             RenderUtil.translateToPivotPoint(matrixStackIn, bone);
             matrixStackIn.scale(scale, scale, scale);
-            passengerState.displayName = null;
-            renderer.render(
+            passengerState.nameTag = null;
+            renderer.submit(
                     passengerState,
                     matrixStackIn,
                     renderTasks,
                     cameraRenderState
             );
             PASSENGERS.add(passengerUUID);
-            matrixStackIn.pop();
+            matrixStackIn.popPose();
     }
 
     protected static GeoRenderState getOwnerRenderState(GeoRenderState renderState) {

@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.ai.control.MoveControl;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -19,20 +19,20 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
     }
 
     public void moveBack() {
-        state = State.STRAFE;
+        operation = Operation.STRAFE;
     }
 
     public void notMove() {
-        state = State.WAIT;
+        operation = Operation.WAIT;
     }
 
     @Override
     public void tick() {
-        if (entity.hasControllingPassenger() || entity.hasVehicle()) return;
+        if (entity.hasControllingPassenger() || entity.isPassenger()) return;
 
-        double diffX = targetX - entity.getX();
-        double diffY = targetY - entity.getY();
-        double diffZ = targetZ - entity.getZ();
+        double diffX = wantedX - entity.getX();
+        double diffY = wantedY - entity.getY();
+        double diffZ = wantedZ - entity.getZ();
         double distanceSquared = diffX * diffX + diffY * diffY + diffZ * diffZ;
         double distanceXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
         float destinationYaw;
@@ -43,62 +43,62 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
             double diffTargetY = target.getY() - shooterDragon.getShootingPoint().pos().y;
             double diffTargetZ = target.getZ() - shooterDragon.getShootingPoint().pos().z;
             double distanceTargetXZ = Math.sqrt(diffTargetX * diffTargetX + diffTargetZ * diffTargetZ);
-            destinationPitch = wrapDegrees(
-                    entity.getPitch(),
-                    (float)(-(MathHelper.atan2(diffTargetY, distanceTargetXZ) * MathHelper.DEGREES_PER_RADIAN)),
+            destinationPitch = rotlerp(
+                    entity.getXRot(),
+                    (float)(-(Mth.atan2(diffTargetY, distanceTargetXZ) * Mth.RAD_TO_DEG)),
                     entity.getPitchLimit()
             );
-            destinationYaw = (float)(MathHelper.atan2(diffTargetZ, diffTargetX) * MathHelper.DEGREES_PER_RADIAN) - 90.0F;
+            destinationYaw = (float)(Mth.atan2(diffTargetZ, diffTargetX) * Mth.RAD_TO_DEG) - 90.0F;
         } else {
-            destinationYaw = (float)(MathHelper.atan2(diffZ, diffX) * MathHelper.DEGREES_PER_RADIAN) - 90.0F;
-            destinationPitch = entity.getPitch();
+            destinationYaw = (float)(Mth.atan2(diffZ, diffX) * Mth.RAD_TO_DEG) - 90.0F;
+            destinationPitch = entity.getXRot();
         }
 
-        boolean inWater = entity.isTouchingWater() && !entity.canNavigateInFluids();
+        boolean inWater = entity.isInWater() && !entity.canNavigateInFluids();
 
-        if (Double.isNaN(entity.getVelocity().y)) entity.setVelocity(entity.getVelocity().x, 0, entity.getVelocity().z);
+        if (Double.isNaN(entity.getDeltaMovement().y)) entity.setDeltaMovement(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z);
         int accelerationDuration = entity.getAccelerationDuration();
         if (accelerationDuration < 0) accelerationDuration = 0;
         float accelerationModifier = (float)accelerationDuration/entity.getMaxAccelerationDuration();
         if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
         entity.setMovingBackwards(false);
         entity.setTiltState((byte) 0);
-        float verticalAccelerationModifier = MathHelper.clamp(accelerationModifier, 0.25f, 1.5f);
+        float verticalAccelerationModifier = Mth.clamp(accelerationModifier, 0.25f, 1.5f);
         float speed = getMovementSpeed(accelerationModifier, inWater);
 
-        entity.setRotation(destinationYaw, destinationPitch);
+        entity.setRot(destinationYaw, destinationPitch);
 
-        switch (state) {
+        switch (operation) {
             case STRAFE -> { //there's no strafe for dragons, but it's used for backwards movement
-                state = State.WAIT;
+                operation = Operation.WAIT;
                 entity.setMovingBackwards(true);
 
                 if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.25) accelerationDuration -= 2;
                 else accelerationDuration++;
 
-                entity.setMovementSpeed(-speed);
+                entity.setSpeed(-speed);
             }
             case MOVE_TO -> {
-                state = State.WAIT;
+                operation = Operation.WAIT;
                 if (distanceSquared < 2.500000277905201E-7D) {
-                    entity.setUpwardSpeed(0.0F);
-                    entity.setForwardSpeed(0.0F);
+                    entity.setYya(0.0F);
+                    entity.setZza(0.0F);
                     return;
                 }
-                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getPitch(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
+                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getXRot(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
                     if (accelerationDuration < entity.getMaxAccelerationDuration()) accelerationDuration++;
                     if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration--;
 
-                    entity.setMovementSpeed(speed);
-                } else entity.setForwardSpeed(0.0F);
+                    entity.setSpeed(speed);
+                } else entity.setZza(0.0F);
             }
             case JUMPING -> {
-                entity.setMovementSpeed(speed);
-                if (entity.isOnGround()) state = State.WAIT;
+                entity.setSpeed(speed);
+                if (entity.onGround()) operation = Operation.WAIT;
             }
             default -> {
-                entity.setUpwardSpeed(0.0F);
-                entity.setForwardSpeed(0.0F);
+                entity.setYya(0.0F);
+                entity.setZza(0.0F);
                 entity.setMovingBackwards(entity.isMoving());
                 accelerationDuration /= 2;
                 if (!entity.isMoving()) accelerationDuration = 0;
@@ -110,11 +110,11 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                 if (forceFlyUp) accelerationDuration = flyUp(accelerationDuration, verticalAccelerationModifier);
                 if (forceFlyDown) accelerationDuration = flyDown(accelerationDuration, verticalAccelerationModifier);
             } else if (Math.abs(diffY) > 9.999999747378752E-6D || Math.abs(distanceXZ) > 9.999999747378752E-6D) {
-                destinationPitch = (float)(-(MathHelper.atan2(diffY, distanceXZ) * 57.2957763671875D));
-                entity.setPitch(wrapDegrees(entity.getPitch(), destinationPitch, entity.getPitchLimit()));
-                entity.setUpwardSpeed(0);
+                destinationPitch = (float)(-(Mth.atan2(diffY, distanceXZ) * 57.2957763671875D));
+                entity.setXRot(rotlerp(entity.getXRot(), destinationPitch, entity.getPitchLimit()));
+                entity.setYya(0);
 
-                if (entity.isTouchingWater() && entity.hasTargetInWater() || !entity.isTouchingWater()) {
+                if (entity.isInWater() && entity.hasTargetInWater() || !entity.isInWater()) {
                     double divergence = Math.clamp(Math.max(0, (distanceXZ - (entity.getWidthMod() < 2 ? 0 : 4)) * 0.5), 0, 3);
                     if (diffY > divergence) accelerationDuration = flyUp(accelerationDuration, verticalAccelerationModifier);
                     if (diffY < -divergence) accelerationDuration = flyDown(accelerationDuration, verticalAccelerationModifier);
@@ -137,14 +137,14 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
     private int flyUp (int accelerationDuration, float verticalAccelerationModifier) {
         if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.4) accelerationDuration -= 2;
         if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration -= 2;
-        entity.setUpwardSpeed(entity.getVerticalSpeed() * verticalAccelerationModifier);
+        entity.setYya(entity.getVerticalSpeed() * verticalAccelerationModifier);
         entity.setTiltState((byte) 1);
         return accelerationDuration;
     }
 
     private int flyDown (int accelerationDuration, float verticalAccelerationModifier) {
         if (accelerationDuration < entity.getMaxAccelerationDuration() * 3) accelerationDuration += 2;
-        entity.setUpwardSpeed(-entity.getVerticalSpeed() * verticalAccelerationModifier * 1.3f);
+        entity.setYya(-entity.getVerticalSpeed() * verticalAccelerationModifier * 1.3f);
         entity.setTiltState((byte) 2);
         return accelerationDuration;
     }
@@ -156,9 +156,9 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
     private float getMovementSpeed(float accelerationModifier, boolean inWater) {
         float speed;
         if (entity.isFlying()) {
-            speed = (float) entity.getAttributeValue(EntityAttributes.FLYING_SPEED) * accelerationModifier;
-            if (inWater || entity.getRecentDamageSource() == entity.getDamageSources().lava()) entity.getJumpControl().setActive();
-        } else speed = (float) entity.getAttributeValue(EntityAttributes.MOVEMENT_SPEED);
+            speed = (float) entity.getAttributeValue(Attributes.FLYING_SPEED) * accelerationModifier;
+            if (inWater || entity.getLastDamageSource() == entity.damageSources().lava()) entity.getJumpControl().jump();
+        } else speed = (float) entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
         return speed;
     }
 }

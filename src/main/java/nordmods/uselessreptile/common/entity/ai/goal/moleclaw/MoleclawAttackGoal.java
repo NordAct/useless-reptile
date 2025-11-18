@@ -1,11 +1,11 @@
 package nordmods.uselessreptile.common.entity.ai.goal.moleclaw;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.util.shape.VoxelShape;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
 
 import java.util.EnumSet;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class MoleclawAttackGoal extends Goal {
     private final MoleclawEntity entity;
@@ -17,7 +17,7 @@ public class MoleclawAttackGoal extends Goal {
     public MoleclawAttackGoal(MoleclawEntity entity, double maxSearchDistance) {
         this.entity = entity;
         this.maxSearchDistance = maxSearchDistance;
-        setControls(EnumSet.of(Control.MOVE, Control.LOOK));
+        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     @Override
@@ -27,23 +27,23 @@ public class MoleclawAttackGoal extends Goal {
     }
 
     @Override
-    public boolean canStart() {
+    public boolean canUse() {
         if (entity.canBeControlledByRider()) return false;
-        if (!entity.canTarget(entity.getTarget())) {
+        if (!entity.canAttack(entity.getTarget())) {
             entity.setTarget(null);
             return false;
         }
         target = entity.getTarget();
         if (target == null) return false;
-        boolean tooBright = entity.isTooBrightAtPos(target.getBlockPos());
-        return !tooBright && (entity.squaredDistanceTo(target) < maxSearchDistance);
+        boolean tooBright = entity.isTooBrightAtPos(target.blockPosition());
+        return !tooBright && (entity.distanceToSqr(target) < maxSearchDistance);
     }
 
     @Override
-    public boolean shouldContinue() {
+    public boolean canContinueToUse() {
         if (target == null) return false;
         if (!target.isAlive()) return false;
-        return !entity.getNavigation().isIdle() || canStart();
+        return !entity.getNavigation().isDone() || canUse();
     }
 
     @Override
@@ -53,20 +53,20 @@ public class MoleclawAttackGoal extends Goal {
     }
 
     @Override
-    public boolean shouldRunEveryTick() {
+    public boolean requiresUpdateEveryTick() {
         return true;
     }
 
     @Override
     public void tick() {
         entity.setSprinting(true);
-        entity.getNavigation().startMovingTo(target, 1);
+        entity.getNavigation().moveTo(target, 1);
 
         if (!entity.isMoving()) notMovingTimer++;
         else notMovingTimer = 0;
         if (notMovingTimer >= nextStrongAttackTimer && entity.getPrimaryAttackCooldown() == 0) {
             int any = 0;
-            for (VoxelShape ignored : entity.getEntityWorld().getBlockCollisions(null, entity.getSecondaryAttackBox())) any++;
+            for (VoxelShape ignored : entity.level().getBlockCollisions(null, entity.getSecondaryAttackBox())) any++;
             if (any > 0) {
                 entity.scheduleStrongAttack();
                 nextStrongAttackTimer = entity.getRandom().nextInt(21) + 40;
@@ -74,7 +74,7 @@ public class MoleclawAttackGoal extends Goal {
         }
 
         if (entity.getSecondaryAttackCooldown() > 0) return;
-        boolean doesCollide = entity.getAttackBox().intersects(target.getBoundingBox());
+        boolean doesCollide = entity.getAttackBoundingBox().intersects(target.getBoundingBox());
         if (doesCollide) entity.scheduleNormalAttack();
     }
 }

@@ -1,10 +1,10 @@
 package nordmods.uselessreptile.common.entity.ai.goal.moleclaw;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.ai.goal.UntamedActiveTargetGoal;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import nordmods.uselessreptile.common.entity.MoleclawEntity;
 
-public class MoleclawUntamedTargetGoal<T extends LivingEntity>  extends UntamedActiveTargetGoal<T> {
+public class MoleclawUntamedTargetGoal<T extends LivingEntity>  extends NonTameRandomTargetGoal<T> {
 
     private final MoleclawEntity mob;
     public MoleclawUntamedTargetGoal(MoleclawEntity tameable, Class targetClass) {
@@ -12,13 +12,13 @@ public class MoleclawUntamedTargetGoal<T extends LivingEntity>  extends UntamedA
         mob = tameable;
     }
 
-    public boolean canStart() {
-        boolean sup = super.canStart();
-        if (targetEntity != null) return sup && !mob.isTooBrightAtPos(targetEntity.getBlockPos());
+    public boolean canUse() {
+        boolean sup = super.canUse();
+        if (target != null) return sup && !mob.isTooBrightAtPos(target.blockPosition());
         else return sup;
     }
 
-    public boolean shouldContinue() {
-        return targetEntity != null ? !mob.isTooBrightAtPos(targetEntity.getBlockPos()) && targetPredicate.test(getServerWorld(mob), mob, targetEntity) : super.shouldContinue();
+    public boolean canContinueToUse() {
+        return target != null ? !mob.isTooBrightAtPos(target.blockPosition()) && targetConditions.test(getServerLevel(mob), mob, target) : super.canContinueToUse();
     }
 }

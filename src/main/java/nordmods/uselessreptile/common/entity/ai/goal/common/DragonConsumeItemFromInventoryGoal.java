@@ -1,8 +1,8 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.item.ItemStack;
-import net.minecraft.sound.SoundEvents;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 
@@ -14,18 +14,18 @@ public abstract class DragonConsumeItemFromInventoryGoal extends Goal {
     }
 
     @Override
-    public boolean shouldRunEveryTick() {
+    public boolean requiresUpdateEveryTick() {
         return true;
     }
 
     @Override
     public void tick() {
         if (canConsume()) {
-            for (int i = DragonInventory.INVENTORY_START_INDEX; i <= dragon.getInventory().size(); i++) {
+            for (int i = DragonInventory.INVENTORY_START_INDEX; i <= dragon.getInventory().getContainerSize(); i++) {
                 ItemStack itemStack = dragon.getStackFromSlot(i);
                 if (isConsumableItem(itemStack)) {
                     beforeItemConsumed(itemStack);
-                    dragon.consumeGivenItem(dragon, itemStack, SoundEvents.ENTITY_GENERIC_EAT.value(), null);
+                    dragon.consumeGivenItem(dragon, itemStack, SoundEvents.GENERIC_EAT.value(), null);
                     break;
                 }
             }

@@ -2,22 +2,22 @@ package nordmods.uselessreptile.datagen.data.tag;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.RegistryWrapper;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.dimension.DimensionTypes;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
+import net.minecraft.world.level.dimension.DimensionType;
 import nordmods.uselessreptile.common.init.URTags;
 
 import java.util.concurrent.CompletableFuture;
 
 public class URDimensionTypeTagProvider extends FabricTagProvider<DimensionType> {
-    public URDimensionTypeTagProvider(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture) {
-        super(output, RegistryKeys.DIMENSION_TYPE, registriesFuture);
+    public URDimensionTypeTagProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+        super(output, Registries.DIMENSION_TYPE, registriesFuture);
     }
 
     @Override
-    protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
-        getTagBuilder(URTags.DEPLETED_MAGMA_REGENERATES)
-                .add(DimensionTypes.THE_NETHER_ID);
+    protected void addTags(HolderLookup.Provider wrapperLookup) {
+        getOrCreateRawBuilder(URTags.DEPLETED_MAGMA_REGENERATES)
+                .addElement(BuiltinDimensionTypes.NETHER_EFFECTS);
     }
 }

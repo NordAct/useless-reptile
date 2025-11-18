@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.util;
 
-import net.minecraft.entity.SpawnGroup;
+import net.minecraft.world.entity.MobCategory;
 import nordmods.uselessreptile.common.config.URConfig;
 
 //credits to Hybrid Aquatic code
@@ -9,7 +9,7 @@ public enum URSpawnGroup {
     UNDERGROUND_DRAGON("ur_underground_dragon", URConfig.getConfig().undergroundDragonSpawnGroupCapacity, true, false, 128),
     SMALL_DRAGON("ur_small_sragon", URConfig.getConfig().smallDragonSpawnGroupCapacity, true, false, 128);
 
-    public SpawnGroup spawnGroup;
+    public MobCategory spawnGroup;
     public final String name;
     public final int spawnCap;
     public final boolean peaceful;

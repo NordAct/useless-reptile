@@ -1,8 +1,8 @@
 package nordmods.uselessreptile.common.init;
 
-import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
-import net.minecraft.sound.SoundEvent;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
 import nordmods.uselessreptile.UselessReptile;
 
 public class URSounds {
@@ -47,11 +47,11 @@ public class URSounds {
     public static final SoundEvent MAGMAMUNCHER_DEATH = register("magmamuncher.death");
 
     private static SoundEvent register(String id) {
-        return Registry.register(Registries.SOUND_EVENT, UselessReptile.id(id), SoundEvent.of(UselessReptile.id(id)));
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, UselessReptile.id(id), SoundEvent.createVariableRangeEvent(UselessReptile.id(id)));
     }
 
     private static SoundEvent register(String id, float distance) {
-        return Registry.register(Registries.SOUND_EVENT, UselessReptile.id(id), SoundEvent.of(UselessReptile.id(id), distance));
+        return Registry.register(BuiltInRegistries.SOUND_EVENT, UselessReptile.id(id), SoundEvent.createFixedRangeEvent(UselessReptile.id(id), distance));
     }
 
     @SuppressWarnings("EmptyMethod")

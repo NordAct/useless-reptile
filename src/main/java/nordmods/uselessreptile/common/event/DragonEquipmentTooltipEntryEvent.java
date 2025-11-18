@@ -2,18 +2,18 @@ package nordmods.uselessreptile.common.event;
 
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.tooltip.TooltipType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import nordmods.uselessreptile.common.init.URModEvents;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adds entries to {@link nordmods.uselessreptile.common.item.DragonEquipmentItem#appendTooltip(ItemStack, Item.TooltipContext, List, TooltipType)} to show which entities can equip this item
+ * Adds entries to {@link nordmods.uselessreptile.common.item.DragonEquipmentItem#appendHoverText(ItemStack, Item.TooltipContext, List, TooltipFlag)} to show which entities can equip this item
  * For usage example refer to {@link URModEvents#addDragonEquipmentTooltipEntries()}
  */
 public interface DragonEquipmentTooltipEntryEvent {

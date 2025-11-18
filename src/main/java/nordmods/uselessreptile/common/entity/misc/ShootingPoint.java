@@ -2,25 +2,25 @@ package nordmods.uselessreptile.common.entity.misc;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.phys.Vec3;
 
-public record ShootingPoint(Vec3d pos, Vec3d rotation) {
+public record ShootingPoint(Vec3 pos, Vec3 rotation) {
     public static final Codec<ShootingPoint> CODEC = RecordCodecBuilder.create(inst -> inst.group(
-            Vec3d.CODEC.fieldOf("pos").forGetter(ShootingPoint::pos),
-            Vec3d.CODEC.fieldOf("rotation").forGetter(ShootingPoint::rotation)
+            Vec3.CODEC.fieldOf("pos").forGetter(ShootingPoint::pos),
+            Vec3.CODEC.fieldOf("rotation").forGetter(ShootingPoint::rotation)
         ).apply(inst, ShootingPoint::new)
     );
 
-    public static final PacketCodec<RegistryByteBuf,ShootingPoint> PACKET_CODEC =  PacketCodec.ofStatic(
+    public static final StreamCodec<RegistryFriendlyByteBuf,ShootingPoint> PACKET_CODEC =  StreamCodec.of(
             (buf, value) -> {
-                buf.writeVec3d(value.pos());
-                buf.writeVec3d(value.rotation());
+                buf.writeVec3(value.pos());
+                buf.writeVec3(value.rotation());
             },
             buf -> {
-                Vec3d pos = buf.readVec3d();
-                Vec3d rot = buf.readVec3d();
+                Vec3 pos = buf.readVec3();
+                Vec3 rot = buf.readVec3();
                 return new ShootingPoint(pos, rot);
             }
     );

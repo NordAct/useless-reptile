@@ -1,15 +1,15 @@
 package nordmods.uselessreptile.client.renderer.special;
 
-import net.minecraft.client.model.ModelPart;
-import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
-import net.minecraft.client.util.math.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.geom.ModelPart;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.RenderLayerParent;
+import net.minecraft.client.renderer.entity.layers.RenderLayer;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.duck.HeadMountDragonRenderState;
@@ -20,15 +20,15 @@ import software.bernie.geckolib.renderer.base.GeoRenderState;
 import java.util.HashSet;
 import java.util.UUID;
 
-public class HeadMountDragonFeatureRenderer extends FeatureRenderer<PlayerEntityRenderState, PlayerEntityModel> {
+public class HeadMountDragonFeatureRenderer extends RenderLayer<AvatarRenderState, PlayerModel> {
     public static final HashSet<UUID> ON_HEAD = new HashSet<>();
 
-    public HeadMountDragonFeatureRenderer(FeatureRendererContext<PlayerEntityRenderState, PlayerEntityModel> context) {
+    public HeadMountDragonFeatureRenderer(RenderLayerParent<AvatarRenderState, PlayerModel> context) {
         super(context);
     }
 
     @Override
-    public void render(MatrixStack matrices, OrderedRenderCommandQueue queue, int light, PlayerEntityRenderState state, float limbAngle, float limbDistancee) {
+    public void submit(PoseStack matrices, SubmitNodeCollector queue, int light, AvatarRenderState state, float limbAngle, float limbDistancee) {
         if (state instanceof HeadMountDragonRenderState owner) {
             GeoRenderState dragonState = owner.useless_reptile$getHeadMountDragonRenderState();
             if (dragonState == null) return;
@@ -37,18 +37,18 @@ public class HeadMountDragonFeatureRenderer extends FeatureRenderer<PlayerEntity
             UUID dragonUUID = dragonState.getGeckolibData(URDataTickets.DRAGON_UUID);
             ON_HEAD.remove(dragonUUID);
 
-            matrices.push();
-            ModelPart head = getContextModel().head;
-            head.applyTransform(matrices);
-            float scale = 1 / state.baseScale;
-            float offsetScale = ((LivingEntityRenderState)dragonState).baseScale / state.baseScale;
+            matrices.pushPose();
+            ModelPart head = getParentModel().head;
+            head.translateAndRotate(matrices);
+            float scale = 1 / state.scale;
+            float offsetScale = ((LivingEntityRenderState)dragonState).scale / state.scale;
             matrices.translate(0, -0.2960000524520874 * offsetScale - 0.5 * (1 - offsetScale), 0);
             matrices.scale(-scale, -scale, scale);
 
             if (!dragonState.hasGeckolibData(DataTickets.PACKED_LIGHT)) dragonState.addGeckolibData(DataTickets.PACKED_LIGHT, light);
-            renderer.render((EntityRenderState) dragonState, matrices, queue, RenderUtil.getCameraRenderState());
+            renderer.submit((EntityRenderState) dragonState, matrices, queue, RenderUtil.getCameraRenderState());
 
-            matrices.pop();
+            matrices.popPose();
 
             ON_HEAD.add(dragonUUID);
         }

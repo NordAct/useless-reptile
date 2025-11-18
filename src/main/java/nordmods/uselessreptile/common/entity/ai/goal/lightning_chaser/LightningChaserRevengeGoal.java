@@ -11,7 +11,7 @@ public class LightningChaserRevengeGoal extends DragonRevengeGoal {
     }
 
     @Override
-    public boolean canStart() {
-        return !mob.hasSurrendered() && !mob.getShouldBailOut() && super.canStart();
+    public boolean canUse() {
+        return !mob.hasSurrendered() && !mob.getShouldBailOut() && super.canUse();
     }
 }

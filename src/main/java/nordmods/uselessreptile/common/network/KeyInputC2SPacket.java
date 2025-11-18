@@ -1,11 +1,11 @@
 package nordmods.uselessreptile.common.network;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.entity.Entity;
-import net.minecraft.network.RegistryByteBuf;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.util.Identifier;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 
@@ -19,22 +19,22 @@ public record KeyInputC2SPacket(
         boolean down,
         boolean freeLook,
         int id
-) implements CustomPayload{
-    public static final Identifier ID = UselessReptile.id("key_input");
-    public static final Id<KeyInputC2SPacket> PACKET_ID = new Id<>(ID);
-    public static final PacketCodec<RegistryByteBuf, KeyInputC2SPacket> PACKET_CODEC =
-            PacketCodec.ofStatic(KeyInputC2SPacket::write, KeyInputC2SPacket::read);
+) implements CustomPacketPayload{
+    public static final ResourceLocation ID = UselessReptile.id("key_input");
+    public static final Type<KeyInputC2SPacket> PACKET_ID = new Type<>(ID);
+    public static final StreamCodec<RegistryFriendlyByteBuf, KeyInputC2SPacket> PACKET_CODEC =
+            StreamCodec.of(KeyInputC2SPacket::write, KeyInputC2SPacket::read);
 
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(PACKET_ID, (packet, context) -> {
-            Entity entity = context.player().getEntityWorld().getEntityById(packet.id);
+            Entity entity = context.player().level().getEntity(packet.id);
             if (entity instanceof URRideableDragonEntity dragon && dragon.canBeControlledByRider() && context.player().getVehicle() == entity) {
                 dragon.updateInputs(packet.forward, packet.back, packet.jump, packet.down, packet.secondaryAttack, packet.primaryAttack, packet.sprint, packet.freeLook);
             }
         });
     }
 
-    private static KeyInputC2SPacket read(RegistryByteBuf buffer) {
+    private static KeyInputC2SPacket read(RegistryFriendlyByteBuf buffer) {
         boolean jump = buffer.readBoolean();
         boolean forward = buffer.readBoolean();
         boolean back = buffer.readBoolean();
@@ -47,7 +47,7 @@ public record KeyInputC2SPacket(
         return new KeyInputC2SPacket(jump, forward, back, sprint, secondaryAttack, primaryAttack, down, freeLook, id);
     }
 
-    private static void write(RegistryByteBuf buf, KeyInputC2SPacket packet) {
+    private static void write(RegistryFriendlyByteBuf buf, KeyInputC2SPacket packet) {
         buf.writeBoolean(packet.jump);
         buf.writeBoolean(packet.forward);
         buf.writeBoolean(packet.back);
@@ -60,7 +60,7 @@ public record KeyInputC2SPacket(
     }
 
     @Override
-    public Id<? extends CustomPayload> getId() {
+    public Type<? extends CustomPacketPayload> type() {
         return PACKET_ID;
     }
 }
