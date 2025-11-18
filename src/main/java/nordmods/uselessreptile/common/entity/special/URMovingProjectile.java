@@ -11,6 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
+import org.jetbrains.annotations.NotNull;
 
 //I really REALLY wish Mojang separated PersistentProjectileEntity's movement and collision from behaviour of being pickable item
 public abstract class URMovingProjectile extends AbstractArrow {
@@ -36,7 +37,7 @@ public abstract class URMovingProjectile extends AbstractArrow {
     }
 
     @Override
-    protected ItemStack getDefaultPickupItem() { //this is a pain in my ass
+    protected @NotNull ItemStack getDefaultPickupItem() { //this is a pain in my ass
         return Items.BROWN_DYE.getDefaultInstance();
     }
 

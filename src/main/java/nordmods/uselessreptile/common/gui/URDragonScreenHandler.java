@@ -8,6 +8,7 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class URDragonScreenHandler extends AbstractContainerMenu {
@@ -68,7 +69,7 @@ public class URDragonScreenHandler extends AbstractContainerMenu {
 
 
     @Override
-    public ItemStack quickMoveStack(Player player, int invSlot) {
+    public @NotNull ItemStack quickMoveStack(Player player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = slots.get(invSlot);
         if (slot != null && slot.hasItem()) {

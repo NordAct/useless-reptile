@@ -61,7 +61,7 @@ public class MagmamuncherEntity extends URDragonEntity implements HeadMountDrago
     public static int EAT_MAGMA_COOLDOWN_AVERAGE = 20*50;
     public int eatMagmaCooldown = 0;
     private int eatingMagmaProgress;
-    private static int MAX_EATING_MAGMA_PROGRESS = 20*5;
+    private static final int MAX_EATING_MAGMA_PROGRESS = 20*5;
     public static final float DISTANCE_TO_EAT = 1.25f;
     public static final ResourceKey<LootTable> MAGMA_EATEN_TABLE = ResourceKey.create(Registries.LOOT_TABLE, UselessReptile.id("entities/magmamuncher_from_magma"));
 

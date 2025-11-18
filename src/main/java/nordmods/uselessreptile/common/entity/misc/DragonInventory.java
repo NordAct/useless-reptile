@@ -1,11 +1,12 @@
 package nordmods.uselessreptile.common.entity.misc;
 
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
-import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.ItemStack;
 
 public class DragonInventory extends SimpleContainer {
     public static final int INVENTORY_START_INDEX = 5;
@@ -80,7 +81,7 @@ public class DragonInventory extends SimpleContainer {
     }
 
     @Override
-    public ItemStack addItem(ItemStack stack) {
+    public @NotNull ItemStack addItem(ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
         ItemStack itemStack = stack.copy();

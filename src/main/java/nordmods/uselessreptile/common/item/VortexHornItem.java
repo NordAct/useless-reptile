@@ -34,6 +34,7 @@ import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URSounds;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import com.mojang.blaze3d.platform.InputConstants;
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class VortexHornItem extends InstrumentItem {
         super(settings);
     }
 
-    public InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity entity, InteractionHand hand) {
+    public @NotNull InteractionResult interactLivingEntity(ItemStack stack, Player user, LivingEntity entity, InteractionHand hand) {
         if (getPartParent(user) instanceof URDragonEntity dragon) entity = dragon;
         if (entity instanceof URDragonEntity dragon && dragon.getOwner() == user && !user.isShiftKeyDown()) {
             if (tryCollectDragon(stack, user, dragon, hand, true)) {
@@ -60,7 +61,7 @@ public class VortexHornItem extends InstrumentItem {
     }
 
     @Override
-    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+    public @NotNull InteractionResult use(Level world, Player user, InteractionHand hand) {
         ItemStack stack = user.getItemInHand(hand);
         if (user.isShiftKeyDown()) {
             if (tryMassCatchOrRelease(stack, user, world, hand)) return InteractionResult.SUCCESS;
@@ -76,7 +77,7 @@ public class VortexHornItem extends InstrumentItem {
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext context) {
+    public @NotNull InteractionResult useOn(UseOnContext context) {
         ItemStack stack = context.getItemInHand();
         if (context.getPlayer() instanceof Player user) {
             Level world = context.getLevel();

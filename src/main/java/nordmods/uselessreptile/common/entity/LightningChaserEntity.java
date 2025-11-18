@@ -497,7 +497,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public AABB getAttackBoundingBox() {
+    public @NotNull AABB getAttackBoundingBox() {
         Vec3 rotationVec = calculateViewVector(0, getYRot()).scale(2.5);
         return getBoundingBox().move(rotationVec);
     }
@@ -516,7 +516,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
     }
 
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (isTameable()) {
@@ -595,7 +595,7 @@ public class LightningChaserEntity extends URRideableFlyingDragonEntity implemen
             this.range = range;
         }
 
-        public PositionSource getListenerSource() {return this.positionSource;}
+        public @NotNull PositionSource getListenerSource() {return this.positionSource;}
 
         public int getListenerRadius() {return this.range;}
 

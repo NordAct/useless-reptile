@@ -8,6 +8,7 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
 import nordmods.uselessreptile.UselessReptile;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class URDamageTypeProvider implements DataProvider {
     }
 
     @Override
-    public CompletableFuture<?> run(CachedOutput writer) {
+    public @NotNull CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
@@ -46,7 +47,7 @@ public class URDamageTypeProvider implements DataProvider {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "Damage Type";
     }
 }

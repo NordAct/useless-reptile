@@ -297,7 +297,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     }
 
     @Override
-    public AABB getAttackBoundingBox() {
+    public @NotNull AABB getAttackBoundingBox() {
         return getBoundingBox().inflate(getScale(), 0, getScale());
     }
 
@@ -332,7 +332,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
     }
 
     @Override
-    public Vec3 getVehicleAttachmentPoint(Entity vehicle) {
+    public @NotNull Vec3 getVehicleAttachmentPoint(Entity vehicle) {
         return super.getVehicleAttachmentPoint(vehicle).add(0, vehicle.getBbHeight() - vehicle.getEyeHeight(vehicle.getPose()) - 0.001, 0);
     }
 
@@ -365,7 +365,7 @@ public class RiverPikehornEntity extends URFlyingDragonEntity implements HeadMou
             this.range = range;
         }
 
-        public PositionSource getListenerSource() {return this.positionSource;}
+        public @NotNull PositionSource getListenerSource() {return this.positionSource;}
 
         public int getListenerRadius() {return this.range;}
 

@@ -10,6 +10,7 @@ import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.storage.loot.LootTable;
 import nordmods.uselessreptile.common.init.URBlocks;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class URBlockLootTableGenerator extends BlockLootSubProvider implements D
     }
 
     @Override
-    public CompletableFuture<?> run(CachedOutput writer) {
+    public @NotNull CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             generate();
             List<CompletableFuture<?>> list = new ArrayList<>();
@@ -49,7 +50,7 @@ public class URBlockLootTableGenerator extends BlockLootSubProvider implements D
 
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "Block Loot Tables";
     }
 }

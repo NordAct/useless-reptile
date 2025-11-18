@@ -1,8 +1,5 @@
 package nordmods.uselessreptile.datagen.data;
 
-import nordmods.uselessreptile.common.recipe.VortexHornSmithingRecipe;
-
-import java.util.Optional;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -16,6 +13,10 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.TransmuteResult;
+import nordmods.uselessreptile.common.recipe.VortexHornSmithingRecipe;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class VortexHornSmithingRecipeJsonBuilder extends SmithingTransformRecipeBuilder {
 
@@ -28,7 +29,7 @@ public class VortexHornSmithingRecipeJsonBuilder extends SmithingTransformRecipe
     }
 
     @Override
-    public VortexHornSmithingRecipeJsonBuilder unlocks(String string, Criterion<?> advancementCriterion) {
+    public @NotNull VortexHornSmithingRecipeJsonBuilder unlocks(String string, Criterion<?> advancementCriterion) {
         return (VortexHornSmithingRecipeJsonBuilder) super.unlocks(string, advancementCriterion);
     }
 

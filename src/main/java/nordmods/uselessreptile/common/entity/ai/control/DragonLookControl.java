@@ -1,12 +1,13 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-
-import java.util.Optional;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.control.LookControl;
+import nordmods.uselessreptile.common.entity.base.ShooterDragon;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class DragonLookControl extends LookControl {
     protected final URDragonEntity entity;
@@ -54,7 +55,7 @@ public class DragonLookControl extends LookControl {
     }
 
     @Override
-    public Optional<Float> getXRotD() {
+    public @NotNull Optional<Float> getXRotD() {
         if (entity instanceof ShooterDragon shooterDragon) {
             double x = this.wantedX - shooterDragon.getShootingPoint().pos().x();
             double y = this.wantedY - shooterDragon.getShootingPoint().pos().y();
@@ -68,7 +69,7 @@ public class DragonLookControl extends LookControl {
     }
 
     @Override
-    public Optional<Float> getYRotD() {
+    public @NotNull Optional<Float> getYRotD() {
         if (entity instanceof ShooterDragon shooterDragon) {
             double x = this.wantedX - shooterDragon.getShootingPoint().pos().x();
             double z = this.wantedZ - shooterDragon.getShootingPoint().pos().z();

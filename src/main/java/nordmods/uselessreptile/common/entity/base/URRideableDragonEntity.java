@@ -29,6 +29,7 @@ import nordmods.uselessreptile.client.init.URKeybinds;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.network.GUIEntityToRenderS2CPacket;
 import nordmods.uselessreptile.common.network.KeyInputC2SPacket;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
     public static final ResourceLocation RIDER_BONUS = UselessReptile.id("rider_bonus");
@@ -89,7 +90,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTame() && isOwnedBy(player) && !isInteractableItem(itemStack) && !player.isShiftKeyDown()) {
             if (!isVehicle() && hasSaddle()) {
@@ -137,7 +138,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    protected Vec3 getRiddenInput(Player rider, Vec3 movementInput) {
+    protected @NotNull Vec3 getRiddenInput(Player rider, Vec3 movementInput) {
         return super.getRiddenInput(rider, updateMovementInput(rider, movementInput));
     }
 

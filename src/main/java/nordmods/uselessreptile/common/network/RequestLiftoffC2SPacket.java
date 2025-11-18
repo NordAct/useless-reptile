@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import org.jetbrains.annotations.NotNull;
 
 public record RequestLiftoffC2SPacket(int id) implements CustomPacketPayload {
     public static final ResourceLocation ID = UselessReptile.id("request_liftoff");
@@ -34,7 +35,7 @@ public record RequestLiftoffC2SPacket(int id) implements CustomPacketPayload {
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends CustomPacketPayload> type() {
         return PACKET_ID;
     }
 }

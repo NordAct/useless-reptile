@@ -58,12 +58,12 @@ public class VortexHornSmithingRecipe implements SmithingRecipe {
     }
 
     @Override
-    public RecipeSerializer<VortexHornSmithingRecipe> getSerializer() {
+    public @NotNull RecipeSerializer<VortexHornSmithingRecipe> getSerializer() {
         return URRecipeSerializers.VORTEX_HORN_SMITHING;
     }
 
     @Override
-    public PlacementInfo placementInfo() {
+    public @NotNull PlacementInfo placementInfo() {
         if (this.ingredientPlacement == null) {
             this.ingredientPlacement = PlacementInfo.createFromOptionals(List.of(this.template, Optional.of(this.base), this.addition));
         }
@@ -72,17 +72,17 @@ public class VortexHornSmithingRecipe implements SmithingRecipe {
     }
 
     @Override
-    public Optional<Ingredient> templateIngredient() {
+    public @NotNull Optional<Ingredient> templateIngredient() {
         return template;
     }
 
     @Override
-    public Ingredient baseIngredient() {
+    public @NotNull Ingredient baseIngredient() {
         return base;
     }
 
     @Override
-    public Optional<Ingredient> additionIngredient() {
+    public @NotNull Optional<Ingredient> additionIngredient() {
         return addition;
     }
 
@@ -108,12 +108,12 @@ public class VortexHornSmithingRecipe implements SmithingRecipe {
         );
 
         @Override
-        public MapCodec<VortexHornSmithingRecipe> codec() {
+        public @NotNull MapCodec<VortexHornSmithingRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public StreamCodec<RegistryFriendlyByteBuf, VortexHornSmithingRecipe> streamCodec() {
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, VortexHornSmithingRecipe> streamCodec() {
             return PACKET_CODEC;
         }
     }

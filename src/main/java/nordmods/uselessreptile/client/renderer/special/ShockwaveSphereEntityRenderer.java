@@ -14,6 +14,7 @@ import net.minecraft.util.Mth;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.special.ShockwaveSphereEntity;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSphereEntity, ShockwaveSphereEntityRenderer.ShockwaveSpereEntityRenderState> {
@@ -25,7 +26,7 @@ public class ShockwaveSphereEntityRenderer extends EntityRenderer<ShockwaveSpher
     }
 
     @Override
-    public ShockwaveSpereEntityRenderState createRenderState() {
+    public @NotNull ShockwaveSpereEntityRenderState createRenderState() {
         return new ShockwaveSpereEntityRenderState();
     }
 

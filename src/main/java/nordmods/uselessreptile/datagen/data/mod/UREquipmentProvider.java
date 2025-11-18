@@ -16,6 +16,7 @@ import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonEquipment;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.*;
@@ -34,7 +35,7 @@ public class UREquipmentProvider implements DataProvider {
     }
 
     @Override
-    public CompletableFuture<?> run(CachedOutput writer) {
+    public @NotNull CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
@@ -100,7 +101,7 @@ public class UREquipmentProvider implements DataProvider {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "Dragon Equipment";
     }
 }

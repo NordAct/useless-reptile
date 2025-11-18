@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import nordmods.uselessreptile.common.init.URTags;
+import org.jetbrains.annotations.NotNull;
 
 public class DepletedMagmaBlock extends NetherrackBlock {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_2;
@@ -45,7 +46,7 @@ public class DepletedMagmaBlock extends NetherrackBlock {
         builder.add(AGE);
     }
 
-    protected ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
+    protected @NotNull ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
         return Blocks.NETHERRACK.asItem().getDefaultInstance();
     }
 }

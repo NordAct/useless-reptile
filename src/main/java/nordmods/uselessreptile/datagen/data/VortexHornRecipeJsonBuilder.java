@@ -1,9 +1,5 @@
 package nordmods.uselessreptile.datagen.data;
 
-import nordmods.uselessreptile.common.recipe.VortexHornRecipe;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.Objects;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
@@ -22,6 +18,11 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
+import nordmods.uselessreptile.common.recipe.VortexHornRecipe;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
 
 public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
 
@@ -38,37 +39,37 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder define(Character c, TagKey<Item> tag) {
+    public @NotNull VortexHornRecipeJsonBuilder define(Character c, TagKey<Item> tag) {
         return (VortexHornRecipeJsonBuilder) super.define(c, tag);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder define(Character c, ItemLike itemProvider) {
+    public @NotNull VortexHornRecipeJsonBuilder define(Character c, ItemLike itemProvider) {
         return (VortexHornRecipeJsonBuilder) super.define(c, itemProvider);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder define(Character c, Ingredient ingredient) {
+    public @NotNull VortexHornRecipeJsonBuilder define(Character c, Ingredient ingredient) {
         return (VortexHornRecipeJsonBuilder) super.define(c, ingredient);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder pattern(String patternStr) {
+    public @NotNull VortexHornRecipeJsonBuilder pattern(String patternStr) {
         return (VortexHornRecipeJsonBuilder) super.pattern(patternStr);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder unlockedBy(String string, Criterion<?> advancementCriterion) {
+    public @NotNull VortexHornRecipeJsonBuilder unlockedBy(String string, Criterion<?> advancementCriterion) {
         return (VortexHornRecipeJsonBuilder) super.unlockedBy(string, advancementCriterion);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder group(@Nullable String string) {
+    public @NotNull VortexHornRecipeJsonBuilder group(@Nullable String string) {
         return (VortexHornRecipeJsonBuilder) super.group(string);
     }
 
     @Override
-    public VortexHornRecipeJsonBuilder showNotification(boolean showNotification) {
+    public @NotNull VortexHornRecipeJsonBuilder showNotification(boolean showNotification) {
         return (VortexHornRecipeJsonBuilder) super.showNotification(showNotification);
     }
 

@@ -519,12 +519,12 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     @Override
-    public EntityDimensions getDefaultDimensions(Pose pose) {
+    public @NotNull EntityDimensions getDefaultDimensions(Pose pose) {
         return super.getDefaultDimensions(pose).scale(getWidthMod()/getScale(), getHeightMod()/getScale());
     }
 
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTameable()) {
             DragonVariant.TamingItem tamingItem = getTamingItem(itemStack);
@@ -907,7 +907,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     @Override
-    public SoundSource getSoundSource() {
+    public @NotNull SoundSource getSoundSource() {
         return SoundSource.NEUTRAL;
     }
 
@@ -921,7 +921,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     @Override
-    protected Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
+    protected @NotNull Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
         return new Vec3(0, getMountedOffset(), 0);
     }
 
@@ -1052,7 +1052,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     @Override
-    public DragonLookControl getLookControl() {
+    public @NotNull DragonLookControl getLookControl() {
         return (DragonLookControl) lookControl;
     }
 
@@ -1083,7 +1083,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     @Override
-    public PathNavigation getNavigation() {
+    public @NotNull PathNavigation getNavigation() {
         return navigation;
     }
 
@@ -1150,7 +1150,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     @Override
-    protected Component getTypeName() {
+    protected @NotNull Component getTypeName() {
         if (defaultDisplayName == null) {
             DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), level());
             if (variant != null && variant.displayNameKey().isPresent()) defaultDisplayName = Component.translatable(variant.displayNameKey().get());
@@ -1190,7 +1190,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     @Override
-    public SlotAccess getSlot(int mappedIndex) {
+    public @NotNull SlotAccess getSlot(int mappedIndex) {
         int i = mappedIndex - 500;
         return i >= 0 && i < inventory.getContainerSize() ? SlotAccess.forContainer(inventory, i) : super.getSlot(mappedIndex);
     }
@@ -1241,7 +1241,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
             this.range = range;
         }
 
-        public PositionSource getListenerSource() {return this.positionSource;}
+        public @NotNull PositionSource getListenerSource() {return this.positionSource;}
 
         public int getListenerRadius() {return this.range;}
 
@@ -1268,7 +1268,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
             this.range = range;
         }
 
-        public PositionSource getListenerSource() {return this.positionSource;}
+        public @NotNull PositionSource getListenerSource() {return this.positionSource;}
 
         public int getListenerRadius() {return this.range;}
 

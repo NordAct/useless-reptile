@@ -1,5 +1,12 @@
 package nordmods.uselessreptile.client.renderer.base;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.model.DragonEqupmentModel;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
@@ -12,15 +19,9 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoObjectRenderer;
 import software.bernie.geckolib.renderer.base.GeoRenderState;
 import software.bernie.geckolib.renderer.base.RenderModelPositioner;
-import com.mojang.blaze3d.vertex.PoseStack;
+
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 
 public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable, GeoModel<?>, GeoRenderState> { //related object - dragon model
     public DragonEquipmentRenderer() {
@@ -32,18 +33,18 @@ public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAn
     public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
                           int packedLight, int packedOverlay, int renderColor) {
         renderState.getGeckolibData(URDataTickets.DRAGON_BONES).forEach((parentBone, transform) -> {
-            model.getBone((String) parentBone).ifPresent(bone -> {
-                Vector3f rot = ((OwnerBoneTransforms)transform).rot;
+            model.getBone(parentBone).ifPresent(bone -> {
+                Vector3f rot = transform.rot;
                 bone.setRotX(rot.x);
                 bone.setRotY(rot.y);
                 bone.setRotZ(rot.z);
 
-                Vector3f pos = ((OwnerBoneTransforms)transform).pos;
+                Vector3f pos = transform.pos;
                 bone.setPosX(pos.x);
                 bone.setPosY(pos.y);
                 bone.setPosZ(pos.z);
 
-                Vector3f scale = ((OwnerBoneTransforms)transform).scale;
+                Vector3f scale = transform.scale;
                 bone.setScaleX(scale.x);
                 bone.setScaleY(scale.y);
                 bone.setScaleZ(scale.z);

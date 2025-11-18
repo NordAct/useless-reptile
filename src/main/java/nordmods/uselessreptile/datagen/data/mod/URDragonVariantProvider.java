@@ -15,6 +15,7 @@ import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.init.UREntities;
+import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -63,7 +64,7 @@ public class URDragonVariantProvider implements DataProvider {
 
 
     @Override
-    public CompletableFuture<?> run(CachedOutput writer) {
+    public @NotNull CompletableFuture<?> run(CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
@@ -251,7 +252,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "Dragon Variant";
     }
 }

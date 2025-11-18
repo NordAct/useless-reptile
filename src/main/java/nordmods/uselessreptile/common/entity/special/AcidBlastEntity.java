@@ -11,6 +11,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import nordmods.uselessreptile.common.init.*;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animatable.manager.AnimatableManager;
@@ -85,7 +86,7 @@ public class AcidBlastEntity extends URMovingProjectile implements GeoEntity, Pr
     }
 
     @Override
-    protected SoundEvent getDefaultHitGroundSoundEvent() {
+    protected @NotNull SoundEvent getDefaultHitGroundSoundEvent() {
         return URSounds.ACID_SPLASH;
     }
 

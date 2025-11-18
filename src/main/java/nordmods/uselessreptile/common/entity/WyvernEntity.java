@@ -288,7 +288,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTame()) {
             if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwnedBy(player)) {
@@ -306,7 +306,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public EntityDimensions getDefaultDimensions(Pose pose) {
+    public @NotNull EntityDimensions getDefaultDimensions(Pose pose) {
         return super.getDefaultDimensions(pose).withEyeHeight(getBbHeight() * 0.95f);
     }
 
@@ -361,7 +361,7 @@ public class WyvernEntity extends URRideableFlyingDragonEntity implements Multip
     }
 
     @Override
-    public AABB getAttackBoundingBox() {
+    public @NotNull AABB getAttackBoundingBox() {
         double modifier = isFlying() ? getWidthMod() / 2 : (getWidthMod() + 0.1);
         double x = -Math.sin(Math.toRadians(getYRot())) * modifier;
         double z = Math.cos(Math.toRadians(getYRot())) * modifier;

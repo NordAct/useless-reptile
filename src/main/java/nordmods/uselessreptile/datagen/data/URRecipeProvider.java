@@ -18,6 +18,7 @@ import net.minecraft.world.level.ItemLike;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
@@ -28,7 +29,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
     }
 
     @Override
-    protected RecipeProvider createRecipeProvider(HolderLookup.Provider wrapperLookup, RecipeOutput recipeExporter) {
+    protected @NotNull RecipeProvider createRecipeProvider(HolderLookup.Provider wrapperLookup, RecipeOutput recipeExporter) {
         return new RecipeProvider(wrapperLookup, recipeExporter) {
             @Override
             public void buildRecipes() {
@@ -200,7 +201,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "UR Recipes";
     }
 }

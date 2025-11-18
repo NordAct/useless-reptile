@@ -293,7 +293,7 @@ public class MoleclawEntity extends URRideableDragonEntity {
     }
 
     @Override
-    public AABB getAttackBoundingBox() {
+    public @NotNull AABB getAttackBoundingBox() {
         Vec3 rotationVec = calculateViewVector(0, getYRot());
         double x = rotationVec.x * 2;
         double z = rotationVec.z * 2;

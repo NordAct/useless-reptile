@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
+import org.jetbrains.annotations.NotNull;
 
 public record KeyInputC2SPacket(
         boolean jump,
@@ -60,7 +61,7 @@ public record KeyInputC2SPacket(
     }
 
     @Override
-    public Type<? extends CustomPacketPayload> type() {
+    public @NotNull Type<? extends CustomPacketPayload> type() {
         return PACKET_ID;
     }
 }

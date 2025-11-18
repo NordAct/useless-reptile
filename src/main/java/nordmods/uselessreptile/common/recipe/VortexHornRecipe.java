@@ -17,6 +17,7 @@ import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URRecipeSerializers;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
+import org.jetbrains.annotations.NotNull;
 
 public class VortexHornRecipe extends ShapedRecipe {
     public VortexHornRecipe(String group, CraftingBookCategory category, ShapedRecipePattern raw, ItemStack result, boolean showNotification) {
@@ -24,7 +25,7 @@ public class VortexHornRecipe extends ShapedRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput input, HolderLookup.Provider lookup) {
+    public @NotNull ItemStack assemble(CraftingInput input, HolderLookup.Provider lookup) {
         ItemStack instrument = getInstrumentStack(input);
         if (!instrument.isEmpty()) {
             ItemStack result = this.result.copy();
@@ -39,7 +40,7 @@ public class VortexHornRecipe extends ShapedRecipe {
     }
 
     @Override
-    public RecipeSerializer<? extends ShapedRecipe> getSerializer() {
+    public @NotNull RecipeSerializer<? extends ShapedRecipe> getSerializer() {
         return URRecipeSerializers.VORTEX_HORN;
     }
 
@@ -63,11 +64,11 @@ public class VortexHornRecipe extends ShapedRecipe {
                         .apply(instance, VortexHornRecipe::new));
         public static final StreamCodec<RegistryFriendlyByteBuf, VortexHornRecipe> PACKET_CODEC = StreamCodec.of(nordmods.uselessreptile.common.recipe.VortexHornRecipe.Serializer::write, nordmods.uselessreptile.common.recipe.VortexHornRecipe.Serializer::read);
 
-        public MapCodec<VortexHornRecipe> codec() {
+        public @NotNull MapCodec<VortexHornRecipe> codec() {
             return CODEC;
         }
 
-        public StreamCodec<RegistryFriendlyByteBuf, VortexHornRecipe> streamCodec() {
+        public @NotNull StreamCodec<RegistryFriendlyByteBuf, VortexHornRecipe> streamCodec() {
             return PACKET_CODEC;
         }
 

@@ -114,7 +114,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                 entity.setXRot(rotlerp(entity.getXRot(), destinationPitch, entity.getPitchLimit()));
                 entity.setYya(0);
 
-                if (entity.isInWater() && entity.hasTargetInWater() || !entity.isInWater()) {
+                if (!entity.isInWater() || entity.hasTargetInWater()) {
                     double divergence = Math.clamp(Math.max(0, (distanceXZ - (entity.getWidthMod() < 2 ? 0 : 4)) * 0.5), 0, 3);
                     if (diffY > divergence) accelerationDuration = flyUp(accelerationDuration, verticalAccelerationModifier);
                     if (diffY < -divergence) accelerationDuration = flyDown(accelerationDuration, verticalAccelerationModifier);

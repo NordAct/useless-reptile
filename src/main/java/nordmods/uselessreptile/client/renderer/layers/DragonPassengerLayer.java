@@ -1,5 +1,13 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.client.init.URDataTickets;
 import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -9,19 +17,12 @@ import software.bernie.geckolib.renderer.base.GeoRenderer;
 import software.bernie.geckolib.renderer.base.PerBoneRender;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import software.bernie.geckolib.util.RenderUtil;
-import com.mojang.blaze3d.vertex.PoseStack;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.phys.Vec3;
 
 public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
     public static final Set<UUID> PASSENGERS = new HashSet<>();
@@ -57,10 +58,11 @@ public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R exte
 
     @Override
     public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
-        model.getBone(boneName).ifPresent(bone ->
-                consumer.accept(bone, ((renderState1, poseStack, bone1, renderTasks, cameraState, packedLight, packedOverlay, renderColor) -> {
-                    renderForBone(renderState, bone, poseStack, renderTasks, cameraState);
-                })));
+        model.getBone(boneName).ifPresent(bone -> {
+            consumer.accept(bone, ((renderState1, poseStack, bone1, renderTasks, cameraState, packedLight, packedOverlay, renderColor) -> {
+                renderForBone(renderState, bone, poseStack, renderTasks, cameraState);
+            }));
+        });
     }
 
     protected void renderForBone(R renderState, GeoBone bone, PoseStack matrixStackIn, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState) {

@@ -29,7 +29,7 @@ public class HeadMountDragonFeatureRenderer extends RenderLayer<AvatarRenderStat
 
     @Override
     public void submit(PoseStack matrices, SubmitNodeCollector queue, int light, AvatarRenderState state, float limbAngle, float limbDistancee) {
-        if (state instanceof HeadMountDragonRenderState owner) {
+        if (state instanceof HeadMountDragonRenderState<?, ?> owner) {
             GeoRenderState dragonState = owner.useless_reptile$getHeadMountDragonRenderState();
             if (dragonState == null) return;
             EntityRenderer<URDragonEntity, EntityRenderState> renderer = state.useless_reptile$getHeadMountDragonRenderer();

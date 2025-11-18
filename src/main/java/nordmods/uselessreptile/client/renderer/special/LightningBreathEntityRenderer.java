@@ -15,6 +15,7 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.renderer.LightningChaserEntityRenderer;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.special.LightningBreathEntity;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Random;
 import org.joml.Vector3f;
 
@@ -26,7 +27,7 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
     }
 
     @Override
-    public LightningBreathEntityRenderState createRenderState() {
+    public @NotNull LightningBreathEntityRenderState createRenderState() {
         return new LightningBreathEntityRenderState();
     }
 
@@ -67,7 +68,8 @@ public class LightningBreathEntityRenderer extends EntityRenderer<LightningBreat
         matrices.popPose();
     }
 
-    public void updateRenderState(LightningBreathEntity entity, LightningBreathEntityRenderState state, float tickDelta) {
+    @Override
+    public void extractRenderState(LightningBreathEntity entity, LightningBreathEntityRenderState state, float tickDelta) {
         super.extractRenderState(entity, state, tickDelta);
         Entity owner = entity.getOwner();
         if (owner == null) {

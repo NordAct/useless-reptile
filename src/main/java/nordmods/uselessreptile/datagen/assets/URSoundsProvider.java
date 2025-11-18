@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.URSounds;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -272,7 +273,7 @@ public class URSoundsProvider extends FabricSoundsProvider {
     }
 
     @Override
-    public String getName() {
+    public @NotNull String getName() {
         return "UR Sounds";
     }
 }

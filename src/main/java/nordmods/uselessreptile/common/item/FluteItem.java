@@ -2,17 +2,6 @@ package nordmods.uselessreptile.common.item;
 
 import com.google.common.collect.ImmutableSortedMap;
 import com.mojang.blaze3d.platform.InputConstants;
-import nordmods.uselessreptile.common.entity.base.FluteListener;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.init.URGameEvents;
-import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.init.URSounds;
-import nordmods.uselessreptile.common.item.component.FluteComponent;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.Consumer;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
@@ -36,6 +25,18 @@ import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.entity.base.FluteListener;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.init.URGameEvents;
+import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URSounds;
+import nordmods.uselessreptile.common.item.component.FluteComponent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Consumer;
 
 //todo expand functionality to other dragons
 public class FluteItem extends Item {
@@ -47,7 +48,7 @@ public class FluteItem extends Item {
     }
 
     @Override
-    public InteractionResult use(Level world, Player user, InteractionHand hand) {
+    public @NotNull InteractionResult use(Level world, Player user, InteractionHand hand) {
         ItemStack itemStack = user.getItemInHand(hand);
         if (user.isShiftKeyDown()) {
             String nextMode = getNextMode(itemStack);
@@ -70,7 +71,7 @@ public class FluteItem extends Item {
     }
 
     @Override
-    public ItemUseAnimation getUseAnimation(ItemStack stack) {
+    public @NotNull ItemUseAnimation getUseAnimation(ItemStack stack) {
         return ItemUseAnimation.TOOT_HORN;
     }
 
