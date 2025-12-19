@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.13-SNAPSHOT'
+    id 'fabric-loom' version '1.14-SNAPSHOT'
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
@@ -9,7 +9,6 @@ group = project.maven_group
 
 repositories {
     mavenCentral()
-    maven { url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/' }
     maven { url "https://maven.terraformersmc.com/releases/" }
     maven {
         name 'Xander Maven'
@@ -39,9 +38,6 @@ repositories {
     flatDir() {
         dir 'libs'
     }
-
-    //bruh (needed for Controlify)
-    //maven { url 'https://maven.quiltmc.org/repository/release'}
 }
 
 dependencies {
@@ -50,16 +46,12 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "software.bernie.geckolib:geckolib-fabric-${project.geckolib_version}"
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
     //added locally, compiled from https://github.com/NordAct/Primitive-Multipart-Entities/
-    modImplementation include ("nordmods.primitive_multipart_entities:primitive_multipart_entities:${project.primitive_multipart_entities_version}")
-
-    //test mods
-    //modRuntimeOnly("dev.isxander:controlify:2.1.1+1.21.5-fabric")
-    //modImplementation("maven.modrinth:debugutils:1.21.8-1.0.9-fabric")
+    modImplementation include ("nordmods.primitive_multipart_entities:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
+    modImplementation include ("nordmods.biscuit_roll:biscuit_roll:${project.biscuit_roll_version}")
 }
 
 processResources {
