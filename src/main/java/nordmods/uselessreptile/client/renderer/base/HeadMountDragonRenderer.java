@@ -3,54 +3,43 @@ package nordmods.uselessreptile.client.renderer.base;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.entity.player.Player;
-import nordmods.uselessreptile.client.init.URDataTickets;
+import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.renderer.layers.HeadMountDragonRenderLayer;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 
-public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMountDragon, R extends LivingEntityRenderState & GeoRenderState> extends URDragonEntityRenderer<T, R> {
+public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMountDragon> extends URDragonEntityRenderer<T> {
     public HeadMountDragonRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager);
     }
 
     @Override
-    public void submitRenderTasks(R renderState, PoseStack poseStack, SubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderModelPositioner<R> modelPositioner) {
-        if (renderState.getGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER)) {
-            if (HeadMountDragonRenderLayer.ON_HEAD.contains(renderState.getGeckolibData(URDataTickets.DRAGON_UUID)))
-                return;
-            else if (!renderState.getGeckolibData(URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT))
-                return;
-        }
-        super.submitRenderTasks(renderState, poseStack, renderTasks, cameraState, modelPositioner);
+    public void extractRenderState(T animatable, LivingEntityRenderState renderState, float tickDelta) {
+        super.extractRenderState(animatable, renderState, tickDelta);
+        renderState.setStateData(URStateDataTypes.DRAGON_IS_RIDING_PLAYER, animatable.getVehicle() instanceof Player);
+        renderState.setStateData(URStateDataTypes.DRAGON_UUID, animatable.getUUID());
     }
 
     @Override
-    protected void applyRotations(R renderState, PoseStack poseStack, float nativeScale, CameraRenderState cameraState) {
-        if (renderState.getGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER)) {
-            if (renderState.isUpsideDown) {
-                poseStack.translate(0, (renderState.boundingBoxHeight + 0.1f) / nativeScale, 0);
+    public boolean shouldRender(T entity, Frustum frustum, double d, double e, double f) {
+        if (entity.getVehicle() instanceof Player player
+                && (HeadMountDragonRenderLayer.ON_HEAD.contains(entity.getUUID())
+                || (player == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson())))
+            return false;
+        return super.shouldRender(entity, frustum, d, e, f);
+    }
+
+    @Override
+    public <SL extends LivingEntityRenderState> void setupRotations(SL state, PoseStack poseStack, float bodyYaw, float scale) {
+        if (state.getStateData(URStateDataTypes.DRAGON_IS_RIDING_PLAYER)) {
+            if (state.isUpsideDown) {
+                poseStack.translate(0, (state.boundingBoxHeight + 0.1f) / scale, 0);
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
             }
-        } else super.applyRotations(renderState, poseStack, nativeScale, cameraState);
-    }
-
-    @Override
-    public void addRenderData(T animatable, Void relatedObject, R renderState, float tickDelta) {
-        super.addRenderData(animatable, relatedObject, renderState, tickDelta);
-        renderState.addGeckolibData(URDataTickets.DRAGON_IS_RIDING_PLAYER, animatable.getVehicle() instanceof Player);
-        renderState.addGeckolibData(URDataTickets.DRAGON_UUID, animatable.getUUID());
-        renderState.addGeckolibData(
-                URDataTickets.DRAGON_SHOULD_RENDER_TO_CLIENT,
-                !(animatable.getVehicle() instanceof Player player
-                        && player == Minecraft.getInstance().player
-                        && Minecraft.getInstance().options.getCameraType().isFirstPerson()));
+        } else super.setupRotations(state, poseStack, bodyYaw, scale);
     }
 }

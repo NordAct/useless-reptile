@@ -2,6 +2,7 @@ package nordmods.uselessreptile.mixin.common.misc;
 
 import net.minecraft.world.entity.MobCategory;
 import nordmods.uselessreptile.common.util.URMobCategory;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -28,7 +29,7 @@ public class MobCategoryMixin {
         return ((MobCategory)(Object) new MobCategoryMixin(enumname, ordinal, spawnGroup.name, spawnGroup.spawnCap, spawnGroup.peaceful, spawnGroup.rare, spawnGroup.immediateDespawnRange));
     }
 
-    @Inject(method = "<clinit>", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/MobCategory;$VALUES:[Lnet/minecraft/world/entity/MobCategory;", shift = At.Shift.AFTER))
+    @Inject(method = "<clinit>", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/MobCategory;$VALUES:[Lnet/minecraft/world/entity/MobCategory;", shift = At.Shift.AFTER, opcode = Opcodes.PUTSTATIC))
     private static void addGroups(CallbackInfo ci) {
         int vanillaSpawnGroupsLength = $VALUES.length;
         URMobCategory[] groups = URMobCategory.values();

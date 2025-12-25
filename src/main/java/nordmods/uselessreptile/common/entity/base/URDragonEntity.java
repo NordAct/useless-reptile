@@ -14,7 +14,7 @@ import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -73,13 +73,14 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.AssetCahceOwner;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
-import nordmods.uselessreptile.common.dragon_variant.model.DragonModel;
+import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
@@ -93,15 +94,6 @@ import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.animation.keyframe.event.KeyFrameEvent;
-import software.bernie.geckolib.animation.keyframe.event.data.SoundKeyframeData;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -109,7 +101,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
-public abstract class URDragonEntity extends TamableAnimal implements GeoEntity, MenuProvider, AssetCahceOwner, ContainerListener {
+public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner, ContainerListener {
     protected double animationSpeed = 1;
     public static final int TRANSITION_TICKS = 10;
     protected float pitchLimitGround = 90;
@@ -132,8 +124,8 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     public boolean shouldFollow = false;
     protected Component defaultDisplayName;
     public static final Map<EntityType<?>, Map<String ,Map<String, SoundInfo>>> SOUND_INFO_HOLDER = new HashMap<>();
-    public static final ResourceLocation VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
-    public static final ResourceLocation SPEED_MODIFIER_BONUS = UselessReptile.id("speed_modifier");
+    public static final Identifier VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
+    public static final Identifier SPEED_MODIFIER_BONUS = UselessReptile.id("speed_modifier");
 
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
@@ -366,10 +358,10 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     private SoundInfo createSoundInfo(String name) {
-        DragonModel model = DragonVariantUtil.getDragonModelData(getDragonId(), hasCustomName() ? getCustomName().getString() : null, getVariant(), level());
+        DragonModelData model = DragonVariantUtil.getDragonModelData(getDragonId(), hasCustomName() ? getCustomName().getString() : null, getVariant(), level());
         if (model != null) {
             if (model.sounds().isPresent()) {
-                DragonModel.Sound sound = model.sounds().get().stream()
+                DragonModelData.Sound sound = model.sounds().get().stream()
                         .filter(s -> s.name().equals(name))
                         .findFirst()
                         .orElse(null);
@@ -388,17 +380,6 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
             }
         }
         return null;
-    }
-
-
-    protected <ENTITY extends GeoEntity> void soundHandler(KeyFrameEvent<ENTITY, SoundKeyframeData> event) {
-        SoundInfo soundInfo = getSoundInfo(event.keyframeData().getSound());
-        if (soundInfo != null) playSound(SoundEvent.createVariableRangeEvent(soundInfo.id()), soundInfo.volume(), getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()));
-    }
-
-    @Override
-    public double getBoneResetTime() {
-        return TRANSITION_TICKS;
     }
 
     @Override
@@ -852,22 +833,6 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
         return !this.isTame() && this.tickCount > 2400;
     }
 
-    @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState loopAnim(String anim, AnimationTest<A> event) {
-        event.controller().setAnimation(RawAnimation.begin().thenLoop(anim)); return PlayState.CONTINUE;
-    }
-
-    @SuppressWarnings("SameReturnValue")
-    protected <A extends GeoEntity> PlayState playAnim(String anim, AnimationTest<A> event) {
-        event.controller().setAnimation(RawAnimation.begin().then(anim, Animation.LoopType.PLAY_ONCE)); return PlayState.CONTINUE;
-    }
-
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {return cache;}
-
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-
     @Override
     protected void playStepSound(BlockPos pos, BlockState state) {
     }
@@ -952,7 +917,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
                     .filter(tamingItem -> {
                         ExtraCodecs.TagOrElementLocation entryId = tamingItem.item();
                         if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
-                        return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().location());
+                        return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().identifier());
                     })
                     .findFirst()
                     .orElse(null);
@@ -968,7 +933,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
                     .filter(tamingItem -> {
                         ExtraCodecs.TagOrElementLocation entryId = tamingItem.item();
                         if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
-                        return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().location());
+                        return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().identifier());
                     })
                     .findFirst()
                     .orElse(null);
@@ -1016,7 +981,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
         return (int) getRotationSpeed();
     }
 
-    public ResourceLocation getDragonId() {
+    public Identifier getDragonId() {
         return EntityType.getKey(getType());
     }
 
@@ -1055,6 +1020,13 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     public @NotNull DragonLookControl getLookControl() {
         return (DragonLookControl) lookControl;
     }
+
+    @Override
+    public @NotNull AABB getAttackBoundingBox(double range) {
+        return getPrimaryAttackBox();
+    }
+
+    public @NotNull abstract AABB getPrimaryAttackBox();
 
     public AABB getSecondaryAttackBox() {
         return null;
@@ -1190,9 +1162,10 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
     }
 
     @Override
-    public @NotNull SlotAccess getSlot(int mappedIndex) {
+    @Nullable
+    public SlotAccess getSlot(int mappedIndex) {
         int i = mappedIndex - 500;
-        return i >= 0 && i < inventory.getContainerSize() ? SlotAccess.forContainer(inventory, i) : super.getSlot(mappedIndex);
+        return i >= 0 && i < inventory.getContainerSize() ? inventory.getSlot(i) : super.getSlot(mappedIndex);
     }
 
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
@@ -1223,7 +1196,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
         return itemStack.getItem() instanceof BannerItem;
     }
     //todo make those advancements datadriven... some day somehow
-    public static boolean grantTriggerableAdvancement(ServerPlayer player, ResourceLocation advancement) {
+    public static boolean grantTriggerableAdvancement(ServerPlayer player, Identifier advancement) {
         AdvancementHolder entry = player.level().getServer().getAdvancements().get(advancement);
         if (entry == null) return false;
         return player.getAdvancements().award(entry, "triggered_from_code");
@@ -1231,6 +1204,7 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
 
     @NotNull
     public abstract DragonInventory createInventory();
+
 
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
@@ -1293,5 +1267,5 @@ public abstract class URDragonEntity extends TamableAnimal implements GeoEntity,
         }
     }
 
-    public record SoundInfo(ResourceLocation id, float volume, float pitch, float pitchDeviation) { }
+    public record SoundInfo(Identifier id, float volume, float pitch, float pitchDeviation) { }
 }

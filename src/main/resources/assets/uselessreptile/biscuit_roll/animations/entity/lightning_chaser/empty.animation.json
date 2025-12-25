@@ -1,0 +1,113 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"idle": {
+			"loop": true,
+			"bones": {}
+		},
+		"dance": {
+			"loop": true,
+			"bones": {}
+		},
+		"sit": {
+			"loop": true,
+			"bones": {}
+		},
+		"surrender": {
+			"loop": true,
+			"bones": {}
+		},
+		"walk": {
+			"loop": true,
+			"bones": {}
+		},
+		"fly.idle": {
+			"loop": true,
+			"bones": {}
+		},
+		"fly.shockwave": {
+			"loop": true,
+			"bones": {}
+		},
+		"fly.back": {
+			"loop": true,
+			"bones": {}
+		},
+		"fly.straight": {
+			"loop": true,
+			"bones": {}
+		},
+		"fly.straight.heavy": {
+			"loop": true,
+			"bones": {}
+		},
+		"fly.straight.glide": {
+			"loop": true,
+			"bones": {}
+		},
+		"fly.straight.up": {
+			"loop": true,
+			"bones": {}
+		},
+		"fly.straight.down": {
+			"loop": true,
+			"bones": {}
+		},
+		"turn.left": {
+			"loop": true,
+			"bones": {}
+		},
+		"turn.right": {
+			"loop": true,
+			"bones": {}
+		},
+		"turn.fly.left": {
+			"loop": true,
+			"bones": {}
+		},
+		"turn.fly.right": {
+			"loop": true,
+			"bones": {}
+		},
+		"turn.fly.idle.left": {
+			"loop": true,
+			"bones": {}
+		},
+		"turn.fly.idle.right": {
+			"loop": true,
+			"bones": {}
+		},
+		"attack.melee1": {
+			"loop": true,
+			"bones": {}
+		},
+		"attack.melee2": {
+			"loop": true,
+			"bones": {}
+		},
+		"attack.melee3": {
+			"loop": true,
+			"bones": {}
+		},
+		"attack.range": {
+			"loop": true,
+			"bones": {}
+		},
+		"attack.range.fly": {
+			"loop": true,
+			"bones": {}
+		},
+		"attack.range.fly.idle": {
+			"loop": true,
+			"bones": {}
+		},
+		"attack.range.fly.shockwave": {
+			"loop": true,
+			"bones": {}
+		},
+		"blink": {
+			"loop": true,
+			"bones": {}
+		}
+	}
+}

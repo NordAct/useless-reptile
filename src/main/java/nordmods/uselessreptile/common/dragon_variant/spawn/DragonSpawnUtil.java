@@ -1,5 +1,17 @@
 package nordmods.uselessreptile.common.dragon_variant.spawn;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Tuple;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -8,18 +20,6 @@ import nordmods.uselessreptile.common.init.URResourceKeys;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
 
 public class DragonSpawnUtil {
     public static boolean isBiomeInList(List<ExtraCodecs.TagOrElementLocation> list, Holder<Biome> biome) {
@@ -45,7 +45,7 @@ public class DragonSpawnUtil {
     public static void assignAvailableVariant(URDragonEntity entity, EntitySpawnReason spawnReason) {
         BlockPos pos = entity.blockPosition();
         LevelAccessor world = entity.level();
-        ResourceLocation id = entity.getDragonId();
+        Identifier id = entity.getDragonId();
         Stream<DragonVariant> variantStream = getAvailableVariants(world, pos, id);
         boolean canWarn = spawnReason == EntitySpawnReason.NATURAL
                 || spawnReason == EntitySpawnReason.EVENT
@@ -81,7 +81,7 @@ public class DragonSpawnUtil {
         }
     }
 
-    public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, ResourceLocation dragonId) {
+    public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, Identifier dragonId) {
         RegistryAccess registryManager = world.registryAccess();
         return getAllVariants(world, dragonId).filter(variant -> {
            for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get())) {
@@ -96,7 +96,7 @@ public class DragonSpawnUtil {
      * @param dragonId Identifier of the dragon
      * @return Stream of all variants that can spawn naturally
      */
-    public static Stream<DragonVariant> getAllVariants(LevelAccessor world, ResourceLocation dragonId) {
+    public static Stream<DragonVariant> getAllVariants(LevelAccessor world, Identifier dragonId) {
         RegistryAccess registryManager = world.registryAccess();
         return registryManager.lookupOrThrow(URResourceKeys.DRAGON_VARIANT).stream()
                 .filter(variant -> variant.dragonId().equals(dragonId))

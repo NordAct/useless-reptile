@@ -4,6 +4,8 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.level.block.state.BlockState;
 import nordmods.uselessreptile.common.entity.Moleclaw;
+
+//javadoc
 import nordmods.uselessreptile.common.init.URModEvents;
 
 /**

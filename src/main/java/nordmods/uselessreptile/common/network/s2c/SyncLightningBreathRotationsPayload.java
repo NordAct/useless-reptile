@@ -4,13 +4,13 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import nordmods.uselessreptile.UselessReptile;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncLightningBreathRotationsPayload(int[] beamIDs, float pitch, float yaw) implements CustomPacketPayload {
-    public static final ResourceLocation ID = UselessReptile.id("sync_lightning_beam_rotations");
+    public static final Identifier ID = UselessReptile.id("sync_lightning_beam_rotations");
     public static final Type<SyncLightningBreathRotationsPayload> PAYLOAD_ID = new Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncLightningBreathRotationsPayload> PACKET_CODEC = StreamCodec.of(SyncLightningBreathRotationsPayload::write, SyncLightningBreathRotationsPayload::read);
 

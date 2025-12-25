@@ -5,7 +5,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -32,7 +32,7 @@ import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
-    public static final ResourceLocation RIDER_BONUS = UselessReptile.id("rider_bonus");
+    public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
 
     protected URRideableDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);

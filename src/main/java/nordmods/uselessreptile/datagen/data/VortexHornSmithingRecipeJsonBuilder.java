@@ -4,7 +4,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
@@ -50,6 +50,6 @@ public class VortexHornSmithingRecipeJsonBuilder extends SmithingTransformRecipe
                 Optional.of(addition),
                 new TransmuteResult(result)
         );
-        exporter.accept(recipeKey, recipe, builder.build(recipeKey.location().withPrefix("recipes/" + category.getFolderName() + "/")));
+        exporter.accept(recipeKey, recipe, builder.build(recipeKey.identifier().withPrefix("recipes/" + category.getFolderName() + "/")));
     }
 }

@@ -15,7 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
@@ -41,7 +41,7 @@ public class URModEvents {
         //Lightning Chaser spawn event
         ServerTickEvents.START_WORLD_TICK.register(world -> {
             if (world.isThundering()) {
-                if (!world.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) return;
+                if (!world.getGameRules().get(GameRules.SPAWN_MOBS)) return;
                 if (world.useless_reptile$getTimer() > 0) {
                     world.useless_reptile$setTimer(world.useless_reptile$getTimer() - 1);
                     return;
@@ -80,7 +80,7 @@ public class URModEvents {
         });
     }
 
-    private static void addDragonEquipmentTooltipEntries() {
+    public static void addDragonEquipmentTooltipEntries() {
         DragonEquipmentTooltipEntryEvent.EVENT.register(item -> {
             List<EntityType<?>> entityTypes = new ArrayList<>();
             Holder<Item> entry = BuiltInRegistries.ITEM.wrapAsHolder(item);
@@ -104,7 +104,7 @@ public class URModEvents {
         });
     }
 
-    private static void getDefaultBlockMiningLevelForMoleclaw() {
+    public static void getDefaultBlockMiningLevelForMoleclaw() {
         MoleclawGetBlockMiningLevelEvent.EVENT.register(blockState -> {
             if (blockState.is(BlockTags.INCORRECT_FOR_NETHERITE_TOOL)) return 5;
             if (blockState.is(BlockTags.INCORRECT_FOR_DIAMOND_TOOL)) return 4;
@@ -115,7 +115,7 @@ public class URModEvents {
         });
     }
 
-    private static void onItemConsumedEvents() {
+    public static void onItemConsumedEvents() {
         DragonOnItemConsumedEvent.EVENT.register((user, original, remainder, hand) -> {
             if (original.is(ConventionalItemTags.ENTITY_WATER_BUCKETS)) {
                 ItemStack toGive = Items.WATER_BUCKET.getDefaultInstance();

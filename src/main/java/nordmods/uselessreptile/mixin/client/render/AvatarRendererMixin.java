@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.mixin.client.render;
 
 import net.minecraft.client.entity.ClientAvatarEntity;
-import net.minecraft.client.model.PlayerModel;
+import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
@@ -37,7 +37,7 @@ public abstract class AvatarRendererMixin<A extends Avatar & ClientAvatarEntity>
 
         playerEntityRenderState.useless_reptile$setHeadMountDragonRenderState(
                 playerLikeEntity.getFirstPassenger() instanceof URDragonEntity dragon && dragon instanceof HeadMountDragon
-                        ? (software.bernie.geckolib.renderer.base.GeoRenderState) playerEntityRenderState.useless_reptile$getHeadMountDragonRenderer().createRenderState(dragon, f)
+                        ? playerEntityRenderState.useless_reptile$getHeadMountDragonRenderer().createRenderState(dragon, f)
                         : null);
     }
 }

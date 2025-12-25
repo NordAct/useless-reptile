@@ -26,13 +26,15 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.phys.AABB;
+import nordmods.biscuit_roll.common.animation.BRAnimationController;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -50,11 +52,9 @@ import nordmods.uselessreptile.common.init.URMenus;
 import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.animation.PlayState;
+
+import java.util.Collection;
+import java.util.List;
 
 public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     public static final float BASE_GROUND_SPEED = 0.2f;
@@ -90,50 +90,51 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         return new URDragonMenu(URMenus.MAGMAMUNCHER_INVENTORY, syncId, inv, getInventory());
     }
 
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
-        AnimationController<RiverPikehorn> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
-        AnimationController<RiverPikehorn> turn = new AnimationController<>( "turn", TRANSITION_TICKS, this::turnController);
-        AnimationController<RiverPikehorn> attack = new AnimationController<>("attack", 0, this::attackController);
-        AnimationController<RiverPikehorn> eye = new AnimationController<>("eye", 0, this::eyeController);
-        main.setSoundKeyframeHandler(this::soundHandler);
-        attack.setSoundKeyframeHandler(this::soundHandler);
-        turn.setSoundKeyframeHandler(this::soundHandler);
-        eye.setSoundKeyframeHandler(this::soundHandler);
-        controllerRegistrar.add(main, turn, attack, eye);
-    }
-
-    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
-        return loopAnim("blink", event);
-    }
-    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
-        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
-        event.controller().setAnimationSpeed(animationSpeed);
-        if (isPassenger()) return loopAnim("sit.head", event);
-        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
-        if (event.isMoving()) return loopAnim("walk", event);
-        event.controller().setAnimationSpeed(1);
-        if (isEatingMagma()) return loopAnim("eat", event);
-        if (isDancing()) return loopAnim("dance", event);
-        return loopAnim("idle", event);
-    }
-
-    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
-        byte turnState = getTurningState();
-        if (event.isMoving()) {
-            if (turnState == 1) return loopAnim("turn.walk.left", event);
-            if (turnState == 2) return loopAnim("turn.walk.right", event);
-        }
-        if (turnState == 1) return loopAnim("turn.left", event);
-        if (turnState == 2) return loopAnim("turn.right", event);
-        return loopAnim("turn.none", event);
-    }
-
-    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event) {
-        event.controller().setAnimationSpeed(1 / getCooldownModifier());
-        if (isPrimaryAttack()) return playAnim( "attack" + getAttackType(), event);
-        return playAnim("attack.none", event);
-    }
+    //todo
+//    @Override
+//    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {
+//        AnimationController<RiverPikehorn> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
+//        AnimationController<RiverPikehorn> turn = new AnimationController<>( "turn", TRANSITION_TICKS, this::turnController);
+//        AnimationController<RiverPikehorn> attack = new AnimationController<>("attack", 0, this::attackController);
+//        AnimationController<RiverPikehorn> eye = new AnimationController<>("eye", 0, this::eyeController);
+//        main.setSoundKeyframeHandler(this::soundHandler);
+//        attack.setSoundKeyframeHandler(this::soundHandler);
+//        turn.setSoundKeyframeHandler(this::soundHandler);
+//        eye.setSoundKeyframeHandler(this::soundHandler);
+//        controllerRegistrar.add(main, turn, attack, eye);
+//    }
+//
+//    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
+//        return loopAnim("blink", event);
+//    }
+//    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+//        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
+//        event.controller().setAnimationSpeed(animationSpeed);
+//        if (isPassenger()) return loopAnim("sit.head", event);
+//        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
+//        if (event.isMoving()) return loopAnim("walk", event);
+//        event.controller().setAnimationSpeed(1);
+//        if (isEatingMagma()) return loopAnim("eat", event);
+//        if (isDancing()) return loopAnim("dance", event);
+//        return loopAnim("idle", event);
+//    }
+//
+//    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
+//        byte turnState = getTurningState();
+//        if (event.isMoving()) {
+//            if (turnState == 1) return loopAnim("turn.walk.left", event);
+//            if (turnState == 2) return loopAnim("turn.walk.right", event);
+//        }
+//        if (turnState == 1) return loopAnim("turn.left", event);
+//        if (turnState == 2) return loopAnim("turn.right", event);
+//        return loopAnim("turn.none", event);
+//    }
+//
+//    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event) {
+//        event.controller().setAnimationSpeed(1 / getCooldownModifier());
+//        if (isPrimaryAttack()) return playAnim( "attack" + getAttackType(), event);
+//        return playAnim("attack.none", event);
+//    }
 
     public static AttributeSupplier.Builder createMagmamuncherAttributes() {
         return createDragonAttributes()
@@ -244,7 +245,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     public boolean canBreakBlocks() {
         if (!(level() instanceof ServerLevel world)) return false;
         boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().magmamuncherGriefing.canTamedBreak() : URConfig.getConfig().magmamuncherGriefing.canUntamedBreak();
-        return shouldBreakBlocks &&  world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+        return shouldBreakBlocks &&  world.getGameRules().get(GameRules.MOB_GRIEFING);
     }
 
     @Override
@@ -276,4 +277,13 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         return new DragonInventory(dragon, DragonInventory.StorageSize.SMALL, false, false, false);
     }
 
+    @Override
+    public @NotNull AABB getPrimaryAttackBox() {
+        return getBoundingBox().inflate(getScale(), 0, getScale());
+    }
+
+    @Override
+    public Collection<BRAnimationController<?>> getAnimationControllers() {
+        return List.of();
+    }
 }

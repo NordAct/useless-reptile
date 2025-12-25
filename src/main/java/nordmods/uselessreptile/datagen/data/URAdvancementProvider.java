@@ -12,7 +12,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -44,7 +44,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .display(URItems.WYVERN_SKIN,
                         Component.translatable("advancement.uselessreptile.root"),
                         Component.translatable("advancement.uselessreptile.root.desc"),
-                        ResourceLocation.parse("minecraft:block/dirt"),
+                        Identifier.parse("minecraft:block/dirt"),
                         AdvancementType.TASK,
                         true,
                         true,

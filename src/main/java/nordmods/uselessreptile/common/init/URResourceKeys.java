@@ -8,8 +8,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
-import nordmods.uselessreptile.common.dragon_variant.model.DragonEquipment;
-import nordmods.uselessreptile.common.dragon_variant.model.DragonModel;
+import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
+import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
 
 import java.util.List;
@@ -17,16 +17,16 @@ import java.util.List;
 public class URResourceKeys {
     public static final ResourceKey<Registry<DragonVariant>> DRAGON_VARIANT = ResourceKey.createRegistryKey(UselessReptile.id("variant"));
     public static final ResourceKey<Registry<DragonVariant>> DRAGON_VARIANT_CUSTOM_NAME = ResourceKey.createRegistryKey(UselessReptile.id("custom_name"));
-    public static final ResourceKey<Registry<DragonModel>> DRAGON_MODEL = ResourceKey.createRegistryKey(UselessReptile.id("dragon_model"));
-    public static final ResourceKey<Registry<DragonEquipment>> DRAGON_EQUIPMENT = ResourceKey.createRegistryKey(UselessReptile.id("equipment"));
-    public static final ResourceKey<Registry<DragonEquipment>> DRAGON_EQUIPMENT_INJECT = ResourceKey.createRegistryKey(UselessReptile.id("equipment_inject"));
+    public static final ResourceKey<Registry<DragonModelData>> DRAGON_MODEL = ResourceKey.createRegistryKey(UselessReptile.id("dragon_model"));
+    public static final ResourceKey<Registry<EquipmentModelData>> DRAGON_EQUIPMENT = ResourceKey.createRegistryKey(UselessReptile.id("equipment"));
+    public static final ResourceKey<Registry<EquipmentModelData>> DRAGON_EQUIPMENT_INJECT = ResourceKey.createRegistryKey(UselessReptile.id("equipment_inject"));
     public static final ResourceKey<Registry<List<DragonSpawnConditions>>> DRAGON_SPAWN_CONDITIONS = ResourceKey.createRegistryKey(UselessReptile.id("spawn_conditions"));
     public static final ResourceKey<Registry<List<AttributeModifier>>> DRAGON_VARIANT_ATTRIBUTE_MODIFIERS = ResourceKey.createRegistryKey(UselessReptile.id("attribute_modifiers"));
 
     public static void init() {
-        DynamicRegistries.registerSynced(DRAGON_MODEL, DragonModel.CODEC);
-        DynamicRegistries.registerSynced(DRAGON_EQUIPMENT_INJECT, DragonEquipment.CODEC);
-        DynamicRegistries.registerSynced(DRAGON_EQUIPMENT, DragonEquipment.CODEC);
+        DynamicRegistries.registerSynced(DRAGON_MODEL, DragonModelData.CODEC);
+        DynamicRegistries.registerSynced(DRAGON_EQUIPMENT_INJECT, EquipmentModelData.CODEC);
+        DynamicRegistries.registerSynced(DRAGON_EQUIPMENT, EquipmentModelData.CODEC);
         DynamicRegistries.register(DRAGON_SPAWN_CONDITIONS, DragonSpawnConditions.CODEC.listOf());
         DynamicRegistries.register(DRAGON_VARIANT_ATTRIBUTE_MODIFIERS, AttributeModifier.CODEC.listOf());
         DynamicRegistries.registerSynced(DRAGON_VARIANT, DragonVariant.CODEC, DragonVariant.CODEC_NO_SERVER_INFO);

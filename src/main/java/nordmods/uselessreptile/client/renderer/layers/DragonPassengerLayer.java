@@ -1,98 +1,67 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
-import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.base.GeoRenderer;
-import software.bernie.geckolib.renderer.base.PerBoneRender;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-import software.bernie.geckolib.util.RenderUtil;
+import nordmods.biscuit_roll.client.renderer.BRRenderer;
+import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataTypes;
+import nordmods.uselessreptile.client.init.URStateDataTypes;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
+import java.util.*;
 
-public class DragonPassengerLayer<T extends DragonEquipmentAnimatable, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
+public class DragonPassengerLayer extends nordmods.biscuit_roll.client.renderer.layer.BRRenderLayer {
     public static final Set<UUID> PASSENGERS = new HashSet<>();
-    private final BiFunction<R, GeoBone, ? extends EntityRenderState> passengerRenderStateGetter;
-    private final BiFunction<R, GeoBone, EntityRenderer<? extends Entity, EntityRenderState>> passengerRenderGetter;
-    private final BiFunction<R, GeoBone, UUID> passengerUUIDGetter;
-    private final String boneName;
 
-    public DragonPassengerLayer(GeoRenderer<T, O, R> entityRendererIn, BiFunction<R, GeoBone, ? extends EntityRenderState> passengerRenderStateGetter, BiFunction<R, GeoBone, EntityRenderer<? extends Entity, EntityRenderState>> passengerRenderGetter, BiFunction<R, GeoBone, UUID> passengerUUIDGetter, String boneName) {
-        super(entityRendererIn);
-        this.passengerRenderStateGetter = passengerRenderStateGetter;
-        this.passengerRenderGetter = passengerRenderGetter;
-        this.passengerUUIDGetter = passengerUUIDGetter;
-        this.boneName = boneName;
-    }
-
-    public DragonPassengerLayer(GeoRenderer<T, O, R> entityRendererIn) {
-        this(entityRendererIn,
-                (state, bone) -> {
-            if (!bone.getName().equals("rider")) return null;
-            GeoRenderState ownerState = getOwnerRenderState(state);
-            if (ownerState != null) return ownerState.getOrDefaultGeckolibData(URDataTickets.PASSENGER_RENDER_STATE, null);
-            return null;
-            },
-                (state, bone) -> {
-            if (!bone.getName().equals("rider")) return null;
-            GeoRenderState ownerState = getOwnerRenderState(state);
-            if (ownerState != null) return ownerState.getOrDefaultGeckolibData(URDataTickets.PASSENGER_RENDER, null);
-            return null;
-            },
-                (state, bone) -> getOwnerRenderState(state).getGeckolibData(URDataTickets.PASSENGER_UUID), "rider");
+    public DragonPassengerLayer(BRRenderer<? extends BRState> renderer) {
+        super(renderer);
     }
 
     @Override
-    public void addPerBoneRender(R renderState, BakedGeoModel model, boolean didRenderModel, BiConsumer<GeoBone, PerBoneRender<R>> consumer) {
-        model.getBone(boneName).ifPresent(bone -> {
-            consumer.accept(bone, ((renderState1, poseStack, bone1, renderTasks, cameraState, packedLight, packedOverlay, renderColor) -> {
-                renderForBone(renderState, bone, poseStack, renderTasks, cameraState);
-            }));
-        });
-    }
+    protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        int passengers = state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE).size();
+        if (passengers == 0) return;
 
-    protected void renderForBone(R renderState, GeoBone bone, PoseStack matrixStackIn, SubmitNodeCollector renderTasks, CameraRenderState cameraRenderState) {
-            GeoRenderState ownerState = getOwnerRenderState(renderState);
-            if (!ownerState.getGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT)) return;
-            EntityRenderState passengerState = passengerRenderStateGetter.apply(renderState, bone);
-            if (passengerState == null) return;
-            EntityRenderer<? extends Entity, EntityRenderState> renderer = passengerRenderGetter.apply(renderState, bone);
-            if (renderer == null) return;
+        List<Boolean> shouldRenderToClient = state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT);
+        List<? super EntityRenderState> renderStates = state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE);
+        List<EntityRenderer<? super Entity, ? super EntityRenderState>> renderers = state.getStateData(URStateDataTypes.PASSENGERS_RENDERERS);
+        List<UUID> uuids = state.getStateData(URStateDataTypes.PASSENGERS_UUID);
+        List<Vec3> attachmentPos = state.getStateData(URStateDataTypes.PASSENGERS_ATTACHMENT_POS);
 
-            matrixStackIn.pushPose();
-            UUID passengerUUID = passengerUUIDGetter.apply(renderState, bone);
+        for (int i = 0; i < passengers; i++) {
+            if (!shouldRenderToClient.get(i)) continue;
+
+            LocatorTransformation transformation = getModel(state).getLocatorTransformation("passenger" + i);
+            if (transformation == null) continue;
+
+            UUID passengerUUID = uuids.get(i);
+
             PASSENGERS.remove(passengerUUID);
-            Vec3 vec3d = ownerState.getGeckolibData(URDataTickets.PASSENGER_ATTACHMENT_POS);
-            float scale = 1/((LivingEntityRenderState)ownerState).scale;
-            matrixStackIn.translate(vec3d.x * scale, -vec3d.y * scale, vec3d.z * scale);
-            RenderUtil.translateToPivotPoint(matrixStackIn, bone);
-            matrixStackIn.scale(scale, scale, scale);
-            passengerState.nameTag = null;
-            renderer.submit(
+            poseStack.pushPose();
+
+            Vec3 vec3d = attachmentPos.get(i);
+            float scale = 1/(state.getStateDataOptional(StateDataTypes.SCALE).orElse(1f));
+            poseStack.translate(vec3d.x * scale, vec3d.y * scale, vec3d.z * scale);
+            poseStack.scale(-1, -1, 1);
+            poseStack.mulPose(transformation.matrix());
+            poseStack.scale(-1, -1, 1);
+            poseStack.scale(scale, scale, scale);
+            EntityRenderState passengerState = (EntityRenderState) renderStates.get(i);
+            if (passengerState instanceof EntityRenderState renderState) renderState.nameTag = null;
+            renderers.get(i).submit(
                     passengerState,
-                    matrixStackIn,
-                    renderTasks,
+                    poseStack,
+                    submitNodeCollector,
                     cameraRenderState
             );
-            PASSENGERS.add(passengerUUID);
-            matrixStackIn.popPose();
-    }
 
-    protected static GeoRenderState getOwnerRenderState(GeoRenderState renderState) {
-        return renderState.getGeckolibData(URDataTickets.DRAGON_RENDER_STATE);
+            poseStack.popPose();
+            PASSENGERS.add(passengerUUID);
+        }
     }
 }

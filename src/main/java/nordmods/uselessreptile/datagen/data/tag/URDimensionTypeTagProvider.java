@@ -18,6 +18,6 @@ public class URDimensionTypeTagProvider extends FabricTagProvider<DimensionType>
     @Override
     protected void addTags(HolderLookup.Provider wrapperLookup) {
         getOrCreateRawBuilder(URTags.DEPLETED_MAGMA_REGENERATES)
-                .addElement(BuiltinDimensionTypes.NETHER_EFFECTS);
+                .addElement(BuiltinDimensionTypes.NETHER.identifier());
     }
 }

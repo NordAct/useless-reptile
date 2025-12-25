@@ -1,8 +1,8 @@
 {
   "model_data": {
-    "animation": "uselessreptile:entity/wyvern/wyvern",
-    "model": "uselessreptile:entity/wyvern/wyvern",
-    "texture": "uselessreptile:entity/wyvern/green"
+    "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/wyvern.animation.json",
+    "model": "uselessreptile:biscuit_roll/models/entity/wyvern/wyvern.geo.json",
+    "texture": "uselessreptile:textures/entity/wyvern/green.png"
   },
   "sounds": [
     {

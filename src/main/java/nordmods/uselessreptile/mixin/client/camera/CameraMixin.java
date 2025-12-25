@@ -3,13 +3,13 @@ package nordmods.uselessreptile.mixin.client.camera;
 import net.minecraft.client.Camera;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -22,18 +22,20 @@ public abstract class CameraMixin {
 
     @Shadow private Entity entity;
 
-    @Shadow public abstract Vector3f getLookVector();
-
-    @Shadow public abstract Vec3 getPosition();
-
-    @Shadow private BlockGetter level;
-
     @Shadow protected abstract void move(float f, float g, float h);
 
+    @Shadow
+    public abstract Vec3 position();
+
+    @Shadow
+    public abstract Vector3fc forwardVector();
+
+    @Shadow
+    private Level level;
     @Unique private static final int ROUNDS = 1000;
 
     @Inject(method = "setup", at = @At(value = "TAIL"))
-    public void offsetCameraDistance(BlockGetter area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {
+    public void offsetCameraDistance(Level area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {
         if (!URClientConfig.getConfig().enableCameraOffset) return;
         if (this.entity.getVehicle() instanceof URRideableDragonEntity dragonEntity && thirdPerson) {
             float scale = focusedEntity instanceof  LivingEntity livingEntity ? livingEntity.getScale() : 1;
@@ -58,8 +60,8 @@ public abstract class CameraMixin {
             float h = (float)((i & 1) * 2 - 1);
             float j = (float)((i >> 1 & 1) * 2 - 1);
             float k = (float)((i >> 2 & 1) * 2 - 1);
-            Vec3 vec3d = getPosition().add(h * 0.1F, j * 0.1F, k * 0.1F);
-            Vec3 vec3d2 = vec3d.add((new Vec3(getLookVector())).scale(-dl));
+            Vec3 vec3d = position().add(h * 0.1F, j * 0.1F, k * 0.1F);
+            Vec3 vec3d2 = vec3d.add((new Vec3(forwardVector())).scale(-dl));
             HitResult hitResult = level.clip(new ClipContext(vec3d, vec3d2, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, entity));
             if (hitResult.getType() == HitResult.Type.MISS) move(dx, dy, dz);
             else {

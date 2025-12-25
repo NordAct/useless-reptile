@@ -1,6 +1,5 @@
 accessWidener	v2 named
 accessible field net/minecraft/world/entity/Entity DATA_CUSTOM_NAME Lnet/minecraft/network/syncher/EntityDataAccessor;
-accessible method net/minecraft/world/entity/Mob getAttackBoundingBox ()Lnet/minecraft/world/phys/AABB;
 accessible method net/minecraft/data/recipes/ShapedRecipeBuilder <init> (Lnet/minecraft/core/HolderGetter;Lnet/minecraft/data/recipes/RecipeCategory;Lnet/minecraft/world/level/ItemLike;I)V
 accessible field net/minecraft/data/recipes/ShapedRecipeBuilder category Lnet/minecraft/data/recipes/RecipeCategory;
 accessible field net/minecraft/data/recipes/ShapedRecipeBuilder result Lnet/minecraft/world/item/Item;

@@ -1,137 +1,167 @@
 package nordmods.uselessreptile.client.renderer.base;
 
-import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.SubmitNodeCollection;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.state.HitboxRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.world.entity.EntityEquipment;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
-import nordmods.uselessreptile.client.config.URClientConfig;
-import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.model.URDragonEntityModel;
+import net.minecraft.world.level.storage.TagValueInput;
+import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataTypes;
+import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.client.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
-import nordmods.uselessreptile.client.renderer.projectile.SaddleEquipmentRenderer;
+import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.DragonAssetCache;
-import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
+import nordmods.uselessreptile.client.util.DragonEquipment;
 import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
+import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
+import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URTags;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 
-public abstract class URDragonEntityRenderer<T extends URDragonEntity, R extends LivingEntityRenderState & GeoRenderState> extends GeoEntityRenderer<T, R> {
-    private final DragonEquipmentRenderer dragonEquipmentRenderer = new DragonEquipmentRenderer();
-    private final SaddleEquipmentRenderer saddleEquipmentRenderer = new SaddleEquipmentRenderer();
+public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends BREntityRenderer<T, LivingEntityRenderState> {
+    private final DragonEquipmentRenderer equipmentRenderer = new DragonEquipmentRenderer();
+    private final DragonSaddleRenderer saddleRenderer = new DragonSaddleRenderer();
     public URDragonEntityRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new URDragonEntityModel<>());
-        withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE), 1));
+        super(renderManager, new URDragonEntityModelProvider());
+        addRenderLayer(new URGlowingLayer(this, 1));
     }
 
     @Override
-    protected float getShadowRadius(R state) {
+    protected float getShadowRadius(LivingEntityRenderState state) {
         return super.getShadowRadius(state) * state.scale;
     }
 
     @Override
-    public void preRender(R renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                           int packedLight, int packedOverlay, int renderColor) {
-        super.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
-        if (renderState.hitboxesRenderState != null && renderState.hasGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT) //mayhaps I should move this to mixin
-                && renderTasks instanceof SubmitNodeCollector orderedRenderCommandQueue
-                && orderedRenderCommandQueue.order(0) instanceof SubmitNodeCollection queue) {
-            queue.useless_reptile$submitShootingPoint(poseStack, renderState, renderState.getGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT));
+    public void extractRenderState(T animatable, LivingEntityRenderState renderState, float tickDelta) {
+        super.extractRenderState(animatable, renderState, tickDelta);
+        DragonAssetCache assetCache = animatable.getAssetCache();
+        if (ResourceUtil.isResourceReloadFinished) {
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                ItemStack itemStack = animatable.getItemBySlot(slot);
+                if (itemStack.isEmpty()) {
+                    animatable.getAssetCache().setEquipment(slot, null);
+                    continue;
+                }
+
+                DragonEquipment dragonEquipmentAnimatable = assetCache.getEquipment(slot);
+                if (dragonEquipmentAnimatable == null || dragonEquipmentAnimatable.itemStack != itemStack) {
+                    dragonEquipmentAnimatable = new DragonEquipment(renderState, itemStack);
+                    assetCache.setEquipment(slot, dragonEquipmentAnimatable);
+                }
+                dragonEquipmentAnimatable.ownerRenderState = renderState;
+            }
         }
+        renderState.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
+        renderState.setStateData(URStateDataTypes.DRAGON_ID, animatable.getDragonId());
+        renderState.setStateData(URStateDataTypes.DRAGON_VARIANT, animatable.getVariant());
+        renderState.setStateData(URStateDataTypes.DRAGON_NAME, animatable.getName());
+
+        if (animatable instanceof ShooterDragon shooterDragon) renderState.setStateData(URStateDataTypes.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
     }
 
     @Override
-    public void postRender(R dragonRenderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                           int packedLight, int packedOverlay, int renderColor) {
-        super.postRender(dragonRenderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
-        if (!ResourceUtil.isResourceReloadFinished) return;
-
-        DragonAssetCache dragonAssetCache = dragonRenderState.getGeckolibData(URDataTickets.DRAGON_ASSET_CACHE);
-        EntityEquipment equipment = dragonRenderState.getGeckolibData(URDataTickets.DRAGON_EQIPMENT);
-
-        float tickDelta = dragonRenderState.getGeckolibData(DataTickets.PARTIAL_TICK);
+    public void afterSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
-            ItemStack itemStack = equipment.get(slot);
-            if (itemStack == null || itemStack.isEmpty()) {
-                dragonAssetCache.setEquipmentAnimatable(slot, null);
-                continue;
+            DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
+            if (equipment != null) {
+                DragonEquipmentRenderer usedRenderer = equipment.itemStack.is(URTags.DRAGON_SADDLES) ? saddleRenderer : equipmentRenderer;
+                usedRenderer.submitObjectOrdered(equipment, poseStack, submitNodeCollector, cameraRenderState, state.getStateData(StateDataTypes.TICK_DELTA), 1);
             }
-
-            DragonEquipmentAnimatable dragonEquipmentAnimatable = dragonAssetCache.getEquipmentAnimatable(slot);
-            if (dragonEquipmentAnimatable == null || dragonEquipmentAnimatable.item != itemStack.getItem()) {
-                dragonEquipmentAnimatable = new DragonEquipmentAnimatable(dragonRenderState, itemStack.getItem());
-                dragonAssetCache.setEquipmentAnimatable(slot, dragonEquipmentAnimatable);
-            }
-            dragonEquipmentAnimatable.ownerRenderState = dragonRenderState;
-
-            DragonEquipmentRenderer usedRenderer = itemStack.is(URTags.DRAGON_SADDLES) ? saddleEquipmentRenderer : dragonEquipmentRenderer;
-            usedRenderer.submit(poseStack, dragonEquipmentAnimatable, getGeoModel(), renderTasks, cameraState, packedLight, tickDelta, null);
         }
     }
 
-
     @Override
-    public void addRenderData(T animatable, Void relatedObject, R renderState, float partialTick) {
-        renderState.addGeckolibData(URDataTickets.DRAGON_ID, animatable.getDragonId());
-        renderState.addGeckolibData(URDataTickets.DRAGON_VARIANT, animatable.getVariant());
-        renderState.addGeckolibData(URDataTickets.DRAGON_NAME, animatable.getCustomName());
-        renderState.addGeckolibData(URDataTickets.DRAGON_ASSET_CACHE, animatable.getAssetCache());
-        if (animatable instanceof ShooterDragon shooterDragon) renderState.addGeckolibData(URDataTickets.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
+    public RenderType getRenderType(BRState renderState, Identifier texture) {
+        if (!ResourceUtil.isResourceReloadFinished) return RenderTypes.entityCutout(texture);
 
-        EntityEquipment map = new EntityEquipment();
-        for (EquipmentSlot slot : EquipmentSlot.values()) map.set(slot, animatable.getItemBySlot(slot));
-        renderState.addGeckolibData(URDataTickets.DRAGON_EQIPMENT, map);
+        AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
+        RenderType renderType = assetCache.getRenderTypeCache();
+        if (renderType != null) return renderType;
+
+        Identifier dragonId = renderState.getStateData(URStateDataTypes.DRAGON_ID);
+        String name = renderState.getStateData(URStateDataTypes.DRAGON_NAME).getString();
+        String variant = renderState.getStateData(URStateDataTypes.DRAGON_VARIANT);
+
+        DragonModelData data  = DragonVariantUtil.getDragonModelData(
+                dragonId,
+                name,
+                variant,
+                Minecraft.getInstance().level
+        );
+        if (data != null) {
+            ModelData modelData = data.modelData();
+            if (modelData.translucent()) renderType = RenderTypes.entityTranslucent(texture); //all translucent models can't have culling
+            else renderType = modelData.cull() ? RenderTypes.entityCutout(texture) : RenderTypes.entityCutoutNoCull(texture);
+            assetCache.setRenderTypeCache(renderType);
+            return renderType;
+        }
+
+        renderType = RenderTypes.entityCutout(texture);
+        assetCache.setRenderTypeCache(renderType);
+        return renderType;
     }
 
     @Override
-    protected void extractAdditionalHitboxes(T entity, ImmutableList.Builder<HitboxRenderState> builder, float tickDelta) {
-        super.extractAdditionalHitboxes(entity, builder, tickDelta);
-        if (URClientConfig.getConfig().attackBoxesInDebug) {
-            double x = -entity.getX();
-            double y = -entity.getY();
-            double z = -entity.getZ();
+    public Identifier getTextureId(BRState renderState) {
+        Identifier dragonId = renderState.getStateData(URStateDataTypes.DRAGON_ID);
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(dragonId);
 
-            AABB box = entity.getAttackBoundingBox();
-            if (box != null) {
-                builder.add(new HitboxRenderState(
-                        box.minX + x,
-                        box.minY + y,
-                        box.minZ + z,
-                        box.maxX + x,
-                        box.maxY + y,
-                        box.maxZ + z,
-                        1,
-                        0,
-                        1
-                ));
-            }
+        AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
+        Identifier id = assetCache.getTextureLocationCache();
+        if (id != null) return id;
 
-            box = entity.getSecondaryAttackBox();
-            if (box != null) {
-                builder.add(new HitboxRenderState(
-                        box.minX + x,
-                        box.minY + y,
-                        box.minZ + z,
-                        box.maxX + x,
-                        box.maxY + y,
-                        box.maxZ + z,
-                        1.0F,
-                        0.0f,
-                        0.25f
-                ));
+        String name = renderState.getStateData(URStateDataTypes.DRAGON_NAME).getString();
+        String variant = renderState.getStateData(URStateDataTypes.DRAGON_VARIANT);
+
+        DragonModelData data  = DragonVariantUtil.getDragonModelData(
+                dragonId,
+                name,
+                variant,
+                Minecraft.getInstance().level
+        );
+        if (data != null) {
+            id = data.modelData().texture();
+            if (ResourceUtil.doesExist(id)) {
+                assetCache.setTextureLocationCache(id);
+                return id;
             }
+        } else {
+            UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead",
+                    name,
+                    dragonId,
+                    variant);
         }
+
+        id = getDefaultTexture(dragonId);
+        assetCache.setTextureLocationCache(id);
+        return id;
+    }
+
+    protected final Identifier getDefaultTexture(Identifier entity) {
+        CompoundTag nbtCompound = new CompoundTag();
+        nbtCompound.putString("id", entity.toString());
+        URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER,  Minecraft.getInstance().level.registryAccess(), nbtCompound), Minecraft.getInstance().level, EntitySpawnReason.TRIGGERED).get();
+        dragon.discard();
+        return UselessReptile.id("textures/entity/"+ entity.getPath() + "/" + dragon.getDefaultVariant() + ".png");
+    }
+
+    @Override
+    public LivingEntityRenderState createRenderState() {
+        return new LivingEntityRenderState();
     }
 }

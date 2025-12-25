@@ -1,4 +1,5 @@
 ## Example resource pack.
+NOTE: THIS IS OUTDATED
 
 Contains assets necessary for example data pack to work on client properly.
 

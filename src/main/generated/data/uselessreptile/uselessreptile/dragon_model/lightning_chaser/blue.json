@@ -1,8 +1,8 @@
 {
   "model_data": {
-    "animation": "uselessreptile:entity/lightning_chaser/lightning_chaser",
-    "model": "uselessreptile:entity/lightning_chaser/lightning_chaser",
-    "texture": "uselessreptile:entity/lightning_chaser/blue"
+    "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/lightning_chaser.animation.json",
+    "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/lightning_chaser.geo.json",
+    "texture": "uselessreptile:textures/entity/lightning_chaser/blue.png"
   },
   "sounds": [
     {

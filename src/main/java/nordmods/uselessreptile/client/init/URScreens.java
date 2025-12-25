@@ -7,7 +7,6 @@ import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.URMenus;
 
 public class URScreens {
-
     public static void init() {
         MenuScreens.register(URMenus.WYVERN_INVENTORY, URDragonScreen<URDragonMenu>::new);
         MenuScreens.register(URMenus.MOLECLAW_INVENTORY, URDragonScreen<URDragonMenu>::new);

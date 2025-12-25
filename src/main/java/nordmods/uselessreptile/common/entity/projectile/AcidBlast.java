@@ -10,17 +10,15 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.BRAnimationController;
 import nordmods.uselessreptile.common.init.*;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
-import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class AcidBlast extends URMovingProjectile implements GeoEntity, ProjectileDamageHelper {
+import java.util.Collection;
+import java.util.List;
+
+public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, ProjectileDamageHelper {
     private static final int COLOR = 0x99E416;
     public AcidBlast(EntityType<? extends AcidBlast> entityType, Level world) {
         super(entityType, world);
@@ -77,25 +75,18 @@ public class AcidBlast extends URMovingProjectile implements GeoEntity, Projecti
         if (level().isClientSide()) spawnEffectParticles(8, COLOR);
     }
 
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar animatableManager) {
-        animatableManager.add(new AnimationController<>("contr", 0, animationEvent -> {
-            animationEvent.controller().setAnimation(RawAnimation.begin().thenLoop("idle"));
-            return PlayState.CONTINUE;
-        }));
-    }
+//    @Override
+//    public void registerControllers(AnimatableManager.ControllerRegistrar animatableManager) {
+//        animatableManager.add(new AnimationController<>("contr", 0, animationEvent -> {
+//            animationEvent.controller().setAnimation(RawAnimation.begin().thenLoop("idle"));
+//            return PlayState.CONTINUE;
+//        }));
+//    }
 
     @Override
     protected @NotNull SoundEvent getDefaultHitGroundSoundEvent() {
         return URSoundEvent.ACID_SPLASH;
     }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
-    }
-
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     @Override
     public float getDefaultDamage() {
@@ -105,5 +96,10 @@ public class AcidBlast extends URMovingProjectile implements GeoEntity, Projecti
     @Override
     public float getDamageScaling() {
         return 1;
+    }
+
+    @Override
+    public Collection<BRAnimationController<?>> getAnimationControllers() {
+        return List.of();//todo
     }
 }

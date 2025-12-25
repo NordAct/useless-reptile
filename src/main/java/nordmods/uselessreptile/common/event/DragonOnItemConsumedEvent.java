@@ -5,12 +5,16 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import nordmods.uselessreptile.common.init.URModEvents;
 import org.jetbrains.annotations.Nullable;
 
+//javadoc
+import nordmods.uselessreptile.common.init.URModEvents;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import net.minecraft.world.entity.player.Player;
+
 /**
- * Fired whenever {@link nordmods.uselessreptile.common.entity.base.URDragonEntity} attempts to consume an item.
- * user - usually either {@link net.minecraft.world.entity.player.Player} (when interacting with mob) or {@link nordmods.uselessreptile.common.entity.base.URDragonEntity}
+ * Fired whenever {@link URDragonEntity} attempts to consume an item.
+ * user - usually either {@link Player} (when interacting with mob) or {@link URDragonEntity}
  * original - {@link ItemStack} that is attempted to be consumed, copy of the stack before consumption
  * remainder - original {@link ItemStack} that already got consumed
  * hand - player hand, always provided when user is Player and never when dragon

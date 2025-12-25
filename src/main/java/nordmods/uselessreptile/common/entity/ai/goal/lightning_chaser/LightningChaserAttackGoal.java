@@ -1,11 +1,5 @@
 package nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser;
 
-import nordmods.uselessreptile.common.entity.LightningChaser;
-import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
-import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
-
-import java.util.EnumSet;
-import java.util.List;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -19,6 +13,12 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.entity.LightningChaser;
+import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
+import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
+
+import java.util.EnumSet;
+import java.util.List;
 
 public class LightningChaserAttackGoal extends Goal {
 
@@ -84,8 +84,8 @@ public class LightningChaserAttackGoal extends Goal {
             entity.getNavigation().stop();
             entity.getMoveControl().moveBack();
             if (target instanceof Player player && yDiff < player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE)
-                    || target instanceof Mob mob && mob.getAttackBoundingBox().intersects(entity.getBoundingBox().inflate(2))
-                    || entity.getLastAttacker() instanceof Mob attacker && attacker.getAttackBoundingBox().intersects(entity.getBoundingBox().inflate(2))) {
+                    || target instanceof Mob mob && mob.isWithinMeleeAttackRange(entity)
+                    || entity.getLastAttacker() instanceof Mob attacker && attacker.isWithinMeleeAttackRange(entity)) {
                 if (!entity.isFlying()) { //try jump/back off
                     entity.forceFlightNextTick();
                     Vec3 vec3d = entity.calculateViewVector(Mth.clamp(-entity.getXRot(), -10, 10), entity.getYRot() - 180);
@@ -123,7 +123,7 @@ public class LightningChaserAttackGoal extends Goal {
     private boolean tryMeleeAttack() {
         if (entity.getSecondaryAttackCooldown() > 0) return false;
         if (entity.isFlying()) return false;
-        boolean doesCollide = entity.getAttackBoundingBox().intersects(target.getBoundingBox());
+        boolean doesCollide = entity.getPrimaryAttackBox().intersects(target.getBoundingBox());
         if (!doesCollide) return false;
         entity.meleeAttack();
         attackCooldown = 30;

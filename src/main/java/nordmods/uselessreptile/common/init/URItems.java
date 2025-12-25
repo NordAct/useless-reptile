@@ -9,8 +9,8 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.InstrumentTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -45,33 +45,39 @@ public class URItems {
             builder -> builder.persistent(VortexHornCapacityComponent.CODEC).networkSynchronized(VortexHornCapacityComponent.PACKET_CODEC));
 
     public static final Item WYVERN_SKIN = registerItem("wyvern_skin", Item::new);
-    public static final Item DRAGON_HELMET_IRON = registerItem("dragon_helmet_iron", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, settings));
-    public static final Item DRAGON_HELMET_GOLD = registerItem("dragon_helmet_gold", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 3, 0, settings));
-    public static final Item DRAGON_HELMET_DIAMOND = registerItem("dragon_helmet_diamond", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 4, 0, settings));
-    public static final Item DRAGON_HELMET_NETHERITE = registerItem("dragon_helmet_netherite", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 5, 2, settings));
-    public static final Item DRAGON_CHESTPLATE_IRON = registerItem("dragon_chestplate_iron", settings -> createDragonArmorItem(EquipmentSlot.CHEST, 4, 0, settings));
-    public static final Item DRAGON_CHESTPLATE_GOLD = registerItem("dragon_chestplate_gold", settings -> createDragonArmorItem(EquipmentSlot.CHEST, 5, 0, settings));
-    public static final Item DRAGON_CHESTPLATE_DIAMOND = registerItem("dragon_chestplate_diamond", settings -> createDragonArmorItem(EquipmentSlot.CHEST, 6, 0, settings));
-    public static final Item DRAGON_CHESTPLATE_NETHERITE = registerItem("dragon_chestplate_netherite", settings -> createDragonArmorItem(EquipmentSlot.CHEST, 7, 2, settings));
-    public static final Item DRAGON_TAIL_ARMOR_IRON = registerItem("dragon_tail_armor_iron", settings -> createDragonArmorItem(EquipmentSlot.LEGS, 1, 0, settings));
-    public static final Item DRAGON_TAIL_ARMOR_GOLD = registerItem("dragon_tail_armor_gold", settings -> createDragonArmorItem(EquipmentSlot.LEGS, 2, 0, settings));
-    public static final Item DRAGON_TAIL_ARMOR_DIAMOND = registerItem("dragon_tail_armor_diamond", settings -> createDragonArmorItem(EquipmentSlot.LEGS, 3, 0, settings));
-    public static final Item DRAGON_TAIL_ARMOR_NETHERITE = registerItem("dragon_tail_armor_netherite", settings -> createDragonArmorItem(EquipmentSlot.LEGS, 4, 1, settings));
-    public static final Item MOLECLAW_HELMET_IRON = registerItem("moleclaw_helmet_iron", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, settings));
-    public static final Item MOLECLAW_HELMET_GOLD = registerItem("moleclaw_helmet_gold", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 3, 0, settings));
-    public static final Item MOLECLAW_HELMET_DIAMOND = registerItem("moleclaw_helmet_diamond", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 4, 0, settings));
-    public static final Item MOLECLAW_HELMET_NETHERITE = registerItem("moleclaw_helmet_netherite", settings -> createDragonArmorItem(EquipmentSlot.HEAD, 5, 2, settings));
-    public static final Item WYVERN_SPAWN_EGG = registerItem("wyvern_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.WYVERN_ENTITY)));
-    public static final Item MOLECLAW_SPAWN_EGG = registerItem("moleclaw_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.MOLECLAW_ENTITY)));
-    public static final Item RIVER_PIKEHORN_SPAWN_EGG = registerItem("river_pikehorn_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.RIVER_PIKEHORN_ENTITY)));
-    public static final Item LIGHTNING_CHASER_SPAWN_EGG = registerItem("lightning_chaser_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.LIGHTNING_CHASER_ENTITY)));
-    public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", settings -> new SpawnEggItem(settings.spawnEgg(UREntities.MAGMAMUNCHER_ENTITY)));
-    public static final Item FLUTE = registerItem("flute", settings -> new FluteItem(settings.stacksTo(1).component(FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT)));
-    public static final Item VORTEX_HORN = registerItem("vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 1)));
-    public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 3)));
-    public static final Item GOLD_VORTEX_HORN = registerItem("gold_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 6)));
-    public static final Item DIAMOND_VORTEX_HORN = registerItem("diamond_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 9)));
-    public static final Item NETHERITE_VORTEX_HORN = registerItem("netherite_vortex_horn", settings -> new VortexHornItem(createVortexHornItemSettings(settings, 15)));
+
+    public static final Item DRAGON_HELMET_IRON = registerItem("dragon_helmet_iron", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));
+    public static final Item DRAGON_HELMET_GOLD = registerItem("dragon_helmet_gold", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 3, 0, 0, properties));
+    public static final Item DRAGON_HELMET_DIAMOND = registerItem("dragon_helmet_diamond", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 5, 1, 0, properties));
+    public static final Item DRAGON_HELMET_NETHERITE = registerItem("dragon_helmet_netherite", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 7, 2, 1, properties));
+
+    public static final Item DRAGON_CHESTPLATE_IRON = registerItem("dragon_chestplate_iron", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 4, 0, 0, properties));
+    public static final Item DRAGON_CHESTPLATE_GOLD = registerItem("dragon_chestplate_gold", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 5, 0, 0, properties));
+    public static final Item DRAGON_CHESTPLATE_DIAMOND = registerItem("dragon_chestplate_diamond", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 7, 1, 0, properties));
+    public static final Item DRAGON_CHESTPLATE_NETHERITE = registerItem("dragon_chestplate_netherite", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 10, 2, 1, properties));
+
+    public static final Item DRAGON_TAIL_ARMOR_IRON = registerItem("dragon_tail_armor_iron", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 1, 0, 0, properties));
+    public static final Item DRAGON_TAIL_ARMOR_GOLD = registerItem("dragon_tail_armor_gold", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 2, 0, 0, properties));
+    public static final Item DRAGON_TAIL_ARMOR_DIAMOND = registerItem("dragon_tail_armor_diamond", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 4, 1, 0, properties));
+    public static final Item DRAGON_TAIL_ARMOR_NETHERITE = registerItem("dragon_tail_armor_netherite", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 6, 2, 1, properties));
+
+    public static final Item MOLECLAW_HELMET_IRON = registerItem("moleclaw_helmet_iron", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));
+    public static final Item MOLECLAW_HELMET_GOLD = registerItem("moleclaw_helmet_gold", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 3, 0, 0, properties));
+    public static final Item MOLECLAW_HELMET_DIAMOND = registerItem("moleclaw_helmet_diamond", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 5, 1, 0, properties));
+    public static final Item MOLECLAW_HELMET_NETHERITE = registerItem("moleclaw_helmet_netherite", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 7, 2,1,  properties));
+
+    public static final Item WYVERN_SPAWN_EGG = registerItem("wyvern_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.WYVERN_ENTITY)));
+    public static final Item MOLECLAW_SPAWN_EGG = registerItem("moleclaw_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.MOLECLAW_ENTITY)));
+    public static final Item RIVER_PIKEHORN_SPAWN_EGG = registerItem("river_pikehorn_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.RIVER_PIKEHORN_ENTITY)));
+    public static final Item LIGHTNING_CHASER_SPAWN_EGG = registerItem("lightning_chaser_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.LIGHTNING_CHASER_ENTITY)));
+    public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.MAGMAMUNCHER_ENTITY)));
+
+    public static final Item FLUTE = registerItem("flute", properties -> new FluteItem(properties.stacksTo(1).component(FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT)));
+    public static final Item VORTEX_HORN = registerItem("vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 1)));
+    public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 3)));
+    public static final Item GOLD_VORTEX_HORN = registerItem("gold_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 6)));
+    public static final Item DIAMOND_VORTEX_HORN = registerItem("diamond_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 9)));
+    public static final Item NETHERITE_VORTEX_HORN = registerItem("netherite_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 15)));
 
     public static final ResourceKey<CreativeModeTab> UR_ITEM_GROUP = ResourceKey.create(Registries.CREATIVE_MODE_TAB, UselessReptile.id("item_group"));
 
@@ -123,16 +129,17 @@ public class URItems {
         });
     }
 
-    private static DragonEquipmentItem createDragonArmorItem(EquipmentSlot equipmentSlot, int armor, int toughness, Item.Properties settings) {
+    private static DragonEquipmentItem createDragonArmorItem(EquipmentSlot equipmentSlot, float armor, float toughness, float knockbackResistance, Item.Properties properties) {
         return new DragonEquipmentItem(Suppliers.memoize(() -> {
                     ItemAttributeModifiers.Builder builder = ItemAttributeModifiers.builder();
                     EquipmentSlotGroup attributeModifierSlot = EquipmentSlotGroup.bySlot(equipmentSlot);
-                    ResourceLocation id = DragonEquipmentItem.equipmentModifierID(equipmentSlot);
+                    Identifier id = DragonEquipmentItem.equipmentModifierID(equipmentSlot);
                     if (armor > 0) builder.add(Attributes.ARMOR, new AttributeModifier(id, armor, AttributeModifier.Operation.ADD_VALUE), attributeModifierSlot);
                     if (toughness > 0) builder.add(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(id, toughness, AttributeModifier.Operation.ADD_VALUE), attributeModifierSlot);
+                    if (knockbackResistance > 0) builder.add(Attributes.KNOCKBACK_RESISTANCE, new AttributeModifier(id, knockbackResistance/10f, AttributeModifier.Operation.ADD_VALUE), attributeModifierSlot);
                     return builder.build();
                 }),
-                settings.stacksTo(1));
+                properties.stacksTo(1));
     }
 
     private static <T> DataComponentType<T> registerComponent(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
@@ -149,8 +156,8 @@ public class URItems {
                         InstrumentItem.create(item, instrument)).forEach((stack) -> entries.accept(stack, visibility)));
     }
 
-    private static Item.Properties createVortexHornItemSettings(Item.Properties settings, int maxCapacity) {
-        return settings.stacksTo(1)
+    private static Item.Properties createVortexHornItemProperties(Item.Properties properties, int maxCapacity) {
+        return properties.stacksTo(1)
                 .component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT)
                 .component(VORTEX_HORN_CAPACITY_COMPONENT, new VortexHornCapacityComponent(0, maxCapacity));
     }

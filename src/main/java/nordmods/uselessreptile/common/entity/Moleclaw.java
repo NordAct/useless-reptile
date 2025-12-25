@@ -21,19 +21,19 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.animal.Chicken;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import nordmods.biscuit_roll.common.animation.BRAnimationController;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
@@ -51,12 +51,9 @@ import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.animation.PlayState;
+import org.jspecify.annotations.NonNull;
 
+import java.util.Collection;
 import java.util.List;
 
 public class Moleclaw extends URRideableDragonEntity {
@@ -93,7 +90,6 @@ public class Moleclaw extends URRideableDragonEntity {
         goalSelector.addGoal(10, new DragonWanderAroundGoal(this));
         goalSelector.addGoal(11, new DragonLookAroundGoal(this));
         targetSelector.addGoal(5, new MoleclawUntamedTargetGoal<>(this, Player.class));
-        targetSelector.addGoal(6, new MoleclawUntamedTargetGoal<>(this, Chicken.class));
         targetSelector.addGoal(5, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(6, new OwnerHurtByTargetGoal(this));
         targetSelector.addGoal(4, new DragonRevengeGoal(this));
@@ -123,53 +119,54 @@ public class Moleclaw extends URRideableDragonEntity {
 
     }
 
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<Moleclaw> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
-        AnimationController<Moleclaw> turn = new AnimationController<>("turn", TRANSITION_TICKS, this::turnController);
-        AnimationController<Moleclaw> attack = new AnimationController<>( "attack", 0, this::attackController);
-        AnimationController<Moleclaw> eye = new AnimationController<>("eye", 0, this::eyeController);
-        main.setSoundKeyframeHandler(this::soundHandler);
-        attack.setSoundKeyframeHandler(this::soundHandler);
-        turn.setSoundKeyframeHandler(this::soundHandler);
-        eye.setSoundKeyframeHandler(this::soundHandler);
-        animationData.add(main, turn, attack, eye);
-    }
-
-    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
-        return loopAnim("blink", event);
-    }
-
-    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
-        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
-        event.controller().setAnimationSpeed(animationSpeed);
-        if (isOrderedToSit() && !isDancing() && !isPanicking()) return loopAnim("sit", event);
-        if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
-            if (isPanicking()) return loopAnim("panic", event);
-            return loopAnim("walk", event);
-        }
-        event.controller().setAnimationSpeed(1);
-        if (isDancing() && !isVehicle()) return loopAnim("dance", event);
-        if (isPanicking()) return loopAnim("panic.idle", event);
-        return loopAnim("idle", event);
-    }
-
-    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
-        byte turnState = getTurningState();
-        if (turnState == 1) return loopAnim("turn.left", event);
-        if (turnState == 2) return loopAnim("turn.right", event);
-        return loopAnim("turn.none", event);
-    }
-
-    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event){
-        event.controller().setAnimationSpeed(1/ getCooldownModifier());
-        if (isSecondaryAttack()) return playAnim( "attack.normal" + getAttackType(), event);
-        if (isPrimaryAttack()) {
-            if (isPanicking()) return playAnim( "attack.strong.panic", event);
-            return playAnim( "attack.strong", event);
-        }
-        return playAnim("attack.none", event);
-    }
+    //todo
+//    @Override
+//    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
+//        AnimationController<Moleclaw> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
+//        AnimationController<Moleclaw> turn = new AnimationController<>("turn", TRANSITION_TICKS, this::turnController);
+//        AnimationController<Moleclaw> attack = new AnimationController<>( "attack", 0, this::attackController);
+//        AnimationController<Moleclaw> eye = new AnimationController<>("eye", 0, this::eyeController);
+//        main.setSoundKeyframeHandler(this::soundHandler);
+//        attack.setSoundKeyframeHandler(this::soundHandler);
+//        turn.setSoundKeyframeHandler(this::soundHandler);
+//        eye.setSoundKeyframeHandler(this::soundHandler);
+//        animationData.add(main, turn, attack, eye);
+//    }
+//
+//    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
+//        return loopAnim("blink", event);
+//    }
+//
+//    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+//        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
+//        event.controller().setAnimationSpeed(animationSpeed);
+//        if (isOrderedToSit() && !isDancing() && !isPanicking()) return loopAnim("sit", event);
+//        if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
+//            if (isPanicking()) return loopAnim("panic", event);
+//            return loopAnim("walk", event);
+//        }
+//        event.controller().setAnimationSpeed(1);
+//        if (isDancing() && !isVehicle()) return loopAnim("dance", event);
+//        if (isPanicking()) return loopAnim("panic.idle", event);
+//        return loopAnim("idle", event);
+//    }
+//
+//    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
+//        byte turnState = getTurningState();
+//        if (turnState == 1) return loopAnim("turn.left", event);
+//        if (turnState == 2) return loopAnim("turn.right", event);
+//        return loopAnim("turn.none", event);
+//    }
+//
+//    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event){
+//        event.controller().setAnimationSpeed(1/ getCooldownModifier());
+//        if (isSecondaryAttack()) return playAnim( "attack.normal" + getAttackType(), event);
+//        if (isPrimaryAttack()) {
+//            if (isPanicking()) return playAnim( "attack.strong.panic", event);
+//            return playAnim( "attack.strong", event);
+//        }
+//        return playAnim("attack.none", event);
+//    }
 
     @Override
     public void tick() {
@@ -238,14 +235,14 @@ public class Moleclaw extends URRideableDragonEntity {
         List<Entity> targets = level()
                 .getEntities(
                         this,
-                        getAttackBoundingBox(),
+                        getSecondaryAttackBox(),
                         entity -> !getPassengers().contains(entity)
                                 && !entity.getType().is(URTags.DRAGON_IMMUNE)
                                 && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
                 );
         if (!targets.isEmpty()) for (Entity mob: targets) {
             AABB targetBox = mob.getBoundingBox();
-            if (targetBox.intersects(getAttackBoundingBox())) doHurtTarget(world, mob);
+            if (targetBox.intersects(getSecondaryAttackBox())) doHurtTarget(world, mob);
         }
     }
 
@@ -254,19 +251,19 @@ public class Moleclaw extends URRideableDragonEntity {
         List<Entity> targets = level()
                 .getEntities(
                         this,
-                        getSecondaryAttackBox(),
+                        getPrimaryAttackBox(),
                         entity -> !getPassengers().contains(entity)
                                 && !entity.getType().is(URTags.DRAGON_IMMUNE)
                                 && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
                 );
         if (!targets.isEmpty()) for (Entity mob : targets) {
             AABB targetBox = mob.getBoundingBox();
-            if (targetBox.intersects(getSecondaryAttackBox())) doHurtTarget(world, mob);
+            if (targetBox.intersects(getPrimaryAttackBox())) doHurtTarget(world, mob);
         }
 
         if (!canBreakBlocks()) return;
 
-        Iterable<BlockPos> blocks = BlockPos.betweenClosed(getSecondaryAttackBox());
+        Iterable<BlockPos> blocks = BlockPos.betweenClosed(getPrimaryAttackBox());
         float maxMiningLevel = (float) getAttributeValue(URAttributes.MOLECLAW_MINING_LEVEL);
         if (hasEffect(MobEffects.STRENGTH)) maxMiningLevel += getEffect(MobEffects.STRENGTH).getAmplifier() + 1;
         if (hasEffect(MobEffects.WEAKNESS)) maxMiningLevel -= getEffect(MobEffects.WEAKNESS).getAmplifier() + 1;
@@ -288,11 +285,16 @@ public class Moleclaw extends URRideableDragonEntity {
     public boolean canBreakBlocks() {
         if (!(level() instanceof ServerLevel world)) return false;
         boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().moleclawGriefing.canTamedBreak() : URConfig.getConfig().moleclawGriefing.canUntamedBreak();
-        return shouldBreakBlocks &&  world.getGameRules().getBoolean(GameRules.RULE_MOBGRIEFING);
+        return shouldBreakBlocks &&  world.getGameRules().get(GameRules.MOB_GRIEFING);
     }
 
     @Override
-    public @NotNull AABB getAttackBoundingBox() {
+    public @NotNull AABB getAttackBoundingBox(double range) {
+        return getSecondaryAttackBox();
+    }
+
+    @Override
+    public @NotNull AABB getSecondaryAttackBox() {
         Vec3 rotationVec = calculateViewVector(0, getYRot());
         double x = rotationVec.x * 2;
         double z = rotationVec.z * 2;
@@ -301,7 +303,7 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    public AABB getSecondaryAttackBox() {
+    public @NonNull AABB getPrimaryAttackBox() {
         double halfWidth = getBbWidth() / 2f;
         double x = -Math.sin(Math.toRadians(getYRot())) * halfWidth;
         double y = 0;
@@ -399,5 +401,10 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
         return isPanicking() || super.isLookingAtDirection(pitch, yaw, pitchTolerance, yawTolerance);
+    }
+
+    @Override
+    public Collection<BRAnimationController<?>> getAnimationControllers() {
+        return List.of();
     }
 }

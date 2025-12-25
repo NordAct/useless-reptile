@@ -4,7 +4,7 @@ import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementRequirements;
 import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
+import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.data.recipes.RecipeCategory;
@@ -86,6 +86,6 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
                 .requirements(AdvancementRequirements.Strategy.OR);
         criteria.forEach(builder::addCriterion);
         VortexHornRecipe shapedRecipe = new VortexHornRecipe(Objects.requireNonNullElse(group, ""), RecipeBuilder.determineBookCategory(category), rawShapedRecipe, new ItemStack(result, count), showNotification);
-        exporter.accept(recipeKey, shapedRecipe, builder.build(recipeKey.location().withPrefix("recipes/" + category.getFolderName() + "/")));
+        exporter.accept(recipeKey, shapedRecipe, builder.build(recipeKey.identifier().withPrefix("recipes/" + category.getFolderName() + "/")));
     }
 }

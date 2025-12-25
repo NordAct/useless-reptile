@@ -3,7 +3,7 @@ package nordmods.uselessreptile.common.network.c2s;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public record KeyInputPayload(
         boolean freeLook,
         int id
 ) implements CustomPacketPayload{
-    public static final ResourceLocation ID = UselessReptile.id("key_input");
+    public static final Identifier ID = UselessReptile.id("key_input");
     public static final Type<KeyInputPayload> PAYLOAD_ID = new Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, KeyInputPayload> PACKET_CODEC =
             StreamCodec.of(KeyInputPayload::write, KeyInputPayload::read);

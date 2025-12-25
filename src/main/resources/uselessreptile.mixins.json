@@ -14,23 +14,22 @@
     "common.misc.ItemMixin",
     "common.misc.ItemStackMixin",
     "common.misc.LightningBoltMixin",
-    "common.misc.ServerPlayerEntityMixin",
-    "common.misc.MobCategoryMixin"
+    "common.misc.MobCategoryMixin",
+    "common.misc.ServerPlayerEntityMixin"
   ],
   "client": [
     "client.camera.CameraMixin",
     "client.camera.EntityMixin",
     "client.camera.LivingEntityMixin",
-    "client.debug.SubmitNodeCollectionMixin",
-    "client.debug.FeatureRenderDispatcherMixin",
+    "client.debug.EnitiyHitboxDebugMixin",
     "client.debug.ResourceLoadStateTrackerMixin",
-    "client.gui.GuiMixin",
     "client.gui.EffectsInInventoryMixin",
-    "client.render.LivingEntityRendererMixin",
-    "client.render.LivingEntityRenderStateMixin",
+    "client.gui.GuiMixin",
     "client.render.AvatarRendererMixin",
     "client.render.AvatarRenderStateMixin",
-    "client.render.LivingEntityMixin"
+    "client.render.LivingEntityMixin",
+    "client.render.LivingEntityRendererMixin",
+    "client.render.LivingEntityRenderStateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

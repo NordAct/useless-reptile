@@ -4,7 +4,6 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.minecraft.client.data.*;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
@@ -18,7 +17,7 @@ import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
 import net.minecraft.client.renderer.item.properties.select.ComponentContents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
@@ -41,7 +40,7 @@ public class URModelProvider extends FabricModelProvider {
 
     @Override
     public void generateBlockStateModels(BlockModelGenerators blockStateModelGenerator) {
-        Variant modelVariant = new Variant(ResourceLocation.parse("block/netherrack"));
+        Variant modelVariant = new Variant(Identifier.parse("block/netherrack"));
         blockStateModelGenerator.blockStateOutput
                 .accept(
                         MultiVariantGenerator.dispatch(
@@ -104,10 +103,10 @@ public class URModelProvider extends FabricModelProvider {
     }
 
     protected static ModelTemplate item(String parent, TextureSlot... requiredTextureKeys) {
-        return new ModelTemplate(Optional.of(ResourceLocation.parse("item/" + parent)), Optional.empty(), requiredTextureKeys);
+        return new ModelTemplate(Optional.of(Identifier.parse("item/" + parent)), Optional.empty(), requiredTextureKeys);
     }
 
-    protected void generateDragonArmor(Item item, ResourceLocation texture,  BiConsumer<ResourceLocation, ModelInstance> modelCollector) {
+    protected void generateDragonArmor(Item item, Identifier texture,  BiConsumer<Identifier, ModelInstance> modelCollector) {
         JsonArray translation = new JsonArray();
         translation.add(0);
         translation.add(-0.4);
@@ -136,12 +135,12 @@ public class URModelProvider extends FabricModelProvider {
         });
     }
 
-    protected void registerDragonArmorModel(ItemModelGenerators itemModelGenerator, Item item, ResourceLocation texture) {
+    protected void registerDragonArmorModel(ItemModelGenerators itemModelGenerator, Item item, Identifier texture) {
         generateDragonArmor(item, texture, itemModelGenerator.modelOutput);
         itemModelGenerator.declareCustomModelItem(item);
     }
 
-    protected void generateVotexHorn(Item item, BiConsumer<ResourceLocation, ModelInstance> modelCollector) {
+    protected void generateVotexHorn(Item item, BiConsumer<Identifier, ModelInstance> modelCollector) {
         JsonArray translation;
         JsonArray rotation;
         JsonArray scale;
@@ -185,19 +184,19 @@ public class URModelProvider extends FabricModelProvider {
         display.add("firstperson_righthand", firstpersonRighthand);
         display.add("firstperson_lefthand", firstpersonLefthand);
 
-        ResourceLocation itemID = item.builtInRegistryHolder().key().location();
+        Identifier itemID = item.builtInRegistryHolder().key().identifier();
         modelCollector.accept(ModelLocationUtils.getModelLocation(item), () -> {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("parent", "minecraft:item/generated");
             JsonObject jsonObject2 = new JsonObject();
-            jsonObject2.addProperty("layer0", ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
+            jsonObject2.addProperty("layer0", Identifier.fromNamespaceAndPath(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
             jsonObject.add("textures", jsonObject2);
             jsonObject.add("display", display);
             return jsonObject;
         });
     }
 
-    protected void generateTootingVotexHorn(Item item, BiConsumer<ResourceLocation, ModelInstance> modelCollector) {
+    protected void generateTootingVotexHorn(Item item, BiConsumer<Identifier, ModelInstance> modelCollector) {
         JsonArray translation;
         JsonArray rotation;
         JsonArray scale;
@@ -237,12 +236,12 @@ public class URModelProvider extends FabricModelProvider {
         display.add("firstperson_righthand", firstpersonRighthand);
         display.add("firstperson_lefthand", firstpersonLefthand);
 
-        ResourceLocation itemID = item.builtInRegistryHolder().key().location();
-        modelCollector.accept(ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/tooting_" + itemID.getPath()), () -> {
+        Identifier itemID = item.builtInRegistryHolder().key().identifier();
+        modelCollector.accept(Identifier.fromNamespaceAndPath(itemID.getNamespace(), "item/tooting_" + itemID.getPath()), () -> {
             JsonObject jsonObject = new JsonObject();
             jsonObject.addProperty("parent", "minecraft:item/generated");
             JsonObject jsonObject2 = new JsonObject();
-            jsonObject2.addProperty("layer0", ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
+            jsonObject2.addProperty("layer0", Identifier.fromNamespaceAndPath(itemID.getNamespace(), "item/vortex_horn/" + itemID.getPath()).toString());
             jsonObject.add("textures", jsonObject2);
             jsonObject.add("display", display);
             return jsonObject;
@@ -253,9 +252,9 @@ public class URModelProvider extends FabricModelProvider {
         generateVotexHorn(item, itemModelGenerator.modelOutput);
         generateTootingVotexHorn(item, itemModelGenerator.modelOutput);
 
-        ResourceLocation itemID = item.builtInRegistryHolder().key().location();
-        ItemModel.Unbaked unbaked = ItemModelUtils.plainModel(ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/" + itemID.getPath()));
-        ItemModel.Unbaked unbaked2 = ItemModelUtils.plainModel(ResourceLocation.fromNamespaceAndPath(itemID.getNamespace(), "item/tooting_" + itemID.getPath()));
+        Identifier itemID = item.builtInRegistryHolder().key().identifier();
+        ItemModel.Unbaked unbaked = ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(itemID.getNamespace(), "item/" + itemID.getPath()));
+        ItemModel.Unbaked unbaked2 = ItemModelUtils.plainModel(Identifier.fromNamespaceAndPath(itemID.getNamespace(), "item/tooting_" + itemID.getPath()));
         itemModelGenerator.generateBooleanDispatch(item, ItemModelUtils.isUsingItem(), unbaked2, unbaked);
     }
 

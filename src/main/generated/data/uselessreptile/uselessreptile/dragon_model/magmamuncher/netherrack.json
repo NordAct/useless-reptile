@@ -1,8 +1,8 @@
 {
   "model_data": {
-    "animation": "uselessreptile:entity/magmamuncher/magmamuncher",
-    "model": "uselessreptile:entity/magmamuncher/magmamuncher",
-    "texture": "uselessreptile:entity/magmamuncher/netherrack"
+    "animation": "uselessreptile:biscuit_roll/animations/entity/magmamuncher/magmamuncher.animation.json",
+    "model": "uselessreptile:biscuit_roll/models/entity/magmamuncher/magmamuncher.geo.json",
+    "texture": "uselessreptile:textures/entity/magmamuncher/netherrack.png"
   },
   "sounds": [
     {

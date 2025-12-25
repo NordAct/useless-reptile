@@ -1,108 +1,138 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import nordmods.uselessreptile.client.init.URDataTickets;
-import nordmods.uselessreptile.client.model.DragonEqupmentModel;
+import net.minecraft.resources.Identifier;
+import nordmods.biscuit_roll.client.renderer.BRObjectRenderer;
+import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataTypes;
+import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.client.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
-import nordmods.uselessreptile.client.util.DragonEquipmentAnimatable;
+import nordmods.uselessreptile.client.util.AssetCache;
+import nordmods.uselessreptile.client.util.DragonEquipment;
+import nordmods.uselessreptile.client.util.EquipmentAssetCache;
+import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
+import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.GeoObjectRenderer;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.base.RenderModelPositioner;
 
 import java.util.HashMap;
-import java.util.Map;
 
-public class DragonEquipmentRenderer extends GeoObjectRenderer<DragonEquipmentAnimatable, GeoModel<?>, GeoRenderState> { //related object - dragon model
+public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, BRState.Impl> {
+    public static final Identifier DEFAULT_TEXTURE = TextureAtlas.LOCATION_BLOCKS;
     public DragonEquipmentRenderer() {
-        super(new DragonEqupmentModel());
-        withRenderLayer(new URGlowingLayer<>(this, state -> state.getGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE), 2));
+        super(new DragonEquipmentModelProvider());
+        addRenderLayer(new URGlowingLayer(this, 2));
     }
 
     @Override
-    public void preRender(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                          int packedLight, int packedOverlay, int renderColor) {
-        renderState.getGeckolibData(URDataTickets.DRAGON_BONES).forEach((parentBone, transform) -> {
-            model.getBone((String) parentBone).ifPresent(bone -> {
-                Vector3f rot = ((OwnerBoneTransforms)transform).rot;
-                bone.setRotX(rot.x);
-                bone.setRotY(rot.y);
-                bone.setRotZ(rot.z);
+    public RenderType getRenderType(BRState renderState, Identifier texture) {
+        if (!ResourceUtil.isResourceReloadFinished) return RenderTypes.armorCutoutNoCull(texture);
 
-                Vector3f pos = ((OwnerBoneTransforms)transform).pos;
-                bone.setPosX(pos.x);
-                bone.setPosY(pos.y);
-                bone.setPosZ(pos.z);
+        AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
 
-                Vector3f scale = ((OwnerBoneTransforms)transform).scale;
-                bone.setScaleX(scale.x);
-                bone.setScaleY(scale.y);
-                bone.setScaleZ(scale.z);
-            });
-        });
-        super.preRender(renderState, poseStack, model, renderTasks, cameraState, packedLight, packedOverlay, renderColor);
+        RenderType renderType = assetCache.getRenderTypeCache();
+        if (renderType != null) return renderType;
+
+        Identifier dragonId = renderState.getStateData(URStateDataTypes.DRAGON_ID);
+        String name = renderState.getStateData(URStateDataTypes.DRAGON_NAME).getString();
+        String variant = renderState.getStateData(URStateDataTypes.DRAGON_VARIANT);
+        Identifier itemId = BuiltInRegistries.ITEM.getKey(renderState.getStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK).getItem());
+        EquipmentModelData.Equipment data = DragonVariantUtil.getEquipmentModelData(
+                dragonId,
+                name,
+                variant,
+                Minecraft.getInstance().level,
+                itemId
+        );
+        if (data != null && data.modelData().translucent()) {
+            renderType = RenderTypes.armorTranslucent(texture);
+            assetCache.setRenderTypeCache(renderType);
+            return renderType;
+        }
+
+        renderType = RenderTypes.armorCutoutNoCull(texture);
+        assetCache.setRenderTypeCache(renderType);
+        return renderType;
     }
 
-    @Override
-    public void adjustRenderPose(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel model, CameraRenderState cameraState) {
-    }
 
     @Override
-    public void addRenderData(DragonEquipmentAnimatable animatable, GeoModel<?> relatedObject, GeoRenderState renderState, float partialTick) {
-        renderState.addGeckolibData(URDataTickets.DRAGON_RENDER_STATE, animatable.ownerRenderState);
-        renderState.addGeckolibData(URDataTickets.EQUIPMENT_ITEM_ID, BuiltInRegistries.ITEM.getKey(animatable.item));
-        renderState.addGeckolibData(URDataTickets.EQUIPMENT_ASSET_CACHE, animatable.getAssetCache());
+    @Nullable
+    public Identifier getTextureId(BRState renderState) {
+        if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_TEXTURE;
 
-        ResourceLocation id = getGeoModel().getModelResource(renderState);
-        HashMap<String, OwnerBoneTransforms> transforms = new HashMap<>();
-        if (id != DragonEqupmentModel.DEFAULT_MODEL) {
-            Map<String, GeoBone> equipmentBones = animatable.equipmentBones;
-            if (equipmentBones.isEmpty()) {
-                BakedGeoModel bakedEquipmentModel = getGeoModel().getBakedModel(id);
-                for (GeoBone bone : bakedEquipmentModel.topLevelBones()) addChildren(equipmentBones, bone);
+        AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
+        if (assetCache == null) return DEFAULT_TEXTURE;
+
+        Identifier id = assetCache.getTextureLocationCache();
+        if (id != null) return id;
+
+        Identifier dragonId = renderState.getStateData(URStateDataTypes.DRAGON_ID);
+        String name = renderState.getStateData(URStateDataTypes.DRAGON_NAME).getString();
+        String variant = renderState.getStateData(URStateDataTypes.DRAGON_VARIANT);
+        Identifier itemId = BuiltInRegistries.ITEM.getKey(renderState.getStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK).getItem());
+        EquipmentModelData.Equipment data = DragonVariantUtil.getEquipmentModelData(
+                dragonId,
+                name,
+                variant,
+                Minecraft.getInstance().level,
+                itemId
+        );
+        if (data != null) {
+            id = data.modelData().texture();
+            if (ResourceUtil.doesExist(id)) {
+                assetCache.setTextureLocationCache(id);
+                return id;
+            } else {
+                UselessReptile.LOGGER.warn("Failed to find texture for equipment ({}) for {} ({}) of variant {}",
+                        itemId,
+                        name,
+                        dragonId,
+                        variant);
             }
-
-            relatedObject.getAnimationProcessor().getRegisteredBones().forEach(bone -> {
-                GeoBone equipmentBone = animatable.equipmentBones.get(bone.getName());
-                if (equipmentBone != null) {
-                    transforms.put(bone.getName(),
-                            new OwnerBoneTransforms(
-                                    new Vector3f(bone.getPosX(), bone.getPosY(), bone.getPosZ()),
-                                    new Vector3f(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ()),
-                                    new Vector3f(bone.getRotX(), bone.getRotY(), bone.getRotZ())
-                                    )
-                    );
-                }
-            });
         }
-        renderState.addGeckolibData(URDataTickets.DRAGON_BONES, transforms);
+        assetCache.setTextureLocationCache(DEFAULT_TEXTURE);
+        return DEFAULT_TEXTURE;
     }
 
-    private void addChildren(Map<String, GeoBone> equipmentBones, GeoBone bone) {
-        equipmentBones.put(bone.getName(), bone);
-        for (GeoBone child : bone.getChildBones()) addChildren(equipmentBones, child);
+    @Override
+    public void extractRenderState(DragonEquipment animatable, BRState.Impl state, float v) {
+        state.setStateData(URStateDataTypes.DRAGON_NAME, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_NAME));
+        state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_ID));
+        state.setStateData(URStateDataTypes.DRAGON_VARIANT, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_VARIANT));
+        state.setStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK, animatable.itemStack);
+        state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
+        state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerRenderState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
+        state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerRenderState.getStateData(ClientStateDataTypes.LIGHT));
+        state.setStateData(StateDataTypes.CONTROLLERS, animatable.getAnimationControllers());
+        state.setStateData(StateDataTypes.MODEL_PROVIDER, this.getModelProvider());
+        state.setStateData(StateDataTypes.SCALE, animatable.ownerRenderState.scale);
     }
 
-    @Override //mitigation for some transparency issues
-    public void buildRenderTask(GeoRenderState renderState, PoseStack poseStack, BakedGeoModel bakedModel, GeoModel<DragonEquipmentAnimatable> model, OrderedSubmitNodeCollector renderTasks, CameraRenderState cameraState, @Nullable RenderType renderType,
-                                 int packedLight, int packedOverlay, int renderColor, @Nullable RenderModelPositioner<GeoRenderState> modelPositioner) {
-        if (renderTasks instanceof SubmitNodeCollector queue) {
-            super.buildRenderTask(renderState, poseStack, bakedModel, model, queue.order(1), cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
-            return;
-        }
-        super.buildRenderTask(renderState, poseStack, bakedModel, model, renderTasks, cameraState, renderType, packedLight, packedOverlay, renderColor, modelPositioner);
+    @Override
+    public BRState.Impl createRenderState() {
+        return new BRState.Impl(new HashMap<>());
     }
 
-    public record OwnerBoneTransforms(Vector3f pos, Vector3f scale, Vector3f rot) {
+    @Override
+    public void submitBRModel(BRState.Impl state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        if (!((EquipmentAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).canRender()) return;
+        super.submitBRModel(state, poseStack, submitNodeCollector, cameraRenderState);
+    }
+
+    @Override
+    public void submitBRModelOrdered(BRState.Impl state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, int order) {
+        if (!((EquipmentAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).canRender()) return;
+        super.submitBRModelOrdered(state, poseStack, submitNodeCollector, cameraRenderState, order);
     }
 }

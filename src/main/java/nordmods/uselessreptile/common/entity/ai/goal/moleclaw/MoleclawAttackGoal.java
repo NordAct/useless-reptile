@@ -1,11 +1,11 @@
 package nordmods.uselessreptile.common.entity.ai.goal.moleclaw;
 
-import nordmods.uselessreptile.common.entity.Moleclaw;
-
-import java.util.EnumSet;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import nordmods.uselessreptile.common.entity.Moleclaw;
+
+import java.util.EnumSet;
 
 public class MoleclawAttackGoal extends Goal {
     private final Moleclaw entity;
@@ -66,7 +66,7 @@ public class MoleclawAttackGoal extends Goal {
         else notMovingTimer = 0;
         if (notMovingTimer >= nextStrongAttackTimer && entity.getPrimaryAttackCooldown() == 0) {
             int any = 0;
-            for (VoxelShape ignored : entity.level().getBlockCollisions(null, entity.getSecondaryAttackBox())) any++;
+            for (VoxelShape ignored : entity.level().getBlockCollisions(null, entity.getPrimaryAttackBox())) any++;
             if (any > 0) {
                 entity.scheduleStrongAttack();
                 nextStrongAttackTimer = entity.getRandom().nextInt(21) + 40;
@@ -74,7 +74,7 @@ public class MoleclawAttackGoal extends Goal {
         }
 
         if (entity.getSecondaryAttackCooldown() > 0) return;
-        boolean doesCollide = entity.getAttackBoundingBox().intersects(target.getBoundingBox());
+        boolean doesCollide = entity.getSecondaryAttackBox().intersects(target.getBoundingBox());
         if (doesCollide) entity.scheduleNormalAttack();
     }
 }

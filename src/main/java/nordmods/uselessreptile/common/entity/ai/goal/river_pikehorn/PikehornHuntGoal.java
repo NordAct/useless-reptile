@@ -1,16 +1,11 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
-import nordmods.uselessreptile.common.entity.RiverPikehorn;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.EnumSet;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.random.Weighted;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.RandomPos;
-import net.minecraft.world.entity.animal.AbstractFish;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -19,6 +14,11 @@ import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import nordmods.uselessreptile.common.entity.RiverPikehorn;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.EnumSet;
+import java.util.List;
 
 public class PikehornHuntGoal extends Goal {
 
@@ -101,7 +101,7 @@ public class PikehornHuntGoal extends Goal {
                     entity.getLookControl().setLookAt(fish);
                     entity.getNavigation().moveTo(fish, 1);
                     if (entity.getPrimaryAttackCooldown() > 0) return;
-                    if (entity.getAttackBoundingBox().intersects(fish.getBoundingBox())) entity.attackMelee(fish);
+                    if (entity.getPrimaryAttackBox().intersects(fish.getBoundingBox())) entity.attackMelee(fish);
                 }
             }
         } else {

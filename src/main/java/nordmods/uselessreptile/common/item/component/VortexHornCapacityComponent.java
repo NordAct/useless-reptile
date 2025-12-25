@@ -2,9 +2,10 @@ package nordmods.uselessreptile.common.item.component;
 
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import java.util.stream.IntStream;
-import net.minecraft.Util;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.util.Util;
+
+import java.util.stream.IntStream;
 
 public record VortexHornCapacityComponent(int currentCapacity, int maxCapacity) {
     public static final VortexHornCapacityComponent DEFAULT = new VortexHornCapacityComponent(0, 0);

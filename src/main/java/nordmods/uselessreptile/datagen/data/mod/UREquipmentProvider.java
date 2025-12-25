@@ -6,7 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -14,7 +14,7 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.dragon_variant.model.DragonEquipment;
+import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,7 +26,7 @@ public class UREquipmentProvider implements DataProvider {
     protected final FabricDataOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
-    private final Map<ResourceLocation, DragonEquipment> holder = new HashMap<>();
+    private final Map<Identifier, EquipmentModelData> holder = new HashMap<>();
 
     public UREquipmentProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
@@ -41,7 +41,7 @@ public class UREquipmentProvider implements DataProvider {
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach((key, val) -> {
                 Path path = this.pathResolver.json(key);
-                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonEquipment.CODEC, val, path));
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, EquipmentModelData.CODEC, val, path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
@@ -55,49 +55,52 @@ public class UREquipmentProvider implements DataProvider {
         addCommonArmor(UREntities.LIGHTNING_CHASER_ENTITY);
         addCommonArmor(UREntities.MOLECLAW_ENTITY);
 
-        ResourceLocation moleclawHelmet = UselessReptile.id("entity/moleclaw/helmet");
-        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("entity/moleclaw/moleclaw_helmet_iron"), moleclawHelmet, true);
-        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("entity/moleclaw/moleclaw_helmet_gold"), moleclawHelmet, true);
-        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("entity/moleclaw/moleclaw_helmet_diamond"), moleclawHelmet, true);
-        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("entity/moleclaw/moleclaw_helmet_netherite"), moleclawHelmet, true);
-        holder.put(UselessReptile.id("empty"), new DragonEquipment(Optional.empty(), List.of()));
+        Identifier moleclawHelmet = UselessReptile.id("biscuit_roll/models/entity/moleclaw/helmet.geo.json");
+        Identifier moleclawEmptyAnimation = UselessReptile.id("biscuit_roll/animations/entity/moleclaw/empty.animation.json");
+        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_iron.png"), moleclawHelmet, moleclawEmptyAnimation, true);
+        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_gold.png"), moleclawHelmet, moleclawEmptyAnimation, true);
+        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_diamond.png"), moleclawHelmet, moleclawEmptyAnimation, true);
+        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_netherite.png"), moleclawHelmet, moleclawEmptyAnimation, true);
+        holder.put(UselessReptile.id("empty"), new EquipmentModelData(Optional.empty(), List.of()));
     }
 
-    protected void addEntry(EntityType<? extends URDragonEntity> type, Item item, ResourceLocation texture, ResourceLocation model, boolean translucent) {
-        DragonEquipment.Equipment equipmentModelData = new DragonEquipment.Equipment(BuiltInRegistries.ITEM.getKey(item), new ModelData(texture, model, Optional.empty(), true, translucent));
-        ResourceLocation id = EntityType.getKey(type);
+    protected void addEntry(EntityType<? extends URDragonEntity> type, Item item, Identifier texture, Identifier model, Identifier animation, boolean translucent) {
+        EquipmentModelData.Equipment equipmentModelData = new EquipmentModelData.Equipment(BuiltInRegistries.ITEM.getKey(item), new ModelData(texture, model, animation, true, translucent));
+        Identifier id = EntityType.getKey(type);
         if (holder.containsKey(id)) holder.get(id).equipment().add(equipmentModelData);
-        else holder.put(id, new DragonEquipment(Optional.empty(), new ArrayList<>(Collections.singleton(equipmentModelData))));
+        else holder.put(id, new EquipmentModelData(Optional.empty(), new ArrayList<>(Collections.singleton(equipmentModelData))));
     }
 
     protected void addSaddle(EntityType<? extends URDragonEntity> type) {
-        ResourceLocation id = EntityType.getKey(type);
-        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
-        ResourceLocation model = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/saddle");
-        addEntry(type, Items.SADDLE, texture, model, false);
+        Identifier id = EntityType.getKey(type);
+        Identifier texture = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/entity/" + id.getPath() + "/saddle.png");
+        Identifier model = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/saddle.geo.json");
+        Identifier animation = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/animations/entity/" + id.getPath() + "/saddle.animation.json");
+        addEntry(type, Items.SADDLE, texture, model, animation, false);
     }
 
     protected void addCommonArmor(EntityType<? extends URDragonEntity> type) {
-        ResourceLocation id = EntityType.getKey(type);
-        ResourceLocation textureIron = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/armor_iron");
-        ResourceLocation textureGold = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/armor_gold");
-        ResourceLocation textureDiamond = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/armor_diamond");
-        ResourceLocation textureNetherite = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/armor_netherite");
-        ResourceLocation modelHelmet = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/helmet");
-        ResourceLocation modelChestplate = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/chestplate");
-        ResourceLocation modelTailArmor = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "entity/" + id.getPath() + "/tail_armor");
-        addEntry(type, URItems.DRAGON_HELMET_IRON, textureIron, modelHelmet, false);
-        addEntry(type, URItems.DRAGON_HELMET_GOLD, textureGold, modelHelmet, false);
-        addEntry(type, URItems.DRAGON_HELMET_DIAMOND, textureDiamond, modelHelmet, false);
-        addEntry(type, URItems.DRAGON_HELMET_NETHERITE, textureNetherite, modelHelmet, false);
-        addEntry(type, URItems.DRAGON_CHESTPLATE_IRON, textureIron, modelChestplate, false);
-        addEntry(type, URItems.DRAGON_CHESTPLATE_GOLD, textureGold, modelChestplate, false);
-        addEntry(type, URItems.DRAGON_CHESTPLATE_DIAMOND, textureDiamond, modelChestplate, false);
-        addEntry(type, URItems.DRAGON_CHESTPLATE_NETHERITE, textureNetherite, modelChestplate, false);
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_IRON, textureIron, modelTailArmor, false);
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_GOLD, textureGold, modelTailArmor, false);
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_DIAMOND, textureDiamond, modelTailArmor, false);
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_NETHERITE, textureNetherite, modelTailArmor, false);
+        Identifier id = EntityType.getKey(type);
+        Identifier textureIron = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_iron.png");
+        Identifier textureGold = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_gold.png");
+        Identifier textureDiamond = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_diamond.png");
+        Identifier textureNetherite = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/entity/" + id.getPath() + "/armor_netherite.png");
+        Identifier modelHelmet = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/helmet.geo.json");
+        Identifier modelChestplate = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/chestplate.geo.json");
+        Identifier modelTailArmor = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/tail_armor.geo.json");
+        Identifier emptyAnimation = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/animations/entity/" + id.getPath() + "/empty.animation.json");
+        addEntry(type, URItems.DRAGON_HELMET_IRON, textureIron, modelHelmet, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_HELMET_GOLD, textureGold, modelHelmet, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_HELMET_DIAMOND, textureDiamond, modelHelmet, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_HELMET_NETHERITE, textureNetherite, modelHelmet, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_CHESTPLATE_IRON, textureIron, modelChestplate, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_CHESTPLATE_GOLD, textureGold, modelChestplate, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_CHESTPLATE_DIAMOND, textureDiamond, modelChestplate, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_CHESTPLATE_NETHERITE, textureNetherite, modelChestplate, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_IRON, textureIron, modelTailArmor, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_GOLD, textureGold, modelTailArmor, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_DIAMOND, textureDiamond, modelTailArmor, emptyAnimation, false);
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_NETHERITE, textureNetherite, modelTailArmor, emptyAnimation, false);
     }
 
     @Override

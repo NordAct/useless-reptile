@@ -1,8 +1,7 @@
-- 1.21.10 port
-- Now fly down key is bound to left ctrl by default. If you moving from previous game versions, make sure to bind it
-- Fix Vortex Horns preserving original max capacity when upgrading the horn
-- Now dragon attacks should no longer destroy dropped items
-- Added entity type tag `uselessreptile:dragon_immune` to specify entity types that cannot be damaged by dragons
-- Dragons no longer have seizures when trying to look around while standing still
+- 1.21.11 port
+- Now fly down key is bound to left ctrl by default. If you're moving from previous game versions, make sure to bind it
 - Culling is no longer supported for dragon equipment
 - Spawn groups are now referred as "mob categories" (or "categories")
+- Replaced Geckolib with new animation library (currently bundled with mod, later will be shipped as separate dependency)
+- Updated all models and animations to accompany animation library change. No more redundant bones just to overlap animations, yay
+- Buffed Netherite and Diamond Dragon Armor sets

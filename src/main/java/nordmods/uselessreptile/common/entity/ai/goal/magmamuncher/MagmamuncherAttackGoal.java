@@ -1,10 +1,10 @@
 package nordmods.uselessreptile.common.entity.ai.goal.magmamuncher;
 
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.entity.Magmamuncher;
 
 import java.util.EnumSet;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.goal.Goal;
 
 public class MagmamuncherAttackGoal extends Goal {
     private final Magmamuncher entity;
@@ -60,10 +60,9 @@ public class MagmamuncherAttackGoal extends Goal {
             return;
         }
         entity.setSprinting(true);
-        //entity.getLookControl().lookAt(target);
         entity.getNavigation().moveTo(target, 1);
 
-        if (entity.getPrimaryAttackCooldown() > 0 || !entity.getAttackBoundingBox().intersects(target.getBoundingBox())) return;
+        if (entity.getPrimaryAttackCooldown() > 0 || !entity.getPrimaryAttackBox().intersects(target.getBoundingBox())) return;
 
         entity.attackMelee(target);
     }

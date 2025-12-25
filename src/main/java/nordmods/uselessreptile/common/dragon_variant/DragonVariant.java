@@ -3,6 +3,15 @@ package nordmods.uselessreptile.common.dragon_variant;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Registry;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Util;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.TagValueInput;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URResourceKeys;
@@ -13,15 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-import net.minecraft.Util;
-import net.minecraft.core.Registry;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.TagValueInput;
 
 
 //TODO:
@@ -35,36 +35,36 @@ import net.minecraft.world.level.storage.TagValueInput;
 
 //TODO also move custom name registry to clientside
 public record DragonVariant(
-        ResourceLocation dragonId,
+        Identifier dragonId,
         String name,
         Optional<String> displayNameKey,
-        ResourceLocation dragonModelData,
-        ResourceLocation dragonEquipment,
-        Optional<ResourceLocation> spawnConditions,
-        Optional<ResourceLocation> variantAttributeModifiers,
+        Identifier dragonModelData,
+        Identifier dragonEquipment,
+        Optional<Identifier> spawnConditions,
+        Optional<Identifier> variantAttributeModifiers,
         int baseTamingProgress,
         Optional<List<TamingItem>> tamingItems,
         Optional<List<FoodItem>> foodItems
 ) {
     public static final Codec<DragonVariant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ResourceLocation.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
+                    Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
                     Codec.STRING.fieldOf("name").forGetter(DragonVariant::name),
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
-                    ResourceLocation.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
-                    ResourceLocation.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
-                    ResourceLocation.CODEC.optionalFieldOf("spawn_conditions").forGetter(DragonVariant::spawnConditions),
-                    ResourceLocation.CODEC.optionalFieldOf("attribute_modifiers").forGetter(DragonVariant::variantAttributeModifiers),
+                    Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
+                    Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
+                    Identifier.CODEC.optionalFieldOf("spawn_conditions").forGetter(DragonVariant::spawnConditions),
+                    Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(DragonVariant::variantAttributeModifiers),
                     Codec.INT.fieldOf("base_taming_progress").forGetter(DragonVariant::baseTamingProgress),
                     TamingItem.LIST_CODEC.optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
                     FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
             .apply(instance, DragonVariant::new));
 
     public static final Codec<DragonVariant> CODEC_NO_SERVER_INFO = RecordCodecBuilder.create(instance -> instance.group(
-                    ResourceLocation.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
+                    Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
                     Codec.STRING.fieldOf("name").forGetter(DragonVariant::name),
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
-                    ResourceLocation.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
-                    ResourceLocation.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
+                    Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
+                    Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
                     TamingItem.LIST_CODEC.optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
                     FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
             .apply(instance, (
@@ -90,10 +90,10 @@ public record DragonVariant(
             ));
 
     public static final Codec<DragonVariant> CODEC_CUSTOM_NAME = RecordCodecBuilder.create(instance -> instance.group(
-                    ResourceLocation.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
+                    Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
                     Codec.STRING.fieldOf("name").forGetter(DragonVariant::name),
-                    ResourceLocation.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
-                    ResourceLocation.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment))
+                    Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
+                    Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment))
             .apply(instance, (
                             id,
                             variant,
@@ -114,7 +114,7 @@ public record DragonVariant(
             ));
 
     @NotNull
-    public static DragonVariant getDefaultVariant(ResourceLocation dragonId, Level world) {
+    public static DragonVariant getDefaultVariant(Identifier dragonId, Level world) {
         CompoundTag nbtCompound = new CompoundTag();
         nbtCompound.putString("id", dragonId.toString());
         URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), nbtCompound), world, EntitySpawnReason.TRIGGERED).get();
@@ -127,7 +127,7 @@ public record DragonVariant(
     }
 
     @Nullable
-    public static DragonVariant getByVariant(ResourceLocation dragonId, String variant, Level world) {
+    public static DragonVariant getByVariant(Identifier dragonId, String variant, Level world) {
         Registry<DragonVariant> registry = world.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT);
         return registry.stream()
                 .filter(dragonVariant -> dragonVariant.dragonId().equals(dragonId) && dragonVariant.name().equals(variant))
@@ -136,7 +136,7 @@ public record DragonVariant(
     }
 
     @Nullable
-    public static DragonVariant getByCustomName(ResourceLocation dragonId, String name, Level world) {
+    public static DragonVariant getByCustomName(Identifier dragonId, String name, Level world) {
         Registry<DragonVariant> registry = world.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT_CUSTOM_NAME);
         return registry.stream()
                 .filter(dragonVariant -> dragonVariant.dragonId().equals(dragonId) && dragonVariant.name().equals(name))
@@ -144,7 +144,7 @@ public record DragonVariant(
                 .orElse(null);
     }
 
-    public static DragonVariant getDragonVariant(ResourceLocation dragonId, String name, String variant, Level world) {
+    public static DragonVariant getDragonVariant(Identifier dragonId, String name, String variant, Level world) {
         DragonVariant dragonVariant = null;
 
         if (name != null) dragonVariant = getByCustomName(dragonId, name, world);

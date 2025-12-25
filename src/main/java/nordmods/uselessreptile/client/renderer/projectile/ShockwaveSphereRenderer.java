@@ -3,13 +3,14 @@ package nordmods.uselessreptile.client.renderer.projectile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.RenderUtil;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, ShockwaveSphereRenderer.ShockwaveSpereEntityRenderState> {
-    private static final ResourceLocation TEXTURE = UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
+    private static final Identifier TEXTURE = UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
     private static final int SPHERE_ROWS = 16;
 
     public ShockwaveSphereRenderer(EntityRendererProvider.Context ctx) {
@@ -34,7 +35,7 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
     public void submit(ShockwaveSpereEntityRenderState state, PoseStack matrixStack, SubmitNodeCollector commandQueue, CameraRenderState cameraRenderState) {
         matrixStack.pushPose();
 
-        RenderType layer = RenderType.entityTranslucentEmissive(TEXTURE, true);
+        RenderType layer = RenderTypes.entityTranslucentEmissive(TEXTURE, true);
 
         matrixStack.pushPose();
         matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha / 2f * 180f));

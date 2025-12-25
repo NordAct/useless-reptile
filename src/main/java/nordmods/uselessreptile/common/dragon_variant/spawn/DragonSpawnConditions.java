@@ -4,16 +4,17 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Util;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
-import net.minecraft.Util;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.block.Block;
 
 public record DragonSpawnConditions(
         int weight,
@@ -120,7 +121,7 @@ public record DragonSpawnConditions(
         //allowed biomes
         public Builder addAllowedBiome(ResourceKey<Biome> biomeRegistryKey) {
             if (allowedBiomes == null) allowedBiomes = new ArrayList<>();
-            allowedBiomes.add(new ExtraCodecs.TagOrElementLocation(biomeRegistryKey.location(), false));
+            allowedBiomes.add(new ExtraCodecs.TagOrElementLocation(biomeRegistryKey.identifier(), false));
             return this;
         }
 
@@ -134,7 +135,7 @@ public record DragonSpawnConditions(
         //banned biomes
         public Builder addBannedBiome(ResourceKey<Biome> biomeRegistryKey) {
             if (bannedBiomes == null) bannedBiomes = new ArrayList<>();
-            bannedBiomes.add(new ExtraCodecs.TagOrElementLocation(biomeRegistryKey.location(), false));
+            bannedBiomes.add(new ExtraCodecs.TagOrElementLocation(biomeRegistryKey.identifier(), false));
             return this;
         }
 
@@ -147,7 +148,7 @@ public record DragonSpawnConditions(
         //allowed blocks
         public Builder addAllowedBlock(ResourceKey<Block> blockRegistryKey) {
             if (allowedBlocks == null) allowedBlocks = new ArrayList<>();
-            allowedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockRegistryKey.location(), false));
+            allowedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockRegistryKey.identifier(), false));
             return this;
         }
 
@@ -160,7 +161,7 @@ public record DragonSpawnConditions(
         //banned blocks
         public Builder addBannedBlock(ResourceKey<Block> blockRegistryKey) {
             if (bannedBlocks == null) bannedBlocks = new ArrayList<>();
-            bannedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockRegistryKey.location(), false));
+            bannedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockRegistryKey.identifier(), false));
             return this;
         }
 

@@ -1,38 +1,38 @@
 package nordmods.uselessreptile.common.dragon_variant;
 
+import net.minecraft.core.RegistryAccess;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.level.Level;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.common.dragon_variant.model.DragonEquipment;
-import nordmods.uselessreptile.common.dragon_variant.model.DragonModel;
+import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
+import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.Level;
 
 public class DragonVariantUtil {
     @Nullable
-    public static DragonModel getDragonModelData(ResourceLocation dragonId, String name, String variant, Level world) {
+    public static DragonModelData getDragonModelData(Identifier dragonId, String name, String variant, Level world) {
         if (!ResourceUtil.isResourceReloadFinished) return null;
         return world.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_MODEL).getValue(DragonVariant.getDragonVariant(dragonId, name, variant, world).dragonModelData());
     }
 
     @Nullable
-    public static DragonEquipment.Equipment getEquipmentModelData(ResourceLocation dragonId, String name, String variant, Level world, ResourceLocation item) {
+    public static EquipmentModelData.Equipment getEquipmentModelData(Identifier dragonId, String name, String variant, Level world, Identifier item) {
         if (!ResourceUtil.isResourceReloadFinished) return null;
 
         DragonVariant dragonVariant = DragonVariant.getDragonVariant(dragonId, name, variant, world);
 
         RegistryAccess registryManager = world.registryAccess();
-        DragonEquipment dragonEquipment = registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT).getValue(dragonVariant.dragonEquipment());
+        EquipmentModelData dragonEquipment = registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT).getValue(dragonVariant.dragonEquipment());
         if (dragonEquipment == null) return null;
 
-        List<DragonEquipment.Equipment> equipments = new ArrayList<>(dragonEquipment.equipment());
+        List<EquipmentModelData.Equipment> equipments = new ArrayList<>(dragonEquipment.equipment());
         equipments.addAll(getInjections(registryManager, dragonVariant.dragonEquipment()));
 
-        ResourceLocation parent = dragonEquipment.parent().orElse(null);
+        Identifier parent = dragonEquipment.parent().orElse(null);
         while (parent != null) {
             dragonEquipment = registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT).getValue(parent);
             if (dragonEquipment == null) break;
@@ -41,12 +41,12 @@ public class DragonVariantUtil {
             parent = dragonEquipment.parent().orElse(null);
         }
 
-        for (DragonEquipment.Equipment equipment : equipments) if (equipment.item().equals(item)) return equipment;
+        for (EquipmentModelData.Equipment equipment : equipments) if (equipment.item().equals(item)) return equipment;
         return null;
     }
 
-    private static List<DragonEquipment.Equipment> getInjections(RegistryAccess registryManager, ResourceLocation parent) {
-        List<DragonEquipment.Equipment> injections = new ArrayList<>();
+    private static List<EquipmentModelData.Equipment> getInjections(RegistryAccess registryManager, Identifier parent) {
+        List<EquipmentModelData.Equipment> injections = new ArrayList<>();
         registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT_INJECT)
                 .stream()
                 .filter(inject -> inject.parent().isPresent() && inject.parent().get().equals(parent))

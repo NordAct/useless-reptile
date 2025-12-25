@@ -1,10 +1,10 @@
 package nordmods.uselessreptile.common.entity.ai.goal.wyvern;
 
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.entity.Wyvern;
 
 import java.util.EnumSet;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.goal.Goal;
 
 public class WyvernAttackGoal extends Goal {
     private final Wyvern entity;
@@ -63,7 +63,7 @@ public class WyvernAttackGoal extends Goal {
         double attackDistance = entity.getBbWidth() * 2.0f * (entity.getBbWidth() * 2.0f);
         double distance = entity.distanceToSqr(target);
         entity.getNavigation().moveTo(target, 1);
-        boolean doesCollide = entity.getAttackBoundingBox().intersects(target.getBoundingBox());
+        boolean doesCollide = entity.getPrimaryAttackBox().intersects(target.getBoundingBox());
 
         if (!doesCollide && entity.getPrimaryAttackCooldown() == 0 && (distance > attackDistance * 4 || !target.onGround() || distance < attackDistance && entity.getY() - target.getY() >= 1)) {
             entity.getLookControl().setLookAt(target);

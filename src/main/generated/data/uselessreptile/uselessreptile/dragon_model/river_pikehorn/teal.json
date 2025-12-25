@@ -1,8 +1,8 @@
 {
   "model_data": {
-    "animation": "uselessreptile:entity/river_pikehorn/river_pikehorn",
-    "model": "uselessreptile:entity/river_pikehorn/river_pikehorn",
-    "texture": "uselessreptile:entity/river_pikehorn/teal"
+    "animation": "uselessreptile:biscuit_roll/animations/entity/river_pikehorn/river_pikehorn.animation.json",
+    "model": "uselessreptile:biscuit_roll/models/entity/river_pikehorn/river_pikehorn.geo.json",
+    "texture": "uselessreptile:textures/entity/river_pikehorn/teal.png"
   },
   "sounds": [
     {

@@ -3,7 +3,7 @@ package nordmods.uselessreptile;
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
@@ -40,7 +40,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
         URConfig.init();
     }
 
-    public static ResourceLocation id(String id) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, id);
+    public static Identifier id(String id) {
+        return Identifier.fromNamespaceAndPath(MODID, id);
     }
 }

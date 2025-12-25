@@ -3,9 +3,10 @@ package nordmods.uselessreptile.client.util;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +14,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class RenderUtil {
-    public static void renderQuad( //todo test if it works
+    public static void renderQuad(
             Matrix4f positionMatrix, PoseStack.Pose normalMatrix, RenderType layer,
             Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3,
             float a, float r, float g, float b, int light,
@@ -43,9 +44,9 @@ public class RenderUtil {
                 .setNormal(normalMatrix, 0.0F, 1.0F, 0.0F);
     }
 
-    public static <E extends Entity> EntityRenderer<? super E, ?> getEntityRenderer(E entityIn) {
+    public static <E extends Entity> EntityRenderer<? super E, ? super EntityRenderState> getEntityRenderer(E entityIn) {
         EntityRenderDispatcher manager = Minecraft.getInstance().getEntityRenderDispatcher();
-        return manager.getRenderer(entityIn);
+        return (EntityRenderer<? super E, ? super EntityRenderState>) manager.getRenderer(entityIn);
     }
 
     public static float getTickDelta(boolean ignoreFreeze) {

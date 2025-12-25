@@ -8,24 +8,23 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.init.URDataTickets;
+import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
 
 public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
-    protected static final ResourceLocation TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
+    protected static final Identifier TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
     private int mouseX;
     private int mouseY;
     private final URDragonEntity entity;
@@ -129,10 +128,8 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
         LivingEntityRenderState state = (LivingEntityRenderState) renderer.createRenderState(entity, tickDelta);
         state.nameTag = null;
-        if (state instanceof GeoRenderState geoRenderState) {
-            geoRenderState.addGeckolibData(URDataTickets.PASSENGER_SHOULD_RENDER_TO_CLIENT, false);
-            geoRenderState.addGeckolibData(DataTickets.PACKED_LIGHT, LightTexture.FULL_BRIGHT); //geckolib moment
-        }
+        state.setStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT).stream().map(val -> false).toList());
+        state.setStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
 
         Quaternionf rot = new Quaternionf();
         Quaternionf cam = Axis.XP.rotationDegrees(-dy * 20 + 180).mul(Axis.YP.rotationDegrees(-dx * 40 + state.bodyRot));

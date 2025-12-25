@@ -26,24 +26,24 @@ public class URBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .addOptionalTag(BlockTags.FLOWERS.location())
                 .addOptionalTag(BlockTags.WOOL_CARPETS.location())
                 .addOptionalTag(BlockTags.WOOL.location())
-                .addElement(Blocks.MOSS_BLOCK.builtInRegistryHolder().key().location())
-                .addElement(Blocks.MOSS_CARPET.builtInRegistryHolder().key().location())
-                .addElement(Blocks.MUSHROOM_STEM.builtInRegistryHolder().key().location())
-                .addElement(Blocks.BROWN_MUSHROOM_BLOCK.builtInRegistryHolder().key().location())
-                .addElement(Blocks.RED_MUSHROOM_BLOCK.builtInRegistryHolder().key().location())
+                .addElement(Blocks.MOSS_BLOCK.builtInRegistryHolder().key().identifier())
+                .addElement(Blocks.MOSS_CARPET.builtInRegistryHolder().key().identifier())
+                .addElement(Blocks.MUSHROOM_STEM.builtInRegistryHolder().key().identifier())
+                .addElement(Blocks.BROWN_MUSHROOM_BLOCK.builtInRegistryHolder().key().identifier())
+                .addElement(Blocks.RED_MUSHROOM_BLOCK.builtInRegistryHolder().key().identifier())
                 .addOptionalTag(BlockTags.SNOW.location());
 
         getOrCreateRawBuilder(BlockTags.INFINIBURN_END)
-                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().identifier());
         getOrCreateRawBuilder(BlockTags.INFINIBURN_NETHER)
-                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().identifier());
         getOrCreateRawBuilder(BlockTags.INFINIBURN_OVERWORLD)
-                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().identifier());
         getOrCreateRawBuilder(BlockTags.MINEABLE_WITH_PICKAXE)
-                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().identifier());
         getOrCreateRawBuilder(ConventionalBlockTags.NETHERRACKS)
-                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().identifier());
         getOrCreateRawBuilder(BlockTags.SCULK_REPLACEABLE)
-                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().location());
+                .addElement(URBlocks.DEPLETED_MAGMA.builtInRegistryHolder().key().identifier());
     }
 }

@@ -12,18 +12,14 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.animal.Chicken;
+import net.minecraft.world.entity.animal.chicken.Chicken;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -35,6 +31,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import nordmods.biscuit_roll.common.animation.BRAnimationController;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -49,17 +46,13 @@ import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
-import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
+import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.manager.AnimatableManager;
-import software.bernie.geckolib.animatable.processing.AnimationController;
-import software.bernie.geckolib.animatable.processing.AnimationTest;
-import software.bernie.geckolib.animation.PlayState;
 
+import java.util.Collection;
 import java.util.List;
 
 public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity, ShooterDragon {
@@ -150,69 +143,70 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().wyvernBaseSecondaryAttackCooldown);
     }
 
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-        AnimationController<Wyvern> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
-        AnimationController<Wyvern> turn = new AnimationController<>("turn", TRANSITION_TICKS, this::turnController);
-        AnimationController<Wyvern> attack = new AnimationController<>("attack", 0, this::attackController);
-        AnimationController<Wyvern> eye = new AnimationController<>("eye", 0, this::eyeController);
-        main.setSoundKeyframeHandler(this::soundHandler);
-        attack.setSoundKeyframeHandler(this::soundHandler);
-        turn.setSoundKeyframeHandler(this::soundHandler);
-        eye.setSoundKeyframeHandler(this::soundHandler);
-        animationData.add(main, turn, attack, eye);
-    }
-
-    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
-        return loopAnim("blink", event);
-    }
-    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
-        if (event.controller().hasAnimationFinished()) event.controller().forceAnimationReset();
-        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
-        event.controller().setAnimationSpeed(animationSpeed);
-        if (isFlying()) {
-            if (isSecondaryAttack()) {
-                event.controller().setAnimationSpeed(1/ getCooldownModifier());
-                return loopAnim("fly.attack", event);
-            }
-            if (isMoving() || event.isMoving()) {
-                if (isMovingBackwards()) return loopAnim("fly.back", event);
-                if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
-                if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
-                if (isFlyGliding()) return loopAnim("fly.straight.glide", event);
-                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
-                return loopAnim("fly.straight", event);
-            }
-            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
-            return loopAnim("fly.idle", event);
-        }
-        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
-        if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
-        event.controller().setAnimationSpeed(1);
-        if (isDancing() && !isVehicle()) return loopAnim("dance", event);
-        return loopAnim("idle", event);
-    }
-
-    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
-        byte turnState = getTurningState();
-        if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
-            if (turnState == 1) return loopAnim("turn.fly.left", event);
-            if (turnState == 2) return loopAnim("turn.fly.right", event);
-        }
-        if (turnState == 1) return loopAnim("turn.left", event);
-        if (turnState == 2) return loopAnim("turn.right", event);
-        return loopAnim("turn.none", event);
-    }
-
-    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event) {
-        event.controller().setAnimationSpeed(1/ getCooldownModifier());
-        if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
-        if (isPrimaryAttack()) {
-            if (isFlying() && (isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
-            return playAnim("attack.range", event);
-        }
-        return playAnim("attack.none", event);
-    }
+    //todo
+//    @Override
+//    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
+//        AnimationController<Wyvern> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
+//        AnimationController<Wyvern> turn = new AnimationController<>("turn", TRANSITION_TICKS, this::turnController);
+//        AnimationController<Wyvern> attack = new AnimationController<>("attack", 0, this::attackController);
+//        AnimationController<Wyvern> eye = new AnimationController<>("eye", 0, this::eyeController);
+//        main.setSoundKeyframeHandler(this::soundHandler);
+//        attack.setSoundKeyframeHandler(this::soundHandler);
+//        turn.setSoundKeyframeHandler(this::soundHandler);
+//        eye.setSoundKeyframeHandler(this::soundHandler);
+//        animationData.add(main, turn, attack, eye);
+//    }
+//
+//    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
+//        return loopAnim("blink", event);
+//    }
+//    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
+//        if (event.controller().hasAnimationFinished()) event.controller().forceAnimationReset();
+//        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
+//        event.controller().setAnimationSpeed(animationSpeed);
+//        if (isFlying()) {
+//            if (isSecondaryAttack()) {
+//                event.controller().setAnimationSpeed(1/ getCooldownModifier());
+//                return loopAnim("fly.attack", event);
+//            }
+//            if (isMoving() || event.isMoving()) {
+//                if (isMovingBackwards()) return loopAnim("fly.back", event);
+//                if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
+//                if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
+//                if (isFlyGliding()) return loopAnim("fly.straight.glide", event);
+//                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
+//                return loopAnim("fly.straight", event);
+//            }
+//            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
+//            return loopAnim("fly.idle", event);
+//        }
+//        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
+//        if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
+//        event.controller().setAnimationSpeed(1);
+//        if (isDancing() && !isVehicle()) return loopAnim("dance", event);
+//        return loopAnim("idle", event);
+//    }
+//
+//    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
+//        byte turnState = getTurningState();
+//        if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
+//            if (turnState == 1) return loopAnim("turn.fly.left", event);
+//            if (turnState == 2) return loopAnim("turn.fly.right", event);
+//        }
+//        if (turnState == 1) return loopAnim("turn.left", event);
+//        if (turnState == 2) return loopAnim("turn.right", event);
+//        return loopAnim("turn.none", event);
+//    }
+//
+//    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event) {
+//        event.controller().setAnimationSpeed(1/ getCooldownModifier());
+//        if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
+//        if (isPrimaryAttack()) {
+//            if (isFlying() && (isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.fly.range", event);
+//            return playAnim("attack.range", event);
+//        }
+//        return playAnim("attack.none", event);
+//    }
 
     @Override
     public boolean canBeAffected(MobEffectInstance effect) {
@@ -335,7 +329,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         if (!(level() instanceof ServerLevel world)) return;
         List<Entity> list = world.getEntities(
                 this,
-                getAttackBoundingBox(),
+                getPrimaryAttackBox(),
                 entity -> !getPassengers().contains(entity)
                         && !entity.is(this)
                         && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
@@ -356,12 +350,12 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         }
         if (target != null && !getPassengers().contains(target)) {
             AABB targetBox = target.getBoundingBox();
-            if (targetBox.intersects(getAttackBoundingBox())) doHurtTarget(world, target);
+            if (targetBox.intersects(getPrimaryAttackBox())) doHurtTarget(world, target);
         }
     }
 
     @Override
-    public @NotNull AABB getAttackBoundingBox() {
+    public @NotNull AABB getPrimaryAttackBox() {
         double modifier = isFlying() ? getWidthMod() / 2 : (getWidthMod() + 0.1);
         double x = -Math.sin(Math.toRadians(getYRot())) * modifier;
         double z = Math.cos(Math.toRadians(getYRot())) * modifier;
@@ -494,5 +488,10 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
 
         tail3.setRelativePos(tail3Pos);
         tail3.setScale(1 ,1);
+    }
+
+    @Override
+    public Collection<BRAnimationController<?>> getAnimationControllers() {
+        return List.of();
     }
 }

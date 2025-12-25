@@ -1,55 +1,62 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
-import nordmods.uselessreptile.client.config.URClientConfig;
-import nordmods.uselessreptile.client.util.AssetCache;
-import nordmods.uselessreptile.client.util.AssetCahceOwner;
-import nordmods.uselessreptile.client.util.ResourceUtil;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.renderer.base.GeoRenderState;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import com.mojang.blaze3d.vertex.PoseStack;
-import java.util.function.Function;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import nordmods.biscuit_roll.client.renderer.BRRenderer;
+import nordmods.biscuit_roll.client.renderer.layer.TextureRenderLayer;
+import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.uselessreptile.client.config.URClientConfig;
+import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.client.util.AssetCache;
+import nordmods.uselessreptile.client.util.ResourceUtil;
 
-public class URGlowingLayer<T extends GeoAnimatable & AssetCahceOwner, O, R extends GeoRenderState> extends GeoRenderLayer<T, O, R> {
-    private final Function<R, ? extends AssetCache> assetCahceGetter;
-    private final int renderOrder;
-    public URGlowingLayer(software.bernie.geckolib.renderer.base.GeoRenderer<T, O, R> entityRendererIn, Function<R, ? extends AssetCache> assetCahceGetter, int renderOrder) {
-        super(entityRendererIn);
-        this.assetCahceGetter = assetCahceGetter;
-        this.renderOrder = renderOrder;
+public class URGlowingLayer extends TextureRenderLayer {
+    public URGlowingLayer(BRRenderer<?> parentRenderer, int order) {
+        super(parentRenderer, order);
+    }
+
+    protected Identifier getGlowingTexture(BRState state) {
+        String namespace = parentRenderer.getModelProvider().getModelId(state).getNamespace();
+        String path = parentRenderer.getTextureId(state).getPath().replace(".png", "_glowing.png");
+        Identifier id = Identifier.fromNamespaceAndPath(namespace, path);
+        state.getStateData(URStateDataTypes.ASSET_CACHE).setGlowLayerLocationCache(id);
+        return id;
+    }
+
+    protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        if (URClientConfig.getConfig().disableEmissiveTextures) return;
+        if (!ResourceUtil.isResourceReloadFinished) return;
+        if (!state.getStateData(URStateDataTypes.ASSET_CACHE).hasGlowing()) return;
+
+        super.submit(state, poseStack, submitNodeCollector, cameraRenderState);
     }
 
     @Override
-    public void submitRenderTask(R renderState, PoseStack poseStack, BakedGeoModel bakedModel, SubmitNodeCollector renderTasks, CameraRenderState cameraState,
-                                 int packedLight, int packedOverlay, int renderColor, boolean didRenderModel) {
-        if (URClientConfig.getConfig().disableEmissiveTextures) return;
-        if (!ResourceUtil.isResourceReloadFinished) return;
-
-        AssetCache assetCache = assetCahceGetter.apply(renderState);
-        if (!assetCache.hasGlowing()) return;
-        ResourceLocation id = assetCache.getGlowLayerLocationCache();
-        if (id == null) {
-            id = getGlowingTexture(renderState);
-            if (!ResourceUtil.doesExist(id, false)) {
-                assetCache.setHasGlowing(false);
-                return;
-            }
-        }
-
-        RenderType renderLayer =  RenderType.eyes(id);
-        this.renderer.buildRenderTask(renderState, poseStack, bakedModel, this.renderer.getGeoModel(), renderTasks.order(renderOrder), cameraState, renderLayer, packedLight, packedOverlay, renderColor, null);
+    public Identifier getTextureId(BRState state) {
+        return state.getStateData(URStateDataTypes.ASSET_CACHE).getGlowLayerLocationCache();
     }
 
-    protected ResourceLocation getGlowingTexture(R state) {
-        String namespace = getTextureResource(state).getNamespace();
-        String path = getTextureResource(state).getPath().replace(".png", "_glowing.png");
-        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(namespace, path);
-        assetCahceGetter.apply(state).setGlowLayerLocationCache(id);
-        return id;
+    @Override
+    public RenderType getRenderType(BRState state, Identifier texture) {
+        return RenderTypes.eyes(texture);
+    }
+
+    @Override
+    protected void updateRenderState(BRState state) {
+        state.setStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
+        state.setStateData(ClientStateDataTypes.INVISIBLE, false);
+        AssetCache assetCache = state.getStateData(URStateDataTypes.ASSET_CACHE);
+        if (assetCache.hasGlowing() && assetCache.getGlowLayerLocationCache() == null) {
+            Identifier id = getGlowingTexture(state);
+            if (!ResourceUtil.doesExist(id, false)) {
+                assetCache.setHasGlowing(false);
+            }
+        }
     }
 }

@@ -41,7 +41,7 @@
     "fabric-api": "*",
     "java": ">=17",
     "minecraft": ">=1.21.9",
-    "geckolib": "*",
+    "biscuit_roll": "*",
     "yet_another_config_lib_v3": "*"
   },
   "custom": {
@@ -52,7 +52,6 @@
     },
 
     "loom:injected_interfaces": {
-      "net/minecraft/class_11788": ["nordmods/uselessreptile/client/util/duck/ShootingPointCommandRendererHelper"],
       "net/minecraft/class_10055": ["nordmods/uselessreptile/client/util/duck/HeadMountDragonRenderState"],
       "net/minecraft/class_10042": ["nordmods/uselessreptile/client/util/duck/DragonPassengerRenderState"],
       "net/minecraft/class_1657": [

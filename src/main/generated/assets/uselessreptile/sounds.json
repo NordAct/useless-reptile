@@ -1,6 +1,5 @@
 {
   "acid.burn": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:common/acid_burn1",
       "uselessreptile:common/acid_burn2",
@@ -11,14 +10,12 @@
     "subtitle": "subtitles.uselessreptile.acid.burn"
   },
   "acid.splash": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:common/acid_splash"
     ],
     "subtitle": "subtitles.uselessreptile.acid.splash"
   },
   "dragon.step": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:common/step1",
       "uselessreptile:common/step2"
@@ -26,7 +23,6 @@
     "subtitle": "subtitles.block.generic.footsteps"
   },
   "dragon.woosh": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:common/woosh1",
       "uselessreptile:common/woosh2",
@@ -37,42 +33,36 @@
     ]
   },
   "flute.call": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:flute/call"
     ],
     "subtitle": "subtitles.uselessreptile.flute"
   },
   "flute.gather": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:flute/gather"
     ],
     "subtitle": "subtitles.uselessreptile.flute"
   },
   "flute.sit_down": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:flute/sit_down"
     ],
     "subtitle": "subtitles.uselessreptile.flute"
   },
   "flute.stand_up": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:flute/stand_up"
     ],
     "subtitle": "subtitles.uselessreptile.flute"
   },
   "flute.target": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:flute/target"
     ],
     "subtitle": "subtitles.uselessreptile.flute"
   },
   "lightning_chaser.accept_challenge": {
-    "category": "neutral",
     "sounds": [
       {
         "attenuation_distance": 256,
@@ -82,7 +72,6 @@
     "subtitle": "subtitles.uselessreptile.lightning_chaser.roar"
   },
   "lightning_chaser.ambient": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:lightning_chaser/idle1",
       "uselessreptile:lightning_chaser/idle2"
@@ -90,7 +79,6 @@
     "subtitle": "subtitles.uselessreptile.lightning_chaser.ambient"
   },
   "lightning_chaser.bite": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:lightning_chaser/bite1",
       "uselessreptile:lightning_chaser/bite2",
@@ -99,14 +87,12 @@
     "subtitle": "subtitles.uselessreptile.dragon.bite"
   },
   "lightning_chaser.death": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:lightning_chaser/death"
     ],
     "subtitle": "subtitles.uselessreptile.lightning_chaser.death"
   },
   "lightning_chaser.distant_roar": {
-    "category": "neutral",
     "sounds": [
       {
         "attenuation_distance": 256,
@@ -124,7 +110,6 @@
     "subtitle": "subtitles.uselessreptile.lightning_chaser.roar"
   },
   "lightning_chaser.hurt": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:lightning_chaser/hit1",
       "uselessreptile:lightning_chaser/hit2"
@@ -132,7 +117,6 @@
     "subtitle": "subtitles.uselessreptile.lightning_chaser.hurt"
   },
   "lightning_chaser.surrender": {
-    "category": "neutral",
     "sounds": [
       {
         "attenuation_distance": 128,
@@ -142,7 +126,6 @@
     "subtitle": "subtitles.uselessreptile.lightning_chaser.roar"
   },
   "magmamuncher.ambient": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:magmamuncher/idle1",
       "uselessreptile:magmamuncher/idle2",
@@ -151,7 +134,6 @@
     "subtitle": "subtitles.uselessreptile.magmamuncher.ambient"
   },
   "magmamuncher.bite": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:magmamuncher/bite1",
       "uselessreptile:magmamuncher/bite2"
@@ -159,21 +141,18 @@
     "subtitle": "subtitles.uselessreptile.dragon.bite"
   },
   "magmamuncher.death": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:magmamuncher/death"
     ],
     "subtitle": "subtitles.uselessreptile.river_pikehorn.death"
   },
   "magmamuncher.hurt": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:magmamuncher/hit"
     ],
     "subtitle": "subtitles.uselessreptile.magmamuncher.hurt"
   },
   "moleclaw.ambient": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:moleclaw/idle1",
       "uselessreptile:moleclaw/idle2",
@@ -183,21 +162,18 @@
     "subtitle": "subtitles.uselessreptile.moleclaw.ambient"
   },
   "moleclaw.attack": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:moleclaw/attack"
     ],
     "subtitle": "subtitles.uselessreptile.moleclaw.attack"
   },
   "moleclaw.death": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:moleclaw/death"
     ],
     "subtitle": "subtitles.uselessreptile.moleclaw.death"
   },
   "moleclaw.hurt": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:moleclaw/hit1",
       "uselessreptile:moleclaw/hit2",
@@ -206,7 +182,6 @@
     "subtitle": "subtitles.uselessreptile.moleclaw.hurt"
   },
   "moleclaw.panicking": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:moleclaw/panic1",
       "uselessreptile:moleclaw/panic2",
@@ -215,14 +190,12 @@
     "subtitle": "subtitles.uselessreptile.moleclaw.panicking"
   },
   "moleclaw.strong_attack": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:moleclaw/strong_attack"
     ],
     "subtitle": "subtitles.uselessreptile.moleclaw.strong_attack"
   },
   "river_pikehorn.ambient": {
-    "category": "neutral",
     "sounds": [
       {
         "name": "uselessreptile:river_pikehorn/idle1",
@@ -244,7 +217,6 @@
     "subtitle": "subtitles.uselessreptile.river_pikehorn.ambient"
   },
   "river_pikehorn.attack": {
-    "category": "neutral",
     "sounds": [
       {
         "name": "uselessreptile:river_pikehorn/attack1",
@@ -258,7 +230,6 @@
     "subtitle": "subtitles.uselessreptile.river_pikehorn.attack"
   },
   "river_pikehorn.death": {
-    "category": "neutral",
     "sounds": [
       {
         "name": "uselessreptile:river_pikehorn/death",
@@ -268,7 +239,6 @@
     "subtitle": "subtitles.uselessreptile.river_pikehorn.death"
   },
   "river_pikehorn.hurt": {
-    "category": "neutral",
     "sounds": [
       {
         "name": "uselessreptile:river_pikehorn/hit1",
@@ -286,7 +256,6 @@
     "subtitle": "subtitles.uselessreptile.river_pikehorn.hurt"
   },
   "shockwave": {
-    "category": "neutral",
     "sounds": [
       {
         "attenuation_distance": 64,
@@ -304,7 +273,6 @@
     "subtitle": "subtitles.uselessreptile.shockwave"
   },
   "shockwave.hit": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:common/shockwave_hit1",
       "uselessreptile:common/shockwave_hit2",
@@ -315,21 +283,18 @@
     "subtitle": "subtitles.uselessreptile.shockwave.hit"
   },
   "vortex_horn.spit_out": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:vortex_horn/spit_out"
     ],
     "subtitle": "subtitles.uselessreptile.vortex_horn.spit_out"
   },
   "vortex_horn.suck_in": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:vortex_horn/suck_in"
     ],
     "subtitle": "subtitles.uselessreptile.vortex_horn.suck_in"
   },
   "wyvern.ambient": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:wyvern/idle1",
       "uselessreptile:wyvern/idle2",
@@ -340,7 +305,6 @@
     "subtitle": "subtitles.uselessreptile.wyvern.ambient"
   },
   "wyvern.bite": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:wyvern/bite1",
       "uselessreptile:wyvern/bite2",
@@ -349,14 +313,12 @@
     "subtitle": "subtitles.uselessreptile.dragon.bite"
   },
   "wyvern.death": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:wyvern/death1"
     ],
     "subtitle": "subtitles.uselessreptile.wyvern.death"
   },
   "wyvern.hurt": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:wyvern/hit1",
       "uselessreptile:wyvern/hit2",
@@ -365,7 +327,6 @@
     "subtitle": "subtitles.uselessreptile.wyvern.hurt"
   },
   "wyvern.step": {
-    "category": "neutral",
     "sounds": [
       "uselessreptile:wyvern/step1",
       "uselessreptile:wyvern/step2",

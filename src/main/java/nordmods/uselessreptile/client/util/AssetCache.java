@@ -1,45 +1,45 @@
 package nordmods.uselessreptile.client.util;
 
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 
-public class AssetCache {
-    private ResourceLocation modelLocationCache;
-    private ResourceLocation textureLocationCache;
-    private ResourceLocation animationLocationCache;
-    private ResourceLocation glowLayerLocationCache;
+public abstract class AssetCache {
+    private Identifier modelLocationCache;
+    private Identifier textureLocationCache;
+    private Identifier animationLocationCache;
+    private Identifier glowLayerLocationCache;
     private RenderType renderTypeCache;
     private boolean hasGlowing = true;
 
-    public ResourceLocation getGlowLayerLocationCache() {
+    public Identifier getGlowLayerLocationCache() {
         return glowLayerLocationCache;
     }
 
-    public void setGlowLayerLocationCache(ResourceLocation state) {
+    public void setGlowLayerLocationCache(Identifier state) {
         glowLayerLocationCache = state;
     }
 
-    public ResourceLocation getModelLocationCache() {
+    public Identifier getModelLocationCache() {
         return modelLocationCache;
     }
 
-    public void setModelLocationCache(ResourceLocation state) {
+    public void setModelLocationCache(Identifier state) {
         modelLocationCache = state;
     }
 
-    public ResourceLocation getAnimationLocationCache() {
+    public Identifier getAnimationLocationCache() {
         return animationLocationCache;
     }
 
-    public void setAnimationLocationCache(ResourceLocation state) {
+    public void setAnimationLocationCache(Identifier state) {
         animationLocationCache = state;
     }
 
-    public ResourceLocation getTextureLocationCache() {
+    public Identifier getTextureLocationCache() {
         return textureLocationCache;
     }
 
-    public void setTextureLocationCache(ResourceLocation state) {
+    public void setTextureLocationCache(Identifier state) {
         textureLocationCache = state;
     }
 

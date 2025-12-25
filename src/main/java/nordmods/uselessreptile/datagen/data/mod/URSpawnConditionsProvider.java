@@ -7,7 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.biome.Biomes;
@@ -26,7 +26,7 @@ public class URSpawnConditionsProvider implements DataProvider {
     protected final FabricDataOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
-    private final List<Tuple<ResourceLocation, List<DragonSpawnConditions>>> holder = new ArrayList<>();
+    private final List<Tuple<Identifier, List<DragonSpawnConditions>>> holder = new ArrayList<>();
 
     public URSpawnConditionsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         this.output = output;
@@ -47,7 +47,7 @@ public class URSpawnConditionsProvider implements DataProvider {
         });
     }
 
-    protected ResourceLocation getId(String name) {
+    protected Identifier getId(String name) {
         return UselessReptile.id(name);
     }
 

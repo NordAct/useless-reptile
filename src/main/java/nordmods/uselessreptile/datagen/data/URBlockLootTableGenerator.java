@@ -36,7 +36,7 @@ public class URBlockLootTableGenerator extends BlockLootSubProvider implements D
             List<CompletableFuture<?>> list = new ArrayList<>();
             map.forEach((key, loot) -> {
                 LootTable lootTable = loot.build();
-                Path path = pathResolver.json(key.location());
+                Path path = pathResolver.json(key.identifier());
                 list.add(DataProvider.saveStable(writer, registryLookupFuture, LootTable.DIRECT_CODEC, lootTable, path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));

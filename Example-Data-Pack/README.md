@@ -1,5 +1,5 @@
 # Example data pack
-
+NOTE: THIS IS OUTDATED
 ## General information
 Showcases how to add custom variant, equipment and nametag/custom name variant. All directories added by Useless Reptile have to go in `uselessreptile` folder right after namespace folder.
 List of directories and what they do:

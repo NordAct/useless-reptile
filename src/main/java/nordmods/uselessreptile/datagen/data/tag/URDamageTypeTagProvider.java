@@ -17,7 +17,7 @@ public class URDamageTypeTagProvider extends FabricTagProvider<DamageType> {
 
     @Override
     protected void addTags(HolderLookup.Provider wrapperLookup) {
-        getOrCreateRawBuilder(DamageTypeTags.BYPASSES_ARMOR).addOptionalElement(URDamageTypes.ACID.location());
-        getOrCreateRawBuilder(DamageTypeTags.BYPASSES_ENCHANTMENTS).addOptionalElement(URDamageTypes.ACID.location());
+        getOrCreateRawBuilder(DamageTypeTags.BYPASSES_ARMOR).addOptionalElement(URDamageTypes.ACID.identifier());
+        getOrCreateRawBuilder(DamageTypeTags.BYPASSES_ENCHANTMENTS).addOptionalElement(URDamageTypes.ACID.identifier());
     }
 }

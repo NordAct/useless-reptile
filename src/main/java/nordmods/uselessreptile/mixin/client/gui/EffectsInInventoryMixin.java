@@ -18,8 +18,8 @@ import java.util.List;
 @Mixin(EffectsInInventory.class)
 public abstract class EffectsInInventoryMixin {
 
-    @Inject(method = "renderEffects(Lnet/minecraft/client/gui/GuiGraphics;II)V", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
-    private void yeetShockEffect(GuiGraphics context, int mouseX, int mouseY, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
+    @Inject(method = "renderEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;getFont()Lnet/minecraft/client/gui/Font;"))
+    private void yeetShockEffect(GuiGraphics guiGraphics, Collection<MobEffectInstance> collection, int i, int j, int k, int l, int m, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
         List<MobEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));
         copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffect().equals(URMobEffect.SHOCK));
         localRef.set(copy);
