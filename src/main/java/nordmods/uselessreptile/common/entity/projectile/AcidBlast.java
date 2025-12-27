@@ -12,6 +12,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.EntityAnimationController;
 import nordmods.uselessreptile.common.init.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,13 @@ import java.util.List;
 
 public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, ProjectileDamageHelper {
     private static final int COLOR = 0x99E416;
+    private final BRAnimationController controller = new EntityAnimationController<>(this, false) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final Collection<BRAnimationController> controllers = List.of(controller);
     public AcidBlast(EntityType<? extends AcidBlast> entityType, Level world) {
         super(entityType, world);
         lifeLimit = 200;
@@ -72,16 +80,11 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
     @Override
     public void tick() {
         super.tick();
-        if (level().isClientSide()) spawnEffectParticles(8, COLOR);
+        if (level().isClientSide()) {
+            spawnEffectParticles(8, COLOR);
+            if (controller.getPlayingAnimations().isEmpty()) controller.playAnimation("idle");
+        }
     }
-
-//    @Override
-//    public void registerControllers(AnimatableManager.ControllerRegistrar animatableManager) {
-//        animatableManager.add(new AnimationController<>("contr", 0, animationEvent -> {
-//            animationEvent.controller().setAnimation(RawAnimation.begin().thenLoop("idle"));
-//            return PlayState.CONTINUE;
-//        }));
-//    }
 
     @Override
     protected @NotNull SoundEvent getDefaultHitGroundSoundEvent() {
@@ -99,7 +102,7 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
     }
 
     @Override
-    public Collection<BRAnimationController<?>> getAnimationControllers() {
-        return List.of();//todo
+    public Collection<BRAnimationController> getAnimationControllers() {
+        return controllers;
     }
 }

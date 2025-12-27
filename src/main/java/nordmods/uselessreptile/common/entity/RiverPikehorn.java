@@ -23,6 +23,7 @@ import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
@@ -39,6 +40,7 @@ import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.util.URAnimationController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +58,22 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     protected final DynamicGameEventListener<FluteUsedEventListener> fluteUsedEventHandler = new DynamicGameEventListener<>(new FluteUsedEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.FLUTE_USED.value().notificationRadius()));
     private static final Identifier WATER_SPEED_MODIFIER_BONUS = UselessReptile.id("water_speed_modifier");
+    private final URAnimationController<RiverPikehorn> mainController = new URAnimationController<>(this, true);
+    private final URAnimationController<RiverPikehorn> turnController = new URAnimationController<>(this, true);
+    private final URAnimationController<RiverPikehorn> attackController = new URAnimationController<>(this, false) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final URAnimationController<RiverPikehorn> blinkController = new URAnimationController<>(this, true) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
+
     public static final float BASE_GROUND_SPEED = 0.2f;
 
     public RiverPikehorn(EntityType<? extends TamableAnimal> entityType, Level world) {
@@ -87,60 +105,95 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
         return null;
     }
-    //todo
-//    @Override
-//    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-//        AnimationController<RiverPikehorn> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
-//        AnimationController<RiverPikehorn> turn = new AnimationController<>( "turn", TRANSITION_TICKS, this::turnController);
-//        AnimationController<RiverPikehorn> attack = new AnimationController<>("attack", 0, this::attackController);
-//        AnimationController<RiverPikehorn> eye = new AnimationController<>("eye", 0, this::eyeController);
-//        main.setSoundKeyframeHandler(this::soundHandler);
-//        attack.setSoundKeyframeHandler(this::soundHandler);
-//        turn.setSoundKeyframeHandler(this::soundHandler);
-//        eye.setSoundKeyframeHandler(this::soundHandler);
-//        animationData.add(main, turn, attack, eye);
-//    }
-//
-//    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
-//        return loopAnim("blink", event);
-//    }
-//    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
-//        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
-//        event.controller().setAnimationSpeed(animationSpeed);
-//        if (isPassenger()) return loopAnim("sit.head", event);
-//        if (isFlying()) {
-//            if (isMoving() || event.isMoving()) {
-//                if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
-//                if (getTiltState() == 2) return loopAnim("fly.dive", event);
-//                if (isFlyGliding()) return loopAnim("fly.glide", event);
-//                return loopAnim("fly.straight", event);
-//            }
-//            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
-//            return loopAnim("fly.idle", event);
-//        }
-//        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
-//        if (event.isMoving()) return loopAnim("walk", event);
-//        event.controller().setAnimationSpeed(1);
-//        if (isDancing()) return loopAnim("dance", event);
-//        return loopAnim("idle", event);
-//    }
-//
-//    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
-//        byte turnState = getTurningState();
-//        if (isFlying() && (isMoving() || event.isMoving()) && !isSecondaryAttack() && !isMovingBackwards()) {
-//            if (turnState == 1) return loopAnim("turn.fly.left", event);
-//            if (turnState == 2) return loopAnim("turn.fly.right", event);
-//        }
-//        if (turnState == 1) return loopAnim("turn.left", event);
-//        if (turnState == 2) return loopAnim("turn.right", event);
-//        return loopAnim("turn.none", event);
-//    }
-//
-//    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event) {
-//        event.controller().setAnimationSpeed(1/ getCooldownModifier());
-//        if (isPrimaryAttack()) return playAnim( "attack" + getAttackType(), event);
-//        return playAnim("attack.none", event);
-//    }
+
+    @Override
+    public Collection<BRAnimationController> getAnimationControllers() {
+        return controllers;
+    }
+
+    //todo reconsider structure and make it cleaner
+    public void tickAnimations() {
+        if (!level().isClientSide()) return;
+        tickBlinkController();
+        tickTurnController();
+        tickAttackController();
+        tickMainController();
+    }
+
+    private void tickBlinkController() {
+        if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
+    }
+
+    private void tickAttackController() {
+        attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
+        if (isPrimaryAttack()) attackController.playAnimation("attack" + getAttackType());
+    }
+
+    private void tickTurnController() {
+        byte turnState = getTurningState();
+        if (isFlying() && isMoving() && !isMovingBackwards()) {
+            if (turnState == 1) {
+                turnController.playAnimation("turn.fly.left");
+                return;
+            }
+            if (turnState == 2) {
+                turnController.playAnimation("turn.fly.right");
+                return;
+            }
+        }
+        if (turnState == 1) {
+            turnController.playAnimation("turn.left");
+            return;
+        }
+        if (turnState == 2) {
+            turnController.playAnimation("turn.right");
+            return;
+        }
+        turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
+    }
+
+    private void tickMainController() {
+        float animationSpeed = getMovementSpeedModifier();
+        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
+        if (isPassenger()) {
+            mainController.playAnimation("sit.head");
+            return;
+        }
+        if (isFlying()) {
+            if (isMoving()) {
+                if (getTiltState() == 1) {
+                    mainController.playAnimation("fly.straight.up");
+                    return;
+                }
+                if (getTiltState() == 2) {
+                    mainController.playAnimation("fly.dive");
+                    return;
+                }
+                if (isFlyGliding()) {
+                    mainController.playAnimation("fly.glide");
+                }
+                mainController.playAnimation("fly.straight");
+                return;
+            }
+            mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(Math.max(animationSpeed, 1)));
+            mainController.playAnimation("fly.idle");
+            return;
+        }
+        if (isOrderedToSit() && !isDancing()) {
+            mainController.playAnimation("sit");
+            return;
+        }
+        if (isMoving()) {
+            mainController.playAnimation("walk");
+            return;
+        }
+        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(Math.max(animationSpeed, 1)));
+        if (isDancing()) {
+            mainController.playAnimation("dance");
+            return;
+        }
+        mainController.playAnimation("idle");
+    }
 
     @Override
     public void tick() {
@@ -172,6 +225,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         }
 
         if (level() instanceof ServerLevel world) dropLootToOwner(world);
+        tickAnimations();
     }
 
     @Override
@@ -344,11 +398,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     @Override
     public void respondToFlute(FluteItem.FluteAction action) {
         action.run(this);
-    }
-
-    @Override
-    public Collection<BRAnimationController<?>> getAnimationControllers() {
-        return List.of();
     }
 
     protected class FluteUsedEventListener implements GameEventListener {

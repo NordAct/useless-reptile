@@ -79,6 +79,7 @@ public class DragonEquipmentModelProvider implements BRModelProvider {
                 itemId
         );
         if (data != null) {
+            id = data.modelData().animation();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setAnimationLocationCache(id);
                 return id;

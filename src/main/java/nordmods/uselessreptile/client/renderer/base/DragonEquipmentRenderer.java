@@ -114,7 +114,10 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
         state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerRenderState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
         state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerRenderState.getStateData(ClientStateDataTypes.LIGHT));
+
+        animatable.cloneController.copyFrom(animatable.ownerRenderState.getStateData(StateDataTypes.CONTROLLERS));
         state.setStateData(StateDataTypes.CONTROLLERS, animatable.getAnimationControllers());
+
         state.setStateData(StateDataTypes.MODEL_PROVIDER, this.getModelProvider());
         state.setStateData(StateDataTypes.SCALE, animatable.ownerRenderState.scale);
     }

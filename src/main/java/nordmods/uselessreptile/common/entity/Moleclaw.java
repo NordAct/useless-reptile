@@ -34,6 +34,7 @@ import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
@@ -49,6 +50,7 @@ import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URMenus;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
+import nordmods.uselessreptile.common.util.URAnimationController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
@@ -61,6 +63,21 @@ public class Moleclaw extends URRideableDragonEntity {
     public static final float defaultWidth = 2f;
     public static final float defaultHeight = 2.9f;
     private int panicSoundDelay = 0;
+    private final URAnimationController<Moleclaw> mainController = new URAnimationController<>(this, true);
+    private final URAnimationController<Moleclaw> turnController = new URAnimationController<>(this, true);
+    private final URAnimationController<Moleclaw> attackController = new URAnimationController<>(this, false) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final URAnimationController<Moleclaw> blinkController = new URAnimationController<>(this, true) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
 
     public static final float BASE_GROUND_SPEED = 0.25f;
 
@@ -119,54 +136,78 @@ public class Moleclaw extends URRideableDragonEntity {
 
     }
 
-    //todo
-//    @Override
-//    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-//        AnimationController<Moleclaw> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
-//        AnimationController<Moleclaw> turn = new AnimationController<>("turn", TRANSITION_TICKS, this::turnController);
-//        AnimationController<Moleclaw> attack = new AnimationController<>( "attack", 0, this::attackController);
-//        AnimationController<Moleclaw> eye = new AnimationController<>("eye", 0, this::eyeController);
-//        main.setSoundKeyframeHandler(this::soundHandler);
-//        attack.setSoundKeyframeHandler(this::soundHandler);
-//        turn.setSoundKeyframeHandler(this::soundHandler);
-//        eye.setSoundKeyframeHandler(this::soundHandler);
-//        animationData.add(main, turn, attack, eye);
-//    }
-//
-//    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
-//        return loopAnim("blink", event);
-//    }
-//
-//    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
-//        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
-//        event.controller().setAnimationSpeed(animationSpeed);
-//        if (isOrderedToSit() && !isDancing() && !isPanicking()) return loopAnim("sit", event);
-//        if (event.isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
-//            if (isPanicking()) return loopAnim("panic", event);
-//            return loopAnim("walk", event);
-//        }
-//        event.controller().setAnimationSpeed(1);
-//        if (isDancing() && !isVehicle()) return loopAnim("dance", event);
-//        if (isPanicking()) return loopAnim("panic.idle", event);
-//        return loopAnim("idle", event);
-//    }
-//
-//    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
-//        byte turnState = getTurningState();
-//        if (turnState == 1) return loopAnim("turn.left", event);
-//        if (turnState == 2) return loopAnim("turn.right", event);
-//        return loopAnim("turn.none", event);
-//    }
-//
-//    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event){
-//        event.controller().setAnimationSpeed(1/ getCooldownModifier());
-//        if (isSecondaryAttack()) return playAnim( "attack.normal" + getAttackType(), event);
-//        if (isPrimaryAttack()) {
-//            if (isPanicking()) return playAnim( "attack.strong.panic", event);
-//            return playAnim( "attack.strong", event);
-//        }
-//        return playAnim("attack.none", event);
-//    }
+    @Override
+    public Collection<BRAnimationController> getAnimationControllers() {
+        return controllers;
+    }
+
+    //todo reconsider structure and make it cleaner
+    public void tickAnimations() {
+        if (!level().isClientSide()) return;
+        tickBlinkController();
+        tickTurnController();
+        tickAttackController();
+        tickMainController();
+    }
+
+    private void tickBlinkController() {
+        if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
+    }
+
+    private void tickAttackController() {
+        if (isSecondaryAttack()) {
+            attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
+            attackController.playAnimation("attack.normal" + getAttackType());
+            return;
+        }
+        if (isPrimaryAttack()) {
+            if (isPanicking()) {
+                attackController.playAnimation("attack.strong.panic");
+                return;
+            }
+            attackController.playAnimation("attack.strong");
+        }
+    }
+
+    private void tickTurnController() {
+        byte turnState = getTurningState();
+        if (turnState == 1) {
+            turnController.playAnimation("turn.left");
+            return;
+        }
+        if (turnState == 2) {
+            turnController.playAnimation("turn.right");
+            return;
+        }
+        turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
+    }
+
+    private void tickMainController() {
+        float animationSpeed = getMovementSpeedModifier();
+        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
+        if (isOrderedToSit() && !isDancing() && !isPanicking()) {
+            mainController.playAnimation("sit");
+            return;
+        }
+        if (isMoving() || isMoveForwardPressed() || isMovingBackwards()) {
+            if (isPanicking()) {
+                mainController.playAnimation("panic");
+                return;
+            }
+            mainController.playAnimation("walk");
+            return;
+        }
+        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1));
+        if (isDancing() && !isVehicle()) {
+            mainController.playAnimation("dance");
+            return;
+        }
+        if (isPanicking()) {
+            mainController.playAnimation("panic.idle");
+            return;
+        }
+        mainController.playAnimation("idle");
+    }
 
     @Override
     public void tick() {
@@ -188,6 +229,7 @@ public class Moleclaw extends URRideableDragonEntity {
                 attackDelay = 0;
             }
         }
+        tickAnimations();
     }
 
     @Override
@@ -401,10 +443,5 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
         return isPanicking() || super.isLookingAtDirection(pitch, yaw, pitchTolerance, yawTolerance);
-    }
-
-    @Override
-    public Collection<BRAnimationController<?>> getAnimationControllers() {
-        return List.of();
     }
 }

@@ -102,7 +102,6 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 
 public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner, ContainerListener {
-    protected double animationSpeed = 1;
     public static final int TRANSITION_TICKS = 10;
     protected float pitchLimitGround = 90;
     protected int primaryAttackDuration = 20;
@@ -752,7 +751,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (!level().isClientSide()) {
             updateRotationProgress();
         }
-        else updateAnimationSpeed();
 
         if (this instanceof ShooterDragon shooterDragon) {
             shooterDragon.setShootingPoint(
@@ -797,10 +795,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             if (jukeboxReachable) updateJukeboxPos(jukeboxPos, true);
             else updateJukeboxPos(null, false);
         }
-    }
-
-    protected void updateAnimationSpeed() {
-        animationSpeed = Mth.lerp(1f/level().tickRateManager().tickrate(), animationSpeed, getMovementSpeedModifier());
     }
 
     @Override

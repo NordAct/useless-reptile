@@ -41,6 +41,7 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
@@ -62,6 +63,7 @@ import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
+import nordmods.uselessreptile.common.util.URAnimationController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -91,6 +93,22 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     protected final DynamicGameEventListener<LightningStrikeEventListener> lightningStrikeEventHandler = new DynamicGameEventListener<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
     private ShootingPoint shootingPoint = new ShootingPoint(position(), getLookAngle());
+    private final URAnimationController<LightningChaser> mainController = new URAnimationController<>(this, true);
+    private final URAnimationController<LightningChaser> turnController = new URAnimationController<>(this, true);
+    private final URAnimationController<LightningChaser> attackController = new URAnimationController<>(this, false) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final URAnimationController<LightningChaser> blinkController = new URAnimationController<>(this, true) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
+
     public static final float BASE_GROUND_SPEED = 0.25f;
 
     public LightningChaser(EntityType<? extends TamableAnimal> entityType, Level world) {
@@ -140,80 +158,131 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         return new URDragonMenu(URMenus.LIGHTNING_CHASER_INVENTORY, syncId, inv, getInventory());
     }
 
-    //todo
-//    @Override
-//    public void registerControllers(AnimatableManager.ControllerRegistrar animationData) {
-//        AnimationController<LightningChaser> main = new AnimationController<>("main", TRANSITION_TICKS, this::mainController);
-//        AnimationController<LightningChaser> turn = new AnimationController<>("turn", TRANSITION_TICKS, this::turnController);
-//        AnimationController<LightningChaser> attack = new AnimationController<>("attack", 0, this::attackController);
-//        AnimationController<LightningChaser> eye = new AnimationController<>("eye", 0, this::eyeController);
-//        main.setSoundKeyframeHandler(this::soundHandler);
-//        attack.setSoundKeyframeHandler(this::soundHandler);
-//        turn.setSoundKeyframeHandler(this::soundHandler);
-//        eye.setSoundKeyframeHandler(this::soundHandler);
-//        animationData.add(main, turn, attack, eye);
-//    }
-//
-//    private <A extends GeoEntity> PlayState eyeController(AnimationTest<A> event) {
-//        return loopAnim("blink", event);
-//    }
-//    private <A extends GeoEntity> PlayState mainController(AnimationTest<A> event) {
-//        event.controller().transitionLength((int) (TRANSITION_TICKS / event.controller().getAnimationSpeed()));
-//        event.controller().setAnimationSpeed(animationSpeed);
-//        if (isFlying()) {
-//            if (isSpecialAttack()) {
-//                event.controller().setAnimationSpeed(1);
-//                event.controller().transitionLength(TRANSITION_TICKS/2);
-//                event.controller().setAnimationSpeed(getCooldownModifier());
-//                return loopAnim("fly.shockwave", event);
-//            }
-//            if (isMoving() || event.isMoving()) {
-//                if (isMovingBackwards()) return loopAnim("fly.back", event);
-//                if (getTiltState() == 1) return loopAnim("fly.straight.up", event);
-//                if (getTiltState() == 2) return loopAnim("fly.straight.down", event);
-//                if (isFlyGliding()) return loopAnim("fly.straight.glide", event);
-//                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) return loopAnim("fly.straight.heavy", event);
-//                return loopAnim("fly.straight", event);
-//            }
-//            event.controller().setAnimationSpeed(Math.max(animationSpeed, 1));
-//            return loopAnim("fly.idle", event);
-//        }
-//        if (hasSurrendered()) return loopAnim("surrender", event);
-//        if (isOrderedToSit() && !isDancing()) return loopAnim("sit", event);
-//        if (event.isMoving() || isMoveForwardPressed()) return loopAnim("walk", event);
-//        event.controller().setAnimationSpeed(1);
-//        if (isDancing() && !isVehicle()) return loopAnim("dance", event);
-//        return loopAnim("idle", event);
-//    }
-//
-//    private <A extends GeoEntity> PlayState turnController(AnimationTest<A> event) {
-//        byte turnState = getTurningState();
-//        if (isFlying()) {
-//            if ((isMoving() || event.isMoving()) && !isMovingBackwards()) {
-//                if (turnState == 1) return loopAnim("turn.fly.left", event);
-//                if (turnState == 2) return loopAnim("turn.fly.right", event);
-//            }
-//            if (turnState == 1) return loopAnim("turn.fly.idle.left", event);
-//            if (turnState == 2) return loopAnim("turn.fly.idle.right", event);
-//        }
-//        if (turnState == 1) return loopAnim("turn.left", event);
-//        if (turnState == 2) return loopAnim("turn.right", event);
-//        return loopAnim("turn.none", event);
-//    }
-//
-//    private <A extends GeoEntity> PlayState attackController(AnimationTest<A> event) {
-//        event.controller().setAnimationSpeed(1/ getCooldownModifier());
-//        if (!isFlying() && isSecondaryAttack()) return playAnim( "attack.melee" + getAttackType(), event);
-//        if (isPrimaryAttack()) {
-//            if (isFlying()) {
-//                if (isSpecialAttack()) return playAnim("attack.range.fly.shockwave", event);
-//                if ((isMoving() || event.isMoving()) && !isMovingBackwards()) return playAnim("attack.range.fly", event);
-//                return playAnim("attack.range.fly.idle", event);
-//            }
-//            return playAnim("attack.range", event);
-//        }
-//        return playAnim("attack.none", event);
-//    }
+    @Override
+    public Collection<BRAnimationController> getAnimationControllers() {
+        return controllers;
+    }
+
+    //todo reconsider structure and make it cleaner
+    public void tickAnimations() {
+        if (!level().isClientSide()) return;
+        tickBlinkController();
+        tickTurnController();
+        tickAttackController();
+        tickMainController();
+    }
+
+    private void tickBlinkController() {
+        if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
+    }
+
+    private void tickAttackController() {
+        attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
+        if (!isFlying() && isSecondaryAttack()) {
+            attackController.playAnimation("attack.melee" + getAttackType());
+            return;
+        }
+        if (isPrimaryAttack()) {
+            if (isFlying()) {
+                if (isSpecialAttack()) {
+                    attackController.playAnimation("attack.range.fly.shockwave");
+                    return;
+                }
+                if (isMoving() && !isMovingBackwards()) {
+                    attackController.playAnimation("attack.range.fly");
+                    return;
+                }
+                attackController.playAnimation("attack.range.fly.idle");
+                return;
+            }
+            attackController.playAnimation("attack.range");
+        }
+    }
+
+    private void tickTurnController() {
+        byte turnState = getTurningState();
+        if (isFlying()) {
+            if (isMoving() && !isMovingBackwards()) {
+                if (turnState == 1) {
+                    turnController.playAnimation("turn.fly.left");
+                    return;
+                }
+                if (turnState == 2) {
+                    turnController.playAnimation("turn.fly.right");
+                    return;
+                }
+            }
+            if (turnState == 1) {
+                turnController.playAnimation("turn.fly.idle.left");
+                return;
+            }
+            if (turnState == 2) {
+                turnController.playAnimation("turn.fly.idle.right");
+                return;
+            }
+        }
+        if (turnState == 1) {
+            turnController.playAnimation("turn.left");
+            return;
+        }
+        if (turnState == 2) {
+            turnController.playAnimation("turn.right");
+            return;
+        }
+        turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
+    }
+
+    private void tickMainController() {
+        float animationSpeed = getMovementSpeedModifier();
+        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
+        if (isFlying()) {
+            if (isSecondaryAttack()) {
+                mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1/ getCooldownModifier()));
+                mainController.playAnimation("fly.attack");
+                return;
+            }
+            if (isMoving()) {
+                if (isMovingBackwards()) {
+                    mainController.playAnimation("fly.back");
+                    return;
+                }
+                if (getTiltState() == 1) {
+                    mainController.playAnimation("fly.straight.up");
+                    return;
+                }
+                if (getTiltState() == 2) {
+                    mainController.playAnimation("fly.straight.down");
+                    return;
+                }
+                if (isFlyGliding()) {
+                    mainController.playAnimation("fly.straight.glide");
+                    return;
+                }
+                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) {
+                    mainController.playAnimation("fly.straight.heavy");
+                }
+                mainController.playAnimation("fly.straight");
+                return;
+            }
+            mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(Math.max(animationSpeed, 1)));
+            mainController.playAnimation("fly.idle");
+            return;
+        }
+        if (isOrderedToSit() && !isDancing()) {
+            mainController.playAnimation("sit");
+            return;
+        }
+        if (isMoving() || isMoveForwardPressed()) {
+            mainController.playAnimation("walk");
+            return;
+        }
+        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1));
+        if (isDancing() && !isVehicle()) {
+            mainController.playAnimation("dance");
+            return;
+        }
+        mainController.playAnimation("idle");
+    }
 
     public static AttributeSupplier.Builder createLightningChaserAttributes() {
         return createDragonAttributes()
@@ -336,6 +405,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         getLookControl().setLockRotation(hasSurrendered() && !isFlying());
 
         updateChildParts();
+        tickAnimations();
     }
 
     @Override
@@ -572,11 +642,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     @Override
     public float getShootingPointDesiredYaw() {
         return getYawWithAdjustment();
-    }
-
-    @Override
-    public Collection<BRAnimationController<?>> getAnimationControllers() {
-        return List.of();
     }
 
     protected class LightningStrikeEventListener implements GameEventListener {

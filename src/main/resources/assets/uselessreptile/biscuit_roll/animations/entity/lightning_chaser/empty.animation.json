@@ -26,7 +26,6 @@
 			"bones": {}
 		},
 		"fly.shockwave": {
-			"loop": true,
 			"bones": {}
 		},
 		"fly.back": {
@@ -78,31 +77,24 @@
 			"bones": {}
 		},
 		"attack.melee1": {
-			"loop": true,
 			"bones": {}
 		},
 		"attack.melee2": {
-			"loop": true,
 			"bones": {}
 		},
 		"attack.melee3": {
-			"loop": true,
 			"bones": {}
 		},
 		"attack.range": {
-			"loop": true,
 			"bones": {}
 		},
 		"attack.range.fly": {
-			"loop": true,
 			"bones": {}
 		},
 		"attack.range.fly.idle": {
-			"loop": true,
 			"bones": {}
 		},
 		"attack.range.fly.shockwave": {
-			"loop": true,
 			"bones": {}
 		},
 		"blink": {
