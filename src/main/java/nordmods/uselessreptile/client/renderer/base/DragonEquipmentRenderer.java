@@ -11,6 +11,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BRObjectRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
@@ -25,6 +27,7 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, BRState.Impl> {
@@ -106,7 +109,7 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     }
 
     @Override
-    public void extractRenderState(DragonEquipment animatable, BRState.Impl state, float v) {
+    public void extractRenderState(DragonEquipment animatable, BRState.Impl state, float tickDelta) {
         state.setStateData(URStateDataTypes.DRAGON_NAME, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_NAME));
         state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_ID));
         state.setStateData(URStateDataTypes.DRAGON_VARIANT, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_VARIANT));
@@ -115,9 +118,40 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerRenderState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
         state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerRenderState.getStateData(ClientStateDataTypes.LIGHT));
 
-        animatable.cloneController.copyFrom(animatable.ownerRenderState.getStateData(StateDataTypes.CONTROLLERS));
+        Collection<BRAnimationController> ownerControllers = animatable.ownerRenderState.getStateData(StateDataTypes.CONTROLLERS);
+        animatable.cloneController.copyFrom(ownerControllers);
+        ownerControllers.forEach(controller -> {
+            controller.getPlayingAnimations().forEach(playingAnimation -> {
+                if (playingAnimation.isDone()) return;
+                String name = playingAnimation.getAnimation().name();
+                if (animatable.controller.getAnimation(name) != null) {
+                    animatable.controller.playAnimation(
+                            name,
+                            playingAnimation.getTransitionInTime(),
+                            playingAnimation.getTransitionOutTime(),
+                            playingAnimation.getTransitionInLerp(),
+                            playingAnimation.getTransitionOutLerp()
+                    );
+                    return;
+                }
+                animatable.controller.playAnimation(
+                        new BRPlayingAnimation(
+                                animatable.controller.getAnimationData(name),
+                                animatable.ownerRenderState.getStateData(StateDataTypes.ANIMATION_TIME),
+                                playingAnimation.getTransitionInTime(),
+                                playingAnimation.getTransitionOutTime(),
+                                playingAnimation.getTransitionInLerp(),
+                                playingAnimation.getTransitionOutLerp(),
+                                playingAnimation.getAnimationTime(),
+                                playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
+                        )
+                );
+            });
+            animatable.controller.checkAgainstOtherController(controller);
+        });
         state.setStateData(StateDataTypes.CONTROLLERS, animatable.getAnimationControllers());
 
+        state.setStateData(StateDataTypes.ANIMATION_TIME, animatable.ownerRenderState.getStateData(StateDataTypes.ANIMATION_TIME));
         state.setStateData(StateDataTypes.MODEL_PROVIDER, this.getModelProvider());
         state.setStateData(StateDataTypes.SCALE, animatable.ownerRenderState.scale);
     }

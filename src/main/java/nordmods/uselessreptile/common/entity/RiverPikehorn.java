@@ -81,10 +81,11 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         xpReward = 5;
         setCanPickUpLoot(true);
 
-        secondaryAttackDuration = 12;
-        primaryAttackDuration = 12;
+        secondaryAttackDuration = 11;
+        primaryAttackDuration = 11;
         canNavigateInFluids = true;
         ticksUntilHeal = 400;
+
     }
 
     public boolean isHunting() {
@@ -171,6 +172,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
                 }
                 if (isFlyGliding()) {
                     mainController.playAnimation("fly.glide");
+                    return;
                 }
                 mainController.playAnimation("fly.straight");
                 return;

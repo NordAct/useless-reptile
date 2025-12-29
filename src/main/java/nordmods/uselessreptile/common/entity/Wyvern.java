@@ -93,6 +93,9 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         pitchLimitAir = 20;
         ticksUntilHeal = 200;
         sprintSpeedModifier = 1.2f;
+
+        secondaryAttackDuration = 14;
+        primaryAttackDuration = 14;
     }
 
     @Override
@@ -242,6 +245,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                 }
                 if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) {
                     mainController.playAnimation("fly.straight.heavy");
+                    return;
                 }
                 mainController.playAnimation("fly.straight");
                 return;

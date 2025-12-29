@@ -223,7 +223,7 @@
 					"name": "banner",
 					"parent": "back",
 					"pivot": [6, 50, 5],
-					"rotation": [0, -90, 0],
+					"rotation": [0, 90, 0],
 					"locators": {
 						"banner": [6, 50, 5]
 					}

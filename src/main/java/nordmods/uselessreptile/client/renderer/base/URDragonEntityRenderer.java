@@ -20,18 +20,18 @@ import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.client.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.client.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
-import nordmods.uselessreptile.client.util.AssetCache;
-import nordmods.uselessreptile.client.util.DragonAssetCache;
-import nordmods.uselessreptile.client.util.DragonEquipment;
-import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.client.util.*;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URTags;
+
+import java.util.HashMap;
 
 public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends BREntityRenderer<T, LivingEntityRenderState> {
     private final DragonEquipmentRenderer equipmentRenderer = new DragonEquipmentRenderer();
@@ -50,6 +50,11 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     public void extractRenderState(T animatable, LivingEntityRenderState renderState, float tickDelta) {
         super.extractRenderState(animatable, renderState, tickDelta);
         DragonAssetCache assetCache = animatable.getAssetCache();
+        renderState.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
+        renderState.setStateData(URStateDataTypes.DRAGON_ID, animatable.getDragonId());
+        renderState.setStateData(URStateDataTypes.DRAGON_VARIANT, animatable.getVariant());
+        renderState.setStateData(URStateDataTypes.DRAGON_NAME, animatable.getName());
+
         if (ResourceUtil.isResourceReloadFinished) {
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 ItemStack itemStack = animatable.getItemBySlot(slot);
@@ -60,18 +65,24 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
                 DragonEquipment dragonEquipmentAnimatable = assetCache.getEquipment(slot);
                 if (dragonEquipmentAnimatable == null || dragonEquipmentAnimatable.itemStack != itemStack) {
-                    dragonEquipmentAnimatable = new DragonEquipment(renderState, itemStack);
+                    dragonEquipmentAnimatable = createEquipment(renderState, itemStack);
                     assetCache.setEquipment(slot, dragonEquipmentAnimatable);
                 }
                 dragonEquipmentAnimatable.ownerRenderState = renderState;
             }
         }
-        renderState.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
-        renderState.setStateData(URStateDataTypes.DRAGON_ID, animatable.getDragonId());
-        renderState.setStateData(URStateDataTypes.DRAGON_VARIANT, animatable.getVariant());
-        renderState.setStateData(URStateDataTypes.DRAGON_NAME, animatable.getName());
 
         if (animatable instanceof ShooterDragon shooterDragon) renderState.setStateData(URStateDataTypes.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
+    }
+
+    private DragonEquipment createEquipment(LivingEntityRenderState ownerRenderState, ItemStack itemStack) {
+        BRState temp = new BRState.Impl(new HashMap<>());
+        temp.setStateData(URStateDataTypes.DRAGON_NAME, ownerRenderState.getStateData(URStateDataTypes.DRAGON_NAME));
+        temp.setStateData(URStateDataTypes.DRAGON_ID, ownerRenderState.getStateData(URStateDataTypes.DRAGON_ID));
+        temp.setStateData(URStateDataTypes.DRAGON_VARIANT, ownerRenderState.getStateData(URStateDataTypes.DRAGON_VARIANT));
+        temp.setStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK, itemStack);
+        temp.setStateData(URStateDataTypes.ASSET_CACHE, new EquipmentAssetCache());
+        return new DragonEquipment(itemStack, new DragonEquipmentModelProvider().getAnimationId(temp));
     }
 
     @Override

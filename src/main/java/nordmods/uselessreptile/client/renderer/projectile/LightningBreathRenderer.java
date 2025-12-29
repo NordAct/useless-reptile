@@ -37,6 +37,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
         if (length < 1) return;
 
         matrices.pushPose();
+        matrices.translate(-state.x, -state.y, -state.z);
         for (LightningBreath.LightningBreathBolt lightningBreathBolt : state.lightningBreathBolts)
             for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
                 LightningBreath.LightningBreathBolt.Segment current = lightningBreathBolt.segments.get(i);
@@ -89,11 +90,8 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
             float offset = state.length / (8f + i);
             Vector3f headPos = LightningChaserRenderer.headPos.get(owner.getUUID());
             if (headPos == null) return;
-            //because actual owner's position and lightning breath's one are never the same, and we technically render lightning breath here...
-            Vector3f startPos = new Vector3f((float) (owner.getX() - state.x), (float) (owner.getY() - state.y), (float) (owner.getZ() - state.z));
-            startPos.add(headPos);
             Vector3f vec3d = entity.getLookAngle().scale(state.length).toVector3f();
-            lightningBreathBolt.segments.add(new LightningBreath.LightningBreathBolt.Segment(startPos, vec3d.add(startPos)));
+            lightningBreathBolt.segments.add(new LightningBreath.LightningBreathBolt.Segment(headPos, vec3d.add(headPos)));
             for (int l = 0; l < 3; l++) {
                 //do not the foreach unless you want to cause infinite loop
                 int listSize = lightningBreathBolt.segments.size();

@@ -138,10 +138,10 @@
 				{
 					"name": "banner",
 					"parent": "saddle_front",
-					"pivot": [0, 50, -6],
+					"pivot": [0, 50, -5],
 					"rotation": [10, 0, 0],
 					"locators": {
-						"banner": [0, 50, -6]
+						"banner": [0, 50, -5]
 					}
 				},
 				{

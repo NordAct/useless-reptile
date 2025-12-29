@@ -236,9 +236,9 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (isFlying()) {
-            if (isSecondaryAttack()) {
+            if (isSpecialAttack()) {
                 mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1/ getCooldownModifier()));
-                mainController.playAnimation("fly.attack");
+                mainController.playAnimation("fly.shockwave");
                 return;
             }
             if (isMoving()) {
@@ -260,6 +260,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
                 }
                 if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) {
                     mainController.playAnimation("fly.straight.heavy");
+                    return;
                 }
                 mainController.playAnimation("fly.straight");
                 return;

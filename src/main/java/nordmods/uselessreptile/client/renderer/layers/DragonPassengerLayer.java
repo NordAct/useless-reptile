@@ -24,16 +24,13 @@ public class DragonPassengerLayer extends nordmods.biscuit_roll.client.renderer.
 
     @Override
     protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        int passengers = state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE).size();
-        if (passengers == 0) return;
-
         List<Boolean> shouldRenderToClient = state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT);
         List<? super EntityRenderState> renderStates = state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE);
         List<EntityRenderer<? super Entity, ? super EntityRenderState>> renderers = state.getStateData(URStateDataTypes.PASSENGERS_RENDERERS);
         List<UUID> uuids = state.getStateData(URStateDataTypes.PASSENGERS_UUID);
         List<Vec3> attachmentPos = state.getStateData(URStateDataTypes.PASSENGERS_ATTACHMENT_POS);
 
-        for (int i = 0; i < passengers; i++) {
+        for (int i = 0; i < shouldRenderToClient.size(); i++) {
             if (!shouldRenderToClient.get(i)) continue;
 
             LocatorTransformation transformation = getModel(state).getLocatorTransformation("passenger" + i);
@@ -63,5 +60,10 @@ public class DragonPassengerLayer extends nordmods.biscuit_roll.client.renderer.
             poseStack.popPose();
             PASSENGERS.add(passengerUUID);
         }
+    }
+
+    @Override
+    public boolean canRender(BRState state) {
+        return state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE).size() > 0;
     }
 }

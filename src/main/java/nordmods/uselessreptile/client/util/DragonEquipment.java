@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.client.util;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.BRAnimationController;
@@ -14,15 +15,17 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     public final ItemStack itemStack;
     private final AssetCache assetCache = new EquipmentAssetCache();
     public final CloneAnimationController cloneController = new CloneAnimationController(true);
-    public final Collection<BRAnimationController> controllers = List.of(cloneController); //todo equipment animations!!!
+    public final EquipmentAnimationController controller;
+    public final Collection<BRAnimationController> controllers;
 
     public AssetCache getAssetCache() {
         return assetCache;
     }
 
-    public DragonEquipment(LivingEntityRenderState ownerRenderState, ItemStack itemStack) {
-        this.ownerRenderState = ownerRenderState;
+    public DragonEquipment(ItemStack itemStack, Identifier animationFile) {
         this.itemStack = itemStack;
+        this.controller = new EquipmentAnimationController(animationFile);
+        this.controllers = List.of(cloneController, controller);
     }
 
     @Override

@@ -32,7 +32,7 @@ public class URGlowingLayer extends TextureRenderLayer {
     protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         if (URClientConfig.getConfig().disableEmissiveTextures) return;
         if (!ResourceUtil.isResourceReloadFinished) return;
-        if (!state.getStateData(URStateDataTypes.ASSET_CACHE).hasGlowing()) return;
+        if (!canRender(state)) return;
 
         super.submit(state, poseStack, submitNodeCollector, cameraRenderState);
     }
@@ -58,5 +58,10 @@ public class URGlowingLayer extends TextureRenderLayer {
                 assetCache.setHasGlowing(false);
             }
         }
+    }
+
+    @Override
+    public boolean canRender(BRState state) {
+        return state.getStateData(URStateDataTypes.ASSET_CACHE).hasGlowing();
     }
 }

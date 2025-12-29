@@ -5,3 +5,5 @@
 - Replaced Geckolib with new animation library (currently bundled with mod, later will be shipped as separate dependency)
 - Updated all models and animations to accompany animation library change. No more redundant bones just to overlap animations, yay
 - Buffed Netherite and Diamond Dragon Armor sets
+- Glow layers now can be animated
+- Equipment now can play different animations depending on which animation is currently played by dragon

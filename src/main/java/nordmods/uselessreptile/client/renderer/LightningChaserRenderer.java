@@ -1,9 +1,16 @@
 package nordmods.uselessreptile.client.renderer;
 
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.state.CameraRenderState;
+import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.renderer.base.URRideableDragonEntityRenderer;
 import nordmods.uselessreptile.common.entity.LightningChaser;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,19 +23,18 @@ public class LightningChaserRenderer extends URRideableDragonEntityRenderer<Ligh
         super(renderManager);
         shadowRadius = 1.5f;
     }
-    //todo
-//    public void renderBone(R renderState, PoseStack poseStack, GeoBone bone, VertexConsumer buffer, CameraRenderState cameraState,
-//                           int packedLight, int packedOverlay, int renderColor) {
-//        super.renderBone(renderState, poseStack, bone, buffer, cameraState, packedLight, packedOverlay, renderColor);
-//        if (bone.getName().equals("head")) {
-//            Vector3d vector3d = bone.getLocalPosition();
-//            headPos.put(renderState.getGeckolibData(URStateDataTypes.DRAGON_UUID), new Vector3f((float) vector3d.x, (float) vector3d.y, (float) vector3d.z));
-//        }
-//    }
-//
-//    @Override
-//    public void addRenderData(LightningChaser animatable, Void relatedObject, R renderState, float tickDelta) {
-//        super.addRenderData(animatable, relatedObject, renderState, tickDelta);
-//        renderState.addGeckolibData(URStateDataTypes.DRAGON_UUID, animatable.getUUID());
-//    }
+
+    @Override
+    public void afterSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        super.afterSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
+        Vector4f vec = getModel(state).getLocatorTransformation("breath").matrix().transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0F));
+        Vector3f pos = new Vector3f(vec.x, vec.y, vec.z).rotate(Axis.YN.rotationDegrees(state.bodyRot + 180)).add((float) state.x, (float) state.y, (float) state.z);
+        headPos.put(state.getStateData(URStateDataTypes.DRAGON_UUID), new Vector3f(pos.x, pos.y, pos.z));
+    }
+
+    @Override
+    public void extractRenderState(LightningChaser animatable, LivingEntityRenderState renderState, float tickDelta) {
+        super.extractRenderState(animatable, renderState, tickDelta);
+        renderState.setStateData(URStateDataTypes.DRAGON_UUID, animatable.getUUID());
+    }
 }

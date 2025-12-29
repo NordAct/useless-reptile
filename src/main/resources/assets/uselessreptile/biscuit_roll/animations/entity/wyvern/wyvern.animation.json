@@ -3087,7 +3087,7 @@
 					"position": [0, 0, 0]
 				},
 				"neck2": {
-					"rotation": ["-35-math.cos(query.a*360/1.7917)*3", 0, 0],
+					"rotation": ["-35-math.cos(query.anim_time*360/1.7917)*3", 0, 0],
 					"position": [0, 0.2, -0.2]
 				},
 				"neck3": {
@@ -3975,7 +3975,7 @@
 					"position": [0, 0, 0]
 				},
 				"neck2": {
-					"rotation": ["-35-math.cos(query.a*360/1.7917)*3", 0, 0],
+					"rotation": ["-35-math.cos(query.anim_time*360/1.7917)*3", 0, 0],
 					"position": [0, 0.2, -0.2]
 				},
 				"neck3": {
