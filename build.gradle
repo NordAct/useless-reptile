@@ -124,12 +124,12 @@ publishMods {
         projectSlug = "useless-reptile"
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         minecraftVersions.add(project.property("minecraft_version") as String)
-        requires("fabric-api", "yacl", "geckolib")
+        requires("fabric-api", "yacl")
     }
     modrinth {
         projectId = "YE4QRt8F"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
         minecraftVersions.add(project.property("minecraft_version") as String)
-        requires("fabric-api", "yacl", "geckolib")
+        requires("fabric-api", "yacl")
     }
 }

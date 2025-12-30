@@ -9,7 +9,8 @@ Currently supported game versions: whatever is current Minecraft latest release 
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/x5ysfiDE4rk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 
 ## Dependencies
-[Geckolib](https://modrinth.com/mod/geckolib), [YetAnotherConfigLib](https://modrinth.com/mod/yacl) and [Fabric API](https://modrinth.com/mod/fabric-api) are **required**.
+[YetAnotherConfigLib](https://modrinth.com/mod/yacl) and [Fabric API](https://modrinth.com/mod/fabric-api) are **required**.
+Mod versions below 0.12.0 require [Geckolib](https://modrinth.com/mod/geckolib).
 For mod versions below 0.3.0 [Cloth Config API](https://modrinth.com/mod/cloth-config) is required instead of YetAnotherConfigLib.
 Some mod versions for 1.19.2 may require [AzureLib](https://modrinth.com/mod/azurelib) instead of Geckolib
 
@@ -63,8 +64,8 @@ Note: older versions may not contain all features listed.
 ### Custom dragon variants, equipment and spawns
 You can add custom dragon variants and dragon equipment via power of data and resource packs, that Mojang gladly made very useful for mod makers too.\
 You can read more about those features and see examples here:
-- [Example Data Pack](https://github.com/NordAct/useless-reptile/tree/1.21.8/Example-Data-Pack)
-- [Example Resource Pack](https://github.com/NordAct/useless-reptile/tree/1.21.8/Example-Resource-Pack)
+- [Example Data Pack](https://github.com/NordAct/useless-reptile/tree/1.21.11/Example-Data-Pack)
+- [Example Resource Pack](https://github.com/NordAct/useless-reptile/tree/1.21.11/Example-Resource-Pack)
 
 ## FAQ
 **Q:** I found a bug! How can I report it?\
