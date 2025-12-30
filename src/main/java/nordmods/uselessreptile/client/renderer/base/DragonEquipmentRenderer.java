@@ -37,7 +37,7 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
         addRenderLayer(new URGlowingLayer(this, 2));
     }
 
-    @Override
+    @Override //note to self: DO NOT USE ARMOR RENDER TYPES (it breaks glow layer because armor render type has extra z offset... despite render order existing, duh)
     public RenderType getRenderType(BRState renderState, Identifier texture) {
         if (!ResourceUtil.isResourceReloadFinished) return RenderTypes.armorCutoutNoCull(texture);
 
@@ -58,12 +58,12 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
                 itemId
         );
         if (data != null && data.modelData().translucent()) {
-            renderType = RenderTypes.armorTranslucent(texture);
+            renderType = RenderTypes.entityTranslucent(texture);
             assetCache.setRenderTypeCache(renderType);
             return renderType;
         }
 
-        renderType = RenderTypes.armorCutoutNoCull(texture);
+        renderType = RenderTypes.entityCutoutNoCull(texture);
         assetCache.setRenderTypeCache(renderType);
         return renderType;
     }

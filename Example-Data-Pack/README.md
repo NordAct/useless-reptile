@@ -1,5 +1,5 @@
 # Example data pack
-NOTE: THIS IS OUTDATED
+
 ## General information
 Showcases how to add custom variant, equipment and nametag/custom name variant. All directories added by Useless Reptile have to go in `uselessreptile` folder right after namespace folder.
 List of directories and what they do:
@@ -73,9 +73,9 @@ Fields:
 Contains information about used model, texture, animation and information for sound keys within animation.
 Fields:
 - `model_data` - a single object holding all info on used assets for model:
-  - `texture` - id of texture file, located in `textures` within assets
-  - `model` - id of model file, located in `geckolib/models` within assets
-  - `animation` - id of model file, located in `geckolib/animations` within assets
+  - `texture` -  resource location of texture file, located in `textures` within assets
+  - `model` - resource location of model file, located in `biscuit_roll/models` within assets
+  - `animation` -  resource location of model file, located in `biscuit_roll/animations` within assets
   - `cull` - (optional) specifies if model should cull its faces. If not specified, defaults to `true`
   - `translucent` - (optional) specifies if model can have translucent pixels. If not specified, defaults to `false`. If set to `true`, culling will be disabled regardless of what's specified in `cull`
 - `sounds` - list of sound keys and information on them:
@@ -86,12 +86,12 @@ Fields:
 
 Due to some technical limitations some sound key names are hardcoded and have to be specified for each model individually to play correctly
 
-|      Dragon      |            Key names             |                                            Comment                                             |
-|:----------------:|:--------------------------------:|:----------------------------------------------------------------------------------------------:|
-|     Moleclaw     | `idle`, `hurt`, `death`, `panic` | `panic` is played when dragon is panicking due being in too bright spot without any protection |
-|  River Pikehorn  |     `idle`, `hurt`, `death`      |                                               -                                                |
-|   Swamp Wyvern   | `idle`, `hurt`, `death`, `bite`  |                    `bite` is played when dragon uses melee attack in flight                    |
-| Lightning Chaser | `idle`, `hurt`, `death`, `roar`  |        `roar` is played when dragon appears during thunderstorm and sometimes during it        |
+|      Dragon      |                      Key names                      |                                                                                 Comment                                                                                  |
+|:----------------:|:---------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
+|     Moleclaw     |          `idle`, `hurt`, `death`, `panic`           |                                      `panic` is played when dragon is panicking due being in too bright spot without any protection                                      |
+|  River Pikehorn  |               `idle`, `hurt`, `death`               |                                                                                    -                                                                                     |
+|   Swamp Wyvern   |           `idle`, `hurt`, `death`, `bite`           |                                                         `bite` is played when dragon uses melee attack in flight                                                         |
+| Lightning Chaser | `idle`, `hurt`, `death`, `roar`, `accept_challenge` | `roar` is played when dragon appears during thunderstorm and sometimes during it, `accept_challenge` is played when you manage to provoke an attack of challenger dragon |
 `idle` - sound that dragon emits when idle\
 `hurt` - played when dragon is hurt\
 `death` - played when dragon is dying
@@ -104,10 +104,10 @@ Fields:
 - `equipment` - list of models to be used for specified items
   - `item` - item id for which model will be used
   - `model_data` - a single object holding all info on used assets for model:
-      - `texture` - id of texture file, located in `textures` within assets
-      - `model` - id of model file, located in `geckolib/models` within assets
-      - `animation` - (optional) id of model file, located in `geckolib/animations` within assets. Currently supports only one animation with name `idle` and with no sounds or other effects. If not specified, will use placeholder file (`uselessreptile:geckolib/animations/entity/empty.json`) with empty animation.
-      - `translucent` - (optional) specifies if model can have translucent pixels. If not specified, defaults to `false`. If set to `true`, culling will be disabled regardless of what's specified in `cull`
+      - `texture` -  resource location of texture file, located in `textures` within assets
+      - `model` -  resource location of model file, located in `biscuit_roll/models` within assets
+      - `animation` -  resource location of model file, located in `biscuit_roll/animations` within assets. If you wish for your equipment to not have any animations, specify build-in empty animation file for this dragon (`uselessreptile:biscuit_roll/animations/entity/<dragon_id>/empty.animation.json`)
+      - `translucent` - (optional) specifies if model can have translucent pixels. If not specified, defaults to `false`
 
 Note that for dragon to be able to use item as equipment it has to be added in specific tag.
 Tag list for dragon equipment:
@@ -133,11 +133,10 @@ Fields:
 - `equipment` - list of models to be used for specified items
   - `item` - item id for which model will be used
   - `model_data` - a single object holding all info on used assets for model:
-    - `texture` - id of texture file, located in `textures` within assets
-    - `model` - id of model file, located in `geckolib/models` within assets
-    - `animation` - (optional) id of model file, located in `geckolib/animations` within assets. Currently supports only one animation with name `idle` and with no sounds or other effects. If not specified, will use placeholder file (`uselessreptile:geckolib/animations/entity/empty.json`) with empty animation.
-    - `cull` - (optional) specifies if model should cull its faces. If not specified, defaults to `true`
-    - `translucent` - (optional) specifies if model can have translucent pixels. If not specified, defaults to `false`. If set to `true`, culling will be disabled regardless of what's specified in `cull`
+    - `texture` -  resource location of texture file, located in `textures` within assets
+    - `model` -  resource location of model file, located in `biscuit_roll/models` within assets
+    - `animation` -  resource location of model file, located in `biscuit_roll/animations` within assets. If you wish for your equipment to not have any animations, specify build-in empty animation file for this dragon (`uselessreptile:biscuit_roll/animations/entity/<dragon_id>/empty.animation.json`)
+    - `translucent` - (optional) specifies if model can have translucent pixels. If not specified, defaults to `false`
 
 ## `spawn_conditions` file structure
 List of entries with spawn conditions.

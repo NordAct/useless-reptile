@@ -4,15 +4,17 @@
     {
       "item": "minecraft:dirt",
       "model_data": {
-        "model": "example:moleclaw/block",
-        "texture": "minecraft:block/dirt"
+        "model": "example:biscuit_roll/models/moleclaw/block.json",
+        "texture": "minecraft:textures/block/dirt.png",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "minecraft:stone",
       "model_data": {
-        "model": "example:moleclaw/block",
-        "texture": "minecraft:block/stone"
+        "model": "example:biscuit_roll/models/moleclaw/block.json",
+        "texture": "minecraft:textures/block/stone.png",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     }
   ]

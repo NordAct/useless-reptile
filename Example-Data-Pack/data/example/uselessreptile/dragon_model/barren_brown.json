@@ -1,8 +1,8 @@
 {
   "model_data" : {
-    "texture": "example:wyvern/barren_brown",
-    "model": "example:wyvern/barren",
-    "animation": "example:barren"
+    "texture": "example:textures/wyvern/barren_brown.png",
+    "model": "example:biscuit_roll/models/wyvern/barren.json",
+    "animation": "example:biscuit_roll/animations/barren.json"
   },
   "sounds": [
     {

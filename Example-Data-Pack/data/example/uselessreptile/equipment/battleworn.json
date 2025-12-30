@@ -4,73 +4,73 @@
     {
       "item": "uselessreptile:moleclaw_helmet_iron",
       "model_data": {
-        "texture": "example:moleclaw/armor_iron",
-        "model": "example:moleclaw/helmet",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_iron.png",
+        "model": "example:biscuit_roll/models/moleclaw/helmet.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "uselessreptile:dragon_chestplate_iron",
       "model_data": {
-        "texture": "example:moleclaw/armor_iron",
-        "model": "example:moleclaw/chestplate",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_iron.png",
+        "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "uselessreptile:dragon_tail_armor_iron",
       "model_data": {
-        "texture": "example:moleclaw/armor_iron",
-        "model": "example:moleclaw/tail_armor",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_iron.png",
+        "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "uselessreptile:moleclaw_helmet_gold",
       "model_data": {
-        "texture": "example:moleclaw/armor_gold",
-        "model": "example:moleclaw/helmet",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_gold.png",
+        "model": "example:biscuit_roll/models/moleclaw/helmet.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "uselessreptile:dragon_chestplate_gold",
       "model_data": {
-        "texture": "example:moleclaw/armor_gold",
-        "model": "example:moleclaw/chestplate",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_gold.png",
+        "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "uselessreptile:dragon_tail_armor_gold",
       "model_data": {
-        "texture": "example:moleclaw/armor_gold",
-        "model": "example:moleclaw/tail_armor",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_gold.png",
+        "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "uselessreptile:moleclaw_helmet_diamond",
       "model_data": {
-        "texture": "example:moleclaw/armor_diamond",
-        "model": "example:moleclaw/helmet",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "model": "example:biscuit_roll/models/moleclaw/helmet.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "uselessreptile:dragon_chestplate_diamond",
       "model_data": {
-        "texture": "example:moleclaw/armor_diamond",
-        "model": "example:moleclaw/chestplate",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     },
     {
       "item": "uselessreptile:dragon_tail_armor_diamond",
       "model_data": {
-        "texture": "example:moleclaw/armor_diamond",
-        "model": "example:moleclaw/tail_armor",
-        "cull" : false
+        "texture": "example:textures/moleclaw/armor_diamond.png",
+        "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
       }
     }
   ]

@@ -65,7 +65,10 @@
 				{
 					"name": "rider",
 					"parent": "saddle_front",
-					"pivot": [0, 48.75, -1]
+					"pivot": [0, 48.75, -1],
+					"locators": {
+						"passenger0": [0, 48.75, -1]
+					}
 				},
 				{
 					"name": "wing_left",
@@ -556,7 +559,10 @@
 					"name": "banner",
 					"parent": "saddle_back",
 					"pivot": [6, 54.1, 5],
-					"rotation": [-1, 45, 1]
+					"rotation": [-1, 90, 1],
+					"locators": {
+						"banner": [6, 54.1, 5]
+					}
 				},
 				{
 					"name": "Ttail1",

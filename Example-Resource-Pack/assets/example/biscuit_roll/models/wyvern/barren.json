@@ -55,29 +55,6 @@
 					]
 				},
 				{
-					"name": "saddle_front",
-					"parent": "front",
-					"pivot": [0, 48.3, -2],
-					"cubes": [
-						{
-							"origin": [-5.5, 47.8, -10],
-							"size": [11, 1, 13],
-							"uv": {
-								"north": {"uv": [243, 222], "uv_size": [11, 1]},
-								"east": {"uv": [243, 223], "uv_size": [13, 1]},
-								"south": {"uv": [243, 238], "uv_size": [11, 1]},
-								"west": {"uv": [243, 237], "uv_size": [13, 1]},
-								"up": {"uv": [254, 237], "uv_size": [-11, -13]}
-							}
-						}
-					]
-				},
-				{
-					"name": "rider",
-					"parent": "saddle_front",
-					"pivot": [0, 48.75, -1]
-				},
-				{
 					"name": "wing_left",
 					"parent": "front",
 					"pivot": [6.5, 44.3, -6.75],
@@ -775,85 +752,6 @@
 					]
 				},
 				{
-					"name": "saddle_neck1",
-					"parent": "neck1",
-					"pivot": [0, 44.1, -11],
-					"cubes": [
-						{
-							"origin": [-4.1, 40.5, -15],
-							"size": [8.2, 7.2, 2],
-							"uv": {
-								"east": {"uv": [241, 224], "uv_size": [2, 7]},
-								"west": {"uv": [231, 224], "uv_size": [2, 7]},
-								"up": {"uv": [241, 226], "uv_size": [-8, -2]},
-								"down": {"uv": [241, 228], "uv_size": [-8, -2]}
-							}
-						}
-					]
-				},
-				{
-					"name": "Aalso_ropes",
-					"parent": "saddle_neck1",
-					"pivot": [0, 47.8, -13.9]
-				},
-				{
-					"name": "also_ropes",
-					"parent": "Aalso_ropes",
-					"pivot": [0, 47.8, -13.9],
-					"cubes": [
-						{
-							"origin": [-4.5, 47.425, -15],
-							"size": [9, 0.05, 8],
-							"pivot": [0, 47.8, -16.9],
-							"rotation": [8, 0, 0],
-							"uv": {
-								"up": {"uv": [256, 214], "uv_size": [-9, 8]}
-							}
-						}
-					]
-				},
-				{
-					"name": "Tropes",
-					"parent": "saddle_neck1",
-					"pivot": [0, 44.1, -11]
-				},
-				{
-					"name": "Aropes",
-					"parent": "Tropes",
-					"pivot": [0, 44.1, -11]
-				},
-				{
-					"name": "ropes",
-					"parent": "Aropes",
-					"pivot": [0, 44.1, -14],
-					"cubes": [
-						{
-							"origin": [-4.2, 53.65, -14.5],
-							"size": [8.4, 0.05, 1],
-							"uv": {
-								"up": {"uv": [241, 224], "uv_size": [-8, -1]},
-								"down": {"uv": [241, 224], "uv_size": [-8, -1]}
-							}
-						},
-						{
-							"origin": [-4.2, 43.3, -14.5],
-							"size": [0.05, 10.4, 1],
-							"uv": {
-								"east": {"uv": [242, 214], "uv_size": [1, 10]},
-								"west": {"uv": [242, 214], "uv_size": [1, 10]}
-							}
-						},
-						{
-							"origin": [4.15, 43.3, -14.5],
-							"size": [0.05, 10.4, 1],
-							"uv": {
-								"east": {"uv": [242, 214], "uv_size": [1, 10]},
-								"west": {"uv": [242, 214], "uv_size": [1, 10]}
-							}
-						}
-					]
-				},
-				{
 					"name": "Tneck2",
 					"parent": "neck1",
 					"pivot": [0, 44.1, -17.5]
@@ -923,23 +821,6 @@
 							"uv": {
 								"east": {"uv": [44, 98], "uv_size": [9, 3]},
 								"west": {"uv": [53, 98], "uv_size": [-9, 3]}
-							}
-						}
-					]
-				},
-				{
-					"name": "saddle_neck3",
-					"parent": "neck3",
-					"pivot": [0, 44.1, -13],
-					"cubes": [
-						{
-							"origin": [-3.1, 41.5, -30.5],
-							"size": [6.2, 5.2, 2],
-							"uv": {
-								"east": {"uv": [233, 236], "uv_size": [2, 5]},
-								"west": {"uv": [235, 236], "uv_size": [2, 5]},
-								"up": {"uv": [237, 234], "uv_size": [-8, -2]},
-								"down": {"uv": [237, 236], "uv_size": [-8, -2]}
 							}
 						}
 					]
@@ -1436,23 +1317,6 @@
 								"west": {"uv": [122, 248], "uv_size": [8, 2]},
 								"up": {"uv": [119, 240], "uv_size": [3, 8]},
 								"down": {"uv": [122, 248], "uv_size": [3, -8]}
-							}
-						}
-					]
-				},
-				{
-					"name": "saddle_neck5",
-					"parent": "neck5",
-					"pivot": [0, 44.6, -38.5],
-					"cubes": [
-						{
-							"origin": [-3.1, 42, -42],
-							"size": [6.2, 4.2, 2],
-							"uv": {
-								"east": {"uv": [237, 232], "uv_size": [2, 4]},
-								"west": {"uv": [239, 232], "uv_size": [2, 4]},
-								"up": {"uv": [241, 230], "uv_size": [-8, -2]},
-								"down": {"uv": [241, 232], "uv_size": [-8, -2]}
 							}
 						}
 					]

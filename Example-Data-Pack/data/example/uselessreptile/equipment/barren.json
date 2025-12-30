@@ -4,9 +4,9 @@
     {
       "item": "minecraft:saddle",
       "model_data": {
-        "texture": "example:wyvern/saddle_barren",
-        "model": "example:wyvern/barren_saddle",
-        "cull" : false
+        "texture": "example:textures/wyvern/saddle_barren.png",
+        "model": "example:biscuit_roll/models/wyvern/barren_saddle.json",
+        "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/saddle.animation.json"
       }
     }
   ]

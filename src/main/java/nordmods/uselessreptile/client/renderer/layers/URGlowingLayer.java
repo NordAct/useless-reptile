@@ -25,15 +25,12 @@ public class URGlowingLayer extends TextureRenderLayer {
         String namespace = parentRenderer.getModelProvider().getModelId(state).getNamespace();
         String path = parentRenderer.getTextureId(state).getPath().replace(".png", "_glowing.png");
         Identifier id = Identifier.fromNamespaceAndPath(namespace, path);
-        state.getStateData(URStateDataTypes.ASSET_CACHE).setGlowLayerLocationCache(id);
         return id;
     }
 
+    @Override
     protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        if (URClientConfig.getConfig().disableEmissiveTextures) return;
-        if (!ResourceUtil.isResourceReloadFinished) return;
-        if (!canRender(state)) return;
-
+        if (!state.getStateData(URStateDataTypes.ASSET_CACHE).hasGlowing()) return;
         super.submit(state, poseStack, submitNodeCollector, cameraRenderState);
     }
 
@@ -56,12 +53,14 @@ public class URGlowingLayer extends TextureRenderLayer {
             Identifier id = getGlowingTexture(state);
             if (!ResourceUtil.doesExist(id, false)) {
                 assetCache.setHasGlowing(false);
+            } else {
+                assetCache.setGlowLayerLocationCache(id);
             }
         }
     }
 
     @Override
     public boolean canRender(BRState state) {
-        return state.getStateData(URStateDataTypes.ASSET_CACHE).hasGlowing();
+        return !URClientConfig.getConfig().disableEmissiveTextures && ResourceUtil.isResourceReloadFinished && state.getStateData(URStateDataTypes.ASSET_CACHE).hasGlowing();
     }
 }
