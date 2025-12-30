@@ -96,6 +96,7 @@ Due to some technical limitations some sound key names are hardcoded and have to
 `hurt` - played when dragon is hurt\
 `death` - played when dragon is dying
 
+**Note on Lightning Chaser**: it _must_ have locator `breath` on the model as it's used for correct renderer of lightning breath attack
 
 ## `equipment` file structure
 Lists models for items that are going to be used when the latter are used as equipment.
@@ -125,6 +126,7 @@ Tag list for dragon equipment:
 | Lightning Chaser |   `uselessreptile:lightning_chaser_saddles`   |             Saddle             |
 |   Swamp Wyvern   |        `uselessreptile:wyvern_saddles`        |             Saddle             |
 
+**Note for saddles**: to display banner and rider correctly your saddle model _must_ have locators named `banner` and `passenger0` respectively
 
 ## `equipment_inject` file structure
 Allows to inject extra equipment entries into specified equipment list without needing to override entire file.
