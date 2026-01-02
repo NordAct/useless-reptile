@@ -582,6 +582,11 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
+    protected boolean canShearEquipment(Player player) {
+        return false;
+    }
+
+    @Override
     public boolean startRiding(Entity entity, boolean force, boolean event) {
         boolean result = super.startRiding(entity, force, event);
         if (this instanceof HeadMountDragon && result && entity instanceof HeadMountDragonOwner owner) {

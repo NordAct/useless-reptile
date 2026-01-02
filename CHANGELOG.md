@@ -1,12 +1,1 @@
-- 1.21.11 port
-- Now fly down key is bound to left ctrl by default. If you're moving from previous game versions, make sure to bind it
-- Culling is no longer supported for dragon equipment
-- Spawn groups are now referred as "mob categories" (or "categories")
-- Replaced Geckolib with new animation library (currently bundled with mod, later will be shipped as separate dependency)
-  - This as well now allows bones to have overlapping animations that will blend properly
-  - This replacement will allow for more variant customization options in future
-  - Models in mod now utilize actual Bedrock model and animation formats
-  - Glow layers now can be animated (see `jeb_` Swamp Wyvern nametag variant for example)
-- Updated all models and animations to accompany animation library change
-- Buffed Netherite and Diamond Dragon Armor sets
-- Equipment now can play different animations depending on which animation is currently played by dragon
+- Fixed saddle dupe from shearing
