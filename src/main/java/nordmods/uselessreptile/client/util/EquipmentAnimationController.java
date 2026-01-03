@@ -33,7 +33,7 @@ public class EquipmentAnimationController extends BRAnimationController {
         playingAnimations.forEach((name, animation) -> {
             BRPlayingAnimation parentAnimation = controller.getAnimation(name);
             if (parentAnimation != null) {
-                if (parentAnimation.isStopped())
+                if (parentAnimation.isFinished())
                     animation.stop();
                 animation.setPaused(parentAnimation.isPaused());
                 animation.setSpeed(parentAnimation.getSpeed());

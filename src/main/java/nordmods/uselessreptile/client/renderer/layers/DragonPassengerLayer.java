@@ -43,10 +43,10 @@ public class DragonPassengerLayer extends nordmods.biscuit_roll.client.renderer.
 
             Vec3 vec3d = attachmentPos.get(i);
             float scale = 1/(state.getStateDataOptional(StateDataTypes.SCALE).orElse(1f));
-            poseStack.translate(vec3d.x * scale, vec3d.y * scale, vec3d.z * scale);
             poseStack.scale(-1, -1, 1);
             poseStack.mulPose(transformation.matrix());
             poseStack.scale(-1, -1, 1);
+            poseStack.translate(-vec3d.x * scale, -vec3d.y * scale, -vec3d.z * scale);
             poseStack.scale(scale, scale, scale);
             EntityRenderState passengerState = (EntityRenderState) renderStates.get(i);
             if (passengerState instanceof EntityRenderState renderState) renderState.nameTag = null;

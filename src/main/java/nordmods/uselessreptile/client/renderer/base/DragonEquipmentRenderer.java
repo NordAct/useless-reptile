@@ -137,7 +137,6 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
                 animatable.controller.playAnimation(
                         new BRPlayingAnimation(
                                 animatable.controller.getAnimationData(name),
-                                animatable.ownerRenderState.getStateData(StateDataTypes.ANIMATION_TIME),
                                 playingAnimation.getTransitionInTime(),
                                 playingAnimation.getTransitionOutTime(),
                                 playingAnimation.getTransitionInLerp(),
