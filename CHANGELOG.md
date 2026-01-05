@@ -1,3 +1,1 @@
-- Fix sounds effects playing twice when dragon has glowing layer
-- Slightly tweaked Lightning Chaser saddle animation to correct rider's position
-- Fixed rider sliding around when dragon moves its body a lot during animation
+- Updated animation library for some performance improvements

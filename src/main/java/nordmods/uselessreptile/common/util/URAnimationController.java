@@ -3,7 +3,7 @@ package nordmods.uselessreptile.common.util;
 import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.sounds.SoundEvent;
 import nordmods.biscuit_roll.common.animation.EffectConsumer;
-import nordmods.biscuit_roll.common.animation.EntityAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;

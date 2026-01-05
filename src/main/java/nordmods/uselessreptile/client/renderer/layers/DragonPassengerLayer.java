@@ -42,7 +42,7 @@ public class DragonPassengerLayer extends nordmods.biscuit_roll.client.renderer.
             poseStack.pushPose();
 
             Vec3 vec3d = attachmentPos.get(i);
-            float scale = 1/(state.getStateDataOptional(StateDataTypes.SCALE).orElse(1f));
+            float scale = 1/(state.getStateData(StateDataTypes.SCALE, 1f));
             poseStack.scale(-1, -1, 1);
             poseStack.mulPose(transformation.matrix());
             poseStack.scale(-1, -1, 1);

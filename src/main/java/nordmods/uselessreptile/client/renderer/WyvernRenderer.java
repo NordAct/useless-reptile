@@ -21,7 +21,7 @@ public class WyvernRenderer extends URRideableDragonEntityRenderer<Wyvern> {
     @Override
     public void beforeSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         AnimatedBone bone = getModel(state).getBone("spikes_front");
-        if (bone != null) bone.setVisible(!state.getStateDataOptional(URStateDataTypes.DRAGON_HAS_SADDLE).orElse(false));
+        if (bone != null) bone.setVisible(!state.getStateData(URStateDataTypes.DRAGON_HAS_SADDLE, false));
         super.beforeSubmit(state, poseStack, submitNodeCollector, cameraRenderState);
     }
 

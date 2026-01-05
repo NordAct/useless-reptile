@@ -23,6 +23,8 @@ import nordmods.uselessreptile.common.gui.URDragonMenu;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.List;
+
 public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     protected static final Identifier TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
     private int mouseX;
@@ -128,7 +130,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
         LivingEntityRenderState state = (LivingEntityRenderState) renderer.createRenderState(entity, tickDelta);
         state.nameTag = null;
-        state.setStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, state.getStateDataOptional(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT).stream().map(val -> false).toList());
+        state.setStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, List.of()).stream().map(val -> false).toList());
         state.setStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
 
         Quaternionf rot = new Quaternionf();
