@@ -4,8 +4,8 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
-import nordmods.biscuit_roll.common.animation.CloneAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
 
 import java.util.Collection;
 import java.util.List;

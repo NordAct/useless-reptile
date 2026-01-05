@@ -2,7 +2,7 @@ package nordmods.uselessreptile.client.util;
 
 import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;

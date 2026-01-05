@@ -11,7 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BRObjectRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;

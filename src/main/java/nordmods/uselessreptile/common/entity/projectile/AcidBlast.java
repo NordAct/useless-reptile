@@ -11,8 +11,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
-import nordmods.biscuit_roll.common.animation.EntityAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
 import nordmods.uselessreptile.common.init.*;
 import org.jetbrains.annotations.NotNull;
 

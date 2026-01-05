@@ -22,7 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
