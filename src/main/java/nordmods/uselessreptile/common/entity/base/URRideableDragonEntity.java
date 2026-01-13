@@ -82,11 +82,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     @Override
     public LivingEntity getControllingPassenger() {
-        return getPassengers().isEmpty() ? null : (LivingEntity) getPassengers().getFirst();
-    }
-
-    public boolean canBeControlledByRider() {
-        return getControllingPassenger() instanceof Player;
+        return getFirstPassenger() instanceof Player player ? player : null;
     }
 
     @Override
@@ -103,8 +99,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    public boolean isLocalInstanceAuthoritative() {
-        if (canBeControlledByRider()
+    public boolean isLocalInstanceAuthoritative() { //accessed via AT, overriden to make server side movement logic work
+        if (hasControllingPassenger()
                 && (getControllingPassenger() instanceof Player player && player.isLocalPlayer() || !level().isClientSide())) return true;
         return super.isLocalInstanceAuthoritative();
     }
@@ -112,7 +108,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     @Override
     public void travel(Vec3 movementInput) {
         if (level() instanceof ServerLevel) {
-            boolean hasRider = canBeControlledByRider();
+            boolean hasRider = hasControllingPassenger();
             updateRiderBonus(hasRider);
             getLookControl().setLockRotation(hasRider);
             if (hasRider) setHomePoint(blockPosition());
@@ -208,7 +204,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     @Override
     public void openCustomInventoryScreen(Player player) {
-        if (!level().isClientSide() && canBeControlledByRider() && isOwnedBy(player)) {
+        if (!level().isClientSide() && hasControllingPassenger() && isOwnedBy(player)) {
             GUIEntityToRenderPayload.send((ServerPlayer) player, this);
             player.openMenu(this);
         }
@@ -230,5 +226,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     @Override
     public boolean canBeLeashed() {
         return false;
+    }
+
+    public int getMaxPassengerCount() {
+        return 1;
     }
 }

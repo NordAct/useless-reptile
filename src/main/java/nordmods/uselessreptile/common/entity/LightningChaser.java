@@ -374,7 +374,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         if (shootDelay == 0) shoot();
         if (shootDelay > -1) shootDelay--;
 
-        if (canBeControlledByRider()) {
+        if (hasControllingPassenger()) {
             if (isFlying()) {
                 if (isSecondaryAttackPressed() && getSpecialAttackCooldown() == 0) triggerShockwave();
             }

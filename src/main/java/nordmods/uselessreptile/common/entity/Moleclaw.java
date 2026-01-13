@@ -216,7 +216,7 @@ public class Moleclaw extends URRideableDragonEntity {
         else setHitboxModifiers(0.75f, 1f, 2.5f);
         tryPanic();
 
-        if (canBeControlledByRider()) {
+        if (hasControllingPassenger()) {
             if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) scheduleNormalAttack();
             if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) scheduleStrongAttack();
         }
@@ -349,12 +349,12 @@ public class Moleclaw extends URRideableDragonEntity {
         double halfWidth = getBbWidth() / 2f;
         double x = -Math.sin(Math.toRadians(getYRot())) * halfWidth;
         double y = 0;
-        if (canBeControlledByRider()) {
+        if (hasControllingPassenger()) {
             if (getXRot() > 25) y = -1;
             if (getXRot() < -25) y = 1;
         } else y = -Math.sin(Math.toRadians(getXRot()));
         double z = Math.cos(Math.toRadians(getYRot())) * halfWidth;
-        double heightIncrease = canBeControlledByRider() ? 2 : 1;
+        double heightIncrease = hasControllingPassenger() ? 2 : 1;
         return new AABB(position().x() + x - 1.25, position().y() + y, position().z() + z - 1.25,
                 position().x() + x + 1.25, position().y() + getBbHeight() + heightIncrease + y, position().z() + z + 1.25);
     }
@@ -393,8 +393,9 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    public boolean canBeControlledByRider() {
-        return super.canBeControlledByRider() && !isPanicking();
+    public LivingEntity getControllingPassenger() {
+        if (isPanicking()) return null;
+        return super.getControllingPassenger();
     }
 
     public void scheduleNormalAttack() {

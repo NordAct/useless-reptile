@@ -299,7 +299,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         }
         setHitboxModifiers(dHeight, dWidth, dMountedOffset);
 
-        if (canBeControlledByRider()) {
+        if (hasControllingPassenger()) {
             if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) {
                 meleeAttack();
             }

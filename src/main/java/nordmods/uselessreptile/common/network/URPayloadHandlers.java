@@ -46,14 +46,14 @@ public class URPayloadHandlers {
     public static void init() {
         ServerPlayNetworking.registerGlobalReceiver(RequestLiftoffPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.id());
-            if (entity instanceof URRideableFlyingDragonEntity dragon && !dragon.isFlying() && dragon.canBeControlledByRider() && context.player().getVehicle() == entity) {
+            if (entity instanceof URRideableFlyingDragonEntity dragon && !dragon.isFlying() && dragon.hasControllingPassenger() && context.player().getVehicle() == entity) {
                 dragon.startToFly();
             }
         });
 
         ServerPlayNetworking.registerGlobalReceiver(KeyInputPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.id());
-            if (entity instanceof URRideableDragonEntity dragon && dragon.canBeControlledByRider() && context.player().getVehicle() == entity) {
+            if (entity instanceof URRideableDragonEntity dragon && dragon.hasControllingPassenger() && context.player().getVehicle() == entity) {
                 dragon.updateInputs(
                         packet.forward(),
                         packet.back(),

@@ -37,7 +37,7 @@ public class LightningChaserAttackGoal extends Goal {
     public boolean canUse() {
         if (entity.hasSurrendered() || entity.getShouldBailOut()) return false;
 
-        if (entity.canBeControlledByRider()) return false;
+        if (entity.hasControllingPassenger()) return false;
         if (!entity.canAttack(entity.getTarget())) return false;
         target = entity.getTarget();
         return target != null;

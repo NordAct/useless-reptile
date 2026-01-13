@@ -128,7 +128,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     public void travel(Vec3 movementInput) {
         if (!isAlive()) return;
-        if (!canBeControlledByRider()) {
+        if (!hasControllingPassenger()) {
             if (isFlying()) if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
             else setInAirTimer(0);
         }

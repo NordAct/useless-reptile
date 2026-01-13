@@ -1043,7 +1043,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public final boolean isBlockProtected(BlockPos blockPos) {
         BlockState blockState = level().getBlockState(blockPos);
-        Player rider = getOwner() instanceof URRideableDragonEntity dragon && dragon.canBeControlledByRider() ?
+        Player rider = getOwner() instanceof URRideableDragonEntity dragon && dragon.hasControllingPassenger() ?
                 (Player) getControllingPassenger() : null;
         GameProfile gameProfile = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
         return blockState.is(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(level(), blockPos, gameProfile, rider);

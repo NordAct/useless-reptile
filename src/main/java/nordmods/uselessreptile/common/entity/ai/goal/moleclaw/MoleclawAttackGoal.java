@@ -28,7 +28,7 @@ public class MoleclawAttackGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (entity.canBeControlledByRider()) return false;
+        if (entity.hasControllingPassenger()) return false;
         if (!entity.canAttack(entity.getTarget())) {
             entity.setTarget(null);
             return false;
