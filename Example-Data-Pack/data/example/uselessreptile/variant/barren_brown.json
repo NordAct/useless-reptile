@@ -15,5 +15,6 @@
     "minecraft:cooked_beef": 8,
     "minecraft:porkchop": 8,
     "minecraft:cooked_porkchop": 8
-  }
+  },
+  "variant_name_key": "variant.example.barren_wyvern.brown"
 }

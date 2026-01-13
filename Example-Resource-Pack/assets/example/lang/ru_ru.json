@@ -1,4 +1,8 @@
 {
   "entity.example.wyvern.ender": "Виверна Края",
-  "entity.example.wyvern.barren": "Пустырная виверна"
+  "entity.example.wyvern.barren": "Пустырная виверна",
+  "variant.example.barren_wyvern.brown": "Коричневый",
+  "variant.example.barren_wyvern.orange": "Оранжевый",
+  "variant.example.wyvern.ender": "Эндер",
+  "variant.example.river_pikehorn.striped": "Полосатый"
 }

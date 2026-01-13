@@ -33,10 +33,10 @@ import java.util.stream.IntStream;
 //  damage immunities
 //  potentially move all attributes to variant file
 
-//TODO also move custom name registry to clientside
 public record DragonVariant(
         Identifier dragonId,
         String name,
+        String variantNameKey,
         Optional<String> displayNameKey,
         Identifier dragonModelData,
         Identifier dragonEquipment,
@@ -49,6 +49,7 @@ public record DragonVariant(
     public static final Codec<DragonVariant> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
                     Codec.STRING.fieldOf("name").forGetter(DragonVariant::name),
+                    Codec.STRING.fieldOf("variant_name_key").forGetter(DragonVariant::variantNameKey),
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
                     Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
@@ -62,6 +63,7 @@ public record DragonVariant(
     public static final Codec<DragonVariant> CODEC_NO_SERVER_INFO = RecordCodecBuilder.create(instance -> instance.group(
                     Identifier.CODEC.fieldOf("id").forGetter(DragonVariant::dragonId),
                     Codec.STRING.fieldOf("name").forGetter(DragonVariant::name),
+                    Codec.STRING.fieldOf("variant_name_key").forGetter(DragonVariant::variantNameKey),
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
                     Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
@@ -70,6 +72,7 @@ public record DragonVariant(
             .apply(instance, (
                     id,
                     variant,
+                    variantNameKey,
                     displayNameKey,
                     dragonModelData,
                     dragonEquipment,
@@ -78,6 +81,7 @@ public record DragonVariant(
                     ) -> new DragonVariant(
                             id,
                             variant,
+                            variantNameKey,
                             displayNameKey,
                             dragonModelData,
                             dragonEquipment,
@@ -102,6 +106,7 @@ public record DragonVariant(
                     ) -> new DragonVariant(
                             id,
                             variant,
+                    "",
                     Optional.empty(),
                             dragonModelData,
                             dragonEquipment,

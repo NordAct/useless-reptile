@@ -1,1 +1,3 @@
-- Updated animation library for some performance improvements
+- Added integration with Jade that displays dragon variant
+- Dragon variants now require translation key for their variant name
+- Changed warnings to errors when variant of existing dragon is not registered properly or doesn't exist

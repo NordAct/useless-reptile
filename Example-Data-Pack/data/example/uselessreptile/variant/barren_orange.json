@@ -36,5 +36,6 @@
       "item": "minecraft:cooked_porkchop",
       "healing_amount": 8
     }
-  ]
+  ],
+  "variant_name_key": "variant.example.barren_wyvern.orange"
 }

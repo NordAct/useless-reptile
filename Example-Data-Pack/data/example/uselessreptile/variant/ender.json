@@ -17,5 +17,6 @@
     "minecraft:cooked_porkchop": 8,
     "minecraft:chicken": 4,
     "minecraft:cooked_chicken": 4
-  }
+  },
+  "variant_name_key": "variant.example.wyvern.ender"
 }

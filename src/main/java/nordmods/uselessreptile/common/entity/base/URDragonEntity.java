@@ -296,7 +296,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     private void applyVariantModifiers() {
         DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), level());
         if (variant == null) {
-            UselessReptile.LOGGER.warn("Couldn't find any info on variant {} ({}), thus variant modifiers cannot be set", getVariant(), getDragonId());
+            UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}). No variant attribute modifiers will be applied", getVariant(), getDragonId());
             return;
         }
 
@@ -1176,7 +1176,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public int getBaseTamingProgress() {
-        return DragonVariant.getByVariant(getDragonId(), getVariant(), level()).baseTamingProgress();
+        DragonVariant variant = DragonVariant.getByVariant(getDragonId(), getVariant(), level());
+        if (variant == null) {
+            UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}), base value of taming progress will be set to -1", getVariant(), getDragonId());
+            return -1;
+        }
+        return variant.baseTamingProgress();
     }
 
     public boolean isTameable() {

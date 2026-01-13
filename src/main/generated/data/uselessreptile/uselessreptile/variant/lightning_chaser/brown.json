@@ -7,5 +7,6 @@
   },
   "id": "uselessreptile:lightning_chaser",
   "name": "brown",
-  "spawn_conditions": "uselessreptile:lightning_chaser/brown"
+  "spawn_conditions": "uselessreptile:lightning_chaser/brown",
+  "variant_name_key": "variant.uselessreptile.lightning_chaser.brown"
 }

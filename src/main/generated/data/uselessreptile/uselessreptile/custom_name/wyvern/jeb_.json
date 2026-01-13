@@ -3,5 +3,6 @@
   "dragon_model": "uselessreptile:wyvern/jeb_",
   "equipment": "uselessreptile:wyvern",
   "id": "uselessreptile:wyvern",
-  "name": "jeb_"
+  "name": "jeb_",
+  "variant_name_key": ""
 }

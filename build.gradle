@@ -49,6 +49,7 @@ dependencies {
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
     modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
+    modImplementation "maven.modrinth:jade:${project.jade_version}+fabric"
     //added locally, compiled from https://github.com/NordAct/Primitive-Multipart-Entities/
     modImplementation include ("nordmods.primitive_multipart_entities:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
     modImplementation include ("nordmods.biscuit_roll:biscuit_roll:${project.biscuit_roll_version}")

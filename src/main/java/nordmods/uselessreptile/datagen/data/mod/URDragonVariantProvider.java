@@ -50,6 +50,7 @@ public class URDragonVariantProvider implements DataProvider {
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
+                "",
                 Optional.empty(),
                 UselessReptile.id("wyvern/" + name),
                 UselessReptile.id("wyvern"),
@@ -113,6 +114,7 @@ public class URDragonVariantProvider implements DataProvider {
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
+                "variant.uselessreptile.wyvern." + name,
                 Optional.empty(),
                 UselessReptile.id("wyvern/" + name),
                 UselessReptile.id("wyvern"),
@@ -146,6 +148,7 @@ public class URDragonVariantProvider implements DataProvider {
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
+                "variant.uselessreptile.moleclaw." + name,
                 Optional.empty(),
                 UselessReptile.id("moleclaw/" + name),
                 UselessReptile.id("moleclaw"),
@@ -174,6 +177,7 @@ public class URDragonVariantProvider implements DataProvider {
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
+                "variant.uselessreptile.river_pikehorn." + name,
                 Optional.empty(),
                 UselessReptile.id("river_pikehorn/" + name),
                 UselessReptile.id("empty"),
@@ -202,6 +206,7 @@ public class URDragonVariantProvider implements DataProvider {
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
+                "variant.uselessreptile.lightning_chaser." + name,
                 Optional.empty(),
                 UselessReptile.id("lightning_chaser/" + name),
                 UselessReptile.id("lightning_chaser"),
@@ -223,6 +228,7 @@ public class URDragonVariantProvider implements DataProvider {
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
+                "variant.uselessreptile.magmamuncher." + name,
                 Optional.empty(),
                 UselessReptile.id("magmamuncher/" + name),
                 UselessReptile.id("empty"),

@@ -1,4 +1,8 @@
 {
   "entity.example.wyvern.ender": "Ender Wyvern",
-  "entity.example.wyvern.barren": "Barren Wyvern"
+  "entity.example.wyvern.barren": "Barren Wyvern",
+  "variant.example.barren_wyvern.brown": "Brown",
+  "variant.example.barren_wyvern.orange": "Orange",
+  "variant.example.wyvern.ender": "Ender",
+  "variant.example.river_pikehorn.striped": "Striped"
 }

@@ -30,6 +30,9 @@
     ],
     "fabric-datagen": [
       "nordmods.uselessreptile.datagen.UselessReptileDataGenerator"
+    ],
+    "jade": [
+      "nordmods.uselessreptile.integration.JadeIntegration"
     ]
   },
   "mixins": [

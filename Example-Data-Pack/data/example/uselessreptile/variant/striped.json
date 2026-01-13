@@ -11,5 +11,6 @@
   },
   "taming_items": {
     "minecraft:tropical_fish_bucket": [1, 1]
-  }
+  },
+  "variant_name_key": "variant.example.river_pikehorn.striped"
 }

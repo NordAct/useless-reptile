@@ -19,7 +19,6 @@ public record EquipmentModelData(Optional<Identifier> parent, List<Equipment>equ
     // make tooltip that will display for which variant which attributes it'll increase
     //      tooltip should be scrollable (like pages) and group based on display name and similarity of attribute modifiers
     // add types for equipment (armor and saddle) to make for saddle possible to configure amount of passengers and their positions
-    // rework passenger renderer to make multiple passengers possible
     public record Equipment(Identifier item, ModelData modelData) {
         public static final Codec<Equipment> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         Identifier.CODEC.fieldOf("item").forGetter(Equipment::item),
