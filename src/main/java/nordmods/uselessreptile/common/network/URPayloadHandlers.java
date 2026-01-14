@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.network;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.client.gui.URDragonScreen;
@@ -9,15 +10,23 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
+import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
 import nordmods.uselessreptile.common.network.c2s.RequestLiftoffPayload;
-import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
+import nordmods.uselessreptile.common.network.s2c.OpenDragonInventoryPayload;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPayload;
 
 public class URPayloadHandlers {
     public static void initClient() {
-        ClientPlayNetworking.registerGlobalReceiver(GUIEntityToRenderPayload.PAYLOAD_ID, (packet, context) -> URDragonScreen.entityToRenderID = packet.id());
+        ClientPlayNetworking.registerGlobalReceiver(OpenDragonInventoryPayload.PAYLOAD_ID, (packet, context) -> {
+            Entity entity = context.player().level().getEntity(packet.dragonId());
+            if (entity instanceof URDragonEntity dragon) {
+                URDragonMenu dragonMenu = new URDragonMenu(packet.containterId(), context.player().getInventory(), dragon.getInventory());
+                context.player().containerMenu = dragonMenu;
+                Minecraft.getInstance().setScreen(new URDragonScreen<>(dragonMenu, context.player().getInventory(), dragon));
+            }
+        });
 
         ClientPlayNetworking.registerGlobalReceiver(LiftoffParticlesPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.id());

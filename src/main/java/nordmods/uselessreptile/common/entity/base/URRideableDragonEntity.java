@@ -27,9 +27,9 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
-import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
     public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
@@ -39,7 +39,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(MOVE_FORWARD_PRESSED, false);
         builder.define(MOVE_BACK_PRESSED, false);
@@ -86,7 +86,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTame() && isOwnedBy(player) && !isInteractableItem(itemStack) && !player.isShiftKeyDown()) {
             if (!isVehicle() && hasSaddle()) {
@@ -106,7 +106,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    public void travel(Vec3 movementInput) {
+    public void travel(@NonNull Vec3 movementInput) {
         if (level() instanceof ServerLevel) {
             boolean hasRider = hasControllingPassenger();
             updateRiderBonus(hasRider);
@@ -203,10 +203,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    public void openCustomInventoryScreen(Player player) {
-        if (!level().isClientSide() && hasControllingPassenger() && isOwnedBy(player)) {
-            GUIEntityToRenderPayload.send((ServerPlayer) player, this);
-            player.openMenu(this);
+    public void openCustomInventoryScreen(@NonNull Player player) {
+        if (player instanceof ServerPlayer serverPlayer && hasControllingPassenger() && isOwnedBy(player)) {
+            serverPlayer.uselessreptile$openDragonInventoryScreen(this);
         }
     }
 

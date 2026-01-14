@@ -22,6 +22,7 @@ import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavig
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public abstract class URFlyingDragonEntity extends URDragonEntity implements FlyingDragon {
     protected final int maxInAirTimer = 600;
@@ -41,7 +42,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(FLYING, false);
         builder.define(FLY_GLIDING, false);
@@ -68,7 +69,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     public void setTiltState(byte state) {entityData.set(TILT_STATE, state);}
 
     @Override
-    public void addAdditionalSaveData(ValueOutput tag) {
+    public void addAdditionalSaveData(@NonNull ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("IsFlying", isFlying());
     }
@@ -80,7 +81,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
         if (!level().isClientSide())
             if (FLYING.equals(data)) getNavigation().recomputePath();
@@ -141,7 +142,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public void travel(Vec3 movementInput) {
+    public void travel(@NonNull Vec3 movementInput) {
         if (!isAlive()) return;
         if (isFlying()) if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);
         else setInAirTimer(0);
@@ -176,7 +177,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, @NonNull DamageSource damageSource) {return false;}
 
     protected float getFlyingSpeed() {
         return getSpeed() *  0.14f;

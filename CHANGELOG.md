@@ -1,3 +1,7 @@
 - Added integration with Jade that displays dragon variant
 - Dragon variants now require translation key for their variant name
 - Changed warnings to errors when variant of existing dragon is not registered properly or doesn't exist
+- Fix Swamp Wyvern spikes not displaying properly when there are several Swamp Wyverns with same model file being rendered
+- Whether dragon can equip an item now is defined by its variant and not hardcoded tags
+- Fixed items in inventory appearing in wrong slot for 1 tick when using quick move
+- River Pikehorn now has inventory screen

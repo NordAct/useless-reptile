@@ -14,7 +14,7 @@
     "common.misc.ItemStackMixin",
     "common.misc.LightningBoltMixin",
     "common.misc.MobCategoryMixin",
-    "common.misc.ServerPlayerEntityMixin"
+    "common.misc.ServerPlayerMixin"
   ],
   "client": [
     "client.camera.CameraMixin",

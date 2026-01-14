@@ -61,7 +61,8 @@
         "nordmods/uselessreptile/common/util/duck/LightningChaserSpawnTimer",
         "nordmods/uselessreptile/common/util/duck/HeadMountDragonOwner"
       ],
-      "net/minecraft/class_3218": ["nordmods/uselessreptile/common/util/duck/LightningChaserSpawnTimer"]
+      "net/minecraft/class_3218": ["nordmods/uselessreptile/common/util/duck/LightningChaserSpawnTimer"],
+      "net/minecraft/class_3222": ["nordmods/uselessreptile/common/util/duck/DragonInventoryHelper"]
     }
   }
 }

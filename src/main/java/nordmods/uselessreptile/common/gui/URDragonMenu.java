@@ -3,13 +3,11 @@ package nordmods.uselessreptile.common.gui;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 public class URDragonMenu extends AbstractContainerMenu {
     protected final DragonInventory inventory;
@@ -18,15 +16,15 @@ public class URDragonMenu extends AbstractContainerMenu {
     public static final int ENTITY_WINDOW_SIDE = 54;
     public static final int EDGE_OFFSET = 8;
 
-    public URDragonMenu(@Nullable MenuType<?> type, int syncId, Inventory playerInventory, DragonInventory inventory) {
-        super(type, syncId);
+    public URDragonMenu(int syncId, Inventory playerInventory, DragonInventory inventory) {
+        super(null, syncId);
         this.inventory = inventory;
         this.storageSize = inventory.storageSize;
         inventory.startOpen(playerInventory.player);
 
         if (inventory.hasSaddle) {
             addSlot(new DragonEquipmentSlot(inventory, DragonInventory.SADDLE_INDEX, EDGE_OFFSET, SLOT_SIDE) {
-                public boolean mayPickup(Player playerEntity) {
+                public boolean mayPickup(@NonNull Player playerEntity) {
                     return !(playerEntity.getVehicle() instanceof URRideableDragonEntity);
                 }
             });
@@ -55,19 +53,19 @@ public class URDragonMenu extends AbstractContainerMenu {
     }
 
     @Override
-    public void removed(Player player) {
+    public void removed(@NonNull Player player) {
         super.removed(player);
         inventory.stopOpen(player);
     }
 
     @Override
-    public boolean stillValid(Player player) {
+    public boolean stillValid(@NonNull Player player) {
         return inventory.stillValid(player);
     }
 
 
     @Override
-    public @NotNull ItemStack quickMoveStack(Player player, int invSlot) {
+    public @NonNull ItemStack quickMoveStack(@NonNull Player player, int invSlot) {
         ItemStack newStack = ItemStack.EMPTY;
         Slot slot = slots.get(invSlot);
         if (slot != null && slot.hasItem()) {
@@ -93,7 +91,7 @@ public class URDragonMenu extends AbstractContainerMenu {
         }
 
         @Override
-        public boolean mayPlace(ItemStack stack) {
+        public boolean mayPlace(@NonNull ItemStack stack) {
             return getInventory().canInsertInSlot(stack, getContainerSlot());
         }
 

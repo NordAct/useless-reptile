@@ -7,7 +7,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -22,10 +21,7 @@ import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.monster.MagmaCube;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.gamerules.GameRules;
@@ -46,14 +42,10 @@ import nordmods.uselessreptile.common.entity.ai.navigation.MagmamuncherNavigatio
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
-import nordmods.uselessreptile.common.init.URMenus;
-import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import nordmods.uselessreptile.common.util.URAnimationController;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -99,13 +91,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     @Override
     public String getDefaultVariant() {
         return "netherrack";
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        if (!level().isClientSide()) GUIEntityToRenderPayload.send((ServerPlayer) player, this);
-        return new URDragonMenu(URMenus.MAGMAMUNCHER_INVENTORY, syncId, inv, getInventory());
     }
 
     @Override
@@ -194,7 +179,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(EATING_MAGMA, false);
         builder.define(MAGMA_POS, BlockPos.ZERO);
@@ -219,11 +204,11 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
-        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MagmaCube.class, true, null));
+        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MagmaCube.class, true));
     }
 
     @Override
-    public void addAdditionalSaveData(ValueOutput tag) {
+    public void addAdditionalSaveData(@NonNull ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putInt("EatMagmaCooldown", eatMagmaCooldown);
     }
@@ -295,25 +280,11 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     }
 
     @Override
-    public @NotNull DragonInventory createInventory() {
-        return createInventory(this);
+    protected DragonInventory.StorageSize getStorageSize() {
+        return DragonInventory.StorageSize.SMALL;
     }
-
-    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
-        if (dragon == null) return new DragonInventory(dragon, DragonInventory.StorageSize.SMALL, true, true,true,true, true);
-        return new DragonInventory(
-                dragon,
-                DragonInventory.StorageSize.SMALL,
-                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty(),
-                dragon.getDragonActualVariant().helmetItems().isPresent() &&!dragon.getDragonActualVariant().helmetItems().get().isEmpty(),
-                dragon.getDragonActualVariant().chestplateItems().isPresent() &&!dragon.getDragonActualVariant().chestplateItems().get().isEmpty(),
-                dragon.getDragonActualVariant().tailArmorItems().isPresent() &&!dragon.getDragonActualVariant().tailArmorItems().get().isEmpty(),
-                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty()
-        );
-    }
-
     @Override
-    public @NotNull AABB getPrimaryAttackBox() {
+    public @NonNull AABB getPrimaryAttackBox() {
         return getBoundingBox().inflate(getScale(), 0, getScale());
     }
 }

@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
@@ -20,9 +19,7 @@ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.animal.chicken.Chicken;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -39,20 +36,17 @@ import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
-import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
-import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import nordmods.uselessreptile.common.util.URAnimationController;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -316,25 +310,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public @NotNull DragonInventory createInventory() {
-        return createInventory(this);
-    }
-
-    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
-        if (dragon == null) return new DragonInventory(dragon, DragonInventory.StorageSize.SMALL, true, true,true,true, true);
-        return new DragonInventory(
-                dragon,
-                DragonInventory.StorageSize.SMALL,
-                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty(),
-                dragon.getDragonActualVariant().helmetItems().isPresent() &&!dragon.getDragonActualVariant().helmetItems().get().isEmpty(),
-                dragon.getDragonActualVariant().chestplateItems().isPresent() &&!dragon.getDragonActualVariant().chestplateItems().get().isEmpty(),
-                dragon.getDragonActualVariant().tailArmorItems().isPresent() &&!dragon.getDragonActualVariant().tailArmorItems().get().isEmpty(),
-                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty()
-        );
-    }
-
-    @Override
-    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTame()) {
             if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwnedBy(player)) {
@@ -352,7 +328,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public @NotNull EntityDimensions getDefaultDimensions(Pose pose) {
+    public @NotNull EntityDimensions getDefaultDimensions(@NonNull Pose pose) {
         return super.getDefaultDimensions(pose).withEyeHeight(getBbHeight() * 0.95f);
     }
 
@@ -422,15 +398,13 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public float getHeightModTransSpeed() {
-        return (float) (0.13 * getScale());
+    protected DragonInventory.StorageSize getStorageSize() {
+        return DragonInventory.StorageSize.SMALL;
     }
 
-    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        if (!level().isClientSide()) GUIEntityToRenderPayload.send((ServerPlayer) player, this);
-        return new URDragonMenu(URMenus.WYVERN_INVENTORY, syncId, inv, getInventory());
+    public float getHeightModTransSpeed() {
+        return (float) (0.13 * getScale());
     }
 
     @Override

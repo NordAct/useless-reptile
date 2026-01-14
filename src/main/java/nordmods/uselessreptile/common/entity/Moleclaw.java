@@ -5,7 +5,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffects;
@@ -21,10 +20,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -45,14 +41,10 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
-import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URMenus;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import nordmods.uselessreptile.common.util.URAnimationController;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -113,7 +105,7 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(IS_PANICKING, false);
     }
@@ -235,30 +227,6 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     protected float getBaseGroundSpeed() {
         return BASE_GROUND_SPEED;
-    }
-
-    @Override
-    public @NotNull DragonInventory createInventory() {
-        return createInventory(this);
-    }
-
-    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
-        if (dragon == null) return new DragonInventory(dragon, DragonInventory.StorageSize.LARGE, true, true,true,true, true);
-        return new DragonInventory(
-                dragon,
-                DragonInventory.StorageSize.LARGE,
-                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty(),
-                dragon.getDragonActualVariant().helmetItems().isPresent() &&!dragon.getDragonActualVariant().helmetItems().get().isEmpty(),
-                dragon.getDragonActualVariant().chestplateItems().isPresent() &&!dragon.getDragonActualVariant().chestplateItems().get().isEmpty(),
-                dragon.getDragonActualVariant().tailArmorItems().isPresent() &&!dragon.getDragonActualVariant().tailArmorItems().get().isEmpty(),
-                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty()
-        );
-    }
-
-    @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        if (!level().isClientSide()) GUIEntityToRenderPayload.send((ServerPlayer) player, this);
-        return new URDragonMenu(URMenus.MOLECLAW_INVENTORY, syncId, inv, getInventory());
     }
 
     public void meleeAttack() {
@@ -404,7 +372,7 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    public float getWalkTargetValue(BlockPos pos, LevelReader world) {
+    public float getWalkTargetValue(@NonNull BlockPos pos, @NonNull LevelReader world) {
         return -world.getPathfindingCostFromLightLevels(pos);
     }
 
@@ -425,7 +393,7 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    protected boolean canTeleportTo(BlockPos pos) {
+    protected boolean canTeleportTo(@NonNull BlockPos pos) {
         if (isTooBrightAtPos(pos)) return false;
         return super.canTeleportTo(pos);
     }
@@ -433,5 +401,10 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
         return isPanicking() || super.isLookingAtDirection(pitch, yaw, pitchTolerance, yawTolerance);
+    }
+
+    @Override
+    protected DragonInventory.StorageSize getStorageSize() {
+        return DragonInventory.StorageSize.LARGE;
     }
 }

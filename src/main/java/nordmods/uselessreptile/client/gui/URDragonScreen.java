@@ -7,12 +7,10 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
@@ -22,6 +20,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
@@ -32,14 +31,10 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
     private final URDragonEntity entity;
     private int i;
     private int j;
-    public static int entityToRenderID;
-    protected float entityRenderSize = 12;
-    protected Vector3f entityScreenOffset = new Vector3f();
 
-    public URDragonScreen(T handler, Inventory inventory, Component title) {
-        super(handler, inventory, title);
-        Player player = inventory.player;
-        entity = (URDragonEntity) player.level().getEntity(entityToRenderID);
+    public URDragonScreen(T handler, Inventory inventory, URDragonEntity entity) {
+        super(handler, inventory, entity.getDisplayName());
+        this.entity = entity;
     }
 
     @Override
@@ -55,7 +50,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
     }
 
     @Override
-    public void render(GuiGraphics context, int mouseX, int mouseY, float delta) {
+    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
         renderBackground(context, mouseX, mouseY, delta);
         this.mouseX = mouseX;
         this.mouseY = mouseY;
@@ -114,10 +109,10 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
     }
 
     protected void drawEntity(GuiGraphics context) {
-        if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, entityRenderSize, this.mouseX, this.mouseY, this.entity);
+        if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, this.mouseX, this.mouseY, this.entity);
     }
 
-    private void drawEntity(GuiGraphics context, int x1, int y1, int x2, int y2, float size, float mouseX, float mouseY, LivingEntity entity) {
+    private void drawEntity(GuiGraphics context, int x1, int y1, int x2, int y2, float mouseX, float mouseY, LivingEntity entity) {
         float centerX = (x1 + x2) / 2f;
         float centerY = (y1 + y2) / 2f;
         float dx = (float)Math.atan((centerX - mouseX) / 40f);
@@ -136,7 +131,8 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         Quaternionf cam = Axis.XP.rotationDegrees(-dy * 20 + 180).mul(Axis.YP.rotationDegrees(-dx * 40 + state.bodyRot));
         rot.mul(cam);
 
-        context.submitEntityRenderState(state, size / state.scale, new Vector3f(0, state.boundingBoxHeight / 2f + 0.4f, 0).add(entityScreenOffset), rot, cam, x1, y1, x2, y2);
+        float size = 2.5f/Math.max(entity.getBbHeight(), entity.getBbWidth());
+        context.submitEntityRenderState(state, 13 * size, new Vector3f(0, state.boundingBoxHeight / 2f + 0.4f, 0).add(0, -0.2f * (size - 1), 0), rot, cam, x1, y1, x2, y2);
 
         context.disableScissor();
     }

@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -15,9 +14,7 @@ import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.*;
@@ -35,19 +32,15 @@ import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFoll
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
 import nordmods.uselessreptile.common.entity.base.FluteListener;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.init.URMenus;
 import nordmods.uselessreptile.common.item.FluteItem;
-import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import nordmods.uselessreptile.common.util.URAnimationController;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -90,7 +83,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         primaryAttackDuration = 11;
         canNavigateInFluids = true;
         ticksUntilHeal = 400;
-
     }
 
     public boolean isHunting() {
@@ -101,16 +93,9 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    public void updateDynamicGameEventListener(BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
+    public void updateDynamicGameEventListener(@NonNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
         if (level() instanceof ServerLevel serverWorld) callback.accept(fluteUsedEventHandler, serverWorld);
         super.updateDynamicGameEventListener(callback);
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        if (!level().isClientSide()) GUIEntityToRenderPayload.send((ServerPlayer) player, this);
-        return new URDragonMenu(URMenus.RIVER_PIKEHORN_INVENTORY, syncId, inv, getInventory());
     }
 
     @Override
@@ -295,7 +280,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    protected void pickUpItem(ServerLevel world, ItemEntity item) {
+    protected void pickUpItem(@NonNull ServerLevel world, @NonNull ItemEntity item) {
         if (isOwnerClose()) return;
         if (getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && getFoodItem(item.getItem()) != null
                 || getItemBySlot(EquipmentSlot.MAINHAND).is(item.getItem().getItem()) && item.getItem().getComponents().equals(getItemBySlot(EquipmentSlot.MAINHAND).getComponents())) {
@@ -359,25 +344,12 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    public @NotNull DragonInventory createInventory() {
-        return createInventory(this);
-    }
-
-    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
-        if (dragon == null) return new DragonInventory(dragon, DragonInventory.StorageSize.NONE, true, true,true,true, true);
-        return new DragonInventory(
-                dragon,
-                DragonInventory.StorageSize.NONE,
-                dragon.getDragonActualVariant().saddleItems().isPresent() && !dragon.getDragonActualVariant().saddleItems().get().isEmpty(),
-                dragon.getDragonActualVariant().helmetItems().isPresent() && !dragon.getDragonActualVariant().helmetItems().get().isEmpty(),
-                dragon.getDragonActualVariant().chestplateItems().isPresent() &&!dragon.getDragonActualVariant().chestplateItems().get().isEmpty(),
-                dragon.getDragonActualVariant().tailArmorItems().isPresent() &&!dragon.getDragonActualVariant().tailArmorItems().get().isEmpty(),
-                dragon.getDragonActualVariant().saddleItems().isPresent() && !dragon.getDragonActualVariant().saddleItems().get().isEmpty()
-        );
+    protected DragonInventory.StorageSize getStorageSize() {
+        return DragonInventory.StorageSize.SMALL;
     }
 
     @Override
-    public @NotNull Vec3 getVehicleAttachmentPoint(Entity vehicle) {
+    public @NotNull Vec3 getVehicleAttachmentPoint(@NonNull Entity vehicle) {
         return super.getVehicleAttachmentPoint(vehicle).add(0, vehicle.getBbHeight() - vehicle.getEyeHeight(vehicle.getPose()) - 0.001, 0);
     }
 
@@ -387,7 +359,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    public boolean doesEmitEquipEvent(EquipmentSlot slot) {
+    public boolean doesEmitEquipEvent(@NonNull EquipmentSlot slot) {
         return slot != EquipmentSlot.MAINHAND;
     }
 

@@ -2,13 +2,18 @@ package nordmods.uselessreptile.mixin.common.lightning_chaser;
 
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -16,6 +21,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity implements LightningChaserSpawnTimer {
+    @Shadow public AbstractContainerMenu containerMenu;
+    @Shadow
+    @Final
+    public InventoryMenu inventoryMenu;
+
+    @Shadow
+    public abstract Inventory getInventory();
+
     @Unique private int lightningChaserSpawnCooldown = 0;
     protected PlayerMixin(EntityType<? extends LivingEntity> entityType, Level world) {
         super(entityType, world);

@@ -7,7 +7,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -26,9 +25,7 @@ import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -59,14 +56,13 @@ import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
-import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
-import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import nordmods.uselessreptile.common.util.URAnimationController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -141,7 +137,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(@NonNull ServerLevelAccessor world, @NonNull DifficultyInstance difficulty, @NonNull EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         if (spawnReason == EntitySpawnReason.EVENT) isChallenger = true;
         return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
@@ -149,13 +145,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     public static boolean canDragonSpawn(EntityType<? extends Mob> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
         if (world.getChunk(pos).getInhabitedTime() > 12000) return false;
         return URDragonEntity.canDragonSpawn(type, world, spawnReason, pos, random);
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
-        if (!level().isClientSide()) GUIEntityToRenderPayload.send((ServerPlayer) player, this);
-        return new URDragonMenu(URMenus.LIGHTNING_CHASER_INVENTORY, syncId, inv, getInventory());
     }
 
     @Override
@@ -304,7 +293,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(SURRENDERED, false);
     }
@@ -313,7 +302,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     public void setSurrendered(boolean state) {entityData.set(SURRENDERED, state);}
 
     @Override
-    public void addAdditionalSaveData(ValueOutput tag) {
+    public void addAdditionalSaveData(@NonNull ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         if (!isTame()) {
             tag.putInt("BailOutTimer", bailOutTimer);
@@ -341,7 +330,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public boolean isInvulnerableTo(ServerLevel world, DamageSource damageSource) {
+    public boolean isInvulnerableTo(@NonNull ServerLevel world, @NonNull DamageSource damageSource) {
         if (damageSource.is(DamageTypes.LIGHTNING_BOLT)) return true;
         else return super.isInvulnerableTo(world, damageSource);
     }
@@ -415,21 +404,8 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public @NotNull DragonInventory createInventory() {
-        return createInventory(this);
-    }
-
-    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
-        if (dragon == null) return new DragonInventory(dragon, DragonInventory.StorageSize.MEDIUM, true, true,true,true, true);
-        return new DragonInventory(
-                dragon,
-                DragonInventory.StorageSize.MEDIUM,
-                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty(),
-                dragon.getDragonActualVariant().helmetItems().isPresent() &&!dragon.getDragonActualVariant().helmetItems().get().isEmpty(),
-                dragon.getDragonActualVariant().chestplateItems().isPresent() &&!dragon.getDragonActualVariant().chestplateItems().get().isEmpty(),
-                dragon.getDragonActualVariant().tailArmorItems().isPresent() &&!dragon.getDragonActualVariant().tailArmorItems().get().isEmpty(),
-                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty()
-        );
+    protected DragonInventory.StorageSize getStorageSize() {
+        return DragonInventory.StorageSize.MEDIUM;
     }
 
     private void updateThunderstormBonus() {
@@ -466,7 +442,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public boolean hurtServer(ServerLevel world, DamageSource damageSource, float amount) {
+    public boolean hurtServer(@NonNull ServerLevel world, @NonNull DamageSource damageSource, float amount) {
         boolean toReturn = super.hurtServer(world, damageSource, amount);
         if (getHealth() / getMaxHealth() < 0.3 && !hasSurrendered() && (getTamingProgress() <= 0 || isTame())) {
             if (!isDeadOrDying()) setHealth(getMaxHealth() * 0.3f);
@@ -483,7 +459,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public void thunderHit(ServerLevel world, LightningBolt lightning) {
+    public void thunderHit(@NonNull ServerLevel world, @NonNull LightningBolt lightning) {
         if (isTameable() && lightning.getCause() != null && getTamingProgress() > 0) setTamingProgress(getTamingProgress() - 1);
         addEffect(new MobEffectInstance(MobEffects.STRENGTH, 400, 3));
         addEffect(new MobEffectInstance(MobEffects.SPEED, 400, 1));
@@ -564,7 +540,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public @NotNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (isTameable()) {
@@ -585,7 +561,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public boolean startRiding(Entity entity, boolean force, boolean event) {
+    public boolean startRiding(@NonNull Entity entity, boolean force, boolean event) {
         if (hasSurrendered()) return false;
         return super.startRiding(entity, force, event);
     }
@@ -648,7 +624,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         public int getListenerRadius() {return this.range;}
 
         @Override
-        public boolean handleGameEvent(ServerLevel world, Holder<GameEvent> event, GameEvent.Context emitter, Vec3 emitterPos) {
+        public boolean handleGameEvent(@NonNull ServerLevel world, @NonNull Holder<GameEvent> event, GameEvent.@NonNull Context emitter, @NonNull Vec3 emitterPos) {
             if (event != URGameEvents.LIGHTNING_STRIKE_FAR) return false;
             if (isTame() || getTarget() != null) return false;
             if (emitter.sourceEntity() instanceof LightningBolt lightning) {
@@ -665,7 +641,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public void updateDynamicGameEventListener(BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
+    public void updateDynamicGameEventListener(@NonNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
         if (level() instanceof ServerLevel serverWorld) callback.accept(lightningStrikeEventHandler, serverWorld);
         super.updateDynamicGameEventListener(callback);
     }

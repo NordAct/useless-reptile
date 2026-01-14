@@ -28,6 +28,7 @@ import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import nordmods.uselessreptile.common.network.c2s.RequestLiftoffPayload;
 import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntity implements FlyingDragon {
     protected final int maxInAirTimer = 600;
@@ -49,7 +50,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(FLYING, false);
         builder.define(FLY_GLIDING, false);
@@ -75,7 +76,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public void setTiltState(byte state) {entityData.set(TILT_STATE, state);}
 
     @Override
-    public void addAdditionalSaveData(ValueOutput tag) {
+    public void addAdditionalSaveData(@NonNull ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putBoolean("IsFlying", isFlying());
     }
@@ -87,12 +88,12 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
         if (!level().isClientSide())
             if (FLYING.equals(data)) getNavigation().recomputePath();
         if (JUMP_PRESSED.equals(data)) {
-            if (level().isClientSide() && getControllingPassenger() instanceof LocalPlayer player) {
+            if (level().isClientSide() && getControllingPassenger() instanceof LocalPlayer) {
                 if (isJumpPressed() && !jumpWasPressed) {
                     if (flyUpWindow <= 0) {
                         jumpWasPressed = true;
@@ -126,7 +127,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    public void travel(Vec3 movementInput) {
+    public void travel(@NonNull Vec3 movementInput) {
         if (!isAlive()) return;
         if (!hasControllingPassenger()) {
             if (isFlying()) if (getInAirTimer() < maxInAirTimer) setInAirTimer(getInAirTimer() + 1);

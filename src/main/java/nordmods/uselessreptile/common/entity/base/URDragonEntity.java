@@ -49,7 +49,9 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.Instrument;
 import net.minecraft.world.item.ItemStack;
@@ -88,12 +90,13 @@ import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
+import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashMap;
 import java.util.List;
@@ -119,7 +122,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     protected final DynamicGameEventListener<HornUsedEventListener> hornUsedEventHandler = new DynamicGameEventListener<>(new HornUsedEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.INSTRUMENT_USED.value().notificationRadius()));
     protected @Nullable BlockPos jukeboxPos;
-    private final DragonInventory inventory;
+    private DragonInventory inventory;
     public boolean shouldFollow = false;
     protected Component defaultDisplayName;
     public static final Map<EntityType<?>, Map<String ,Map<String, SoundInfo>>> SOUND_INFO_HOLDER = new HashMap<>();
@@ -134,11 +137,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         navigation = new DragonNavigation(this, world);
         lookControl = new DragonLookControl(this);
         moveControl = new LandDragonMoveControl<>(this);
-        inventory = createInventory();
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(MOVING_BACKWARDS, false);
         builder.define(IS_SITTING, false);
@@ -256,7 +258,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public void addAdditionalSaveData(ValueOutput tag) {
+    public void addAdditionalSaveData(@NonNull ValueOutput tag) {
         super.addAdditionalSaveData(tag);
         tag.putString("Variant", getVariant());
 
@@ -267,7 +269,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         else tag.putString("BoundedInstrumentSound", getBoundedInstrumentSound());
 
         tag.putBoolean("Sitting", isOrderedToSit());
-        if (inventory != null && isTame()) {
+        if (isTame()) {
             ValueOutput.TypedOutputList<ItemStackWithSlot> listAppender = tag.list("Inventory", ItemStackWithSlot.CODEC);
             for (int i = 0; i < inventory.getContainerSize(); i++) {
                 ItemStack stack = inventory.getItem(i);
@@ -285,7 +287,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 inventory.setItem(stackWithSlot.slot(), stackWithSlot.stack());
             }
         }
-        inventory.addListener(this);
 
         super.readAdditionalSaveData(tag);
 
@@ -302,7 +303,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public void onSyncedDataUpdated(EntityDataAccessor<?> data) {
+    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
         if (DATA_CUSTOM_NAME.equals(data) || VARIANT.equals(data)) {
             assetCache.cleanCache();
@@ -314,6 +315,11 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             defaultDisplayName = null;
             dragonActualVariant = null;
             invalidVariant = false;
+
+            DragonInventory newInventory = createInventory();
+            if (inventory != null) inventory.forEach(newInventory::addItem);
+            inventory = newInventory;
+            inventory.addListener(this);
         }
     }
 
@@ -406,7 +412,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(ServerLevelAccessor world, DifficultyInstance difficulty, EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
+    public SpawnGroupData finalizeSpawn(@NonNull ServerLevelAccessor world, @NonNull DifficultyInstance difficulty, @NonNull EntitySpawnReason spawnReason, @Nullable SpawnGroupData entityData) {
         entityData = new AgeableMobGroupData(false);
         DragonSpawnUtil.assignAvailableVariant(this, spawnReason);
         setTamingProgress(getBaseTamingProgress());
@@ -438,7 +444,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Nullable
     @Override
-    public AgeableMob getBreedOffspring(ServerLevel world, AgeableMob entity) {
+    public AgeableMob getBreedOffspring(@NonNull ServerLevel world, @NonNull AgeableMob entity) {
         return null;
     }
 
@@ -451,13 +457,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public void tame(Player entity) {
+    public void tame(@NonNull Player entity) {
         super.tame(entity);
         setHomePoint(blockPosition());
     }
 
     @Override
-    public void updateDynamicGameEventListener(BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
+    public void updateDynamicGameEventListener(@NonNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
         if (level() instanceof ServerLevel serverWorld) {
             callback.accept(this.jukeboxEventHandler, serverWorld);
             callback.accept(this.hornUsedEventHandler, serverWorld);
@@ -513,7 +519,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public void onEquipItem(EquipmentSlot slot, ItemStack oldStack, ItemStack newStack) {
+    public void onEquipItem(@NonNull EquipmentSlot slot, @NonNull ItemStack oldStack, ItemStack newStack) {
         boolean empty = newStack.isEmpty() && oldStack.isEmpty();
         if (!empty && !ItemStack.isSameItemSameComponents(oldStack, newStack) && !firstTick) {
             if (!level().isClientSide() && doesEmitEquipEvent(slot))
@@ -523,12 +529,19 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public @NotNull EntityDimensions getDefaultDimensions(Pose pose) {
+    public @NonNull EntityDimensions getDefaultDimensions(@NonNull Pose pose) {
         return super.getDefaultDimensions(pose).scale(getWidthMod()/getScale(), getHeightMod()/getScale());
     }
 
+    @Nullable
     @Override
-    public @NotNull InteractionResult mobInteract(Player player, InteractionHand hand) {
+    public AbstractContainerMenu createMenu(int syncId, @NonNull Inventory inv, @NonNull Player player) {
+        return new URDragonMenu(syncId, inv, getInventory());
+    }
+
+
+    @Override
+    public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTameable()) {
             DragonVariant.TamingItem tamingItem = getTamingItem(itemStack);
@@ -597,8 +610,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             }
 
             if (player.isShiftKeyDown() && inventory.getContainerSize() >= 0) {
-                if (!level().isClientSide())
-                    player.openMenu(this);
+                if (player instanceof ServerPlayer serverPlayer) {
+                    serverPlayer.uselessreptile$openDragonInventoryScreen(this);
+                }
                 return InteractionResult.SUCCESS;
             }
         }
@@ -606,12 +620,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    protected boolean canShearEquipment(Player player) {
+    protected boolean canShearEquipment(@NonNull Player player) {
         return false;
     }
 
     @Override
-    public boolean startRiding(Entity entity, boolean force, boolean event) {
+    public boolean startRiding(@NonNull Entity entity, boolean force, boolean event) {
         boolean result = super.startRiding(entity, force, event);
         if (this instanceof HeadMountDragon && result && entity instanceof HeadMountDragonOwner owner) {
             TagValueOutput nbtWriteView = TagValueOutput.createWithContext(UselessReptile.ERROR_REPORTER, entity.registryAccess());
@@ -650,7 +664,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return "";
     }
 
-    public void playSound(SoundEvent sound, float volume, float pitch) {
+    public void playSound(@NonNull SoundEvent sound, float volume, float pitch) {
         if (!isSilent()) level().playLocalSound(getX(), getY(),getZ(), sound, SoundSource.NEUTRAL, volume, pitch,true);
     }
 
@@ -827,7 +841,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public void travel(Vec3 movementInput) {
+    public void travel(@NonNull Vec3 movementInput) {
         updateMovementModifiers();
         super.travel(movementInput);
     }
@@ -857,7 +871,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    protected void playStepSound(BlockPos pos, BlockState state) {
+    protected void playStepSound(@NonNull BlockPos pos, @NonNull BlockState state) {
     }
 
     @Override
@@ -873,13 +887,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     @Deprecated
-    protected SoundEvent getHurtSound(DamageSource source) {
+    protected SoundEvent getHurtSound(@NonNull DamageSource source) {
         playHurtSound(source); //don't ask
         return null;
     }
 
     @Override
-    protected void playHurtSound(DamageSource damageSource) {
+    protected void playHurtSound(@NonNull DamageSource damageSource) {
         SoundInfo soundInfo = getSoundInfo("hurt");
         if (soundInfo != null) {
             ambientSoundTime = -getAmbientSoundInterval();
@@ -895,7 +909,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public @NotNull SoundSource getSoundSource() {
+    public @NonNull SoundSource getSoundSource() {
         return SoundSource.NEUTRAL;
     }
 
@@ -909,12 +923,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    protected @NotNull Vec3 getPassengerAttachmentPoint(Entity passenger, EntityDimensions dimensions, float scaleFactor) {
+    protected @NonNull Vec3 getPassengerAttachmentPoint(@NonNull Entity passenger, @NonNull EntityDimensions dimensions, float scaleFactor) {
         return new Vec3(0, getMountedOffset(), 0);
     }
 
     @Override
-    protected void dropEquipment(ServerLevel world) {
+    protected void dropEquipment(@NonNull ServerLevel world) {
         super.dropEquipment(world);
         if (inventory != null) {
             for(int i = 0; i < inventory.getContainerSize(); ++i) {
@@ -928,7 +942,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public boolean isFood(ItemStack stack) {
+    public boolean isFood(@NonNull ItemStack stack) {
         return false;
     }
 
@@ -1040,16 +1054,16 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public @NotNull DragonLookControl getLookControl() {
+    public @NonNull DragonLookControl getLookControl() {
         return (DragonLookControl) lookControl;
     }
 
     @Override
-    public @NotNull AABB getAttackBoundingBox(double range) {
+    public @NonNull AABB getAttackBoundingBox(double range) {
         return getPrimaryAttackBox();
     }
 
-    public @NotNull abstract AABB getPrimaryAttackBox();
+    public @NonNull abstract AABB getPrimaryAttackBox();
 
     public AABB getSecondaryAttackBox() {
         return null;
@@ -1078,12 +1092,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public @NotNull PathNavigation getNavigation() {
+    public @NonNull PathNavigation getNavigation() {
         return navigation;
     }
 
     @Override
-    protected boolean canTeleportTo(BlockPos pos) {
+    protected boolean canTeleportTo(@NonNull BlockPos pos) {
         PathType pathNodeType = getNavigation().getNodeEvaluator().getPathType(this, pos);
         if (getPathfindingMalus(pathNodeType) != 0) return false;
         if (level().getBlockState(pos.below()).getCollisionShape(level(), pos.below()).isEmpty()) {
@@ -1100,7 +1114,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public void containerChanged(Container sender) {
+    public void containerChanged(@NonNull Container sender) {
         updateEquipment();
     }
 
@@ -1110,7 +1124,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     //I have no idea how this happened to be so important for spawning
     @Override
-    public float getWalkTargetValue(BlockPos pos, LevelReader world) {
+    public float getWalkTargetValue(@NonNull BlockPos pos, @NonNull LevelReader world) {
         return 0;
     }
 
@@ -1139,13 +1153,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public void remove(RemovalReason reason) {
+    public void remove(@NonNull RemovalReason reason) {
         super.remove(reason);
         if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner owner && reason.shouldDestroy()) owner.useless_reptile$setHeadMountDragon(new CompoundTag());
     }
 
     @Override
-    protected @NotNull Component getTypeName() {
+    protected @NonNull Component getTypeName() {
         if (defaultDisplayName == null) {
             DragonVariant variant = getDragonActualVariant();
             if (variant != null && variant.displayNameKey().isPresent()) defaultDisplayName = Component.translatable(variant.displayNameKey().get());
@@ -1155,22 +1169,16 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public boolean hurtServer(ServerLevel world, DamageSource damageSource, float amount) {
+    public boolean hurtServer(@NonNull ServerLevel world, @NonNull DamageSource damageSource, float amount) {
         if (isDancing() && damageSource.getEntity() != null) updateJukeboxPos(jukeboxPos, true);
         return super.hurtServer(world, damageSource, amount);
     }
 
 
     @Override
-    public boolean isInvulnerableTo(ServerLevel world, DamageSource damageSource) {
+    public boolean isInvulnerableTo(@NonNull ServerLevel world, @NonNull DamageSource damageSource) {
         if (this instanceof HeadMountDragon && getVehicle() instanceof Player && damageSource.is(DamageTypes.IN_WALL)) return true;
         return super.isInvulnerableTo(world, damageSource);
-    }
-
-    @Override
-    public void setTame(boolean tamed, boolean updateAttributes) {
-        super.setTame(tamed, updateAttributes);
-        inventory.addListener(this);
     }
 
     public DragonInventory getInventory() {
@@ -1262,8 +1270,20 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return player.getAdvancements().award(entry, "triggered_from_code");
     }
 
-    @NotNull
-    public abstract DragonInventory createInventory();
+    @NonNull
+    public DragonInventory createInventory() {
+        return new DragonInventory(
+                this,
+                getStorageSize(),
+                getDragonActualVariant().saddleItems().isPresent() &&!getDragonActualVariant().saddleItems().get().isEmpty(),
+                getDragonActualVariant().helmetItems().isPresent() &&!getDragonActualVariant().helmetItems().get().isEmpty(),
+                getDragonActualVariant().chestplateItems().isPresent() &&!getDragonActualVariant().chestplateItems().get().isEmpty(),
+                getDragonActualVariant().tailArmorItems().isPresent() &&!getDragonActualVariant().tailArmorItems().get().isEmpty(),
+                getDragonActualVariant().saddleItems().isPresent() &&!getDragonActualVariant().saddleItems().get().isEmpty()
+        );
+    }
+
+    protected abstract DragonInventory.StorageSize getStorageSize();
 
     public boolean isInvalidVariant() {
         return invalidVariant;
@@ -1279,12 +1299,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             this.range = range;
         }
 
-        public @NotNull PositionSource getListenerSource() {return this.positionSource;}
+        public @NonNull PositionSource getListenerSource() {return this.positionSource;}
 
         public int getListenerRadius() {return this.range;}
 
         @Override
-        public boolean handleGameEvent(ServerLevel world, Holder<GameEvent> event, GameEvent.Context emitter, Vec3 emitterPos) {
+        public boolean handleGameEvent(@NonNull ServerLevel world, Holder<GameEvent> event, GameEvent.@NonNull Context emitter, @NonNull Vec3 emitterPos) {
             if (event.is(GameEvent.JUKEBOX_PLAY)) {
                 updateJukeboxPos(BlockPos.containing(emitterPos), true);
                 return true;
@@ -1306,12 +1326,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             this.range = range;
         }
 
-        public @NotNull PositionSource getListenerSource() {return this.positionSource;}
+        public @NonNull PositionSource getListenerSource() {return this.positionSource;}
 
         public int getListenerRadius() {return this.range;}
 
         @Override
-        public boolean handleGameEvent(ServerLevel world, Holder<GameEvent> event, GameEvent.Context emitter, Vec3 emitterPos) {
+        public boolean handleGameEvent(@NonNull ServerLevel world, @NonNull Holder<GameEvent> event, GameEvent.@NonNull Context emitter, @NonNull Vec3 emitterPos) {
             if (event != URGameEvents.INSTRUMENT_USED) return false;
             if (!(emitter.sourceEntity() instanceof Player player)) return false;
             if (getOwner() != player) return false;
