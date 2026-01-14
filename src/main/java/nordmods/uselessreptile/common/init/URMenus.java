@@ -7,10 +7,7 @@ import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.entity.LightningChaser;
-import nordmods.uselessreptile.common.entity.Magmamuncher;
-import nordmods.uselessreptile.common.entity.Moleclaw;
-import nordmods.uselessreptile.common.entity.Wyvern;
+import nordmods.uselessreptile.common.entity.*;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
@@ -19,6 +16,7 @@ public class URMenus {
     public final static MenuType<URDragonMenu> WYVERN_INVENTORY = registerDragonInventory(UREntities.WYVERN_ENTITY, Wyvern.createInventory(null));
     public final static MenuType<URDragonMenu> MOLECLAW_INVENTORY = registerDragonInventory(UREntities.MOLECLAW_ENTITY, Moleclaw.createInventory(null));
     public final static MenuType<URDragonMenu> LIGHTNING_CHASER_INVENTORY = registerDragonInventory(UREntities.LIGHTNING_CHASER_ENTITY, LightningChaser.createInventory(null));
+    public final static MenuType<URDragonMenu> RIVER_PIKEHORN_INVENTORY = registerDragonInventory(UREntities.RIVER_PIKEHORN_ENTITY, RiverPikehorn.createInventory(null));
     public final static MenuType<URDragonMenu> MAGMAMUNCHER_INVENTORY = registerDragonInventory(UREntities.MAGMAMUNCHER_ENTITY, Magmamuncher.createInventory(null));
 
     public static void init() {}

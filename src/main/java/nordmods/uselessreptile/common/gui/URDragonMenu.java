@@ -32,11 +32,9 @@ public class URDragonMenu extends AbstractContainerMenu {
             });
         }
 
-        if (inventory.hasArmor) {
-            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.HELMET_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE));
-            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.CHESTPLATE_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *2));
-            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.TAIL_ARMOR_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *3));
-        }
+        if (inventory.hasHelmet) addSlot(new DragonEquipmentSlot(inventory, DragonInventory.HELMET_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE));
+        if (inventory.hasChestplate) addSlot(new DragonEquipmentSlot(inventory, DragonInventory.CHESTPLATE_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *2));
+        if (inventory.hasTailArmor) addSlot(new DragonEquipmentSlot(inventory, DragonInventory.TAIL_ARMOR_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *3));
 
         if (inventory.hasBanner) {
             addSlot(new DragonEquipmentSlot(inventory, DragonInventory.BANNER_INDEX, EDGE_OFFSET, SLOT_SIDE *2));
@@ -48,7 +46,7 @@ public class URDragonMenu extends AbstractContainerMenu {
             for (int i = 0; i < size; i++) {
                 int column = i / 3;
                 int row = i % 3;
-                int offset = inventory.hasArmor ? 2 : 1;
+                int offset = inventory.hasHelmet || inventory.hasChestplate || inventory.hasTailArmor ? 2 : 1;
                 addSlot(new Slot(inventory, DragonInventory.INVENTORY_START_INDEX + i, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE *offset+ SLOT_SIDE *column, SLOT_SIDE + SLOT_SIDE *row));
             }
         }

@@ -14,18 +14,29 @@ import java.util.List;
 
 public class DragonVariantUtil {
     @Nullable
-    public static DragonModelData getDragonModelData(Identifier dragonId, String name, String variant, Level world) {
+    public static DragonModelData getDragonModelData(Identifier dragonId, String name, String variant, Level level) {
         if (!ResourceUtil.isResourceReloadFinished) return null;
-        return world.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_MODEL).getValue(DragonVariant.getDragonVariant(dragonId, name, variant, world).dragonModelData());
+        return getDragonModelData(DragonVariant.getDragonVariant(dragonId, name, variant, level), level);
     }
 
     @Nullable
-    public static EquipmentModelData.Equipment getEquipmentModelData(Identifier dragonId, String name, String variant, Level world, Identifier item) {
+    public static DragonModelData getDragonModelData(DragonVariant dragonVariant, Level level) {
+        if (!ResourceUtil.isResourceReloadFinished) return null;
+        return level.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_MODEL).getValue(dragonVariant.dragonModelData());
+    }
+
+    @Nullable
+    public static EquipmentModelData.Equipment getEquipmentModelData(Identifier dragonId, String name, String variant, Level level, Identifier item) {
+        if (!ResourceUtil.isResourceReloadFinished) return null;
+        DragonVariant dragonVariant = DragonVariant.getDragonVariant(dragonId, name, variant, level);
+        return getEquipmentModelData(dragonVariant, level, item);
+    }
+
+    @Nullable
+    public static EquipmentModelData.Equipment getEquipmentModelData(DragonVariant dragonVariant, Level level, Identifier item) {
         if (!ResourceUtil.isResourceReloadFinished) return null;
 
-        DragonVariant dragonVariant = DragonVariant.getDragonVariant(dragonId, name, variant, world);
-
-        RegistryAccess registryManager = world.registryAccess();
+        RegistryAccess registryManager = level.registryAccess();
         EquipmentModelData dragonEquipment = registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT).getValue(dragonVariant.dragonEquipment());
         if (dragonEquipment == null) return null;
 

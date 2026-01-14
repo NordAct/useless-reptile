@@ -18,88 +18,23 @@ public class DragonEquipmentModelProvider implements BRModelProvider {
     @Override
     @Nullable
     public Identifier getModelId(BRState renderState) {
-        Identifier dragonId = renderState.getStateData(URStateDataTypes.DRAGON_ID);
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel(dragonId);
-
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel(renderState.getStateData(URStateDataTypes.DRAGON_ID));
         AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
-        if (assetCache == null) return getDefaultModel(dragonId);
-
-        Identifier id = assetCache.getModelLocationCache();
-        if (id != null) return id;
-
-        String name = renderState.getStateData(URStateDataTypes.DRAGON_NAME).getString();
-        String variant = renderState.getStateData(URStateDataTypes.DRAGON_VARIANT);
-        Identifier itemId = BuiltInRegistries.ITEM.getKey(renderState.getStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK).getItem());
-        EquipmentModelData.Equipment data = DragonVariantUtil.getEquipmentModelData(
-                dragonId,
-                name,
-                variant,
-                Minecraft.getInstance().level,
-                itemId
-        );
-        if (data != null) {
-            id = data.modelData().model();
-            if (ResourceUtil.doesExist(id)) {
-                assetCache.setModelLocationCache(id);
-                return id;
-            } else {
-                UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}",
-                        itemId,
-                        name,
-                        dragonId,
-                        variant);
-            }
-        }
-
-        ((EquipmentAssetCache)assetCache).setCanRender(false);
-        assetCache.setModelLocationCache(getDefaultModel(dragonId));
-        return getDefaultModel(dragonId);
+        return assetCache.getModelLocationCache();
     }
 
     @Override
     public Identifier getAnimationId(BRState renderState) {
-        Identifier dragonId = renderState.getStateData(URStateDataTypes.DRAGON_ID);
-
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation(dragonId);
-
+        if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation(renderState.getStateData(URStateDataTypes.DRAGON_ID));
         AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
-        if (assetCache == null) return getDefaultAnimation(dragonId);
-
-        Identifier id = assetCache.getAnimationLocationCache();
-        if (id != null) return id;
-
-        String name = renderState.getStateData(URStateDataTypes.DRAGON_NAME).getString();
-        String variant = renderState.getStateData(URStateDataTypes.DRAGON_VARIANT);
-        Identifier itemId = BuiltInRegistries.ITEM.getKey(renderState.getStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK).getItem());
-        EquipmentModelData.Equipment data = DragonVariantUtil.getEquipmentModelData(
-                dragonId,
-                name,
-                variant,
-                Minecraft.getInstance().level,
-                itemId
-        );
-        if (data != null) {
-            id = data.modelData().animation();
-            if (ResourceUtil.doesExist(id)) {
-                assetCache.setAnimationLocationCache(id);
-                return id;
-            } else {
-                UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}",
-                        itemId,
-                        name,
-                        dragonId,
-                        variant);
-            }
-        }
-        assetCache.setAnimationLocationCache(getDefaultAnimation(dragonId));
-        return getDefaultAnimation(dragonId);
+        return assetCache.getAnimationLocationCache();
     }
 
-    protected final Identifier getDefaultAnimation(Identifier entity) {
+    public final Identifier getDefaultAnimation(Identifier entity) {
         return UselessReptile.id("biscuit_roll/animations/entity/" + entity.getPath() + "/empty.animation.json");
     }
 
-    protected final Identifier getDefaultModel(Identifier entity) {
+    public final Identifier getDefaultModel(Identifier entity) {
         return UselessReptile.id("biscuit_roll/models/entity/" + entity.getPath() + "/" + entity.getPath() + ".geo.json");
     }
 }

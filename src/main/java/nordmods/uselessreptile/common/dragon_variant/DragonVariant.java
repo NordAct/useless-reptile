@@ -4,23 +4,29 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagEntry;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.TagValueInput;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URResourceKeys;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Unique;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 
@@ -28,7 +34,6 @@ import java.util.stream.IntStream;
 //  hunt targets
 //  untamed targets
 //  tamed targets
-//  per slot equipment items
 //  effect immunities
 //  damage immunities
 //  potentially move all attributes to variant file
@@ -40,6 +45,10 @@ public record DragonVariant(
         Optional<String> displayNameKey,
         Identifier dragonModelData,
         Identifier dragonEquipment,
+        Optional<List<ExtraCodecs.TagOrElementLocation>> saddleItems,
+        Optional<List<ExtraCodecs.TagOrElementLocation>> helmetItems,
+        Optional<List<ExtraCodecs.TagOrElementLocation>> chestplateItems,
+        Optional<List<ExtraCodecs.TagOrElementLocation>> tailArmorItems,
         Optional<Identifier> spawnConditions,
         Optional<Identifier> variantAttributeModifiers,
         int baseTamingProgress,
@@ -53,6 +62,10 @@ public record DragonVariant(
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
                     Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("saddle_items").forGetter(DragonVariant::saddleItems),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("helmet_items").forGetter(DragonVariant::helmetItems),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("chestplate_items").forGetter(DragonVariant::chestplateItems),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("tail_armor_items").forGetter(DragonVariant::tailArmorItems),
                     Identifier.CODEC.optionalFieldOf("spawn_conditions").forGetter(DragonVariant::spawnConditions),
                     Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(DragonVariant::variantAttributeModifiers),
                     Codec.INT.fieldOf("base_taming_progress").forGetter(DragonVariant::baseTamingProgress),
@@ -67,6 +80,10 @@ public record DragonVariant(
                     Codec.STRING.optionalFieldOf("display_name_key").forGetter(DragonVariant::displayNameKey),
                     Identifier.CODEC.fieldOf("dragon_model").forGetter(DragonVariant::dragonModelData),
                     Identifier.CODEC.fieldOf("equipment").forGetter(DragonVariant::dragonEquipment),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("saddle_items").forGetter(DragonVariant::saddleItems),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("helmet_items").forGetter(DragonVariant::helmetItems),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("chestplate_items").forGetter(DragonVariant::chestplateItems),
+                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("tail_armor_items").forGetter(DragonVariant::tailArmorItems),
                     TamingItem.LIST_CODEC.optionalFieldOf("taming_items").forGetter(DragonVariant::tamingItems),
                     FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(DragonVariant::foodItems))
             .apply(instance, (
@@ -76,6 +93,10 @@ public record DragonVariant(
                     displayNameKey,
                     dragonModelData,
                     dragonEquipment,
+                    saddleItems,
+                    helmetItems,
+                    chestplateItems,
+                    tailArmorItems,
                     tamingItemList,
                     foodItemList
                     ) -> new DragonVariant(
@@ -85,6 +106,10 @@ public record DragonVariant(
                             displayNameKey,
                             dragonModelData,
                             dragonEquipment,
+                            saddleItems,
+                            helmetItems,
+                            chestplateItems,
+                            tailArmorItems,
                             Optional.empty(),
                             Optional.empty(),
                             0,
@@ -112,11 +137,17 @@ public record DragonVariant(
                             dragonEquipment,
                             Optional.empty(),
                             Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
+                            Optional.empty(),
                             0,
                     Optional.empty(),
                     Optional.empty()
                     )
             ));
+    @ApiStatus.Internal //idk where else to put it
+    public static final Map<Item, Set<Component>> EQUIPMENT_INFO_MAP = new HashMap<>();
 
     @NotNull
     public static DragonVariant getDefaultVariant(Identifier dragonId, Level world) {

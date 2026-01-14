@@ -415,32 +415,21 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public boolean isSaddle(ItemStack itemStack) {
-        return itemStack.is(URTags.LIGHTNING_CHASER_SADDLES);
-    }
-
-    @Override
-    public boolean isHelmet(ItemStack itemStack) {
-        return itemStack.is(URTags.LIGHTNING_CHASER_HELMETS);
-    }
-
-    @Override
-    public boolean isChestplate(ItemStack itemStack) {
-        return itemStack.is(URTags.LIGHTNING_CHASER_CHESTPLATES);
-    }
-
-    @Override
-    public boolean isTailArmor(ItemStack itemStack) {
-        return itemStack.is(URTags.LIGHTNING_CHASER_TAIL_ARMOR);
-    }
-
-    @Override
     public @NotNull DragonInventory createInventory() {
         return createInventory(this);
     }
 
     public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
-        return new DragonInventory(dragon, DragonInventory.StorageSize.MEDIUM, true, true, true);
+        if (dragon == null) return new DragonInventory(dragon, DragonInventory.StorageSize.MEDIUM, true, true,true,true, true);
+        return new DragonInventory(
+                dragon,
+                DragonInventory.StorageSize.MEDIUM,
+                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty(),
+                dragon.getDragonActualVariant().helmetItems().isPresent() &&!dragon.getDragonActualVariant().helmetItems().get().isEmpty(),
+                dragon.getDragonActualVariant().chestplateItems().isPresent() &&!dragon.getDragonActualVariant().chestplateItems().get().isEmpty(),
+                dragon.getDragonActualVariant().tailArmorItems().isPresent() &&!dragon.getDragonActualVariant().tailArmorItems().get().isEmpty(),
+                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty()
+        );
     }
 
     private void updateThunderstormBonus() {

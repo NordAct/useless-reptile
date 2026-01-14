@@ -1,40 +1,37 @@
 package nordmods.uselessreptile.common.init;
 
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.entity.LightningChaser;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.event.DragonEquipmentTooltipEntryEvent;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class URModEvents {
+
     public static void init() {
         spawnLightningChaser();
-        addDragonEquipmentTooltipEntries();
         getDefaultBlockMiningLevelForMoleclaw();
         onItemConsumedEvents();
+        clearEquipmentInfo();
     }
 
     private static void spawnLightningChaser() {
@@ -80,29 +77,6 @@ public class URModEvents {
         });
     }
 
-    public static void addDragonEquipmentTooltipEntries() {
-        DragonEquipmentTooltipEntryEvent.EVENT.register(item -> {
-            List<EntityType<?>> entityTypes = new ArrayList<>();
-            Holder<Item> entry = BuiltInRegistries.ITEM.wrapAsHolder(item);
-
-            if (entry.is(URTags.MOLECLAW_TAIL_ARMOR)
-                    || entry.is(URTags.MOLECLAW_CHESTPLATES)
-                    || entry.is(URTags.MOLECLAW_HELMETS)
-                    || entry.is(URTags.MOLECLAW_SADDLES))
-                entityTypes.add(UREntities.MOLECLAW_ENTITY);
-
-            if (entry.is(URTags.LIGHTNING_CHASER_TAIL_ARMOR)
-                    || entry.is(URTags.LIGHTNING_CHASER_CHESTPLATES)
-                    || entry.is(URTags.LIGHTNING_CHASER_HELMETS)
-                    || entry.is(URTags.LIGHTNING_CHASER_SADDLES))
-                entityTypes.add(UREntities.LIGHTNING_CHASER_ENTITY);
-
-            if (entry.is(URTags.WYVERN_SADDLES))
-                entityTypes.add(UREntities.WYVERN_ENTITY);
-
-            return entityTypes;
-        });
-    }
 
     public static void getDefaultBlockMiningLevelForMoleclaw() {
         MoleclawGetBlockMiningLevelEvent.EVENT.register(blockState -> {
@@ -144,5 +118,9 @@ public class URModEvents {
                 if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
             }
         });
+    }
+
+    private static void clearEquipmentInfo() {
+        CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> DragonVariant.EQUIPMENT_INFO_MAP.clear());
     }
 }

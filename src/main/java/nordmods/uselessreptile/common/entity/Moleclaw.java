@@ -238,32 +238,21 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    public boolean isSaddle(ItemStack itemStack) {
-        return itemStack.is(URTags.MOLECLAW_SADDLES);
-    }
-
-    @Override
-    public boolean isHelmet(ItemStack itemStack) {
-        return itemStack.is(URTags.MOLECLAW_HELMETS);
-    }
-
-    @Override
-    public boolean isChestplate(ItemStack itemStack) {
-        return itemStack.is(URTags.MOLECLAW_CHESTPLATES);
-    }
-
-    @Override
-    public boolean isTailArmor(ItemStack itemStack) {
-        return itemStack.is(URTags.MOLECLAW_TAIL_ARMOR);
-    }
-
-    @Override
     public @NotNull DragonInventory createInventory() {
         return createInventory(this);
     }
 
     public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
-        return new DragonInventory(dragon, DragonInventory.StorageSize.LARGE, true, true, true);
+        if (dragon == null) return new DragonInventory(dragon, DragonInventory.StorageSize.LARGE, true, true,true,true, true);
+        return new DragonInventory(
+                dragon,
+                DragonInventory.StorageSize.LARGE,
+                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty(),
+                dragon.getDragonActualVariant().helmetItems().isPresent() &&!dragon.getDragonActualVariant().helmetItems().get().isEmpty(),
+                dragon.getDragonActualVariant().chestplateItems().isPresent() &&!dragon.getDragonActualVariant().chestplateItems().get().isEmpty(),
+                dragon.getDragonActualVariant().tailArmorItems().isPresent() &&!dragon.getDragonActualVariant().tailArmorItems().get().isEmpty(),
+                dragon.getDragonActualVariant().saddleItems().isPresent() &&!dragon.getDragonActualVariant().saddleItems().get().isEmpty()
+        );
     }
 
     @Override

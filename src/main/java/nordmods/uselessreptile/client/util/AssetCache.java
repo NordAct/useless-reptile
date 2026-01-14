@@ -2,13 +2,14 @@ package nordmods.uselessreptile.client.util;
 
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
+import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 
 public abstract class AssetCache {
     private Identifier modelLocationCache;
     private Identifier textureLocationCache;
     private Identifier animationLocationCache;
     private Identifier glowLayerLocationCache;
-    private RenderType renderTypeCache;
+    private BRModelSubmitStorage.RenderTypeProvider renderTypeProviderCache;
     private boolean hasGlowing = true;
 
     public Identifier getGlowLayerLocationCache() {
@@ -43,12 +44,12 @@ public abstract class AssetCache {
         textureLocationCache = state;
     }
 
-    public RenderType getRenderTypeCache() {
-        return renderTypeCache;
+    public BRModelSubmitStorage.RenderTypeProvider getRenderTypeProviderCache() {
+        return renderTypeProviderCache;
     }
 
-    public void setRenderTypeCache(RenderType state) {
-        renderTypeCache = state;
+    public void setRenderTypeProviderCache(BRModelSubmitStorage.RenderTypeProvider state) {
+        renderTypeProviderCache = state;
     }
 
     public boolean hasGlowing() {
@@ -63,7 +64,7 @@ public abstract class AssetCache {
         textureLocationCache = null;
         animationLocationCache = null;
         glowLayerLocationCache = null;
-        renderTypeCache = null;
+        renderTypeProviderCache = null;
         hasGlowing = true;
     }
 }

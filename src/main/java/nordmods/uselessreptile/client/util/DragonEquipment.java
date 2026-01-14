@@ -13,18 +13,19 @@ import java.util.List;
 public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     public LivingEntityRenderState ownerRenderState;
     public final ItemStack itemStack;
-    private final AssetCache assetCache = new EquipmentAssetCache();
+    private final EquipmentAssetCache assetCache;
     public final CloneAnimationController cloneController = new CloneAnimationController(true);
     public final EquipmentAnimationController controller;
     public final Collection<BRAnimationController> controllers;
 
-    public AssetCache getAssetCache() {
+    public EquipmentAssetCache getAssetCache() {
         return assetCache;
     }
 
-    public DragonEquipment(ItemStack itemStack, Identifier animationFile) {
+    public DragonEquipment(ItemStack itemStack, EquipmentAssetCache assetCache) {
         this.itemStack = itemStack;
-        this.controller = new EquipmentAnimationController(animationFile);
+        this.assetCache = assetCache;
+        this.controller = new EquipmentAnimationController(assetCache.getAnimationLocationCache());
         this.controllers = List.of(cloneController, controller);
     }
 

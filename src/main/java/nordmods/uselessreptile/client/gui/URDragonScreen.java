@@ -78,40 +78,39 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
     }
 
     protected void drawArmor(GuiGraphics context) {
-        if (entity.getInventory().hasArmor) {
-            context.blit( //head
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
-                    j + 35 -  URDragonMenu.SLOT_SIDE,
-                    URDragonMenu.SLOT_SIDE,
-                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
-                    URDragonMenu.SLOT_SIDE,
-                    URDragonMenu.SLOT_SIDE,
-                    256, 256
-            );
-            context.blit( //body
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
-                    j + 35,  URDragonMenu.SLOT_SIDE * 2,
-                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
-                    URDragonMenu.SLOT_SIDE,
-                    URDragonMenu.SLOT_SIDE,
-                    256, 256
-            );
-            context.blit( //tail
-                    RenderPipelines.GUI_TEXTURED,
-                    TEXTURE,
-                    i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
-                    j + 35 +  URDragonMenu.SLOT_SIDE,
-                    URDragonMenu.SLOT_SIDE * 3,
-                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
-                    URDragonMenu.SLOT_SIDE,
-                    URDragonMenu.SLOT_SIDE,
-                    256, 256
-            );
-        }
+        if (entity.getInventory().hasHelmet) context.blit( //head
+                RenderPipelines.GUI_TEXTURED,
+                TEXTURE,
+                i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                j + 35 -  URDragonMenu.SLOT_SIDE,
+                URDragonMenu.SLOT_SIDE,
+                imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                URDragonMenu.SLOT_SIDE,
+                URDragonMenu.SLOT_SIDE,
+                256, 256
+        );
+        if (entity.getInventory().hasChestplate) context.blit( //body
+                RenderPipelines.GUI_TEXTURED,
+                TEXTURE,
+                i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                j + 35,  URDragonMenu.SLOT_SIDE * 2,
+                imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                URDragonMenu.SLOT_SIDE,
+                URDragonMenu.SLOT_SIDE,
+                256, 256
+        );
+        if (entity.getInventory().hasTailArmor) context.blit( //tail
+                RenderPipelines.GUI_TEXTURED,
+                TEXTURE,
+                i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                j + 35 +  URDragonMenu.SLOT_SIDE,
+                URDragonMenu.SLOT_SIDE * 3,
+                imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                URDragonMenu.SLOT_SIDE,
+                URDragonMenu.SLOT_SIDE,
+                256, 256
+        );
+
     }
 
     protected void drawEntity(GuiGraphics context) {
@@ -144,7 +143,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
 
     protected void drawStorage(GuiGraphics context) {
         int size = entity.getInventory().storageSize.getSize()/3;
-        int offset = entity.getInventory().hasArmor ? 2 : 1;
+        int offset = entity.getInventory().hasHelmet || entity.getInventory().hasChestplate || entity.getInventory().hasTailArmor ? 2 : 1;
         context.blit(
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,

@@ -18,9 +18,7 @@ import java.util.UUID;
 
 public class URStateDataTypes {
     //common dragon data - used for all dragons
-    public static final StateDataType<String> DRAGON_VARIANT = new StateDataType<>(UselessReptile.id("dragon_variant"));
     public static final StateDataType<Identifier> DRAGON_ID = new StateDataType<>(UselessReptile.id("dragon_id"));
-    public static final StateDataType<Component> DRAGON_NAME = new StateDataType<>(UselessReptile.id("dragon_name"));
     public static final StateDataType<AssetCache> ASSET_CACHE = new StateDataType<>(UselessReptile.id("asset_cache"));
     //specific dragon data - used for some dragons
     public static final StateDataType<Boolean> DRAGON_HAS_SADDLE = new StateDataType<>(UselessReptile.id("dragon_has_saddle"));
@@ -28,7 +26,6 @@ public class URStateDataTypes {
     public static final StateDataType<Boolean> DRAGON_IS_RIDING_PLAYER = new StateDataType<>(UselessReptile.id("dragon_is_riding_player"));
     public static final StateDataType<ShootingPoint> DRAGON_SHOOTING_POINT = new StateDataType<>(UselessReptile.id("dragon_shooting_point"));
     //equipment data for rendering
-    public static final StateDataType<ItemStack> EQUIPMENT_ITEM_STACK = new StateDataType<>(UselessReptile.id("equipment_item_stack"));
     public static final StateDataType<ItemStackRenderState> OFFHAND = new StateDataType<>(UselessReptile.id("offhand"));
     public static final StateDataType<ItemStackRenderState> MAIN_HAND = new StateDataType<>(UselessReptile.id("main_hand"));
     //passengers data for rendering

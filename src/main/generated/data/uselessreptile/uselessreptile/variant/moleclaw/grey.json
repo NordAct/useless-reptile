@@ -1,13 +1,25 @@
 {
   "base_taming_progress": 64,
+  "chestplate_items": [
+    "#uselessreptile:moleclaw_chestplates"
+  ],
   "dragon_model": "uselessreptile:moleclaw/grey",
   "equipment": "uselessreptile:moleclaw",
   "food_items": {
     "#c:foods/vegetable": 2
   },
+  "helmet_items": [
+    "#uselessreptile:moleclaw_helmets"
+  ],
   "id": "uselessreptile:moleclaw",
   "name": "grey",
+  "saddle_items": [
+    "#uselessreptile:moleclaw_saddles"
+  ],
   "spawn_conditions": "uselessreptile:moleclaw/default",
+  "tail_armor_items": [
+    "#uselessreptile:moleclaw_tail_armor"
+  ],
   "taming_items": {
     "minecraft:beetroot": [
       1,

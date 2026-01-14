@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.entity;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -34,12 +35,16 @@ import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFoll
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
 import nordmods.uselessreptile.common.entity.base.FluteListener;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
+import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URMenus;
 import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.network.s2c.GUIEntityToRenderPayload;
 import nordmods.uselessreptile.common.util.URAnimationController;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -103,8 +108,9 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
     @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
-        return null;
+    public AbstractContainerMenu createMenu(int syncId, Inventory inv, Player player) {
+        if (!level().isClientSide()) GUIEntityToRenderPayload.send((ServerPlayer) player, this);
+        return new URDragonMenu(URMenus.RIVER_PIKEHORN_INVENTORY, syncId, inv, getInventory());
     }
 
     @Override
@@ -353,28 +359,21 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    public boolean isSaddle(ItemStack itemStack) {
-        return false;
-    }
-
-    @Override
-    public boolean isHelmet(ItemStack itemStack) {
-        return false;
-    }
-
-    @Override
-    public boolean isChestplate(ItemStack itemStack) {
-        return false;
-    }
-
-    @Override
-    public boolean isTailArmor(ItemStack itemStack) {
-        return false;
-    }
-
-    @Override
     public @NotNull DragonInventory createInventory() {
-        return new DragonInventory(this, DragonInventory.StorageSize.NO_INVENTORY, false, false, false);
+        return createInventory(this);
+    }
+
+    public static DragonInventory createInventory(@Nullable URDragonEntity dragon) {
+        if (dragon == null) return new DragonInventory(dragon, DragonInventory.StorageSize.NONE, true, true,true,true, true);
+        return new DragonInventory(
+                dragon,
+                DragonInventory.StorageSize.NONE,
+                dragon.getDragonActualVariant().saddleItems().isPresent() && !dragon.getDragonActualVariant().saddleItems().get().isEmpty(),
+                dragon.getDragonActualVariant().helmetItems().isPresent() && !dragon.getDragonActualVariant().helmetItems().get().isEmpty(),
+                dragon.getDragonActualVariant().chestplateItems().isPresent() &&!dragon.getDragonActualVariant().chestplateItems().get().isEmpty(),
+                dragon.getDragonActualVariant().tailArmorItems().isPresent() &&!dragon.getDragonActualVariant().tailArmorItems().get().isEmpty(),
+                dragon.getDragonActualVariant().saddleItems().isPresent() && !dragon.getDragonActualVariant().saddleItems().get().isEmpty()
+        );
     }
 
     @Override

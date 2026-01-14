@@ -1,13 +1,11 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BRObjectRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
@@ -15,7 +13,6 @@ import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
-import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
@@ -23,8 +20,6 @@ import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipment;
 import nordmods.uselessreptile.client.util.EquipmentAssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
-import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -40,80 +35,21 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     @Override //note to self: DO NOT USE ARMOR RENDER TYPES (it breaks glow layer because armor render type has extra z offset... despite render order existing, duh)
     public RenderType getRenderType(BRState renderState, Identifier texture) {
         if (!ResourceUtil.isResourceReloadFinished) return RenderTypes.armorCutoutNoCull(texture);
-
         AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
-
-        RenderType renderType = assetCache.getRenderTypeCache();
-        if (renderType != null) return renderType;
-
-        Identifier dragonId = renderState.getStateData(URStateDataTypes.DRAGON_ID);
-        String name = renderState.getStateData(URStateDataTypes.DRAGON_NAME).getString();
-        String variant = renderState.getStateData(URStateDataTypes.DRAGON_VARIANT);
-        Identifier itemId = BuiltInRegistries.ITEM.getKey(renderState.getStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK).getItem());
-        EquipmentModelData.Equipment data = DragonVariantUtil.getEquipmentModelData(
-                dragonId,
-                name,
-                variant,
-                Minecraft.getInstance().level,
-                itemId
-        );
-        if (data != null && data.modelData().translucent()) {
-            renderType = RenderTypes.entityTranslucent(texture);
-            assetCache.setRenderTypeCache(renderType);
-            return renderType;
-        }
-
-        renderType = RenderTypes.entityCutoutNoCull(texture);
-        assetCache.setRenderTypeCache(renderType);
-        return renderType;
+        return assetCache.getRenderTypeProviderCache().getRenderType(renderState, texture);
     }
-
 
     @Override
     @Nullable
     public Identifier getTextureId(BRState renderState) {
         if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_TEXTURE;
-
         AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
-        if (assetCache == null) return DEFAULT_TEXTURE;
-
-        Identifier id = assetCache.getTextureLocationCache();
-        if (id != null) return id;
-
-        Identifier dragonId = renderState.getStateData(URStateDataTypes.DRAGON_ID);
-        String name = renderState.getStateData(URStateDataTypes.DRAGON_NAME).getString();
-        String variant = renderState.getStateData(URStateDataTypes.DRAGON_VARIANT);
-        Identifier itemId = BuiltInRegistries.ITEM.getKey(renderState.getStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK).getItem());
-        EquipmentModelData.Equipment data = DragonVariantUtil.getEquipmentModelData(
-                dragonId,
-                name,
-                variant,
-                Minecraft.getInstance().level,
-                itemId
-        );
-        if (data != null) {
-            id = data.modelData().texture();
-            if (ResourceUtil.doesExist(id)) {
-                assetCache.setTextureLocationCache(id);
-                return id;
-            } else {
-                UselessReptile.LOGGER.warn("Failed to find texture for equipment ({}) for {} ({}) of variant {}",
-                        itemId,
-                        name,
-                        dragonId,
-                        variant);
-            }
-        }
-        assetCache.setTextureLocationCache(DEFAULT_TEXTURE);
-        return DEFAULT_TEXTURE;
+        return assetCache.getTextureLocationCache();
     }
 
     @Override
     public void extractRenderState(DragonEquipment animatable, BRState.Impl state, float tickDelta) {
-        state.setStateData(URStateDataTypes.DRAGON_NAME, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_NAME));
         state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_ID));
-        state.setStateData(URStateDataTypes.DRAGON_VARIANT, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_VARIANT));
-        state.setStateData(URStateDataTypes.EQUIPMENT_ITEM_STACK, animatable.itemStack);
         state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerRenderState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
         state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerRenderState.getStateData(ClientStateDataTypes.LIGHT));
@@ -170,5 +106,10 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     public void submitBRModelOrdered(BRState.Impl state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, int order) {
         if (!((EquipmentAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).canRender()) return;
         super.submitBRModelOrdered(state, poseStack, submitNodeCollector, cameraRenderState, order);
+    }
+
+    @Override
+    public DragonEquipmentModelProvider getModelProvider() {
+        return (DragonEquipmentModelProvider) super.getModelProvider();
     }
 }

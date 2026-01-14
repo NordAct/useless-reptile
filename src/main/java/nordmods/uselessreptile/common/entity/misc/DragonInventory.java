@@ -16,8 +16,10 @@ public class DragonInventory extends SimpleContainer {
     public static final int TAIL_ARMOR_INDEX = 3;
     public static final int BANNER_INDEX = 4;
     public final StorageSize storageSize;
-    public final boolean hasArmor;
     public final boolean hasSaddle;
+    public final boolean hasHelmet;
+    public final boolean hasChestplate;
+    public final boolean hasTailArmor;
     public final boolean hasBanner;
     public final Function<ItemStack, Boolean> isSaddle;
     public final Function<ItemStack, Boolean> isHelmet;
@@ -25,11 +27,13 @@ public class DragonInventory extends SimpleContainer {
     public final Function<ItemStack, Boolean> isTailArmor;
     public final Function<ItemStack, Boolean> isBanner;
 
-    public DragonInventory(@Nullable URDragonEntity dragon, StorageSize storageSize, boolean hasArmor, boolean hasSaddle, boolean hasBanner) {
+    public DragonInventory(@Nullable URDragonEntity dragon, StorageSize storageSize, boolean hasSaddle, boolean hasHelmet, boolean hasChestplate, boolean hasTailArmor, boolean hasBanner) {
         super(getInventorySize(storageSize));
         this.storageSize = storageSize;
-        this.hasArmor = hasArmor;
         this.hasSaddle = hasSaddle;
+        this.hasHelmet = hasHelmet;
+        this.hasChestplate = hasChestplate;
+        this.hasTailArmor = hasTailArmor;
         this.hasBanner = hasBanner;
         if (dragon == null) { //for sake of even being able to register screen handlers
             this.isSaddle = itemStack -> false;
@@ -62,13 +66,13 @@ public class DragonInventory extends SimpleContainer {
                 if (hasSaddle && itemStack.isEmpty() && isSaddle.apply(stack)) return true;
             }
             case HELMET_INDEX -> {
-                if (hasArmor && itemStack.isEmpty() && isHelmet.apply(stack)) return true;
+                if (hasHelmet && itemStack.isEmpty() && isHelmet.apply(stack)) return true;
             }
             case CHESTPLATE_INDEX -> {
-                if (hasArmor && itemStack.isEmpty() && isChestplate.apply(stack)) return true;
+                if (hasChestplate && itemStack.isEmpty() && isChestplate.apply(stack)) return true;
             }
             case TAIL_ARMOR_INDEX -> {
-                if (hasArmor && itemStack.isEmpty() && isTailArmor.apply(stack)) return true;
+                if (hasTailArmor && itemStack.isEmpty() && isTailArmor.apply(stack)) return true;
             }
             case BANNER_INDEX -> {
                 if (hasBanner && itemStack.isEmpty() && isBanner.apply(stack)) return true;

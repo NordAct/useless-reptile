@@ -22,12 +22,11 @@ public class JadeIntegration implements IWailaPlugin {
         @Override
         public void appendTooltip(ITooltip iTooltip, EntityAccessor entityAccessor, IPluginConfig iPluginConfig) {
             if (!(entityAccessor.getEntity() instanceof URDragonEntity dragon)) return;
-            DragonVariant variant = DragonVariant.getByVariant(dragon.getDragonId(), dragon.getVariant(), dragon.level());
             iTooltip.add(Component.translatable(
                     "variant.uselessreptile",
-                    variant == null ?
+                    dragon.isInvalidVariant() ?
                             Component.literal("UNREGISTERED VARIANT (" + dragon.getVariant() + ")").withStyle(ChatFormatting.DARK_RED) :
-                            Component.translatable(variant.variantNameKey()).withStyle(ChatFormatting.GOLD)
+                            Component.translatable(dragon.getDragonActualVariant().variantNameKey()).withStyle(ChatFormatting.GOLD)
                     )
             );
         }
