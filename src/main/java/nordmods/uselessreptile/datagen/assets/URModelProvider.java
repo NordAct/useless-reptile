@@ -70,6 +70,7 @@ public class URModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerators itemModelGenerator) {
         itemModelGenerator.generateFlatItem(URItems.WYVERN_SKIN, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(URItems.DUAL_SADDLE, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(URItems.WYVERN_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(URItems.LIGHTNING_CHASER_SPAWN_EGG, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(URItems.MOLECLAW_SPAWN_EGG, ModelTemplates.FLAT_ITEM);

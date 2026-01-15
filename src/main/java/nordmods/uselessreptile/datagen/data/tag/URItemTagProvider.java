@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URTags;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -15,7 +16,7 @@ public class URItemTagProvider extends FabricTagProvider.ItemTagProvider{
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider wrapperLookup) {
+    protected void addTags(HolderLookup.@NonNull Provider wrapperLookup) {
         //Moleclaw armor items
         getOrCreateRawBuilder(URTags.PROTECTS_MOLECLAW_FROM_LIGHT)
                 .addElement(URItems.MOLECLAW_HELMET_IRON.builtInRegistryHolder().key().identifier())
@@ -63,18 +64,14 @@ public class URItemTagProvider extends FabricTagProvider.ItemTagProvider{
 
         //Saddles
         getOrCreateRawBuilder(URTags.WYVERN_SADDLES)
-                .addElement(Items.SADDLE.builtInRegistryHolder().key().identifier());
+                .addElement(Items.SADDLE.builtInRegistryHolder().key().identifier())
+                .addElement(URItems.DUAL_SADDLE.builtInRegistryHolder().key().identifier());
 
         getOrCreateRawBuilder(URTags.LIGHTNING_CHASER_SADDLES)
                 .addElement(Items.SADDLE.builtInRegistryHolder().key().identifier());
 
         getOrCreateRawBuilder(URTags.MOLECLAW_SADDLES)
                 .addElement(Items.SADDLE.builtInRegistryHolder().key().identifier());
-
-        getOrCreateRawBuilder(URTags.DRAGON_SADDLES)
-                .addOptionalTag(URTags.WYVERN_SADDLES.location())
-                .addOptionalTag(URTags.LIGHTNING_CHASER_SADDLES.location())
-                .addOptionalTag(URTags.MOLECLAW_SADDLES.location());
 
         //other items
         getOrCreateRawBuilder(URTags.VORTEX_HORNS)

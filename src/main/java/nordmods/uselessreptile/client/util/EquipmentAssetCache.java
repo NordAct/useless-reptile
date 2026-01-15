@@ -2,6 +2,7 @@ package nordmods.uselessreptile.client.util;
 
 public class EquipmentAssetCache extends AssetCache {
     private boolean canRender = true;
+    private String[] hidBones = new String[0];
 
     public boolean canRender() {
         return canRender;
@@ -15,5 +16,14 @@ public class EquipmentAssetCache extends AssetCache {
     public void cleanCache() {
         super.cleanCache();
         canRender = true;
+        hidBones = new String[0];
+    }
+
+    public String[] getHidBones() {
+        return hidBones;
+    }
+
+    public void setHidBones(String[] hidBones) {
+        this.hidBones = hidBones;
     }
 }

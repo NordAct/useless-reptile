@@ -5,3 +5,4 @@
 - Whether dragon can equip an item now is defined by its variant and not hardcoded tags
 - Fixed items in inventory appearing in wrong slot for 1 tick when using quick move
 - River Pikehorn now has inventory screen
+- Removed uselessreptile:dragon_saddles tag

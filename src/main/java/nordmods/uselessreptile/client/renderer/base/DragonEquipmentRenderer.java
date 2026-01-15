@@ -97,18 +97,6 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     }
 
     @Override
-    public void submitBRModel(BRState.Impl state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        if (!((EquipmentAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).canRender()) return;
-        super.submitBRModel(state, poseStack, submitNodeCollector, cameraRenderState);
-    }
-
-    @Override
-    public void submitBRModelOrdered(BRState.Impl state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState, int order) {
-        if (!((EquipmentAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).canRender()) return;
-        super.submitBRModelOrdered(state, poseStack, submitNodeCollector, cameraRenderState, order);
-    }
-
-    @Override
     public DragonEquipmentModelProvider getModelProvider() {
         return (DragonEquipmentModelProvider) super.getModelProvider();
     }

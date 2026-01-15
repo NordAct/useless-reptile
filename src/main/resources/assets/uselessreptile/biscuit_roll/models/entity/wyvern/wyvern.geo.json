@@ -422,7 +422,7 @@
 				{
 					"name": "spikes_front",
 					"parent": "front",
-					"pivot": [0, 18.1, 0],
+					"pivot": [0, 49.6, -3.5],
 					"cubes": [
 						{
 							"origin": [-0.025, 48.1, -11],
@@ -1110,7 +1110,14 @@
 								"up": {"uv": [70, 135], "uv_size": [11, 14]},
 								"down": {"uv": [81, 149], "uv_size": [11, -14]}
 							}
-						},
+						}
+					]
+				},
+				{
+					"name": "spikes_back",
+					"parent": "back",
+					"pivot": [0, 49.5, 10],
+					"cubes": [
 						{
 							"origin": [-0.025, 48, 3],
 							"size": [0.05, 3, 14],

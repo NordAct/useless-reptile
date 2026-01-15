@@ -2,6 +2,7 @@
   "equipment": [
     {
       "item": "minecraft:saddle",
+      "max_passengers": 1,
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/saddle.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/moleclaw/saddle.geo.json",

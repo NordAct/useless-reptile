@@ -17,16 +17,18 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     public final CloneAnimationController cloneController = new CloneAnimationController(true);
     public final EquipmentAnimationController controller;
     public final Collection<BRAnimationController> controllers;
+    public final boolean isSaddle;
 
     public EquipmentAssetCache getAssetCache() {
         return assetCache;
     }
 
-    public DragonEquipment(ItemStack itemStack, EquipmentAssetCache assetCache) {
+    public DragonEquipment(ItemStack itemStack, EquipmentAssetCache assetCache, boolean isSaddle) {
         this.itemStack = itemStack;
         this.assetCache = assetCache;
         this.controller = new EquipmentAnimationController(assetCache.getAnimationLocationCache());
         this.controllers = List.of(cloneController, controller);
+        this.isSaddle = isSaddle;
     }
 
     @Override

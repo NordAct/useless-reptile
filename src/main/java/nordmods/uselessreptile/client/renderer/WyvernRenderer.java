@@ -11,10 +11,4 @@ public class WyvernRenderer extends URRideableDragonEntityRenderer<Wyvern> {
         super(renderManager);
         shadowRadius = 1.5f;
     }
-
-    @Override
-    public void extractRenderState(Wyvern animatable, LivingEntityRenderState renderState, float tickDelta) {
-        super.extractRenderState(animatable, renderState, tickDelta);
-        setBoneVisibility(renderState, "spikes_front", animatable.getItemBySlot(EquipmentSlot.SADDLE).isEmpty());
-    }
 }
