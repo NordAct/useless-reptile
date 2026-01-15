@@ -344,7 +344,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
     @Override
     protected DragonInventory.StorageSize getStorageSize() {
-        return DragonInventory.StorageSize.SMALL;
+        return DragonInventory.StorageSize.NONE;
     }
 
     @Override

@@ -109,7 +109,6 @@ public class DragonInventory extends SimpleContainer {
 
     @SuppressWarnings("unused")
     public enum StorageSize {
-        NO_INVENTORY(-INVENTORY_START_INDEX),
         NONE(0),
         SMALL(3),
         MEDIUM(6),
