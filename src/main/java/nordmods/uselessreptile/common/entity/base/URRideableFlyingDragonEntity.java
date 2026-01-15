@@ -27,7 +27,6 @@ import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavig
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import nordmods.uselessreptile.common.network.c2s.RequestLiftoffPayload;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntity implements FlyingDragon {
@@ -253,7 +252,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    public boolean causeFallDamage(double fallDistance, float damageMultiplier, DamageSource damageSource) {return false;}
+    public boolean causeFallDamage(double fallDistance, float damageMultiplier, @NonNull DamageSource damageSource) {return false;}
 
     @Override
     public boolean isFlapping() {return isFlying();}
@@ -324,7 +323,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    public @NotNull FlyingDragonMoveControl<? extends FlyingDragon> getMoveControl() {
+    public @NonNull FlyingDragonMoveControl<? extends FlyingDragon> getMoveControl() {
         return (FlyingDragonMoveControl<?>) moveControl;
     }
 

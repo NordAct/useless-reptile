@@ -95,8 +95,8 @@ import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
-import org.jetbrains.annotations.Nullable;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -946,8 +946,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return false;
     }
 
-    @Nullable
-    public DragonVariant.TamingItem getTamingItem(ItemStack itemStack) {
+    public DragonVariant.@Nullable TamingItem getTamingItem(ItemStack itemStack) {
         DragonVariant variant = getDragonActualVariant();
         if (variant != null) {
             return variant.tamingItems().orElse(List.of()).stream()
@@ -962,8 +961,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return null;
     }
 
-    @Nullable
-    public DragonVariant.FoodItem getFoodItem(ItemStack itemStack) {
+    public DragonVariant.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
         DragonVariant variant = getDragonActualVariant();
         if (variant != null) {
             return variant.foodItems().orElse(List.of()).stream()
@@ -1278,8 +1276,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 getDragonActualVariant().saddleItems().isPresent() &&!getDragonActualVariant().saddleItems().get().isEmpty(),
                 getDragonActualVariant().helmetItems().isPresent() &&!getDragonActualVariant().helmetItems().get().isEmpty(),
                 getDragonActualVariant().chestplateItems().isPresent() &&!getDragonActualVariant().chestplateItems().get().isEmpty(),
-                getDragonActualVariant().tailArmorItems().isPresent() &&!getDragonActualVariant().tailArmorItems().get().isEmpty(),
-                getDragonActualVariant().saddleItems().isPresent() &&!getDragonActualVariant().saddleItems().get().isEmpty()
+                getDragonActualVariant().tailArmorItems().isPresent() &&!getDragonActualVariant().tailArmorItems().get().isEmpty()
         );
     }
 

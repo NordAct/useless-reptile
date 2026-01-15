@@ -14,7 +14,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import nordmods.uselessreptile.common.init.URTags;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class DepletedMagmaBlock extends NetherrackBlock {
     public static final IntegerProperty AGE = BlockStateProperties.AGE_2;
@@ -24,7 +24,7 @@ public class DepletedMagmaBlock extends NetherrackBlock {
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
+    protected void randomTick(@NonNull BlockState state, ServerLevel world, @NonNull BlockPos pos, @NonNull RandomSource random) {
         if (world.dimensionTypeRegistration().is(URTags.DEPLETED_MAGMA_REGENERATES)) tickRegenerate(state, world, pos);
         if (world.getBlockState(pos.below()).getFluidState().is(ConventionalFluidTags.LAVA)
                 || world.getBlockState(pos.above()).getFluidState().is(ConventionalFluidTags.LAVA)
@@ -46,7 +46,7 @@ public class DepletedMagmaBlock extends NetherrackBlock {
         builder.add(AGE);
     }
 
-    protected @NotNull ItemStack getCloneItemStack(LevelReader world, BlockPos pos, BlockState state, boolean includeData) {
+    protected @NonNull ItemStack getCloneItemStack(@NonNull LevelReader world, @NonNull BlockPos pos, @NonNull BlockState state, boolean includeData) {
         return Blocks.NETHERRACK.asItem().getDefaultInstance();
     }
 }

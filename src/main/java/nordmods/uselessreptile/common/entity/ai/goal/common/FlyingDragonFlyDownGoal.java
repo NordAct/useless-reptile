@@ -2,12 +2,12 @@ package nordmods.uselessreptile.common.entity.ai.goal.common;
 
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 public class FlyingDragonFlyDownGoal<T extends URDragonEntity & FlyingDragon> extends FlyingDragonFlyAroundGoal<T> {
     public FlyingDragonFlyDownGoal(T entity, int range) {

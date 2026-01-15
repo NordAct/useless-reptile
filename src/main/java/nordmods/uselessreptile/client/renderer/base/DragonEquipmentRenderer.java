@@ -20,7 +20,7 @@ import nordmods.uselessreptile.client.util.AssetCache;
 import nordmods.uselessreptile.client.util.DragonEquipment;
 import nordmods.uselessreptile.client.util.EquipmentAssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;

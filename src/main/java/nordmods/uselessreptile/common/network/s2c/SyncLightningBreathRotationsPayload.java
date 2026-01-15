@@ -7,7 +7,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import nordmods.uselessreptile.UselessReptile;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public record SyncLightningBreathRotationsPayload(int[] beamIDs, float pitch, float yaw) implements CustomPacketPayload {
     public static final Identifier ID = UselessReptile.id("sync_lightning_beam_rotations");
@@ -35,7 +35,7 @@ public record SyncLightningBreathRotationsPayload(int[] beamIDs, float pitch, fl
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NonNull Type<? extends CustomPacketPayload> type() {
         return PAYLOAD_ID;
     }
 }

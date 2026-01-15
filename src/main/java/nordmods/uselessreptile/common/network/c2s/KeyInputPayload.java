@@ -5,7 +5,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public record KeyInputPayload(
         boolean jump,
@@ -49,7 +49,7 @@ public record KeyInputPayload(
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NonNull Type<? extends CustomPacketPayload> type() {
         return PAYLOAD_ID;
     }
 }

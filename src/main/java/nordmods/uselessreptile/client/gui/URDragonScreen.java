@@ -154,7 +154,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
     }
 
     protected void drawBanner(GuiGraphics context) {
-        if (entity.getInventory().hasBanner)
+        if (entity.getInventory().hasSaddle)
             context.blit( //banner
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,

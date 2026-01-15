@@ -30,8 +30,8 @@ import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.init.URMobEffect;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPayload;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +69,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(@NonNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         if (!(level() instanceof ServerLevel serverWorld)) return;
         Entity target = entityHitResult.getEntity();
@@ -163,9 +163,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         Entity owner = getOwner();
         LivingEntity ownerOwner = owner instanceof OwnableEntity tameable ? tameable.getOwner() : null;
         if (target == ownerOwner) return false;
-        if (target instanceof OwnableEntity tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
-
-        return true;
+        return !(target instanceof OwnableEntity tameableEntity) || tameableEntity.getOwner() != ownerOwner;
     }
 
     @Override
@@ -191,7 +189,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         return 2;
     }
 
-    public static void createBeam(@NotNull Entity owner, float pitch, float yaw, Vec3 startPos) {
+    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos) {
         Vec3 rot = owner.calculateViewVector(pitch, yaw);
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreath firstSegment = null;

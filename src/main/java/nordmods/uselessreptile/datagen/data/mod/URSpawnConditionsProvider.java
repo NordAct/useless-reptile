@@ -14,7 +14,7 @@ import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class URSpawnConditionsProvider implements DataProvider {
     }
 
     @Override
-    public @NotNull CompletableFuture<?> run(CachedOutput writer) {
+    public @NonNull CompletableFuture<?> run(@NonNull CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addSpawnEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
@@ -158,7 +158,7 @@ public class URSpawnConditionsProvider implements DataProvider {
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return "Spawn Conditions";
     }
 }

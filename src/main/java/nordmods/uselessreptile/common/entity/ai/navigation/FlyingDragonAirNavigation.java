@@ -6,7 +6,7 @@ import net.minecraft.world.level.pathfinder.FlyNodeEvaluator;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class FlyingDragonAirNavigation<T extends URDragonEntity & FlyingDragon> extends FlyingDragonBaseNavigation<T>{
 
@@ -15,7 +15,7 @@ public class FlyingDragonAirNavigation<T extends URDragonEntity & FlyingDragon> 
     }
 
     @Override
-    protected @NotNull PathFinder createPathFinder(int range) {
+    protected @NonNull PathFinder createPathFinder(int range) {
         nodeEvaluator = new FlyNodeEvaluator();
         return new PathFinder(nodeEvaluator, range);
     }

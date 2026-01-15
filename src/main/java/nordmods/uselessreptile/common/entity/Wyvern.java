@@ -44,7 +44,6 @@ import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.URAnimationController;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
@@ -310,7 +309,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public @NotNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
+    public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTame()) {
             if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwnedBy(player)) {
@@ -328,7 +327,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public @NotNull EntityDimensions getDefaultDimensions(@NonNull Pose pose) {
+    public @NonNull EntityDimensions getDefaultDimensions(@NonNull Pose pose) {
         return super.getDefaultDimensions(pose).withEyeHeight(getBbHeight() * 0.95f);
     }
 
@@ -383,7 +382,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public @NotNull AABB getPrimaryAttackBox() {
+    public @NonNull AABB getPrimaryAttackBox() {
         double modifier = isFlying() ? getWidthMod() / 2 : (getWidthMod() + 0.1);
         double x = -Math.sin(Math.toRadians(getYRot())) * modifier;
         double z = Math.cos(Math.toRadians(getYRot())) * modifier;

@@ -1,18 +1,13 @@
 package nordmods.uselessreptile.client.model_provider;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.util.AssetCache;
-import nordmods.uselessreptile.client.util.EquipmentAssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
-import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class DragonEquipmentModelProvider implements BRModelProvider {
     @Override

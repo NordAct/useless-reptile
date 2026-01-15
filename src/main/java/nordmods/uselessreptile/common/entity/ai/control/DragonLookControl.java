@@ -5,7 +5,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.control.LookControl;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
@@ -55,7 +55,7 @@ public class DragonLookControl extends LookControl {
     }
 
     @Override
-    public @NotNull Optional<Float> getXRotD() {
+    public @NonNull Optional<Float> getXRotD() {
         if (entity instanceof ShooterDragon shooterDragon) {
             double x = this.wantedX - shooterDragon.getShootingPoint().pos().x();
             double y = this.wantedY - shooterDragon.getShootingPoint().pos().y();
@@ -69,7 +69,7 @@ public class DragonLookControl extends LookControl {
     }
 
     @Override
-    public @NotNull Optional<Float> getYRotD() {
+    public @NonNull Optional<Float> getYRotD() {
         if (entity instanceof ShooterDragon shooterDragon) {
             double x = this.wantedX - shooterDragon.getShootingPoint().pos().x();
             double z = this.wantedZ - shooterDragon.getShootingPoint().pos().z();
@@ -85,7 +85,7 @@ public class DragonLookControl extends LookControl {
     }
 
     @Override
-    public void setLookAt(Entity target, float maxYawChange, float maxPitchChange) {
+    public void setLookAt(@NonNull Entity target, float maxYawChange, float maxPitchChange) {
         if (entity.getSensing().hasLineOfSight(target)) super.setLookAt(target, maxYawChange, maxPitchChange);
     }
 }

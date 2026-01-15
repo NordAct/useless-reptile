@@ -22,7 +22,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -126,7 +126,7 @@ public class UREntityLootTableProvider extends EntityLootSubProvider implements 
     }
 
     @Override
-    public @NotNull CompletableFuture<?> run(CachedOutput writer) {
+    public @NonNull CompletableFuture<?> run(@NonNull CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             generate();
             List<CompletableFuture<?>> list = new ArrayList<>();
@@ -149,7 +149,7 @@ public class UREntityLootTableProvider extends EntityLootSubProvider implements 
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return "Entity Loot Tables";
     }
 }

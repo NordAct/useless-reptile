@@ -12,7 +12,7 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -37,12 +37,12 @@ public abstract class PlayerMixin extends LivingEntity implements HeadMountDrago
     }
 
     @Override
-    public void useless_reptile$setHeadMountDragon(@NotNull CompoundTag state) {
+    public void useless_reptile$setHeadMountDragon(@NonNull CompoundTag state) {
         headMountDragon = state;
     }
 
     @Override
-    @NotNull
+    @NonNull
     public CompoundTag useless_reptile$getHeadMountDragon() {
         return headMountDragon;
     }
@@ -51,9 +51,7 @@ public abstract class PlayerMixin extends LivingEntity implements HeadMountDrago
     private void removeHeadMountDragon(RemovalReason reason, CallbackInfo ci) {
         if (!headMountDragon.isEmpty() && level() instanceof ServerLevel world) {
             if (!reason.shouldDestroy()) {
-                EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), headMountDragon), world, EntitySpawnReason.LOAD).ifPresent(dragon -> {
-                    dragon.remove(reason);
-                });
+                EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), headMountDragon), world, EntitySpawnReason.LOAD).ifPresent(dragon -> dragon.remove(reason));
             }
         }
     }

@@ -15,8 +15,8 @@ import net.minecraft.util.Mth;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, ShockwaveSphereRenderer.ShockwaveSpereEntityRenderState> {
     private static final Identifier TEXTURE = UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
@@ -27,12 +27,12 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
     }
 
     @Override
-    public @NotNull ShockwaveSpereEntityRenderState createRenderState() {
+    public @NonNull ShockwaveSpereEntityRenderState createRenderState() {
         return new ShockwaveSpereEntityRenderState();
     }
 
     @Override
-    public void submit(ShockwaveSpereEntityRenderState state, PoseStack matrixStack, SubmitNodeCollector commandQueue, CameraRenderState cameraRenderState) {
+    public void submit(ShockwaveSpereEntityRenderState state, PoseStack matrixStack, @NonNull SubmitNodeCollector commandQueue, @NonNull CameraRenderState cameraRenderState) {
         matrixStack.pushPose();
 
         RenderType layer = RenderTypes.entityTranslucentEmissive(TEXTURE, true);

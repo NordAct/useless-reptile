@@ -19,8 +19,8 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.ShapedRecipePattern;
 import net.minecraft.world.level.ItemLike;
 import nordmods.uselessreptile.common.recipe.VortexHornRecipe;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Objects;
 
@@ -30,51 +30,51 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
         super(registryLookup, category, output, count);
     }
 
-    public static VortexHornRecipeJsonBuilder shaped(HolderGetter<Item> registryLookup, RecipeCategory category, ItemLike output) {
+    public static VortexHornRecipeJsonBuilder shaped(@NonNull HolderGetter<Item> registryLookup, @NonNull RecipeCategory category, ItemLike output) {
         return shaped(registryLookup, category, output, 1);
     }
 
-    public static VortexHornRecipeJsonBuilder shaped(HolderGetter<Item> registryLookup, RecipeCategory category, ItemLike output, int count) {
+    public static VortexHornRecipeJsonBuilder shaped(@NonNull HolderGetter<Item> registryLookup, @NonNull RecipeCategory category, ItemLike output, int count) {
         return new VortexHornRecipeJsonBuilder(registryLookup, category, output, count);
     }
 
     @Override
-    public @NotNull VortexHornRecipeJsonBuilder define(Character c, TagKey<Item> tag) {
+    public @NonNull VortexHornRecipeJsonBuilder define(@NonNull Character c, @NonNull TagKey<Item> tag) {
         return (VortexHornRecipeJsonBuilder) super.define(c, tag);
     }
 
     @Override
-    public @NotNull VortexHornRecipeJsonBuilder define(Character c, ItemLike itemProvider) {
+    public @NonNull VortexHornRecipeJsonBuilder define(@NonNull Character c, @NonNull ItemLike itemProvider) {
         return (VortexHornRecipeJsonBuilder) super.define(c, itemProvider);
     }
 
     @Override
-    public @NotNull VortexHornRecipeJsonBuilder define(Character c, Ingredient ingredient) {
+    public @NonNull VortexHornRecipeJsonBuilder define(@NonNull Character c, @NonNull Ingredient ingredient) {
         return (VortexHornRecipeJsonBuilder) super.define(c, ingredient);
     }
 
     @Override
-    public @NotNull VortexHornRecipeJsonBuilder pattern(String patternStr) {
+    public @NonNull VortexHornRecipeJsonBuilder pattern(@NonNull String patternStr) {
         return (VortexHornRecipeJsonBuilder) super.pattern(patternStr);
     }
 
     @Override
-    public @NotNull VortexHornRecipeJsonBuilder unlockedBy(String string, Criterion<?> advancementCriterion) {
+    public @NonNull VortexHornRecipeJsonBuilder unlockedBy(@NonNull String string, @NonNull Criterion<?> advancementCriterion) {
         return (VortexHornRecipeJsonBuilder) super.unlockedBy(string, advancementCriterion);
     }
 
     @Override
-    public @NotNull VortexHornRecipeJsonBuilder group(@Nullable String string) {
+    public @NonNull VortexHornRecipeJsonBuilder group(@Nullable String string) {
         return (VortexHornRecipeJsonBuilder) super.group(string);
     }
 
     @Override
-    public @NotNull VortexHornRecipeJsonBuilder showNotification(boolean showNotification) {
+    public @NonNull VortexHornRecipeJsonBuilder showNotification(boolean showNotification) {
         return (VortexHornRecipeJsonBuilder) super.showNotification(showNotification);
     }
 
     @Override
-    public void save(RecipeOutput exporter, ResourceKey<Recipe<?>> recipeKey) {
+    public void save(RecipeOutput exporter, @NonNull ResourceKey<Recipe<?>> recipeKey) {
         ShapedRecipePattern rawShapedRecipe = ShapedRecipePattern.of(this.key, this.rows);
         Advancement.Builder builder = exporter
                 .advancement()

@@ -115,7 +115,8 @@ public class LightningChaserAttackGoal extends Goal {
             if (tryMeleeAttack()) return;
             if (canDamage) {
                 if (tryRangedAttack()) return;
-                if (tryShockwaveAttack()) return;
+                if (tryShockwaveAttack()) {
+                }
             }
         }
     }

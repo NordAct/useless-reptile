@@ -97,9 +97,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
         Entity owner = getOwner();
         LivingEntity ownerOwner = owner instanceof OwnableEntity tameable ? tameable.getOwner() : null;
         if (target == ownerOwner) return false;
-        if (target instanceof OwnableEntity tameableEntity && tameableEntity.getOwner() == ownerOwner) return false;
-
-        return true;
+        return !(target instanceof OwnableEntity tameableEntity) || tameableEntity.getOwner() != ownerOwner;
     }
 
     private void tryPlaySpawnSound() {

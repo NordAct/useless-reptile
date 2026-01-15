@@ -17,7 +17,7 @@ import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URRecipeSerializers;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +37,7 @@ public class VortexHornSmithingRecipe implements SmithingRecipe {
     }
 
     @Override
-    public @NotNull ItemStack assemble(SmithingRecipeInput smithingRecipeInput, HolderLookup.Provider wrapperLookup) {
+    public @NonNull ItemStack assemble(SmithingRecipeInput smithingRecipeInput, HolderLookup.@NonNull Provider wrapperLookup) {
         ItemStack instrument = getInstrumentStack(smithingRecipeInput);
         if (!instrument.isEmpty()) {
             ItemStack result = this.result.apply(smithingRecipeInput.base());
@@ -58,12 +58,12 @@ public class VortexHornSmithingRecipe implements SmithingRecipe {
     }
 
     @Override
-    public @NotNull RecipeSerializer<VortexHornSmithingRecipe> getSerializer() {
+    public @NonNull RecipeSerializer<VortexHornSmithingRecipe> getSerializer() {
         return URRecipeSerializers.VORTEX_HORN_SMITHING;
     }
 
     @Override
-    public @NotNull PlacementInfo placementInfo() {
+    public @NonNull PlacementInfo placementInfo() {
         if (this.ingredientPlacement == null) {
             this.ingredientPlacement = PlacementInfo.createFromOptionals(List.of(this.template, Optional.of(this.base), this.addition));
         }
@@ -72,17 +72,17 @@ public class VortexHornSmithingRecipe implements SmithingRecipe {
     }
 
     @Override
-    public @NotNull Optional<Ingredient> templateIngredient() {
+    public @NonNull Optional<Ingredient> templateIngredient() {
         return template;
     }
 
     @Override
-    public @NotNull Ingredient baseIngredient() {
+    public @NonNull Ingredient baseIngredient() {
         return base;
     }
 
     @Override
-    public @NotNull Optional<Ingredient> additionIngredient() {
+    public @NonNull Optional<Ingredient> additionIngredient() {
         return addition;
     }
 
@@ -108,12 +108,12 @@ public class VortexHornSmithingRecipe implements SmithingRecipe {
         );
 
         @Override
-        public @NotNull MapCodec<VortexHornSmithingRecipe> codec() {
+        public @NonNull MapCodec<VortexHornSmithingRecipe> codec() {
             return CODEC;
         }
 
         @Override
-        public @NotNull StreamCodec<RegistryFriendlyByteBuf, VortexHornSmithingRecipe> streamCodec() {
+        public @NonNull StreamCodec<RegistryFriendlyByteBuf, VortexHornSmithingRecipe> streamCodec() {
             return PACKET_CODEC;
         }
     }

@@ -7,7 +7,7 @@ import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.init.URResourceKeys;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +25,13 @@ public class DragonVariantUtil {
         return level.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_MODEL).getValue(dragonVariant.dragonModelData());
     }
 
-    @Nullable
-    public static EquipmentModelData.Equipment getEquipmentModelData(Identifier dragonId, String name, String variant, Level level, Identifier item) {
+    public static EquipmentModelData.@Nullable Equipment getEquipmentModelData(Identifier dragonId, String name, String variant, Level level, Identifier item) {
         if (!ResourceUtil.isResourceReloadFinished) return null;
         DragonVariant dragonVariant = DragonVariant.getDragonVariant(dragonId, name, variant, level);
         return getEquipmentModelData(dragonVariant, level, item);
     }
 
-    @Nullable
-    public static EquipmentModelData.Equipment getEquipmentModelData(DragonVariant dragonVariant, Level level, Identifier item) {
+    public static EquipmentModelData.@Nullable Equipment getEquipmentModelData(DragonVariant dragonVariant, Level level, Identifier item) {
         if (!ResourceUtil.isResourceReloadFinished) return null;
 
         RegistryAccess registryManager = level.registryAccess();

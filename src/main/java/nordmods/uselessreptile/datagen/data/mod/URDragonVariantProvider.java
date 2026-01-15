@@ -8,7 +8,6 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagEntry;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EntityType;
@@ -17,7 +16,7 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URTags;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -71,7 +70,7 @@ public class URDragonVariantProvider implements DataProvider {
 
 
     @Override
-    public @NotNull CompletableFuture<?> run(CachedOutput writer) {
+    public @NonNull CompletableFuture<?> run(@NonNull CachedOutput writer) {
         return registryLookupFuture.thenCompose((registryLookupFuture) -> {
             addEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
@@ -284,7 +283,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return "Dragon Variant";
     }
 }

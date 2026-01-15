@@ -4,13 +4,9 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Registry;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.TagEntry;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -22,9 +18,8 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Unique;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.*;
 import java.util.stream.IntStream;
@@ -149,11 +144,11 @@ public record DragonVariant(
     @ApiStatus.Internal //idk where else to put it
     public static final Map<Item, Set<Component>> EQUIPMENT_INFO_MAP = new HashMap<>();
 
-    @NotNull
+    @NonNull
     public static DragonVariant getDefaultVariant(Identifier dragonId, Level world) {
         CompoundTag nbtCompound = new CompoundTag();
         nbtCompound.putString("id", dragonId.toString());
-        URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), nbtCompound), world, EntitySpawnReason.TRIGGERED).get();
+        URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), nbtCompound), world, EntitySpawnReason.TRIGGERED).orElseThrow();
         dragon.discard();
         return dragon.level().registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT)
                 .stream()

@@ -39,7 +39,6 @@ import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.util.URAnimationController;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -266,7 +265,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         goalSelector.addGoal(8, new DragonWanderAroundGoal(this));
         goalSelector.addGoal(8, new FlyingDragonFlyAroundGoal<>(this, 30));
         goalSelector.addGoal(9, new DragonLookAroundGoal(this));
-        targetSelector.addGoal(3, (new DragonRevengeGoal(this, new Class[0])).setAlertOthers(new Class[0]));
+        targetSelector.addGoal(3, (new DragonRevengeGoal(this)).setAlertOthers());
         targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(5, new OwnerHurtByTargetGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
@@ -334,7 +333,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    public @NotNull AABB getPrimaryAttackBox() {
+    public @NonNull AABB getPrimaryAttackBox() {
         return getBoundingBox().inflate(getScale(), 0, getScale());
     }
 
@@ -349,7 +348,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    public @NotNull Vec3 getVehicleAttachmentPoint(@NonNull Entity vehicle) {
+    public @NonNull Vec3 getVehicleAttachmentPoint(@NonNull Entity vehicle) {
         return super.getVehicleAttachmentPoint(vehicle).add(0, vehicle.getBbHeight() - vehicle.getEyeHeight(vehicle.getPose()) - 0.001, 0);
     }
 
@@ -382,12 +381,12 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
             this.range = range;
         }
 
-        public @NotNull PositionSource getListenerSource() {return this.positionSource;}
+        public @NonNull PositionSource getListenerSource() {return this.positionSource;}
 
         public int getListenerRadius() {return this.range;}
 
         @Override
-        public boolean handleGameEvent(ServerLevel world, Holder<GameEvent> event, GameEvent.Context emitter, Vec3 emitterPos) {
+        public boolean handleGameEvent(@NonNull ServerLevel world, @NonNull Holder<GameEvent> event, GameEvent.@NonNull Context emitter, @NonNull Vec3 emitterPos) {
             if (event != URGameEvents.FLUTE_USED) return false;
             if (!(emitter.sourceEntity() instanceof Player player)) return false;
             if (getOwner() != player) return false;

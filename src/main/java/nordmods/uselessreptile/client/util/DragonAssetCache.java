@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.client.util;
 
 import net.minecraft.world.entity.EquipmentSlot;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 

@@ -28,7 +28,6 @@ import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
@@ -86,7 +85,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    public @NotNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
+    public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTame() && isOwnedBy(player) && !isInteractableItem(itemStack) && !player.isShiftKeyDown()) {
             if (!isVehicle() && hasSaddle()) {
@@ -134,12 +133,12 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    protected @NotNull Vec3 getRiddenInput(Player rider, Vec3 movementInput) {
+    protected @NonNull Vec3 getRiddenInput(@NonNull Player rider, @NonNull Vec3 movementInput) {
         return super.getRiddenInput(rider, updateMovementInput(rider, movementInput));
     }
 
     @Override
-    protected void tickRidden(Player rider, Vec3 movementInput) {
+    protected void tickRidden(@NonNull Player rider, @NonNull Vec3 movementInput) {
         if (level().isClientSide() && getControllingPassenger() instanceof LocalPlayer player) {
             boolean isSprintPressed = player.input.keyPresses.sprint();
             boolean isMoveForwardPressed = player.input.keyPresses.forward();

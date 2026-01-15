@@ -4,8 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import nordmods.uselessreptile.UselessReptile;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.TagValueOutput;
+import org.jspecify.annotations.Nullable;
 
 public record URDragonDataStorageComponent(List<CustomData> entityData) {
     public static final Codec<URDragonDataStorageComponent> CODEC = RecordCodecBuilder.create(instance ->

@@ -3,8 +3,7 @@ package nordmods.uselessreptile.common.entity.misc;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
 
 import java.util.function.Function;
 
@@ -20,39 +19,28 @@ public class DragonInventory extends SimpleContainer {
     public final boolean hasHelmet;
     public final boolean hasChestplate;
     public final boolean hasTailArmor;
-    public final boolean hasBanner;
     public final Function<ItemStack, Boolean> isSaddle;
     public final Function<ItemStack, Boolean> isHelmet;
     public final Function<ItemStack, Boolean> isChestplate;
     public final Function<ItemStack, Boolean> isTailArmor;
     public final Function<ItemStack, Boolean> isBanner;
 
-    public DragonInventory(@Nullable URDragonEntity dragon, StorageSize storageSize, boolean hasSaddle, boolean hasHelmet, boolean hasChestplate, boolean hasTailArmor, boolean hasBanner) {
+    public DragonInventory(URDragonEntity dragon, StorageSize storageSize, boolean hasSaddle, boolean hasHelmet, boolean hasChestplate, boolean hasTailArmor) {
         super(getInventorySize(storageSize));
         this.storageSize = storageSize;
         this.hasSaddle = hasSaddle;
         this.hasHelmet = hasHelmet;
         this.hasChestplate = hasChestplate;
         this.hasTailArmor = hasTailArmor;
-        this.hasBanner = hasBanner;
-        if (dragon == null) { //for sake of even being able to register screen handlers
-            this.isSaddle = itemStack -> false;
-            this.isHelmet = itemStack -> false;
-            this.isChestplate = itemStack -> false;
-            this.isTailArmor = itemStack -> false;
-            this.isBanner = itemStack -> false;
-        }
-        else {
-            this.isSaddle = dragon::isSaddle;
-            this.isHelmet = dragon::isHelmet;
-            this.isChestplate = dragon::isChestplate;
-            this.isTailArmor = dragon::isTailArmor;
-            this.isBanner = dragon::isBanner;
-        }
+        this.isSaddle = dragon::isSaddle;
+        this.isHelmet = dragon::isHelmet;
+        this.isChestplate = dragon::isChestplate;
+        this.isTailArmor = dragon::isTailArmor;
+        this.isBanner = dragon::isBanner;
     }
 
     @Override
-    public boolean canAddItem(ItemStack stack) {
+    public boolean canAddItem(@NonNull ItemStack stack) {
         for (int i = 0; i < getContainerSize(); i++) {
             if (canInsertInSlot(stack, i)) return true;
         }
@@ -75,7 +63,7 @@ public class DragonInventory extends SimpleContainer {
                 if (hasTailArmor && itemStack.isEmpty() && isTailArmor.apply(stack)) return true;
             }
             case BANNER_INDEX -> {
-                if (hasBanner && itemStack.isEmpty() && isBanner.apply(stack)) return true;
+                if (hasSaddle && itemStack.isEmpty() && isBanner.apply(stack)) return true;
             }
             default -> {
                 if (itemStack.isEmpty() || ItemStack.isSameItemSameComponents(itemStack, stack) && itemStack.getCount() < itemStack.getMaxStackSize()) return true;
@@ -85,7 +73,7 @@ public class DragonInventory extends SimpleContainer {
     }
 
     @Override
-    public @NotNull ItemStack addItem(ItemStack stack) {
+    public @NonNull ItemStack addItem(ItemStack stack) {
         if (stack.isEmpty()) return ItemStack.EMPTY;
 
         ItemStack itemStack = stack.copy();

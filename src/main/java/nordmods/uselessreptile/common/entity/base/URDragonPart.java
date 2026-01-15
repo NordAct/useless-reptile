@@ -11,8 +11,8 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec2;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 public class URDragonPart extends EntityPart {
     public final URDragonEntity owner;
@@ -60,7 +60,7 @@ public class URDragonPart extends EntityPart {
     }
 
     @Override
-    public @NotNull EntityDimensions getDimensions(Pose pose) {
+    public @NonNull EntityDimensions getDimensions(Pose pose) {
         return super.getDimensions(pose).scale(widthMod, heightMod);
     }
 
@@ -70,7 +70,7 @@ public class URDragonPart extends EntityPart {
     }
 
     @Override
-    protected @NotNull Component getTypeName() {
+    protected @NonNull Component getTypeName() {
         return owner.getTypeName();
     }
 

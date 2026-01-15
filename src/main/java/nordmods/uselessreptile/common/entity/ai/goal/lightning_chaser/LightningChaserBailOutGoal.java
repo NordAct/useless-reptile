@@ -22,8 +22,7 @@ public class LightningChaserBailOutGoal extends Goal {
     @Override
     public boolean canUse() {
         if (entity.isTame() || !entity.isChallenger()) return false;
-        if (entity.getShouldBailOut()) return true;
-        return false;
+        return entity.getShouldBailOut();
     }
 
     @Override

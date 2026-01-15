@@ -15,9 +15,9 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.renderer.LightningChaserRenderer;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
-import org.jetbrains.annotations.NotNull;
 import org.joml.Random;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 //reference: https://habr.com/ru/articles/230483/
 public class LightningBreathRenderer extends EntityRenderer<LightningBreath, LightningBreathRenderer.LightningBreathEntityRenderState> {
@@ -27,12 +27,12 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
     }
 
     @Override
-    public @NotNull LightningBreathEntityRenderState createRenderState() {
+    public @NonNull LightningBreathEntityRenderState createRenderState() {
         return new LightningBreathEntityRenderState();
     }
 
     @Override
-    public void submit(LightningBreathEntityRenderState state, PoseStack matrices, SubmitNodeCollector queue, CameraRenderState cameraState) {
+    public void submit(LightningBreathEntityRenderState state, @NonNull PoseStack matrices, @NonNull SubmitNodeCollector queue, @NonNull CameraRenderState cameraState) {
         int length = state.length;
         if (length < 1) return;
 

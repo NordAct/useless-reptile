@@ -44,7 +44,6 @@ import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.util.URAnimationController;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -288,12 +287,12 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    public @NotNull AABB getAttackBoundingBox(double range) {
+    public @NonNull AABB getAttackBoundingBox(double range) {
         return getSecondaryAttackBox();
     }
 
     @Override
-    public @NotNull AABB getSecondaryAttackBox() {
+    public @NonNull AABB getSecondaryAttackBox() {
         Vec3 rotationVec = calculateViewVector(0, getYRot());
         double x = rotationVec.x * 2;
         double z = rotationVec.z * 2;

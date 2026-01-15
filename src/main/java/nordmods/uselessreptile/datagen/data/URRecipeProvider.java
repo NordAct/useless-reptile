@@ -18,8 +18,8 @@ import net.minecraft.world.level.ItemLike;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -29,7 +29,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
     }
 
     @Override
-    protected @NotNull RecipeProvider createRecipeProvider(HolderLookup.Provider wrapperLookup, RecipeOutput recipeExporter) {
+    protected @NonNull RecipeProvider createRecipeProvider(HolderLookup.@NonNull Provider wrapperLookup, @NonNull RecipeOutput recipeExporter) {
         return new RecipeProvider(wrapperLookup, recipeExporter) {
             @Override
             public void buildRecipes() {
@@ -68,7 +68,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
                         .save(output);
 
                 HolderGetter<Item> registryEntryLookup = wrapperLookup.lookupOrThrow(Registries.ITEM);
-                offerVortexHornRecipe(this, registryEntryLookup, output, URItems.VORTEX_HORN, Items.GOAT_HORN, (ItemLike) null);
+                offerVortexHornRecipe(this, registryEntryLookup, output, null);
                 offerVortexHornRecipe(this, registryEntryLookup, output, URItems.IRON_VORTEX_HORN, URItems.VORTEX_HORN, ConventionalItemTags.IRON_INGOTS);
                 offerVortexHornRecipe(this, registryEntryLookup, output, URItems.GOLD_VORTEX_HORN, URItems.IRON_VORTEX_HORN, ConventionalItemTags.GOLD_INGOTS);
                 offerVortexHornRecipe(this, registryEntryLookup, output, URItems.DIAMOND_VORTEX_HORN, URItems.GOLD_VORTEX_HORN, ConventionalItemTags.DIAMOND_GEMS);
@@ -167,10 +167,10 @@ public class URRecipeProvider extends FabricRecipeProvider {
                 .save(exporter);
     }
 
-    protected static void offerVortexHornRecipe(RecipeProvider generator,HolderGetter<Item> registryEntryLookup, RecipeOutput exporter, ItemLike outputHorn, ItemLike inputHorn, @Nullable ItemLike inputMaterial) {
-        VortexHornRecipeJsonBuilder builder = VortexHornRecipeJsonBuilder.shaped(registryEntryLookup, RecipeCategory.TOOLS, outputHorn)
+    protected static void offerVortexHornRecipe(RecipeProvider generator, HolderGetter<Item> registryEntryLookup, RecipeOutput exporter, @Nullable ItemLike inputMaterial) {
+        VortexHornRecipeJsonBuilder builder = VortexHornRecipeJsonBuilder.shaped(registryEntryLookup, RecipeCategory.TOOLS, URItems.VORTEX_HORN)
                 .define('R', Items.BREEZE_ROD)
-                .define('H', inputHorn);
+                .define('H', Items.GOAT_HORN);
 
         char corner = inputMaterial == null ? ' ' : 'I';
         if (inputMaterial != null) builder.define(corner, inputMaterial);
@@ -201,7 +201,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return "UR Recipes";
     }
 }

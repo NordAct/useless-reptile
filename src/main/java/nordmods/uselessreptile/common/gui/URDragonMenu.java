@@ -28,15 +28,12 @@ public class URDragonMenu extends AbstractContainerMenu {
                     return !(playerEntity.getVehicle() instanceof URRideableDragonEntity);
                 }
             });
+            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.BANNER_INDEX, EDGE_OFFSET, SLOT_SIDE *2));
         }
 
         if (inventory.hasHelmet) addSlot(new DragonEquipmentSlot(inventory, DragonInventory.HELMET_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE));
         if (inventory.hasChestplate) addSlot(new DragonEquipmentSlot(inventory, DragonInventory.CHESTPLATE_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *2));
         if (inventory.hasTailArmor) addSlot(new DragonEquipmentSlot(inventory, DragonInventory.TAIL_ARMOR_INDEX, EDGE_OFFSET+ ENTITY_WINDOW_SIDE + SLOT_SIDE, SLOT_SIDE *3));
-
-        if (inventory.hasBanner) {
-            addSlot(new DragonEquipmentSlot(inventory, DragonInventory.BANNER_INDEX, EDGE_OFFSET, SLOT_SIDE *2));
-        }
 
         //dragon storage
         int size = storageSize.getSize();

@@ -6,7 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.URSoundEvent;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,7 +16,7 @@ public class URSoundsProvider extends FabricSoundsProvider {
     }
 
     @Override
-    protected void configure(HolderLookup.Provider registryLookup, SoundExporter exporter) {
+    protected void configure(HolderLookup.@NonNull Provider registryLookup, SoundExporter exporter) {
         exporter.add(URSoundEvent.DRAGON_WOOSH,
                 SoundTypeBuilder.of()
                         .sound(SoundTypeBuilder.EntryBuilder.ofFile(UselessReptile.id("common/woosh1")))
@@ -273,7 +273,7 @@ public class URSoundsProvider extends FabricSoundsProvider {
     }
 
     @Override
-    public @NotNull String getName() {
+    public @NonNull String getName() {
         return "UR Sounds";
     }
 }

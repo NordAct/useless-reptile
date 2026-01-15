@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.client.util.duck;
 
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.UUID;
 

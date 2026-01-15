@@ -21,7 +21,6 @@ import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNaviga
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
-import org.jetbrains.annotations.NotNull;
 import org.jspecify.annotations.NonNull;
 
 public abstract class URFlyingDragonEntity extends URDragonEntity implements FlyingDragon {
@@ -206,7 +205,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public @NotNull FlyingDragonMoveControl<? extends FlyingDragon> getMoveControl() {
+    public @NonNull FlyingDragonMoveControl<? extends FlyingDragon> getMoveControl() {
         return (FlyingDragonMoveControl<?>) moveControl;
     }
 

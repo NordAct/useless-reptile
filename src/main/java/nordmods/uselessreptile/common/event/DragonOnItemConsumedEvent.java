@@ -5,8 +5,7 @@ import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
-
+import org.jspecify.annotations.Nullable;
 //javadoc
 import nordmods.uselessreptile.common.init.URModEvents;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;

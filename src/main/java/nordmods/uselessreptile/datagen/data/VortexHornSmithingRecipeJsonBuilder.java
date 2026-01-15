@@ -14,7 +14,7 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.TransmuteResult;
 import nordmods.uselessreptile.common.recipe.VortexHornSmithingRecipe;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
@@ -24,17 +24,17 @@ public class VortexHornSmithingRecipeJsonBuilder extends SmithingTransformRecipe
         super(template, base, addition, category, result);
     }
 
-    public static VortexHornSmithingRecipeJsonBuilder smithing(Ingredient template, Ingredient base, Ingredient addition, RecipeCategory category, Item result) {
+    public static VortexHornSmithingRecipeJsonBuilder smithing(@NonNull Ingredient template, @NonNull Ingredient base, @NonNull Ingredient addition, @NonNull RecipeCategory category, @NonNull Item result) {
         return new VortexHornSmithingRecipeJsonBuilder(template, base, addition, category, result);
     }
 
     @Override
-    public @NotNull VortexHornSmithingRecipeJsonBuilder unlocks(String string, Criterion<?> advancementCriterion) {
+    public @NonNull VortexHornSmithingRecipeJsonBuilder unlocks(@NonNull String string, @NonNull Criterion<?> advancementCriterion) {
         return (VortexHornSmithingRecipeJsonBuilder) super.unlocks(string, advancementCriterion);
     }
 
     @Override
-    public void save(RecipeOutput exporter, ResourceKey<Recipe<?>> recipeKey) {
+    public void save(RecipeOutput exporter, @NonNull ResourceKey<Recipe<?>> recipeKey) {
         Advancement.Builder builder = exporter
                 .advancement()
                 .addCriterion(

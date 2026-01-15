@@ -9,7 +9,7 @@ import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.client.renderer.layer.ItemRenderLayer;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class RiverPikehornFishRenderLayer extends ItemRenderLayer {
     public RiverPikehornFishRenderLayer(BRRenderer<?> parentRenderer) {

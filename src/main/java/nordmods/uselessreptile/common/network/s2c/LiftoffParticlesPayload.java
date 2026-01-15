@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public record LiftoffParticlesPayload(int id) implements CustomPacketPayload {
     public static final Identifier ID = UselessReptile.id("liftoff_particles");
@@ -22,7 +22,7 @@ public record LiftoffParticlesPayload(int id) implements CustomPacketPayload {
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NonNull Type<? extends CustomPacketPayload> type() {
         return PAYLOAD_ID;
     }
 }

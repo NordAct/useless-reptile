@@ -9,7 +9,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.PathfindingContext;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public class MagmamuncherNavigation extends DragonNavigation {
     public MagmamuncherNavigation(URDragonEntity mobEntity, Level world) {
@@ -17,19 +17,19 @@ public class MagmamuncherNavigation extends DragonNavigation {
     }
 
     @Override
-    public boolean canCutCorner(PathType nodeType) {
+    public boolean canCutCorner(@NonNull PathType nodeType) {
         return nodeType != PathType.DANGER_OTHER && nodeType != PathType.WALKABLE_DOOR;
     }
 
     @Override
-    protected @NotNull PathFinder createPathFinder(int range) {
+    protected @NonNull PathFinder createPathFinder(int range) {
         this.nodeEvaluator = new MagmamuncherPathNodeMaker();
         return new PathFinder(nodeEvaluator, range);
     }
 
     public static class MagmamuncherPathNodeMaker extends WalkNodeEvaluator {
         @Override
-        public @NotNull PathType getPathType(PathfindingContext context, int x, int y, int z) {
+        public @NonNull PathType getPathType(PathfindingContext context, int x, int y, int z) {
             BlockState blockState = context.getBlockState(new BlockPos(x, y, z));
             return blockState.is(Blocks.MAGMA_BLOCK) ? PathType.BLOCKED : super.getPathType(context, x, y, z);
         }

@@ -59,10 +59,9 @@ import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.URAnimationController;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
@@ -521,7 +520,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public @NotNull AABB getPrimaryAttackBox() {
+    public @NonNull AABB getPrimaryAttackBox() {
         Vec3 rotationVec = calculateViewVector(0, getYRot()).scale(2.5);
         return getBoundingBox().move(rotationVec);
     }
@@ -540,7 +539,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public @NotNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
+    public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (isTameable()) {
@@ -619,7 +618,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
             this.range = range;
         }
 
-        public @NotNull PositionSource getListenerSource() {return this.positionSource;}
+        public @NonNull PositionSource getListenerSource() {return this.positionSource;}
 
         public int getListenerRadius() {return this.range;}
 

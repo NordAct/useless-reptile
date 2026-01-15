@@ -8,7 +8,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 public record OpenDragonInventoryPayload(int dragonId, int containterId) implements CustomPacketPayload {
     public static final Identifier ID = UselessReptile.id("open_dragon_inventory");
@@ -25,7 +25,7 @@ public record OpenDragonInventoryPayload(int dragonId, int containterId) impleme
     }
 
     @Override
-    public @NotNull Type<? extends CustomPacketPayload> type() {
+    public @NonNull Type<? extends CustomPacketPayload> type() {
         return PAYLOAD_ID;
     }
 }

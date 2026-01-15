@@ -11,7 +11,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 //I really REALLY wish Mojang separated AbstractArrow's movement and collision from behaviour of being pickable item
 public abstract class URMovingProjectile extends AbstractArrow {
@@ -31,18 +31,18 @@ public abstract class URMovingProjectile extends AbstractArrow {
     }
 
     @Override
-    protected boolean canHitEntity(Entity entity) {
+    protected boolean canHitEntity(@NonNull Entity entity) {
         if (entity instanceof EntityPart entityPart && entityPart.owner == getOwner()) return false;
         return super.canHitEntity(entity);
     }
 
     @Override
-    protected @NotNull ItemStack getDefaultPickupItem() { //this is a pain in my ass
+    protected @NonNull ItemStack getDefaultPickupItem() { //this is a pain in my ass
         return Items.BROWN_DYE.getDefaultInstance();
     }
 
     @Override
-    public void playSound(SoundEvent sound, float volume, float pitch) {
+    public void playSound(@NonNull SoundEvent sound, float volume, float pitch) {
         if (!isSilent()) level().playLocalSound(getX(), getY(),getZ(), sound, getOwner() != null ? getOwner().getSoundSource() : SoundSource.NEUTRAL, volume, pitch,true);
     }
 

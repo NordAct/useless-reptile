@@ -5,7 +5,7 @@ import nordmods.biscuit_roll.common.state.BRState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.renderer.base.DragonEquipmentRenderer;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class BannerRenderLayer extends ItemRenderLayer {
     public BannerRenderLayer(DragonEquipmentRenderer parentRenderer) {

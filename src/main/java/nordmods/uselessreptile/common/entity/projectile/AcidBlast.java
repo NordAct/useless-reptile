@@ -14,7 +14,7 @@ import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
 import nordmods.uselessreptile.common.init.*;
-import org.jetbrains.annotations.NotNull;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,14 +40,14 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult blockHitResult) {
+    protected void onHitBlock(@NonNull BlockHitResult blockHitResult) {
         if (!level().isClientSide()) spawnEffectCloud();
         super.onHitBlock(blockHitResult);
         discard();
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(@NonNull EntityHitResult entityHitResult) {
         if (!(level() instanceof ServerLevel world)) return;
         Entity target = entityHitResult.getEntity();
         if (!target.getType().is(URTags.DRAGON_IMMUNE)) target.hurtServer(world, target.damageSources().source(URDamageTypes.ACID, getOwner()), getResultingDamage());
@@ -87,7 +87,7 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
     }
 
     @Override
-    protected @NotNull SoundEvent getDefaultHitGroundSoundEvent() {
+    protected @NonNull SoundEvent getDefaultHitGroundSoundEvent() {
         return URSoundEvent.ACID_SPLASH;
     }
 
