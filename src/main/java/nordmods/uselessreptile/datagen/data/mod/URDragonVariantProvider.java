@@ -15,7 +15,6 @@ import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URTags;
 import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
@@ -24,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("deprecation")
 public class URDragonVariantProvider implements DataProvider {
     private static final List<Tuple<Identifier, DragonVariant>> holder = new ArrayList<>();
     private static final List<Tuple<Identifier, DragonVariant>> holderCustomName = new ArrayList<>();
@@ -55,10 +55,6 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 UselessReptile.id("wyvern/" + name),
                 UselessReptile.id("wyvern"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
                 Optional.empty(),
                 Optional.empty(),
                 -1,
@@ -123,10 +119,6 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 UselessReptile.id("wyvern/" + name),
                 UselessReptile.id("wyvern"),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.WYVERN_SADDLES.location(), true))),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
                 Optional.of(UselessReptile.id("wyvern/default")),
                 Optional.empty(),
                 128,
@@ -161,10 +153,6 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 UselessReptile.id("moleclaw/" + name),
                 UselessReptile.id("moleclaw"),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.MOLECLAW_SADDLES.location(), true))),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.MOLECLAW_HELMETS.location(), true))),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.MOLECLAW_CHESTPLATES.location(), true))),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.MOLECLAW_TAIL_ARMOR.location(), true))),
                 Optional.of(UselessReptile.id("moleclaw/" + (rare ? "rare" : "default"))),
                 Optional.empty(),
                 64,
@@ -194,10 +182,6 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 UselessReptile.id("river_pikehorn/" + name),
                 UselessReptile.id("empty"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
                 Optional.of(UselessReptile.id("river_pikehorn/default")),
                 Optional.empty(),
                 1,
@@ -227,10 +211,6 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 UselessReptile.id("lightning_chaser/" + name),
                 UselessReptile.id("lightning_chaser"),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.LIGHTNING_CHASER_SADDLES.location(), true))),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.LIGHTNING_CHASER_HELMETS.location(), true))),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.LIGHTNING_CHASER_CHESTPLATES.location(), true))),
-                Optional.of(List.of(new ExtraCodecs.TagOrElementLocation(URTags.LIGHTNING_CHASER_TAIL_ARMOR.location(), true))),
                 Optional.of(UselessReptile.id("lightning_chaser/" + name)),
                 Optional.empty(),
                 3,
@@ -253,10 +233,6 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 UselessReptile.id("magmamuncher/" + name),
                 UselessReptile.id("empty"),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
-                Optional.empty(),
                 Optional.of(UselessReptile.id("magmamuncher/default")),
                 Optional.empty(),
                 12,

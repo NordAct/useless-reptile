@@ -21,19 +21,7 @@ public class URTags {
     public static final TagKey<Biome> LIGHTNING_CHASER_SPAWN_BLACKLIST = register(Registries.BIOME,"lightning_chaser_spawn_blacklist");
     public static final TagKey<Biome> MAGMAMUNCHER_SPAWN_BLACKLIST = register(Registries.BIOME,"magmamuncher_spawn_blacklist");
 
-    public static final TagKey<Item> MOLECLAW_CHESTPLATES = register(Registries.ITEM, "moleclaw_chestplates");
-    public static final TagKey<Item> MOLECLAW_TAIL_ARMOR = register(Registries.ITEM, "moleclaw_tail_armor");
-    public static final TagKey<Item> MOLECLAW_HELMETS = register(Registries.ITEM, "moleclaw_helmets");
     public static final TagKey<Item> PROTECTS_MOLECLAW_FROM_LIGHT = register(Registries.ITEM, "protects_moleclaw_from_light");
-    public static final TagKey<Item> MOLECLAW_SADDLES = register(Registries.ITEM, "moleclaw_saddles");
-
-    public static final TagKey<Item> LIGHTNING_CHASER_CHESTPLATES = register(Registries.ITEM, "lightning_chaser_chestplates");
-    public static final TagKey<Item> LIGHTNING_CHASER_TAIL_ARMOR = register(Registries.ITEM, "lightning_chaser_tail_armor");
-    public static final TagKey<Item> LIGHTNING_CHASER_HELMETS = register(Registries.ITEM, "lightning_chaser_helmets");
-    public static final TagKey<Item> LIGHTNING_CHASER_SADDLES = register(Registries.ITEM, "lightning_chaser_saddles");
-
-    public static final TagKey<Item> WYVERN_SADDLES = register(Registries.ITEM, "wyvern_saddles");
-
     public static final TagKey<Item> VORTEX_HORNS = register(Registries.ITEM, "vortex_horns");
 
     public static final TagKey<DimensionType> DEPLETED_MAGMA_REGENERATES = register(Registries.DIMENSION_TYPE, "depleted_magma_regenerates");

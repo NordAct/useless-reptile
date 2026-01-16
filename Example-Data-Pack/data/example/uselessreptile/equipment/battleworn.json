@@ -1,77 +1,77 @@
 {
   "parent": "uselessreptile:moleclaw",
-  "equipment": [
-    {
-      "item": "uselessreptile:moleclaw_helmet_iron",
+  "equipment": {
+    "uselessreptile:moleclaw_helmet_iron": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_iron.png",
         "model": "example:biscuit_roll/models/moleclaw/helmet.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "helmet"
     },
-    {
-      "item": "uselessreptile:dragon_chestplate_iron",
+    "uselessreptile:dragon_chestplate_iron": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_iron.png",
         "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "chestplate"
     },
-    {
-      "item": "uselessreptile:dragon_tail_armor_iron",
+    "uselessreptile:dragon_tail_armor_iron": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_iron.png",
         "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "tail_armor"
     },
-    {
-      "item": "uselessreptile:moleclaw_helmet_gold",
+    "uselessreptile:moleclaw_helmet_gold": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_gold.png",
         "model": "example:biscuit_roll/models/moleclaw/helmet.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "helmet"
     },
-    {
-      "item": "uselessreptile:dragon_chestplate_gold",
+    "uselessreptile:dragon_chestplate_gold": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_gold.png",
         "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "chestplate"
     },
-    {
-      "item": "uselessreptile:dragon_tail_armor_gold",
+    "uselessreptile:dragon_tail_armor_gold": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_gold.png",
         "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "tail_armor"
     },
-    {
-      "item": "uselessreptile:moleclaw_helmet_diamond",
+    "uselessreptile:moleclaw_helmet_diamond": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_diamond.png",
         "model": "example:biscuit_roll/models/moleclaw/helmet.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "helmet"
     },
-    {
-      "item": "uselessreptile:dragon_chestplate_diamond",
+    "uselessreptile:dragon_chestplate_diamond": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_diamond.png",
         "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "chestplate"
     },
-    {
-      "item": "uselessreptile:dragon_tail_armor_diamond",
+    "uselessreptile:dragon_tail_armor_diamond": {
       "model_data": {
         "texture": "example:textures/moleclaw/armor_diamond.png",
         "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "tail_armor"
     }
-  ]
+  }
 }

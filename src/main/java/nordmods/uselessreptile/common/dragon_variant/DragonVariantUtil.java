@@ -3,63 +3,44 @@ package nordmods.uselessreptile.common.dragon_variant;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.Level;
-import nordmods.uselessreptile.client.util.ResourceUtil;
-import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
+import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.init.URResourceKeys;
-import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DragonVariantUtil {
-    @Nullable
-    public static DragonModelData getDragonModelData(Identifier dragonId, String name, String variant, Level level) {
-        if (!ResourceUtil.isResourceReloadFinished) return null;
-        return getDragonModelData(DragonVariant.getDragonVariant(dragonId, name, variant, level), level);
-    }
-
-    @Nullable
     public static DragonModelData getDragonModelData(DragonVariant dragonVariant, Level level) {
-        if (!ResourceUtil.isResourceReloadFinished) return null;
         return level.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_MODEL).getValue(dragonVariant.dragonModelData());
     }
 
-    public static EquipmentModelData.@Nullable Equipment getEquipmentModelData(Identifier dragonId, String name, String variant, Level level, Identifier item) {
-        if (!ResourceUtil.isResourceReloadFinished) return null;
-        DragonVariant dragonVariant = DragonVariant.getDragonVariant(dragonId, name, variant, level);
-        return getEquipmentModelData(dragonVariant, level, item);
-    }
-
-    public static EquipmentModelData.@Nullable Equipment getEquipmentModelData(DragonVariant dragonVariant, Level level, Identifier item) {
-        if (!ResourceUtil.isResourceReloadFinished) return null;
-
+    public static Map<Identifier, EquipmentModelData.Equipment> getEquipmentModelDataMap(DragonVariant dragonVariant, Level level) {
         RegistryAccess registryManager = level.registryAccess();
         EquipmentModelData dragonEquipment = registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT).getValue(dragonVariant.dragonEquipment());
-        if (dragonEquipment == null) return null;
+        if (dragonEquipment == null) return new HashMap<>();
 
-        List<EquipmentModelData.Equipment> equipments = new ArrayList<>(dragonEquipment.equipment());
-        equipments.addAll(getInjections(registryManager, dragonVariant.dragonEquipment()));
+        Map<Identifier, EquipmentModelData.Equipment> equipments = new HashMap<>(dragonEquipment.equipment());
+        equipments.putAll(getInjections(registryManager, dragonVariant.dragonEquipment()));
 
         Identifier parent = dragonEquipment.parent().orElse(null);
         while (parent != null) {
             dragonEquipment = registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT).getValue(parent);
             if (dragonEquipment == null) break;
-            equipments.addAll(dragonEquipment.equipment());
-            equipments.addAll(getInjections(registryManager, parent));
+            dragonEquipment.equipment().forEach(equipments::putIfAbsent);
+            getInjections(registryManager, parent).forEach(equipments::putIfAbsent);
             parent = dragonEquipment.parent().orElse(null);
         }
 
-        for (EquipmentModelData.Equipment equipment : equipments) if (equipment.item().equals(item)) return equipment;
-        return null;
+        return equipments;
     }
 
-    private static List<EquipmentModelData.Equipment> getInjections(RegistryAccess registryManager, Identifier parent) {
-        List<EquipmentModelData.Equipment> injections = new ArrayList<>();
+    private static Map<Identifier, EquipmentModelData.Equipment> getInjections(RegistryAccess registryManager, Identifier parent) {
+        Map<Identifier, EquipmentModelData.Equipment> injections = new HashMap<>();
         registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT_INJECT)
                 .stream()
                 .filter(inject -> inject.parent().isPresent() && inject.parent().get().equals(parent))
-                .forEach(inject -> injections.addAll(inject.equipment()));
+                .forEach(inject -> injections.putAll(inject.equipment()));
         return injections;
     }
 }

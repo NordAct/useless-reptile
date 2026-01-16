@@ -1,24 +1,12 @@
 {
   "base_taming_progress": 3,
-  "chestplate_items": [
-    "#uselessreptile:lightning_chaser_chestplates"
-  ],
   "dragon_model": "uselessreptile:lightning_chaser/grey",
   "equipment": "uselessreptile:lightning_chaser",
   "food_items": {
     "#minecraft:meat": 3
   },
-  "helmet_items": [
-    "#uselessreptile:lightning_chaser_helmets"
-  ],
   "id": "uselessreptile:lightning_chaser",
   "name": "grey",
-  "saddle_items": [
-    "#uselessreptile:lightning_chaser_saddles"
-  ],
   "spawn_conditions": "uselessreptile:lightning_chaser/grey",
-  "tail_armor_items": [
-    "#uselessreptile:lightning_chaser_tail_armor"
-  ],
   "variant_name_key": "variant.uselessreptile.lightning_chaser.grey"
 }

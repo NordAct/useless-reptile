@@ -1,109 +1,109 @@
 {
-  "equipment": [
-    {
-      "item": "minecraft:saddle",
+  "equipment": {
+    "minecraft:saddle": {
       "max_passengers": 1,
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/saddle.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/saddle.geo.json",
         "texture": "uselessreptile:textures/entity/lightning_chaser/saddle.png"
-      }
+      },
+      "slot": "saddle"
     },
-    {
-      "item": "uselessreptile:dragon_helmet_iron",
-      "model_data": {
-        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
-        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
-      }
-    },
-    {
-      "item": "uselessreptile:dragon_helmet_gold",
-      "model_data": {
-        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
-        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png"
-      }
-    },
-    {
-      "item": "uselessreptile:dragon_helmet_diamond",
-      "model_data": {
-        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
-        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png"
-      }
-    },
-    {
-      "item": "uselessreptile:dragon_helmet_netherite",
-      "model_data": {
-        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
-        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_netherite.png"
-      }
-    },
-    {
-      "item": "uselessreptile:dragon_chestplate_iron",
-      "model_data": {
-        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
-        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/chestplate.geo.json",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
-      }
-    },
-    {
-      "item": "uselessreptile:dragon_chestplate_gold",
-      "model_data": {
-        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
-        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/chestplate.geo.json",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png"
-      }
-    },
-    {
-      "item": "uselessreptile:dragon_chestplate_diamond",
+    "uselessreptile:dragon_chestplate_diamond": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/chestplate.geo.json",
         "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png"
-      }
+      },
+      "slot": "chestplate"
     },
-    {
-      "item": "uselessreptile:dragon_chestplate_netherite",
+    "uselessreptile:dragon_chestplate_gold": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/chestplate.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png"
+      },
+      "slot": "chestplate"
+    },
+    "uselessreptile:dragon_chestplate_iron": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/chestplate.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
+      },
+      "slot": "chestplate"
+    },
+    "uselessreptile:dragon_chestplate_netherite": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/chestplate.geo.json",
         "texture": "uselessreptile:textures/entity/lightning_chaser/armor_netherite.png"
-      }
+      },
+      "slot": "chestplate"
     },
-    {
-      "item": "uselessreptile:dragon_tail_armor_iron",
+    "uselessreptile:dragon_helmet_diamond": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
-        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/tail_armor.geo.json",
-        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
-      }
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png"
+      },
+      "slot": "helmet"
     },
-    {
-      "item": "uselessreptile:dragon_tail_armor_gold",
+    "uselessreptile:dragon_helmet_gold": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
-        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/tail_armor.geo.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
         "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png"
-      }
+      },
+      "slot": "helmet"
     },
-    {
-      "item": "uselessreptile:dragon_tail_armor_diamond",
+    "uselessreptile:dragon_helmet_iron": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
+      },
+      "slot": "helmet"
+    },
+    "uselessreptile:dragon_helmet_netherite": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_netherite.png"
+      },
+      "slot": "helmet"
+    },
+    "uselessreptile:dragon_tail_armor_diamond": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/tail_armor.geo.json",
         "texture": "uselessreptile:textures/entity/lightning_chaser/armor_diamond.png"
-      }
+      },
+      "slot": "tail_armor"
     },
-    {
-      "item": "uselessreptile:dragon_tail_armor_netherite",
+    "uselessreptile:dragon_tail_armor_gold": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/tail_armor.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_gold.png"
+      },
+      "slot": "tail_armor"
+    },
+    "uselessreptile:dragon_tail_armor_iron": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/tail_armor.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_iron.png"
+      },
+      "slot": "tail_armor"
+    },
+    "uselessreptile:dragon_tail_armor_netherite": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/tail_armor.geo.json",
         "texture": "uselessreptile:textures/entity/lightning_chaser/armor_netherite.png"
-      }
+      },
+      "slot": "tail_armor"
     }
-  ]
+  }
 }

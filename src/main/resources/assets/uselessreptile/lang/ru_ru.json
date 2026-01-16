@@ -254,16 +254,7 @@
   "advancement.uselessreptile.eat_from_inventory.desc": "Положите еду в инвентарь дракона и позвольте ему ее съесть",
   "advancement.uselessreptile.give_potion.desc": "Дайте вашему дракону зелье",
 
-  "tag.item.uselessreptile.moleclaw_chestplates": "Нагрудники для кротолапа",
-  "tag.item.uselessreptile.moleclaw_tail_armor": "Броня на хвост для кротолапа",
-  "tag.item.uselessreptile.moleclaw_helmets": "Шлемы для кротолапа",
   "tag.item.uselessreptile.protects_moleclaw_from_light": "Защищает кротолапа от света",
-  "tag.item.uselessreptile.lightning_chaser_chestplates": "Нагрудники для ловца молний",
-  "tag.item.uselessreptile.lightning_chaser_tail_armor": "Броня на хвост для ловца молний",
-  "tag.item.uselessreptile.lightning_chaser_helmets": "Шлемы для ловца молний",
-  "tag.item.uselessreptile.wyvern_saddles": "Седла для болотной виверны",
-  "tag.item.uselessreptile.moleclaw_saddles": "Седла для кротолапа",
-  "tag.item.uselessreptile.lightning_chaser_saddles": "Седла для ловца молний",
   "tag.item.uselessreptile.vortex_horns": "Вихревые рога",
 
   "attribute.name.dragon.ground_rotation_speed": "Скорость поворота на земле",
@@ -296,5 +287,10 @@
   "variant.uselessreptile.lightning_chaser.blue": "Синий",
   "variant.uselessreptile.lightning_chaser.purple": "Фиолетвый",
   "variant.uselessreptile.magmamuncher.netherrack": "Адский камень",
-  "variant.uselessreptile.magmamuncher.magma": "Магма"
+  "variant.uselessreptile.magmamuncher.magma": "Магма",
+
+  "slot.uselessreptile.saddle": "Седло",
+  "slot.uselessreptile.helmet": "Шлем",
+  "slot.uselessreptile.chestplate": "Нагрудник",
+  "slot.uselessreptile.tail_armor": "Броня на хвост"
 }

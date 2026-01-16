@@ -1,21 +1,21 @@
 {
   "parent": "uselessreptile:moleclaw",
-  "equipment": [
-    {
-      "item": "minecraft:dirt",
+  "equipment": {
+    "minecraft:dirt": {
       "model_data": {
         "model": "example:biscuit_roll/models/moleclaw/block.json",
         "texture": "minecraft:textures/block/dirt.png",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "helmet"
     },
-    {
-      "item": "minecraft:stone",
+    "minecraft:stone": {
       "model_data": {
         "model": "example:biscuit_roll/models/moleclaw/block.json",
         "texture": "minecraft:textures/block/stone.png",
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
-      }
+      },
+      "slot": "helmet"
     }
-  ]
+  }
 }

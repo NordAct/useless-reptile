@@ -1,13 +1,13 @@
 {
   "parent": "uselessreptile:wyvern",
-  "equipment": [
-    {
-      "item": "minecraft:saddle",
+  "equipment": {
+    "minecraft:saddle": {
       "model_data": {
         "texture": "example:textures/wyvern/saddle_barren.png",
         "model": "example:biscuit_roll/models/wyvern/barren_saddle.json",
         "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/saddle.animation.json"
-      }
+      },
+      "slot": "saddle"
     }
-  ]
+  }
 }

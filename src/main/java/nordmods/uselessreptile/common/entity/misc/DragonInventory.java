@@ -1,5 +1,7 @@
 package nordmods.uselessreptile.common.entity.misc;
 
+import com.mojang.serialization.Codec;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -123,5 +125,23 @@ public class DragonInventory extends SimpleContainer {
         }
 
         public int getSize() {return size;}
+    }
+
+    public enum Slot implements StringRepresentable{
+        SADDLE,
+        HELMET,
+        CHESTPLATE,
+        TAIL_ARMOR;
+
+        public static final Codec<Slot> CODEC = StringRepresentable.fromEnum(Slot::values);
+
+        @Override
+        public @NonNull String getSerializedName() {
+            return toString().toLowerCase();
+        }
+
+        public String getTranslationKey() {
+            return "slot.uselessreptile." + getSerializedName();
+        }
     }
 }

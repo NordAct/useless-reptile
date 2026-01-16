@@ -8,9 +8,6 @@
   },
   "id": "uselessreptile:wyvern",
   "name": "green",
-  "saddle_items": [
-    "#uselessreptile:wyvern_saddles"
-  ],
   "spawn_conditions": "uselessreptile:wyvern/default",
   "taming_items": {
     "minecraft:chicken": [
