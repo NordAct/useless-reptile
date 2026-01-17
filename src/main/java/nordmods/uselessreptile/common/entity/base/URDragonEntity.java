@@ -78,8 +78,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.util.AssetCahceOwner;
-import nordmods.uselessreptile.client.util.DragonAssetCache;
+import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
+import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
@@ -518,7 +518,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             setItemSlot(EquipmentSlot.LEGS, tail);
 
             ItemStack banner = inventory.getItem(4);
-            setItemSlot(EquipmentSlot.OFFHAND, banner);
+            setItemSlot(EquipmentSlot.BODY, banner);
 
             if (getOwner() instanceof ServerPlayer serverPlayer) { //TODO i really should unhardcode this...
                 if ((head.is(URItems.DRAGON_HELMET_DIAMOND) || head.is(URItems.MOLECLAW_HELMET_DIAMOND))

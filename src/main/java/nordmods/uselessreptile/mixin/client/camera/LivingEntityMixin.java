@@ -21,6 +21,7 @@ public abstract class LivingEntityMixin extends Entity{
         super(type, world);
     }
 
+    /// Forces first person perspective when stopping to ride dragon
     @Inject(method = "stopRiding", at = @At("HEAD"))
     private void setFirstPersonPerspective(CallbackInfo ci) {
         if (!URClientConfig.getConfig().autoThirdPerson) return;

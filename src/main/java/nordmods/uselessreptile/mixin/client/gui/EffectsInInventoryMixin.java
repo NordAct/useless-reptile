@@ -17,7 +17,7 @@ import java.util.List;
 
 @Mixin(EffectsInInventory.class)
 public abstract class EffectsInInventoryMixin {
-
+    /// Removes shock effect from displayed status effect list
     @Inject(method = "renderEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;getFont()Lnet/minecraft/client/gui/Font;"))
     private void yeetShockEffect(GuiGraphics guiGraphics, Collection<MobEffectInstance> collection, int i, int j, int k, int l, int m, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
         List<MobEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));

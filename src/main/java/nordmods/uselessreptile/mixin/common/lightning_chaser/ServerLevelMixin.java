@@ -5,6 +5,7 @@ import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+/// Manages lightning chaser spawning on server
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin implements LightningChaserSpawnTimer {
     @Unique

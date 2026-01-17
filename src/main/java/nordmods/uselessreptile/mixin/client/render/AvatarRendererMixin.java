@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/// Adds and renders head mount dragon on avatar model
 @Mixin(AvatarRenderer.class)
 public abstract class AvatarRendererMixin<A extends Avatar & ClientAvatarEntity> extends LivingEntityRenderer<A, AvatarRenderState, PlayerModel> {
 
@@ -24,7 +25,7 @@ public abstract class AvatarRendererMixin<A extends Avatar & ClientAvatarEntity>
     }
 
     @Inject(method = "<init>(Lnet/minecraft/client/renderer/entity/EntityRendererProvider$Context;Z)V", at = @At("TAIL"))
-    private void addPikehornOnHead(EntityRendererProvider.Context ctx, boolean slim, CallbackInfo ci) {
+    private void addHeadMountDragon(EntityRendererProvider.Context ctx, boolean slim, CallbackInfo ci) {
         addLayer(new HeadMountDragonRenderLayer(this));
     }
 

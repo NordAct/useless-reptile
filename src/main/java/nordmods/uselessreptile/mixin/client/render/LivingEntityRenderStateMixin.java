@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.util.UUID;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 
+/// DragonPassengerRenderState impl
 @Mixin(LivingEntityRenderState.class)
 public abstract class LivingEntityRenderStateMixin implements DragonPassengerRenderState {
     @Unique private boolean isRidingDragon;

@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
 
+/// Spawns head mount dragon when player is loaded
 @Mixin(targets = "net.minecraft.server.network.config.PrepareSpawnTask$Ready")
 public abstract class PrepareSpawnTaskMixin {
     @Inject(

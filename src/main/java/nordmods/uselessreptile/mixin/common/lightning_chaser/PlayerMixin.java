@@ -19,9 +19,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/// Saves lightning chaser spawn timer to player
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity implements LightningChaserSpawnTimer {
     @Shadow public AbstractContainerMenu containerMenu;
+
     @Shadow
     @Final
     public InventoryMenu inventoryMenu;

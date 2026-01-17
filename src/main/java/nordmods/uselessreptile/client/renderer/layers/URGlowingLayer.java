@@ -13,7 +13,7 @@ import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
-import nordmods.uselessreptile.client.util.AssetCache;
+import nordmods.uselessreptile.client.asset_cache.AssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 
 public class URGlowingLayer extends TextureRenderLayer {

@@ -1,10 +1,12 @@
-package nordmods.uselessreptile.client.util;
+package nordmods.uselessreptile.client.dragon_equipment;
 
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
+import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
+import nordmods.uselessreptile.client.asset_cache.EquipmentAssetCache;
 
 import java.util.Collection;
 import java.util.List;

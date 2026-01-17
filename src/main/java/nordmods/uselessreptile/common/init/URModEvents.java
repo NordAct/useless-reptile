@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.init;
 
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientWorldEvents;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
@@ -32,6 +32,7 @@ public class URModEvents {
         getDefaultBlockMiningLevelForMoleclaw();
         onItemConsumedEvents();
         clearEquipmentInfo();
+        ensureNoOneElseIsRidingOnLogOut();
     }
 
     private static void spawnLightningChaser() {
@@ -122,5 +123,15 @@ public class URModEvents {
 
     private static void clearEquipmentInfo() {
         CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> DragonVariant.EQUIPMENT_INFO_MAP.clear());
+    }
+
+    private static void ensureNoOneElseIsRidingOnLogOut() {
+        ServerPlayerEvents.LEAVE.register(player -> {
+            if (player.getVehicle() instanceof URDragonEntity dragon && dragon.isOwnedBy(player)) {
+                dragon.getPassengers().forEach(passenger -> {
+                    if (passenger instanceof Player player1 && !dragon.isOwnedBy(player1)) player1.stopRiding();
+                });
+            }
+        });
     }
 }

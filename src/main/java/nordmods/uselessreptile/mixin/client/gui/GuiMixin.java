@@ -33,12 +33,14 @@ public abstract class GuiMixin {
     @Unique private float prevStrength;
     @Shadow @Final private Minecraft minecraft;
 
+    /// Renders crosshair in third person
     @WrapOperation(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z"))
     private boolean render(CameraType instance, Operation<Boolean> original) {
         if (URClientConfig.getConfig().enableCrosshair && Minecraft.getInstance().player.getVehicle() instanceof URRideableDragonEntity) return true;
         return original.call(instance);
     }
 
+    /// Removes shock effect from displayed status effect list
     @Inject(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
     private void yeetShockEffect(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
         List<MobEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));
@@ -46,6 +48,7 @@ public abstract class GuiMixin {
         localRef.set(copy);
     }
 
+    /// Renders shock effect overlay
     @Inject(method = "renderCameraOverlays", at = @At("TAIL"))
     private void renderShockOverlay(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
         if (minecraft.player.hasEffect(URMobEffect.SHOCK)) {

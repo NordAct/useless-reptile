@@ -34,6 +34,7 @@ public abstract class CameraMixin {
     private Level level;
     @Unique private static final int ROUNDS = 1000;
 
+    /// Offsets camera by specified in config amount
     @Inject(method = "setup", at = @At(value = "TAIL"))
     public void offsetCameraDistance(Level area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {
         if (!URClientConfig.getConfig().enableCameraOffset) return;

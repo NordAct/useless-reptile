@@ -1,6 +1,5 @@
-package nordmods.uselessreptile.client.util;
+package nordmods.uselessreptile.client.asset_cache;
 
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 

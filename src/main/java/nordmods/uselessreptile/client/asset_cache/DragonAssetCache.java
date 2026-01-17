@@ -1,6 +1,7 @@
-package nordmods.uselessreptile.client.util;
+package nordmods.uselessreptile.client.asset_cache;
 
 import net.minecraft.world.entity.EquipmentSlot;
+import nordmods.uselessreptile.client.dragon_equipment.DragonEquipment;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;

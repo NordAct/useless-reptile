@@ -17,6 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(EntityHitboxDebugRenderer.class)
 public class EnitiyHitboxDebugMixin {
+
+    /// Shows attack boxes when hitbox debug renderer is enabled
     @Inject(method = "showHitboxes", at = @At("TAIL"))
     private void showExtraDebugInfo(Entity entity, float tickDelta, boolean bl, CallbackInfo ci) {
         if (URClientConfig.getConfig().attackBoxesInDebug && entity instanceof URDragonEntity dragon) {

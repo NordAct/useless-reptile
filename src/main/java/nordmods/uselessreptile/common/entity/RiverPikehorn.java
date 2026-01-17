@@ -196,17 +196,17 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         if (!isTame() && level() instanceof ServerLevel world) {
             if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
 
-            ItemStack itemStack = getMainHandItem();
+            ItemStack itemStack = getOffhandItem();
             if (!itemStack.isEmpty() && --eatTimer <= 0) {
                 DragonVariant.FoodItem foodItem = getFoodItem(itemStack);
                 if (foodItem != null) {
                     heal(foodItem.healingAmount());
-                    setItemSlot(EquipmentSlot.MAINHAND, consumeGivenItem(this, itemStack, SoundEvents.GENERIC_EAT.value(), null));
+                    setItemSlot(EquipmentSlot.OFFHAND, consumeGivenItem(this, itemStack, SoundEvents.GENERIC_EAT.value(), null));
                 } else spawnAtLocation(world, itemStack);
                 stopHunt();
             }
 
-            getItemBySlot(EquipmentSlot.MAINHAND);
+            getItemBySlot(EquipmentSlot.OFFHAND);
         }
 
         if (!level().isClientSide()) {
@@ -281,12 +281,12 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     @Override
     protected void pickUpItem(@NonNull ServerLevel world, @NonNull ItemEntity item) {
         if (isOwnerClose()) return;
-        if (getItemBySlot(EquipmentSlot.MAINHAND).isEmpty() && getFoodItem(item.getItem()) != null
-                || getItemBySlot(EquipmentSlot.MAINHAND).is(item.getItem().getItem()) && item.getItem().getComponents().equals(getItemBySlot(EquipmentSlot.MAINHAND).getComponents())) {
+        if (getItemBySlot(EquipmentSlot.OFFHAND).isEmpty() && getFoodItem(item.getItem()) != null
+                || getItemBySlot(EquipmentSlot.OFFHAND).is(item.getItem().getItem()) && item.getItem().getComponents().equals(getItemBySlot(EquipmentSlot.OFFHAND).getComponents())) {
             onItemPickup(item);
             ItemStack itemStack = item.getItem();
-            setItemSlot(EquipmentSlot.MAINHAND, itemStack);
-            setGuaranteedDrop(EquipmentSlot.MAINHAND);
+            setItemSlot(EquipmentSlot.OFFHAND, itemStack);
+            setGuaranteedDrop(EquipmentSlot.OFFHAND);
             take(item, itemStack.getCount());
             item.discard();
         }
@@ -311,11 +311,11 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
     private void dropLootToOwner(ServerLevel world) {
         if (!isTame() || !isOwnerClose() || level().isClientSide()) return;
-        ItemStack stack = getItemBySlot(EquipmentSlot.MAINHAND).copy();
+        ItemStack stack = getItemBySlot(EquipmentSlot.OFFHAND).copy();
         if (!stack.isEmpty()) {
             ItemEntity item = spawnAtLocation(world, stack);
             if (item != null) item.setDeltaMovement(getOwner().position().subtract(position()).normalize().scale(0.2));
-            getItemBySlot(EquipmentSlot.MAINHAND).shrink(stack.getCount());
+            getItemBySlot(EquipmentSlot.OFFHAND).shrink(stack.getCount());
             setIsHunting(false);
         }
     }
@@ -359,7 +359,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
     @Override
     public boolean doesEmitEquipEvent(@NonNull EquipmentSlot slot) {
-        return slot != EquipmentSlot.MAINHAND;
+        return slot != EquipmentSlot.OFFHAND;
     }
 
     @Override

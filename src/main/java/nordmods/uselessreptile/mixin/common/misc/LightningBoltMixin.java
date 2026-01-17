@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/// Emits game event when lightning strike occurs
 @Mixin(LightningBolt.class)
 public abstract class LightningBoltMixin extends Entity {
     public LightningBoltMixin(EntityType<?> type, Level world) {

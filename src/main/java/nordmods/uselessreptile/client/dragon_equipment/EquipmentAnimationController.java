@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.util;
+package nordmods.uselessreptile.client.dragon_equipment;
 
 import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;

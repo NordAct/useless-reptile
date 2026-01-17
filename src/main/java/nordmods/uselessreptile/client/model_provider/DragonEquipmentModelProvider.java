@@ -5,7 +5,7 @@ import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
-import nordmods.uselessreptile.client.util.AssetCache;
+import nordmods.uselessreptile.client.asset_cache.AssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import org.jspecify.annotations.Nullable;
 

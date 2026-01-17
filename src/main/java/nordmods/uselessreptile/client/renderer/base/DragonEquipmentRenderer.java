@@ -1,10 +1,7 @@
 package nordmods.uselessreptile.client.renderer.base;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BRObjectRenderer;
@@ -16,9 +13,8 @@ import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
-import nordmods.uselessreptile.client.util.AssetCache;
-import nordmods.uselessreptile.client.util.DragonEquipment;
-import nordmods.uselessreptile.client.util.EquipmentAssetCache;
+import nordmods.uselessreptile.client.asset_cache.AssetCache;
+import nordmods.uselessreptile.client.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import org.jspecify.annotations.Nullable;
 

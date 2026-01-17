@@ -33,6 +33,6 @@ public class RiverPikehornFishRenderLayer extends ItemRenderLayer {
 
     @Override
     protected @Nullable ItemStackRenderState getItemStackRenderState(BRState state) {
-        return state.getStateData(URStateDataTypes.MAIN_HAND);
+        return state.getStateData(URStateDataTypes.FISH);
     }
 }

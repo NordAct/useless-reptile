@@ -14,6 +14,8 @@ import java.util.List;
 
 //in theory those methods should be called once per resource reload
 //but if something throws an error within methods - something gone wrong, but that's not my fault and problem
+
+/// Captures start and stop of reload state
 @Mixin(ResourceLoadStateTracker.class)
 public abstract class ResourceLoadStateTrackerMixin {
     @Inject(method = "startReload(Lnet/minecraft/client/ResourceLoadStateTracker$ReloadReason;Ljava/util/List;)V", at = @At("TAIL"))

@@ -1,7 +1,7 @@
 {
   "required": true,
   "package": "nordmods.uselessreptile.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "mixins": [
     "common.head_mount_dragon.BlockBehaviourMixin",
     "common.head_mount_dragon.EntityMixin",
@@ -25,6 +25,7 @@
     "client.gui.EffectsInInventoryMixin",
     "client.gui.GuiMixin",
     "client.gui.ItemMixin",
+    "client.gui.MinecraftMixin",
     "client.render.AvatarRendererMixin",
     "client.render.AvatarRenderStateMixin",
     "client.render.LivingEntityMixin",

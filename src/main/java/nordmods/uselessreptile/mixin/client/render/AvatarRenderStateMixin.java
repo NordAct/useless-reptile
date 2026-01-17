@@ -9,6 +9,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+/// HeadMountDragonRenderState impl
 @Mixin(AvatarRenderState.class)
 public abstract class AvatarRenderStateMixin<E extends URDragonEntity, R extends EntityRenderState> implements HeadMountDragonRenderState<E, R> {
     @Unique private BRState headMountDragonRenderState;

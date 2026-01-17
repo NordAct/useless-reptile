@@ -30,6 +30,8 @@ import java.util.function.Consumer;
 
 @Mixin(Item.class)
 public abstract class ItemMixin {
+
+    /// Adds tooltip if any of dragons can equip this item
     @Inject(method = "appendHoverText", at = @At("HEAD"))
     private void addDragonEquipmentEntries(ItemStack stack, Item.TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type, CallbackInfo ci) {
         if (URClientConfig.getConfig().hideEquipmentInfo) return;

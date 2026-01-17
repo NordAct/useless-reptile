@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.base;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -11,11 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.HasCustomInventoryScreen;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -87,14 +84,18 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     @Override
     public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
-        if (isTame() && isOwnedBy(player) && !isInteractableItem(itemStack) && !player.isShiftKeyDown()) {
-            if (!isVehicle() && hasSaddle()) {
+        if (isTame() && !isInteractableItem(itemStack) && !player.isShiftKeyDown() && !level().isClientSide()) {
+            if (hasSaddle() && (!getPassengers().isEmpty() || isOwnedBy(player)) && player.startRiding(this)) {
                 if (isOrderedToSit()) setOrderedToSit(false);
-                else if (!level().isClientSide()) player.startRiding(this);
                 return InteractionResult.SUCCESS;
             }
         }
         return super.mobInteract(player, hand);
+    }
+
+    @Override
+    protected boolean canAddPassenger(@NonNull Entity entity) {
+        return getPassengers().size() < getMaxPassengerCount();
     }
 
     @Override
@@ -187,7 +188,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     public boolean hasSaddle() {
-        return getInventory() != null && isSaddle(getInventory().getItem(0));
+        return isSaddle(getInventory().getItem(0));
     }
 
     protected void updateRiderBonus(boolean hasRider) {
@@ -203,7 +204,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     @Override
     public void openCustomInventoryScreen(@NonNull Player player) {
-        if (player instanceof ServerPlayer serverPlayer && hasControllingPassenger() && isOwnedBy(player)) {
+        if (player instanceof ServerPlayer serverPlayer && isOwnedBy(player)) {
             serverPlayer.uselessreptile$openDragonInventoryScreen(this);
         }
     }
@@ -227,6 +228,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     public int getMaxPassengerCount() {
-        return 1;
+        ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
+        Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
+        if (saddle.isEmpty() || !getDragonActualEquipment().containsKey(id)) return 0;
+        return getDragonActualEquipment().get(id).maxPassengers().orElse(0);
     }
 }

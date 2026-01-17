@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Arrays;
 
+/// Adds custom mob categories
 //credits to Hybrid Aquatic code for whatever this cursed thing is because I was too lazy to learn how to use Fabric ASM
 @Mixin(MobCategory.class)
 public class MobCategoryMixin {

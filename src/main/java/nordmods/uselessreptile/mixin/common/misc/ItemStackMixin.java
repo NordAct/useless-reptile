@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+/// Emits game event when instrument (i.e. goat horn) is used
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
     @Shadow public abstract DataComponentMap getComponents();
