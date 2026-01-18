@@ -19,8 +19,12 @@ public class FlyingDragonCallBackGoal<T extends URDragonEntity & FlyingDragon> e
     }
 
     protected void checkProximity(double currentDistance) {
-        if (!entity.isFlying()) ticksToStop = 0;
-        if (currentDistance < proximityRange && (owner.onGround() || !entity.isFlying())) {
+        if (!entity.isFlying() && owner.onGround()) {
+            ticksToStop = 0;
+            super.checkProximity(currentDistance);
+            return;
+        }
+        if (currentDistance < proximityRange) {
             if (entity.isFlying()) {
                 if (ticksToStop > 10) entity.shouldFollow = false;
                 else ticksToStop++;

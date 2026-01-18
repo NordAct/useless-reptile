@@ -118,7 +118,9 @@ public class FluteItem extends Item {
 
     private static ImmutableSortedMap<String, Tuple<SoundEvent, FluteAction>>createFluteModeMap() {
         HashMap<String, Tuple<SoundEvent, FluteAction>> mutable = new HashMap<>();
-        mutable.put("call", new Tuple<>(URSoundEvent.FLUTE_CALL, dragon -> dragon.shouldFollow = true));
+        mutable.put("call", new Tuple<>(URSoundEvent.FLUTE_CALL, dragon -> {
+            if (!dragon.isOrderedToSit()) dragon.shouldFollow = true;
+        }));
         mutable.put("gather", new Tuple<>(URSoundEvent.FLUTE_GATHER, dragon -> {
             if (dragon instanceof FluteListener gathererDragon) gathererDragon.startGathering();
         }));

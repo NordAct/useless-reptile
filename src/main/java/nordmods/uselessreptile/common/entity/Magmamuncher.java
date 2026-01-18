@@ -198,6 +198,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         goalSelector.addGoal(4, new DragonEatFromInventoryGoal(this));
         goalSelector.addGoal(5, new MagmamuncherAttackGoal(this, 4096));
         goalSelector.addGoal(6, new MagmamuncherEatMagmaGoal(this));
+        goalSelector.addGoal(7, new DragonReturnToHomePoint(this));
         goalSelector.addGoal(8, new DragonWanderAroundGoal(this));
         goalSelector.addGoal(9, new DragonLookAroundGoal(this));
         targetSelector.addGoal(1, new DragonRevengeGoal(this));

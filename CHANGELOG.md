@@ -8,3 +8,5 @@
 - River Pikehorn now has inventory screen
 - Removed `uselessreptile:dragon_saddles` tag
 - Removed all dragon specific equipment tags besides `uselessreptile:protects_moleclaw_from_light`
+- Now to pick up dragon that can ride on your head you have to click on it while not crouching with empty hand. To put it down you still have to couch
+  - This means you now able to open dragon's inventory without having to have an item in your hand in this case

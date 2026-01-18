@@ -292,5 +292,13 @@
   "slot.uselessreptile.saddle": "Saddle",
   "slot.uselessreptile.helmet": "Helmet",
   "slot.uselessreptile.chestplate": "Chestplate",
-  "slot.uselessreptile.tail_armor": "Tail Armor"
+  "slot.uselessreptile.tail_armor": "Tail Armor",
+
+  "button.uselessreptile.follow": "Order to follow",
+  "button.uselessreptile.stay": "Order to stay",
+  "button.uselessreptile.sit": "Order to sit",
+  "button.uselessreptile.unbind_instrument_sound": "Unbind instrument sound",
+  "button.uselessreptile.wander_small": "Wander radius: Small",
+  "button.uselessreptile.wander_medium": "Wander radius: Medium",
+  "button.uselessreptile.wander_big": "Wander radius: Big"
 }

@@ -1,12 +1,16 @@
 package nordmods.uselessreptile.client.gui;
 
 import com.mojang.math.Axis;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,6 +22,9 @@ import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
+import nordmods.uselessreptile.common.network.c2s.ChangeWanderRadiusPayload;
+import nordmods.uselessreptile.common.network.c2s.OrderPayload;
+import nordmods.uselessreptile.common.network.c2s.UnbindInstrumentPayload;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
@@ -31,14 +38,92 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
     private final URDragonEntity entity;
     private int i;
     private int j;
+    private final Button follow;
+    private final Button stay;
+    private final Button sit;
+    private final Button unbindInstrument;
+    private final Button wanderClose;
+    private final Button wanderMedium;
+    private final Button wanderFar;
+    private static final int COMMAND_BUTTON_SIZE = 20;
 
     public URDragonScreen(T handler, Inventory inventory, URDragonEntity entity) {
         super(handler, inventory, entity.getDisplayName());
         this.entity = entity;
+
+        follow = SpriteIconButton
+                .builder(Component.translatable("button.uselessreptile.follow"), (button) -> {
+                    ClientPlayNetworking.send(new OrderPayload(URDragonEntity.Order.FOLLOW, entity.getId()));
+                }, true)
+                .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
+                .sprite(UselessReptile.id("follow"), 16, 16)
+                .withTootip()
+                .build();
+        addWidget(follow);
+
+        stay = SpriteIconButton
+                .builder(Component.translatable("button.uselessreptile.stay"), (button) -> {
+                    ClientPlayNetworking.send(new OrderPayload(URDragonEntity.Order.STAY, entity.getId()));
+                }, true)
+                .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
+                .sprite(UselessReptile.id("stay"), 16, 16)
+                .withTootip()
+                .build();
+        addWidget(stay);
+
+        sit = SpriteIconButton
+                .builder(Component.translatable("button.uselessreptile.sit"), (button) -> {
+                    ClientPlayNetworking.send(new OrderPayload(URDragonEntity.Order.SIT, entity.getId()));
+                }, true)
+                .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
+                .sprite(UselessReptile.id("sit"), 16, 16)
+                .withTootip()
+                .build();
+        addWidget(sit);
+
+        unbindInstrument = SpriteIconButton
+                .builder(Component.translatable("button.uselessreptile.unbind_instrument_sound"), (button) -> {
+                    ClientPlayNetworking.send(new UnbindInstrumentPayload(entity.getId()));
+                }, true)
+                .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
+                .sprite(UselessReptile.id("unbind_instrument_sound"), 16, 16)
+                .withTootip()
+                .build();
+        addWidget(unbindInstrument);
+
+        wanderClose = SpriteIconButton
+                .builder(Component.translatable("button.uselessreptile.wander_small"), (button) -> {
+                    ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.MEDIUM, entity.getId()));
+                }, true)
+                .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
+                .sprite(UselessReptile.id("wander_small"), 16, 16)
+                .withTootip()
+                .build();
+        addWidget(wanderClose);
+
+        wanderMedium = SpriteIconButton
+                .builder(Component.translatable("button.uselessreptile.wander_medium"), (button) -> {
+                    ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.FAR, entity.getId()));
+                }, true)
+                .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
+                .sprite(UselessReptile.id("wander_medium"), 16, 16)
+                .withTootip()
+                .build();
+        addWidget(wanderMedium);
+
+        wanderFar = SpriteIconButton
+                .builder(Component.translatable("button.uselessreptile.wander_big"), (button) -> {
+                    ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.CLOSE, entity.getId()));
+                }, true)
+                .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
+                .sprite(UselessReptile.id("wander_big"), 16, 16)
+                .withTootip()
+                .build();
+        addWidget(wanderFar);
     }
 
     @Override
-    protected void renderBg(GuiGraphics context, float delta, int mouseX, int mouseY) {
+    protected void renderBg(@NonNull GuiGraphics context, float delta, int mouseX, int mouseY) {
         i = (width - imageWidth) / 2;
         j = (height - imageHeight) / 2;
         context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0, 0, imageWidth, imageHeight, 256, 256);
@@ -47,6 +132,49 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         drawArmor(context);
         drawStorage(context);
         drawEntity(context);
+
+        follow.active = entity.getCurrentOrder() != URDragonEntity.Order.FOLLOW;
+        follow.setPosition(i - COMMAND_BUTTON_SIZE, j + 14);
+        follow.render(context, mouseX, mouseY, delta);
+
+        stay.active = entity.getCurrentOrder() != URDragonEntity.Order.STAY;
+        stay.setPosition(i - COMMAND_BUTTON_SIZE, j + 14 + COMMAND_BUTTON_SIZE);
+        stay.render(context, mouseX, mouseY, delta);
+
+        sit.active = entity.getCurrentOrder() != URDragonEntity.Order.SIT;
+        sit.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 2);
+        sit.render(context, mouseX, mouseY, delta);
+
+        Button wander = null;
+
+        switch (entity.getWanderRadius()) {
+            case FAR -> {
+                wander = wanderFar;
+                wanderFar.visible = true;
+                wanderMedium.visible = false;
+                wanderClose.visible = false;
+            }
+            case MEDIUM -> {
+                wander = wanderMedium;
+                wanderFar.visible = false;
+                wanderMedium.visible = true;
+                wanderClose.visible = false;
+            }
+            case CLOSE -> {
+                wander = wanderClose;
+                wanderFar.visible = false;
+                wanderMedium.visible = false;
+                wanderClose.visible = true;
+            }
+        }
+
+        wander.active = sit.active;
+        wander.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 4);
+        wander.render(context, mouseX, mouseY, delta);
+
+        unbindInstrument.active = !entity.getBoundedInstrumentSound().isEmpty();
+        unbindInstrument.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 5);
+        unbindInstrument.render(context, mouseX, mouseY, delta);
     }
 
     @Override
@@ -161,7 +289,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
                     i + 7,
                     j + 35,
                     URDragonMenu.SLOT_SIDE * 4,
-                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.OFFHAND).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.BODY).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
                     URDragonMenu.SLOT_SIDE,
                     URDragonMenu.SLOT_SIDE,
                     256, 256

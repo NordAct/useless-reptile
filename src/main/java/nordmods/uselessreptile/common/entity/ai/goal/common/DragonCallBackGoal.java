@@ -1,11 +1,11 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.goal.Goal;
 
 public class DragonCallBackGoal extends Goal {
     protected final URDragonEntity entity;
@@ -29,7 +29,6 @@ public class DragonCallBackGoal extends Goal {
         prevDistance = 0;
         proximityRange = entity.getBbWidth() * 2.0f * (entity.getBbWidth() * 2.0f);
         owner = entity.getOwner();
-        entity.setOrderedToSit(false);
         entity.setTarget(null);
     }
 
@@ -38,10 +37,11 @@ public class DragonCallBackGoal extends Goal {
         if (!entity.isTame()) return false;
         if (entity.isLeashed() || entity.isOrderedToSit()) return false;
         if (!entity.shouldFollow) return false;
+        if (entity.getTarget() != null) return false;
         LivingEntity player = entity.getOwner();
         if (player == null) return false;
         double distance = entity.distanceToSqr(player);
-        if (distance < player.getBbWidth() * player.getBbWidth() * 9) return false;
+        if (distance < entity.getWanderRadius().radius * 0.3f) return false;
         return distance < MAX_CALL_DISTANCE * MAX_CALL_DISTANCE;
     }
 
@@ -73,13 +73,13 @@ public class DragonCallBackGoal extends Goal {
             entity.getNavigation().moveTo(owner, 1);
             entity.setHomePoint(owner.blockPosition());
             if (URConfig.getConfig().allowDragonTeleport
-                    && (distance > 4096 || distance > (proximityRange * 4) && forceTeleportCountdown <= 0)) entity.tryToTeleportToOwner();
+                    && (distance > entity.getWanderRadius().radius * entity.getWanderRadius().radius * 4 || distance > (proximityRange * 4) && forceTeleportCountdown <= 0)) entity.tryToTeleportToOwner();
         }
 
         prevDistance = distance;
     }
 
     protected void checkProximity(double currentDistance) {
-        if (currentDistance < proximityRange && owner.onGround()) entity.shouldFollow = false;
+        if (currentDistance < proximityRange) entity.shouldFollow = false;
     }
 }

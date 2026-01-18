@@ -7,7 +7,6 @@ import net.minecraft.world.entity.ai.goal.Goal;
 
 public class DragonReturnToHomePoint extends Goal {
     private final URDragonEntity entity;
-    private final int toleranceDistance = 20;
 
     public DragonReturnToHomePoint(URDragonEntity entity) {
         this.entity = entity;
@@ -16,12 +15,12 @@ public class DragonReturnToHomePoint extends Goal {
 
     @Override
     public boolean canUse() {
-        return entity.isTame() && entity.distanceToSqr(entity.getHomePoint().getCenter()) > toleranceDistance * toleranceDistance;
+        return entity.isTame() && entity.distanceToSqr(entity.getHomePoint().getCenter()) > entity.getWanderRadius().radius * entity.getWanderRadius().radius;
     }
 
     @Override
     public boolean canContinueToUse(){
-        return entity.distanceToSqr(entity.getHomePoint().getCenter()) > toleranceDistance * toleranceDistance / 2f;
+        return entity.distanceToSqr(entity.getHomePoint().getCenter()) > entity.getWanderRadius().radius * entity.getWanderRadius().radius / 2f;
     }
 
     @Override

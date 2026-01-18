@@ -58,6 +58,7 @@ public class PikehornHuntGoal extends Goal {
     @Override
     public void tick() {
         if (isGoingToDrown()) entity.forceTargetInWater = false;
+
         if (!hasFish() && !tooManyCalls() && entity.forceTargetInWater) {
             //lookup for dropped fish first
             AABB box = entity.getBoundingBox().inflate(20);
@@ -197,6 +198,7 @@ public class PikehornHuntGoal extends Goal {
 
     private void stopHunt() {
         startingPos = null;
+
         entity.stopHunt();
     }
 

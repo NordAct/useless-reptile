@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.base;
 
 import com.mojang.authlib.GameProfile;
 import eu.pb4.common.protection.api.CommonProtection;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -12,6 +13,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -22,6 +25,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.ByIdMap;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -135,6 +139,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     private boolean invalidVariant;
     private Map<Identifier, EquipmentModelData.Equipment> dragonActualEquipment;
     private Map<Identifier, EquipmentModelData.Equipment> dragonDisplayEquipment;
+    //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
+    private final DragonAssetCache assetCache = new DragonAssetCache();
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -147,7 +153,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(MOVING_BACKWARDS, false);
-        builder.define(IS_SITTING, false);
         builder.define(DANCING, false);
         builder.define(TURNING_STATE, (byte)0);//1 - left, 2 - right, 0 - straight
         builder.define(ROTATION_PROGRESS, (byte)0);
@@ -162,10 +167,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         builder.define(ACCELERATION_DURATION, 0);
         builder.define(BOUNDED_INSTRUMENT_SOUND, "");
         builder.define(VARIANT, "");
+        builder.define(CURRENT_ORDER, Order.FOLLOW);
+        builder.define(PREVIOUS_ORDER, Order.SIT);
+        builder.define(WANDER_RADIUS, WanderRadius.MEDIUM);
     }
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Boolean> IS_SITTING = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> DANCING = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Byte> TURNING_STATE = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BYTE);
     public static final EntityDataAccessor<Byte> ROTATION_PROGRESS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BYTE);
@@ -180,6 +187,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public static final EntityDataAccessor<Integer> ATTACK_TYPE = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<String> BOUNDED_INSTRUMENT_SOUND = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> VARIANT = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.STRING);
+    public static final EntityDataAccessor<Order> CURRENT_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
+    public static final EntityDataAccessor<Order> PREVIOUS_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
+    public static final EntityDataAccessor<WanderRadius> WANDER_RADIUS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.WANDER_RADIUS);
 
     public boolean isSecondaryAttack() {return getSecondaryAttackCooldown() > getMaxSecondaryAttackCooldown() - secondaryAttackDuration;} //old melee
     public int getSecondaryAttackCooldown() {return  entityData.get(SECONDARY_ATTACK_COOLDOWN);}
@@ -208,14 +218,28 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public boolean isMoving() {return getDeltaMovement().z() != 0 || getDeltaMovement().x() != 0;}
 
     @Override
-    public boolean isOrderedToSit() {return entityData.get(IS_SITTING);}
+    public boolean isOrderedToSit() {
+        return getCurrentOrder() == Order.SIT;
+    }
 
     @Override
     public void setOrderedToSit(boolean state) {
-        entityData.set(IS_SITTING, state);
-        super.setOrderedToSit(state);
-        if (state) setTarget(null);
+        if (state) setCurrentOrder(Order.SIT);
+        else if (getCurrentOrder() == Order.SIT) setCurrentOrder(getPreviousOrder());
     }
+
+    public Order getCurrentOrder() {return entityData.get(CURRENT_ORDER);}
+    public void setCurrentOrder(Order order) {
+        if (getCurrentOrder() != order) setPreviousOrder(getCurrentOrder());
+        entityData.set(CURRENT_ORDER, order);
+        super.setOrderedToSit(order == Order.SIT);
+    }
+
+    public Order getPreviousOrder() {return entityData.get(PREVIOUS_ORDER);}
+    public void setPreviousOrder(Order state) {entityData.set(PREVIOUS_ORDER, state);}
+
+    public WanderRadius getWanderRadius() {return entityData.get(WANDER_RADIUS);}
+    public void setWanderRadius(WanderRadius state) {entityData.set(WANDER_RADIUS, state);}
 
     public String getVariant() {return entityData.get(VARIANT);}
     public void setVariant(String state) {entityData.set(VARIANT, state);}
@@ -288,19 +312,22 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (!isTame()) tag.putInt("TamingProgress", getTamingProgress());
         else tag.putString("BoundedInstrumentSound", getBoundedInstrumentSound());
 
-        tag.putBoolean("Sitting", isOrderedToSit());
+        ValueOutput.TypedOutputList<ItemStackWithSlot> listAppender = tag.list("Inventory", ItemStackWithSlot.CODEC);
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (!stack.isEmpty()) listAppender.add(new ItemStackWithSlot(i, stack));
+        }
         if (isTame()) {
-            ValueOutput.TypedOutputList<ItemStackWithSlot> listAppender = tag.list("Inventory", ItemStackWithSlot.CODEC);
-            for (int i = 0; i < inventory.getContainerSize(); i++) {
-                ItemStack stack = inventory.getItem(i);
-                if (!stack.isEmpty()) listAppender.add(new ItemStackWithSlot(i, stack));
-            }
+            tag.putBoolean("Sitting", isOrderedToSit());
+            tag.putInt("CurrentOrder", getCurrentOrder().ordinal());
+            tag.putInt("PreviousOrder", getPreviousOrder().ordinal());
+            tag.putInt("WanderRadius", getWanderRadius().ordinal());
         }
     }
 
     @Override
     public void readAdditionalSaveData(ValueInput tag) {
-        entityData.set(VARIANT, tag.getStringOr("Variant", getDefaultVariant()));
+        setVariant(tag.getStringOr("Variant", getDefaultVariant()));
 
         for (ItemStackWithSlot stackWithSlot : tag.listOrEmpty("Inventory", ItemStackWithSlot.CODEC)) {
             if (stackWithSlot.isValidInContainer(this.inventory.getContainerSize())) {
@@ -317,8 +344,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (!isTame()) setTamingProgress(tag.getIntOr("TamingProgress", getBaseTamingProgress()));
         else setBoundedInstrumentSound(tag.getStringOr("BoundedInstrumentSound", ""));
 
-        setOrderedToSit(tag.getBooleanOr("Sitting", false));
-
+        setPreviousOrder(Order.values()[tag.getIntOr("PreviousOrder", Order.SIT.ordinal())]);
+        if (tag.getBooleanOr("Sitting", false)) {
+            setOrderedToSit(true);
+        } else {
+            setCurrentOrder(Order.values()[tag.getIntOr("CurrentOrder", Order.FOLLOW.ordinal())]);
+        }
+        setWanderRadius(WanderRadius.values()[tag.getIntOr("WanderRadius", WanderRadius.MEDIUM.ordinal())]);
         updateEquipment();
     }
 
@@ -594,7 +626,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
 
         if (isTame() && isOwnedBy(player)) {
-            if (this instanceof HeadMountDragon && player.isShiftKeyDown() && itemStack.isEmpty()) {
+            if (this instanceof HeadMountDragon && !player.isShiftKeyDown() && itemStack.isEmpty()) {
                 dropLeash();
                 startRiding(player);
                 return InteractionResult.SUCCESS;
@@ -815,6 +847,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         super.tick();
         if (!level().isClientSide()) {
             updateRotationProgress();
+
+            if (getOwner() != null && getCurrentOrder() == Order.FOLLOW) {
+                if (distanceTo(getOwner()) > getWanderRadius().radius) {
+                    shouldFollow = true;
+                    setHomePoint(getOwner().blockPosition());
+                }
+            }
         }
 
         if (this instanceof ShooterDragon shooterDragon) {
@@ -856,7 +895,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
         if (!level().isClientSide() && tickCount % 20 == 0) {
             boolean jukeboxReachable = false;
-            if (jukeboxPos != null) jukeboxReachable = jukeboxPos.closerThan(blockPosition(), 9);
+            if (jukeboxPos != null) jukeboxReachable = jukeboxPos.closerThan(blockPosition(), GameEvent.JUKEBOX_PLAY.value().notificationRadius());
             if (jukeboxReachable) updateJukeboxPos(jukeboxPos, true);
             else updateJukeboxPos(null, false);
         }
@@ -1205,9 +1244,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return inventory;
     }
 
-    //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
-    private final DragonAssetCache assetCache = new DragonAssetCache();
-
     public DragonAssetCache getAssetCache() {
         return assetCache;
     }
@@ -1341,6 +1377,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
             if (getInstrument(stack).equals(getBoundedInstrumentSound())) {
                 setOrderedToSit(false);
+                setTarget(null);
                 shouldFollow = true;
                 if (player instanceof ServerPlayer serverPlayer)
                     grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/use_horn"));
@@ -1351,4 +1388,26 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public record SoundInfo(Identifier id, float volume, float pitch, float pitchDeviation) { }
+
+    public enum Order {
+        FOLLOW,
+        STAY,
+        SIT;
+
+        public static final StreamCodec<ByteBuf, Order> STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
+    }
+
+    public enum WanderRadius {
+        CLOSE(8),
+        MEDIUM(20),
+        FAR(32);
+
+        public final int radius;
+
+        public static final StreamCodec<ByteBuf, WanderRadius> STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
+
+        WanderRadius(int radius) {
+            this.radius = radius;
+        }
+    }
 }

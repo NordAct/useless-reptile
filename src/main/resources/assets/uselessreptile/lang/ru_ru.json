@@ -292,5 +292,13 @@
   "slot.uselessreptile.saddle": "Седло",
   "slot.uselessreptile.helmet": "Шлем",
   "slot.uselessreptile.chestplate": "Нагрудник",
-  "slot.uselessreptile.tail_armor": "Броня на хвост"
+  "slot.uselessreptile.tail_armor": "Броня на хвост",
+
+  "button.uselessreptile.follow": "Приказать следовать",
+  "button.uselessreptile.stay": "Приказать остаться",
+  "button.uselessreptile.sit": "Приказать сидеть",
+  "button.uselessreptile.unbind_instrument_sound": "Отвязать звук инструмента",
+  "button.uselessreptile.wander_small": "Радиус перемещения: маленький",
+  "button.uselessreptile.wander_medium": "Радиус перемещения: средний",
+  "button.uselessreptile.wander_big": "Радиус перемещения: большой"
 }

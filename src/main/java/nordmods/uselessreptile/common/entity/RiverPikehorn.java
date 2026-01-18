@@ -27,8 +27,7 @@ import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAttackGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFluteCallGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornFollowGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornCallBackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
 import nordmods.uselessreptile.common.entity.base.FluteListener;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
@@ -87,7 +86,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     public boolean isHunting() {
         return isHunting;
     }
-    public void setIsHunting (boolean state) {
+    public void setHunting(boolean state) {
         isHunting = state;
     }
 
@@ -194,7 +193,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         else setHitboxModifiers(0.7f, 0.8f, 0);
 
         if (!isTame() && level() instanceof ServerLevel world) {
-            if (!isHunting() && --huntTimer <= 0) setIsHunting(true);
+            if (!isHunting() && --huntTimer <= 0) setHunting(true);
 
             ItemStack itemStack = getOffhandItem();
             if (!itemStack.isEmpty() && --eatTimer <= 0) {
@@ -255,16 +254,15 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(1, new FlyingDragonCallBackGoal<>(this));
-        goalSelector.addGoal(1, new PikehornFluteCallGoal(this));
-        goalSelector.addGoal(1, new PikehornFollowGoal(this));
+        goalSelector.addGoal(1, new PikehornCallBackGoal(this));
         goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(5, new PikehornAttackGoal(this, 4096 * 2));
         goalSelector.addGoal(6, new PikehornHuntGoal(this));
         goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 30));
-        goalSelector.addGoal(8, new DragonWanderAroundGoal(this));
-        goalSelector.addGoal(8, new FlyingDragonFlyAroundGoal<>(this, 30));
-        goalSelector.addGoal(9, new DragonLookAroundGoal(this));
+        goalSelector.addGoal(8, new DragonReturnToHomePoint(this));
+        goalSelector.addGoal(9, new DragonWanderAroundGoal(this));
+        goalSelector.addGoal(9, new FlyingDragonFlyAroundGoal<>(this, 30));
+        goalSelector.addGoal(10, new DragonLookAroundGoal(this));
         targetSelector.addGoal(3, (new DragonRevengeGoal(this)).setAlertOthers());
         targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(5, new OwnerHurtByTargetGoal(this));
@@ -316,7 +314,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
             ItemEntity item = spawnAtLocation(world, stack);
             if (item != null) item.setDeltaMovement(getOwner().position().subtract(position()).normalize().scale(0.2));
             getItemBySlot(EquipmentSlot.OFFHAND).shrink(stack.getCount());
-            setIsHunting(false);
+            setHunting(false);
         }
     }
 
@@ -326,7 +324,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     public void stopHunt() {
-        setIsHunting(false);
+        setHunting(false);
         huntTimer = huntCooldown + getRandom().nextInt(huntCooldown / 2);
         eatTimer = eatCooldown + getRandom().nextInt(eatCooldown / 2);
         setInAirTimer(getMaxInAirTimer());
@@ -364,7 +362,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
     @Override
     public void startGathering() {
-        setIsHunting(true);
+        setHunting(true);
     }
 
     @Override
@@ -395,7 +393,9 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
             if (!stack.is(URItems.FLUTE)) stack = player.getOffhandItem();
             if (!stack.is(URItems.FLUTE)) return false;
 
-            respondToFlute(FluteItem.getFluteModeAction(stack));
+            FluteItem.FluteAction action = FluteItem.getFluteModeAction(stack);
+            if (!stack.getComponents().get(URItems.FLUTE_MODE_COMPONENT).mode().equals("gather")) stopHunt();
+            respondToFlute(action);
 
             return true;
         }
