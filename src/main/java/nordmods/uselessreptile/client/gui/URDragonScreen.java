@@ -194,7 +194,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
                     i + 7,
                     j + 35 - URDragonMenu.SLOT_SIDE,
                     0,
-                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.FEET).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
+                    imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.SADDLE).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
                     URDragonMenu.SLOT_SIDE,
                     URDragonMenu.SLOT_SIDE,
                     256, 256);

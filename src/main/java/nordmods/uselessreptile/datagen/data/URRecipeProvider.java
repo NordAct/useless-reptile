@@ -90,6 +90,13 @@ public class URRecipeProvider extends FabricRecipeProvider {
                 netheriteSmithing(URItems.DRAGON_CHESTPLATE_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_CHESTPLATE_NETHERITE);
                 netheriteSmithing(URItems.DRAGON_TAIL_ARMOR_DIAMOND, RecipeCategory.TOOLS, URItems.DRAGON_TAIL_ARMOR_NETHERITE);
                 netheriteSmithing(URItems.MOLECLAW_HELMET_DIAMOND, RecipeCategory.TOOLS, URItems.MOLECLAW_HELMET_NETHERITE);
+
+                shaped(RecipeCategory.COMBAT, URItems.DUAL_SADDLE)
+                        .define('X', Items.LEATHER)
+                        .define('#', Items.SADDLE)
+                        .pattern("#X#")
+                        .unlockedBy("has_leather", this.has(Items.LEATHER))
+                        .save(this.output);
             }
         };
     }
@@ -197,7 +204,6 @@ public class URRecipeProvider extends FabricRecipeProvider {
                 .pattern( corner + "R" + corner)
                 .unlockedBy("has_material", generator.has(Items.GOAT_HORN))
                 .save(exporter);
-
     }
 
     @Override

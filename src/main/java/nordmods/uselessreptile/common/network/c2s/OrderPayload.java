@@ -9,7 +9,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jspecify.annotations.NonNull;
 
 public record OrderPayload(URDragonEntity.Order order, int id) implements CustomPacketPayload {
-    public static final Identifier ID = UselessReptile.id("wanderRadius");
+    public static final Identifier ID = UselessReptile.id("order");
     public static final Type<OrderPayload> PAYLOAD_ID = new Type<>(ID);
     public static final StreamCodec<RegistryFriendlyByteBuf, OrderPayload> PACKET_CODEC =
             StreamCodec.of(OrderPayload::write, OrderPayload::read);

@@ -45,7 +45,7 @@ public class URItems {
             builder -> builder.persistent(VortexHornCapacityComponent.CODEC).networkSynchronized(VortexHornCapacityComponent.PACKET_CODEC));
 
     public static final Item WYVERN_SKIN = registerItem("wyvern_skin", Item::new);
-    public static final Item DUAL_SADDLE = registerItem("dual_saddle", Item::new);
+    public static final Item DUAL_SADDLE = registerItem("dual_saddle", properties -> new Item(properties.stacksTo(1)));
 
     public static final Item DRAGON_HELMET_IRON = registerItem("dragon_helmet_iron", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));
     public static final Item DRAGON_HELMET_GOLD = registerItem("dragon_helmet_gold", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 3, 0, 0, properties));

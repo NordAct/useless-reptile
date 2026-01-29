@@ -10,7 +10,7 @@ public class UREntityDataSerializers {
     public static final EntityDataSerializer<URDragonEntity.WanderRadius> WANDER_RADIUS = EntityDataSerializer.forValueType(URDragonEntity.WanderRadius.STREAM_CODEC);
 
     public static void init() {
-        FabricTrackedDataRegistry.register(UselessReptile.id("wanderRadius"), ORDER);
+        FabricTrackedDataRegistry.register(UselessReptile.id("order"), ORDER);
         FabricTrackedDataRegistry.register(UselessReptile.id("wander_radius"), WANDER_RADIUS);
     }
 }
