@@ -1398,9 +1398,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public enum WanderRadius {
-        CLOSE(8),
+        SMALL(8),
         MEDIUM(20),
-        FAR(32);
+        BIG(32);
 
         public final int radius;
 

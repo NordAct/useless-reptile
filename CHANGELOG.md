@@ -1,12 +1,34 @@
+## General changes
 - Added integration with Jade that displays dragon variant
-- Dragon variants now require translation key for their variant name
 - Changed warnings to errors when variant of existing dragon is not registered properly or doesn't exist
 - Fix Swamp Wyvern spikes not displaying properly when there are several Swamp Wyverns with same model file being rendered
 - Whether dragon can equip an item now is defined by its variant equipment list and not hardcoded tags
-  - If custom name variant specifies
+  - If custom name variant specifies its own list, it will override only appearance of the item, but not if dragon can equip the item
+- Removed `uselessreptile:dragon_saddles` tag and all dragon specific equipment tags besides `uselessreptile:protects_moleclaw_from_light` as now their functionality was taken over by equipment lists
 - Fixed items in inventory appearing in wrong slot for 1 tick when using quick move
 - River Pikehorn now has inventory screen
-- Removed `uselessreptile:dragon_saddles` tag
-- Removed all dragon specific equipment tags besides `uselessreptile:protects_moleclaw_from_light`
+  - It still does not have an inventory space
 - Now to pick up dragon that can ride on your head you have to click on it while not crouching with empty hand. To put it down you still have to couch
   - This means you now able to open dragon's inventory without having to have an item in your hand in this case
+- Added dual saddle
+  - Dual saddle is equipable by Swamp Wyvern only
+  - Support for other dragons can be added via data and resource packs (you need both for it to work correctly)
+- Added command menu to dragon inventory screen
+  - You can order dragon to either sit, follow or stay at place, change wander radius and unbind instrument sound
+  - When dragon is ordered to stay, it will wander around point where it was left at within specified wander radius
+  - Wander radius can be set to small (8 blocks), medium (20 blocks) and big (32 blocks)
+  - Wander radius also affects how far away dragon can wander when following you
+
+## Data and resource pack format changes
+- Breaking changes to equipment lists:
+  - Equipment list is now specified as object that holds values in format `"item_id": {...}`
+  - You now must specify animation for your dragon equipment
+    - All existing mod dragons have empty animation file for placeholder for cases when equipment piece does not have animation
+  - Each equipment piece now must specify slot: `helmet`, `chestplate`, `tail_armor` or `saddle`
+- When specifying saddle in equipment list, you now can specify max amount of supported passengers
+  - To specify position of passenger on model, you need to place locator called `passengerN`, where `N` is ordinal of passenger, starting from 0
+- You can specify bones that will be hidden on dragon model when equipment piece is worn by dragon by specifying bone names in `hid_bones` list
+  - If bone is hidden, it still will be animated
+- Dragon variants now require translation key for their variant name
+  - This translation key is used to display localized variant name in Jade tooltip
+  - I beg you to properly add localization file to your pack and not just slap variant name in English in plain text

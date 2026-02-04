@@ -103,7 +103,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
 
         wanderMedium = SpriteIconButton
                 .builder(Component.translatable("button.uselessreptile.wander_medium"), (button) -> {
-                    ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.FAR, entity.getId()));
+                    ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.BIG, entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
                 .sprite(UselessReptile.id("wander_medium"), 16, 16)
@@ -113,7 +113,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
 
         wanderFar = SpriteIconButton
                 .builder(Component.translatable("button.uselessreptile.wander_big"), (button) -> {
-                    ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.CLOSE, entity.getId()));
+                    ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.SMALL, entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
                 .sprite(UselessReptile.id("wander_big"), 16, 16)
@@ -148,7 +148,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         Button wander = null;
 
         switch (entity.getWanderRadius()) {
-            case FAR -> {
+            case BIG -> {
                 wander = wanderFar;
                 wanderFar.visible = true;
                 wanderMedium.visible = false;
@@ -160,7 +160,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
                 wanderMedium.visible = true;
                 wanderClose.visible = false;
             }
-            case CLOSE -> {
+            case SMALL -> {
                 wander = wanderClose;
                 wanderFar.visible = false;
                 wanderMedium.visible = false;
