@@ -131,7 +131,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     private DragonInventory inventory;
     public boolean shouldFollow = false;
     protected Component defaultDisplayName;
-    public static final Map<EntityType<?>, Map<String ,Map<String, SoundInfo>>> SOUND_INFO_HOLDER = new HashMap<>();
+    public static final Map<DragonVariant, Map<String, SoundInfo>> SOUND_INFO_HOLDER = new HashMap<>();
     public static final Identifier VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
     public static final Identifier SPEED_MODIFIER_BONUS = UselessReptile.id("speed_modifier");
     private DragonVariant dragonActualVariant;
@@ -412,30 +412,19 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Nullable
     public SoundInfo getSoundInfo(String name) {
-        Map<String ,Map<String, SoundInfo>> variantMap = SOUND_INFO_HOLDER.get(getType());
-        if (variantMap != null) {
-            Map<String, SoundInfo> soundMap = variantMap.get(getVariant());
-            if (soundMap != null) {
-                if (soundMap.containsKey(name)) return soundMap.get(name);
-                else {
-                    SoundInfo info = createSoundInfo(name);
-                    soundMap.put(name, info);
-                    return info;
-                }
-            } else {
-                soundMap = new HashMap<>();
+        Map<String, SoundInfo> soundMap = SOUND_INFO_HOLDER.get(getDragonDisplayVariant());
+        if (soundMap != null) {
+            if (soundMap.containsKey(name)) return soundMap.get(name);
+            else {
                 SoundInfo info = createSoundInfo(name);
                 soundMap.put(name, info);
-                variantMap.put(getVariant(), soundMap);
                 return info;
             }
         } else {
-            variantMap = new HashMap<>();
-            Map<String, SoundInfo> soundMap = new HashMap<>();
+            soundMap = new HashMap<>();
             SoundInfo info = createSoundInfo(name);
             soundMap.put(name, info);
-            variantMap.put(getVariant(), soundMap);
-            SOUND_INFO_HOLDER.put(getType(), variantMap);
+            SOUND_INFO_HOLDER.put(getDragonDisplayVariant(), soundMap);
             return info;
         }
     }
