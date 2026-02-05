@@ -219,6 +219,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     public boolean isOrderedToSit() {
+        if (!getPassengers().isEmpty()) return false;
         return getCurrentOrder() == Order.SIT;
     }
 

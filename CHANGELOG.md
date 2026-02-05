@@ -18,6 +18,8 @@
   - When dragon is ordered to stay, it will wander around point where it was left at within specified wander radius
   - Wander radius can be set to small (8 blocks), medium (20 blocks) and big (32 blocks)
   - Wander radius also affects how far away dragon can wander when following you
+- By default, all tamed dragons will now follow you unless you order them otherwise
+- When starting to ride dragon, it now will remember last order and return to it after stop being ridden. I.e. if you start riding sitting dragon and then dismount, it'll be back to sitting position
 
 ## Data and resource pack format changes
 - Breaking changes to equipment lists:

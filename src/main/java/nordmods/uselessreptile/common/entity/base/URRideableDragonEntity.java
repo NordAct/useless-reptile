@@ -86,7 +86,6 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTame() && !isInteractableItem(itemStack) && !player.isShiftKeyDown() && !level().isClientSide()) {
             if (hasSaddle() && (!getPassengers().isEmpty() || isOwnedBy(player)) && player.startRiding(this)) {
-                if (isOrderedToSit()) setOrderedToSit(false);
                 return InteractionResult.SUCCESS;
             }
         }
