@@ -8,6 +8,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Blocks;
 import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URTags;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -17,7 +18,7 @@ public class URBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider wrapperLookup) {
+    protected void addTags(HolderLookup.@NonNull Provider wrapperLookup) {
         getOrCreateRawBuilder(URTags.DRAGON_UNBREAKABLE)
                 .addOptionalTag(BlockTags.AIR.location());
         getOrCreateRawBuilder(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS)

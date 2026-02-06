@@ -23,6 +23,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public class ShockwaveSphere extends Projectile implements ProjectileDamageHelper {
     private float currentRadius = 0;
@@ -47,7 +48,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder builder) {}
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {}
 
     @Override
     public void tick() {
@@ -68,7 +69,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
     }
 
     @Override
-    protected void onHitEntity(EntityHitResult entityHitResult) {
+    protected void onHitEntity(@NonNull EntityHitResult entityHitResult) {
         super.onHitEntity(entityHitResult);
         Entity target = entityHitResult.getEntity();
         float exposure = ServerExplosion.getSeenPercent(getEyePosition(), target);

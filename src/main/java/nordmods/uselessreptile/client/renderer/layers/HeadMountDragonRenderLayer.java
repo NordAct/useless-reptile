@@ -15,6 +15,7 @@ import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.duck.HeadMountDragonRenderState;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import org.jspecify.annotations.NonNull;
 
 import java.util.HashSet;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class HeadMountDragonRenderLayer extends RenderLayer<AvatarRenderState, P
     }
 
     @Override
-    public void submit(PoseStack matrices, SubmitNodeCollector queue, int light, AvatarRenderState state, float limbAngle, float limbDistancee) {
+    public void submit(@NonNull PoseStack matrices, @NonNull SubmitNodeCollector queue, int light, AvatarRenderState state, float limbAngle, float limbDistancee) {
         if (state instanceof HeadMountDragonRenderState<?, ?> owner) {
             BRState dragonState = owner.useless_reptile$getHeadMountDragonRenderState();
             if (dragonState == null) return;

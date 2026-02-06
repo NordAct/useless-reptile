@@ -4,8 +4,8 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import org.jspecify.annotations.NonNull;
 import snownee.jade.api.*;
 import snownee.jade.api.config.IPluginConfig;
 
@@ -20,7 +20,7 @@ public class JadeIntegration implements IWailaPlugin {
     protected static class JadeDragonVariantProvider implements IEntityComponentProvider {
         public static final JadeDragonVariantProvider INSTANCE = new JadeDragonVariantProvider();
         @Override
-        public void appendTooltip(ITooltip iTooltip, EntityAccessor entityAccessor, IPluginConfig iPluginConfig) {
+        public void appendTooltip(@NonNull ITooltip iTooltip, EntityAccessor entityAccessor, @NonNull IPluginConfig iPluginConfig) {
             if (!(entityAccessor.getEntity() instanceof URDragonEntity dragon)) return;
             iTooltip.add(Component.translatable(
                     "variant.uselessreptile",

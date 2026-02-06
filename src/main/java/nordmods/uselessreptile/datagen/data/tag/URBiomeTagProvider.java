@@ -7,6 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.biome.Biome;
 import nordmods.uselessreptile.common.init.URTags;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,7 +17,7 @@ public class URBiomeTagProvider extends FabricTagProvider<Biome>{
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider wrapperLookup) {
+    protected void addTags(HolderLookup.@NonNull Provider wrapperLookup) {
         getOrCreateRawBuilder(URTags.LIGHTNING_CHASER_SPAWN_BLACKLIST)
                 .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS.location());
 

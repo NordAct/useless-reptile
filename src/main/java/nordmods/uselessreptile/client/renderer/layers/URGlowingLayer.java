@@ -24,8 +24,7 @@ public class URGlowingLayer extends TextureRenderLayer {
     protected Identifier getGlowingTexture(BRState state) {
         String namespace = parentRenderer.getModelProvider().getModelId(state).getNamespace();
         String path = parentRenderer.getTextureId(state).getPath().replace(".png", "_glowing.png");
-        Identifier id = Identifier.fromNamespaceAndPath(namespace, path);
-        return id;
+        return Identifier.fromNamespaceAndPath(namespace, path);
     }
 
     @Override

@@ -9,6 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import nordmods.uselessreptile.common.init.URDamageTypes;
 import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
+import org.jspecify.annotations.NonNull;
 
 public class AcidMobEffect extends URMobEffect {
     public AcidMobEffect() {
@@ -19,7 +20,7 @@ public class AcidMobEffect extends URMobEffect {
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {return true;}
 
     @Override
-    public boolean applyEffectTick(ServerLevel world, LivingEntity entity, int amplifier) {
+    public boolean applyEffectTick(@NonNull ServerLevel world, @NonNull LivingEntity entity, int amplifier) {
         if (!CommonProtection.canDamageEntity(world, entity, CommonProtection.UNKNOWN, null)) return false;
 
         int armorUnequipped = 0;
@@ -37,7 +38,7 @@ public class AcidMobEffect extends URMobEffect {
     }
 
     @Override
-    public void onEffectStarted(LivingEntity entity, int amplifier) {
+    public void onEffectStarted(@NonNull LivingEntity entity, int amplifier) {
         super.onEffectStarted(entity, amplifier);
         URNetworkHelper.playSound(entity, URSoundEvent.ACID_SPLASH, SoundSource.AMBIENT, 1 ,1, 1);
     }

@@ -11,7 +11,6 @@ import org.jspecify.annotations.Nullable;
 
 public class DragonEquipmentModelProvider implements BRModelProvider {
     @Override
-    @Nullable
     public Identifier getModelId(BRState renderState) {
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultModel(renderState.getStateData(URStateDataTypes.DRAGON_ID));
         AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);

@@ -64,6 +64,6 @@ public class DragonPassengerLayer extends nordmods.biscuit_roll.client.renderer.
 
     @Override
     public boolean canRender(BRState state) {
-        return state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE).size() > 0;
+        return !state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE).isEmpty();
     }
 }

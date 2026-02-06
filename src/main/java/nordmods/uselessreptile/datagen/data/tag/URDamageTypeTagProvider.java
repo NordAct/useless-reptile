@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageType;
 import nordmods.uselessreptile.common.init.URDamageTypes;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -16,7 +17,7 @@ public class URDamageTypeTagProvider extends FabricTagProvider<DamageType> {
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider wrapperLookup) {
+    protected void addTags(HolderLookup.@NonNull Provider wrapperLookup) {
         getOrCreateRawBuilder(DamageTypeTags.BYPASSES_ARMOR).addOptionalElement(URDamageTypes.ACID.identifier());
         getOrCreateRawBuilder(DamageTypeTags.BYPASSES_ENCHANTMENTS).addOptionalElement(URDamageTypes.ACID.identifier());
     }

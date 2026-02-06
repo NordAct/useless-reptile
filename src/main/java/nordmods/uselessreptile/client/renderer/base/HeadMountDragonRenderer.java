@@ -11,6 +11,7 @@ import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.renderer.layers.HeadMountDragonRenderLayer;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import org.jspecify.annotations.NonNull;
 
 public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMountDragon> extends URDragonEntityRenderer<T> {
     public HeadMountDragonRenderer(EntityRendererProvider.Context renderManager) {
@@ -25,7 +26,7 @@ public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMou
     }
 
     @Override
-    public boolean shouldRender(T entity, Frustum frustum, double d, double e, double f) {
+    public boolean shouldRender(T entity, @NonNull Frustum frustum, double d, double e, double f) {
         if (entity.getVehicle() instanceof Player player
                 && (HeadMountDragonRenderLayer.ON_HEAD.contains(entity.getUUID())
                 || (player == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson())))

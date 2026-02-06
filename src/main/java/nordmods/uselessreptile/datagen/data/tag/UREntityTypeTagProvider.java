@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import nordmods.uselessreptile.common.init.URTags;
+import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -15,7 +16,7 @@ public class UREntityTypeTagProvider extends FabricTagProvider<EntityType<?>>{
     }
 
     @Override
-    protected void addTags(HolderLookup.Provider wrapperLookup) {
+    protected void addTags(HolderLookup.@NonNull Provider wrapperLookup) {
         getOrCreateRawBuilder(URTags.DRAGON_IMMUNE)
                 .addElement(EntityType.getKey(EntityType.ITEM));
     }

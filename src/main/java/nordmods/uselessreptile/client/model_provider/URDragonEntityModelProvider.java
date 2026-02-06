@@ -12,7 +12,6 @@ public class URDragonEntityModelProvider implements BRModelProvider {
     @Override
     public Identifier getAnimationId(BRState renderState) {
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation(renderState.getStateData(URStateDataTypes.DRAGON_ID));
-
         AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
         return assetCache.getAnimationLocationCache();
     }

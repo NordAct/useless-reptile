@@ -61,7 +61,6 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
             }
         }
 
-        if (darkestSpot == null)  return false;
         this.posX = darkestSpot.getX();
         this.posY = darkestSpot.getY();
         this.posZ = darkestSpot.getZ();
