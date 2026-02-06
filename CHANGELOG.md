@@ -5,6 +5,8 @@
 - Whether dragon can equip an item now is defined by its variant equipment list and not hardcoded tags
   - If custom name variant specifies its own list, it will override only appearance of the item, but not if dragon can equip the item
 - Removed `uselessreptile:dragon_saddles` tag and all dragon specific equipment tags besides `uselessreptile:protects_moleclaw_from_light` as now their functionality was taken over by equipment lists
+- Equipment tooltip now groups dragons based on their variant display name rather than base entity
+- Tooltip for dragon equipment now also shows which slot it goes in
 - Fixed items in inventory appearing in wrong slot for 1 tick when using quick move
 - River Pikehorn now has inventory screen
   - It still does not have an inventory space
@@ -13,6 +15,9 @@
 - Added dual saddle
   - Dual saddle is equipable by Swamp Wyvern only
   - Support for other dragons can be added via data and resource packs (you need both for it to work correctly)
+  - When another non-owner player is riding dragon, they cannot interact with dragon's inventory
+  - Second player can start riding dragon as passenger only if owner is riding the dragon as primary rider
+  - When owner disconnects or dismounts dragon, all other passengers get ejected
 - Added command menu to dragon inventory screen
   - You can order dragon to either sit, follow or stay at place, change wander radius and unbind instrument sound
   - When dragon is ordered to stay, it will wander around point where it was left at within specified wander radius
@@ -24,11 +29,14 @@
 ## Data and resource pack format changes
 - Breaking changes to equipment lists:
   - Equipment list is now specified as object that holds values in format `"item_id": {...}`
-  - You now must specify animation for your dragon equipment
+  - You now must specify animation file for your dragon equipment
     - All existing mod dragons have empty animation file for placeholder for cases when equipment piece does not have animation
+    - Equipment animation file must have only animations that dragon it belongs to has
   - Each equipment piece now must specify slot: `helmet`, `chestplate`, `tail_armor` or `saddle`
-- When specifying saddle in equipment list, you now can specify max amount of supported passengers
-  - To specify position of passenger on model, you need to place locator called `passengerN`, where `N` is ordinal of passenger, starting from 0
+- When specifying saddle in equipment list, you now can specify max amount of supported passengers by specifying their positions in list
+  - To specify position of passenger on saddle model, you need to place locator called `passengerN`, where `N` is ordinal of passenger, starting from 0
+  - Max amount of supported passengers equals size of passenger positions list
+  - Passenger position defines offset where passenger will be placed at as entity, not as model
 - You can specify bones that will be hidden on dragon model when equipment piece is worn by dragon by specifying bone names in `hid_bones` list
   - If bone is hidden, it still will be animated
 - Dragon variants now require translation key for their variant name

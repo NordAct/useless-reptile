@@ -27,6 +27,8 @@ import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
 import org.jspecify.annotations.NonNull;
 
+import java.util.List;
+
 public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
     public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
 
@@ -79,6 +81,12 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     @Override
     public LivingEntity getControllingPassenger() {
         return getFirstPassenger() instanceof Player player ? player : null;
+    }
+
+    @Override
+    protected void removePassenger(@NonNull Entity entity) {
+        if (entity == getOwner()) getPassengers().forEach(Entity::stopRiding);
+        super.removePassenger(entity);
     }
 
     @Override
@@ -230,6 +238,23 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
         Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
         if (saddle.isEmpty() || !getDragonActualEquipment().containsKey(id)) return 0;
-        return getDragonActualEquipment().get(id).maxPassengers().orElse(0);
+        return getDragonActualEquipment().get(id).passengerPositions().orElse(List.of()).size();
+    }
+
+    @Override
+    protected @NonNull Vec3 getPassengerAttachmentPoint(@NonNull Entity passenger, @NonNull EntityDimensions dimensions, float scaleFactor) {
+        int ordinal = getPassengers().size();
+        Vec3 offset = Vec3.ZERO;
+        while (--ordinal > -1) {
+            if (getPassengers().get(ordinal) == passenger) break;
+        }
+        if (ordinal > -1) {
+            ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
+            Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
+            if (!saddle.isEmpty() && getDragonActualEquipment().containsKey(id)) {
+                offset = getDragonActualEquipment().get(id).passengerPositions().orElseThrow().get(ordinal);
+            }
+        }
+        return super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor).add(offset.yRot(-getYRot() * Mth.DEG_TO_RAD));
     }
 }

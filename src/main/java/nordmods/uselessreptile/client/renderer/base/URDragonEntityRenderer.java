@@ -200,7 +200,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         data.hidBones().ifPresent(bones -> equipmentAssetCache.setHidBones(bones.toArray(new String[0])));
 
-        return new DragonEquipment(itemStack, equipmentAssetCache, data.maxPassengers().isPresent() && data.maxPassengers().get() > 0);
+        return new DragonEquipment(itemStack, equipmentAssetCache, data.passengerPositions().isPresent() && !data.passengerPositions().get().isEmpty());
     }
 
     @Override
