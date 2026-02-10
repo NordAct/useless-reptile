@@ -112,10 +112,11 @@ public class URSpawnConditionsProvider implements DataProvider {
                 .setWeight(weight)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OVERWORLD)
                 .addAllowedBlockTag(ConventionalBlockTags.ORES)
-                .addAllowedBlockTag(BlockTags.STONE_ORE_REPLACEABLES)
-                .addAllowedBlockTag(BlockTags.DEEPSLATE_ORE_REPLACEABLES)
+                .addAllowedBlockTag(ConventionalBlockTags.STONES)
                 .addAllowedBlock(Blocks.DIRT.builtInRegistryHolder().key())
                 .addAllowedBlock(Blocks.GRAVEL.builtInRegistryHolder().key())
+                .setMaxSkyLightLevel(0)
+                .setMaxBlockLightLevel(0)
                 .build();
         addSpawn("moleclaw/" + name, Collections.singletonList(spawn));
     }
@@ -123,16 +124,14 @@ public class URSpawnConditionsProvider implements DataProvider {
     protected void addRiverPikehornEntry(String name, int weight) {
         DragonSpawnConditions spawn = DragonSpawnConditions.builder()
                 .setWeight(weight)
-                .addAllowedBiomeTag(ConventionalBiomeTags.IS_BEACH)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_RIVER)
-                .addAllowedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_AQUATIC_ICY)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_SNOWY)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_COLD)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_ICY)
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
-                .addAllowedBlockTag(BlockTags.SAND)
-                .addAllowedBlock(Blocks.GRAVEL.builtInRegistryHolder().key())
+                .addAllowedBlockTag(ConventionalBlockTags.SANDS)
+                .addAllowedBlockTag(ConventionalBlockTags.GRAVELS)
                 .setMinAltitude(62)
                 .build();
 

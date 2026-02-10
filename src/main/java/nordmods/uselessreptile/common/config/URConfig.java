@@ -34,7 +34,7 @@ public class URConfig {
     @SerialEntry(comment = "MOB CATEGORIES CAPACITIES")
     public int dragonCategoryCapacity = 2;
     @SerialEntry
-    public int smallDragonCategoryCapacity = 12;
+    public int smallDragonCategoryCapacity = 8;
     @SerialEntry
     public int undergroundDragonCategoryCapacity = 6;
     @SerialEntry(comment = "GROUP SIZES")
@@ -48,7 +48,7 @@ public class URConfig {
     @SerialEntry
     public int riverPikehornMinGroupSize = 1;
     @SerialEntry
-    public int riverPikehornMaxGroupSize = 3;
+    public int riverPikehornMaxGroupSize = 2;
     @SerialEntry
     public int lightningChaserMinGroupSize = 1;
     @SerialEntry

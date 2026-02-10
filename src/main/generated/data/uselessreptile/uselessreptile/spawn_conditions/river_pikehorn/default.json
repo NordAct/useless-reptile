@@ -1,14 +1,12 @@
 [
   {
     "allowed_biomes": [
-      "#c:is_beach",
-      "#c:is_river",
-      "#c:is_ocean"
+      "#c:is_river"
     ],
     "allowed_blocks": [
       "#minecraft:animals_spawnable_on",
-      "#minecraft:sand",
-      "minecraft:gravel"
+      "#c:sands",
+      "#c:gravels"
     ],
     "altitude": {
       "min": 62

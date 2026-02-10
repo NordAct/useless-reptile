@@ -5,11 +5,18 @@
     ],
     "allowed_blocks": [
       "#c:ores",
-      "#minecraft:stone_ore_replaceables",
-      "#minecraft:deepslate_ore_replaceables",
+      "#c:stones",
       "minecraft:dirt",
       "minecraft:gravel"
     ],
+    "light_level": {
+      "block": {
+        "max": 0
+      },
+      "sky": {
+        "max": 0
+      }
+    },
     "weight": 1
   }
 ]

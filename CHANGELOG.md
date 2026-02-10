@@ -42,3 +42,6 @@
 - Dragon variants now require translation key for their variant name
   - This translation key is used to display localized variant name in Jade tooltip
   - I beg you to properly add localization file to your pack and not just slap variant name in English in plain text
+- Added new conditions for spawn conditions
+  - `light_level` allows to specify required block and sky light level ranges. Note: sky light level is constant even at night
+  - `time_period` allows to specify time of the day when dragon can spawn

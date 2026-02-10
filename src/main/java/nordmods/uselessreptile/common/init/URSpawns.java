@@ -28,7 +28,7 @@ public class URSpawns {
                     UREntities.MOLECLAW_ENTITY,
                     1,
                     URConfig.getConfig().moleclawMinGroupSize, URConfig.getConfig().moleclawMaxGroupSize);
-            SpawnPlacements.register(UREntities.MOLECLAW_ENTITY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Moleclaw::canDragonSpawn);
+            SpawnPlacements.register(UREntities.MOLECLAW_ENTITY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, URDragonEntity::canDragonSpawn);
         }
 
         if (URConfig.getConfig().naturalRiverPikehornSpawn) {
@@ -46,7 +46,7 @@ public class URSpawns {
                     UREntities.LIGHTNING_CHASER_ENTITY,
                     1,
                     URConfig.getConfig().lightningChaserMinGroupSize, URConfig.getConfig().lightningChaserMaxGroupSize);
-            SpawnPlacements.register(UREntities.LIGHTNING_CHASER_ENTITY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, LightningChaser::canDragonSpawn);
+            SpawnPlacements.register(UREntities.LIGHTNING_CHASER_ENTITY, SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, URDragonEntity::canDragonSpawn);
         }
 
         if (URConfig.getConfig().naturalMagmamuncherSpawn) {

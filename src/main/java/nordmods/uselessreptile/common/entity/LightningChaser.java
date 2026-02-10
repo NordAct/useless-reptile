@@ -141,11 +141,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
-    public static boolean canDragonSpawn(EntityType<? extends Mob> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-        if (world.getChunk(pos).getInhabitedTime() > 12000) return false;
-        return URDragonEntity.canDragonSpawn(type, world, spawnReason, pos, random);
-    }
-
     @Override
     public Collection<BRAnimationController> getAnimationControllers() {
         return controllers;

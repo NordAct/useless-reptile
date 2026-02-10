@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.common.dragon_variant.spawn;
 
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
@@ -10,6 +11,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import nordmods.uselessreptile.UselessReptile;
@@ -113,8 +115,33 @@ public class DragonSpawnUtil {
     private static boolean checkConditions(DragonSpawnConditions conditions, LevelAccessor world, BlockPos pos) {
         //altitude check
         if (conditions.altitudeRestriction().isPresent()) {
-            DragonSpawnConditions.AltitudeRestriction restriction = conditions.altitudeRestriction().get();
-            if (restriction.getMin() > pos.getY() || restriction.getMax() <= pos.getY()) return false;
+            DragonSpawnConditions.IntRange restriction = conditions.altitudeRestriction().get();
+            if (restriction.getMin() > pos.getY() || restriction.getMax() < pos.getY()) return false;
+        }
+
+        //time of day check
+        if (conditions.timePeriod().isPresent()) {
+            Pair<Integer, Integer> restriction = conditions.timePeriod().get();
+            long time = world.getGameTime() % 24000;
+            if (restriction.getFirst() > time || restriction.getSecond() < time) return false;
+        }
+
+        //light level check
+        if (conditions.lightLevelRestriction().isPresent()) {
+            DragonSpawnConditions.LightLevelRestriction restriction = conditions.lightLevelRestriction().get();
+            if (restriction.skyLightLevel().isPresent()) {
+                DragonSpawnConditions.IntRange skyRestriction = restriction.skyLightLevel().get();
+                int light = world.getBrightness(LightLayer.SKY, pos);
+                if (skyRestriction.getMin() > light || skyRestriction.getMax() < light) return false;
+            }
+
+            if (restriction.blockLightLevel().isPresent()) {
+                DragonSpawnConditions.IntRange blockRestriction = restriction.blockLightLevel().get();
+                int light = world.getBrightness(LightLayer.BLOCK, pos);
+                if (blockRestriction.getMin() > light
+                        || blockRestriction.getMax() < light)
+                    return false;
+            }
         }
 
         //allowed tagEntries check (whitelist)

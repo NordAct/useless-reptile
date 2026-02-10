@@ -22,8 +22,15 @@ public record DragonSpawnConditions(
         Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBiomes,
         Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBlocks,
         Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBlocks,
-        Optional<AltitudeRestriction> altitudeRestriction
+        Optional<IntRange> altitudeRestriction,
+        Optional<LightLevelRestriction> lightLevelRestriction,
+        Optional<Pair<Integer, Integer>> timePeriod
 ) {
+    private static final Codec<Pair<Integer, Integer>> INT_PAIR_CODEC = Codec.INT_STREAM
+            .comapFlatMap(
+                    stream -> Util.fixedSize(stream, 2).map(values -> new Pair<>(values[0], values[1])),
+                    pair -> IntStream.of(pair.getFirst(), pair.getSecond())
+            ).stable();
 
     public static final Codec<DragonSpawnConditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(DragonSpawnConditions::weight),
@@ -31,15 +38,24 @@ public record DragonSpawnConditions(
                     ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_biomes").forGetter(DragonSpawnConditions::bannedBiomes),
                     ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("allowed_blocks").forGetter(DragonSpawnConditions::allowedBlocks),
                     ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_blocks").forGetter(DragonSpawnConditions::bannedBlocks),
-                    AltitudeRestriction.CODEC.optionalFieldOf("altitude").forGetter(DragonSpawnConditions::altitudeRestriction))
-            .apply(instance, (DragonSpawnConditions::new)));
+                    IntRange.CODEC.optionalFieldOf("altitude").forGetter(DragonSpawnConditions::altitudeRestriction),
+                    LightLevelRestriction.CODEC.optionalFieldOf("light_level").forGetter(DragonSpawnConditions::lightLevelRestriction),
+                    INT_PAIR_CODEC.optionalFieldOf("time_period").forGetter(DragonSpawnConditions::timePeriod)
+            ).apply(instance, (DragonSpawnConditions::new)));
 
-    public record AltitudeRestriction(Pair<Optional<Integer>, Optional<Integer>> range) {
-        public AltitudeRestriction(Optional<Integer> min, Optional<Integer> max) {
+    public record LightLevelRestriction(Optional<IntRange> blockLightLevel, Optional<IntRange> skyLightLevel) {
+        public static final Codec<LightLevelRestriction> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                IntRange.CODEC.optionalFieldOf("block").forGetter(LightLevelRestriction::blockLightLevel),
+                IntRange.CODEC.optionalFieldOf("sky").forGetter(LightLevelRestriction::blockLightLevel)
+        ).apply(instance, LightLevelRestriction::new));
+    }
+
+    public record IntRange(Pair<Optional<Integer>, Optional<Integer>> range) {
+        public IntRange(Optional<Integer> min, Optional<Integer> max) {
             this(new Pair<>(min, max));
         }
 
-        public static final Codec<Pair<Optional<Integer>, Optional<Integer>>> PAIR_CODEC = Codec.withAlternative(
+        public static final Codec<Pair<Optional<Integer>, Optional<Integer>>> MIN_MAX_INT_CODEC = Codec.withAlternative(
                 Codec.pair(
                         Codec.INT.optionalFieldOf("min").codec(),
                         Codec.INT.optionalFieldOf("max").codec()
@@ -52,10 +68,10 @@ public record DragonSpawnConditions(
                         .stable()
         );
 
-        public static final Codec<AltitudeRestriction> CODEC = PAIR_CODEC
+        public static final Codec<IntRange> CODEC = MIN_MAX_INT_CODEC
                 .comapFlatMap(
-                        range1 -> DataResult.success(new AltitudeRestriction(range1)),
-                        AltitudeRestriction::range
+                        range1 -> DataResult.success(new IntRange(range1)),
+                        IntRange::range
                 ).stable();
 
         public int getMin() {
@@ -82,24 +98,46 @@ public record DragonSpawnConditions(
         private List<ExtraCodecs.TagOrElementLocation> bannedBlocks;
         private Integer minAltitude;
         private Integer maxAltitude;
+        private Integer minBlockLightLevel;
+        private Integer maxBlockLightLevel;
+        private Integer minSkyLightLevel;
+        private Integer maxSkyLightLevel;
+        private Pair<Integer, Integer> timePeriod;
 
         private Builder() {}
 
         public DragonSpawnConditions build() {
             if (weight == null) throw new IllegalStateException("Weight must be specified");
-            Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBiomes = this.allowedBiomes != null ? Optional.of(this.allowedBiomes) : Optional.empty();
-            Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBiomes = this.bannedBiomes != null ? Optional.of(this.bannedBiomes) : Optional.empty();
-            Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBlocks = this.allowedBlocks != null ? Optional.of(this.allowedBlocks) : Optional.empty();
-            Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBlocks = this.bannedBlocks != null ? Optional.of(this.bannedBlocks) : Optional.empty();
-            Optional<AltitudeRestriction> altitudeRestriction;
+            Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBiomes = Optional.ofNullable(this.allowedBiomes);
+            Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBiomes = Optional.ofNullable(this.bannedBiomes);
+            Optional<List<ExtraCodecs.TagOrElementLocation>> allowedBlocks = Optional.ofNullable(this.allowedBlocks);
+            Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBlocks = Optional.ofNullable(this.bannedBlocks);
+            Optional<IntRange> altitudeRestriction;
             if (this.minAltitude != null || this.maxAltitude != null) {
-                Optional<Integer> minAltitude = this.minAltitude != null ? Optional.of(this.minAltitude) : Optional.empty();
-                Optional<Integer> maxAltitude = this.maxAltitude != null ? Optional.of(this.maxAltitude) : Optional.empty();
-                altitudeRestriction = Optional.of(new AltitudeRestriction(minAltitude, maxAltitude));
+                Optional<Integer> minAltitude = Optional.ofNullable(this.minAltitude);
+                Optional<Integer> maxAltitude = Optional.ofNullable(this.maxAltitude);
+                altitudeRestriction = Optional.of(new IntRange(minAltitude, maxAltitude));
             }
             else altitudeRestriction = Optional.empty();
 
-            return new DragonSpawnConditions(weight, allowedBiomes, bannedBiomes, allowedBlocks, bannedBlocks, altitudeRestriction);
+            Optional<LightLevelRestriction> lightLevelRestriction;
+            if (this.minBlockLightLevel != null || this.maxBlockLightLevel != null || this.minSkyLightLevel != null || this.maxSkyLightLevel != null) {
+                Optional<Integer> minBlockLightLevel = Optional.ofNullable(this.minBlockLightLevel);
+                Optional<Integer> maxBlockLightLevel = Optional.ofNullable(this.maxBlockLightLevel);
+                Optional<Integer> minSkyLightLevel = Optional.ofNullable(this.minSkyLightLevel);
+                Optional<Integer> maxSkyLightLevel = Optional.ofNullable(this.maxSkyLightLevel);
+                lightLevelRestriction = Optional.of(
+                        new LightLevelRestriction(
+                                Optional.of(new IntRange(minBlockLightLevel, maxBlockLightLevel)),
+                                Optional.of(new IntRange(minSkyLightLevel, maxSkyLightLevel))
+                        )
+                );
+            }
+            else lightLevelRestriction = Optional.empty();
+
+            Optional<Pair<Integer, Integer>> timePeriod = Optional.ofNullable(this.timePeriod);
+
+            return new DragonSpawnConditions(weight, allowedBiomes, bannedBiomes, allowedBlocks, bannedBlocks, altitudeRestriction, lightLevelRestriction, timePeriod);
         }
 
         public Builder setWeight(Integer weight) {
@@ -168,6 +206,32 @@ public record DragonSpawnConditions(
         public Builder addBannedBlockTag(TagKey<Block> blockTagKey) {
             if (bannedBlocks == null) bannedBlocks = new ArrayList<>();
             bannedBlocks.add(new ExtraCodecs.TagOrElementLocation(blockTagKey.location(), true));
+            return this;
+        }
+
+        //light levels
+        public Builder setMinBlockLightLevel(Integer minBlockLightLevel) {
+            this.minBlockLightLevel = minBlockLightLevel;
+            return this;
+        }
+
+        public Builder setMaxBlockLightLevel(Integer maxBlockLightLevel) {
+            this.maxBlockLightLevel = maxBlockLightLevel;
+            return this;
+        }
+
+        public Builder setMinSkyLightLevel(Integer minSkyLightLevel) {
+            this.minSkyLightLevel = minSkyLightLevel;
+            return this;
+        }
+
+        public Builder setMaxSkyLightLevel(Integer maxSkyLightLevel) {
+            this.maxSkyLightLevel = maxSkyLightLevel;
+            return this;
+        }
+
+        public Builder setTimePeriod(int min, int max) {
+            this.timePeriod = new Pair<>(min, max);
             return this;
         }
     }

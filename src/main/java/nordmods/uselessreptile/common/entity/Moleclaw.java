@@ -81,11 +81,6 @@ public class Moleclaw extends URRideableDragonEntity {
         ticksUntilHeal = 400;
     }
 
-    public static boolean canDragonSpawn(EntityType<? extends Mob> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-        if (world.getBrightness(LightLayer.SKY, pos) > 0 || world.getBrightness(LightLayer.BLOCK, pos) > 0) return false;
-        return URDragonEntity.canDragonSpawn(type, world, spawnReason, pos, random);
-    }
-
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(1, new FloatGoal(this));
