@@ -1,7 +1,8 @@
 [
   {
     "allowed_biomes": [
-      "#c:is_river"
+      "#c:is_river",
+      "#c:is_beach"
     ],
     "allowed_blocks": [
       "#minecraft:animals_spawnable_on",
@@ -17,6 +18,14 @@
       "#c:is_cold",
       "#c:is_icy"
     ],
+    "light_level": {
+      "block": {},
+      "sky": {}
+    },
+    "spacing": {
+      "max_entity_count": 3,
+      "range": 8.0
+    },
     "weight": 1
   }
 ]

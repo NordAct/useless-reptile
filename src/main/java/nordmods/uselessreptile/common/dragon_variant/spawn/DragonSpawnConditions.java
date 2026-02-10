@@ -24,7 +24,8 @@ public record DragonSpawnConditions(
         Optional<List<ExtraCodecs.TagOrElementLocation>> bannedBlocks,
         Optional<IntRange> altitudeRestriction,
         Optional<LightLevelRestriction> lightLevelRestriction,
-        Optional<Pair<Integer, Integer>> timePeriod
+        Optional<Pair<Integer, Integer>> timePeriod,
+        Optional<Spacing> spacing
 ) {
     private static final Codec<Pair<Integer, Integer>> INT_PAIR_CODEC = Codec.INT_STREAM
             .comapFlatMap(
@@ -40,7 +41,8 @@ public record DragonSpawnConditions(
                     ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_blocks").forGetter(DragonSpawnConditions::bannedBlocks),
                     IntRange.CODEC.optionalFieldOf("altitude").forGetter(DragonSpawnConditions::altitudeRestriction),
                     LightLevelRestriction.CODEC.optionalFieldOf("light_level").forGetter(DragonSpawnConditions::lightLevelRestriction),
-                    INT_PAIR_CODEC.optionalFieldOf("time_period").forGetter(DragonSpawnConditions::timePeriod)
+                    INT_PAIR_CODEC.optionalFieldOf("time_period").forGetter(DragonSpawnConditions::timePeriod),
+                    Spacing.CODEC.optionalFieldOf("spacing").forGetter(DragonSpawnConditions::spacing)
             ).apply(instance, (DragonSpawnConditions::new)));
 
     public record LightLevelRestriction(Optional<IntRange> blockLightLevel, Optional<IntRange> skyLightLevel) {
@@ -48,6 +50,13 @@ public record DragonSpawnConditions(
                 IntRange.CODEC.optionalFieldOf("block").forGetter(LightLevelRestriction::blockLightLevel),
                 IntRange.CODEC.optionalFieldOf("sky").forGetter(LightLevelRestriction::blockLightLevel)
         ).apply(instance, LightLevelRestriction::new));
+    }
+
+    public record Spacing(float range, int maxEntityCount) {
+        public static final Codec<Spacing> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("range").forGetter(Spacing::range),
+                ExtraCodecs.NON_NEGATIVE_INT.fieldOf("max_entity_count").forGetter(Spacing::maxEntityCount)
+        ).apply(instance, (Spacing::new)));
     }
 
     public record IntRange(Pair<Optional<Integer>, Optional<Integer>> range) {
@@ -103,6 +112,7 @@ public record DragonSpawnConditions(
         private Integer minSkyLightLevel;
         private Integer maxSkyLightLevel;
         private Pair<Integer, Integer> timePeriod;
+        private Spacing spacing;
 
         private Builder() {}
 
@@ -136,12 +146,23 @@ public record DragonSpawnConditions(
             else lightLevelRestriction = Optional.empty();
 
             Optional<Pair<Integer, Integer>> timePeriod = Optional.ofNullable(this.timePeriod);
+            Optional<Spacing> spacing = Optional.ofNullable(this.spacing);
 
-            return new DragonSpawnConditions(weight, allowedBiomes, bannedBiomes, allowedBlocks, bannedBlocks, altitudeRestriction, lightLevelRestriction, timePeriod);
+            return new DragonSpawnConditions(weight, allowedBiomes, bannedBiomes, allowedBlocks, bannedBlocks, altitudeRestriction, lightLevelRestriction, timePeriod, spacing);
         }
 
         public Builder setWeight(Integer weight) {
             this.weight = weight;
+            return this;
+        }
+
+        public Builder setTimePeriod(int min, int max) {
+            this.timePeriod = new Pair<>(min, max);
+            return this;
+        }
+
+        public Builder setSpacing(float range, int maxEntityCount) {
+            this.spacing = new Spacing(range, maxEntityCount);
             return this;
         }
 
@@ -227,11 +248,6 @@ public record DragonSpawnConditions(
 
         public Builder setMaxSkyLightLevel(Integer maxSkyLightLevel) {
             this.maxSkyLightLevel = maxSkyLightLevel;
-            return this;
-        }
-
-        public Builder setTimePeriod(int min, int max) {
-            this.timePeriod = new Pair<>(min, max);
             return this;
         }
     }

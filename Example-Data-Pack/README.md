@@ -33,11 +33,12 @@ Allows to add new variants to dragon species
 Fields:
 - `id` - full entity id of the dragon for which this variant can be applied to
 - `name` - name of the variant. Does not have any restrictions *technically* on what characters can be used for them, but in general I would recommend to use lowercase english alphabet letters and avoid spaces to avoid any potential issues.
-- `equipment` - id of equipment list file, located in `uselessreptile/equipment` within data
+- `equipment` - id of equipment list file, located in `uselessreptile/equipment` within data. To be equipable by variant, item must be on the list
 - `dragon_model` - id of dragon model file, located in `uselessreptile/dragon_model` within data
 - `spawn_conditions` - (optional) id of spawn conditions file, located in `uselessreptile/spawn_conditions` within data
 - `attribute_modifiers` - (optional) id of attribute modifiers file, located in `uselessreptile/attribute_modifiers` within data
 - `display_name_key` - (optional) localisation key for display name of the variant. Note that it'll only be visible if entity does not have custom name
+- `variant_name_key` - localisation key for name of the variant. Used to display variant name in Jade tooltip
 - `base_taming_progress` - base taming progress for variant. Setting this to -1 will make variant untameable. Should be a positive number, as taming progress works by going down each time certain condition is met (i.e. giving dragon right taming item) until it reaches 0
 - `taming_items` - list of items that can be used for taming the variant. Technically optional, but not specifying those makes variant technically untameable. List entries can be specified in 2 ways:
   - By specifying entry as a pair of `"key": value`, where `key` is either item tag or item id and value is an array of 2 integer numbers, where 1st number represents minimal possible taming progress decrease and second is maximum possible decrease (`[min, max]`)
@@ -102,43 +103,33 @@ Due to some technical limitations some sound key names are hardcoded and have to
 Lists models for items that are going to be used when the latter are used as equipment.
 Fields:
 - `parent` - (optional) id of parent equipment list file. If specified, will try to poll models for items that are not specified within current list. It's generally recommended to inherit base lists for each dragon species if you want to change some models for your custom variant.
-- `equipment` - list of models to be used for specified items
-  - `item` - item id for which model will be used
+- `equipment` - list of models to be used for specified items. Specified as a pair of key-object, where key is item id and object is equipment data
+  - `hid_bones` - (optional) list of bone names that gets hidden on dragon model when this item is equipped
+  - `slot` - slot in which specified item goes. Can be either `helmet`, `chestplate`, `tail_armor` or `saddle`
   - `model_data` - a single object holding all info on used assets for model:
       - `texture` -  resource location of texture file, located in `textures` within assets
       - `model` -  resource location of model file, located in `biscuit_roll/models` within assets
       - `animation` -  resource location of model file, located in `biscuit_roll/animations` within assets. If you wish for your equipment to not have any animations, specify build-in empty animation file for this dragon (`uselessreptile:biscuit_roll/animations/entity/<dragon_id>/empty.animation.json`)
       - `translucent` - (optional) specifies if model can have translucent pixels. If not specified, defaults to `false`
+  - `passenger_positions` - (optional) controls entity offset for a passenger (where actual entity gets placed relative to ridden dragon) for items that go into `saddle` slot. Represented as list of 3-sized arrays of floats, where each number represents offset on x, y and z axis respectively. Amount of entries also controls max amount of passengers supported.
 
-Note that for dragon to be able to use item as equipment it has to be added in specific tag.
-Tag list for dragon equipment:
+**Note for saddles**: to display banner correctly your saddle model _must_ have locators named `banner`. To display any passengers, model must have locators `passengerN` where `N` is an ordinal number of passenger. I.e. if saddle can support 3 passengers, it must have locators called `passenger0` for primary rider (first passenger), `passenger1` for second passenger and `passenger2` for third passenger. For reference, refer to Swamp Wyvern's Dual Saddle model
 
-|      Dragon      |                   Item tag                    |        Equipment piece         |
-|:----------------:|:---------------------------------------------:|:------------------------------:|
-|     Moleclaw     |       `uselessreptile:moleclaw_helmets`       |             Helmet             |
-|     Moleclaw     |     `uselessreptile:moleclaw_chestplates`     |           Chestplate           |
-|     Moleclaw     |     `uselessreptile:moleclaw_tail_armor`      |           Tail Armor           |
-|     Moleclaw     | `uselessreptile:protects_moleclaw_from_light` | Helmet (With light protection) |
-|     Moleclaw     |       `uselessreptile:moleclaw_saddles`       |             Saddle             |
-| Lightning Chaser |   `uselessreptile:lightning_chaser_helmets`   |             Helmet             |
-| Lightning Chaser | `uselessreptile:lightning_chaser_chestplates` |           Chestplate           |
-| Lightning Chaser | `uselessreptile:lightning_chaser_tail_armor`  |           Tail Armor           |
-| Lightning Chaser |   `uselessreptile:lightning_chaser_saddles`   |             Saddle             |
-|   Swamp Wyvern   |        `uselessreptile:wyvern_saddles`        |             Saddle             |
-
-**Note for saddles**: to display banner and rider correctly your saddle model _must_ have locators named `banner` and `passenger0` respectively
+**Note for Moleclaw helmets**: if you wish your helmet for Moleclaw to protect it from light, you must add item in `uselessreptile:protects_moleclaw_from_light` item tag
 
 ## `equipment_inject` file structure
 Allows to inject extra equipment entries into specified equipment list without needing to override entire file.
 Fields:
 - `parent` - id of equipment list file, located in `uselessreptile/equipment` within data, in which listed below equipment will be injected
-- `equipment` - list of models to be used for specified items
-  - `item` - item id for which model will be used
+- `equipment` - list of models to be used for specified items. Specified as a pair of key-object, where key is item id and object is equipment data
+  - `hid_bones` - (optional) list of bone names that gets hidden on dragon model when this item is equipped
+  - `slot` - slot in which specified item goes. Can be either `helmet`, `chestplate`, `tail_armor` or `saddle`
   - `model_data` - a single object holding all info on used assets for model:
     - `texture` -  resource location of texture file, located in `textures` within assets
     - `model` -  resource location of model file, located in `biscuit_roll/models` within assets
     - `animation` -  resource location of model file, located in `biscuit_roll/animations` within assets. If you wish for your equipment to not have any animations, specify build-in empty animation file for this dragon (`uselessreptile:biscuit_roll/animations/entity/<dragon_id>/empty.animation.json`)
     - `translucent` - (optional) specifies if model can have translucent pixels. If not specified, defaults to `false`
+  - `passenger_positions` - (optional) controls entity offset for a passenger (where actual entity gets placed relative to ridden dragon) for items that go into `saddle` slot. Represented as list of 3-sized arrays of floats, where each number represents offset on x, y and z axis respectively. Amount of entries also controls max amount of passengers supported.
 
 ## `spawn_conditions` file structure
 List of entries with spawn conditions.
@@ -152,7 +143,21 @@ Fields:
   - As an integer array of size of 2, where first number represents minimal world height and second represents maximum world height (`[min, max]`)
   - As object:
     - `min` - (optional) minimal world height for variant to appear. If not specified, no limit on min Y
-    - `max` - (optional) maximum world height up to which variant can appear. If not specified, no limit on min Y
+    - `max` - (optional) maximum world height up to which variant can appear. If not specified, no limit on max Y
+- `light_level` - (optional) required light level for dragon to spawn. Can be specified as block and sky light level ranges:
+  - `block` - (optional) block light level range. Can be defined in 2 ways:
+    - As an integer array of size of 2, where first number represents minimal light level and second represents maximum light level (`[min, max]`)
+    - As object:
+      - `min` - (optional) minimal light level for variant to appear. If not specified, no limit on min light level
+      - `max` - (optional) maximum light level up to which variant can appear. If not specified, no limit on max light level
+  - `sky` - (optional) sky light level range. Note that sky light level does not change depending on time of day. Can be defined in 2 ways:
+    - As an integer array of size of 2, where first number represents minimal light level and second represents maximum light level (`[min, max]`)
+    - As object:
+      - `min` - (optional) minimal light level for variant to appear. If not specified, no limit on min light level
+      - `max` - (optional) maximum light level up to which variant can appear. If not specified, no limit on max light level
+- `spacing` - (optional) defines how much dragons with same id can be within zone of specified size in order to spawn the variant. Note: for convenience, spacing check is ignored when trying to spawn dragon from command, spawner or spawn egg
+  - `range` - controls check zone size. Check zone is represented by cube with each side size equaling `range * 2` with center at spawn position
+  - `max_entity_count` - max amount of dragons with same id that is allowed to be within check radius for it to pass
 
 To add spawn entry, you have to at least specify `weight`. You probably also should add `allowed_biomes` if you don't want to end up with your custom variant spawning absolutely everywhere (although this field is optional).
 File names for spawn entries don't matter. You also can create subfolders within folder of the dragon for which you are adding spawns.

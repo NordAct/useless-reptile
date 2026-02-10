@@ -25,6 +25,15 @@
   - Wander radius also affects how far away dragon can wander when following you
 - By default, all tamed dragons will now follow you unless you order them otherwise
 - When starting to ride dragon, it now will remember last order and return to it after stop being ridden. I.e. if you start riding sitting dragon and then dismount, it'll be back to sitting position
+- Added light level, day time and spacing spawn conditions
+- Adjusted River Pikehorn spawn conditions to address common complains of them being way too common
+  - River Pikehorns no longer spawn in oceans (but still do occasionally at beaches)
+  - Reduced group max size default config value from 3 to 2
+  - Reduced small dragon mob group capacity default config value from 12 to 8
+  - Added spacing condition that ensures that no more than 3 pikehorns is present within 32x32x32 cube area before spawning
+- Added spacing check for Swamp Wyvern to ensure that no other Swamp Wyvern is present within 64x64x64 cube area
+  - This should make wyvern spawning more spread out instead of them ending up spawning all of the mob group capacity in one place
+- When spawning, Moleclaw now checks for blocks in `c:stones` tag instead of just deepslate and normal stone
 
 ## Data and resource pack format changes
 - Breaking changes to equipment lists:
@@ -45,3 +54,7 @@
 - Added new conditions for spawn conditions
   - `light_level` allows to specify required block and sky light level ranges. Note: sky light level is constant even at night
   - `time_period` allows to specify time of the day when dragon can spawn
+- Added `spacing` as condition to make spawns more rare
+  - `range` field controls check zone size
+  - `max_entity_count` is max amount of dragons with same id that is allowed to be within check radius for it to pass
+  - For convenience, spacing check is ignored when trying to spawn dragon from command, spawner or spawn egg

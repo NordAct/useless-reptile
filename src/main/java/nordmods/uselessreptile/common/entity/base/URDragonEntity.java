@@ -559,7 +559,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public static boolean canDragonSpawn(EntityType<? extends Mob> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-        return DragonSpawnUtil.getAvailableVariants(world, pos, EntityType.getKey(type)).findFirst().isPresent();
+        return DragonSpawnUtil.getAvailableVariants(world, pos, EntityType.getKey(type), spawnReason).findFirst().isPresent();
     }
 
     @Override

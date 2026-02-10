@@ -102,6 +102,7 @@ public class URSpawnConditionsProvider implements DataProvider {
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_SWAMP)
                 .addBannedBiome(Biomes.MANGROVE_SWAMP)
                 .addAllowedBlockTag(BlockTags.ANIMALS_SPAWNABLE_ON)
+                .setSpacing(32, 0)
                 .build();
 
         addSpawn("wyvern/" + name, Collections.singletonList(spawn));
@@ -125,6 +126,7 @@ public class URSpawnConditionsProvider implements DataProvider {
         DragonSpawnConditions spawn = DragonSpawnConditions.builder()
                 .setWeight(weight)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_RIVER)
+                .addAllowedBiomeTag(ConventionalBiomeTags.IS_BEACH)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_AQUATIC_ICY)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_SNOWY)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_COLD)
@@ -133,6 +135,8 @@ public class URSpawnConditionsProvider implements DataProvider {
                 .addAllowedBlockTag(ConventionalBlockTags.SANDS)
                 .addAllowedBlockTag(ConventionalBlockTags.GRAVELS)
                 .setMinAltitude(62)
+                .setMinSkyLightLevel(14)
+                .setSpacing(8, 3)
                 .build();
 
         addSpawn("river_pikehorn/" + name, Collections.singletonList(spawn));

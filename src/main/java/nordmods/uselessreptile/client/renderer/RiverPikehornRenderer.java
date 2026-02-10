@@ -22,7 +22,7 @@ public class RiverPikehornRenderer extends HeadMountDragonRenderer<RiverPikehorn
     @Override
     public void extractRenderState(RiverPikehorn animatable, LivingEntityRenderState state, float tickDelta) {
         super.extractRenderState(animatable, state, tickDelta);
-        DragonEquipment equipment = animatable.getAssetCache().getEquipment(EquipmentSlot.MAINHAND);
+        DragonEquipment equipment = animatable.getAssetCache().getEquipment(EquipmentSlot.OFFHAND);
         if (equipment != null && equipment.itemStack != null) {
             ItemStackRenderState stackRenderState = new ItemStackRenderState();
             Minecraft.getInstance().getItemModelResolver().updateForTopItem(stackRenderState, equipment.itemStack, ItemDisplayContext.NONE, Minecraft.getInstance().level, animatable, animatable.getId());

@@ -9,6 +9,10 @@
     "banned_biomes": [
       "minecraft:mangrove_swamp"
     ],
+    "spacing": {
+      "max_entity_count": 0,
+      "range": 32.0
+    },
     "weight": 1
   }
 ]
