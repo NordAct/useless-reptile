@@ -1,5 +1,5 @@
 {
-  "base_taming_progress": 1,
+  "base_taming_progress": 8,
   "dragon_model": "uselessreptile:river_pikehorn/dark_purple",
   "equipment": "uselessreptile:empty",
   "food_items": {
@@ -8,11 +8,21 @@
   "id": "uselessreptile:river_pikehorn",
   "name": "dark_purple",
   "spawn_conditions": "uselessreptile:river_pikehorn/default",
-  "taming_items": {
-    "minecraft:tropical_fish_bucket": [
-      1,
-      1
-    ]
-  },
+  "taming_items": [
+    {
+      "item": "minecraft:tropical_fish_bucket",
+      "taming_progress_increase": [
+        8,
+        8
+      ]
+    },
+    {
+      "item": "minecraft:tropical_fish",
+      "taming_progress_increase": [
+        1,
+        2
+      ]
+    }
+  ],
   "variant_name_key": "variant.uselessreptile.river_pikehorn.dark_purple"
 }

@@ -131,7 +131,7 @@ public record DragonVariant(
                 .orElse(null);
     }
 
-    public record TamingItem(ExtraCodecs.TagOrElementLocation item, Pair<Integer, Integer> tamingProgressIncrease) {
+    public record TamingItem(ExtraCodecs.TagOrElementLocation item, Pair<Integer, Integer> tamingProgressIncrease, Optional<Integer> priority) {
         private static final Codec<Pair<Integer, Integer>> PAIR_CODEC = Codec.pair(
                 ExtraCodecs.NON_NEGATIVE_INT.fieldOf("min").codec(),
                 ExtraCodecs.POSITIVE_INT.fieldOf("max").codec()
@@ -148,29 +148,31 @@ public record DragonVariant(
 
         public static final Codec<TamingItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         ExtraCodecs.TAG_OR_ELEMENT_ID.fieldOf("item").forGetter(TamingItem::item),
-                        PAIR_WITH_ALTERNATIVE.fieldOf("taming_progress_increase").forGetter(TamingItem::tamingProgressIncrease)
+                        PAIR_WITH_ALTERNATIVE.fieldOf("taming_progress_increase").forGetter(TamingItem::tamingProgressIncrease),
+                        Codec.INT.optionalFieldOf("priority").forGetter(TamingItem::priority)
                 ).apply(instance, TamingItem::new)
         );
 
         public static final Codec<List<TamingItem>> LIST_CODEC = Codec.withAlternative(
+                CODEC.listOf(),
                 Codec.unboundedMap(ExtraCodecs.TAG_OR_ELEMENT_ID, PAIR_WITH_ALTERNATIVE).xmap(tagEntryIdIntegerMap ->
                         tagEntryIdIntegerMap
                                 .entrySet()
                                 .stream()
-                                .map(entry -> new TamingItem(entry.getKey(), entry.getValue()))
+                                .map(entry -> new TamingItem(entry.getKey(), entry.getValue(), Optional.empty()))
                                 .toList(), list -> {
                     HashMap<ExtraCodecs.TagOrElementLocation, Pair<Integer, Integer>> map = new HashMap<>();
                     list.forEach(tamingItem -> map.put(tamingItem.item(), tamingItem.tamingProgressIncrease()));
                     return map;
-                }),
-                CODEC.listOf()
+                })
         );
     }
 
-    public record FoodItem(ExtraCodecs.TagOrElementLocation item, Integer healingAmount) {
+    public record FoodItem(ExtraCodecs.TagOrElementLocation item, Integer healingAmount, Optional<Integer> priority) {
         public static final Codec<FoodItem> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                         ExtraCodecs.TAG_OR_ELEMENT_ID.fieldOf("item").forGetter(FoodItem::item),
-                        ExtraCodecs.NON_NEGATIVE_INT.fieldOf("healing_amount").forGetter(FoodItem::healingAmount)
+                        ExtraCodecs.NON_NEGATIVE_INT.fieldOf("healing_amount").forGetter(FoodItem::healingAmount),
+                        Codec.INT.optionalFieldOf("priority").forGetter(FoodItem::priority)
                 ).apply(instance, FoodItem::new)
         );
 
@@ -179,7 +181,7 @@ public record DragonVariant(
                         tagEntryIdIntegerMap
                                 .entrySet()
                                 .stream()
-                                .map(entry -> new FoodItem(entry.getKey(), entry.getValue()))
+                                .map(entry -> new FoodItem(entry.getKey(), entry.getValue(), Optional.empty()))
                                 .toList(), list -> {
                     HashMap<ExtraCodecs.TagOrElementLocation, Integer> map = new HashMap<>();
                     list.forEach(foodItem -> map.put(foodItem.item(), foodItem.healingAmount()));

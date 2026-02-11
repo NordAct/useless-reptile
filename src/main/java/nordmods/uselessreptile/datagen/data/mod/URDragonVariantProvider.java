@@ -121,23 +121,31 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("wyvern"),
                 Optional.of(UselessReptile.id("wyvern/default")),
                 Optional.empty(),
-                128,
+                256,
                 Optional.of(
                         List.of(
                                 new DragonVariant.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(1, 2)
+                                        new com.mojang.datafixers.util.Pair<>(2, 4),
+                                        Optional.of(1)
                                 ),
                                 new DragonVariant.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(1, 1)
+                                        new com.mojang.datafixers.util.Pair<>(2, 4),
+                                        Optional.of(1)
+                                ),
+                                new DragonVariant.TamingItem(
+                                        new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true),
+                                        new com.mojang.datafixers.util.Pair<>(1, 1),
+                                        Optional.empty()
                                 )
                         )
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false), 4),
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
                         )
                 )
         );
@@ -160,13 +168,14 @@ public class URDragonVariantProvider implements DataProvider {
                         List.of(
                                 new DragonVariant.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.BEETROOT.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(1, 2)
+                                        new com.mojang.datafixers.util.Pair<>(1, 2),
+                                        Optional.empty()
                                 )
                         )
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
                         )
                 )
         );
@@ -184,18 +193,24 @@ public class URDragonVariantProvider implements DataProvider {
                 UselessReptile.id("empty"),
                 Optional.of(UselessReptile.id("river_pikehorn/default")),
                 Optional.empty(),
-                1,
+                8,
                 Optional.of(
                         List.of(
                                 new DragonVariant.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH_BUCKET.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(1, 1)
+                                        new com.mojang.datafixers.util.Pair<>(8, 8),
+                                        Optional.empty()
+                                ),
+                                new DragonVariant.TamingItem(
+                                        new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH.builtInRegistryHolder().key().identifier(), false),
+                                        new com.mojang.datafixers.util.Pair<>(1, 2),
+                                        Optional.empty()
                                 )
                         )
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
                         )
                 )
         );
@@ -217,7 +232,7 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
                         )
                 )
         );
@@ -240,14 +255,15 @@ public class URDragonVariantProvider implements DataProvider {
                         List.of(
                                 new DragonVariant.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.BLAZE_ROD.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(1, 3)
+                                        new com.mojang.datafixers.util.Pair<>(1, 3),
+                                        Optional.empty()
                                 )
                         )
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4),
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2)
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4, Optional.empty()),
+                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
                         )
                 )
         );

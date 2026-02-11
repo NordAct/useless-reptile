@@ -8,6 +8,7 @@
 - Equipment tooltip now groups dragons based on their variant display name rather than base entity
 - Tooltip for dragon equipment now also shows which slot it goes in
 - Fixed items in inventory appearing in wrong slot for 1 tick when using quick move
+- River Pikehorn now takes caught fish in offhand instead of main hand
 - River Pikehorn now has inventory screen
   - It still does not have an inventory space
 - Now to pick up dragon that can ride on your head you have to click on it while not crouching with empty hand. To put it down you still have to couch
@@ -34,6 +35,15 @@
 - Added spacing check for Swamp Wyvern to ensure that no other Swamp Wyvern is present within 64x64x64 cube area
   - This should make wyvern spawning more spread out instead of them ending up spawning all of the mob group capacity in one place
 - When spawning, Moleclaw now checks for blocks in `c:stones` tag instead of just deepslate and normal stone
+- Adjusted Swamp Wyvern's taming conditions:
+  - Base taming progress is now 256
+  - Raw and Cooked Chicken now gives from 2 to 4 taming progress, thus you still need 1-2 stacks of chicken
+  - As alternative to those who don't wish to set up chicken farm, Swamp Wyverns now can be tamed with any meat (all meat from `minecraft:meat` tag). But those items will give only 1 taming progress, meaning you'll need 4 stacks of non-chicken meat to tame. Also note that meat tag includes Rotten Flesh and all raw and cooked meat variants of vanilla mobs by default
+  - Additionally, any non-chicken meat will also heal 2 health when consumed by dragon
+- Adjusted River Pikehorn's taming conditions:
+  - Base taming progress is now 8
+  - Tropical Fish Bucket now gives 8 taming progress, meaning you still need 1 to tame the dragon
+  - As alternative, River Pikehorn now also takes just Tropical Fish as taming item. Tropical Fish will give from 1 to 2 of taming progress, meaning you'll need from 4 to 8 of Tropical Fishes (items, not stacks) to tame it
 
 ## Data and resource pack format changes
 - Breaking changes to equipment lists:
@@ -58,3 +68,9 @@
   - `range` field controls check zone size
   - `max_entity_count` is max amount of dragons with same id that is allowed to be within check radius for it to pass
   - For convenience, spacing check is ignored when trying to spawn dragon from command, spawner or spawn egg
+- Added optional `priority` field to `taming_items` and `food_items` entries
+  - Defines which entries get highest priority when getting data for item and there are several entries that fit for it
+  - Entries with no priority specified will have lowest priority
+  - Entry with highest priority value will be picked first
+  - You still can specify entry in old way, but you won't be able to specify priority with it
+  - If several entries are fit for item and have same priority, one may be picked at random

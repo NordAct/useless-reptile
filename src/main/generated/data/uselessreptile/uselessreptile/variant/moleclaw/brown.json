@@ -8,11 +8,14 @@
   "id": "uselessreptile:moleclaw",
   "name": "brown",
   "spawn_conditions": "uselessreptile:moleclaw/default",
-  "taming_items": {
-    "minecraft:beetroot": [
-      1,
-      2
-    ]
-  },
+  "taming_items": [
+    {
+      "item": "minecraft:beetroot",
+      "taming_progress_increase": [
+        1,
+        2
+      ]
+    }
+  ],
   "variant_name_key": "variant.uselessreptile.moleclaw.brown"
 }

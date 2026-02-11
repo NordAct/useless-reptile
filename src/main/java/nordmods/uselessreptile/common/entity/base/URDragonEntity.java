@@ -104,10 +104,7 @@ import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner, ContainerListener {
@@ -1001,12 +998,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         DragonVariant variant = getDragonActualVariant();
         if (variant != null) {
             return variant.tamingItems().orElse(List.of()).stream()
-                    .filter(tamingItem -> {
-                        ExtraCodecs.TagOrElementLocation entryId = tamingItem.item();
+                    .filter(item -> {
+                        ExtraCodecs.TagOrElementLocation entryId = item.item();
                         if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
                         return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().identifier());
                     })
-                    .findFirst()
+                    .max(Comparator.comparingInt(item -> item.priority().orElse(Integer.MIN_VALUE)))
                     .orElse(null);
         }
         return null;
@@ -1016,12 +1013,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         DragonVariant variant = getDragonActualVariant();
         if (variant != null) {
             return variant.foodItems().orElse(List.of()).stream()
-                    .filter(tamingItem -> {
-                        ExtraCodecs.TagOrElementLocation entryId = tamingItem.item();
+                    .filter(item -> {
+                        ExtraCodecs.TagOrElementLocation entryId = item.item();
                         if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
                         return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().identifier());
                     })
-                    .findFirst()
+                    .max(Comparator.comparingInt(item -> item.priority().orElse(Integer.MIN_VALUE)))
                     .orElse(null);
         }
         return null;

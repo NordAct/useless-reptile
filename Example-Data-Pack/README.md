@@ -41,17 +41,19 @@ Fields:
 - `variant_name_key` - localisation key for name of the variant. Used to display variant name in Jade tooltip
 - `base_taming_progress` - base taming progress for variant. Setting this to -1 will make variant untameable. Should be a positive number, as taming progress works by going down each time certain condition is met (i.e. giving dragon right taming item) until it reaches 0
 - `taming_items` - list of items that can be used for taming the variant. Technically optional, but not specifying those makes variant technically untameable. List entries can be specified in 2 ways:
-  - By specifying entry as a pair of `"key": value`, where `key` is either item tag or item id and value is an array of 2 integer numbers, where 1st number represents minimal possible taming progress decrease and second is maximum possible decrease (`[min, max]`)
+  - By specifying entry as a pair of `"key": value`, where `key` is either item tag or item id and value is an array of 2 integer numbers, where 1st number represents minimal possible taming progress decrease and second is maximum possible decrease (`[min, max]`). Note that in this case entry priority cannot be specified manually and thus will be the lowest
   - By specifying entry as object with following fields:
     - `item` - either item tag or item id
     - `taming_progress_increase` - either an array of 2 integer numbers, where 1st number represents minimal possible taming progress decrease and second is maximum possible decrease (`[min, max]`) or an object with following fields:
       - `min` - minimal possible taming progress decrease
       - `max` - maximum possible taming progress decrease
+    - `priority` - (optional) defines priority of entry. If not specified, it'll default to lowest possible value. If several entries that match given item are present, one with highest priority value will be picked. If several matching entries have same priority value, random entry will be picked
 - `food_items` - list of items that can be used to heal dragon. For some dragons may be used for other activities (i.e. River Pikehorn will seek its food items when fishing). Technically optional, but leaving this empty will make dragon impossible to be healed with food. List entries can be specified in 2 ways:
-  - By specifying entry as a pair of `"key": value`, where `key` is either item tag or item id and value is a positive integer number that represents amount of health that will be restored when dragon consumes the food item
+  - By specifying entry as a pair of `"key": value`, where `key` is either item tag or item id and value is a positive integer number that represents amount of health that will be restored when dragon consumes the food item. Note that in this case entry priority cannot be specified manually and thus will be the lowest
   - By specifying entry as object with following fields:
     - `item` - either item tag or item id 
     - `healing_amount` - amount of health that will be restored when dragon consumes the food item
+  - `priority` - (optional) defines priority of entry. If not specified, it'll default to lowest possible value. If several entries that match given item are present, one with highest priority value will be picked. If several matching entries have same priority value, random entry will be picked
 
 ## `custom_name` file structure
 Technically just a stripped version of variant.
