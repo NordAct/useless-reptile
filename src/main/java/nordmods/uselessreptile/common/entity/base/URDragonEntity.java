@@ -583,7 +583,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
+        if (player.getItemInHand(InteractionHand.MAIN_HAND).is(URItems.VARIANT_CHANGING_ORB)
+                || player.getItemInHand(InteractionHand.OFF_HAND).is(URItems.VARIANT_CHANGING_ORB))
+            return InteractionResult.PASS;
+
         ItemStack itemStack = player.getItemInHand(hand);
+
         if (isTameable()) {
             DragonVariant.TamingItem tamingItem = getTamingItem(itemStack);
             if (tamingItem != null) {

@@ -16,7 +16,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.InstrumentItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -26,8 +25,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.EntityHitResult;
-import net.minecraft.world.phys.HitResult;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.init.URItems;
@@ -36,7 +33,6 @@ import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponen
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 import com.mojang.blaze3d.platform.InputConstants;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,8 +45,9 @@ public class VortexHornItem extends InstrumentItem {
         super(settings);
     }
 
+    @Override
     public @NonNull InteractionResult interactLivingEntity(@NonNull ItemStack stack, @NonNull Player user, @NonNull LivingEntity entity, @NonNull InteractionHand hand) {
-        if (getPartParent(user) instanceof URDragonEntity dragon) entity = dragon;
+        if (URDragonPart.getPartParent(user) instanceof URDragonEntity dragon) entity = dragon;
         if (entity instanceof URDragonEntity dragon && dragon.getOwner() == user && !user.isShiftKeyDown()) {
             if (tryCollectDragon(stack, user, dragon, hand, true)) {
                 user.releaseUsingItem();
@@ -67,7 +64,7 @@ public class VortexHornItem extends InstrumentItem {
         if (user.isShiftKeyDown()) {
             if (tryMassCatchOrRelease(stack, user, world, hand)) return InteractionResult.SUCCESS;
         }
-        if (getPartParent(user) instanceof URDragonEntity dragon) {
+        if (URDragonPart.getPartParent(user) instanceof URDragonEntity dragon) {
             interactLivingEntity(stack, user, dragon, hand);
             user.releaseUsingItem();
             return InteractionResult.SUCCESS;
@@ -237,13 +234,6 @@ public class VortexHornItem extends InstrumentItem {
 
     protected int getCurrentCapacity(ItemStack stack) {
         return stack.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT).currentCapacity();
-    }
-
-    @Nullable
-    protected URDragonEntity getPartParent(Player user) {
-        HitResult hitResult = ProjectileUtil.getHitResultOnViewVector(user, entity -> entity instanceof URDragonPart, user.entityInteractionRange());
-        if (hitResult.getType() == HitResult.Type.ENTITY && ((EntityHitResult)hitResult).getEntity() instanceof URDragonPart part) return part.owner;
-        return null;
     }
 
     public int getMaxCapacity(ItemStack stack) {

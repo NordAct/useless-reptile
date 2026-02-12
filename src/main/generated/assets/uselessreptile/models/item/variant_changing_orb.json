@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "uselessreptile:item/variant_changing_orb"
+  }
+}

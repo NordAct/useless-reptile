@@ -42,6 +42,7 @@
   "item.uselessreptile.dragon_chestplate_netherite" : "Netherite Dragon Chestplate",
   "item.uselessreptile.dragon_tail_armor_netherite" : "Netherite Dragon Tail Armor",
   "item.uselessreptile.dual_saddle" : "Dual Saddle",
+  "item.uselessreptile.variant_changing_orb" : "Variant Changing Orb",
 
   "tooltip.uselessreptile.hidden": "Hold Left Shift for more info",
   "tooltip.uselessreptile.flute": "Can be used to command River Pikehorns.\nRight-click in air while crouching to change mode",
@@ -54,6 +55,7 @@
   "tooltip.uselessreptile.can_be_equipped_by": "Can be equipped by:",
   "tooltip.uselessreptile.vortex_horn.capacity": "Capacity: %s / %s",
   "tooltip.uselessreptile.vortex_horn.contained_dragons": "Dragons inside:",
+  "tooltip.uselessreptile.variant_changing_orb": "Rename this item to name matching one of its variants and use it on the dragon to change its variant",
 
   "entity.uselessreptile.wyvern": "Swamp Wyvern",
   "entity.uselessreptile.moleclaw": "Moleclaw",
@@ -95,6 +97,7 @@
   "other.uselessreptile.none": "None",
   "other.uselessreptile.sound_respond": "%1$s will now respond to the following sound: %2$s",
   "other.uselessreptile.not_enough_capacity": "Not enough capacity",
+  "other.uselessreptile.variant_not_found": "Variant \"%s\" doesn't exist for this dragon",
 
   "config.uselessreptile.title": "Useless Reptile Configuration",
   "config.uselessreptile.category.gameplay" : "Gameplay Options",

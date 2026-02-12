@@ -9,10 +9,14 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec2;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class URDragonPart extends EntityPart {
     public final URDragonEntity owner;
@@ -29,6 +33,13 @@ public class URDragonPart extends EntityPart {
         this.owner = owner;
         this.damageMultiplier = damageMultiplier;
         refreshDimensions();
+    }
+
+    @Nullable
+    public static URDragonEntity getPartParent(Player user) {
+        HitResult hitResult = ProjectileUtil.getHitResultOnViewVector(user, entity -> entity instanceof URDragonPart, user.entityInteractionRange());
+        if (hitResult.getType() == HitResult.Type.ENTITY && ((EntityHitResult)hitResult).getEntity() instanceof URDragonPart part) return part.owner;
+        return null;
     }
 
     @Override

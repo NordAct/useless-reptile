@@ -28,6 +28,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.item.DragonEquipmentItem;
 import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.item.VariantChangingOrbItem;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
@@ -45,6 +46,7 @@ public class URItems {
             builder -> builder.persistent(VortexHornCapacityComponent.CODEC).networkSynchronized(VortexHornCapacityComponent.PACKET_CODEC));
 
     public static final Item WYVERN_SKIN = registerItem("wyvern_skin", Item::new);
+    public static final Item VARIANT_CHANGING_ORB = registerItem("variant_changing_orb", VariantChangingOrbItem::new);
     public static final Item DUAL_SADDLE = registerItem("dual_saddle", properties -> new Item(properties.stacksTo(1)));
 
     public static final Item DRAGON_HELMET_IRON = registerItem("dragon_helmet_iron", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));
@@ -89,6 +91,7 @@ public class URItems {
                 .build());
 
         ItemGroupEvents.modifyEntriesEvent(UR_ITEM_GROUP).register(c ->{
+            c.accept(VARIANT_CHANGING_ORB);
             c.accept(WYVERN_SPAWN_EGG);
             c.accept(MOLECLAW_SPAWN_EGG);
             c.accept(RIVER_PIKEHORN_SPAWN_EGG);
