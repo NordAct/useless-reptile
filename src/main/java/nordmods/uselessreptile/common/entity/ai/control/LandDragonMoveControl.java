@@ -33,20 +33,25 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
         double distanceSquared = diffX * diffX + diffY * diffY + diffZ * diffZ;
         float destinationYaw;
         float destinationPitch;
-        if (entity.getTarget() != null && entity instanceof ShooterDragon shooterDragon) {
-            Entity target = entity.getTarget();
-            double diffTargetX = target.getX() - shooterDragon.getShootingPoint().pos().x;
-            double diffTargetY = target.getY() - shooterDragon.getShootingPoint().pos().y;
-            double diffTargetZ = target.getZ() - shooterDragon.getShootingPoint().pos().z;
-            double distanceTargetXZ = Math.sqrt(diffTargetX * diffTargetX + diffTargetZ * diffTargetZ);
-            destinationPitch = rotlerp(
-                    entity.getXRot(),
-                    (float)(-(Mth.atan2(diffTargetY, distanceTargetXZ) * Mth.RAD_TO_DEG)),
-                    entity.getPitchLimit()
-            );
-            destinationYaw = (float)(Mth.atan2(diffTargetZ, diffTargetX) * Mth.RAD_TO_DEG) - 90.0F;
+        if (!entity.isOrderedToSit()) {
+            if (entity.getTarget() != null && entity instanceof ShooterDragon shooterDragon) {
+                Entity target = entity.getTarget();
+                double diffTargetX = target.getX() - shooterDragon.getShootingPoint().pos().x;
+                double diffTargetY = target.getY() - shooterDragon.getShootingPoint().pos().y;
+                double diffTargetZ = target.getZ() - shooterDragon.getShootingPoint().pos().z;
+                double distanceTargetXZ = Math.sqrt(diffTargetX * diffTargetX + diffTargetZ * diffTargetZ);
+                destinationPitch = rotlerp(
+                        entity.getXRot(),
+                        (float) (-(Mth.atan2(diffTargetY, distanceTargetXZ) * Mth.RAD_TO_DEG)),
+                        entity.getPitchLimit()
+                );
+                destinationYaw = (float) (Mth.atan2(diffTargetZ, diffTargetX) * Mth.RAD_TO_DEG) - 90.0F;
+            } else {
+                destinationYaw = (float) (Mth.atan2(diffZ, diffX) * Mth.RAD_TO_DEG) - 90.0F;
+                destinationPitch = entity.getXRot();
+            }
         } else {
-            destinationYaw = (float)(Mth.atan2(diffZ, diffX) * Mth.RAD_TO_DEG) - 90.0F;
+            destinationYaw = entity.getYRot();
             destinationPitch = entity.getXRot();
         }
         entity.setMovingBackwards(false);
