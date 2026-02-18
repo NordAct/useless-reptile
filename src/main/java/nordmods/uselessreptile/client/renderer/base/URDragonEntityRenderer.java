@@ -18,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.TagValueInput;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
@@ -58,8 +59,6 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         if (ResourceUtil.isResourceReloadFinished) {
             fillDragonCache(animatable, assetCache, dragonId);
-            getModel(renderState).getBones().forEach(animatedBone -> setBoneVisibility(renderState, animatedBone, true, false));
-
             //equipment
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 ItemStack itemStack = animatable.getItemBySlot(slot);
@@ -75,14 +74,25 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                     dragonEquipment = getDragonEquipment(animatable, BuiltInRegistries.ITEM.getKey(itemStack.getItem()), equipmentAssetCache, itemStack, dragonId);
                     assetCache.setEquipment(slot, dragonEquipment);
                 }
-                for (String hidBone : dragonEquipment.getAssetCache().getHidBones()) {
-                    setBoneVisibility(renderState, getModel(renderState).getBone(hidBone), false, false);
-                }
                 dragonEquipment.ownerRenderState = renderState;
             }
         }
 
         if (animatable instanceof ShooterDragon shooterDragon) renderState.setStateData(URStateDataTypes.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
+    }
+
+    @Override
+    public void adjustAnimation(BRState state, BRModel model) {
+        if (!ResourceUtil.isResourceReloadFinished) return;
+        model.getRootBones().forEach(animatedBone -> animatedBone.setVisible(true));
+
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
+            if (equipment == null) continue;
+            for (String hidBone : equipment.getAssetCache().getHidBones()) {
+                model.getBone(hidBone).setVisible(false);
+            }
+        }
     }
 
     private void fillDragonCache(T animatable, DragonAssetCache assetCache, Identifier dragonId) {
