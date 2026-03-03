@@ -55,7 +55,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
     }
 
     public LightningBreath(Level world, Entity owner) {
-        this(UREntities.LIGHTNING_BREATH_ENTITY, world, owner);
+        this(UREntities.LIGHTNING_BREATH, world, owner);
     }
 
     public static final EntityDataAccessor<Integer> BEAM_LENGTH = SynchedEntityData.defineId(LightningBreath.class, EntityDataSerializers.INT);

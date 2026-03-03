@@ -85,7 +85,7 @@ public class URDragonVariantProvider implements DataProvider {
     protected void addEntries() {
         addWyvern("green");
         addWyvern("brown");
-        addCustomNameEntry(EntityType.getKey(UREntities.WYVERN_ENTITY), "jeb_");
+        addCustomNameEntry(EntityType.getKey(UREntities.WYVERN), "jeb_");
 
         addMoleclaw("black", false);
         addMoleclaw("brown", false);
@@ -111,7 +111,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addWyvern(String name) {
-        Identifier id = EntityType.getKey(UREntities.WYVERN_ENTITY);
+        Identifier id = EntityType.getKey(UREntities.WYVERN);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -153,7 +153,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addMoleclaw(String name, boolean rare) {
-        Identifier id = EntityType.getKey(UREntities.MOLECLAW_ENTITY);
+        Identifier id = EntityType.getKey(UREntities.MOLECLAW);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -183,7 +183,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addRiverPikehorn(String name) {
-        Identifier id = EntityType.getKey(UREntities.RIVER_PIKEHORN_ENTITY);
+        Identifier id = EntityType.getKey(UREntities.RIVER_PIKEHORN);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -218,7 +218,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addLightningChaser(String name) {
-        Identifier id = EntityType.getKey(UREntities.LIGHTNING_CHASER_ENTITY);
+        Identifier id = EntityType.getKey(UREntities.LIGHTNING_CHASER);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,
@@ -240,7 +240,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addMagmamuncher(String name) {
-        Identifier id = EntityType.getKey(UREntities.MAGMAMUNCHER_ENTITY);
+        Identifier id = EntityType.getKey(UREntities.MAGMAMUNCHER);
         DragonVariant variant = new DragonVariant(
                 id,
                 name,

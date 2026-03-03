@@ -59,7 +59,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
                         .pattern("RGI")
                         .pattern("BW ")
                         .pattern("W  ")
-                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), UREntities.RIVER_PIKEHORN_ENTITY))
+                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), UREntities.RIVER_PIKEHORN))
                         .save(output);
 
                 shapeless(RecipeCategory.MISC, Items.LEATHER, 2)

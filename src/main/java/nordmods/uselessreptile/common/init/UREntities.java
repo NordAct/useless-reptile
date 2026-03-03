@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.*;
+import nordmods.uselessreptile.common.entity.misc.Placeholder;
 import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
@@ -18,30 +19,32 @@ import nordmods.uselessreptile.common.util.URMobCategory;
 
 public class UREntities {
 
-    public static final EntityType<Wyvern> WYVERN_ENTITY =
+    public static final EntityType<Wyvern> WYVERN =
             register("wyvern", getBuilder(URMobCategory.DRAGON.mobCategory, Wyvern::new, 1, 1));
-    public static final EntityType<Moleclaw> MOLECLAW_ENTITY =
+    public static final EntityType<Moleclaw> MOLECLAW =
             register("moleclaw", getBuilder(URMobCategory.UNDERGROUND_DRAGON.mobCategory, Moleclaw::new, Moleclaw.defaultWidth, Moleclaw.defaultHeight));
-    public static final EntityType<RiverPikehorn> RIVER_PIKEHORN_ENTITY =
+    public static final EntityType<RiverPikehorn> RIVER_PIKEHORN =
             register("river_pikehorn", getBuilder(URMobCategory.SMALL_DRAGON.mobCategory, RiverPikehorn::new, 1, 1));
-    public static final EntityType<LightningChaser> LIGHTNING_CHASER_ENTITY =
+    public static final EntityType<LightningChaser> LIGHTNING_CHASER =
             register("lightning_chaser", getBuilder(URMobCategory.DRAGON.mobCategory, LightningChaser::new, 1, 1));
-    public static final EntityType<AcidBlast> ACID_BLAST_ENTITY =
+    public static final EntityType<AcidBlast> ACID_BLAST =
             register("acid_blast", getBuilder(MobCategory.MISC, AcidBlast::new, 0.5f, 0.5f, true, false));
-    public static final EntityType<ShockwaveSphere> SHOCKWAVE_SPHERE_ENTITY =
+    public static final EntityType<ShockwaveSphere> SHOCKWAVE_SPHERE =
             register("shockwave_sphere", getBuilder(MobCategory.MISC, ShockwaveSphere::new, 1, 1, true, true));
-    public static final EntityType<LightningBreath> LIGHTNING_BREATH_ENTITY =
+    public static final EntityType<LightningBreath> LIGHTNING_BREATH =
             register("lightning_breath", getBuilder(MobCategory.MISC, LightningBreath::new, 1f, 1f, true, true));
-    public static final EntityType<Magmamuncher> MAGMAMUNCHER_ENTITY =
+    public static final EntityType<Magmamuncher> MAGMAMUNCHER =
             register("magmamuncher", getBuilder(URMobCategory.SMALL_DRAGON.mobCategory, Magmamuncher::new, 1, 1, false, true));
+    public static final EntityType<Entity> PLACEHOLDER =
+            register("placeholder", EntityType.Builder.of(Placeholder::new, MobCategory.MISC).noLootTable().sized(0.0F, 0.0F).clientTrackingRange(0));
 
 
     public static void init(){
-        FabricDefaultAttributeRegistry.register(WYVERN_ENTITY, Wyvern.createWyvernAttributes());
-        FabricDefaultAttributeRegistry.register(MOLECLAW_ENTITY, Moleclaw.createMoleclawAttributes());
-        FabricDefaultAttributeRegistry.register(RIVER_PIKEHORN_ENTITY, RiverPikehorn.createPikehornAttributes());
-        FabricDefaultAttributeRegistry.register(LIGHTNING_CHASER_ENTITY, LightningChaser.createLightningChaserAttributes());
-        FabricDefaultAttributeRegistry.register(MAGMAMUNCHER_ENTITY, Magmamuncher.createMagmamuncherAttributes());
+        FabricDefaultAttributeRegistry.register(WYVERN, Wyvern.createWyvernAttributes());
+        FabricDefaultAttributeRegistry.register(MOLECLAW, Moleclaw.createMoleclawAttributes());
+        FabricDefaultAttributeRegistry.register(RIVER_PIKEHORN, RiverPikehorn.createPikehornAttributes());
+        FabricDefaultAttributeRegistry.register(LIGHTNING_CHASER, LightningChaser.createLightningChaserAttributes());
+        FabricDefaultAttributeRegistry.register(MAGMAMUNCHER, Magmamuncher.createMagmamuncherAttributes());
     }
 
     private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> builder) {

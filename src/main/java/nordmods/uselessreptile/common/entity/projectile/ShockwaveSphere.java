@@ -44,7 +44,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
     }
 
     public ShockwaveSphere(Level world) {
-        this(UREntities.SHOCKWAVE_SPHERE_ENTITY, world);
+        this(UREntities.SHOCKWAVE_SPHERE, world);
     }
 
     @Override

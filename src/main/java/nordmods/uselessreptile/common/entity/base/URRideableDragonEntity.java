@@ -1,5 +1,7 @@
 package nordmods.uselessreptile.common.entity.base;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,6 +26,7 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
+import nordmods.uselessreptile.common.entity.misc.Placeholder;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
 import org.jspecify.annotations.NonNull;
 
@@ -84,16 +87,10 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    protected void removePassenger(@NonNull Entity entity) {
-        if (entity == getOwner()) getPassengers().forEach(Entity::stopRiding);
-        super.removePassenger(entity);
-    }
-
-    @Override
     public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
         if (isTame() && !isInteractableItem(itemStack) && !player.isShiftKeyDown() && !level().isClientSide()) {
-            if (hasSaddle() && (!getPassengers().isEmpty() || isOwnedBy(player)) && player.startRiding(this)) {
+            if (hasSaddle() && player.startRiding(this)) {
                 return InteractionResult.SUCCESS;
             }
         }
@@ -101,8 +98,102 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
+    protected void addPassenger(Entity entity) {
+        // don't mind some personalized insults
+        if (entity.getVehicle() != this) throw new IllegalStateException("Person who caused this, have you considered reading vanilla code?");
+
+        List<Entity> passengersList = Lists.newArrayList(passengers);
+
+        if (passengersList.isEmpty()) { //if no passengers, just add directly
+            if (entity instanceof LivingEntity living && isOwnedBy(living)) {
+                passengersList.add(entity);
+            } else {
+                Placeholder placeholder = new Placeholder(level());
+                level().addFreshEntity(placeholder);
+                placeholder.vehicle = this;
+                passengersList.add(placeholder);
+                passengersList.add(entity);
+            }
+        } else { // if there are passengers, check for placeholders and try to replace them
+            if (entity instanceof LivingEntity living && isOwnedBy(living)) {
+                Entity first = passengersList.getFirst();
+                if (first instanceof Placeholder) {
+                    first.vehicle = null;
+                    first.discard();
+                } else {
+                    first.stopRiding();
+                }
+                passengersList.removeFirst();
+                passengersList.addFirst(entity);
+            } else {
+                boolean set = false;
+                for (int i = 1; i < passengersList.size(); i++) {
+                    Entity passenger = passengersList.get(i);
+                    if (passenger instanceof Placeholder) {
+                        set = true;
+                        passenger.vehicle = null;
+                        passenger.discard();
+                        passengersList.set(i, entity);
+                    }
+                }
+                if (!set) passengersList.add(entity);
+            }
+        }
+
+        passengers = ImmutableList.copyOf(passengersList);
+    }
+
+    @Override
+    protected void removePassenger(Entity entity) {
+        if (entity.getVehicle() == this) throw new IllegalStateException("Person who caused this, have you considered reading vanilla code?");
+
+        if (passengers.size() == 1 && passengers.getFirst() == entity) { //if single passenger, just clear instantly
+            passengers = ImmutableList.of();
+        } else { //if not, swap with placeholder
+            List<Entity> passengersList = Lists.newArrayList(passengers);
+
+            if (passengersList.getLast() == entity) { //no need for a placeholder if it's last passenger
+                passengersList.removeLast();
+            } else { //here goes placeholder
+                passengersList.replaceAll(entity1 -> {
+                    if (entity1 == entity) {
+                        Placeholder placeholder = new Placeholder(level());
+                        level().addFreshEntity(placeholder);
+                        placeholder.vehicle = this;
+                        return placeholder;
+                    }
+                    return entity1;
+                });
+            }
+            if (passengersList.stream().allMatch(passenger -> passenger instanceof Placeholder)) { //if all placeholders, just clear
+                passengersList.forEach(passenger -> {
+                    passenger.vehicle = null;
+                    passenger.discard();
+                });
+                passengersList = List.of();
+            }
+
+            passengers = ImmutableList.copyOf(passengersList);
+        }
+
+        entity.boardingCooldown = 60;
+    }
+
+    @Override
     protected boolean canAddPassenger(@NonNull Entity entity) {
-        return getPassengers().size() < getMaxPassengerCount();
+        long count = getPassengers()
+                .stream()
+                .filter(passenger -> !(passenger instanceof Placeholder))
+                .count()
+                + (!getPassengers().isEmpty()
+                && getFirstPassenger() instanceof Placeholder
+                && !(entity instanceof LivingEntity living && isOwnedBy(living)) ? 1 : 0); //first placeholder always reserved for rider-owner
+        return count < getMaxPassengerCount();
+    }
+
+    @Override
+    public void ejectPassengers() { //had to override this due to packet handling issue
+        passengers.reverse().forEach(Entity::stopRiding);
     }
 
     @Override

@@ -1,5 +1,12 @@
 accessWidener	v2 named
+# Entity
 accessible field net/minecraft/world/entity/Entity DATA_CUSTOM_NAME Lnet/minecraft/network/syncher/EntityDataAccessor;
+extendable method net/minecraft/world/entity/TamableAnimal canTeleportTo (Lnet/minecraft/core/BlockPos;)Z
+extendable method net/minecraft/world/entity/Entity isLocalInstanceAuthoritative ()Z
+accessible field net/minecraft/world/entity/Entity passengers Lcom/google/common/collect/ImmutableList;
+accessible field net/minecraft/world/entity/Entity vehicle Lnet/minecraft/world/entity/Entity;
+accessible field net/minecraft/world/entity/Entity boardingCooldown I
+# Datagen
 accessible method net/minecraft/data/recipes/ShapedRecipeBuilder <init> (Lnet/minecraft/core/HolderGetter;Lnet/minecraft/data/recipes/RecipeCategory;Lnet/minecraft/world/level/ItemLike;I)V
 accessible field net/minecraft/data/recipes/ShapedRecipeBuilder category Lnet/minecraft/data/recipes/RecipeCategory;
 accessible field net/minecraft/data/recipes/ShapedRecipeBuilder result Lnet/minecraft/world/item/Item;
@@ -15,7 +22,6 @@ accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder base 
 accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder addition Lnet/minecraft/world/item/crafting/Ingredient;
 accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder result Lnet/minecraft/world/item/Item;
 accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder category Lnet/minecraft/data/recipes/RecipeCategory;
+# Recipes
 accessible field net/minecraft/world/item/crafting/ShapedRecipe pattern Lnet/minecraft/world/item/crafting/ShapedRecipePattern;
 accessible field net/minecraft/world/item/crafting/ShapedRecipe result Lnet/minecraft/world/item/ItemStack;
-extendable method net/minecraft/world/entity/TamableAnimal canTeleportTo (Lnet/minecraft/core/BlockPos;)Z
-extendable method net/minecraft/world/entity/Entity isLocalInstanceAuthoritative ()Z

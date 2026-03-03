@@ -55,11 +55,11 @@ public class URModEvents {
                                 world.getHeight(Heightmap.Types.WORLD_SURFACE, (int) (pos.getX() + sin * 128), (int) (pos.getZ() + cos * 128)) + 16,
                                 (int) (pos.getZ() + cos * 128));
                         while (!world.getBlockState(spawnPos).isAir()) spawnPos = spawnPos.above();
-                        if (DragonSpawnUtil.getAvailableVariants(world, spawnPos, EntityType.getKey(UREntities.LIGHTNING_CHASER_ENTITY), EntitySpawnReason.EVENT).findFirst().isEmpty()) {
+                        if (DragonSpawnUtil.getAvailableVariants(world, spawnPos, EntityType.getKey(UREntities.LIGHTNING_CHASER), EntitySpawnReason.EVENT).findFirst().isEmpty()) {
                             world.useless_reptile$setTimer(1200);
                             return;
                         }
-                        LightningChaser lightningChaser = UREntities.LIGHTNING_CHASER_ENTITY.spawn(world, spawnPos, EntitySpawnReason.EVENT);
+                        LightningChaser lightningChaser = UREntities.LIGHTNING_CHASER.spawn(world, spawnPos, EntitySpawnReason.EVENT);
                         if (lightningChaser != null) {
                             lightningChaser.setFlying(true);
                             lightningChaser.setHomePoint(new BlockPos(pos.getX(),
@@ -127,10 +127,14 @@ public class URModEvents {
 
     private static void ensureNoOneElseIsRidingOnLogOut() {
         ServerPlayerEvents.LEAVE.register(player -> {
-            if (player.getVehicle() instanceof URDragonEntity dragon && dragon.isOwnedBy(player)) {
-                dragon.getPassengers().forEach(passenger -> {
-                    if (passenger instanceof Player player1 && !dragon.isOwnedBy(player1)) player1.stopRiding();
-                });
+            if (player.getVehicle() instanceof URDragonEntity dragon) {
+                if (dragon.isOwnedBy(player)) {
+                    dragon.getPassengers().forEach(passenger -> {
+                        if (passenger instanceof Player player1 && !dragon.isOwnedBy(player1)) player1.stopRiding();
+                    });
+                } else {
+                    player.stopRiding();
+                }
             }
         });
     }

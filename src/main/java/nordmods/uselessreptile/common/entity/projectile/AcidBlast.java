@@ -34,7 +34,7 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
     }
 
     public AcidBlast(Level world, LivingEntity owner) {
-        this(UREntities.ACID_BLAST_ENTITY, world);
+        this(UREntities.ACID_BLAST, world);
         setOwner(owner);
         pickup = Pickup.DISALLOWED;
     }

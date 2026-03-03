@@ -52,11 +52,11 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .addCriterion("tick", AdvancementCriterions.gameTickCondition())
                 .build(UselessReptile.id("dragon/root"));
 
-        AdvancementHolder tameWyvern = tamingAdvancementEntry(registryLookup, UREntities.WYVERN_ENTITY, root);
-        AdvancementHolder tameMoleclaw = tamingAdvancementEntry(registryLookup, UREntities.MOLECLAW_ENTITY, root);
-        AdvancementHolder tameLightningChaser = tamingAdvancementEntry(registryLookup, UREntities.LIGHTNING_CHASER_ENTITY, root);
-        AdvancementHolder tameRiverPikehorn = tamingAdvancementEntry(registryLookup, UREntities.RIVER_PIKEHORN_ENTITY, root);
-        AdvancementHolder tameMagmamuncher = tamingAdvancementEntry(registryLookup, UREntities.MAGMAMUNCHER_ENTITY, root);
+        AdvancementHolder tameWyvern = tamingAdvancementEntry(registryLookup, UREntities.WYVERN, root);
+        AdvancementHolder tameMoleclaw = tamingAdvancementEntry(registryLookup, UREntities.MOLECLAW, root);
+        AdvancementHolder tameLightningChaser = tamingAdvancementEntry(registryLookup, UREntities.LIGHTNING_CHASER, root);
+        AdvancementHolder tameRiverPikehorn = tamingAdvancementEntry(registryLookup, UREntities.RIVER_PIKEHORN, root);
+        AdvancementHolder tameMagmamuncher = tamingAdvancementEntry(registryLookup, UREntities.MAGMAMUNCHER, root);
 
         AdvancementHolder useFlute = Advancement.Builder.recipeAdvancement()
                 .display(URItems.FLUTE,

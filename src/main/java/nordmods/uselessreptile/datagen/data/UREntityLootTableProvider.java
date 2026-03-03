@@ -45,7 +45,7 @@ public class UREntityLootTableProvider extends EntityLootSubProvider implements 
 
     @Override
     public void generate() {
-        addEntry(UREntities.WYVERN_ENTITY, LootTable.lootTable()
+        addEntry(UREntities.WYVERN, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(URItems.WYVERN_SKIN)
@@ -62,7 +62,7 @@ public class UREntityLootTableProvider extends EntityLootSubProvider implements 
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
                                 .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0, 1))))));
 
-        addEntry(UREntities.RIVER_PIKEHORN_ENTITY, LootTable.lootTable()
+        addEntry(UREntities.RIVER_PIKEHORN, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(Items.COD)
@@ -80,7 +80,7 @@ public class UREntityLootTableProvider extends EntityLootSubProvider implements 
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(1)))
                                 .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0, 3))))));
 
-        addEntry(UREntities.MOLECLAW_ENTITY, LootTable.lootTable()
+        addEntry(UREntities.MOLECLAW, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(Items.HANGING_ROOTS)
@@ -92,7 +92,7 @@ public class UREntityLootTableProvider extends EntityLootSubProvider implements 
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 2)))
                                 .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0, 2))))));
 
-        addEntry(UREntities.LIGHTNING_CHASER_ENTITY, LootTable.lootTable()
+        addEntry(UREntities.LIGHTNING_CHASER, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(Items.IRON_NUGGET)
@@ -104,7 +104,7 @@ public class UREntityLootTableProvider extends EntityLootSubProvider implements 
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 4)))
                                 .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0, 4))))));
 
-        addEntry(UREntities.MAGMAMUNCHER_ENTITY, LootTable.lootTable()
+        addEntry(UREntities.MAGMAMUNCHER, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(Items.NETHERRACK)
@@ -115,7 +115,7 @@ public class UREntityLootTableProvider extends EntityLootSubProvider implements 
                                 .apply(SetItemCountFunction.setCount(UniformGenerator.between(0, 3)))
                                 .apply(EnchantedCountIncreaseFunction.lootingMultiplier(registries, UniformGenerator.between(0, 3))))));
 
-        addEntry(UREntities.MAGMAMUNCHER_ENTITY, LootTable.lootTable()
+        addEntry(UREntities.MAGMAMUNCHER, LootTable.lootTable()
                 .withPool(LootPool.lootPool()
                         .setRolls(ConstantValue.exactly(1))
                         .add(LootItem.lootTableItem(Items.COAL)

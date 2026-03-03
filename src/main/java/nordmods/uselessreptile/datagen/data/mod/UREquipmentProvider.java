@@ -52,20 +52,20 @@ public class UREquipmentProvider implements DataProvider {
     }
 
     protected void addEntries() {
-        addSaddle(UREntities.WYVERN_ENTITY, Items.SADDLE, List.of("spikes_front"), List.of(Vec3.ZERO));
-        addSaddle(UREntities.WYVERN_ENTITY, URItems.DUAL_SADDLE, List.of("spikes_front", "spikes_back"), List.of(Vec3.ZERO, new Vec3(0, 0, -0.8125f)));
-        addSaddle(UREntities.LIGHTNING_CHASER_ENTITY, Items.SADDLE, List.of(), List.of(Vec3.ZERO));
-        addSaddle(UREntities.MOLECLAW_ENTITY, Items.SADDLE, List.of(), List.of(Vec3.ZERO));
+        addSaddle(UREntities.WYVERN, Items.SADDLE, List.of("spikes_front"), List.of(Vec3.ZERO));
+        addSaddle(UREntities.WYVERN, URItems.DUAL_SADDLE, List.of("spikes_front", "spikes_back"), List.of(Vec3.ZERO, new Vec3(0, 0, -0.8125f)));
+        addSaddle(UREntities.LIGHTNING_CHASER, Items.SADDLE, List.of(), List.of(Vec3.ZERO));
+        addSaddle(UREntities.MOLECLAW, Items.SADDLE, List.of(), List.of(Vec3.ZERO));
 
-        addCommonArmor(UREntities.LIGHTNING_CHASER_ENTITY);
-        addCommonArmor(UREntities.MOLECLAW_ENTITY);
+        addCommonArmor(UREntities.LIGHTNING_CHASER);
+        addCommonArmor(UREntities.MOLECLAW);
 
         Identifier moleclawHelmet = UselessReptile.id("biscuit_roll/models/entity/moleclaw/helmet.geo.json");
         Identifier moleclawEmptyAnimation = UselessReptile.id("biscuit_roll/animations/entity/moleclaw/empty.animation.json");
-        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_iron.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_gold.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_diamond.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(UREntities.MOLECLAW_ENTITY, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_netherite.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_iron.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_gold.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_diamond.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_netherite.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
         holder.put(UselessReptile.id("empty"), new EquipmentModelData(Optional.empty(), Map.of()));
     }
 

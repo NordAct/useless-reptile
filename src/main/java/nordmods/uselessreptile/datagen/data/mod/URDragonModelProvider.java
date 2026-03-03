@@ -92,7 +92,7 @@ public class URDragonModelProvider implements DataProvider {
         sounds.add(new DragonModelData.Sound("idle", URSoundEvent.WYVERN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.WYVERN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("death", URSoundEvent.WYVERN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        addEntry(UREntities.WYVERN_ENTITY, variant, Optional.of(sounds), true, animatedTexture);
+        addEntry(UREntities.WYVERN, variant, Optional.of(sounds), true, animatedTexture);
     }
 
     protected void addMoleclaw(String variant, boolean animatedTexture) {
@@ -104,7 +104,7 @@ public class URDragonModelProvider implements DataProvider {
         sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.MOLECLAW_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("death", URSoundEvent.MOLECLAW_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("panic", URSoundEvent.MOLECLAW_PANICKING.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        addEntry(UREntities.MOLECLAW_ENTITY, variant, Optional.of(sounds), false, animatedTexture);
+        addEntry(UREntities.MOLECLAW, variant, Optional.of(sounds), false, animatedTexture);
     }
 
     protected void addRiverPikehorn(String variant, boolean animatedTexture) {
@@ -116,7 +116,7 @@ public class URDragonModelProvider implements DataProvider {
         sounds.add(new DragonModelData.Sound("idle", URSoundEvent.PIKEHORN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.PIKEHORN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("death", URSoundEvent.PIKEHORN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        addEntry(UREntities.RIVER_PIKEHORN_ENTITY, variant, Optional.of(sounds), true, animatedTexture);
+        addEntry(UREntities.RIVER_PIKEHORN, variant, Optional.of(sounds), true, animatedTexture);
     }
 
     protected void addLightningChaser(String variant, boolean animatedTexture) {
@@ -131,7 +131,7 @@ public class URDragonModelProvider implements DataProvider {
         sounds.add(new DragonModelData.Sound("accept_challenge", URSoundEvent.LIGHTNING_CHASER_ACCEPT_CHALLENGE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.LIGHTNING_CHASER_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("death", URSoundEvent.LIGHTNING_CHASER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        addEntry(UREntities.LIGHTNING_CHASER_ENTITY, variant, Optional.of(sounds), true, animatedTexture);
+        addEntry(UREntities.LIGHTNING_CHASER, variant, Optional.of(sounds), true, animatedTexture);
     }
 
     protected void addMagmamuncher(String variant, boolean animatedTexture) {
@@ -142,7 +142,7 @@ public class URDragonModelProvider implements DataProvider {
         sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.MAGMAMUNCHER_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("death", URSoundEvent.MAGMAMUNCHER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("apply_fire_resistance", SoundEvents.FIRECHARGE_USE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        addEntry(UREntities.MAGMAMUNCHER_ENTITY, variant, Optional.of(sounds), true, animatedTexture);
+        addEntry(UREntities.MAGMAMUNCHER, variant, Optional.of(sounds), true, animatedTexture);
     }
 
     protected void addEntry(Identifier id, DragonModelData variant) {
