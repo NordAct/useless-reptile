@@ -7,4 +7,6 @@ import nordmods.uselessreptile.UselessReptile;
 
 public class URDamageTypes {
     public static final ResourceKey<DamageType> ACID = ResourceKey.create(Registries.DAMAGE_TYPE,UselessReptile.id("acid"));
+
+    public static void init() {}
 }

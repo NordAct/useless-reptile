@@ -257,7 +257,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     public boolean isFlapping() {return isFlying();}
 
-    public void startToFly() {
+    public void startToFly() { //todo this idiot keeps jumping
         jumpFromGround();
         if (level() instanceof ServerLevel world) {
             setAccelerationDuration(getAccelerationDuration() / 10);

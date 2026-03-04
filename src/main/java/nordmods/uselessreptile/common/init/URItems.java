@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -35,16 +34,8 @@ import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponen
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 
 import java.util.function.Function;
-import java.util.function.UnaryOperator;
 
 public class URItems {
-    public static final DataComponentType<FluteComponent> FLUTE_MODE_COMPONENT = registerComponent("flute_mode",
-            builder -> builder.persistent(FluteComponent.CODEC).networkSynchronized(FluteComponent.PACKET_CODEC));
-    public static final DataComponentType<URDragonDataStorageComponent> DRAGON_STORAGE_COMPONENT = registerComponent("dragon_storage",
-            builder -> builder.persistent(URDragonDataStorageComponent.CODEC).networkSynchronized(URDragonDataStorageComponent.PACKET_CODEC));
-    public static final DataComponentType<VortexHornCapacityComponent> VORTEX_HORN_CAPACITY_COMPONENT = registerComponent("vortex_horn_capacity",
-            builder -> builder.persistent(VortexHornCapacityComponent.CODEC).networkSynchronized(VortexHornCapacityComponent.PACKET_CODEC));
-
     public static final Item WYVERN_SKIN = registerItem("wyvern_skin", Item::new);
     public static final Item VARIANT_CHANGING_ORB = registerItem("variant_changing_orb", VariantChangingOrbItem::new);
     public static final Item DUAL_SADDLE = registerItem("dual_saddle", properties -> new Item(properties.stacksTo(1)));
@@ -75,7 +66,7 @@ public class URItems {
     public static final Item LIGHTNING_CHASER_SPAWN_EGG = registerItem("lightning_chaser_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.LIGHTNING_CHASER)));
     public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.MAGMAMUNCHER)));
 
-    public static final Item FLUTE = registerItem("flute", properties -> new FluteItem(properties.stacksTo(1).component(FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT)));
+    public static final Item FLUTE = registerItem("flute", properties -> new FluteItem(properties.stacksTo(1).component(URItemComponents.FLUTE_MODE, FluteComponent.DEFAULT)));
     public static final Item VORTEX_HORN = registerItem("vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 1)));
     public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 3)));
     public static final Item GOLD_VORTEX_HORN = registerItem("gold_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 6)));
@@ -147,10 +138,6 @@ public class URItems {
                 properties.stacksTo(1));
     }
 
-    private static <T> DataComponentType<T> registerComponent(String id, UnaryOperator<DataComponentType.Builder<T>> builderOperator) {
-        return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, UselessReptile.id(id), (builderOperator.apply(DataComponentType.builder())).build());
-    }
-
     public static Item registerItem(String id, Function<Item.Properties, Item> factory) {
         return Items.registerItem(ResourceKey.create(Registries.ITEM, UselessReptile.id(id)), factory);
     }
@@ -163,8 +150,8 @@ public class URItems {
 
     private static Item.Properties createVortexHornItemProperties(Item.Properties properties, int maxCapacity) {
         return properties.stacksTo(1)
-                .component(DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT)
-                .component(VORTEX_HORN_CAPACITY_COMPONENT, new VortexHornCapacityComponent(0, maxCapacity));
+                .component(URItemComponents.DRAGON_STORAGE, URDragonDataStorageComponent.DEFAULT)
+                .component(URItemComponents.VORTEX_HORN_CAPACITY, new VortexHornCapacityComponent(0, maxCapacity));
     }
 }
 

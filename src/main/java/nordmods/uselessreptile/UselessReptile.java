@@ -19,10 +19,11 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
     public void onInitialize() {
         URMobAttributesConfig.init();
         
-        URMobAttributesConfig.init();
+        URAttributes.init();
         URResourceKeys.init();
         URSoundEvent.init();
         UREntities.init();
+        URItemComponents.init();
         URItems.init();
         URSpawns.init();
         URMobEffect.init();
@@ -33,6 +34,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
         URRecipeSerializers.init();
         URBlocks.init();
         UREntityDataSerializers.init();
+        URDamageTypes.init();
     }
 
     @Override

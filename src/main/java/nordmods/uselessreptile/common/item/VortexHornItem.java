@@ -27,7 +27,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
-import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
@@ -105,8 +105,8 @@ public class VortexHornItem extends InstrumentItem {
     public void appendHoverText(
             ItemStack stack, @NonNull TooltipContext context, @NonNull TooltipDisplay displayComponent, @NonNull Consumer<Component> textConsumer, @NonNull TooltipFlag type
     )  {
-        if (stack.getComponents().has(URItems.DRAGON_STORAGE_COMPONENT)) {
-            URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
+        if (stack.getComponents().has(URItemComponents.DRAGON_STORAGE)) {
+            URDragonDataStorageComponent dataComponent = stack.get(URItemComponents.DRAGON_STORAGE);
             if (dataComponent != null) {
                 boolean full = getCurrentCapacity(stack) >= getMaxCapacity(stack);
                 textConsumer.accept(Component.translatable("tooltip.uselessreptile.vortex_horn.capacity",getCurrentCapacity(stack) , getMaxCapacity(stack)).withStyle(full ? ChatFormatting.YELLOW : ChatFormatting.GRAY));
@@ -140,7 +140,7 @@ public class VortexHornItem extends InstrumentItem {
             for (URDragonEntity dragon : dragons) leastCapacity = Math.min(leastCapacity, dragon.vortexHornCapacity());
         }
         if (leastCapacity <= 0 || getCurrentCapacity(stack) + leastCapacity > getMaxCapacity(stack)) {
-            URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
+            URDragonDataStorageComponent dataComponent = stack.get(URItemComponents.DRAGON_STORAGE);
             if (dataComponent != null && getCurrentCapacity(stack) > 0) {
                 for (int i = 0; i < dataComponent.entityData().size(); i++) tryCreateDragon(stack, user, world, hand, user.blockPosition());
                 user.makeSound(URSoundEvent.VORTEX_HORN_SPIT_OUT);
@@ -170,7 +170,7 @@ public class VortexHornItem extends InstrumentItem {
         dragon.stopRiding();
         dragon.ejectPassengers();
 
-        URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
+        URDragonDataStorageComponent dataComponent = stack.get(URItemComponents.DRAGON_STORAGE);
         URDragonDataStorageComponent appliedComponent;
         if (dataComponent != null) {
             List<CustomData> dragons = new ArrayList<>(dataComponent.entityData());
@@ -178,9 +178,9 @@ public class VortexHornItem extends InstrumentItem {
             dragons.add(data);
             appliedComponent = new URDragonDataStorageComponent(dragons);
         } else appliedComponent = URDragonDataStorageComponent.DEFAULT;
-        stack.set(URItems.DRAGON_STORAGE_COMPONENT, appliedComponent);
+        stack.set(URItemComponents.DRAGON_STORAGE, appliedComponent);
         VortexHornCapacityComponent capacityComponent = new VortexHornCapacityComponent(getCurrentCapacityDragonStorage(stack, user.level()), getMaxCapacity(stack));
-        stack.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, capacityComponent);
+        stack.set(URItemComponents.VORTEX_HORN_CAPACITY, capacityComponent);
         user.setItemInHand(hand, stack);
 
         spawnCloud(dragon);
@@ -190,7 +190,7 @@ public class VortexHornItem extends InstrumentItem {
     }
 
     protected boolean tryCreateDragon(ItemStack stack, Player user, Level world, InteractionHand hand, BlockPos pos) {
-        URDragonDataStorageComponent dataComponent = stack.get(URItems.DRAGON_STORAGE_COMPONENT);
+        URDragonDataStorageComponent dataComponent = stack.get(URItemComponents.DRAGON_STORAGE);
         if (dataComponent != null) {
             List<CustomData> dragons = new ArrayList<>(dataComponent.entityData());
             if (dragons.isEmpty()) return false;
@@ -209,9 +209,9 @@ public class VortexHornItem extends InstrumentItem {
                 if (dragon instanceof URDragonEntity urDragon && urDragon.getOwner() != user) urDragon.setTarget(user);
             }
             dragons.removeLast();
-            stack.set(URItems.DRAGON_STORAGE_COMPONENT, new URDragonDataStorageComponent(dragons));
+            stack.set(URItemComponents.DRAGON_STORAGE, new URDragonDataStorageComponent(dragons));
             VortexHornCapacityComponent capacityComponent = new VortexHornCapacityComponent(getCurrentCapacityDragonStorage(stack, world), getMaxCapacity(stack));
-            stack.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, capacityComponent);
+            stack.set(URItemComponents.VORTEX_HORN_CAPACITY, capacityComponent);
             user.setItemInHand(hand, stack);
             return true;
         }
@@ -233,19 +233,19 @@ public class VortexHornItem extends InstrumentItem {
     }
 
     protected int getCurrentCapacity(ItemStack stack) {
-        return stack.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT).currentCapacity();
+        return stack.getOrDefault(URItemComponents.VORTEX_HORN_CAPACITY, VortexHornCapacityComponent.DEFAULT).currentCapacity();
     }
 
     public int getMaxCapacity(ItemStack stack) {
-        if (stack.getComponents().has(URItems.VORTEX_HORN_CAPACITY_COMPONENT)) {
-            VortexHornCapacityComponent dataComponent = stack.get(URItems.VORTEX_HORN_CAPACITY_COMPONENT);
+        if (stack.getComponents().has(URItemComponents.VORTEX_HORN_CAPACITY)) {
+            VortexHornCapacityComponent dataComponent = stack.get(URItemComponents.VORTEX_HORN_CAPACITY);
             if (dataComponent != null) return dataComponent.maxCapacity();
         }
         return VortexHornCapacityComponent.DEFAULT.maxCapacity();
     }
 
     protected int getCurrentCapacityDragonStorage(ItemStack stack, Level world) {
-        return stack.getOrDefault(URItems.DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT)
+        return stack.getOrDefault(URItemComponents.DRAGON_STORAGE, URDragonDataStorageComponent.DEFAULT)
                 .entityData()
                 .stream()
                 .mapToInt(value -> {

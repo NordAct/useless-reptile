@@ -21,10 +21,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.init.URPotions;
-import nordmods.uselessreptile.common.init.URTags;
+import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 
@@ -180,7 +177,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         ItemStack vortexHorn = URItems.NETHERITE_VORTEX_HORN.getDefaultInstance();
         DataComponentMap netheriteVortexHornStorage = DataComponentMap.builder()
                 .set(
-                        URItems.VORTEX_HORN_CAPACITY_COMPONENT,
+                        URItemComponents.VORTEX_HORN_CAPACITY,
                         new VortexHornCapacityComponent(
                                 ((VortexHornItem)vortexHorn.getItem()).getMaxCapacity(vortexHorn)
                                 , ((VortexHornItem)vortexHorn.getItem()).getMaxCapacity(vortexHorn)
@@ -200,7 +197,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .addCriterion("get_full_horn", AdvancementCriterions
                         .obtainItem(
                                 registryEntryLookup,
-                                vortexHorn.getPrototype().filter(componentType -> componentType != URItems.VORTEX_HORN_CAPACITY_COMPONENT),
+                                vortexHorn.getPrototype().filter(componentType -> componentType != URItemComponents.VORTEX_HORN_CAPACITY),
                                 vortexHorn
                         )
                 )

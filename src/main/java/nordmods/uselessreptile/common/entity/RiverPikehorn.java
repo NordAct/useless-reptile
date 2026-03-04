@@ -35,6 +35,7 @@ import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URGameEvents;
+import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.util.URAnimationController;
@@ -394,7 +395,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
             if (!stack.is(URItems.FLUTE)) return false;
 
             FluteItem.FluteAction action = FluteItem.getFluteModeAction(stack);
-            if (!stack.getComponents().get(URItems.FLUTE_MODE_COMPONENT).mode().equals("gather")) stopHunt();
+            if (!stack.getComponents().get(URItemComponents.FLUTE_MODE).mode().equals("gather")) stopHunt();
             respondToFlute(action);
 
             return true;

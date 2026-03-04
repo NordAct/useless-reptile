@@ -17,6 +17,8 @@ public class URAttributes {
     public static final Holder<Attribute> MOLECLAW_MINING_LEVEL = register("moleclaw.mining_level", 0, 1024, 0, true, Attribute.Sentiment.POSITIVE);
     public static final Holder<Attribute> DRAGON_SPECIAL_ATTACK_COOLDOWN = register("dragon.special_attack_cooldown", 0, 2048, 20, true, Attribute.Sentiment.NEGATIVE);
 
+    public static void init() {}
+
     private static Holder<Attribute> register(String id, float min, float max, float fallback, boolean tracked, Attribute.Sentiment category) {
         return Registry.registerForHolder(BuiltInRegistries.ATTRIBUTE, UselessReptile.id(id), new RangedAttribute("attribute.name." + id, fallback, min, max).setSyncable(tracked).setSentiment(category));
     }

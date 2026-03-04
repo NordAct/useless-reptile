@@ -23,6 +23,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.URBlocks;
+import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
@@ -276,6 +277,6 @@ public class URModelProvider extends FabricModelProvider {
             entries.add(new SelectItemModel.SwitchCase<>(List.of(new FluteComponent(mode)), model));
         }
 
-        itemModelGenerator.itemModelOutput.accept(item, ItemModelUtils.select(new ComponentContents<>(URItems.FLUTE_MODE_COMPONENT), entries));
+        itemModelGenerator.itemModelOutput.accept(item, ItemModelUtils.select(new ComponentContents<>(URItemComponents.FLUTE_MODE), entries));
     }
 }

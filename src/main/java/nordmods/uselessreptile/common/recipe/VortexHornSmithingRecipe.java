@@ -13,7 +13,7 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.SmithingRecipe;
 import net.minecraft.world.item.crafting.SmithingRecipeInput;
 import net.minecraft.world.item.crafting.TransmuteResult;
-import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URRecipeSerializers;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
@@ -42,10 +42,10 @@ public class VortexHornSmithingRecipe implements SmithingRecipe {
         if (!instrument.isEmpty()) {
             ItemStack result = this.result.apply(smithingRecipeInput.base());
             result.set(DataComponents.INSTRUMENT, instrument.get(DataComponents.INSTRUMENT));
-            result.set(URItems.DRAGON_STORAGE_COMPONENT, instrument.getOrDefault(URItems.DRAGON_STORAGE_COMPONENT, URDragonDataStorageComponent.DEFAULT));
-            VortexHornCapacityComponent original = instrument.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT);
-            VortexHornCapacityComponent next = result.getOrDefault(URItems.VORTEX_HORN_CAPACITY_COMPONENT, VortexHornCapacityComponent.DEFAULT);
-            result.set(URItems.VORTEX_HORN_CAPACITY_COMPONENT, new VortexHornCapacityComponent(original.currentCapacity(), next.maxCapacity()));
+            result.set(URItemComponents.DRAGON_STORAGE, instrument.getOrDefault(URItemComponents.DRAGON_STORAGE, URDragonDataStorageComponent.DEFAULT));
+            VortexHornCapacityComponent original = instrument.getOrDefault(URItemComponents.VORTEX_HORN_CAPACITY, VortexHornCapacityComponent.DEFAULT);
+            VortexHornCapacityComponent next = result.getOrDefault(URItemComponents.VORTEX_HORN_CAPACITY, VortexHornCapacityComponent.DEFAULT);
+            result.set(URItemComponents.VORTEX_HORN_CAPACITY, new VortexHornCapacityComponent(original.currentCapacity(), next.maxCapacity()));
             return result;
         }
         return ItemStack.EMPTY;

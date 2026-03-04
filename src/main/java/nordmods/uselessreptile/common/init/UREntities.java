@@ -18,7 +18,6 @@ import nordmods.uselessreptile.common.util.URMobCategory;
 
 
 public class UREntities {
-
     public static final EntityType<Wyvern> WYVERN =
             register("wyvern", getBuilder(URMobCategory.DRAGON.mobCategory, Wyvern::new, 1, 1));
     public static final EntityType<Moleclaw> MOLECLAW =

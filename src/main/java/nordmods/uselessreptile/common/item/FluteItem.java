@@ -28,7 +28,7 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.base.FluteListener;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URGameEvents;
-import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
 import org.jspecify.annotations.NonNull;
@@ -44,7 +44,7 @@ public class FluteItem extends Item {
     public FluteItem(Properties settings) {
         super(settings);
         ItemStack itemStack = getDefaultInstance();
-        itemStack.set(URItems.FLUTE_MODE_COMPONENT, FluteComponent.DEFAULT);
+        itemStack.set(URItemComponents.FLUTE_MODE, FluteComponent.DEFAULT);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class FluteItem extends Item {
         ItemStack itemStack = user.getItemInHand(hand);
         if (user.isShiftKeyDown()) {
             String nextMode = getNextMode(itemStack);
-            itemStack.set(URItems.FLUTE_MODE_COMPONENT, new FluteComponent(nextMode));
+            itemStack.set(URItemComponents.FLUTE_MODE, new FluteComponent(nextMode));
 
             if (world.isClientSide() && user == Minecraft.getInstance().player) {
                 Component text = Component.translatable("tooltip.uselessreptile.flute_mode." + getFluteMode(itemStack));
@@ -103,7 +103,7 @@ public class FluteItem extends Item {
     }
 
     public static String getFluteMode(ItemStack stack) {
-        return stack.getComponents().get(URItems.FLUTE_MODE_COMPONENT).mode();
+        return stack.getComponents().get(URItemComponents.FLUTE_MODE).mode();
     }
 
     public static FluteAction getFluteModeAction(ItemStack stack) {

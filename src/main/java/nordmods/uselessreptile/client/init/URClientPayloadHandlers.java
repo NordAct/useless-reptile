@@ -14,6 +14,12 @@ import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPa
 
 public class URClientPayloadHandlers {
     public static void init() {
+        handleOpenDragonInventory();
+        handleLiftoffParticles();
+        handleSyncLightningBreathRotations();
+    }
+
+    private static void handleOpenDragonInventory() {
         ClientPlayNetworking.registerGlobalReceiver(OpenDragonInventoryPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.dragonId());
             if (entity instanceof URDragonEntity dragon) {
@@ -22,7 +28,9 @@ public class URClientPayloadHandlers {
                 Minecraft.getInstance().setScreen(new URDragonScreen<>(dragonMenu, context.player().getInventory(), dragon));
             }
         });
+    }
 
+    private static void handleLiftoffParticles() {
         ClientPlayNetworking.registerGlobalReceiver(LiftoffParticlesPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.id());
             if (entity instanceof URDragonEntity dragon) {
@@ -35,7 +43,9 @@ public class URClientPayloadHandlers {
                             context.player().getRandom().nextGaussian() * 0.1 * span);
             }
         });
+    }
 
+    private static void handleSyncLightningBreathRotations() {
         ClientPlayNetworking.registerGlobalReceiver(SyncLightningBreathRotationsPayload.PAYLOAD_ID, (packet, context) -> {
             for (int id : packet.beamIDs()) {
                 Entity entity = context.player().level().getEntity(id);
