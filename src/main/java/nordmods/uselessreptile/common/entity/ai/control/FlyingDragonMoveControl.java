@@ -59,7 +59,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
             destinationPitch = entity.getXRot();
         }
 
-        boolean inWater = entity.isInWater() && !entity.canNavigateInFluids();
+        boolean inWater = entity.isInWater() && entity.isAffectedByFluids();
 
         if (Double.isNaN(entity.getDeltaMovement().y)) entity.setDeltaMovement(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z);
         int accelerationDuration = entity.getAccelerationDuration();

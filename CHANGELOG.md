@@ -45,6 +45,7 @@
   - Tropical Fish Bucket now gives 8 taming progress, meaning you still need 1 to tame the dragon
   - As alternative, River Pikehorn now also takes just Tropical Fish as taming item. Tropical Fish will give from 1 to 2 of taming progress, meaning you'll need from 4 to 8 of Tropical Fishes (items, not stacks) to tame it
 - Updated French translation (credits to coucoufe)
+- Fixed flying dragons sometimes jumping around when trying to follow owner when owner is on land and dragon is flying
 
 ## Data and resource pack format changes
 - Breaking changes to equipment lists:

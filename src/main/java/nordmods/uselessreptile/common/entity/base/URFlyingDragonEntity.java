@@ -12,6 +12,7 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -137,7 +138,13 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         }
         checkForceFlight();
 
+        updateNavigation();
+    }
+
+    private void updateNavigation() {
+        PathNavigation current = navigation;
         navigation = isFlying() ? airNavigation : landNavigation;
+        if (current != navigation) current.stop();
     }
 
     @Override

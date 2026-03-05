@@ -80,7 +80,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
         secondaryAttackDuration = 11;
         primaryAttackDuration = 11;
-        canNavigateInFluids = true;
         ticksUntilHeal = 400;
     }
 
@@ -294,6 +293,11 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     @Override
     public boolean hasTargetInWater() {
         return super.hasTargetInWater() || forceTargetInWater;
+    }
+
+    @Override
+    public boolean isAffectedByFluids() {
+        return false;
     }
 
     @Override

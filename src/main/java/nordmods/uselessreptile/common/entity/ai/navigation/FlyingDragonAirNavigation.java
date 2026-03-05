@@ -28,14 +28,14 @@ public class FlyingDragonAirNavigation<T extends URDragonEntity & FlyingDragon> 
 
         BlockPos target = getTargetPos();
         if (!isDone() && target != null) {
-            followThePath();
-            moveOrStop(target);
-            if (!isDone() && entity.horizontalCollision) {
+            if (entity.horizontalCollision) {
                 double yDiffNode = path.getNextNode().asVec3().y() - entity.getY();
                 if (yDiffNode < 0) getMoveControl().forceFlyDown();
                 if (yDiffNode > 0) getMoveControl().forceFlyUp();
             }
-            doStuckDetection(getTempMobPos());
+            followThePath();
+            moveOrStop(target);
         }
+        doStuckDetection(getTempMobPos());
     }
 }

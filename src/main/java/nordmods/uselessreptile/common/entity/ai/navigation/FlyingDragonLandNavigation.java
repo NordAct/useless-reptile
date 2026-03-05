@@ -27,23 +27,23 @@ public class FlyingDragonLandNavigation<T extends URDragonEntity & FlyingDragon>
 
         BlockPos target = getTargetPos();
         if (!isDone() && target != null) {
+            double yDiffNode = path.getNextNode().asVec3().y() - entity.getY();
+            double yDiffTarget = target.getY() - entity.getY();
+            double xDiffTarget = entity.getX() - target.getX();
+            xDiffTarget *= xDiffTarget;
+            double zDiffTarget = entity.getZ() - target.getZ();
+            zDiffTarget *= zDiffTarget;
+            boolean shouldFlyUp = jumpCount > 9
+                    || yDiffTarget > 3 && Math.sqrt(xDiffTarget + zDiffTarget) < 16
+                    || yDiffTarget > 8
+                    || Math.sqrt(xDiffTarget + zDiffTarget) > 64
+                    || path != null && path.isDone();
+            if ((tick > 20 || yDiffNode > 0.5f) && entity.horizontalCollision || shouldFlyUp && !entity.hasTargetInWater()) {
+                entity.getJumpControl().jump();
+                startToFly(shouldFlyUp);
+            }
             followThePath();
             moveOrStop(target);
-            if (!isDone()) {
-                double yDiffNode = path.getNextNode().asVec3().y() - entity.getY();
-                double yDiffTarget = target.getY() - entity.getY();
-                double xDiffTarget = Math.pow(entity.getX() - target.getX(), 2);
-                double zDiffTarget = Math.pow(entity.getZ() - target.getZ(), 2);
-                boolean shouldFlyUp = jumpCount > 9
-                        || yDiffTarget > 3 && Math.sqrt(xDiffTarget + zDiffTarget) < 16
-                        || yDiffTarget > 8
-                        || Math.sqrt(xDiffTarget + zDiffTarget) > 64
-                        || path != null && path.isDone();
-                if ((tick > 20 || yDiffNode > 0.5f) && entity.horizontalCollision || shouldFlyUp && !entity.hasTargetInWater()) {
-                    entity.getJumpControl().jump();
-                    startToFly(shouldFlyUp);
-                }
-            }
         }
         doStuckDetection(getTempMobPos());
     }

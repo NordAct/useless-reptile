@@ -114,7 +114,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     protected int secondaryAttackDuration = 20;
     protected int specialAttackDuration = 20;
     protected int eatFromInventoryTimer = 20;
-    protected boolean canNavigateInFluids = false;
     protected int ticksUntilHeal = -1;
     protected float sprintSpeedModifier = 1.1f;
     protected float backwardSpeedModifier = 0.6f;
@@ -1049,19 +1048,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return true;
     }
 
-    public boolean canNavigateInFluids() {
-        return canNavigateInFluids;
-    }
-
     public boolean hasTargetInWater() {
         return (navigation.getTargetPos() != null && level().getBlockState(navigation.getTargetPos()).liquid()
                     || getTarget() != null && getTarget().isUnderWater())
-                && canNavigateInFluids;
-    }
-
-    @Override
-    public boolean isAffectedByFluids() {
-        return !canNavigateInFluids;
+                && !isAffectedByFluids();
     }
 
     @Override
