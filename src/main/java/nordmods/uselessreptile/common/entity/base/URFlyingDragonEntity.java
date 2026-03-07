@@ -81,13 +81,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
-        super.onSyncedDataUpdated(data);
-        if (!level().isClientSide())
-            if (FLYING.equals(data)) getNavigation().recomputePath();
-    }
-
-    @Override
     public float getRotationSpeed() {
         if (isFlying()) return getFlyingRotationSpeed() * getMovementSpeedModifier() / 2f;
         return super.getRotationSpeed();

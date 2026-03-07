@@ -90,8 +90,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
-        if (!level().isClientSide())
-            if (FLYING.equals(data)) getNavigation().recomputePath();
         if (JUMP_PRESSED.equals(data)) {
             if (level().isClientSide() && getControllingPassenger() instanceof LocalPlayer) {
                 if (isJumpPressed() && !jumpWasPressed) {
