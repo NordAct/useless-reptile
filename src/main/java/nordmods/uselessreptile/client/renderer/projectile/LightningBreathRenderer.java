@@ -1,14 +1,14 @@
 package nordmods.uselessreptile.client.renderer.projectile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.UselessReptile;
@@ -47,7 +47,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
                         new Vector3f(current.startPoint()).add(0, -0.1f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.1f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.1f, 0),
-                        state.alpha, 1, 1, 1, LightTexture.FULL_BRIGHT,
+                        state.alpha, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
                         0, 1, 0, 1);
                 RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
                         RenderTypes.entityTranslucentEmissive(TEXTURE),
@@ -55,7 +55,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
                         new Vector3f(current.startPoint()).add(0, 0.2f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.2f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.2f, 0),
-                        state.alpha / 1.5f, 1, 1, 1, LightTexture.FULL_BRIGHT,
+                        state.alpha / 1.5f, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
                         0, 1, 0, 1);
                 RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
                         RenderTypes.entityTranslucentEmissive(TEXTURE),
@@ -63,7 +63,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
                         new Vector3f(current.startPoint()).add(0, 0.3f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.3f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.3f, 0),
-                        state.alpha / 3f, 1, 1, 1, LightTexture.FULL_BRIGHT,
+                        state.alpha / 3f, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
                         0, 1, 0, 1);
         }
         matrices.popPose();

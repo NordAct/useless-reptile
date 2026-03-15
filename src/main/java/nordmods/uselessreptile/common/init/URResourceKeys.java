@@ -33,7 +33,7 @@ public class URResourceKeys {
         DynamicRegistries.registerSynced(DRAGON_VARIANT_CUSTOM_NAME, DragonVariant.CODEC_CUSTOM_NAME);
 
         DynamicRegistrySetupCallback.EVENT.register(registryView -> {
-            RegistryAccess registryManager = registryView.asDynamicRegistryManager();
+            RegistryAccess registryManager = registryView.asRegistryAccess();
             registryView.registerEntryAdded(DRAGON_VARIANT, ((rawId, id, object) -> verifyDragonVariantContent(registryManager, object, false)));
             registryView.registerEntryAdded(DRAGON_VARIANT_CUSTOM_NAME, ((rawId, id, object) -> verifyDragonVariantContent(registryManager, object, true)));
         });

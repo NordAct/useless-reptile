@@ -57,9 +57,9 @@ public class DragonLookControl extends LookControl {
     @Override
     public @NonNull Optional<Float> getXRotD() {
         if (entity instanceof ShooterDragon shooterDragon) {
-            double x = this.wantedX - shooterDragon.getShootingPoint().pos().x();
-            double y = this.wantedY - shooterDragon.getShootingPoint().pos().y();
-            double z = this.wantedZ - shooterDragon.getShootingPoint().pos().z();
+            double x = this.wantedX - shooterDragon.getShootingPoint().position().x();
+            double y = this.wantedY - shooterDragon.getShootingPoint().position().y();
+            double z = this.wantedZ - shooterDragon.getShootingPoint().position().z();
             double distZX = Math.sqrt(x * x + z * z);
             return !(Math.abs(y) > 1.0E-5F) && !(Math.abs(distZX) > 1.0E-5F) ?
                     Optional.empty()
@@ -71,8 +71,8 @@ public class DragonLookControl extends LookControl {
     @Override
     public @NonNull Optional<Float> getYRotD() {
         if (entity instanceof ShooterDragon shooterDragon) {
-            double x = this.wantedX - shooterDragon.getShootingPoint().pos().x();
-            double z = this.wantedZ - shooterDragon.getShootingPoint().pos().z();
+            double x = this.wantedX - shooterDragon.getShootingPoint().position().x();
+            double z = this.wantedZ - shooterDragon.getShootingPoint().position().z();
             return !(Math.abs(x) > 1.0E-5F) && !(Math.abs(z) > 1.0E-5F)
                     ? Optional.empty()
                     : Optional.of((float)(Mth.atan2(z, x) * 180 /Math.PI) - 90);

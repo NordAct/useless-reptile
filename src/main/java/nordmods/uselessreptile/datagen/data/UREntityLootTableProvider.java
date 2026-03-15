@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.datagen.data;
 
 import com.mojang.datafixers.util.Pair;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -32,11 +32,11 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class UREntityLootTableProvider extends EntityLootSubProvider implements DataProvider {
-    protected final FabricDataOutput output;
+    protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
     private final Map<Pair<String, EntityType<?>>, LootTable.Builder> lootTables = new HashMap<>();
-    public UREntityLootTableProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+    public UREntityLootTableProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         super(FeatureFlagSet.of(), registryLookupFuture.join());
         this.output = output;
         this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "loot_table");

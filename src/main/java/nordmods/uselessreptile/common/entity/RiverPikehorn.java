@@ -38,7 +38,7 @@ import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.item.FluteItem;
-import nordmods.uselessreptile.common.util.URAnimationController;
+import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -55,15 +55,15 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     protected final DynamicGameEventListener<FluteUsedEventListener> fluteUsedEventHandler = new DynamicGameEventListener<>(new FluteUsedEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.FLUTE_USED.value().notificationRadius()));
     private static final Identifier WATER_SPEED_MODIFIER_BONUS = UselessReptile.id("water_speed_modifier");
-    private final URAnimationController<RiverPikehorn> mainController = new URAnimationController<>(this, true);
-    private final URAnimationController<RiverPikehorn> turnController = new URAnimationController<>(this, true);
-    private final URAnimationController<RiverPikehorn> attackController = new URAnimationController<>(this, false) {
+    private final URDragonAnimationController<RiverPikehorn> mainController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<RiverPikehorn> turnController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<RiverPikehorn> attackController = new URDragonAnimationController<>(this, false) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
         }
     };
-    private final URAnimationController<RiverPikehorn> blinkController = new URAnimationController<>(this, true) {
+    private final URDragonAnimationController<RiverPikehorn> blinkController = new URDragonAnimationController<>(this, true) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;

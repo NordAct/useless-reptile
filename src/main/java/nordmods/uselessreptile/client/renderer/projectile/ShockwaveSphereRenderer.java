@@ -2,15 +2,15 @@ package nordmods.uselessreptile.client.renderer.projectile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.RenderUtil;
@@ -78,7 +78,7 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
 
                 RenderUtil.renderQuad(matrixStack.last().pose(), matrixStack.last(), renderLayer,
                         v0, v1 ,v2 ,v3,
-                        alpha, 1, 1, 1,LightTexture.FULL_BRIGHT,
+                        alpha, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
                         minU, maxU, minV, maxV);
             }
         }

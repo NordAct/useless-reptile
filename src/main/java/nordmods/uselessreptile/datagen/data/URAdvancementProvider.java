@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.datagen.data;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricAdvancementProvider;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
@@ -29,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public class URAdvancementProvider extends FabricAdvancementProvider {
-    public URAdvancementProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
+    public URAdvancementProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookup) {
         super(output, registryLookup);
     }
 
@@ -84,7 +85,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         ItemStack potion = new ItemStack(Items.POTION);
         potion.applyComponents(DataComponentMap.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(URPotions.ACID)).build());
         AdvancementHolder gatherAcid = Advancement.Builder.recipeAdvancement()
-                .display(potion,
+                .display(ItemStackTemplate.fromNonEmptyStack(potion),
                         Component.translatable("advancement.uselessreptile.gather_acid"),
                         Component.translatable("advancement.uselessreptile.gather_acid.desc"),
                         null,
@@ -220,7 +221,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         ItemStack potion1 = new ItemStack(Items.POTION);
         potion1.applyComponents(DataComponentMap.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.STRENGTH)).build());
         AdvancementHolder givePotion = Advancement.Builder.recipeAdvancement()
-                .display(potion1,
+                .display(ItemStackTemplate.fromNonEmptyStack(potion1),
                         Component.translatable("advancement.uselessreptile.give_potion"),
                         Component.translatable("advancement.uselessreptile.give_potion.desc"),
                         null,

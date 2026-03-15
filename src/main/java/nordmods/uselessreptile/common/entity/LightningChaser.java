@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -8,7 +7,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -28,7 +26,6 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.level.gamerules.GameRules;
@@ -49,7 +46,6 @@ import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningC
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRevengeGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRoamAroundGoal;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
@@ -58,7 +54,7 @@ import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
-import nordmods.uselessreptile.common.util.URAnimationController;
+import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
@@ -87,16 +83,16 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
     protected final DynamicGameEventListener<LightningStrikeEventListener> lightningStrikeEventHandler = new DynamicGameEventListener<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
-    private ShootingPoint shootingPoint = new ShootingPoint(position(), getLookAngle());
-    private final URAnimationController<LightningChaser> mainController = new URAnimationController<>(this, true);
-    private final URAnimationController<LightningChaser> turnController = new URAnimationController<>(this, true);
-    private final URAnimationController<LightningChaser> attackController = new URAnimationController<>(this, false) {
+    private ShootingPoint shootingPoint = new ShootingPoint(position().toVector3f(), getLookAngle().toVector3f());
+    private final URDragonAnimationController<LightningChaser> mainController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<LightningChaser> turnController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<LightningChaser> attackController = new URDragonAnimationController<>(this, false) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
         }
     };
-    private final URAnimationController<LightningChaser> blinkController = new URAnimationController<>(this, true) {
+    private final URDragonAnimationController<LightningChaser> blinkController = new URDragonAnimationController<>(this, true) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
@@ -404,7 +400,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
     private void updateThunderstormBonus() {
         if (level().isClientSide()) return;
-        if (level().getLevelData().isThundering()) {
+        if (level().isThundering()) {
             tryAddModifier(Attributes.ARMOR, 4, AttributeModifier.Operation.ADD_VALUE);
             tryAddModifier(Attributes.FLYING_SPEED, 0.2, AttributeModifier.Operation.ADD_VALUE);
             tryAddModifier(Attributes.MOVEMENT_SPEED, 0.05, AttributeModifier.Operation.ADD_VALUE);
@@ -468,7 +464,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     public void shoot() {
-        LightningBreath.createBeam(this, getShootingPointPitch(), getShootingPointYaw(), getShootingPoint().pos().add(0,  isFlying() ? -0.6 : -1.25, 0));
+        LightningBreath.createBeam(this, getShootingPointPitch(), getShootingPointYaw(), new Vec3(getShootingPoint().position().add(0,  isFlying() ? -0.6f : -1.25f, 0)));
     }
 
     public float getYawProgressLimit() {
@@ -496,7 +492,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
                 getPrimaryAttackBox(),
                 entity -> !getPassengers().contains(entity)
                         && !entity.is(this)
-                        && !entity.getType().is(URTags.DRAGON_IMMUNE)
+                        && !entity.is(URTags.DRAGON_IMMUNE)
                         && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
         );
         Entity target = null;
@@ -590,8 +586,8 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public Vec3 getShootingPointAnchor() {
-        return head.position().add(0, head.getBbHeight() / 2f, 0);
+    public Vector3f getShootingPointAnchor() {
+        return head.position().toVector3f().add(0, head.getBbHeight() / 2f, 0);
     }
 
     @Override

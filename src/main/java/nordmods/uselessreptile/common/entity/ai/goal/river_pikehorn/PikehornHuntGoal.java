@@ -107,7 +107,7 @@ public class PikehornHuntGoal extends Goal {
             }
         } else {
             if (entity.getAirSupply() >= entity.getMaxAirSupply() * 0.9 && !entity.forceTargetInWater) entity.forceTargetInWater = true;
-            //else go back to starting pos
+            //else go back to starting position
             entity.getNavigation().moveTo(startingPos.getX(), startingPos.getY(), startingPos.getZ(), 1);
             if (entity.forceTargetInWater) {
                 double distance = entity.blockPosition().distSqr(startingPos.above());

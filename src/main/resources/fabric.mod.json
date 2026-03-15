@@ -54,14 +54,14 @@
     },
 
     "loom:injected_interfaces": {
-      "net/minecraft/class_10055": ["nordmods/uselessreptile/client/util/duck/HeadMountDragonRenderState"],
-      "net/minecraft/class_10042": ["nordmods/uselessreptile/client/util/duck/DragonPassengerRenderState"],
-      "net/minecraft/class_1657": [
+      "net/minecraft/client/renderer/entity/state/AvatarRenderState": ["nordmods/uselessreptile/client/util/duck/HeadMountDragonRenderState"],
+      "net/minecraft/client/renderer/entity/state/LivingEntityRenderState": ["nordmods/uselessreptile/client/util/duck/DragonPassengerRenderState"],
+      "net/minecraft/world/entity/player/Player": [
         "nordmods/uselessreptile/common/util/duck/LightningChaserSpawnTimer",
         "nordmods/uselessreptile/common/util/duck/HeadMountDragonOwner"
       ],
-      "net/minecraft/class_3218": ["nordmods/uselessreptile/common/util/duck/LightningChaserSpawnTimer"],
-      "net/minecraft/class_3222": ["nordmods/uselessreptile/common/util/duck/DragonInventoryHelper"]
+      "net/minecraft/server/level/ServerLevel": ["nordmods/uselessreptile/common/util/duck/LightningChaserSpawnTimer"],
+      "net/minecraft/server/level/ServerPlayer": ["nordmods/uselessreptile/common/util/duck/DragonInventoryHelper"]
     }
   }
 }

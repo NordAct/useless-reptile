@@ -161,7 +161,8 @@ public class VortexHornItem extends InstrumentItem {
     protected boolean tryCollectDragon(ItemStack stack, Player user, URDragonEntity dragon, InteractionHand hand, boolean capacityWarning) {
         int dragonCapacity = dragon.vortexHornCapacity();
         if (getCurrentCapacity(stack) + dragonCapacity > getMaxCapacity(stack)) {
-            if (capacityWarning && !user.level().isClientSide()) user.displayClientMessage(Component.translatable("other.uselessreptile.not_enough_capacity"), true);
+            if (capacityWarning && !user.level().isClientSide())
+                user.sendOverlayMessage(Component.translatable("other.uselessreptile.not_enough_capacity"));
             return false;
         }
 

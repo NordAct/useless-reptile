@@ -6,7 +6,7 @@ import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.world.entity.LivingEntity;
 import nordmods.uselessreptile.client.renderer.layers.DragonPassengerLayer;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
@@ -26,7 +26,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
     @Unique
     private static final Quaternionf EMPTY = new Quaternionf();
 
-    @Inject(method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/CameraRenderState;)V", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "submit(Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;Lcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/SubmitNodeCollector;Lnet/minecraft/client/renderer/state/level/CameraRenderState;)V", at = @At(value = "HEAD"), cancellable = true)
     private void cancelRender(S livingEntityRenderState, PoseStack matrixStack, SubmitNodeCollector orderedRenderCommandQueue, CameraRenderState cameraRenderState, CallbackInfo ci) {
         if (livingEntityRenderState.useless_reptile$isRidingDragon())
             if (DragonPassengerLayer.PASSENGERS.contains(livingEntityRenderState.useless_reptile$getUUID())) ci.cancel();

@@ -5,7 +5,7 @@ import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.renderer.base.URRideableDragonEntityRenderer;
 import nordmods.uselessreptile.common.entity.LightningChaser;

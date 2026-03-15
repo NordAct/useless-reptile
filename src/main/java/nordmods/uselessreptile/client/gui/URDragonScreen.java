@@ -2,16 +2,16 @@ package nordmods.uselessreptile.client.gui;
 
 import com.mojang.math.Axis;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.SpriteIconButton;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -123,27 +123,28 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
     }
 
     @Override
-    protected void renderBg(@NonNull GuiGraphics context, float delta, int mouseX, int mouseY) {
+    public void extractBackground(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractBackground(context, mouseX, mouseY, delta);
         i = (width - imageWidth) / 2;
         j = (height - imageHeight) / 2;
         context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0, 0, imageWidth, imageHeight, 256, 256);
-        drawSaddle(context);
-        drawBanner(context);
-        drawArmor(context);
-        drawStorage(context);
-        drawEntity(context);
+        extractSaddle(context);
+        extractBanner(context);
+        extractArmor(context);
+        extractStorage(context);
+        extractEntity(context);
 
         follow.active = entity.getCurrentOrder() != URDragonEntity.Order.FOLLOW;
         follow.setPosition(i - COMMAND_BUTTON_SIZE, j + 14);
-        follow.render(context, mouseX, mouseY, delta);
+        follow.extractRenderState(context, mouseX, mouseY, delta);
 
         stay.active = entity.getCurrentOrder() != URDragonEntity.Order.STAY;
         stay.setPosition(i - COMMAND_BUTTON_SIZE, j + 14 + COMMAND_BUTTON_SIZE);
-        stay.render(context, mouseX, mouseY, delta);
+        stay.extractRenderState(context, mouseX, mouseY, delta);
 
         sit.active = entity.getCurrentOrder() != URDragonEntity.Order.SIT;
         sit.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 2);
-        sit.render(context, mouseX, mouseY, delta);
+        sit.extractRenderState(context, mouseX, mouseY, delta);
 
         Button wander = null;
 
@@ -170,23 +171,22 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
 
         wander.active = sit.active;
         wander.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 4);
-        wander.render(context, mouseX, mouseY, delta);
+        wander.extractRenderState(context, mouseX, mouseY, delta);
 
         unbindInstrument.active = !entity.getBoundedInstrumentSound().isEmpty();
         unbindInstrument.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 5);
-        unbindInstrument.render(context, mouseX, mouseY, delta);
+        unbindInstrument.extractRenderState(context, mouseX, mouseY, delta);
     }
 
     @Override
-    public void render(@NonNull GuiGraphics context, int mouseX, int mouseY, float delta) {
-        renderBackground(context, mouseX, mouseY, delta);
+    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        extractBackground(context, mouseX, mouseY, delta);
         this.mouseX = mouseX;
         this.mouseY = mouseY;
-        super.render(context, mouseX, mouseY, delta);
-        renderTooltip(context, mouseX, mouseY);
+        super.extractRenderState(context, mouseX, mouseY, delta);
     }
 
-    protected void drawSaddle(GuiGraphics context) {
+    protected void extractSaddle(GuiGraphicsExtractor context) {
         if (entity.getInventory().hasSaddle)
             context.blit( //saddle
                     RenderPipelines.GUI_TEXTURED,
@@ -200,7 +200,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
                     256, 256);
     }
 
-    protected void drawArmor(GuiGraphics context) {
+    protected void extractArmor(GuiGraphicsExtractor context) {
         if (entity.getInventory().hasHelmet) context.blit( //head
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
@@ -236,11 +236,11 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
 
     }
 
-    protected void drawEntity(GuiGraphics context) {
-        if (entity != null) drawEntity(context, i + 26, j + 18, i + 78, j + 70, this.mouseX, this.mouseY, this.entity);
+    protected void extractEntity(GuiGraphicsExtractor context) {
+        if (entity != null) extractEntity(context, i + 26, j + 18, i + 78, j + 70, this.mouseX, this.mouseY, this.entity);
     }
 
-    private void drawEntity(GuiGraphics context, int x1, int y1, int x2, int y2, float mouseX, float mouseY, LivingEntity entity) {
+    private void extractEntity(GuiGraphicsExtractor context, int x1, int y1, int x2, int y2, float mouseX, float mouseY, LivingEntity entity) {
         float centerX = (x1 + x2) / 2f;
         float centerY = (y1 + y2) / 2f;
         float dx = (float)Math.atan((centerX - mouseX) / 40f);
@@ -253,19 +253,19 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         LivingEntityRenderState state = (LivingEntityRenderState) renderer.createRenderState(entity, tickDelta);
         state.nameTag = null;
         state.setStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, List.of()).stream().map(val -> false).toList());
-        state.setStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
+        state.setStateData(ClientStateDataTypes.LIGHT, LightCoordsUtil.FULL_BRIGHT);
 
         Quaternionf rot = new Quaternionf();
         Quaternionf cam = Axis.XP.rotationDegrees(-dy * 20 + 180).mul(Axis.YP.rotationDegrees(-dx * 40 + state.bodyRot));
         rot.mul(cam);
 
         float size = 2.5f/Math.max(entity.getBbHeight(), entity.getBbWidth());
-        context.submitEntityRenderState(state, 13 * size, new Vector3f(0, state.boundingBoxHeight / 2f + 0.4f, 0).add(0, -0.2f * (size - 1), 0), rot, cam, x1, y1, x2, y2);
+        context.entity(state, 13 * size, new Vector3f(0, state.boundingBoxHeight / 2f + 0.4f, 0).add(0, -0.2f * (size - 1), 0), rot, cam, x1, y1, x2, y2);
 
         context.disableScissor();
     }
 
-    protected void drawStorage(GuiGraphics context) {
+    protected void extractStorage(GuiGraphicsExtractor context) {
         int size = entity.getInventory().storageSize.getSize()/3;
         int offset = entity.getInventory().hasHelmet || entity.getInventory().hasChestplate || entity.getInventory().hasTailArmor ? 2 : 1;
         context.blit(
@@ -281,7 +281,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         );
     }
 
-    protected void drawBanner(GuiGraphics context) {
+    protected void extractBanner(GuiGraphicsExtractor context) {
         if (entity.getInventory().hasSaddle)
             context.blit( //banner
                     RenderPipelines.GUI_TEXTURED,

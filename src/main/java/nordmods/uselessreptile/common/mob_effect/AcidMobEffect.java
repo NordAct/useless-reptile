@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.mob_effect;
 
-import eu.pb4.common.protection.api.CommonProtection;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -21,7 +20,8 @@ public class AcidMobEffect extends URMobEffect {
 
     @Override
     public boolean applyEffectTick(@NonNull ServerLevel world, @NonNull LivingEntity entity, int amplifier) {
-        if (!CommonProtection.canDamageEntity(world, entity, CommonProtection.UNKNOWN, null)) return false;
+        //todo uncomment this part once question about common protection api is resolved
+        //if (!CommonProtection.canDamageEntity(world, entity, CommonProtection.UNKNOWN, null)) return false;
 
         int armorUnequipped = 0;
         if (entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty()) armorUnequipped++;

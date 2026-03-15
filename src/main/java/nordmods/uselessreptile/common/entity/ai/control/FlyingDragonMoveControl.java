@@ -40,9 +40,9 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         if (!entity.isOrderedToSit()) {
             if (entity.getTarget() != null && entity instanceof ShooterDragon shooterDragon) {
                 Entity target = entity.getTarget();
-                double diffTargetX = target.getX() - shooterDragon.getShootingPoint().pos().x;
-                double diffTargetY = target.getY() - shooterDragon.getShootingPoint().pos().y;
-                double diffTargetZ = target.getZ() - shooterDragon.getShootingPoint().pos().z;
+                double diffTargetX = target.getX() - shooterDragon.getShootingPoint().position().x;
+                double diffTargetY = target.getY() - shooterDragon.getShootingPoint().position().y;
+                double diffTargetZ = target.getZ() - shooterDragon.getShootingPoint().position().z;
                 double distanceTargetXZ = Math.sqrt(diffTargetX * diffTargetX + diffTargetZ * diffTargetZ);
                 destinationPitch = rotlerp(
                         entity.getXRot(),

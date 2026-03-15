@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.datagen.data;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -18,12 +18,12 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public class URDamageTypeProvider implements DataProvider {
-    protected final FabricDataOutput output;
+    protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
     private static final Set<DamageType> damageTypes = new HashSet<>();
 
-    public URDamageTypeProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+    public URDamageTypeProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
         this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "damage_type");
         this.registryLookupFuture = registryLookupFuture;

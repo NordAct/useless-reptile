@@ -43,7 +43,7 @@ import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
-import nordmods.uselessreptile.common.util.URAnimationController;
+import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
@@ -59,16 +59,16 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     private final URDragonPart tail2 = new URDragonPart(this);
     private final URDragonPart tail3 = new URDragonPart(this);
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
-    private ShootingPoint shootingPoint = new ShootingPoint(position(), getLookAngle());
-    private final URAnimationController<Wyvern> mainController = new URAnimationController<>(this, true);
-    private final URAnimationController<Wyvern> turnController = new URAnimationController<>(this, true);
-    private final URAnimationController<Wyvern> attackController = new URAnimationController<>(this, false) {
+    private ShootingPoint shootingPoint = new ShootingPoint(position().toVector3f(), getLookAngle().toVector3f());
+    private final URDragonAnimationController<Wyvern> mainController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<Wyvern> turnController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<Wyvern> attackController = new URDragonAnimationController<>(this, false) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
         }
     };
-    private final URAnimationController<Wyvern> blinkController = new URAnimationController<>(this, true) {
+    private final URDragonAnimationController<Wyvern> blinkController = new URDragonAnimationController<>(this, true) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
@@ -102,10 +102,8 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public Vec3 getShootingPointAnchor() {
-        return head
-                .position()
-                .add(0, head.getBbHeight() / 2f, 0);
+    public Vector3f getShootingPointAnchor() {
+        return head.position().toVector3f().add(0, head.getBbHeight() / 2f, 0);
     }
 
     @Override
@@ -339,10 +337,11 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     public void shoot() {
         if (level().isClientSide()) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
+        Vec3 rot = new Vec3(getShootingPoint().rotation()).scale(0.5f);
+        Vec3 pos = new Vec3(getShootingPoint().position());
         for (int i = 0; i < 5; ++i) {
             AcidBlast projectileEntity = new AcidBlast(level(), this);
-            projectileEntity.setPos(getShootingPoint().pos());
-            Vec3 rot = getShootingPoint().rotation().scale(0.5f);
+            projectileEntity.setPos(pos);
             projectileEntity.shoot(rot.x, rot.y, rot.z, 3.0f, 5.0f);
             level().addFreshEntity(projectileEntity);
         }
@@ -360,7 +359,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                 entity -> !getPassengers().contains(entity)
                         && !entity.is(this)
                         && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
-                        && !entity.getType().is(URTags.DRAGON_IMMUNE));
+                        && !entity.is(URTags.DRAGON_IMMUNE));
         Entity target = null;
         if (!list.isEmpty()) {
             target = list.getFirst();

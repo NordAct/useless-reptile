@@ -1,8 +1,9 @@
 package nordmods.uselessreptile.common.init;
 
 import com.google.common.base.Suppliers;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
+import net.fabricmc.fabric.impl.creativetab.FabricCreativeModeTabBuilderImpl;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -76,12 +77,12 @@ public class URItems {
     public static final ResourceKey<CreativeModeTab> UR_ITEM_GROUP = ResourceKey.create(Registries.CREATIVE_MODE_TAB, UselessReptile.id("item_group"));
 
     public static void init(){
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, UR_ITEM_GROUP, FabricItemGroup.builder()
+        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, UR_ITEM_GROUP, FabricCreativeModeTab.builder()
                 .icon(() -> new ItemStack(WYVERN_SKIN))
                 .title(Component.translatable("itemGroup.uselessreptile.item_group"))
                 .build());
 
-        ItemGroupEvents.modifyEntriesEvent(UR_ITEM_GROUP).register(c ->{
+        CreativeModeTabEvents.modifyOutputEvent(UR_ITEM_GROUP).register(c ->{
             c.accept(VARIANT_CHANGING_ORB);
             c.accept(WYVERN_SPAWN_EGG);
             c.accept(MOLECLAW_SPAWN_EGG);
@@ -139,7 +140,8 @@ public class URItems {
     }
 
     public static Item registerItem(String id, Function<Item.Properties, Item> factory) {
-        return Items.registerItem(ResourceKey.create(Registries.ITEM, UselessReptile.id(id)), factory);
+        ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, UselessReptile.id(id));
+        return Registry.register(BuiltInRegistries.ITEM, resourceKey, factory.apply(new Item.Properties()));
     }
 
     public static void addInstruments(CreativeModeTab.Output entries, HolderLookup<Instrument> registryWrapper, Item item, TagKey<Instrument> instrumentTag, CreativeModeTab.TabVisibility visibility) {

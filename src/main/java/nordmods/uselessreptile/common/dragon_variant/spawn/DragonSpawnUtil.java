@@ -168,7 +168,7 @@ public class DragonSpawnUtil {
             if (!list.isEmpty() && isBiomeInList(list, biome)) return false;
         }
 
-        Holder<Block> block = world.getBlockState(pos.below()).getBlockHolder();
+        Holder<Block> block = world.getBlockState(pos.below()).getBlock().builtInRegistryHolder();
         //allowed blocks check (whitelist)
         if (conditions.allowedBlocks().isPresent()) {
             List <ExtraCodecs.TagOrElementLocation> list = conditions.allowedBlocks().get();

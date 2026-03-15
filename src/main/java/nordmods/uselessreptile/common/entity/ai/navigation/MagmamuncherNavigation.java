@@ -18,7 +18,7 @@ public class MagmamuncherNavigation extends DragonNavigation {
 
     @Override
     public boolean canCutCorner(@NonNull PathType nodeType) {
-        return nodeType != PathType.DANGER_OTHER && nodeType != PathType.WALKABLE_DOOR;
+        return nodeType != PathType.DAMAGING_IN_NEIGHBOR && nodeType != PathType.WALKABLE_DOOR;
     }
 
     @Override

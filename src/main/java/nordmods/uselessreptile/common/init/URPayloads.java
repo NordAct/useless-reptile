@@ -8,15 +8,15 @@ import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPa
 
 public class URPayloads {
     public static void init() {
-        PayloadTypeRegistry.playS2C().register(OpenDragonInventoryPayload.PAYLOAD_ID, OpenDragonInventoryPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playS2C().register(LiftoffParticlesPayload.PAYLOAD_ID, LiftoffParticlesPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playS2C().register(SyncLightningBreathRotationsPayload.PAYLOAD_ID, SyncLightningBreathRotationsPayload.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(OpenDragonInventoryPayload.PAYLOAD_ID, OpenDragonInventoryPayload.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(LiftoffParticlesPayload.PAYLOAD_ID, LiftoffParticlesPayload.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncLightningBreathRotationsPayload.PAYLOAD_ID, SyncLightningBreathRotationsPayload.PACKET_CODEC);
 
-        PayloadTypeRegistry.playC2S().register(KeyInputPayload.PAYLOAD_ID, KeyInputPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(RequestLiftoffPayload.PAYLOAD_ID, RequestLiftoffPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(OrderPayload.PAYLOAD_ID, OrderPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(UnbindInstrumentPayload.PAYLOAD_ID, UnbindInstrumentPayload.PACKET_CODEC);
-        PayloadTypeRegistry.playC2S().register(ChangeWanderRadiusPayload.PAYLOAD_ID, ChangeWanderRadiusPayload.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(KeyInputPayload.PAYLOAD_ID, KeyInputPayload.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(RequestLiftoffPayload.PAYLOAD_ID, RequestLiftoffPayload.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(OrderPayload.PAYLOAD_ID, OrderPayload.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(UnbindInstrumentPayload.PAYLOAD_ID, UnbindInstrumentPayload.PACKET_CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(ChangeWanderRadiusPayload.PAYLOAD_ID, ChangeWanderRadiusPayload.PACKET_CODEC);
 
         URPayloadHandlers.init();
     }

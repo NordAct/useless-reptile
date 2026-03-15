@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.CachedOutput;
@@ -27,12 +27,12 @@ import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("deprecation")
 public class UREquipmentProvider implements DataProvider {
-    protected final FabricDataOutput output;
+    protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
     private final Map<Identifier, EquipmentModelData> holder = new HashMap<>();
 
-    public UREquipmentProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+    public UREquipmentProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
         this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/equipment");
         this.registryLookupFuture = registryLookupFuture;

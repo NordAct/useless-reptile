@@ -12,8 +12,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
-import nordmods.biscuit_roll.common.animation.controller.EntityAnimationController;
 import nordmods.uselessreptile.common.init.*;
+import nordmods.uselessreptile.common.util.SimpleAnimationController;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -21,7 +21,7 @@ import java.util.List;
 
 public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, ProjectileDamageHelper {
     private static final int COLOR = 0x99E416;
-    private final BRAnimationController controller = new EntityAnimationController<>(this, false) {
+    private final BRAnimationController controller = new SimpleAnimationController(false) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
@@ -50,7 +50,7 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
     protected void onHitEntity(@NonNull EntityHitResult entityHitResult) {
         if (!(level() instanceof ServerLevel world)) return;
         Entity target = entityHitResult.getEntity();
-        if (!target.getType().is(URTags.DRAGON_IMMUNE)) target.hurtServer(world, target.damageSources().source(URDamageTypes.ACID, getOwner()), getResultingDamage());
+        if (!target.is(URTags.DRAGON_IMMUNE)) target.hurtServer(world, target.damageSources().source(URDamageTypes.ACID, getOwner()), getResultingDamage());
         spawnEffectCloud();
         super.onHitEntity(entityHitResult);
         if (target instanceof LivingEntity entity) entity.addEffect(new MobEffectInstance(URMobEffect.ACID, 60, 1));

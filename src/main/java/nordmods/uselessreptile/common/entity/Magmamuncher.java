@@ -44,7 +44,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
-import nordmods.uselessreptile.common.util.URAnimationController;
+import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -57,15 +57,15 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     private static final int MAX_EATING_MAGMA_PROGRESS = 20*5;
     public static final float DISTANCE_TO_EAT = 1.25f;
     public static final ResourceKey<LootTable> MAGMA_EATEN_TABLE = ResourceKey.create(Registries.LOOT_TABLE, UselessReptile.id("entities/magmamuncher_from_magma"));
-    private final URAnimationController<Magmamuncher> mainController = new URAnimationController<>(this, true);
-    private final URAnimationController<Magmamuncher> turnController = new URAnimationController<>(this, true);
-    private final URAnimationController<Magmamuncher> attackController = new URAnimationController<>(this, false) {
+    private final URDragonAnimationController<Magmamuncher> mainController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<Magmamuncher> turnController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<Magmamuncher> attackController = new URDragonAnimationController<>(this, false) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
         }
     };
-    private final URAnimationController<Magmamuncher> blinkController = new URAnimationController<>(this, true) {
+    private final URDragonAnimationController<Magmamuncher> blinkController = new URDragonAnimationController<>(this, true) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
@@ -78,8 +78,8 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     public Magmamuncher(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         sprintSpeedModifier = 1.3f;
-        setPathfindingMalus(PathType.DAMAGE_FIRE, 0);
-        setPathfindingMalus(PathType.DANGER_FIRE, 0);
+        setPathfindingMalus(PathType.FIRE, 0);
+        setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, 0);
         navigation = new MagmamuncherNavigation(this, level());
     }
 

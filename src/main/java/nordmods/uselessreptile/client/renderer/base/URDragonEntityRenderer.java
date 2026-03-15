@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
@@ -146,7 +146,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
             ModelData modelData = DragonVariantUtil.getDragonModelData(animatable.getDragonDisplayVariant(), Minecraft.getInstance().level).modelData();
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider;
             if (modelData.translucent()) renderTypeProvider = ((state, texture) -> RenderTypes.entityTranslucent(texture)); //all translucent models can't have culling
-            else renderTypeProvider = modelData.cull() ? ((state, texture) ->RenderTypes.entityCutout(texture)) : ((state, texture) ->RenderTypes.entityCutoutNoCull(texture));
+            else renderTypeProvider = modelData.cull() ? ((state, texture) ->RenderTypes.entityCutout(texture)) : ((state, texture) -> RenderTypes.entityCutout(texture));
             assetCache.setRenderTypeProviderCache(renderTypeProvider);
         }
     }
@@ -206,7 +206,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         //render type
         if (data.modelData().translucent()) {
             equipmentAssetCache.setRenderTypeProviderCache((state, texture) -> RenderTypes.entityTranslucent(texture));
-        } else equipmentAssetCache.setRenderTypeProviderCache(((state, texture) -> RenderTypes.entityCutoutNoCull(texture)));
+        } else equipmentAssetCache.setRenderTypeProviderCache(((state, texture) -> RenderTypes.entityCutout(texture)));
 
         data.hidBones().ifPresent(bones -> equipmentAssetCache.setHidBones(bones.toArray(new String[0])));
 

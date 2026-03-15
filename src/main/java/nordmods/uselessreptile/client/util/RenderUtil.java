@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.world.entity.Entity;
 import org.joml.Matrix4f;
@@ -54,6 +54,6 @@ public class RenderUtil {
     }
 
     public static CameraRenderState getCameraRenderState() {
-        return Minecraft.getInstance().gameRenderer.getLevelRenderState().cameraRenderState;
+        return Minecraft.getInstance().gameRenderer.getGameRenderState().levelRenderState.cameraRenderState;
     }
 }

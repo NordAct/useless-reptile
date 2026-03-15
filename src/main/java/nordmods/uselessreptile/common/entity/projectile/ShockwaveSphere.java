@@ -92,7 +92,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
             affected.add(target);
             return false;
         }
-        if (target.getType().is(URTags.DRAGON_IMMUNE)) return false;
+        if (target.is(URTags.DRAGON_IMMUNE)) return false;
         if (getEyePosition().distanceTo(target.position()) > currentRadius + target.getBbWidth()/2) return false;
         if (target instanceof EntityPart part) target = part.owner;
         Entity owner = getOwner();

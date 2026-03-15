@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.14-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
     id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
@@ -42,17 +42,17 @@ repositories {
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
-    modApi "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modImplementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
-    modImplementation "maven.modrinth:jade:${project.jade_version}+fabric"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
+    api "com.terraformersmc:modmenu:${project.modmenu_version}"
+    //removed until it's fixed (if it's even gonna be)
+    //implementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
+    implementation "maven.modrinth:jade:${project.jade_version}+fabric"
     //added locally, compiled from https://github.com/NordAct/Primitive-Multipart-Entities/
-    modImplementation include ("nordmods.primitive_multipart_entities:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
-    modImplementation include ("nordmods.biscuit_roll:biscuit_roll:${project.biscuit_roll_version}")
+    implementation include ("nordmods.primitive_multipart_entities:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")
+    implementation include ("nordmods.biscuit_roll:biscuit_roll:${project.biscuit_roll_version}")
 }
 
 processResources {
@@ -65,7 +65,7 @@ processResources {
     }
 }
 
-def targetJavaVersion = 21
+def targetJavaVersion = 25
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
     if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
@@ -113,7 +113,7 @@ fabricApi {
 }
 
 publishMods {
-    file = remapJar.archiveFile
+    file = jar.archiveFile
     changelog = project.file("CHANGELOG.md").getText()
     type = BETA
     displayName = "Useless Reptile ${project.version}"

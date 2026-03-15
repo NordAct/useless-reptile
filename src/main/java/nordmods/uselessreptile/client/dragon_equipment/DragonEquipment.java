@@ -15,7 +15,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     public LivingEntityRenderState ownerRenderState;
     public final ItemStack itemStack;
     private final EquipmentAssetCache assetCache;
-    public final CloneAnimationController cloneController = new CloneAnimationController(true);
+    public final CloneAnimationController cloneController = new CloneAnimationController();
     public final EquipmentAnimationController controller;
     public final Collection<BRAnimationController> controllers;
     public final boolean isSaddle;

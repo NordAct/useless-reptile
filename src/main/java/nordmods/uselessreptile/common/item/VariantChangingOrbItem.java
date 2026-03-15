@@ -33,7 +33,7 @@ public class VariantChangingOrbItem extends Item {
                     stack.consume(1, user);
                     return InteractionResult.SUCCESS;
                 } else {
-                    user.displayClientMessage(Component.translatable("other.uselessreptile.variant_not_found", variant), true);
+                    user.sendOverlayMessage(Component.translatable("other.uselessreptile.variant_not_found", variant));
                 }
             }
         }

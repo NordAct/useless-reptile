@@ -4,7 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.client.renderer.layer.ItemRenderLayer;
 import nordmods.biscuit_roll.common.state.BRState;

@@ -1,30 +1,37 @@
 package nordmods.uselessreptile.datagen.data;
 
-import net.minecraft.advancements.Advancement;
-import net.minecraft.advancements.AdvancementRequirements;
-import net.minecraft.advancements.AdvancementRewards;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.criterion.RecipeUnlockedTrigger;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeUnlockAdvancementBuilder;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.TransmuteResult;
-import nordmods.uselessreptile.common.recipe.VortexHornSmithingRecipe;
+import net.minecraft.world.item.crafting.SmithingTransformRecipe;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Optional;
 
 public class VortexHornSmithingRecipeJsonBuilder extends SmithingTransformRecipeBuilder {
+    private final RecipeUnlockAdvancementBuilder advancementBuilder = new RecipeUnlockAdvancementBuilder();
+    private final Ingredient template;
+    private final Ingredient base;
+    private final Ingredient addition;
+    private final ItemStackTemplate result;
+    private final RecipeCategory category;
 
-    public VortexHornSmithingRecipeJsonBuilder(Ingredient template, Ingredient base, Ingredient addition, RecipeCategory category, Item result) {
+    public VortexHornSmithingRecipeJsonBuilder(Ingredient template, Ingredient base, Ingredient addition, RecipeCategory category, ItemStackTemplate result) {
         super(template, base, addition, category, result);
+        this.category = category;
+        this.template = template;
+        this.base = base;
+        this.addition = addition;
+        this.result = result;
     }
 
-    public static VortexHornSmithingRecipeJsonBuilder smithing(@NonNull Ingredient template, @NonNull Ingredient base, @NonNull Ingredient addition, @NonNull RecipeCategory category, @NonNull Item result) {
+    public static VortexHornSmithingRecipeJsonBuilder smithing(@NonNull Ingredient template, @NonNull Ingredient base, @NonNull Ingredient addition, @NonNull RecipeCategory category, @NonNull ItemStackTemplate result) {
         return new VortexHornSmithingRecipeJsonBuilder(template, base, addition, category, result);
     }
 
@@ -35,21 +42,13 @@ public class VortexHornSmithingRecipeJsonBuilder extends SmithingTransformRecipe
 
     @Override
     public void save(RecipeOutput exporter, @NonNull ResourceKey<Recipe<?>> recipeKey) {
-        Advancement.Builder builder = exporter
-                .advancement()
-                .addCriterion(
-                        "has_the_recipe",
-                        RecipeUnlockedTrigger.unlocked(recipeKey)
-                )
-                .rewards(AdvancementRewards.Builder.recipe(recipeKey))
-                .requirements(AdvancementRequirements.Strategy.OR);
-        criteria.forEach(builder::addCriterion);
-        VortexHornSmithingRecipe recipe = new VortexHornSmithingRecipe(
+        SmithingTransformRecipe recipe = new SmithingTransformRecipe(
+                new Recipe.CommonInfo(true),
                 Optional.of(template),
                 base,
                 Optional.of(addition),
-                new TransmuteResult(result)
+                result
         );
-        exporter.accept(recipeKey, recipe, builder.build(recipeKey.identifier().withPrefix("recipes/" + category.getFolderName() + "/")));
+        exporter.accept(recipeKey, recipe, advancementBuilder.build(exporter, recipeKey, category));
     }
 }

@@ -8,7 +8,7 @@ import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -34,23 +34,23 @@ public abstract class GuiMixin {
     @Shadow @Final private Minecraft minecraft;
 
     /// Renders crosshair in third person
-    @WrapOperation(method = "renderCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z"))
+    @WrapOperation(method = "extractCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z"))
     private boolean render(CameraType instance, Operation<Boolean> original) {
         if (URClientConfig.getConfig().enableCrosshair && Minecraft.getInstance().player.getVehicle() instanceof URRideableDragonEntity) return true;
         return original.call(instance);
     }
 
     /// Removes shock effect from displayed status effect list
-    @Inject(method = "renderEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
-    private void yeetShockEffect(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
+    @Inject(method = "extractEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
+    private void yeetShockEffect(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
         List<MobEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));
         copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffect().equals(URMobEffect.SHOCK));
         localRef.set(copy);
     }
 
     /// Renders shock effect overlay
-    @Inject(method = "renderCameraOverlays", at = @At("TAIL"))
-    private void renderShockOverlay(GuiGraphics context, DeltaTracker tickCounter, CallbackInfo ci) {
+    @Inject(method = "extractCameraOverlays", at = @At("TAIL"))
+    private void renderShockOverlay(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
         if (minecraft.player.hasEffect(URMobEffect.SHOCK)) {
             float strength = Mth.clamp(minecraft.player.getEffect(URMobEffect.SHOCK).getDuration()/100f, 0f, 1f);
             renderShockOverlay(context, strength, tickCounter.getGameTimeDeltaPartialTick(false));
@@ -59,7 +59,7 @@ public abstract class GuiMixin {
     }
 
     @Unique
-    private void renderShockOverlay(GuiGraphics context, float strength, float tickDelta) {
+    private void renderShockOverlay(GuiGraphicsExtractor context, float strength, float tickDelta) {
         int width = context.guiWidth();
         int height = context.guiHeight();
 

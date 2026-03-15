@@ -6,14 +6,12 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.RandomSource;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -22,7 +20,6 @@ import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,13 +34,12 @@ import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.common.util.URAnimationController;
+import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -54,15 +50,15 @@ public class Moleclaw extends URRideableDragonEntity {
     public static final float defaultWidth = 2f;
     public static final float defaultHeight = 2.9f;
     private int panicSoundDelay = 0;
-    private final URAnimationController<Moleclaw> mainController = new URAnimationController<>(this, true);
-    private final URAnimationController<Moleclaw> turnController = new URAnimationController<>(this, true);
-    private final URAnimationController<Moleclaw> attackController = new URAnimationController<>(this, false) {
+    private final URDragonAnimationController<Moleclaw> mainController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<Moleclaw> turnController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<Moleclaw> attackController = new URDragonAnimationController<>(this, false) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
         }
     };
-    private final URAnimationController<Moleclaw> blinkController = new URAnimationController<>(this, true) {
+    private final URDragonAnimationController<Moleclaw> blinkController = new URDragonAnimationController<>(this, true) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
@@ -230,7 +226,7 @@ public class Moleclaw extends URRideableDragonEntity {
                         this,
                         getSecondaryAttackBox(),
                         entity -> !getPassengers().contains(entity)
-                                && !entity.getType().is(URTags.DRAGON_IMMUNE)
+                                && !entity.is(URTags.DRAGON_IMMUNE)
                                 && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
                 );
         if (!targets.isEmpty()) for (Entity mob: targets) {
@@ -246,7 +242,7 @@ public class Moleclaw extends URRideableDragonEntity {
                         this,
                         getPrimaryAttackBox(),
                         entity -> !getPassengers().contains(entity)
-                                && !entity.getType().is(URTags.DRAGON_IMMUNE)
+                                && !entity.is(URTags.DRAGON_IMMUNE)
                                 && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
                 );
         if (!targets.isEmpty()) for (Entity mob : targets) {
@@ -330,12 +326,10 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     public static int getLightAtPos(BlockPos blockPos, LivingEntity entity) {
-        Level world = entity.level();
-        int lightLevelBlock = world.getBrightness(LightLayer.BLOCK, blockPos);
-        int lightLevelSky = world.getBrightness(LightLayer.SKY, blockPos);
-        long timeOfDay = world.getDayTime() % 24000;
-        boolean isDayTime = (timeOfDay < 13000 || timeOfDay > 23000) && !world.dimensionType().hasFixedTime();
-        return Math.max(lightLevelBlock, isDayTime ? lightLevelSky : 0);
+        Level level = entity.level();
+        int lightLevelBlock = level.getBrightness(LightLayer.BLOCK, blockPos);
+        int lightLevelSky = level.getBrightness(LightLayer.SKY, blockPos);
+        return Math.max(lightLevelBlock, level.environmentAttributes().getValue(EnvironmentAttributes.MONSTERS_BURN, entity.position()) ? lightLevelSky : 0);
     }
 
     @Override

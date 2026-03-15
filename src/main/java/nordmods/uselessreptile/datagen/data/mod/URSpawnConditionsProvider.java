@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.core.HolderLookup;
@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 public class URSpawnConditionsProvider implements DataProvider {
-    protected final FabricDataOutput output;
+    protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
     private final List<Tuple<Identifier, List<DragonSpawnConditions>>> holder = new ArrayList<>();
 
-    public URSpawnConditionsProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public URSpawnConditionsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         this.output = output;
         this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/spawn_conditions");
         this.registryLookupFuture = registriesFuture;

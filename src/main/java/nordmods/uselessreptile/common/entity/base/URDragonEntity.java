@@ -1,7 +1,5 @@
 package nordmods.uselessreptile.common.entity.base;
 
-import com.mojang.authlib.GameProfile;
-import eu.pb4.common.protection.api.CommonProtection;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
@@ -107,7 +105,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.*;
 import java.util.function.BiConsumer;
 
-public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner, ContainerListener {
+public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner {
     public static final int TRANSITION_TICKS = 10;
     protected float pitchLimitGround = 90;
     protected int primaryAttackDuration = 20;
@@ -370,7 +368,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             DragonInventory newInventory = createInventory();
             if (inventory != null) inventory.forEach(newInventory::addItem);
             inventory = newInventory;
-            inventory.addListener(this);
         }
     }
 
@@ -638,7 +635,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 else setBoundedInstrumentSound("");
                 Component instrumentSound = Component.translatable(getBoundedInstrumentSound().isEmpty() ?
                         "other.uselessreptile.none" : getBoundedInstrumentSound()); //might fetch keys for non-vanilla instruments incorrectly
-                if (!level().isClientSide()) player.displayClientMessage(Component.translatable("other.uselessreptile.sound_respond", getName(), instrumentSound), true);
+                if (!level().isClientSide()) player.sendOverlayMessage(Component.translatable("other.uselessreptile.sound_respond", getName(), instrumentSound));
                 if (level().isClientSide()) player.playSound(SoundEvents.COMPARATOR_CLICK, 0.2f, 2);
                 return InteractionResult.SUCCESS;
             }
@@ -701,12 +698,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public String getInstrument(ItemStack itemStack) {
         if (!itemStack.getComponents().has(DataComponents.INSTRUMENT)) return "";
-        Optional<Holder<Instrument>> instrument = itemStack.getComponents().get(DataComponents.INSTRUMENT).unwrap(level().registryAccess());
-        if (instrument.isPresent()) {
-            boolean translatable = instrument.get().value().description().getContents() instanceof TranslatableContents;
-            return translatable ? ((TranslatableContents) instrument.get().value().description().getContents()).getKey() : ((PlainTextContents)instrument.get().value().description().getContents()).text();
-        }
-        return "";
+        Holder<Instrument> instrument = itemStack.getComponents().get(DataComponents.INSTRUMENT).instrument();
+        boolean translatable = instrument.value().description().getContents() instanceof TranslatableContents;
+        return translatable ? ((TranslatableContents) instrument.value().description().getContents()).getKey() : ((PlainTextContents)instrument.value().description().getContents()).text();
     }
 
     public void playSound(@NonNull SoundEvent sound, float volume, float pitch) {
@@ -854,7 +848,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                             calculateViewVector(
                                     shooterDragon.getShootingPointDesiredPitch(),
                                     shooterDragon.getShootingPointDesiredYaw()
-                            )
+                            ).toVector3f()
                     )
             );
         }
@@ -969,7 +963,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public boolean canAttack(@Nullable LivingEntity target) {
         if (target == null) return false;
         if (isOrderedToSit()) return false;
-        if (target.getType().is(URTags.DRAGON_IMMUNE)) return false;
+        if (target.is(URTags.DRAGON_IMMUNE)) return false;
         if (getOwner() != null && target instanceof OwnableEntity tameable && tameable.getOwner() == getOwner()) return false;
         return super.canAttack(target);
     }
@@ -1122,10 +1116,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public final boolean isBlockProtected(BlockPos blockPos) {
         BlockState blockState = level().getBlockState(blockPos);
-        Player rider = getOwner() instanceof URRideableDragonEntity dragon && dragon.hasControllingPassenger() ?
-                (Player) getControllingPassenger() : null;
-        GameProfile gameProfile = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
-        return blockState.is(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(level(), blockPos, gameProfile, rider);
+        //todo uncomment this part once question about common protection api is resolved
+        //Player rider = getOwner() instanceof URRideableDragonEntity dragon && dragon.hasControllingPassenger() ?
+        //        (Player) getControllingPassenger() : null;
+        //GameProfile gameProfile = rider != null ? rider.getGameProfile() : CommonProtection.UNKNOWN;
+        //return blockState.is(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(level(), blockPos, gameProfile, rider);
+        return blockState.is(URTags.DRAGON_UNBREAKABLE);
     }
 
     public boolean canBreakBlocks() {
@@ -1152,11 +1148,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     public boolean canBeLeashed() {
         return isTame();
-    }
-
-    @Override
-    public void containerChanged(@NonNull Container sender) {
-        updateEquipment();
     }
 
     public int vortexHornCapacity() {

@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
@@ -27,12 +27,12 @@ import java.util.concurrent.CompletableFuture;
 public class URDragonVariantProvider implements DataProvider {
     private static final List<Tuple<Identifier, DragonVariant>> holder = new ArrayList<>();
     private static final List<Tuple<Identifier, DragonVariant>> holderCustomName = new ArrayList<>();
-    protected final FabricDataOutput output;
+    protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final PackOutput.PathProvider pathResolverCustomName;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
 
-    public URDragonVariantProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+    public URDragonVariantProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
         this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/variant");
         this.pathResolverCustomName = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/custom_name");

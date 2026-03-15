@@ -66,17 +66,16 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
                     );
                     return;
                 }
-                animatable.controller.playAnimation(
-                        new BRPlayingAnimation(
-                                animatable.controller.getAnimationData(name),
-                                playingAnimation.getTransitionInTime(),
-                                playingAnimation.getTransitionOutTime(),
-                                playingAnimation.getTransitionInLerp(),
-                                playingAnimation.getTransitionOutLerp(),
-                                playingAnimation.getAnimationTime(),
-                                playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
-                        )
+                BRPlayingAnimation animation = new BRPlayingAnimation(
+                        animatable.controller.getAnimationData(name),
+                        playingAnimation.getTransitionInTime(),
+                        playingAnimation.getTransitionOutTime(),
+                        playingAnimation.getTransitionInLerp(),
+                        playingAnimation.getTransitionOutLerp(),
+                        playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
                 );
+                animation.setAnimationTime(playingAnimation.getAnimationTime());
+                animatable.controller.playAnimation(animation);
             });
             animatable.controller.checkAgainstOtherController(controller);
         });

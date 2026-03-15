@@ -10,7 +10,7 @@ import nordmods.biscuit_roll.common.state.BRState;
 //todo sounds and stuff
 public class EquipmentAnimationController extends BRAnimationController {
     public EquipmentAnimationController(Identifier initialAnimFile) {
-        super(true, false);
+        super(true);
         animationFile = initialAnimFile;
     }
 

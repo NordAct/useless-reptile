@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
@@ -23,12 +23,12 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public class URDragonModelProvider implements DataProvider {
-    protected final FabricDataOutput output;
+    protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
     private final List<Tuple<Identifier, DragonModelData>> holder = new ArrayList<>();
 
-    public URDragonModelProvider(FabricDataOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+    public URDragonModelProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
         this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/dragon_model");
         this.registryLookupFuture = registryLookupFuture;
@@ -109,7 +109,7 @@ public class URDragonModelProvider implements DataProvider {
 
     protected void addRiverPikehorn(String variant, boolean animatedTexture) {
         List<DragonModelData.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModelData.Sound("step", SoundEvents.CHICKEN_STEP.location(), Optional.of(0.5f), Optional.of(0.8f), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("step", SoundEvents.CHICKEN_STEP.value().location(), Optional.of(0.5f), Optional.of(0.8f), Optional.empty()));
         sounds.add(new DragonModelData.Sound("woosh", URSoundEvent.DRAGON_WOOSH.location(), Optional.of(0.7f), Optional.of(1.2f), Optional.empty()));
         sounds.add(new DragonModelData.Sound("flap", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.empty(), Optional.of(1.2f), Optional.empty()));
         sounds.add(new DragonModelData.Sound("attack", URSoundEvent.PIKEHORN_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));

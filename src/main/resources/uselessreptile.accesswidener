@@ -1,4 +1,4 @@
-accessWidener	v2 named
+accessWidener	v2 official
 # Entity
 accessible field net/minecraft/world/entity/Entity DATA_CUSTOM_NAME Lnet/minecraft/network/syncher/EntityDataAccessor;
 extendable method net/minecraft/world/entity/TamableAnimal canTeleportTo (Lnet/minecraft/core/BlockPos;)Z
@@ -6,22 +6,9 @@ extendable method net/minecraft/world/entity/Entity isLocalInstanceAuthoritative
 accessible field net/minecraft/world/entity/Entity passengers Lcom/google/common/collect/ImmutableList;
 accessible field net/minecraft/world/entity/Entity vehicle Lnet/minecraft/world/entity/Entity;
 accessible field net/minecraft/world/entity/Entity boardingCooldown I
-# Datagen
+# Datagen (Seriously, why some constructors are private and some aren't?)
+accessible method net/minecraft/data/recipes/ShapedRecipeBuilder <init> (Lnet/minecraft/core/HolderGetter;Lnet/minecraft/data/recipes/RecipeCategory;Lnet/minecraft/world/item/ItemStackTemplate;)V
 accessible method net/minecraft/data/recipes/ShapedRecipeBuilder <init> (Lnet/minecraft/core/HolderGetter;Lnet/minecraft/data/recipes/RecipeCategory;Lnet/minecraft/world/level/ItemLike;I)V
-accessible field net/minecraft/data/recipes/ShapedRecipeBuilder category Lnet/minecraft/data/recipes/RecipeCategory;
-accessible field net/minecraft/data/recipes/ShapedRecipeBuilder result Lnet/minecraft/world/item/Item;
-accessible field net/minecraft/data/recipes/ShapedRecipeBuilder count I
-accessible field net/minecraft/data/recipes/ShapedRecipeBuilder criteria Ljava/util/Map;
-accessible field net/minecraft/data/recipes/ShapedRecipeBuilder group Ljava/lang/String;
-accessible field net/minecraft/data/recipes/ShapedRecipeBuilder showNotification Z
-accessible field net/minecraft/data/recipes/ShapedRecipeBuilder key Ljava/util/Map;
-accessible field net/minecraft/data/recipes/ShapedRecipeBuilder rows Ljava/util/List;
-accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder criteria Ljava/util/Map;
-accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder template Lnet/minecraft/world/item/crafting/Ingredient;
-accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder base Lnet/minecraft/world/item/crafting/Ingredient;
-accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder addition Lnet/minecraft/world/item/crafting/Ingredient;
-accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder result Lnet/minecraft/world/item/Item;
-accessible field net/minecraft/data/recipes/SmithingTransformRecipeBuilder category Lnet/minecraft/data/recipes/RecipeCategory;
 # Recipes
 accessible field net/minecraft/world/item/crafting/ShapedRecipe pattern Lnet/minecraft/world/item/crafting/ShapedRecipePattern;
-accessible field net/minecraft/world/item/crafting/ShapedRecipe result Lnet/minecraft/world/item/ItemStack;
+accessible field net/minecraft/world/item/crafting/ShapedRecipe result Lnet/minecraft/world/item/ItemStackTemplate;

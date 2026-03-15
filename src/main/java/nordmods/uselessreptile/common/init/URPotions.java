@@ -1,6 +1,6 @@
 package nordmods.uselessreptile.common.init;
 
-import net.fabricmc.fabric.api.registry.FabricBrewingRecipeRegistryBuilder;
+import net.fabricmc.fabric.api.registry.FabricPotionBrewingBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,7 +36,7 @@ public class URPotions extends Potions {
     }
 
     private static void recipesRegister() {
-        FabricBrewingRecipeRegistryBuilder.BUILD.register(builder -> {
+        FabricPotionBrewingBuilder.BUILD.register(builder -> {
             builder.addMix(ACID, Items.GLOWSTONE_DUST,STRONG_ACID);
             builder.addMix(ACID, Items.REDSTONE, LONG_ACID);
         });

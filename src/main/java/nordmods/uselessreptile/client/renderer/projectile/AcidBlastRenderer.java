@@ -38,7 +38,7 @@ public class AcidBlastRenderer extends BREntityRenderer<AcidBlast, EntityRenderS
 
     @Override
     public RenderType getRenderType(BRState state, Identifier texture) {
-        return RenderTypes.entityCutoutNoCull(texture);
+        return RenderTypes.entityCutout(texture);
     }
 
     @Override

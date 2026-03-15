@@ -10,6 +10,7 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -32,8 +33,8 @@ public class EnitiyHitboxDebugMixin {
 
         if (entity instanceof ShooterDragon shooterDragon) {
             Vec3 offset = entity.getPosition(tickDelta).subtract(entity.position());
-            Vec3 pos = shooterDragon.getShootingPoint().pos().add(offset);
-            Vec3 rotation = shooterDragon.getShootingPoint().rotation().scale(2);
+            Vec3 pos = new Vec3(shooterDragon.getShootingPoint().position()).add(offset);
+            Vec3 rotation = new Vec3(shooterDragon.getShootingPoint().rotation()).scale(2);
             Gizmos.arrow(pos, pos.add(rotation), -0x00FFF1);
         }
     }

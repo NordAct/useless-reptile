@@ -1,12 +1,12 @@
 package nordmods.uselessreptile.client.renderer.layers;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.LightCoordsUtil;
 import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.client.renderer.layer.TextureRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
@@ -45,7 +45,7 @@ public class URGlowingLayer extends TextureRenderLayer {
 
     @Override
     protected void updateRenderState(BRState state) {
-        state.setStateData(ClientStateDataTypes.LIGHT, LightTexture.FULL_BRIGHT);
+        state.setStateData(ClientStateDataTypes.LIGHT, LightCoordsUtil.FULL_BRIGHT);
         state.setStateData(ClientStateDataTypes.INVISIBLE, false);
         AssetCache assetCache = state.getStateData(URStateDataTypes.ASSET_CACHE);
         if (assetCache.hasGlowing() && assetCache.getGlowLayerLocationCache() == null) {

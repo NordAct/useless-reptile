@@ -37,14 +37,14 @@ public class URModEvents {
 
     private static void spawnLightningChaser() {
         //Lightning Chaser spawn event
-        ServerTickEvents.START_WORLD_TICK.register(world -> {
-            if (world.isThundering()) {
-                if (!world.getGameRules().get(GameRules.SPAWN_MOBS)) return;
-                if (world.useless_reptile$getTimer() > 0) {
-                    world.useless_reptile$setTimer(world.useless_reptile$getTimer() - 1);
+        ServerTickEvents.START_LEVEL_TICK.register(level -> {
+            if (level.isThundering()) {
+                if (!level.getGameRules().get(GameRules.SPAWN_MOBS)) return;
+                if (level.useless_reptile$getTimer() > 0) {
+                    level.useless_reptile$setTimer(level.useless_reptile$getTimer() - 1);
                     return;
                 }
-                for (ServerPlayer player : world.players()) {
+                for (ServerPlayer player : level.players()) {
                     if (player.getY() < 62) continue;
                     if (player.useless_reptile$getTimer() > 0) continue;
                     if (URConfig.getConfig().lightningChaserThunderstormSpawnChance >= player.getRandom().nextFloat() * 100) {
@@ -52,18 +52,18 @@ public class URModEvents {
                         double sin = Math.sin(Math.toRadians(player.getYHeadRot() + 180));
                         BlockPos pos = player.blockPosition();
                         BlockPos spawnPos = new BlockPos((int) (pos.getX() + sin * 128),
-                                world.getHeight(Heightmap.Types.WORLD_SURFACE, (int) (pos.getX() + sin * 128), (int) (pos.getZ() + cos * 128)) + 16,
+                                level.getHeight(Heightmap.Types.WORLD_SURFACE, (int) (pos.getX() + sin * 128), (int) (pos.getZ() + cos * 128)) + 16,
                                 (int) (pos.getZ() + cos * 128));
-                        while (!world.getBlockState(spawnPos).isAir()) spawnPos = spawnPos.above();
-                        if (DragonSpawnUtil.getAvailableVariants(world, spawnPos, EntityType.getKey(UREntities.LIGHTNING_CHASER), EntitySpawnReason.EVENT).findFirst().isEmpty()) {
-                            world.useless_reptile$setTimer(1200);
+                        while (!level.getBlockState(spawnPos).isAir()) spawnPos = spawnPos.above();
+                        if (DragonSpawnUtil.getAvailableVariants(level, spawnPos, EntityType.getKey(UREntities.LIGHTNING_CHASER), EntitySpawnReason.EVENT).findFirst().isEmpty()) {
+                            level.useless_reptile$setTimer(1200);
                             return;
                         }
-                        LightningChaser lightningChaser = UREntities.LIGHTNING_CHASER.spawn(world, spawnPos, EntitySpawnReason.EVENT);
+                        LightningChaser lightningChaser = UREntities.LIGHTNING_CHASER.spawn(level, spawnPos, EntitySpawnReason.EVENT);
                         if (lightningChaser != null) {
                             lightningChaser.setFlying(true);
                             lightningChaser.setHomePoint(new BlockPos(pos.getX(),
-                                    world.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()),
+                                    level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()),
                                     pos.getZ()));
                             URDragonEntity.SoundInfo soundInfo = lightningChaser.getSoundInfo("roar");
                             if (soundInfo != null)
@@ -73,7 +73,7 @@ public class URModEvents {
                         break;
                     }
                 }
-                world.useless_reptile$setTimer(1200);
+                level.useless_reptile$setTimer(1200);
             }
         });
     }
@@ -101,8 +101,8 @@ public class URModEvents {
                 if (user instanceof URDragonEntity dragon) dragon.giveItemStack(toGive);
             }
 
-            if (!original.getItem().getCraftingRemainder().isEmpty()) {
-                ItemStack toGive = original.getItem().getCraftingRemainder();
+            if (original.getItem().getCraftingRemainder() != null) {
+                ItemStack toGive = original.getItem().getCraftingRemainder().create();
                 if (user instanceof Player player && !player.isCreative()) {
                     if (!remainder.isEmpty() || !player.getItemInHand(hand).isEmpty()) player.addItem(toGive);
                     else player.setItemInHand(hand, toGive);
@@ -111,7 +111,7 @@ public class URModEvents {
             }
 
             if (original.get(DataComponents.USE_REMAINDER) != null) {
-                ItemStack toGive = original.get(DataComponents.USE_REMAINDER).convertInto();
+                ItemStack toGive = original.get(DataComponents.USE_REMAINDER).convertInto().create();
                 if (user instanceof Player player && !player.isCreative()) {
                     if (!remainder.isEmpty() || !player.getItemInHand(hand).isEmpty()) player.addItem(toGive);
                     else player.setItemInHand(hand, toGive);
