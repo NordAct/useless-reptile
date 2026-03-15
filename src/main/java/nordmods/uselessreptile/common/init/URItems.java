@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.init;
 import com.google.common.base.Suppliers;
 import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
-import net.fabricmc.fabric.impl.creativetab.FabricCreativeModeTabBuilderImpl;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -68,11 +67,11 @@ public class URItems {
     public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.MAGMAMUNCHER)));
 
     public static final Item FLUTE = registerItem("flute", properties -> new FluteItem(properties.stacksTo(1).component(URItemComponents.FLUTE_MODE, FluteComponent.DEFAULT)));
-    public static final Item VORTEX_HORN = registerItem("vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 1)));
-    public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 3)));
-    public static final Item GOLD_VORTEX_HORN = registerItem("gold_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 6)));
-    public static final Item DIAMOND_VORTEX_HORN = registerItem("diamond_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 9)));
-    public static final Item NETHERITE_VORTEX_HORN = registerItem("netherite_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, 15)));
+    public static final Item VORTEX_HORN = registerItem("vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, VortexHornItem.NORMAL_CAPACITY)));
+    public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, VortexHornItem.IRON_CAPACITY)));
+    public static final Item GOLD_VORTEX_HORN = registerItem("gold_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, VortexHornItem.GOLD_CAPACITY)));
+    public static final Item DIAMOND_VORTEX_HORN = registerItem("diamond_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, VortexHornItem.DIAMOND_CAPACITY)));
+    public static final Item NETHERITE_VORTEX_HORN = registerItem("netherite_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, VortexHornItem.NETHERITE_CAPACITY)));
 
     public static final ResourceKey<CreativeModeTab> UR_ITEM_GROUP = ResourceKey.create(Registries.CREATIVE_MODE_TAB, UselessReptile.id("item_group"));
 
@@ -141,7 +140,7 @@ public class URItems {
 
     public static Item registerItem(String id, Function<Item.Properties, Item> factory) {
         ResourceKey<Item> resourceKey = ResourceKey.create(Registries.ITEM, UselessReptile.id(id));
-        return Registry.register(BuiltInRegistries.ITEM, resourceKey, factory.apply(new Item.Properties()));
+        return Registry.register(BuiltInRegistries.ITEM, resourceKey, factory.apply(new Item.Properties().setId(resourceKey)));
     }
 
     public static void addInstruments(CreativeModeTab.Output entries, HolderLookup<Instrument> registryWrapper, Item item, TagKey<Instrument> instrumentTag, CreativeModeTab.TabVisibility visibility) {

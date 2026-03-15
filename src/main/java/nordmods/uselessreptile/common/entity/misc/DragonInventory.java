@@ -26,6 +26,7 @@ public class DragonInventory extends SimpleContainer {
     public final Function<ItemStack, Boolean> isChestplate;
     public final Function<ItemStack, Boolean> isTailArmor;
     public final Function<ItemStack, Boolean> isBanner;
+    private final Runnable updateEquipment;
 
     public DragonInventory(URDragonEntity dragon, StorageSize storageSize, boolean hasSaddle, boolean hasHelmet, boolean hasChestplate, boolean hasTailArmor) {
         super(getInventorySize(storageSize));
@@ -39,6 +40,7 @@ public class DragonInventory extends SimpleContainer {
         this.isChestplate = dragon::isChestplate;
         this.isTailArmor = dragon::isTailArmor;
         this.isBanner = dragon::isBanner;
+        this.updateEquipment = dragon::updateEquipment;
     }
 
     @Override
@@ -107,6 +109,12 @@ public class DragonInventory extends SimpleContainer {
             source.shrink(j);
             setChanged();
         }
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        updateEquipment.run();
     }
 
     @SuppressWarnings("unused")

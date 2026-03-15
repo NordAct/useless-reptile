@@ -522,31 +522,29 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public void updateEquipment() {
-        if (inventory != null) {
-            ItemStack head = inventory.getItem(1);
-            setItemSlot(EquipmentSlot.HEAD, head);
+        ItemStack head = inventory.getItem(1);
+        setItemSlot(EquipmentSlot.HEAD, head);
 
-            ItemStack body = inventory.getItem(2);
-            setItemSlot(EquipmentSlot.CHEST, body);
+        ItemStack body = inventory.getItem(2);
+        setItemSlot(EquipmentSlot.CHEST, body);
 
-            ItemStack tail = inventory.getItem(3);
-            setItemSlot(EquipmentSlot.LEGS, tail);
+        ItemStack tail = inventory.getItem(3);
+        setItemSlot(EquipmentSlot.LEGS, tail);
 
-            ItemStack banner = inventory.getItem(4);
-            setItemSlot(EquipmentSlot.BODY, banner);
+        ItemStack banner = inventory.getItem(4);
+        setItemSlot(EquipmentSlot.BODY, banner);
 
-            if (getOwner() instanceof ServerPlayer serverPlayer) { //TODO i really should unhardcode this...
-                if ((head.is(URItems.DRAGON_HELMET_DIAMOND) || head.is(URItems.MOLECLAW_HELMET_DIAMOND))
-                        && body.is(URItems.DRAGON_CHESTPLATE_DIAMOND)
-                        && tail.is(URItems.DRAGON_TAIL_ARMOR_DIAMOND)) {
-                    grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/equip_full_diamond_dragon_armor"));
-                }
+        if (getOwner() instanceof ServerPlayer serverPlayer) { //TODO i really should unhardcode this...
+            if ((head.is(URItems.DRAGON_HELMET_DIAMOND) || head.is(URItems.MOLECLAW_HELMET_DIAMOND))
+                    && body.is(URItems.DRAGON_CHESTPLATE_DIAMOND)
+                    && tail.is(URItems.DRAGON_TAIL_ARMOR_DIAMOND)) {
+                grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/equip_full_diamond_dragon_armor"));
+            }
 
-                if ((head.is(URItems.DRAGON_HELMET_NETHERITE) || head.is(URItems.MOLECLAW_HELMET_NETHERITE))
-                        && body.is(URItems.DRAGON_CHESTPLATE_NETHERITE)
-                        && tail.is(URItems.DRAGON_TAIL_ARMOR_NETHERITE)) {
-                    grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/equip_full_netherite_dragon_armor"));
-                }
+            if ((head.is(URItems.DRAGON_HELMET_NETHERITE) || head.is(URItems.MOLECLAW_HELMET_NETHERITE))
+                    && body.is(URItems.DRAGON_CHESTPLATE_NETHERITE)
+                    && tail.is(URItems.DRAGON_TAIL_ARMOR_NETHERITE)) {
+                grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/equip_full_netherite_dragon_armor"));
             }
         }
     }

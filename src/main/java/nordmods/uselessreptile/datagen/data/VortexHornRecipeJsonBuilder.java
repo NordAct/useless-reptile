@@ -29,6 +29,7 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
     private boolean showNotification;
     private final ItemStackTemplate result;
     private final RecipeUnlockAdvancementBuilder advancementBuilder = new RecipeUnlockAdvancementBuilder();
+    private final HolderGetter<Item> items;
 
     public VortexHornRecipeJsonBuilder(HolderGetter<Item> items, RecipeCategory category, ItemStackTemplate result) {
         super(items, category, result);
@@ -37,6 +38,7 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
         this.showNotification = true;
         this.category = category;
         this.result = result;
+        this.items = items;
     }
 
     private VortexHornRecipeJsonBuilder(HolderGetter<Item> items, RecipeCategory category, ItemLike result, int count) {
@@ -52,8 +54,8 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
     }
 
     @Override
-    public @NonNull VortexHornRecipeJsonBuilder define(@NonNull Character c, @NonNull TagKey<Item> tag) {
-        return (VortexHornRecipeJsonBuilder) super.define(c, tag);
+    public @NonNull ShapedRecipeBuilder define(@NonNull Character c, @NonNull TagKey<Item> tag) {
+        return this.define(c, Ingredient.of(items.getOrThrow(tag)));
     }
 
     @Override
@@ -62,13 +64,25 @@ public class VortexHornRecipeJsonBuilder extends ShapedRecipeBuilder {
     }
 
     @Override
-    public @NonNull VortexHornRecipeJsonBuilder define(@NonNull Character c, @NonNull Ingredient ingredient) {
-        return (VortexHornRecipeJsonBuilder) super.define(c, ingredient);
+    public @NonNull ShapedRecipeBuilder define(@NonNull Character symbol, @NonNull Ingredient ingredient) {
+        if (key.containsKey(symbol)) {
+            throw new IllegalArgumentException("Symbol '" + symbol + "' is already defined!");
+        } else if (symbol == ' ') {
+            throw new IllegalArgumentException("Symbol ' ' (whitespace) is reserved and cannot be defined");
+        } else {
+            key.put(symbol, ingredient);
+            return this;
+        }
     }
 
     @Override
-    public @NonNull VortexHornRecipeJsonBuilder pattern(@NonNull String patternStr) {
-        return (VortexHornRecipeJsonBuilder) super.pattern(patternStr);
+    public @NonNull ShapedRecipeBuilder pattern(@NonNull String row) {
+        if (!rows.isEmpty() && row.length() != rows.getFirst().length()) {
+            throw new IllegalArgumentException("Pattern must be the same width on every line!");
+        } else {
+            rows.add(row);
+            return this;
+        }
     }
 
     @Override

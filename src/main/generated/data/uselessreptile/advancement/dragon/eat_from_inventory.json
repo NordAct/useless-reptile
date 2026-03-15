@@ -10,7 +10,6 @@
       "translate": "advancement.uselessreptile.eat_from_inventory.desc"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:chicken"
     },
     "title": {

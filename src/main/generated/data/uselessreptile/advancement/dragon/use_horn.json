@@ -10,7 +10,6 @@
       "translate": "advancement.uselessreptile.use_horn.desc"
     },
     "icon": {
-      "count": 1,
       "id": "minecraft:goat_horn"
     },
     "title": {

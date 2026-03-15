@@ -43,8 +43,6 @@ public class FluteItem extends Item {
     public static final ImmutableSortedMap<String, Tuple<SoundEvent, FluteAction>> FLUTE_MODES = createFluteModeMap();
     public FluteItem(Properties settings) {
         super(settings);
-        ItemStack itemStack = getDefaultInstance();
-        itemStack.set(URItemComponents.FLUTE_MODE, FluteComponent.DEFAULT);
     }
 
     @Override

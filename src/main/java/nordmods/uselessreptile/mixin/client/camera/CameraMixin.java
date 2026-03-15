@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Slice;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Camera.class)
@@ -35,11 +36,17 @@ public abstract class CameraMixin {
     @Unique private static final int ROUNDS = 1000;
 
     /// Offsets camera by specified in config amount
-    @Inject(method = "setup", at = @At(value = "TAIL"))
-    public void offsetCameraDistance(Level area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo ci) {
+    @Inject(method = "alignWithEntity",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(FFF)V"),
+            slice = @Slice(
+                    from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;isPassenger()Z"),
+                    to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isSleeping()Z")
+            )
+    )
+    private void offsetCameraDistance(float partialTicks, CallbackInfo ci) {
         if (!URClientConfig.getConfig().enableCameraOffset) return;
-        if (this.entity.getVehicle() instanceof URRideableDragonEntity dragonEntity && thirdPerson) {
-            float scale = focusedEntity instanceof  LivingEntity livingEntity ? livingEntity.getScale() : 1;
+        if (this.entity.getVehicle() instanceof URRideableDragonEntity dragonEntity) {
+            float scale = entity instanceof  LivingEntity livingEntity ? livingEntity.getScale() : 1;
 
             float distanceToCameraOffset = -URClientConfig.getConfig().cameraDistanceOffset * dragonEntity.getScale() * scale;
             float verticalOffset = URClientConfig.getConfig().cameraVerticalOffset * dragonEntity.getScale() * scale;

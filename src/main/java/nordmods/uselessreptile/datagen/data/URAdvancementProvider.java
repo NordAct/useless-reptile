@@ -7,7 +7,7 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.advancements.AdvancementType;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -16,7 +16,6 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -82,10 +81,9 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .parent(tameMoleclaw)
                 .build(UselessReptile.id("dragon/moleclaw_helmet"));
 
-        ItemStack potion = new ItemStack(Items.POTION);
-        potion.applyComponents(DataComponentMap.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(URPotions.ACID)).build());
+        ItemStackTemplate potion = new ItemStackTemplate(Items.POTION, DataComponentPatch.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(URPotions.ACID)).build());
         AdvancementHolder gatherAcid = Advancement.Builder.recipeAdvancement()
-                .display(ItemStackTemplate.fromNonEmptyStack(potion),
+                .display(potion,
                         Component.translatable("advancement.uselessreptile.gather_acid"),
                         Component.translatable("advancement.uselessreptile.gather_acid.desc"),
                         null,
@@ -93,7 +91,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         true,
                         true,
                         false)
-                .addCriterion("obtain_item", AdvancementCriterions.obtainItem(registryEntryLookup, DataComponentMap.EMPTY, potion))
+                .addCriterion("obtain_item", AdvancementCriterions.obtainItem(registryEntryLookup, potion))
                 .parent(tameWyvern)
                 .build(UselessReptile.id("dragon/gather_acid"));
 
@@ -175,16 +173,11 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .parent(useHorn)
                 .build(UselessReptile.id("dragon/get_vortex_horn"));
 
-        ItemStack vortexHorn = URItems.NETHERITE_VORTEX_HORN.getDefaultInstance();
-        DataComponentMap netheriteVortexHornStorage = DataComponentMap.builder()
-                .set(
-                        URItemComponents.VORTEX_HORN_CAPACITY,
-                        new VortexHornCapacityComponent(
-                                ((VortexHornItem)vortexHorn.getItem()).getMaxCapacity(vortexHorn)
-                                , ((VortexHornItem)vortexHorn.getItem()).getMaxCapacity(vortexHorn)
-                        )
-                ).build();
-        vortexHorn.applyComponents(netheriteVortexHornStorage);
+        DataComponentPatch netheriteVortexHornStorage = DataComponentPatch
+                .builder()
+                .set(URItemComponents.VORTEX_HORN_CAPACITY, new VortexHornCapacityComponent(VortexHornItem.NETHERITE_CAPACITY, VortexHornItem.NETHERITE_CAPACITY))
+                .build();
+        ItemStackTemplate vortexHorn = new ItemStackTemplate(URItems.NETHERITE_VORTEX_HORN, netheriteVortexHornStorage);
 
         AdvancementHolder fullVortexHorn = Advancement.Builder.recipeAdvancement()
                 .display(URItems.NETHERITE_VORTEX_HORN,
@@ -195,13 +188,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         true,
                         true,
                         false)
-                .addCriterion("get_full_horn", AdvancementCriterions
-                        .obtainItem(
-                                registryEntryLookup,
-                                vortexHorn.getPrototype().filter(componentType -> componentType != URItemComponents.VORTEX_HORN_CAPACITY),
-                                vortexHorn
-                        )
-                )
+                .addCriterion("get_full_horn", AdvancementCriterions.obtainItem(registryEntryLookup, vortexHorn))
                 .parent(getVortexHorn)
                 .build(UselessReptile.id("dragon/full_vortex_horn"));
 
@@ -218,10 +205,9 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                 .parent(sitDownDragon)
                 .build(UselessReptile.id("dragon/eat_from_inventory"));
 
-        ItemStack potion1 = new ItemStack(Items.POTION);
-        potion1.applyComponents(DataComponentMap.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.STRENGTH)).build());
+        ItemStackTemplate potion1 = new ItemStackTemplate(Items.POTION, DataComponentPatch.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.STRENGTH)).build());
         AdvancementHolder givePotion = Advancement.Builder.recipeAdvancement()
-                .display(ItemStackTemplate.fromNonEmptyStack(potion1),
+                .display(potion1,
                         Component.translatable("advancement.uselessreptile.give_potion"),
                         Component.translatable("advancement.uselessreptile.give_potion.desc"),
                         null,

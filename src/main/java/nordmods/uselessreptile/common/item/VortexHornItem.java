@@ -41,6 +41,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 public class VortexHornItem extends InstrumentItem {
+    public static final int NORMAL_CAPACITY = 1;
+    public static final int IRON_CAPACITY = 3;
+    public static final int GOLD_CAPACITY = 6;
+    public static final int DIAMOND_CAPACITY = 9;
+    public static final int NETHERITE_CAPACITY = 15;
     public VortexHornItem(Properties settings) {
         super(settings);
     }

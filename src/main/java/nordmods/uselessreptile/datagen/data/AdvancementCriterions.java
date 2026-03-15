@@ -2,14 +2,7 @@ package nordmods.uselessreptile.datagen.data;
 
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.criterion.ConsumeItemTrigger;
-import net.minecraft.advancements.criterion.DataComponentMatchers;
-import net.minecraft.advancements.criterion.EntityPredicate;
-import net.minecraft.advancements.criterion.ImpossibleTrigger;
-import net.minecraft.advancements.criterion.InventoryChangeTrigger;
-import net.minecraft.advancements.criterion.ItemPredicate;
-import net.minecraft.advancements.criterion.PlayerTrigger;
-import net.minecraft.advancements.criterion.TameAnimalTrigger;
+import net.minecraft.advancements.criterion.*;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.component.DataComponentExactPredicate;
 import net.minecraft.core.component.DataComponentMap;
@@ -18,7 +11,8 @@ import net.minecraft.util.Util;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
@@ -36,16 +30,20 @@ public class AdvancementCriterions {
         return CriteriaTriggers.CONSUME_ITEM.createCriterion(ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(registryEntryLookup, item)).triggerInstance());
     }
 
-    public static Criterion<InventoryChangeTrigger.TriggerInstance> obtainItem(HolderGetter<Item> registryEntryLookup, DataComponentMap ignored, ItemStack... itemStacks) {
+    public static Criterion<InventoryChangeTrigger.TriggerInstance> obtainItem(HolderGetter<Item> registryEntryLookup, ItemStackTemplate ... itemStacks) {
         return CriteriaTriggers.INVENTORY_CHANGED.createCriterion(new InventoryChangeTrigger.TriggerInstance(Optional.empty(),
                 InventoryChangeTrigger.TriggerInstance.Slots.ANY, Util.make(new ArrayList<>(), list -> {
                     Arrays.stream(itemStacks).forEach(itemStack -> {
                         list.add(
                                 ItemPredicate.Builder.item()
-                                        .of(registryEntryLookup, itemStack.getItem())
-                                        .withComponents(DataComponentMatchers.Builder.components()
-                                                .exact(DataComponentExactPredicate.allOf(itemStack
-                                                        .getComponents().filter(componentType -> !ignored.has(componentType))))
+                                        .of(registryEntryLookup, itemStack.item().value())
+                                        .withComponents(DataComponentMatchers.Builder
+                                                .components()
+                                                .exact(DataComponentExactPredicate.allOf(
+                                                        DataComponentMap
+                                                                .builder()
+                                                                .addAll(itemStack.components().split().added())
+                                                                .build()))
                                                 .build())
                                         .build());
                     });
