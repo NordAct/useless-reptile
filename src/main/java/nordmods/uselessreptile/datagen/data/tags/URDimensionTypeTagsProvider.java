@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.datagen.data.tag;
+package nordmods.uselessreptile.datagen.data.tags;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
@@ -11,8 +11,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class URDimensionTypeTagProvider extends FabricTagsProvider<DimensionType> {
-    public URDimensionTypeTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+public class URDimensionTypeTagsProvider extends FabricTagsProvider<DimensionType> {
+    public URDimensionTypeTagsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, Registries.DIMENSION_TYPE, registriesFuture);
     }
 

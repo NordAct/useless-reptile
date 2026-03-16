@@ -27,6 +27,7 @@ public class URTags {
     public static final TagKey<DimensionType> DEPLETED_MAGMA_REGENERATES = register(Registries.DIMENSION_TYPE, "depleted_magma_regenerates");
 
     public static final TagKey<EntityType<?>> DRAGON_IMMUNE = register(Registries.ENTITY_TYPE, "dragon_immune");
+    public static final TagKey<EntityType<?>> DRAGON = register(Registries.ENTITY_TYPE, "dragon");
 
     private static<T> TagKey<T> register(ResourceKey<? extends Registry<T>> registryKey, String id) {
         return TagKey.create(registryKey, UselessReptile.id(id));

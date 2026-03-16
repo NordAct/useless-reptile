@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.datagen.data.tag;
+package nordmods.uselessreptile.datagen.data.tags;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
@@ -12,8 +12,8 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class URBlockTagProvider extends FabricTagsProvider.BlockTagsProvider {
-    public URBlockTagProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+public class URBlockTagsProvider extends FabricTagsProvider.BlockTagsProvider {
+    public URBlockTagsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 

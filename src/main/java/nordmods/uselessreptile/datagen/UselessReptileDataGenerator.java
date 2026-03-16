@@ -9,23 +9,23 @@ import nordmods.uselessreptile.datagen.data.mod.URDragonModelProvider;
 import nordmods.uselessreptile.datagen.data.mod.URDragonVariantProvider;
 import nordmods.uselessreptile.datagen.data.mod.UREquipmentProvider;
 import nordmods.uselessreptile.datagen.data.mod.URSpawnConditionsProvider;
-import nordmods.uselessreptile.datagen.data.tag.*;
+import nordmods.uselessreptile.datagen.data.tags.*;
 
 public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
     @Override
     public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
         final FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-        pack.addProvider(URItemTagProvider::new);
-        pack.addProvider(URBiomeTagProvider::new);
-        pack.addProvider(URBlockTagProvider::new);
-        pack.addProvider(URDamageTypeTagProvider::new);
-        pack.addProvider(URDimensionTypeTagProvider::new);
+        pack.addProvider(URItemTagsProvider::new);
+        pack.addProvider(URBiomeTagsProvider::new);
+        pack.addProvider(URBlockTagsProvider::new);
+        pack.addProvider(URDamageTypeTagsProvider::new);
+        pack.addProvider(URDimensionTypeTagsProvider::new);
         pack.addProvider(URRecipeProvider::new);
         pack.addProvider(URAdvancementProvider::new);
         pack.addProvider(URDamageTypeProvider::new);
         pack.addProvider(UREntityLootTableProvider::new);
         pack.addProvider(URBlockLootTableGenerator::new);
-        pack.addProvider(UREntityTypeTagProvider::new);
+        pack.addProvider(UREntityTypeTagsProvider::new);
 
         pack.addProvider(UREquipmentProvider::new);
         pack.addProvider(URDragonVariantProvider::new);
