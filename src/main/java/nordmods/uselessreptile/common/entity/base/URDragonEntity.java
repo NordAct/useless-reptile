@@ -574,7 +574,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return new URDragonMenu(syncId, inv, getInventory());
     }
 
-
     @Override
     public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         if (player.getItemInHand(InteractionHand.MAIN_HAND).is(URItems.VARIANT_CHANGING_ORB)

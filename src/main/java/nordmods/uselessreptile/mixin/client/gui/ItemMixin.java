@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.mixin.client.gui;
 
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -46,7 +47,7 @@ public abstract class ItemMixin {
             return set;
         });
         if (!info.isEmpty()) {
-            textConsumer.accept(Component.translatable("tooltip.uselessreptile.can_be_equipped_by").withColor(CommonColors.LIGHT_GRAY));
+            textConsumer.accept(Component.translatable("tooltip.uselessreptile.can_be_equipped_by").withStyle(ChatFormatting.GRAY));
             info.forEach(textConsumer);
         }
     }
@@ -64,7 +65,7 @@ public abstract class ItemMixin {
                 .append(" (")
                 .append(Component.translatable(slot.getTranslationKey()))
                 .append(")")
-                .withColor(CommonColors.LIGHT_GRAY)
+                .withStyle(ChatFormatting.GRAY)
         );
     }
 }

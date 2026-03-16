@@ -197,31 +197,30 @@ public class VortexHornItem extends InstrumentItem {
 
     protected boolean tryCreateDragon(ItemStack stack, Player user, Level world, InteractionHand hand, BlockPos pos) {
         URDragonDataStorageComponent dataComponent = stack.get(URItemComponents.DRAGON_STORAGE);
-        if (dataComponent != null) {
-            List<CustomData> dragons = new ArrayList<>(dataComponent.entityData());
-            if (dragons.isEmpty()) return false;
-            CustomData last = dragons.getLast();
-            if (!world.isClientSide()) {
-                Entity dragon = URDragonDataStorageComponent.createEntity(last , world);
-                if (dragon == null) return false;
-                dragon.setPosRaw(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-                if (dragon instanceof URDragonEntity urDragon) {
-                    urDragon.setHomePoint(pos);
-                    urDragon.setBoundedInstrumentSound(urDragon.getInstrument(stack));
-                    urDragon.updateEquipment();
-                    spawnCloud(urDragon);
-                }
-                world.addFreshEntity(dragon);
-                if (dragon instanceof URDragonEntity urDragon && urDragon.getOwner() != user) urDragon.setTarget(user);
+        if (dataComponent == null) return false;
+
+        List<CustomData> dragons = new ArrayList<>(dataComponent.entityData());
+        if (dragons.isEmpty()) return false;
+        CustomData last = dragons.getLast();
+        if (!world.isClientSide()) {
+            Entity dragon = URDragonDataStorageComponent.createEntity(last , world);
+            if (dragon == null) return false;
+            dragon.setPosRaw(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
+            if (dragon instanceof URDragonEntity urDragon) {
+                urDragon.setHomePoint(pos);
+                urDragon.setBoundedInstrumentSound(urDragon.getInstrument(stack));
+                urDragon.updateEquipment();
+                spawnCloud(urDragon);
             }
-            dragons.removeLast();
-            stack.set(URItemComponents.DRAGON_STORAGE, new URDragonDataStorageComponent(dragons));
-            VortexHornCapacityComponent capacityComponent = new VortexHornCapacityComponent(getCurrentCapacityDragonStorage(stack, world), getMaxCapacity(stack));
-            stack.set(URItemComponents.VORTEX_HORN_CAPACITY, capacityComponent);
-            user.setItemInHand(hand, stack);
-            return true;
+            world.addFreshEntity(dragon);
+            if (dragon instanceof URDragonEntity urDragon && urDragon.getOwner() != user) urDragon.setTarget(user);
         }
-        return false;
+        dragons.removeLast();
+        stack.set(URItemComponents.DRAGON_STORAGE, new URDragonDataStorageComponent(dragons));
+        VortexHornCapacityComponent capacityComponent = new VortexHornCapacityComponent(getCurrentCapacityDragonStorage(stack, world), getMaxCapacity(stack));
+        stack.set(URItemComponents.VORTEX_HORN_CAPACITY, capacityComponent);
+        user.setItemInHand(hand, stack);
+        return true;
     }
 
     protected void spawnCloud(Entity dragon) {

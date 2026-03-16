@@ -30,6 +30,7 @@ import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.util.*;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
@@ -58,7 +59,16 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         renderState.setStateData(URStateDataTypes.DRAGON_ID, dragonId);
 
         if (ResourceUtil.isResourceReloadFinished) {
-            fillDragonCache(animatable, assetCache, dragonId);
+            fillDragonCache(
+                    assetCache,
+                    animatable.getDragonDisplayVariant(),
+                    dragonId,
+                    animatable.getName().getString(),
+                    animatable.getVariant(),
+                    getDefaultTexture(dragonId),
+                    getModelProvider().getDefaultModel(dragonId),
+                    getModelProvider().getDefaultAnimation(dragonId)
+            );
             //equipment
             for (EquipmentSlot slot : EquipmentSlot.values()) {
                 ItemStack itemStack = animatable.getItemBySlot(slot);
@@ -71,7 +81,19 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                 //create new equipment if none exists or items don't match
                 if (dragonEquipment == null || dragonEquipment.itemStack != itemStack) {
                     EquipmentAssetCache equipmentAssetCache = new EquipmentAssetCache();
-                    dragonEquipment = getDragonEquipment(animatable, BuiltInRegistries.ITEM.getKey(itemStack.getItem()), equipmentAssetCache, itemStack, dragonId);
+                    Identifier itemId = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
+                    dragonEquipment = getDragonEquipment(
+                            itemStack,
+                            itemId,
+                            equipmentAssetCache,
+                            animatable.getDragonDisplayEquipment().get(itemId),
+                            dragonId,
+                            animatable.getName().getString(),
+                            animatable.getVariant(),
+                            DragonEquipmentRenderer.DEFAULT_TEXTURE,
+                            equipmentRenderer.getModelProvider().getDefaultModel(dragonId),
+                            equipmentRenderer.getModelProvider().getDefaultAnimation(dragonId)
+                    );
                     assetCache.setEquipment(slot, dragonEquipment);
                 }
                 dragonEquipment.ownerRenderState = renderState;
@@ -95,55 +117,66 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         }
     }
 
-    private void fillDragonCache(T animatable, DragonAssetCache assetCache, Identifier dragonId) {
+
+
+    public static void fillDragonCache(
+            DragonAssetCache assetCache,
+            DragonVariant displayVariant,
+            Identifier dragonId,
+            String dragonName,
+            String variantName,
+            Identifier defaultTexture,
+            Identifier defaultModel,
+            Identifier defaultAnimation
+    ) {
         //texture
         if (assetCache.getTextureLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(animatable.getDragonDisplayVariant(), Minecraft.getInstance().level).modelData().texture();
+            Identifier id = DragonVariantUtil.getDragonModelData(displayVariant, Minecraft.getInstance().level).modelData().texture();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setTextureLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead",
-                        animatable.getName().getString(),
+                        dragonName,
                         dragonId,
-                        animatable.getVariant()
+                        variantName
                 );
-                assetCache.setTextureLocationCache(getDefaultTexture(dragonId));
+                assetCache.setTextureLocationCache(defaultTexture);
             }
         }
 
         //model
         if (assetCache.getModelLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(animatable.getDragonDisplayVariant(), Minecraft.getInstance().level).modelData().model();
+            Identifier id = DragonVariantUtil.getDragonModelData(displayVariant, Minecraft.getInstance().level).modelData().model();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setModelLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
-                        animatable.getName().getString(),
+                        dragonName,
                         dragonId,
-                        animatable.getVariant()
+                        variantName
                 );
-                assetCache.setModelLocationCache(getModelProvider().getDefaultModel(dragonId));
+                assetCache.setModelLocationCache(defaultModel);
             }
         }
 
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(animatable.getDragonDisplayVariant(), Minecraft.getInstance().level).modelData().animation();
+            Identifier id = DragonVariantUtil.getDragonModelData(displayVariant, Minecraft.getInstance().level).modelData().animation();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setAnimationLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
-                        animatable.getName().getString(),
+                        dragonName,
                         dragonId,
-                        animatable.getVariant()
+                        variantName
                 );
-                assetCache.setAnimationLocationCache(getModelProvider().getDefaultAnimation(dragonId));
+                assetCache.setAnimationLocationCache(defaultAnimation);
             }
         }
 
         //render type
         if (assetCache.getRenderTypeProviderCache() == null) {
-            ModelData modelData = DragonVariantUtil.getDragonModelData(animatable.getDragonDisplayVariant(), Minecraft.getInstance().level).modelData();
+            ModelData modelData = DragonVariantUtil.getDragonModelData(displayVariant, Minecraft.getInstance().level).modelData();
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider;
             if (modelData.translucent()) renderTypeProvider = ((state, texture) -> RenderTypes.entityTranslucent(texture)); //all translucent models can't have culling
             else renderTypeProvider = modelData.cull() ? ((state, texture) ->RenderTypes.entityCutout(texture)) : ((state, texture) -> RenderTypes.entityCutout(texture));
@@ -151,66 +184,76 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         }
     }
 
-    private DragonEquipment getDragonEquipment(T animatable, Identifier itemId, EquipmentAssetCache equipmentAssetCache, ItemStack itemStack, Identifier dragonId) {
-        EquipmentModelData.Equipment data = animatable.getDragonDisplayEquipment().get(itemId);
+    private static DragonEquipment getDragonEquipment(
+            ItemStack itemStack,
+            Identifier itemId,
+            EquipmentAssetCache assetCache,
+            EquipmentModelData.Equipment equipment,
+            Identifier dragonId,
+            String dragonName,
+            String variantName,
+            Identifier defaultTexture,
+            Identifier defaultModel,
+            Identifier defaultAnimation
+    ) {
 
-        if (data == null) {
-            equipmentAssetCache.setCanRender(false);
-            return new DragonEquipment(itemStack, equipmentAssetCache, false);
+        if (equipment == null) {
+            assetCache.setCanRender(false);
+            return new DragonEquipment(itemStack, assetCache, false);
         }
 
 
-        Identifier id = data.modelData().texture();
+        Identifier id = equipment.modelData().texture();
         if (ResourceUtil.doesExist(id)) {
-            equipmentAssetCache.setTextureLocationCache(id);
+            assetCache.setTextureLocationCache(id);
         } else {
             UselessReptile.LOGGER.warn("Failed to find texture for equipment ({}) for {} ({}) of variant {}",
                     itemId,
-                    animatable.getName().getString(),
+                    dragonName,
                     dragonId,
-                    animatable.getVariant()
+                    variantName
             );
-            equipmentAssetCache.setTextureLocationCache(DragonEquipmentRenderer.DEFAULT_TEXTURE);
+            assetCache.setTextureLocationCache(defaultTexture);
         }
 
 
         //model
-        id = data.modelData().model();
+        id = equipment.modelData().model();
         if (ResourceUtil.doesExist(id)) {
-            equipmentAssetCache.setModelLocationCache(id);
+            assetCache.setModelLocationCache(id);
         } else {
             UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}",
                     itemId,
-                    animatable.getName().getString(),
+                    dragonName,
                     dragonId,
-                    animatable.getVariant()
+                    variantName
             );
-            equipmentAssetCache.setModelLocationCache(equipmentRenderer.getModelProvider().getDefaultModel(dragonId));
+            assetCache.setModelLocationCache(defaultModel);
         }
 
 
         //animation cache
-        id = data.modelData().animation();
+        id = equipment.modelData().animation();
         if (ResourceUtil.doesExist(id)) {
-            equipmentAssetCache.setAnimationLocationCache(id);
+            assetCache.setAnimationLocationCache(id);
         } else {
             UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}",
                     itemId,
-                    animatable.getName().getString(),
+                    dragonName,
                     dragonId,
-                    animatable.getVariant()
+                    variantName
             );
-            equipmentAssetCache.setAnimationLocationCache(equipmentRenderer.getModelProvider().getDefaultAnimation(dragonId));
+            assetCache.setAnimationLocationCache(defaultAnimation);
         }
 
         //render type
-        if (data.modelData().translucent()) {
-            equipmentAssetCache.setRenderTypeProviderCache((state, texture) -> RenderTypes.entityTranslucent(texture));
-        } else equipmentAssetCache.setRenderTypeProviderCache(((state, texture) -> RenderTypes.entityCutout(texture)));
+        if (equipment.modelData().translucent()) {
+            assetCache.setRenderTypeProviderCache((state, texture) -> RenderTypes.entityTranslucent(texture));
+        } else assetCache.setRenderTypeProviderCache(((state, texture) -> RenderTypes.entityCutout(texture)));
 
-        data.hidBones().ifPresent(bones -> equipmentAssetCache.setHidBones(bones.toArray(new String[0])));
+        equipment.hidBones().ifPresent(bones -> assetCache.setHidBones(bones.toArray(new String[0])));
 
-        return new DragonEquipment(itemStack, equipmentAssetCache, data.passengerPositions().isPresent() && !data.passengerPositions().get().isEmpty());
+        return new DragonEquipment(itemStack, assetCache, equipment.passengerPositions().isPresent() && !equipment.passengerPositions().get().isEmpty());
     }
 
     @Override

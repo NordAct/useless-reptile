@@ -47,6 +47,9 @@
 - Updated French translation (credits to coucoufe)
 - Fixed flying dragons sometimes jumping around when trying to follow owner when owner is on land and dragon is flying
 - Added entity type tag `uselessreptile:dragon` that contains all dragons from the mod
+- Added Variant Changing Orb
+  - You can use the orb to change dragon's variant
+  - This item can be only obtained via commands or creative mode
 
 ## Data and resource pack format changes
 - Breaking changes to equipment lists:
