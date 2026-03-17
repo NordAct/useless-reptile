@@ -1,4 +1,5 @@
 {
+  "type": "uselessreptile:magmamuncher",
   "base_taming_progress": 12,
   "dragon_model": "uselessreptile:magmamuncher/netherrack",
   "equipment": "uselessreptile:empty",
@@ -6,7 +7,6 @@
     "minecraft:magma_block": 4,
     "minecraft:magma_cream": 2
   },
-  "id": "uselessreptile:magmamuncher",
   "name": "netherrack",
   "spawn_conditions": "uselessreptile:magmamuncher/default",
   "taming_items": [

@@ -50,8 +50,13 @@
 - Added Variant Changing Orb
   - You can use the orb to change dragon's variant
   - This item can be only obtained via commands or creative mode
+- Removed support for custom name variants since internally they were a mess
+  - Idea of custom name variants will be revisited later
+  - For alternative, you can use Variant Changing Orb for now
 
 ## Data and resource pack format changes
+- Due to some internal refactoring, `id` field in dragon variant file is now called `type`
+- Custom name variants are no longer supported as of now
 - Breaking changes to equipment lists:
   - Equipment list is now specified as object that holds values in format `"item_id": {...}`
   - You now must specify animation file for your dragon equipment

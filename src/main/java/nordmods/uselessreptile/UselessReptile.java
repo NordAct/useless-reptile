@@ -18,7 +18,8 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
     @Override
     public void onInitialize() {
         URMobAttributesConfig.init();
-        
+
+        URDragonVariantTypes.init();
         URAttributes.init();
         URResourceKeys.init();
         URSoundEvent.init();

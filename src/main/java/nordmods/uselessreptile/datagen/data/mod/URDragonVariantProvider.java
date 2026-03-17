@@ -28,16 +28,13 @@ import java.util.concurrent.CompletableFuture;
 @SuppressWarnings("deprecation")
 public class URDragonVariantProvider implements DataProvider {
     private static final List<Tuple<Identifier, DragonVariant>> holder = new ArrayList<>();
-    private static final List<Tuple<Identifier, DragonVariant>> holderCustomName = new ArrayList<>();
     protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
-    private final PackOutput.PathProvider pathResolverCustomName;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
 
     public URDragonVariantProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
         this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/variant");
-        this.pathResolverCustomName = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/custom_name");
         this.registryLookupFuture = registryLookupFuture;
     }
 
@@ -46,7 +43,7 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     public void addSecretEntry(Identifier id, DragonVariant variant) {
-        holderCustomName.add(new Tuple<>(id, variant));
+        holder.add(new Tuple<>(id, variant));
     }
 
     @Override
@@ -56,10 +53,6 @@ public class URDragonVariantProvider implements DataProvider {
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach(variant -> {
                 Path path = pathResolver.json(variant.getA());
-                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonVariant.CODEC, variant.getB(), path));
-            });
-            holderCustomName.forEach(variant -> {
-                Path path = pathResolverCustomName.json(variant.getA());
                 list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonVariant.CODEC, variant.getB(), path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
@@ -81,7 +74,7 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 Optional.empty()
         );
-        addSecretEntry(URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.WYVERN), new WyvernVariant(jeb_));
+        addSecretEntry(UselessReptile.id("jeb_"), new WyvernVariant(jeb_));
 
         addMoleclaw("black", false);
         addMoleclaw("brown", false);

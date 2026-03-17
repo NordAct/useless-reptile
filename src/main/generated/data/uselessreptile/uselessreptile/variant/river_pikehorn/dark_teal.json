@@ -1,11 +1,11 @@
 {
+  "type": "uselessreptile:river_pikehorn",
   "base_taming_progress": 8,
   "dragon_model": "uselessreptile:river_pikehorn/dark_teal",
   "equipment": "uselessreptile:empty",
   "food_items": {
     "#minecraft:fishes": 3
   },
-  "id": "uselessreptile:river_pikehorn",
   "name": "dark_teal",
   "spawn_conditions": "uselessreptile:river_pikehorn/default",
   "taming_items": [

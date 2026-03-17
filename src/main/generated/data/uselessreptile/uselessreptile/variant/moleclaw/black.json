@@ -1,11 +1,11 @@
 {
+  "type": "uselessreptile:moleclaw",
   "base_taming_progress": 64,
   "dragon_model": "uselessreptile:moleclaw/black",
   "equipment": "uselessreptile:moleclaw",
   "food_items": {
     "#c:foods/vegetable": 2
   },
-  "id": "uselessreptile:moleclaw",
   "name": "black",
   "spawn_conditions": "uselessreptile:moleclaw/default",
   "taming_items": [

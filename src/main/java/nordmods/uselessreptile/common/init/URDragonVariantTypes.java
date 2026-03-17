@@ -17,4 +17,6 @@ public class URDragonVariantTypes {
     public static <T extends DragonVariant> DragonVariantType<T> register(EntityType<? extends URDragonEntity> entityType, DragonVariantType<T> variantType) {
         return Registry.register(URRegistries.VARIANT_TYPE, BuiltInRegistries.ENTITY_TYPE.getKey(entityType), variantType);
     }
+
+    public static void init() {}
 }

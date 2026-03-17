@@ -1,11 +1,11 @@
 {
+  "type": "uselessreptile:lightning_chaser",
   "base_taming_progress": 3,
   "dragon_model": "uselessreptile:lightning_chaser/brown",
   "equipment": "uselessreptile:lightning_chaser",
   "food_items": {
     "#minecraft:meat": 3
   },
-  "id": "uselessreptile:lightning_chaser",
   "name": "brown",
   "spawn_conditions": "uselessreptile:lightning_chaser/brown",
   "variant_name_key": "variant.uselessreptile.lightning_chaser.brown"

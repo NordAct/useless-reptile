@@ -1,10 +1,9 @@
 # Example data pack
 
 ## General information
-Showcases how to add custom variant, equipment and nametag/custom name variant. All directories added by Useless Reptile have to go in `uselessreptile` folder right after namespace folder.
+Showcases how to add custom variant and equipment. All directories added by Useless Reptile have to go in `uselessreptile` folder right after namespace folder.
 List of directories and what they do:
-- `variant` - stores information on dragon variants that can spawn naturally and cannot be obtained via nametag/applying custom name
-- `custom_name` - stores information on dragon variants that can only be obtained via nametag/applying custom name
+- `variant` - stores information on dragon variants that can spawn naturally
 - `attribute_modifiers` - stores files with lists of modifiers for variants
 - `dragon_model` - stores information about dragon model (used assets, sounds)
 - `equipment` - stores lists with information on equipment models for specific items
@@ -17,7 +16,7 @@ Example data pack adds following:
 - Variants (by actual names):
   - Swamp Wyvern: `Barren Brown`, `Barren Orange`, `Ender`
   - River Pikehorn: `striped`
-  - Moleclaw (via custom name): `Battleworn`
+  - Moleclaw: `Battleworn`
 - Dirt and stone blocks as equipment for helmet slot for Moleclaw. Stone block also protects Moleclaw from light.
 - `Barren Brown`, `Barren Orange` and `Battleworn` have custom models for some pieces of equipment
 - `Barren Brown`, `Barren Orange`, `Ender` have some sounds altered, `striped` and `Battleworn` have different pitch and volume to default sounds
@@ -25,13 +24,13 @@ Example data pack adds following:
 - `striped` has attribute modifiers that decrease its size and health
 - `Barren Brown` and `Barren Orange` showcase different ways of declaring taming and food items
 
-To summon specific variant (if it's not accessible only via custom name), you can use following command `/summon uselessreptile:dragon_id ~ ~ ~ {Variant:"VARIANT NAME"}`, where `uselessreptile:dragon_id` - entity id of the dragon, `VARIANT NAME` - name of the variant.
+To summon specific variant, you can use following command `/summon uselessreptile:dragon_id ~ ~ ~ {Variant:"VARIANT NAME"}`, where `uselessreptile:dragon_id` - entity id of the dragon, `VARIANT NAME` - name of the variant.
 
 
 ## `variant` file structure
 Allows to add new variants to dragon species
 Fields:
-- `id` - full entity id of the dragon for which this variant can be applied to
+- `type` - full entity id of the dragon for which this variant can be applied to
 - `name` - name of the variant. Does not have any restrictions *technically* on what characters can be used for them, but in general I would recommend to use lowercase english alphabet letters and avoid spaces to avoid any potential issues.
 - `equipment` - id of equipment list file, located in `uselessreptile/equipment` within data. To be equipable by variant, item must be on the list
 - `dragon_model` - id of dragon model file, located in `uselessreptile/dragon_model` within data
@@ -55,22 +54,12 @@ Fields:
     - `healing_amount` - amount of health that will be restored when dragon consumes the food item
   - `priority` - (optional) defines priority of entry. If not specified, it'll default to lowest possible value. If several entries that match given item are present, one with highest priority value will be picked. If several matching entries have same priority value, random entry will be picked
 
-## `custom_name` file structure
-Technically just a stripped version of variant.
-Fields:
-- `id` - full entity id of the dragon for which this variant can be applied to
-- `name` - represents custom name that has to be applied to entity in order for custom name variant to show up. Custom name has to be exact as one written in this field. Can use any characters.
-- `equipment` - id of equipment list file, located in `uselessreptile/equipment`
-- `dragon_model` - id of dragon model file, located in `uselessreptile/dragon_model`
-
-
 ## `attribute_modifiers` file structure
 Lists modifiers for attributes that will be applied for variant. Note that for each attribute modifier from this list can be applied only once.
 Fields:
 - `id` - attribute id
 - `amount` - amount at which attribute value will be changed depending on operation
 - `operation` - defines how exactly modifier will affect attribute. Allowed values: `add_value` - adds amount to base value; `add_multiplied_base` - multiplies base value of attribute on (1 + amount); `add_multiplied_total` - multiplies total value of attribute on (1 + amount)
-
 
 ## `dragon_model` file structure
 Contains information about used model, texture, animation and information for sound keys within animation.

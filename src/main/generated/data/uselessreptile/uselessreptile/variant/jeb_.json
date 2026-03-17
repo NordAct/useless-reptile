@@ -1,8 +1,8 @@
 {
+  "type": "uselessreptile:wyvern",
   "base_taming_progress": -1,
   "dragon_model": "uselessreptile:wyvern/jeb_",
   "equipment": "uselessreptile:wyvern",
-  "id": "uselessreptile:wyvern",
   "name": "jeb_",
   "variant_name_key": ""
 }

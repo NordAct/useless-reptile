@@ -1,4 +1,5 @@
 {
+  "type": "uselessreptile:wyvern",
   "base_taming_progress": 256,
   "dragon_model": "uselessreptile:wyvern/brown",
   "equipment": "uselessreptile:wyvern",
@@ -7,7 +8,6 @@
     "minecraft:chicken": 4,
     "minecraft:cooked_chicken": 4
   },
-  "id": "uselessreptile:wyvern",
   "name": "brown",
   "spawn_conditions": "uselessreptile:wyvern/default",
   "taming_items": [
