@@ -10,11 +10,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
-import nordmods.uselessreptile.common.init.UREntities;
+import nordmods.uselessreptile.common.dragon_variant.type.*;
+import nordmods.uselessreptile.common.init.URDragonVariantTypes;
+import nordmods.uselessreptile.common.init.URRegistries;
 import org.jspecify.annotations.NonNull;
 
 import java.nio.file.Path;
@@ -43,27 +45,9 @@ public class URDragonVariantProvider implements DataProvider {
         holder.add(new Tuple<>(id, variant));
     }
 
-    public void addCustomNameEntry(Identifier id, DragonVariant variant) {
+    public void addSecretEntry(Identifier id, DragonVariant variant) {
         holderCustomName.add(new Tuple<>(id, variant));
     }
-
-    public void addCustomNameEntry(Identifier id, String name) {
-        DragonVariant variant = new DragonVariant(
-                id,
-                name,
-                "",
-                Optional.empty(),
-                UselessReptile.id("wyvern/" + name),
-                UselessReptile.id("wyvern"),
-                Optional.empty(),
-                Optional.empty(),
-                -1,
-                Optional.empty(),
-                Optional.empty()
-        );
-        addCustomNameEntry(getId(id, name), variant);
-    }
-
 
     @Override
     public @NonNull CompletableFuture<?> run(@NonNull CachedOutput writer) {
@@ -85,7 +69,19 @@ public class URDragonVariantProvider implements DataProvider {
     protected void addEntries() {
         addWyvern("green");
         addWyvern("brown");
-        addCustomNameEntry(EntityType.getKey(UREntities.WYVERN), "jeb_");
+        CommonDragonVariantData jeb_ = new CommonDragonVariantData(
+                "jeb_",
+                "",
+                Optional.empty(),
+                UselessReptile.id("wyvern/" + "jeb_"),
+                UselessReptile.id("wyvern"),
+                Optional.empty(),
+                Optional.empty(),
+                -1,
+                Optional.empty(),
+                Optional.empty()
+        );
+        addSecretEntry(URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.WYVERN), new WyvernVariant(jeb_));
 
         addMoleclaw("black", false);
         addMoleclaw("brown", false);
@@ -111,9 +107,8 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     protected void addWyvern(String name) {
-        Identifier id = EntityType.getKey(UREntities.WYVERN);
-        DragonVariant variant = new DragonVariant(
-                id,
+        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.WYVERN);
+        CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.wyvern." + name,
                 Optional.empty(),
@@ -124,17 +119,17 @@ public class URDragonVariantProvider implements DataProvider {
                 256,
                 Optional.of(
                         List.of(
-                                new DragonVariant.TamingItem(
+                                new CommonDragonVariantData.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false),
                                         new com.mojang.datafixers.util.Pair<>(2, 4),
                                         Optional.of(1)
                                 ),
-                                new DragonVariant.TamingItem(
+                                new CommonDragonVariantData.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false),
                                         new com.mojang.datafixers.util.Pair<>(2, 4),
                                         Optional.of(1)
                                 ),
-                                new DragonVariant.TamingItem(
+                                new CommonDragonVariantData.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true),
                                         new com.mojang.datafixers.util.Pair<>(1, 1),
                                         Optional.empty()
@@ -143,19 +138,18 @@ public class URDragonVariantProvider implements DataProvider {
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
+                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
+                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
+                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
                         )
                 )
         );
-        addEntry(getId(id, name), variant);
+        addEntry(getId(id, name), new WyvernVariant(variant));
     }
 
     protected void addMoleclaw(String name, boolean rare) {
-        Identifier id = EntityType.getKey(UREntities.MOLECLAW);
-        DragonVariant variant = new DragonVariant(
-                id,
+        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.MOLECLAW);
+        CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.moleclaw." + name,
                 Optional.empty(),
@@ -166,7 +160,7 @@ public class URDragonVariantProvider implements DataProvider {
                 64,
                 Optional.of(
                         List.of(
-                                new DragonVariant.TamingItem(
+                                new CommonDragonVariantData.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.BEETROOT.builtInRegistryHolder().key().identifier(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 2),
                                         Optional.empty()
@@ -175,17 +169,16 @@ public class URDragonVariantProvider implements DataProvider {
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
+                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
                         )
                 )
         );
-        addEntry(getId(id, name), variant);
+        addEntry(getId(id, name), new MoleclawVariant(variant));
     }
 
     protected void addRiverPikehorn(String name) {
-        Identifier id = EntityType.getKey(UREntities.RIVER_PIKEHORN);
-        DragonVariant variant = new DragonVariant(
-                id,
+        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.RIVER_PIKEHORN);
+        CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.river_pikehorn." + name,
                 Optional.empty(),
@@ -196,12 +189,12 @@ public class URDragonVariantProvider implements DataProvider {
                 8,
                 Optional.of(
                         List.of(
-                                new DragonVariant.TamingItem(
+                                new CommonDragonVariantData.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH_BUCKET.builtInRegistryHolder().key().identifier(), false),
                                         new com.mojang.datafixers.util.Pair<>(8, 8),
                                         Optional.empty()
                                 ),
-                                new DragonVariant.TamingItem(
+                                new CommonDragonVariantData.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH.builtInRegistryHolder().key().identifier(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 2),
                                         Optional.empty()
@@ -210,17 +203,16 @@ public class URDragonVariantProvider implements DataProvider {
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
+                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
                         )
                 )
         );
-        addEntry(getId(id, name), variant);
+        addEntry(getId(id, name), new RiverPikehornVariant(variant));
     }
 
     protected void addLightningChaser(String name) {
-        Identifier id = EntityType.getKey(UREntities.LIGHTNING_CHASER);
-        DragonVariant variant = new DragonVariant(
-                id,
+        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.LIGHTNING_CHASER);
+        CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.lightning_chaser." + name,
                 Optional.empty(),
@@ -232,17 +224,16 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
+                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
                         )
                 )
         );
-        addEntry(getId(id, name), variant);
+        addEntry(getId(id, name), new LightningChaserVariant(variant));
     }
 
     protected void addMagmamuncher(String name) {
-        Identifier id = EntityType.getKey(UREntities.MAGMAMUNCHER);
-        DragonVariant variant = new DragonVariant(
-                id,
+        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.MAGMAMUNCHER);
+        CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.magmamuncher." + name,
                 Optional.empty(),
@@ -253,7 +244,7 @@ public class URDragonVariantProvider implements DataProvider {
                 12,
                 Optional.of(
                         List.of(
-                                new DragonVariant.TamingItem(
+                                new CommonDragonVariantData.TamingItem(
                                         new ExtraCodecs.TagOrElementLocation(Items.BLAZE_ROD.builtInRegistryHolder().key().identifier(), false),
                                         new com.mojang.datafixers.util.Pair<>(1, 3),
                                         Optional.empty()
@@ -262,12 +253,12 @@ public class URDragonVariantProvider implements DataProvider {
                 ),
                 Optional.of(
                         List.of(
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4, Optional.empty()),
-                                new DragonVariant.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
+                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4, Optional.empty()),
+                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
                         )
                 )
         );
-        addEntry(getId(id, name), variant);
+        addEntry(getId(id, name), new MagmamuncherVariant(variant));
     }
 
     protected Identifier getId(Identifier dragonId, String name) {

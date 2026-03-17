@@ -10,14 +10,13 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.levelgen.Heightmap;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.entity.LightningChaser;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -55,7 +54,7 @@ public class URModEvents {
                                 level.getHeight(Heightmap.Types.WORLD_SURFACE, (int) (pos.getX() + sin * 128), (int) (pos.getZ() + cos * 128)) + 16,
                                 (int) (pos.getZ() + cos * 128));
                         while (!level.getBlockState(spawnPos).isAir()) spawnPos = spawnPos.above();
-                        if (DragonSpawnUtil.getAvailableVariants(level, spawnPos, EntityType.getKey(UREntities.LIGHTNING_CHASER), EntitySpawnReason.EVENT).findFirst().isEmpty()) {
+                        if (DragonSpawnUtil.getAvailableVariants(level, spawnPos, URDragonVariantTypes.LIGHTNING_CHASER, EntitySpawnReason.EVENT).findFirst().isEmpty()) {
                             level.useless_reptile$setTimer(1200);
                             return;
                         }
@@ -122,7 +121,7 @@ public class URModEvents {
     }
 
     private static void clearEquipmentInfo() {
-        CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> DragonVariant.EQUIPMENT_INFO_MAP.clear());
+        CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> CommonDragonVariantData.EQUIPMENT_INFO_MAP.clear());
     }
 
     private static void ensureNoOneElseIsRidingOnLogOut() {

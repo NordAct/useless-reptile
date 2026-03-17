@@ -29,7 +29,7 @@ import nordmods.uselessreptile.client.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
-import nordmods.uselessreptile.client.util.*;
+import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
@@ -61,7 +61,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         if (ResourceUtil.isResourceReloadFinished) {
             fillDragonCache(
                     assetCache,
-                    animatable.getDragonDisplayVariant(),
+                    animatable.getDragonVariant(),
                     dragonId,
                     animatable.getName().getString(),
                     animatable.getVariant(),
@@ -86,7 +86,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                             itemStack,
                             itemId,
                             equipmentAssetCache,
-                            animatable.getDragonDisplayEquipment().get(itemId),
+                            animatable.getDragonEquipment().get(itemId),
                             dragonId,
                             animatable.getName().getString(),
                             animatable.getVariant(),
@@ -121,7 +121,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
     public static void fillDragonCache(
             DragonAssetCache assetCache,
-            DragonVariant displayVariant,
+            DragonVariant variant,
             Identifier dragonId,
             String dragonName,
             String variantName,
@@ -131,7 +131,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     ) {
         //texture
         if (assetCache.getTextureLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(displayVariant, Minecraft.getInstance().level).modelData().texture();
+            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level).modelData().texture();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setTextureLocationCache(id);
             } else {
@@ -146,7 +146,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //model
         if (assetCache.getModelLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(displayVariant, Minecraft.getInstance().level).modelData().model();
+            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level).modelData().model();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setModelLocationCache(id);
             } else {
@@ -161,7 +161,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(displayVariant, Minecraft.getInstance().level).modelData().animation();
+            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level).modelData().animation();
             if (ResourceUtil.doesExist(id)) {
                 assetCache.setAnimationLocationCache(id);
             } else {
@@ -176,7 +176,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //render type
         if (assetCache.getRenderTypeProviderCache() == null) {
-            ModelData modelData = DragonVariantUtil.getDragonModelData(displayVariant, Minecraft.getInstance().level).modelData();
+            ModelData modelData = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level).modelData();
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider;
             if (modelData.translucent()) renderTypeProvider = ((state, texture) -> RenderTypes.entityTranslucent(texture)); //all translucent models can't have culling
             else renderTypeProvider = modelData.cull() ? ((state, texture) ->RenderTypes.entityCutout(texture)) : ((state, texture) -> RenderTypes.entityCutout(texture));

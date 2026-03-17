@@ -5,7 +5,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Tuple;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.AABB;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 
@@ -48,8 +48,7 @@ public class DragonSpawnUtil {
     public static void assignAvailableVariant(URDragonEntity entity, EntitySpawnReason spawnReason) {
         BlockPos pos = entity.blockPosition();
         LevelAccessor world = entity.level();
-        Identifier id = entity.getDragonId();
-        Stream<DragonVariant> variantStream = getAvailableVariants(world, pos, id, spawnReason);
+        Stream<DragonVariant> variantStream = getAvailableVariants(world, pos, entity.getVariantType(), spawnReason);
         boolean canWarn = spawnReason == EntitySpawnReason.NATURAL
                 || spawnReason == EntitySpawnReason.EVENT
                 || spawnReason == EntitySpawnReason.CHUNK_GENERATION
@@ -59,8 +58,8 @@ public class DragonSpawnUtil {
 
         List<Tuple<String, Integer>> variants = new ArrayList<>();
         variantStream.forEach(variant -> {
-            registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get()).forEach(conditions -> {
-                if (checkConditions(conditions, world, pos, entity.getDragonId(), spawnReason)) variants.add(new Tuple<>(variant.name(), conditions.weight()));
+            registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get()).forEach(conditions -> {
+                if (checkConditions(conditions, world, pos, entity.getDragonVariant().getType(), spawnReason)) variants.add(new Tuple<>(variant.common().name(), conditions.weight()));
             });
         });
 
@@ -84,11 +83,11 @@ public class DragonSpawnUtil {
         }
     }
 
-    public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, Identifier dragonId, EntitySpawnReason spawnReason) {
+    public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, DragonVariantType<? extends DragonVariant> type , EntitySpawnReason spawnReason) {
         RegistryAccess registryManager = world.registryAccess();
-        return getAllVariants(world, dragonId).filter(variant -> {
-           for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get())) {
-               if (checkConditions(conditions, world, pos, dragonId, spawnReason)) return true;
+        return getAllVariants(world, type).filter(variant -> {
+           for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get())) {
+               if (checkConditions(conditions, world, pos, type, spawnReason)) return true;
            }
            return false;
         });
@@ -96,16 +95,16 @@ public class DragonSpawnUtil {
 
     /**
      * @param world WorldAccess
-     * @param dragonId Identifier of the dragon
+     * @param type Dragon variant type
      * @return Stream of all variants that can spawn naturally
      */
-    public static Stream<DragonVariant> getAllVariants(LevelAccessor world, Identifier dragonId) {
+    public static Stream<DragonVariant> getAllVariants(LevelAccessor world, DragonVariantType<? extends DragonVariant> type) {
         RegistryAccess registryManager = world.registryAccess();
         return registryManager.lookupOrThrow(URResourceKeys.DRAGON_VARIANT).stream()
-                .filter(variant -> variant.dragonId().equals(dragonId))
+                .filter(varinat -> varinat.getType().equals(type))
                 .filter(variant -> {
-                    if (variant.spawnConditions().isPresent()) {
-                        List<DragonSpawnConditions> conditionsList = registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get());
+                    if (variant.common().spawnConditions().isPresent()) {
+                        List<DragonSpawnConditions> conditionsList = registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get());
                         if (conditionsList == null) return false;
                         for (DragonSpawnConditions conditions : conditionsList) if (conditions.weight() > 0) return true;
                     }
@@ -113,7 +112,7 @@ public class DragonSpawnUtil {
                 });
     }
 
-    private static boolean checkConditions(DragonSpawnConditions conditions, LevelAccessor world, BlockPos pos, Identifier dragonId, EntitySpawnReason spawnReason) {
+    private static boolean checkConditions(DragonSpawnConditions conditions, LevelAccessor world, BlockPos pos, DragonVariantType<? extends DragonVariant> type, EntitySpawnReason spawnReason) {
         //altitude check
         if (conditions.altitudeRestriction().isPresent()) {
             DragonSpawnConditions.IntRange restriction = conditions.altitudeRestriction().get();
@@ -139,9 +138,7 @@ public class DragonSpawnUtil {
             if (restriction.blockLightLevel().isPresent()) {
                 DragonSpawnConditions.IntRange blockRestriction = restriction.blockLightLevel().get();
                 int light = world.getBrightness(LightLayer.BLOCK, pos);
-                if (blockRestriction.getMin() > light
-                        || blockRestriction.getMax() < light)
-                    return false;
+                if (blockRestriction.getMin() > light || blockRestriction.getMax() < light) return false;
             }
         }
 
@@ -153,7 +150,14 @@ public class DragonSpawnUtil {
                 && spawnReason != EntitySpawnReason.TRIAL_SPAWNER
         ) {
             DragonSpawnConditions.Spacing restriction = conditions.spacing().get();
-            if (restriction.maxEntityCount() < world.getEntitiesOfClass(URDragonEntity.class, new AABB(pos).inflate(restriction.range()), dragon -> !dragon.isPersistenceRequired() && dragonId.equals(dragon.getDragonId())).size()) return false;
+            if (restriction.maxEntityCount() < world.getEntitiesOfClass(
+                    URDragonEntity.class,
+                    new AABB(pos).inflate(restriction.range()),
+                    dragon ->
+                            !dragon.isPersistenceRequired()
+                                    && type.equals(dragon.getDragonVariant().getType())
+            ).size())
+                return false;
         }
 
         //allowed tagEntries check (whitelist)

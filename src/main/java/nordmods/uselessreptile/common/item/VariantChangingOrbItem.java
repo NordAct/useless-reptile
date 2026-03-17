@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.CommonColors;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,7 +29,7 @@ public class VariantChangingOrbItem extends Item {
             if (URDragonPart.getPartParent(user) instanceof URDragonEntity dragon) entity = dragon;
             if (entity instanceof URDragonEntity dragon && (dragon.getOwner() == user || user.isCreative())) {
                 String variant = stack.get(DataComponents.CUSTOM_NAME).getString();
-                if (DragonVariant.getByVariant(dragon.getDragonId(), variant, user.level()) != null) {
+                if (DragonVariant.get(dragon.getVariantType(), variant, user.level()) != null) {
                     dragon.setVariant(variant);
                     stack.consume(1, user);
                     return InteractionResult.SUCCESS;

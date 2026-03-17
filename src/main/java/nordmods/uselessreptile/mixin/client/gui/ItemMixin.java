@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.util.CommonColors;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -13,10 +12,12 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import nordmods.uselessreptile.client.config.URClientConfig;
+import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
+import nordmods.uselessreptile.common.init.URRegistries;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -38,7 +39,7 @@ public abstract class ItemMixin {
         if (URClientConfig.getConfig().hideEquipmentInfo) return;
         Level level = Minecraft.getInstance().level;
         if (level == null) return;
-        Set<Component> info = DragonVariant.EQUIPMENT_INFO_MAP.computeIfAbsent(stack.getItem(), item -> {
+        Set<Component> info = CommonDragonVariantData.EQUIPMENT_INFO_MAP.computeIfAbsent(stack.getItem(), item -> {
             Set<Component> set = new HashSet<>();
             level.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT).forEach(dragonVariant -> {
                 Map<Identifier, EquipmentModelData.Equipment> equipmentMap = DragonVariantUtil.getEquipmentModelDataMap(dragonVariant, level);
@@ -58,8 +59,8 @@ public abstract class ItemMixin {
                 .literal("- ")
                 .append(
                         Component.translatable(
-                                dragonVariant.displayNameKey().isPresent() ? dragonVariant.displayNameKey().get()
-                                : Util.makeDescriptionId("entity", dragonVariant.dragonId())
+                                dragonVariant.common().displayNameKey().isPresent() ? dragonVariant.common().displayNameKey().get()
+                                : Util.makeDescriptionId("entity", URRegistries.VARIANT_TYPE.getKey(dragonVariant.getType()))
                         )
                 )
                 .append(" (")

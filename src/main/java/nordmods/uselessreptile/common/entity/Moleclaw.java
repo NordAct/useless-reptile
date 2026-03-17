@@ -29,6 +29,8 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
@@ -38,6 +40,7 @@ import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
@@ -394,5 +397,10 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     protected DragonInventory.StorageSize getStorageSize() {
         return DragonInventory.StorageSize.LARGE;
+    }
+
+    @Override
+    public DragonVariantType<? extends DragonVariant> getVariantType() {
+        return URDragonVariantTypes.MOLECLAW;
     }
 }

@@ -21,8 +21,7 @@ public class VortexHornRecipe extends ShapedRecipe {
                             CraftingBookInfo.MAP_CODEC.forGetter(o -> o.bookInfo),
                             ShapedRecipePattern.MAP_CODEC.forGetter(o -> o.pattern),
                             ItemStackTemplate.CODEC.fieldOf("result").forGetter(o -> o.result)
-                    )
-                    .apply(i, VortexHornRecipe::new)
+                    ).apply(i, VortexHornRecipe::new)
     );
     public static final StreamCodec<RegistryFriendlyByteBuf, VortexHornRecipe> STREAM_CODEC = StreamCodec.composite(
             CommonInfo.STREAM_CODEC,

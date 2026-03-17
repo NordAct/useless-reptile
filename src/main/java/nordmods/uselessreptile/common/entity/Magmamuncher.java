@@ -34,6 +34,8 @@ import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherApplyFireResistanceGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherAttackGoal;
@@ -44,6 +46,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
+import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
@@ -284,6 +287,12 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     protected DragonInventory.StorageSize getStorageSize() {
         return DragonInventory.StorageSize.SMALL;
     }
+
+    @Override
+    public DragonVariantType<? extends DragonVariant> getVariantType() {
+        return URDragonVariantTypes.MAGMAMUNCHER;
+    }
+
     @Override
     public @NonNull AABB getPrimaryAttackBox() {
         return getBoundingBox().inflate(getScale(), 0, getScale());

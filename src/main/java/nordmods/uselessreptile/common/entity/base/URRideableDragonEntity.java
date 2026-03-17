@@ -328,8 +328,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     public int getMaxPassengerCount() {
         ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
         Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
-        if (saddle.isEmpty() || !getDragonActualEquipment().containsKey(id)) return 0;
-        return getDragonActualEquipment().get(id).passengerPositions().orElse(List.of()).size();
+        if (saddle.isEmpty() || !getDragonEquipment().containsKey(id)) return 0;
+        return getDragonEquipment().get(id).passengerPositions().orElse(List.of()).size();
     }
 
     @Override
@@ -342,8 +342,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         if (ordinal > -1) {
             ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
             Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
-            if (!saddle.isEmpty() && getDragonActualEquipment().containsKey(id)) {
-                offset = getDragonActualEquipment().get(id).passengerPositions().orElseThrow().get(ordinal);
+            if (!saddle.isEmpty() && getDragonEquipment().containsKey(id)) {
+                offset = getDragonEquipment().get(id).passengerPositions().orElseThrow().get(ordinal);
             }
         }
         return super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor).add(offset.yRot(-getYRot() * Mth.DEG_TO_RAD));

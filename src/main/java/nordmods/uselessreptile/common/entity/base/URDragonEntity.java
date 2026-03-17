@@ -83,7 +83,9 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
 import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
+import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
@@ -128,11 +130,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public static final Map<DragonVariant, Map<String, SoundInfo>> SOUND_INFO_HOLDER = new HashMap<>();
     public static final Identifier VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
     public static final Identifier SPEED_MODIFIER_BONUS = UselessReptile.id("speed_modifier");
-    private DragonVariant dragonActualVariant;
-    private DragonVariant dragonDisplayVariant;
+    private DragonVariant dragonVariant;
     private boolean invalidVariant;
-    private Map<Identifier, EquipmentModelData.Equipment> dragonActualEquipment;
-    private Map<Identifier, EquipmentModelData.Equipment> dragonDisplayEquipment;
+    private Map<Identifier, EquipmentModelData.Equipment> dragonEquipment;
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
 
@@ -261,38 +261,23 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public String getBoundedInstrumentSound() {return  entityData.get(BOUNDED_INSTRUMENT_SOUND);}
     public void setBoundedInstrumentSound(String state) {entityData.set(BOUNDED_INSTRUMENT_SOUND, state);}
 
-    public DragonVariant getDragonDisplayVariant() {
-        if (dragonDisplayVariant == null) {
-            if (hasCustomName()) dragonDisplayVariant = DragonVariant.getByCustomName(getDragonId(), getCustomName().getString(), level());
-            if (dragonDisplayVariant == null) dragonDisplayVariant = getDragonActualVariant();
-        }
-        return dragonDisplayVariant;
-    }
-
-    public DragonVariant getDragonActualVariant() {
-        if (dragonActualVariant == null) {
-            dragonActualVariant = DragonVariant.getByVariant(getDragonId(), getVariant(), level());
-            if (dragonActualVariant == null) {
-                dragonActualVariant = DragonVariant.getByVariant(getDragonId(), getDefaultVariant(), level());
+    @NonNull
+    public DragonVariant getDragonVariant() {
+        if (dragonVariant == null) {
+            dragonVariant = DragonVariant.get(getVariantType(), getVariant(), level());
+            if (dragonVariant == null) {
+                dragonVariant = DragonVariant.get(getVariantType(), getDefaultVariant(), level());
                 invalidVariant = true;
             }
         }
-        return dragonActualVariant;
+        return dragonVariant;
     }
 
-    public Map<Identifier, EquipmentModelData.Equipment> getDragonDisplayEquipment() {
-        if (dragonDisplayEquipment == null) {
-            dragonDisplayEquipment = getDragonActualEquipment();
-            dragonDisplayEquipment.putAll(DragonVariantUtil.getEquipmentModelDataMap(getDragonDisplayVariant(), level()));
+    public Map<Identifier, EquipmentModelData.Equipment> getDragonEquipment() {
+        if (dragonEquipment == null) {
+            dragonEquipment = DragonVariantUtil.getEquipmentModelDataMap(getDragonVariant(), level());
         }
-        return dragonDisplayEquipment;
-    }
-
-    public Map<Identifier, EquipmentModelData.Equipment> getDragonActualEquipment() {
-        if (dragonActualEquipment == null) {
-            dragonActualEquipment = DragonVariantUtil.getEquipmentModelDataMap(getDragonActualVariant(), level());
-        }
-        return dragonActualEquipment;
+        return dragonEquipment;
     }
 
 
@@ -354,16 +339,14 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         super.onSyncedDataUpdated(data);
         if (DATA_CUSTOM_NAME.equals(data) || VARIANT.equals(data)) {
             assetCache.cleanCache();
-            dragonDisplayVariant = null;
-            dragonDisplayEquipment = null;
         }
         if (VARIANT.equals(data)) {
             removeVariantModifiers();
             applyVariantModifiers();
             defaultDisplayName = null;
-            dragonActualVariant = null;
+            dragonVariant = null;
             invalidVariant = false;
-            dragonActualEquipment = null;
+            dragonEquipment = null;
 
             DragonInventory newInventory = createInventory();
             if (inventory != null) inventory.forEach(newInventory::addItem);
@@ -372,7 +355,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     private void applyVariantModifiers() {
-        DragonVariant variant = getDragonActualVariant();
+        CommonDragonVariantData variant = getDragonVariant().common();
         if (variant == null) {
             UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}). No variant attribute modifiers will be applied", getVariant(), getDragonId());
             return;
@@ -406,7 +389,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Nullable
     public SoundInfo getSoundInfo(String name) {
-        Map<String, SoundInfo> soundMap = SOUND_INFO_HOLDER.get(getDragonDisplayVariant());
+        Map<String, SoundInfo> soundMap = SOUND_INFO_HOLDER.get(getDragonVariant());
         if (soundMap != null) {
             if (soundMap.containsKey(name)) return soundMap.get(name);
             else {
@@ -418,13 +401,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             soundMap = new HashMap<>();
             SoundInfo info = createSoundInfo(name);
             soundMap.put(name, info);
-            SOUND_INFO_HOLDER.put(getDragonDisplayVariant(), soundMap);
+            SOUND_INFO_HOLDER.put(getDragonVariant(), soundMap);
             return info;
         }
     }
 
     private SoundInfo createSoundInfo(String name) {
-        DragonModelData model = DragonVariantUtil.getDragonModelData(getDragonDisplayVariant(), level());
+        DragonModelData model = DragonVariantUtil.getDragonModelData(getDragonVariant(), level());
         if (model != null) {
             if (model.sounds().isPresent()) {
                 DragonModelData.Sound sound = model.sounds().get().stream()
@@ -550,7 +533,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public static boolean canDragonSpawn(EntityType<? extends Mob> type, LevelAccessor world, EntitySpawnReason spawnReason, BlockPos pos, RandomSource random) {
-        return DragonSpawnUtil.getAvailableVariants(world, pos, EntityType.getKey(type), spawnReason).findFirst().isPresent();
+        return DragonSpawnUtil.getAvailableVariants(world, pos, URRegistries.VARIANT_TYPE.getValue(EntityType.getKey(type)), spawnReason).findFirst().isPresent();
     }
 
     @Override
@@ -583,7 +566,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (isTameable()) {
-            DragonVariant.TamingItem tamingItem = getTamingItem(itemStack);
+            CommonDragonVariantData.TamingItem tamingItem = getTamingItem(itemStack);
             if (tamingItem != null) {
                 consumeGivenItem(player, itemStack, SoundEvents.GENERIC_EAT.value(), hand);
                 if (player.isCreative()) setTamingProgress(0);
@@ -601,7 +584,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
         if (isTame()) {
             if (getHealth() != getMaxHealth()) {
-                DragonVariant.FoodItem foodItem = getFoodItem(itemStack);
+                CommonDragonVariantData.FoodItem foodItem = getFoodItem(itemStack);
                 if (foodItem != null) {
                     consumeGivenItem(player, itemStack, SoundEvents.GENERIC_EAT.value(), hand);
                     heal(foodItem.healingAmount());
@@ -989,10 +972,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return false;
     }
 
-    public DragonVariant.@Nullable TamingItem getTamingItem(ItemStack itemStack) {
-        DragonVariant variant = getDragonActualVariant();
-        if (variant != null) {
-            return variant.tamingItems().orElse(List.of()).stream()
+    public CommonDragonVariantData.@Nullable TamingItem getTamingItem(ItemStack itemStack) {
+        DragonVariant variant = getDragonVariant();
+        if (!isInvalidVariant()) {
+            return variant.common().tamingItems().orElse(List.of()).stream()
                     .filter(item -> {
                         ExtraCodecs.TagOrElementLocation entryId = item.item();
                         if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
@@ -1004,10 +987,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return null;
     }
 
-    public DragonVariant.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
-        DragonVariant variant = getDragonActualVariant();
-        if (variant != null) {
-            return variant.foodItems().orElse(List.of()).stream()
+    public CommonDragonVariantData.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
+        DragonVariant variant = getDragonVariant();
+        if (isInvalidVariant()) {
+            return variant.common().foodItems().orElse(List.of()).stream()
                     .filter(item -> {
                         ExtraCodecs.TagOrElementLocation entryId = item.item();
                         if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
@@ -1190,8 +1173,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     protected @NonNull Component getTypeName() {
         if (defaultDisplayName == null) {
-            DragonVariant variant = getDragonActualVariant();
-            if (variant != null && variant.displayNameKey().isPresent()) defaultDisplayName = Component.translatable(variant.displayNameKey().get());
+            DragonVariant variant = getDragonVariant();
+            if (!isInvalidVariant() && variant.common().displayNameKey().isPresent()) defaultDisplayName = Component.translatable(variant.common().displayNameKey().get());
             if (defaultDisplayName == null) defaultDisplayName = super.getTypeName();
         }
         return defaultDisplayName;
@@ -1234,12 +1217,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public int getBaseTamingProgress() {
-        DragonVariant variant = getDragonActualVariant();
-        if (variant == null) {
+        DragonVariant variant = getDragonVariant();
+        if (isInvalidVariant()) {
             UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}), base value of taming progress will be set to -1", getVariant(), getDragonId());
             return -1;
         }
-        return variant.baseTamingProgress();
+        return variant.common().baseTamingProgress();
     }
 
     public boolean isTameable() {
@@ -1247,23 +1230,23 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public final boolean isSaddle(ItemStack itemStack) {
-        if (!(getDragonActualEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonActualEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.SADDLE;
+        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
+        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.SADDLE;
     }
 
     public final boolean isHelmet(ItemStack itemStack) {
-        if (!(getDragonActualEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonActualEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.HELMET;
+        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
+        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.HELMET;
     }
 
     public final boolean isChestplate(ItemStack itemStack) {
-        if (!(getDragonActualEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonActualEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.CHESTPLATE;
+        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
+        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.CHESTPLATE;
     }
 
     public final boolean isTailArmor(ItemStack itemStack) {
-        if (!(getDragonActualEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonActualEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.TAIL_ARMOR;
+        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
+        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.TAIL_ARMOR;
     }
 
     public boolean isBanner(ItemStack itemStack) {
@@ -1281,10 +1264,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return new DragonInventory(
                 this,
                 getStorageSize(),
-                getDragonActualEquipment().values().stream().anyMatch(equipment -> equipment.slot() == DragonInventory.Slot.SADDLE),
-                getDragonActualEquipment().values().stream().anyMatch(equipment -> equipment.slot() == DragonInventory.Slot.HELMET),
-                getDragonActualEquipment().values().stream().anyMatch(equipment -> equipment.slot() == DragonInventory.Slot.CHESTPLATE),
-                getDragonActualEquipment().values().stream().anyMatch(equipment -> equipment.slot() == DragonInventory.Slot.TAIL_ARMOR)
+                getDragonEquipment().values().stream().anyMatch(equipment -> equipment.slot() == DragonInventory.Slot.SADDLE),
+                getDragonEquipment().values().stream().anyMatch(equipment -> equipment.slot() == DragonInventory.Slot.HELMET),
+                getDragonEquipment().values().stream().anyMatch(equipment -> equipment.slot() == DragonInventory.Slot.CHESTPLATE),
+                getDragonEquipment().values().stream().anyMatch(equipment -> equipment.slot() == DragonInventory.Slot.TAIL_ARMOR)
         );
     }
 
@@ -1294,6 +1277,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return invalidVariant;
     }
 
+    public abstract DragonVariantType<? extends DragonVariant> getVariantType();
 
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;

@@ -26,7 +26,7 @@ public class JadeIntegration implements IWailaPlugin {
                     "variant.uselessreptile",
                     dragon.isInvalidVariant() ?
                             Component.literal("UNREGISTERED VARIANT (" + dragon.getVariant() + ")").withStyle(ChatFormatting.DARK_RED) :
-                            Component.translatable(dragon.getDragonActualVariant().variantNameKey()).withStyle(ChatFormatting.GOLD)
+                            Component.translatable(dragon.getDragonVariant().common().variantNameKey()).withStyle(ChatFormatting.GOLD)
                     )
             );
         }

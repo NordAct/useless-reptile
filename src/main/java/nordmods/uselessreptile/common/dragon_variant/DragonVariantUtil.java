@@ -12,16 +12,16 @@ import java.util.Map;
 
 public class DragonVariantUtil {
     public static DragonModelData getDragonModelData(DragonVariant dragonVariant, Level level) {
-        return level.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_MODEL).getValue(dragonVariant.dragonModelData());
+        return level.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_MODEL).getValue(dragonVariant.common().dragonModelData());
     }
 
     public static Map<Identifier, EquipmentModelData.Equipment> getEquipmentModelDataMap(DragonVariant dragonVariant, Level level) {
         RegistryAccess registryManager = level.registryAccess();
-        EquipmentModelData dragonEquipment = registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT).getValue(dragonVariant.dragonEquipment());
+        EquipmentModelData dragonEquipment = registryManager.lookupOrThrow(URResourceKeys.DRAGON_EQUIPMENT).getValue(dragonVariant.common().dragonEquipment());
         if (dragonEquipment == null) return new HashMap<>();
 
         Map<Identifier, EquipmentModelData.Equipment> equipments = new HashMap<>(dragonEquipment.equipment());
-        equipments.putAll(getInjections(registryManager, dragonVariant.dragonEquipment()));
+        equipments.putAll(getInjections(registryManager, dragonVariant.common().dragonEquipment()));
 
         Identifier parent = dragonEquipment.parent().orElse(null);
         while (parent != null) {

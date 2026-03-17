@@ -33,6 +33,8 @@ import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
@@ -398,6 +400,11 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     @Override
     protected DragonInventory.StorageSize getStorageSize() {
         return DragonInventory.StorageSize.SMALL;
+    }
+
+    @Override
+    public DragonVariantType<? extends DragonVariant> getVariantType() {
+        return URDragonVariantTypes.WYVERN;
     }
 
     @Override

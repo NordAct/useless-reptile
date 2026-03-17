@@ -24,7 +24,9 @@ import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornCallBackGoal;
@@ -33,10 +35,7 @@ import nordmods.uselessreptile.common.entity.base.FluteListener;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URGameEvents;
-import nordmods.uselessreptile.common.init.URItemComponents;
-import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
@@ -197,7 +196,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
             ItemStack itemStack = getOffhandItem();
             if (!itemStack.isEmpty() && --eatTimer <= 0) {
-                DragonVariant.FoodItem foodItem = getFoodItem(itemStack);
+                CommonDragonVariantData.FoodItem foodItem = getFoodItem(itemStack);
                 if (foodItem != null) {
                     heal(foodItem.healingAmount());
                     setItemSlot(EquipmentSlot.OFFHAND, consumeGivenItem(this, itemStack, SoundEvents.GENERIC_EAT.value(), null));
@@ -348,6 +347,11 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     @Override
     protected DragonInventory.StorageSize getStorageSize() {
         return DragonInventory.StorageSize.NONE;
+    }
+
+    @Override
+    public DragonVariantType<? extends DragonVariant> getVariantType() {
+        return URDragonVariantTypes.RIVER_PIKEHORN;
     }
 
     @Override

@@ -1,22 +1,21 @@
 package nordmods.uselessreptile.common.init;
 
 import net.fabricmc.fabric.api.event.registry.DynamicRegistries;
-import net.fabricmc.fabric.api.event.registry.DynamicRegistrySetupCallback;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
-import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
+import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
 
 import java.util.List;
 
 public class URResourceKeys {
     public static final ResourceKey<Registry<DragonVariant>> DRAGON_VARIANT = ResourceKey.createRegistryKey(UselessReptile.id("variant"));
-    public static final ResourceKey<Registry<DragonVariant>> DRAGON_VARIANT_CUSTOM_NAME = ResourceKey.createRegistryKey(UselessReptile.id("custom_name"));
+    public static final ResourceKey<Registry<DragonVariantType<?>>> DRAGON_VARIANT_TYPE = ResourceKey.createRegistryKey(UselessReptile.id("variant_type"));
     public static final ResourceKey<Registry<DragonModelData>> DRAGON_MODEL = ResourceKey.createRegistryKey(UselessReptile.id("dragon_model"));
     public static final ResourceKey<Registry<EquipmentModelData>> DRAGON_EQUIPMENT = ResourceKey.createRegistryKey(UselessReptile.id("equipment"));
     public static final ResourceKey<Registry<EquipmentModelData>> DRAGON_EQUIPMENT_INJECT = ResourceKey.createRegistryKey(UselessReptile.id("equipment_inject"));
@@ -29,29 +28,6 @@ public class URResourceKeys {
         DynamicRegistries.registerSynced(DRAGON_EQUIPMENT, EquipmentModelData.CODEC);
         DynamicRegistries.register(DRAGON_SPAWN_CONDITIONS, DragonSpawnConditions.CODEC.listOf());
         DynamicRegistries.register(DRAGON_VARIANT_ATTRIBUTE_MODIFIERS, AttributeModifier.CODEC.listOf());
-        DynamicRegistries.registerSynced(DRAGON_VARIANT, DragonVariant.CODEC, DragonVariant.CODEC_NO_SERVER_INFO);
-        DynamicRegistries.registerSynced(DRAGON_VARIANT_CUSTOM_NAME, DragonVariant.CODEC_CUSTOM_NAME);
-
-        DynamicRegistrySetupCallback.EVENT.register(registryView -> {
-            RegistryAccess registryManager = registryView.asRegistryAccess();
-            registryView.registerEntryAdded(DRAGON_VARIANT, ((rawId, id, object) -> verifyDragonVariantContent(registryManager, object, false)));
-            registryView.registerEntryAdded(DRAGON_VARIANT_CUSTOM_NAME, ((rawId, id, object) -> verifyDragonVariantContent(registryManager, object, true)));
-        });
-    }
-
-    private static void verifyDragonVariantContent(RegistryAccess registryManager, DragonVariant variant, boolean isCustomName) {
-        String type = isCustomName ? "Custom name model" : "Variant";
-        String name = variant.name();
-        String entity = variant.dragonId().toString();
-
-        if (registryManager.lookupOrThrow(DRAGON_MODEL).getValue(variant.dragonModelData()) == null)
-            UselessReptile.LOGGER.warn("{} {} for {} specifies invalid dragon model path: {}", type, name, entity, variant.dragonModelData());
-        if (registryManager.lookupOrThrow(DRAGON_EQUIPMENT).getValue(variant.dragonEquipment()) == null)
-            UselessReptile.LOGGER.warn("{} {} for {} specifies invalid equipment path: {}", type, name, entity, variant.dragonEquipment());
-
-        if (isCustomName) return;
-
-        if (variant.spawnConditions().isPresent() && registryManager.lookupOrThrow(DRAGON_SPAWN_CONDITIONS).getValue(variant.spawnConditions().get()) == null)
-            UselessReptile.LOGGER.warn("{} {} for {} specifies invalid spawn conditions path: {}", type, name, entity, variant.spawnConditions().get());
+        DynamicRegistries.registerSynced(DRAGON_VARIANT, DragonVariant.CODEC);
     }
 }
