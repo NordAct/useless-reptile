@@ -59,8 +59,9 @@ public abstract class ItemMixin {
                 .literal("- ")
                 .append(
                         Component.translatable(
-                                dragonVariant.common().displayNameKey().isPresent() ? dragonVariant.common().displayNameKey().get()
-                                : Util.makeDescriptionId("entity", URRegistries.VARIANT_TYPE.getKey(dragonVariant.getType()))
+                                dragonVariant.common().displayNameKey().isPresent() ?
+                                        dragonVariant.common().displayNameKey().get() :
+                                        dragonVariant.getType().getTranslationKey()
                         )
                 )
                 .append(" (")

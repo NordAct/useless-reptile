@@ -36,7 +36,7 @@ public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMou
 
     @Override
     public <SL extends LivingEntityRenderState> void setupRotations(SL state, PoseStack poseStack, float bodyYaw, float scale) {
-        if (state.getStateData(URStateDataTypes.DRAGON_IS_RIDING_PLAYER)) {
+        if (state.getStateData(URStateDataTypes.DRAGON_IS_RIDING_PLAYER, false)) {
             if (state.isUpsideDown) {
                 poseStack.translate(0, (state.boundingBoxHeight + 0.1f) / scale, 0);
                 poseStack.mulPose(Axis.ZP.rotationDegrees(180f));

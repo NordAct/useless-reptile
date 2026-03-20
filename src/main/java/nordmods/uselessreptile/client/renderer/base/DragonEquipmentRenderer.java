@@ -83,7 +83,6 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
 
         state.setStateData(StateDataTypes.ANIMATION_TIME, animatable.ownerRenderState.getStateData(StateDataTypes.ANIMATION_TIME));
         state.setStateData(StateDataTypes.MODEL_PROVIDER, this.getModelProvider());
-        state.setStateData(StateDataTypes.SCALE, animatable.ownerRenderState.scale);
     }
 
     @Override

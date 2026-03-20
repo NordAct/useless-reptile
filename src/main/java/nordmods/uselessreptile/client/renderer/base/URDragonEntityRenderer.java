@@ -117,8 +117,6 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         }
     }
 
-
-
     public static void fillDragonCache(
             DragonAssetCache assetCache,
             DragonVariant variant,
@@ -184,7 +182,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         }
     }
 
-    private static DragonEquipment getDragonEquipment(
+    public static DragonEquipment getDragonEquipment(
             ItemStack itemStack,
             Identifier itemId,
             EquipmentAssetCache assetCache,
@@ -280,7 +278,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         return renderState.getStateData(URStateDataTypes.ASSET_CACHE).getTextureLocationCache();
     }
 
-    protected final Identifier getDefaultTexture(Identifier entity) {
+    public static Identifier getDefaultTexture(Identifier entity) {
         CompoundTag nbtCompound = new CompoundTag();
         nbtCompound.putString("id", entity.toString());
         URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER,  Minecraft.getInstance().level.registryAccess(), nbtCompound), Minecraft.getInstance().level, EntitySpawnReason.TRIGGERED).get();

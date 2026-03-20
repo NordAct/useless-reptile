@@ -85,21 +85,6 @@ public class DragonSpawnUtil {
 
     public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, DragonVariantType<? extends DragonVariant> type , EntitySpawnReason spawnReason) {
         RegistryAccess registryManager = world.registryAccess();
-        return getAllVariants(world, type).filter(variant -> {
-           for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get())) {
-               if (checkConditions(conditions, world, pos, type, spawnReason)) return true;
-           }
-           return false;
-        });
-    }
-
-    /**
-     * @param world WorldAccess
-     * @param type Dragon variant type
-     * @return Stream of all variants that can spawn naturally
-     */
-    public static Stream<DragonVariant> getAllVariants(LevelAccessor world, DragonVariantType<? extends DragonVariant> type) {
-        RegistryAccess registryManager = world.registryAccess();
         return registryManager.lookupOrThrow(URResourceKeys.DRAGON_VARIANT).stream()
                 .filter(varinat -> varinat.getType().equals(type))
                 .filter(variant -> {
@@ -107,6 +92,12 @@ public class DragonSpawnUtil {
                         List<DragonSpawnConditions> conditionsList = registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get());
                         if (conditionsList == null) return false;
                         for (DragonSpawnConditions conditions : conditionsList) if (conditions.weight() > 0) return true;
+                    }
+                    return false;
+                })
+                .filter(variant -> {
+                    for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get())) {
+                        if (checkConditions(conditions, world, pos, type, spawnReason)) return true;
                     }
                     return false;
                 });

@@ -3,6 +3,7 @@ package nordmods.uselessreptile.mixin.client.debug;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.ResourceLoadStateTracker;
 import net.minecraft.server.packs.PackResources;
+import nordmods.uselessreptile.client.util.FakeDragon;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,6 +25,7 @@ public abstract class ResourceLoadStateTrackerMixin {
         if (Minecraft.getInstance().level != null) {
             Minecraft.getInstance().level.entitiesForRendering().forEach(entity -> {
                 if (entity instanceof URDragonEntity dragon) dragon.getAssetCache().cleanCache();
+                FakeDragon.clearCache();
             });
         }
         URDragonEntity.SOUND_INFO_HOLDER.clear();
