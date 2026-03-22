@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -25,19 +26,18 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
-import com.mojang.blaze3d.platform.InputConstants;
+import nordmods.uselessreptile.common.util.ComponentUtil;
 import org.jspecify.annotations.NonNull;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 
 public class VortexHornItem extends InstrumentItem {
@@ -115,21 +115,26 @@ public class VortexHornItem extends InstrumentItem {
             if (dataComponent != null) {
                 boolean full = getCurrentCapacity(stack) >= getMaxCapacity(stack);
                 textConsumer.accept(Component.translatable("tooltip.uselessreptile.vortex_horn.capacity",getCurrentCapacity(stack) , getMaxCapacity(stack)).withStyle(full ? ChatFormatting.YELLOW : ChatFormatting.GRAY));
-                if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT)) textConsumer.accept(Component.translatable("tooltip.uselessreptile.hidden").withStyle(ChatFormatting.DARK_GRAY));
-                else {
-                    textConsumer.accept(Component.translatable("tooltip.uselessreptile.vortex_horn.contained_dragons"));
-                    for (CustomData nbtComponent : dataComponent.entityData()) {
-                        CompoundTag nbt = nbtComponent.copyTag();
-                        if (nbt.contains("CustomName")) {
-                            Component customName = nbt.read("CustomName", ComponentSerialization.CODEC).orElse(Component.empty());
-                            textConsumer.accept(customName);
+                Collection<Component> toAdd = new ArrayList<>();
+                toAdd.add(Component.translatable("tooltip.uselessreptile.vortex_horn.contained_dragons"));
+                for (CustomData nbtComponent : dataComponent.entityData()) {
+                    CompoundTag nbt = nbtComponent.copyTag();
+                    if (nbt.contains("CustomName")) {
+                        Component customName = nbt.read("CustomName", ComponentSerialization.CODEC).orElse(Component.empty());
+                        toAdd.add(customName);
+                    } else {
+                        DragonVariant variant = DragonVariant.get(DragonVariantType.fromId(Identifier.parse(nbt.getString("id").orElse(""))), nbt.getStringOr("Variant", ""), Minecraft.getInstance().level);
+                        if (variant != null && variant.common().displayNameKey().isPresent()){
+                            toAdd.add(Component.translatable(variant.common().displayNameKey().get()));
                         } else {
                             String string = nbt.getString("id").orElse("");
                             Optional<EntityType<?>> entityType = EntityType.byString(string);
-                            textConsumer.accept(entityType.map(value -> Component.translatable(value.getDescriptionId())).orElseGet(() -> Component.literal("ERROR").withStyle(ChatFormatting.RED)));
+                            toAdd.add(entityType.map(value -> Component.translatable(value.getDescriptionId())).orElseGet(() -> Component.literal("ERROR").withStyle(ChatFormatting.RED)));
                         }
                     }
+
                 }
+                ComponentUtil.addHidden(textConsumer, toAdd, ChatFormatting.GRAY);
             }
             textConsumer.accept(Component.empty());
         }

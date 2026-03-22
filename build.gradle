@@ -51,8 +51,7 @@ dependencies {
     //removed until it's fixed (if it's even gonna be)
     //implementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
 
-    //implementation "maven.modrinth:jade:${project.jade_version}+fabric"
-    compileOnly "maven.modrinth:jade:${project.jade_version}+fabric"
+    implementation "maven.modrinth:jade:${project.jade_version}+fabric"
 
     //added locally, compiled from https://github.com/NordAct/Primitive-Multipart-Entities/
     implementation include ("nordmods.primitive_multipart_entities:Primitive-Multipart-Entities:${project.primitive_multipart_entities_version}")

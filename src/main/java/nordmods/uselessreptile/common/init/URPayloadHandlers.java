@@ -1,10 +1,14 @@
 package nordmods.uselessreptile.common.init;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.item.component.DragonVariantComponent;
 import nordmods.uselessreptile.common.network.c2s.*;
 
 public class URPayloadHandlers {
@@ -14,6 +18,7 @@ public class URPayloadHandlers {
         handleOrder();
         handleChangeWanderRadius();
         handleUnbindInstrument();
+        handleSetVariantChangingOrbVariant();
     }
 
     private static void handleRequestLiftoff() {
@@ -67,6 +72,20 @@ public class URPayloadHandlers {
             if (entity instanceof URDragonEntity dragon && dragon.isOwnedBy(context.player())) {
                 dragon.setBoundedInstrumentSound("");
             }
+        });
+    }
+
+    private static void handleSetVariantChangingOrbVariant() {
+        ServerPlayNetworking.registerGlobalReceiver(SetVariantChangingOrbVariantPayload.PAYLOAD_ID, (packet, context) -> {
+            ServerPlayer player = context.player();
+            ItemStack orb = player.getItemInHand(InteractionHand.MAIN_HAND);
+            if (orb.getItem() != URItems.VARIANT_CHANGING_ORB) {
+                orb = player.getItemInHand(InteractionHand.OFF_HAND);
+            }
+
+            if (orb.getItem() != URItems.VARIANT_CHANGING_ORB) return;
+
+            orb.set(URItemComponents.DRAGON_VARIANT, new DragonVariantComponent(packet.variantType(), packet.variant()));
         });
     }
 }

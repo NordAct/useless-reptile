@@ -29,6 +29,7 @@ import nordmods.uselessreptile.common.item.DragonEquipmentItem;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.item.VariantChangingOrbItem;
 import nordmods.uselessreptile.common.item.VortexHornItem;
+import nordmods.uselessreptile.common.item.component.DragonVariantComponent;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
@@ -37,7 +38,7 @@ import java.util.function.Function;
 
 public class URItems {
     public static final Item WYVERN_SKIN = registerItem("wyvern_skin", Item::new);
-    public static final Item VARIANT_CHANGING_ORB = registerItem("variant_changing_orb", VariantChangingOrbItem::new);
+    public static final Item VARIANT_CHANGING_ORB = registerItem("variant_changing_orb", properties -> new VariantChangingOrbItem(properties.stacksTo(1).component(URItemComponents.DRAGON_VARIANT, DragonVariantComponent.DEFAULT)));
     public static final Item DUAL_SADDLE = registerItem("dual_saddle", properties -> new Item(properties.stacksTo(1)));
 
     public static final Item DRAGON_HELMET_IRON = registerItem("dragon_helmet_iron", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));

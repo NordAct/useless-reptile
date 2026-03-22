@@ -55,7 +55,10 @@
   "tooltip.uselessreptile.can_be_equipped_by": "Can be equipped by:",
   "tooltip.uselessreptile.vortex_horn.capacity": "Capacity: %s / %s",
   "tooltip.uselessreptile.vortex_horn.contained_dragons": "Dragons inside:",
-  "tooltip.uselessreptile.variant_changing_orb": "Rename this item to name matching one of its variants and use it on the dragon to change its variant",
+  "tooltip.uselessreptile.variant_changing_orb": "Use this on dragon to change its variant. \nRight-click in air to open menu",
+  "tooltip.uselessreptile.can_be_applied_to": "Can be applied to: %s",
+  "tooltip.uselessreptile.dragon_display_name": "Dragon display name: %s",
+  "tooltip.uselessreptile.dragon_variant": "Variant: %s",
 
   "entity.uselessreptile.wyvern": "Swamp Wyvern",
   "entity.uselessreptile.moleclaw": "Moleclaw",
@@ -97,7 +100,6 @@
   "other.uselessreptile.none": "None",
   "other.uselessreptile.sound_respond": "%1$s will now respond to the following sound: %2$s",
   "other.uselessreptile.not_enough_capacity": "Not enough capacity",
-  "other.uselessreptile.variant_not_found": "Variant \"%s\" doesn't exist for this dragon",
 
   "config.uselessreptile.title": "Useless Reptile Configuration",
   "config.uselessreptile.category.gameplay" : "Gameplay Options",
@@ -274,6 +276,7 @@
   "variant.uselessreptile": "Dragon variant: %s",
   "variant.uselessreptile.wyvern.brown": "Brown",
   "variant.uselessreptile.wyvern.green": "Green",
+  "variant.uselessreptile.wyvern.jeb_": "jeb_",
   "variant.uselessreptile.moleclaw.black": "Black",
   "variant.uselessreptile.moleclaw.brown": "Brown",
   "variant.uselessreptile.moleclaw.grey": "Grey",
@@ -304,5 +307,14 @@
   "button.uselessreptile.unbind_instrument_sound": "Unbind instrument sound",
   "button.uselessreptile.wander_small": "Wander radius: Small",
   "button.uselessreptile.wander_medium": "Wander radius: Medium",
-  "button.uselessreptile.wander_big": "Wander radius: Big"
+  "button.uselessreptile.wander_big": "Wander radius: Big",
+  "button.uselessreptile.next_variant": "Next Variant",
+  "button.uselessreptile.previous_variant": "Previous Variant",
+  "button.uselessreptile.next_type": "Next Dragon",
+  "button.uselessreptile.previous_type": "Previous Dragpn",
+  "button.uselessreptile.accept": "Accept",
+  "button.uselessreptile.cancel": "Cancel",
+
+  "gui.uselessreptile.dragon_display_name": "Display Name: %s",
+  "gui.uselessreptile.dragon_variant_name": "Variant: %s"
 }

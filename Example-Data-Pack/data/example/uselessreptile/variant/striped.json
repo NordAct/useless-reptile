@@ -1,5 +1,5 @@
 {
-  "id": "uselessreptile:river_pikehorn",
+  "type": "uselessreptile:river_pikehorn",
   "name": "striped",
   "equipment": "uselessreptile:empty",
   "dragon_model": "example:striped",

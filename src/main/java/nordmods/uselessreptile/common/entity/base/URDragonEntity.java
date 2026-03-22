@@ -669,7 +669,11 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     protected boolean isInteractableItem(ItemStack itemStack) {
-        return itemStack.is(Items.POTION) || itemStack.is(Items.STICK) || isInstrument(itemStack) || getFoodItem(itemStack) != null;
+        return itemStack.is(Items.POTION)
+                || itemStack.is(Items.STICK)
+                || isInstrument(itemStack)
+                || getFoodItem(itemStack) != null
+                || itemStack.is(URItems.VARIANT_CHANGING_ORB);
     }
 
     public boolean isInstrument(ItemStack itemStack) {

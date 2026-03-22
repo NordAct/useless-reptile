@@ -30,7 +30,7 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
 
     @Override //note to self: DO NOT USE ARMOR RENDER TYPES (it breaks glow layer because armor render type has extra z offset... despite render wanderRadius existing, duh)
     public RenderType getRenderType(BRState renderState, Identifier texture) {
-        if (!ResourceUtil.isResourceReloadFinished) return RenderTypes.armorCutoutNoCull(texture);
+        if (!ResourceUtil.isResourceReloadFinished) return RenderTypes.entityCutout(texture);
         AssetCache assetCache = renderState.getStateData(URStateDataTypes.ASSET_CACHE);
         return assetCache.getRenderTypeProviderCache().getRenderType(renderState, texture);
     }

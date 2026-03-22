@@ -1,5 +1,5 @@
 {
-  "id": "uselessreptile:wyvern",
+  "type": "uselessreptile:wyvern",
   "name": "Ender",
   "equipment": "uselessreptile:wyvern",
   "dragon_model": "example:ender",

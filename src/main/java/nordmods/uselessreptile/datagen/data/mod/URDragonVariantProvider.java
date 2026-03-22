@@ -64,7 +64,7 @@ public class URDragonVariantProvider implements DataProvider {
         addWyvern("brown");
         CommonDragonVariantData jeb_ = new CommonDragonVariantData(
                 "jeb_",
-                "",
+                "variant.uselessreptile.wyvern.jeb_",
                 Optional.empty(),
                 UselessReptile.id("wyvern/" + "jeb_"),
                 UselessReptile.id("wyvern"),

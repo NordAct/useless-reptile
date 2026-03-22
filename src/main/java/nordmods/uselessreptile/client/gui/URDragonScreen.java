@@ -33,11 +33,7 @@ import java.util.List;
 
 public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
     protected static final Identifier TEXTURE = UselessReptile.id("textures/gui/dragon_inventory.png");
-    private int mouseX;
-    private int mouseY;
     private final URDragonEntity entity;
-    private int i;
-    private int j;
     private final Button follow;
     private final Button stay;
     private final Button sit;
@@ -46,104 +42,110 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
     private final Button wanderMedium;
     private final Button wanderFar;
     private static final int COMMAND_BUTTON_SIZE = 20;
+    private static final int COMMAND_SPRITE_SIZE = 16;
 
     public URDragonScreen(T handler, Inventory inventory, URDragonEntity entity) {
         super(handler, inventory, entity.getDisplayName());
         this.entity = entity;
 
         follow = SpriteIconButton
-                .builder(Component.translatable("button.uselessreptile.follow"), (button) -> {
+                .builder(Component.translatable("button.uselessreptile.follow"), (_) -> {
                     ClientPlayNetworking.send(new OrderPayload(URDragonEntity.Order.FOLLOW, entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
-                .sprite(UselessReptile.id("follow"), 16, 16)
+                .sprite(UselessReptile.id("follow"), COMMAND_SPRITE_SIZE, COMMAND_SPRITE_SIZE)
                 .withTootip()
                 .build();
-        addWidget(follow);
 
         stay = SpriteIconButton
-                .builder(Component.translatable("button.uselessreptile.stay"), (button) -> {
+                .builder(Component.translatable("button.uselessreptile.stay"), (_) -> {
                     ClientPlayNetworking.send(new OrderPayload(URDragonEntity.Order.STAY, entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
-                .sprite(UselessReptile.id("stay"), 16, 16)
+                .sprite(UselessReptile.id("stay"), COMMAND_SPRITE_SIZE, COMMAND_SPRITE_SIZE)
                 .withTootip()
                 .build();
-        addWidget(stay);
 
         sit = SpriteIconButton
-                .builder(Component.translatable("button.uselessreptile.sit"), (button) -> {
+                .builder(Component.translatable("button.uselessreptile.sit"), (_) -> {
                     ClientPlayNetworking.send(new OrderPayload(URDragonEntity.Order.SIT, entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
-                .sprite(UselessReptile.id("sit"), 16, 16)
+                .sprite(UselessReptile.id("sit"), COMMAND_SPRITE_SIZE, COMMAND_SPRITE_SIZE)
                 .withTootip()
                 .build();
-        addWidget(sit);
 
         unbindInstrument = SpriteIconButton
-                .builder(Component.translatable("button.uselessreptile.unbind_instrument_sound"), (button) -> {
+                .builder(Component.translatable("button.uselessreptile.unbind_instrument_sound"), (_) -> {
                     ClientPlayNetworking.send(new UnbindInstrumentPayload(entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
-                .sprite(UselessReptile.id("unbind_instrument_sound"), 16, 16)
+                .sprite(UselessReptile.id("unbind_instrument_sound"), COMMAND_SPRITE_SIZE, COMMAND_SPRITE_SIZE)
                 .withTootip()
                 .build();
-        addWidget(unbindInstrument);
 
         wanderClose = SpriteIconButton
-                .builder(Component.translatable("button.uselessreptile.wander_small"), (button) -> {
+                .builder(Component.translatable("button.uselessreptile.wander_small"), (_) -> {
                     ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.MEDIUM, entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
-                .sprite(UselessReptile.id("wander_small"), 16, 16)
+                .sprite(UselessReptile.id("wander_small"), COMMAND_SPRITE_SIZE, COMMAND_SPRITE_SIZE)
                 .withTootip()
                 .build();
-        addWidget(wanderClose);
 
         wanderMedium = SpriteIconButton
-                .builder(Component.translatable("button.uselessreptile.wander_medium"), (button) -> {
+                .builder(Component.translatable("button.uselessreptile.wander_medium"), (_) -> {
                     ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.BIG, entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
-                .sprite(UselessReptile.id("wander_medium"), 16, 16)
+                .sprite(UselessReptile.id("wander_medium"), COMMAND_SPRITE_SIZE, COMMAND_SPRITE_SIZE)
                 .withTootip()
                 .build();
-        addWidget(wanderMedium);
 
         wanderFar = SpriteIconButton
-                .builder(Component.translatable("button.uselessreptile.wander_big"), (button) -> {
+                .builder(Component.translatable("button.uselessreptile.wander_big"), (_) -> {
                     ClientPlayNetworking.send(new ChangeWanderRadiusPayload(URDragonEntity.WanderRadius.SMALL, entity.getId()));
                 }, true)
                 .size(COMMAND_BUTTON_SIZE, COMMAND_BUTTON_SIZE)
-                .sprite(UselessReptile.id("wander_big"), 16, 16)
+                .sprite(UselessReptile.id("wander_big"), COMMAND_SPRITE_SIZE, COMMAND_SPRITE_SIZE)
                 .withTootip()
                 .build();
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        addWidget(follow);
+        addWidget(stay);
+        addWidget(sit);
+        addWidget(unbindInstrument);
+        addWidget(wanderClose);
+        addWidget(wanderMedium);
         addWidget(wanderFar);
     }
 
     @Override
     public void extractBackground(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         super.extractBackground(context, mouseX, mouseY, delta);
-        i = (width - imageWidth) / 2;
-        j = (height - imageHeight) / 2;
-        context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, i, j, 0, 0, imageWidth, imageHeight, 256, 256);
-        extractSaddle(context);
-        extractBanner(context);
-        extractArmor(context);
-        extractStorage(context);
-        extractEntity(context);
+        int centerX = (width - imageWidth) / 2;
+        int centerY = (height - imageHeight) / 2;
+        context.blit(RenderPipelines.GUI_TEXTURED, TEXTURE, centerX, centerY, 0, 0, imageWidth, imageHeight, 256, 256);
+        extractSaddle(context, centerX, centerY);
+        extractBanner(context, centerX, centerY);
+        extractArmor(context, centerX, centerY);
+        extractStorage(context, centerX, centerY);
+        if (entity != null) extractEntity(context, centerX + 26, centerY + 18, centerX + 78, centerY + 70, mouseX, mouseY, entity);
 
         follow.active = entity.getCurrentOrder() != URDragonEntity.Order.FOLLOW;
-        follow.setPosition(i - COMMAND_BUTTON_SIZE, j + 14);
+        follow.setPosition(centerX - COMMAND_BUTTON_SIZE, centerY + 14);
         follow.extractRenderState(context, mouseX, mouseY, delta);
 
         stay.active = entity.getCurrentOrder() != URDragonEntity.Order.STAY;
-        stay.setPosition(i - COMMAND_BUTTON_SIZE, j + 14 + COMMAND_BUTTON_SIZE);
+        stay.setPosition(centerX - COMMAND_BUTTON_SIZE, centerY + 14 + COMMAND_BUTTON_SIZE);
         stay.extractRenderState(context, mouseX, mouseY, delta);
 
         sit.active = entity.getCurrentOrder() != URDragonEntity.Order.SIT;
-        sit.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 2);
+        sit.setPosition(centerX - COMMAND_BUTTON_SIZE,  centerY + 14 + COMMAND_BUTTON_SIZE * 2);
         sit.extractRenderState(context, mouseX, mouseY, delta);
 
         Button wander = null;
@@ -170,29 +172,29 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         }
 
         wander.active = sit.active;
-        wander.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 4);
+        wander.setPosition(centerX - COMMAND_BUTTON_SIZE,  centerY + 14 + COMMAND_BUTTON_SIZE * 4);
         wander.extractRenderState(context, mouseX, mouseY, delta);
 
         unbindInstrument.active = !entity.getBoundedInstrumentSound().isEmpty();
-        unbindInstrument.setPosition(i - COMMAND_BUTTON_SIZE,  j + 14 + COMMAND_BUTTON_SIZE * 5);
+        unbindInstrument.setPosition(centerX - COMMAND_BUTTON_SIZE,  centerY + 14 + COMMAND_BUTTON_SIZE * 5);
         unbindInstrument.extractRenderState(context, mouseX, mouseY, delta);
+
+
     }
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
         extractBackground(context, mouseX, mouseY, delta);
-        this.mouseX = mouseX;
-        this.mouseY = mouseY;
         super.extractRenderState(context, mouseX, mouseY, delta);
     }
 
-    protected void extractSaddle(GuiGraphicsExtractor context) {
+    protected void extractSaddle(GuiGraphicsExtractor context, int x, int y) {
         if (entity.getInventory().hasSaddle)
             context.blit( //saddle
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
-                    i + 7,
-                    j + 35 - URDragonMenu.SLOT_SIDE,
+                    x + 7,
+                    y + 35 - URDragonMenu.SLOT_SIDE,
                     0,
                     imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.SADDLE).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
                     URDragonMenu.SLOT_SIDE,
@@ -200,12 +202,12 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
                     256, 256);
     }
 
-    protected void extractArmor(GuiGraphicsExtractor context) {
+    protected void extractArmor(GuiGraphicsExtractor context, int x, int y) {
         if (entity.getInventory().hasHelmet) context.blit( //head
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
-                i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
-                j + 35 -  URDragonMenu.SLOT_SIDE,
+                x + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                y + 35 -  URDragonMenu.SLOT_SIDE,
                 URDragonMenu.SLOT_SIDE,
                 imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.HEAD).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
                 URDragonMenu.SLOT_SIDE,
@@ -215,8 +217,8 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         if (entity.getInventory().hasChestplate) context.blit( //body
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
-                i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
-                j + 35,  URDragonMenu.SLOT_SIDE * 2,
+                x + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                y + 35,  URDragonMenu.SLOT_SIDE * 2,
                 imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.CHEST).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
                 URDragonMenu.SLOT_SIDE,
                 URDragonMenu.SLOT_SIDE,
@@ -225,8 +227,8 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         if (entity.getInventory().hasTailArmor) context.blit( //tail
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
-                i + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
-                j + 35 +  URDragonMenu.SLOT_SIDE,
+                x + 7 + URDragonMenu.SLOT_SIDE + URDragonMenu.ENTITY_WINDOW_SIDE,
+                y + 35 +  URDragonMenu.SLOT_SIDE,
                 URDragonMenu.SLOT_SIDE * 3,
                 imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.LEGS).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
                 URDragonMenu.SLOT_SIDE,
@@ -234,10 +236,6 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
                 256, 256
         );
 
-    }
-
-    protected void extractEntity(GuiGraphicsExtractor context) {
-        if (entity != null) extractEntity(context, i + 26, j + 18, i + 78, j + 70, this.mouseX, this.mouseY, this.entity);
     }
 
     private void extractEntity(GuiGraphicsExtractor context, int x1, int y1, int x2, int y2, float mouseX, float mouseY, LivingEntity entity) {
@@ -252,7 +250,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
         LivingEntityRenderState state = (LivingEntityRenderState) renderer.createRenderState(entity, tickDelta);
         state.nameTag = null;
-        state.setStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, List.of()).stream().map(val -> false).toList());
+        state.setStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, List.of()).stream().map(_ -> false).toList());
         state.setStateData(ClientStateDataTypes.LIGHT, LightCoordsUtil.FULL_BRIGHT);
 
         Quaternionf rot = new Quaternionf();
@@ -265,14 +263,14 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         context.disableScissor();
     }
 
-    protected void extractStorage(GuiGraphicsExtractor context) {
+    protected void extractStorage(GuiGraphicsExtractor context, int x, int y) {
         int size = entity.getInventory().storageSize.getSize()/3;
         int offset = entity.getInventory().hasHelmet || entity.getInventory().hasChestplate || entity.getInventory().hasTailArmor ? 2 : 1;
         context.blit(
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
-                i + 7 + URDragonMenu.ENTITY_WINDOW_SIDE + URDragonMenu.SLOT_SIDE * offset,
-                j + 17,
+                x + 7 + URDragonMenu.ENTITY_WINDOW_SIDE + URDragonMenu.SLOT_SIDE * offset,
+                y + 17,
                 0,
                 this.imageHeight,
                 size * URDragonMenu.SLOT_SIDE,
@@ -281,13 +279,13 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         );
     }
 
-    protected void extractBanner(GuiGraphicsExtractor context) {
+    protected void extractBanner(GuiGraphicsExtractor context, int x, int y) {
         if (entity.getInventory().hasSaddle)
             context.blit( //banner
                     RenderPipelines.GUI_TEXTURED,
                     TEXTURE,
-                    i + 7,
-                    j + 35,
+                    x + 7,
+                    y + 35,
                     URDragonMenu.SLOT_SIDE * 4,
                     imageHeight + URDragonMenu.ENTITY_WINDOW_SIDE - (entity.getItemBySlot(EquipmentSlot.BODY).isEmpty() ? 0 : URDragonMenu.SLOT_SIDE),
                     URDragonMenu.SLOT_SIDE,

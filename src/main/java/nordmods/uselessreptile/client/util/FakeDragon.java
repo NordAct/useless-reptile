@@ -4,15 +4,12 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -27,34 +24,33 @@ import nordmods.uselessreptile.common.init.URRegistries;
 import nordmods.uselessreptile.common.util.SimpleAnimationController;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
-    public static final Map<BRModel, AABB> MODEL_AABB_CACHE = new HashMap<>();
-    private final SimpleAnimationController idleController = new SimpleAnimationController(true) {
+    private AABB modelAABB;
+    private final SimpleAnimationController controller = new SimpleAnimationController(false) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
         }
     };
-    private final List<BRAnimationController> controllers = List.of(idleController);
+    private final List<BRAnimationController> controllers = List.of(controller);
     private final DragonAssetCache assetCache = new DragonAssetCache();
     private DragonVariantType<?> variantType;
     private DragonVariant[] dragonVariants;
     private int currentVariantOrdinal;
     private static final URDragonEntityModelProvider MODEL_PROVIDER = new URDragonEntityModelProvider();
+    private boolean needsAnimationUpdate;
+    private static final DragonVariantType<?>[] DRAGON_VARIANT_TYPES = URRegistries.VARIANT_TYPE.stream().toArray(DragonVariantType[]::new);
 
     public FakeDragon(DragonVariantType<?> variantType, String variantName) {
         setVariantType(variantType);
         for (currentVariantOrdinal = 0; currentVariantOrdinal < dragonVariants.length; currentVariantOrdinal++) {
             if (dragonVariants[currentVariantOrdinal].common().name().equals(variantName)) break;
         }
-    }
-
-    public static void clearCache() {
-        MODEL_AABB_CACHE.clear();
+        //it's there because otherwise first AABB calculation happens when model is t-posing
+        createDragonRenderState();
+        clearModel();
     }
 
     @Override
@@ -72,10 +68,13 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
     }
 
     public void setVariantType(DragonVariantType<?> variantType) {
+        currentVariantOrdinal = 0;
         this.variantType = variantType;
         updateVariants();
-        currentVariantOrdinal = 0;
-        assetCache.cleanCache();
+        clearModel();
+        //it's there because otherwise first AABB calculation happens when model is t-posing
+        createDragonRenderState();
+        clearModel();
     }
 
     protected void updateVariants() {
@@ -89,28 +88,51 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
     public void nextVariant() {
         currentVariantOrdinal += 1;
         if (currentVariantOrdinal >= dragonVariants.length) currentVariantOrdinal = 0;
-        assetCache.cleanCache();
+        clearModel();
     }
 
     public void previousVariant() {
         currentVariantOrdinal -= 1;
         if (currentVariantOrdinal < 0) currentVariantOrdinal = dragonVariants.length - 1;
+        clearModel();
+    }
+
+    public void nextType() {
+        int current;
+        for (current = 0; current < DRAGON_VARIANT_TYPES.length; current++) {
+            if (DRAGON_VARIANT_TYPES[current] == variantType) break;
+        }
+        current++;
+        if (current >= DRAGON_VARIANT_TYPES.length) setVariantType(DRAGON_VARIANT_TYPES[0]);
+        else setVariantType(DRAGON_VARIANT_TYPES[current]);
+    }
+
+    public void previousType() {
+        int current;
+        for (current = 0; current < DRAGON_VARIANT_TYPES.length; current++) {
+            if (DRAGON_VARIANT_TYPES[current] == variantType) break;
+        }
+        current--;
+        if (current < 0) setVariantType(DRAGON_VARIANT_TYPES[DRAGON_VARIANT_TYPES.length - 1]);
+        else setVariantType(DRAGON_VARIANT_TYPES[current]);
+    }
+
+    protected void clearModel() {
         assetCache.cleanCache();
-        BRPlayingAnimation animation = idleController.getAnimation("idle");
-        if (animation != null) animation.stop();
+        needsAnimationUpdate = true;
+        modelAABB = null;
     }
 
     public DragonVariant getDragonVariant() {
         return dragonVariants[currentVariantOrdinal];
     }
 
-
     public LivingEntityRenderState createDragonRenderState() {
         LivingEntityRenderState renderState = new LivingEntityRenderState();
         float tickDelta = RenderUtil.getTickDelta(false);
 
         DragonAssetCache assetCache = getAssetCache();
-        Identifier dragonId = URRegistries.VARIANT_TYPE.getKey(getVariantType());
+        Identifier dragonId = getVariantType().getId();
         URDragonEntityRenderer.fillDragonCache(
                 assetCache,
                 getDragonVariant(),
@@ -127,21 +149,34 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
         renderState.setStateData(StateDataTypes.CONTROLLERS, getAnimationControllers());
         renderState.setStateData(StateDataTypes.MODEL_PROVIDER, MODEL_PROVIDER);
 
-        AABB box = FakeDragon.MODEL_AABB_CACHE.computeIfAbsent(ClientModelManager.instance().getModel(MODEL_PROVIDER.getModelId(renderState)), model -> computeModelAABB(model, renderState));
-        renderState.boundingBoxHeight = (float) box.getYsize();
-        renderState.boundingBoxWidth = (float) Math.max(box.getXsize(), box.getZsize());
+        if (modelAABB == null) {
+            modelAABB = computeModelAABB(ClientModelManager.instance().getModel(MODEL_PROVIDER.getModelId(renderState)), renderState);
+        }
+        renderState.boundingBoxHeight = (float) modelAABB.getYsize();
+        renderState.boundingBoxWidth = (float) Math.max(modelAABB.getXsize(), modelAABB.getZsize());
         renderState.setStateData(StateDataTypes.SCALE, Math.max(renderState.boundingBoxHeight, renderState.boundingBoxWidth));
         renderState.entityType = BuiltInRegistries.ENTITY_TYPE.getValue(dragonId);
 
         renderState.setStateData(StateDataTypes.ANIMATION_TIME, getAnimationTime(tickDelta));
 
+        if (needsAnimationUpdate) {
+            updateAnimation(renderState);
+            needsAnimationUpdate = false;
+        }
+
         return renderState;
     }
 
+    private void updateAnimation(LivingEntityRenderState renderState) {
+        controller.clearAnimations();
+        controller.update(renderState);
+        controller.playAnimation("idle");
+        controller.playAnimation("blink");
+    }
 
     private AABB computeModelAABB(BRModel model, LivingEntityRenderState state) {
         AABB.Builder builder = new AABB.Builder();
-        state.setStateData(StateDataTypes.ANIMATION_ADJUSTMENT, ((state1, model1) -> {}));
+        state.setStateData(StateDataTypes.ANIMATION_ADJUSTMENT, ((_, _) -> {}));
         model.applyAnimations(state);
         nordmods.biscuit_roll.client.util.RenderUtil.getExtentsForGui(model, new PoseStack(), builder::include);
         return builder.isDefined() ? builder.build() : AABB.ofSize(Vec3.ZERO, 0, 0, 0);

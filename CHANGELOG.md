@@ -50,9 +50,11 @@
 - Added Variant Changing Orb
   - You can use the orb to change dragon's variant
   - This item can be only obtained via commands or creative mode
+  - It also allows you to preview all available for this world variants, including ones added by datapacks
 - Removed support for custom name variants since internally they were a mess
   - Idea of custom name variants will be revisited later
   - For alternative, you can use Variant Changing Orb for now
+- Improved multipart entity handling
 
 ## Data and resource pack format changes
 - Due to some internal refactoring, `id` field in dragon variant file is now called `type`
@@ -70,7 +72,7 @@
 - You can specify bones that will be hidden on dragon model when equipment piece is worn by dragon by specifying bone names in `hid_bones` list
   - If bone is hidden, it still will be animated
 - Dragon variants now require translation key for their variant name
-  - This translation key is used to display localized variant name in Jade tooltip
+  - This translation key is used to display localized variant name in Jade tooltip and in Variant Changing Orb Screen
   - I beg you to properly add localization file to your pack and not just slap variant name in English in plain text
 - Added new conditions for spawn conditions
   - `light_level` allows to specify required block and sky light level ranges. Note: sky light level is constant even at night

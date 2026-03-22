@@ -3,10 +3,6 @@ package nordmods.uselessreptile.common.item.component;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
-import nordmods.uselessreptile.UselessReptile;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -16,13 +12,17 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.TagValueOutput;
+import nordmods.uselessreptile.UselessReptile;
 import org.jspecify.annotations.Nullable;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
+
 public record URDragonDataStorageComponent(List<CustomData> entityData) {
-    public static final Codec<URDragonDataStorageComponent> CODEC = RecordCodecBuilder.create(instance ->
-            instance.group(
-                            CustomData.CODEC.listOf().fieldOf("dragons").forGetter(URDragonDataStorageComponent::entityData))
-                    .apply(instance, URDragonDataStorageComponent::new));
+    public static final Codec<URDragonDataStorageComponent> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            CustomData.CODEC.listOf().fieldOf("dragons").forGetter(URDragonDataStorageComponent::entityData))
+            .apply(instance, URDragonDataStorageComponent::new));
 
     public static final StreamCodec<ByteBuf, URDragonDataStorageComponent> PACKET_CODEC = StreamCodec.composite(
             CustomData.STREAM_CODEC.apply(ByteBufCodecs.list()), URDragonDataStorageComponent::entityData,

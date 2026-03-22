@@ -176,8 +176,8 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         if (assetCache.getRenderTypeProviderCache() == null) {
             ModelData modelData = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level).modelData();
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider;
-            if (modelData.translucent()) renderTypeProvider = ((state, texture) -> RenderTypes.entityTranslucent(texture)); //all translucent models can't have culling
-            else renderTypeProvider = modelData.cull() ? ((state, texture) ->RenderTypes.entityCutout(texture)) : ((state, texture) -> RenderTypes.entityCutout(texture));
+            if (modelData.translucent()) renderTypeProvider = ((_, texture) -> RenderTypes.entityTranslucent(texture)); //all translucent models can't have culling
+            else renderTypeProvider = modelData.cull() ? ((_, texture) -> RenderTypes.entityCutoutCull(texture)) : ((_, texture) -> RenderTypes.entityCutout(texture));
             assetCache.setRenderTypeProviderCache(renderTypeProvider);
         }
     }
@@ -246,8 +246,8 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //render type
         if (equipment.modelData().translucent()) {
-            assetCache.setRenderTypeProviderCache((state, texture) -> RenderTypes.entityTranslucent(texture));
-        } else assetCache.setRenderTypeProviderCache(((state, texture) -> RenderTypes.entityCutout(texture)));
+            assetCache.setRenderTypeProviderCache((_, texture) -> RenderTypes.entityTranslucent(texture));
+        } else assetCache.setRenderTypeProviderCache(((_, texture) -> RenderTypes.entityCutout(texture)));
 
         equipment.hidBones().ifPresent(bones -> assetCache.setHidBones(bones.toArray(new String[0])));
 

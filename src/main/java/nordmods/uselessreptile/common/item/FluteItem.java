@@ -1,13 +1,10 @@
 package nordmods.uselessreptile.common.item;
 
 import com.google.common.collect.ImmutableSortedMap;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -31,11 +28,10 @@ import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.item.component.FluteComponent;
+import nordmods.uselessreptile.common.util.ComponentUtil;
 import org.jspecify.annotations.NonNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Consumer;
 
 //todo expand functionality to other dragons
@@ -77,22 +73,9 @@ public class FluteItem extends Item {
     @SuppressWarnings("deprecation")
     @Override
     public void appendHoverText(@NonNull ItemStack stack, @NonNull TooltipContext context, @NonNull TooltipDisplay displayComponent, @NonNull Consumer<Component> textConsumer, @NonNull TooltipFlag type) {
-                if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT)) textConsumer.accept(Component.translatable("tooltip.uselessreptile.hidden").withStyle(ChatFormatting.DARK_GRAY));
-        else for (Component text : getParsedText()) textConsumer.accept(((MutableComponent) text).withStyle(ChatFormatting.GRAY));
+        ComponentUtil.addHidden(textConsumer, ComponentUtil.getParsedText("tooltip.uselessreptile.flute"), ChatFormatting.GRAY);
         String tooltipString = "tooltip.uselessreptile.flute_mode";
         textConsumer.accept(Component.translatable(tooltipString, Component.translatable(tooltipString + "." + getFluteMode(stack))).withStyle(ChatFormatting.GRAY));
-    }
-
-    private static List<Component> getParsedText() {
-        List<Component> toReturn = new ArrayList<>();
-
-        if (I18n.exists("tooltip.uselessreptile.flute")) {
-            String info = I18n.get("tooltip.uselessreptile.flute");
-            String[] infoLines = info.split("\\r?\\n");
-            for (String infoLine : infoLines) toReturn.add(Component.literal(infoLine));
-        } else toReturn.add(Component.literal(I18n.get("tooltip.uselessreptile.flute")));
-
-        return toReturn;
     }
 
     public static SoundEvent getFluteSound(String mode) {

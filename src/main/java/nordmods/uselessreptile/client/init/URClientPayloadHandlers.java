@@ -5,11 +5,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.client.gui.URDragonScreen;
+import nordmods.uselessreptile.client.gui.VariantChangingOrbScreen;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import nordmods.uselessreptile.common.network.s2c.OpenDragonInventoryPayload;
+import nordmods.uselessreptile.common.network.s2c.OpenVariantChangingOrbScreenPayload;
 import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPayload;
 
 public class URClientPayloadHandlers {
@@ -17,6 +19,7 @@ public class URClientPayloadHandlers {
         handleOpenDragonInventory();
         handleLiftoffParticles();
         handleSyncLightningBreathRotations();
+        handleOpenVariantChangingOrbScreen();
     }
 
     private static void handleOpenDragonInventory() {
@@ -54,6 +57,12 @@ public class URClientPayloadHandlers {
                 entity.setXRot(packet.pitch());
                 entity.setYRot(packet.yaw());
             }
+        });
+    }
+
+    private static void handleOpenVariantChangingOrbScreen() {
+        ClientPlayNetworking.registerGlobalReceiver(OpenVariantChangingOrbScreenPayload.PAYLOAD_ID, (packet, _) -> {
+            Minecraft.getInstance().setScreen(new VariantChangingOrbScreen(packet.variantType(), packet.variant()));
         });
     }
 }
