@@ -9108,47 +9108,47 @@
 		"turn.none": {
 			"loop": "hold_on_last_frame",
 			"bones": {
-				"Thead": {
+				"head": {
 					"rotation": [0, 0, 0]
 				},
-				"Tneck5": {
+				"neck5": {
 					"rotation": [0, 0, 0]
 				},
-				"Tneck4": {
+				"neck4": {
 					"rotation": [0, 0, 0]
 				},
-				"Tneck3": {
+				"neck3": {
 					"rotation": [0, 0, 0]
 				},
-				"Tneck2": {
+				"neck2": {
 					"rotation": [0, 0, 0]
 				},
-				"Tneck1": {
+				"neck1": {
 					"rotation": [0, 0, 0]
 				},
-				"Ttail5": {
+				"tail5": {
 					"rotation": [0, 0, 0]
 				},
-				"Ttail4": {
+				"tail4": {
 					"rotation": [0, 0, 0]
 				},
-				"Ttail3": {
+				"tail3": {
 					"rotation": [0, 0, 0]
 				},
-				"Ttail2": {
+				"tail2": {
 					"rotation": [0, 0, 0]
 				},
-				"Ttail1": {
+				"tail1": {
 					"rotation": [0, 0, 0]
 				},
-				"Tdragon": {
+				"dragon": {
 					"rotation": [0, 0, 0],
 					"position": [0, 0, 0]
 				},
-				"Tleg_left": {
+				"leg_left": {
 					"rotation": [0, 0, 0]
 				},
-				"Tleg_right": {
+				"leg_right": {
 					"rotation": [0, 0, 0]
 				}
 			}
@@ -9156,48 +9156,48 @@
 		"turn.left": {
 			"loop": true,
 			"bones": {
-				"Thead": {
+				"head": {
 					"rotation": [0, -10, -7.5]
 				},
-				"Tneck5": {
+				"neck5": {
 					"rotation": [0, -10, -7.5]
 				},
-				"Tneck4": {
+				"neck4": {
 					"rotation": [0, -10, -7.5]
 				},
-				"Tneck3": {
+				"neck3": {
 					"rotation": [0, -10, -7.5]
 				},
-				"Tneck2": {
+				"neck2": {
 					"rotation": [0, -10, -7.5]
 				},
-				"Tneck1": {
+				"neck1": {
 					"rotation": [0, -10, -7.5]
 				},
-				"Ttail5": {
+				"tail5": {
 					"rotation": [0, 13, 0]
 				},
-				"Ttail4": {
+				"tail4": {
 					"rotation": [0, 13, 0]
 				},
-				"Ttail3": {
+				"tail3": {
 					"rotation": [0, 13, 0]
 				},
-				"Ttail2": {
+				"tail2": {
 					"rotation": [0, 13, 0],
 					"position": [0, 0, -0.1]
 				},
-				"Ttail1": {
+				"tail1": {
 					"rotation": [0, 13, 0],
 					"position": [0, 0, -0.5]
 				},
-				"Tdragon": {
+				"dragon": {
 					"rotation": [0, 0, 0]
 				},
-				"Tleg_left": {
+				"leg_left": {
 					"rotation": [0, 0, 0]
 				},
-				"Tleg_right": {
+				"leg_right": {
 					"rotation": [0, 0, 0]
 				}
 			}
@@ -9205,49 +9205,49 @@
 		"turn.right": {
 			"loop": true,
 			"bones": {
-				"Thead": {
+				"head": {
 					"rotation": [0, 10, 7.5]
 				},
-				"Tneck5": {
+				"neck5": {
 					"rotation": [0, 10, 7.5]
 				},
-				"Tneck4": {
+				"neck4": {
 					"rotation": [0, 10, 7.5]
 				},
-				"Tneck3": {
+				"neck3": {
 					"rotation": [0, 10, 7.5]
 				},
-				"Tneck2": {
+				"neck2": {
 					"rotation": [0, 10, 7.5]
 				},
-				"Tneck1": {
+				"neck1": {
 					"rotation": [0, 10, 7.5]
 				},
-				"Ttail5": {
+				"tail5": {
 					"rotation": [0, -13, 0]
 				},
-				"Ttail4": {
+				"tail4": {
 					"rotation": [0, -13, 0]
 				},
-				"Ttail3": {
+				"tail3": {
 					"rotation": [0, -13, 0]
 				},
-				"Ttail2": {
+				"tail2": {
 					"rotation": [0, -13, 0],
 					"position": [0, 0, -0.1]
 				},
-				"Ttail1": {
+				"tail1": {
 					"rotation": [0, -13, 0],
 					"position": [0, 0, -0.5]
 				},
-				"Tdragon": {
+				"dragon": {
 					"rotation": [0, 0, 0],
 					"position": [0, 0, 0]
 				},
-				"Tleg_left": {
+				"leg_left": {
 					"rotation": [0, 0, 0]
 				},
-				"Tleg_right": {
+				"leg_right": {
 					"rotation": [0, 0, 0]
 				}
 			}
@@ -9255,47 +9255,47 @@
 		"turn.fly.left": {
 			"loop": true,
 			"bones": {
-				"Thead": {
+				"head": {
 					"rotation": [-1.5, -11, -1.5]
 				},
-				"Tneck5": {
+				"neck5": {
 					"rotation": [-1.5, -11, -1.5]
 				},
-				"Tneck4": {
+				"neck4": {
 					"rotation": [-1.5, -11, -1.5]
 				},
-				"Tneck3": {
+				"neck3": {
 					"rotation": [-1.5, -11, -1.5]
 				},
-				"Tneck2": {
+				"neck2": {
 					"rotation": [-1.5, -11, -1.5]
 				},
-				"Tneck1": {
+				"neck1": {
 					"rotation": [-1.5, -11, -1.5]
 				},
-				"Ttail5": {
+				"tail5": {
 					"rotation": [0, 15.5, 0]
 				},
-				"Ttail4": {
+				"tail4": {
 					"rotation": [0, 15.5, 0]
 				},
-				"Ttail3": {
+				"tail3": {
 					"rotation": [0, 15.5, 0]
 				},
-				"Ttail2": {
+				"tail2": {
 					"rotation": [0, 15.5, 0]
 				},
-				"Ttail1": {
+				"tail1": {
 					"rotation": [0, 15.5, 0]
 				},
-				"Tdragon": {
+				"dragon": {
 					"rotation": [0, 0, 10],
 					"position": [0, 0.5, 0]
 				},
-				"Tleg_right": {
+				"leg_right": {
 					"rotation": [-10, 0, 0]
 				},
-				"Tleg_left": {
+				"leg_left": {
 					"rotation": [-10, 0, 0]
 				}
 			}
@@ -9304,47 +9304,47 @@
 			"loop": true,
 			"animation_length": 0.0417,
 			"bones": {
-				"Thead": {
+				"head": {
 					"rotation": [-1.5, 11, 1.5]
 				},
-				"Tneck5": {
+				"neck5": {
 					"rotation": [-1.5, 11, 1.5]
 				},
-				"Tneck4": {
+				"neck4": {
 					"rotation": [-1.5, 11, 1.5]
 				},
-				"Tneck3": {
+				"neck3": {
 					"rotation": [-1.5, 11, 1.5]
 				},
-				"Tneck2": {
+				"neck2": {
 					"rotation": [-1.5, 11, 1.5]
 				},
-				"Tneck1": {
+				"neck1": {
 					"rotation": [-1.5, 11, 1.5]
 				},
-				"Ttail5": {
+				"tail5": {
 					"rotation": [0, -15.5, 0]
 				},
-				"Ttail4": {
+				"tail4": {
 					"rotation": [0, -15.5, 0]
 				},
-				"Ttail3": {
+				"tail3": {
 					"rotation": [0, -15.5, 0]
 				},
-				"Ttail2": {
+				"tail2": {
 					"rotation": [0, -15.5, 0]
 				},
-				"Ttail1": {
+				"tail1": {
 					"rotation": [0, -15.5, 0]
 				},
-				"Tdragon": {
+				"dragon": {
 					"rotation": [0, 0, -10],
 					"position": [0, 0.5, 0]
 				},
-				"Tleg_right": {
+				"leg_right": {
 					"rotation": [-10, 0, 0]
 				},
-				"Tleg_left": {
+				"leg_left": {
 					"rotation": [-10, 0, 0]
 				}
 			}
@@ -9352,22 +9352,22 @@
 		"attack.none": {
 			"loop": true,
 			"bones": {
-				"Aneck1": {
+				"neck1": {
 					"rotation": [0, 0, 0]
 				},
-				"Aneck2": {
+				"neck2": {
 					"rotation": [0, 0, 0]
 				},
-				"Aneck3": {
+				"neck3": {
 					"rotation": [0, 0, 0]
 				},
-				"Aneck4": {
+				"neck4": {
 					"rotation": [0, 0, 0]
 				},
-				"Aneck5": {
+				"neck5": {
 					"rotation": [0, 0, 0]
 				},
-				"Ahead": {
+				"head": {
 					"rotation": [0, 0, 0]
 				}
 			}
@@ -9375,7 +9375,7 @@
 		"attack.melee1": {
 			"animation_length": 0.7083,
 			"bones": {
-				"Aneck1": {
+				"neck1": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [45.37835, 4.98093, 8.6822],
@@ -9383,7 +9383,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck2": {
+				"neck2": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [17.5, 12.5, -7.5],
@@ -9391,7 +9391,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck3": {
+				"neck3": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [20, 12.5, -7.5],
@@ -9399,7 +9399,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck4": {
+				"neck4": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-20, -20, 7.5],
@@ -9407,7 +9407,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck5": {
+				"neck5": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-22.5, -17.5, -12.5],
@@ -9415,7 +9415,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Ahead": {
+				"head": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-37.5, -10, 5],
@@ -9441,7 +9441,7 @@
 		"attack.melee2": {
 			"animation_length": 0.7083,
 			"bones": {
-				"Aneck1": {
+				"neck1": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [45.37835, -4.98093, -8.6822],
@@ -9449,7 +9449,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck2": {
+				"neck2": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [17.5, -12.5, 7.5],
@@ -9457,7 +9457,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck3": {
+				"neck3": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [20, -12.5, 7.5],
@@ -9465,7 +9465,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck4": {
+				"neck4": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-20, 20, -7.5],
@@ -9473,7 +9473,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck5": {
+				"neck5": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-22.5, 17.5, 12.5],
@@ -9481,7 +9481,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Ahead": {
+				"head": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-37.5, 10, -5],
@@ -9507,7 +9507,7 @@
 		"attack.melee3": {
 			"animation_length": 0.7083,
 			"bones": {
-				"Aneck1": {
+				"neck1": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [45, 0, 0],
@@ -9515,7 +9515,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck2": {
+				"neck2": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [17.5, 0, 0],
@@ -9523,7 +9523,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck3": {
+				"neck3": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [20, 0, 0],
@@ -9531,7 +9531,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck4": {
+				"neck4": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-20, 0, 0],
@@ -9539,7 +9539,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Aneck5": {
+				"neck5": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-22.5, 0, 0],
@@ -9547,7 +9547,7 @@
 						"0.7083": [0, 0, 0]
 					}
 				},
-				"Ahead": {
+				"head": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2083": [-37.5, 0, 0],
@@ -9573,42 +9573,42 @@
 		"attack.fly.range": {
 			"animation_length": 0.5,
 			"bones": {
-				"Aneck1": {
+				"neck1": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.1667": [-12.5, 0, 0],
 						"0.5": [0, 0, 0]
 					}
 				},
-				"Aneck2": {
+				"neck2": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.1667": [-7.5, 0, 0],
 						"0.5": [0, 0, 0]
 					}
 				},
-				"Aneck3": {
+				"neck3": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.1667": [12.5, 0, 0],
 						"0.5": [0, 0, 0]
 					}
 				},
-				"Aneck4": {
+				"neck4": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.1667": [7.5, 0, 0],
 						"0.5": [0, 0, 0]
 					}
 				},
-				"Aneck5": {
+				"neck5": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.1667": [7.5, 0, 0],
 						"0.5": [0, 0, 0]
 					}
 				},
-				"Ahead": {
+				"head": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.1667": [-10, 0, 0],
@@ -9632,42 +9632,42 @@
 		"attack.range": {
 			"animation_length": 0.7,
 			"bones": {
-				"Aneck1": {
+				"neck1": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2": [40, 0, 0],
 						"0.7": [0, 0, 0]
 					}
 				},
-				"Aneck2": {
+				"neck2": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2": [27.5, 0, 0],
 						"0.7": [0, 0, 0]
 					}
 				},
-				"Aneck3": {
+				"neck3": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2": [27.5, 0, 0],
 						"0.7": [0, 0, 0]
 					}
 				},
-				"Aneck4": {
+				"neck4": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2": [-30, 0, 0],
 						"0.7": [0, 0, 0]
 					}
 				},
-				"Aneck5": {
+				"neck5": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2": [-30, 0, 0],
 						"0.7": [0, 0, 0]
 					}
 				},
-				"Ahead": {
+				"head": {
 					"rotation": {
 						"0.0": [0, 0, 0],
 						"0.2": [-40, 0, 0],

@@ -8,7 +8,12 @@ import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.asset_cache.AssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class URDragonEntityModelProvider implements BRModelProvider {
+    private static final Map<Identifier, Identifier> DEFAULT_MODELS = new HashMap<>();
+    private static final Map<Identifier, Identifier> DEFAULT_ANIMATIONS = new HashMap<>();
     @Override
     public Identifier getAnimationId(BRState renderState) {
         if (!ResourceUtil.isResourceReloadFinished) return getDefaultAnimation(renderState.getStateData(URStateDataTypes.DRAGON_ID));
@@ -24,10 +29,10 @@ public class URDragonEntityModelProvider implements BRModelProvider {
     }
 
     public final Identifier getDefaultAnimation(Identifier entity) {
-        return UselessReptile.id("biscuit_roll/animations/entity/" + entity.getPath() + "/" + entity.getPath() + ".animation.json");
+        return DEFAULT_ANIMATIONS.computeIfAbsent(entity, id -> UselessReptile.id("biscuit_roll/animations/entity/" + id.getPath() + "/" + id.getPath() + ".animation.json"));
     }
 
     public final Identifier getDefaultModel(Identifier entity) {
-        return UselessReptile.id("biscuit_roll/models/entity/" + entity.getPath() + "/" + entity.getPath() + ".geo.json");
+        return DEFAULT_MODELS.computeIfAbsent(entity, id -> UselessReptile.id("biscuit_roll/models/entity/" + id.getPath() + "/" + id.getPath() + ".geo.json"));
     }
 }

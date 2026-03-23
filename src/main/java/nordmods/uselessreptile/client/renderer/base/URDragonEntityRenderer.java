@@ -37,6 +37,9 @@ import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends BREntityRenderer<T, LivingEntityRenderState> {
     private final DragonEquipmentRenderer equipmentRenderer = new DragonEquipmentRenderer();
     private final DragonSaddleRenderer saddleRenderer = new DragonSaddleRenderer();
@@ -44,6 +47,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         super(renderManager, new URDragonEntityModelProvider());
         addRenderLayer(new URGlowingLayer(this, 1));
     }
+    private static final Map<Identifier, Identifier> DEFAULT_TEXTURES = new HashMap<>();
 
     @Override
     protected float getShadowRadius(LivingEntityRenderState state) {
@@ -279,11 +283,13 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     }
 
     public static Identifier getDefaultTexture(Identifier entity) {
-        CompoundTag nbtCompound = new CompoundTag();
-        nbtCompound.putString("id", entity.toString());
-        URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER,  Minecraft.getInstance().level.registryAccess(), nbtCompound), Minecraft.getInstance().level, EntitySpawnReason.TRIGGERED).get();
-        dragon.discard();
-        return UselessReptile.id("textures/entity/"+ entity.getPath() + "/" + dragon.getDefaultVariant() + ".png");
+        return DEFAULT_TEXTURES.computeIfAbsent(entity, (id) -> {
+            CompoundTag nbtCompound = new CompoundTag();
+            nbtCompound.putString("id", id.toString());
+            URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER,  Minecraft.getInstance().level.registryAccess(), nbtCompound), Minecraft.getInstance().level, EntitySpawnReason.TRIGGERED).get();
+            dragon.discard();
+            return UselessReptile.id("textures/entity/"+ id.getPath() + "/" + dragon.getDefaultVariant() + ".png");
+        });
     }
 
     @Override

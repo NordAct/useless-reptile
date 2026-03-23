@@ -337,21 +337,23 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
-        if (DATA_CUSTOM_NAME.equals(data) || VARIANT.equals(data)) {
-            assetCache.cleanCache();
-        }
         if (VARIANT.equals(data)) {
             removeVariantModifiers();
             applyVariantModifiers();
-            defaultDisplayName = null;
-            dragonVariant = null;
-            invalidVariant = false;
-            dragonEquipment = null;
+            clearVariant();
 
             DragonInventory newInventory = createInventory();
             if (inventory != null) inventory.forEach(newInventory::addItem);
             inventory = newInventory;
         }
+    }
+
+    public void clearVariant() {
+        assetCache.cleanCache();
+        defaultDisplayName = null;
+        dragonVariant = null;
+        invalidVariant = false;
+        dragonEquipment = null;
     }
 
     private void applyVariantModifiers() {

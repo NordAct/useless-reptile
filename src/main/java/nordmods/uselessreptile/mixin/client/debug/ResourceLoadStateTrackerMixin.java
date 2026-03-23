@@ -23,7 +23,7 @@ public abstract class ResourceLoadStateTrackerMixin {
         ResourceUtil.isResourceReloadFinished = false;
         if (Minecraft.getInstance().level != null) {
             Minecraft.getInstance().level.entitiesForRendering().forEach(entity -> {
-                if (entity instanceof URDragonEntity dragon) dragon.getAssetCache().cleanCache();
+                if (entity instanceof URDragonEntity dragon) dragon.clearVariant();
             });
         }
         URDragonEntity.SOUND_INFO_HOLDER.clear();
