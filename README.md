@@ -121,7 +121,7 @@ Following translations are **outdated** (meaning they are not full and may not b
 - Turkish - translation by double_axe (last updated 0.1.11)
 - Spanish - translation by kota_araya (last updated 0.4.0)
 - Polish - translation by karolofgutovo (last updated 0.3.0)
-- French - translation by thefiredragon, carputelechat and daelyx (last updated 0.13.0)
+- French - translation by thefiredragon, carputelechat, daelyx and coucoufe (last updated 0.13.0)
 - Japanese - translation by mash1133 (last updated 0.6.3)
 - Vietnamese by godkyo98 (last updated 0.8.0)
 - Hungarian by bombadil6870 (last updated 0.7.4)
