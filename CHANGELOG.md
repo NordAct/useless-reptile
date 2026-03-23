@@ -1,3 +1,6 @@
+## Known issues
+- Dragon equipment sometimes may incorrectly copy owner dragon animations, causing desync in animation. If you happen to find way to reproduce it consistently, please either contact me on Discord or create issue on GitHub
+
 ## General changes
 - Added integration with Jade that displays dragon variant
 - Changed warnings to errors when variant of existing dragon is not registered properly or doesn't exist

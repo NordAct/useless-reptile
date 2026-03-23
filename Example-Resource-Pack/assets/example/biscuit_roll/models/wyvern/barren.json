@@ -7,8 +7,8 @@
 				"texture_width": 256,
 				"texture_height": 256,
 				"visible_bounds_width": 13,
-				"visible_bounds_height": 4.5,
-				"visible_bounds_offset": [0, 1.75, 0]
+				"visible_bounds_height": 5.5,
+				"visible_bounds_offset": [0, 2.25, 0]
 			},
 			"bones": [
 				{
@@ -1337,7 +1337,14 @@
 								"up": {"uv": [70, 135], "uv_size": [11, 14]},
 								"down": {"uv": [81, 149], "uv_size": [11, -14]}
 							}
-						},
+						}
+					]
+				},
+				{
+					"name": "spikes_back",
+					"parent": "back",
+					"pivot": [0, 48, 10],
+					"cubes": [
 						{
 							"origin": [-0.025, 48, 3],
 							"size": [0.05, 3, 14],
@@ -1347,38 +1354,6 @@
 							}
 						}
 					]
-				},
-				{
-					"name": "saddle_back",
-					"parent": "back",
-					"pivot": [0, 48.1, 2.5],
-					"cubes": [
-						{
-							"origin": [-5.5, 48.325, 1],
-							"size": [11, 0.05, 5],
-							"pivot": [0, 48.5, 2],
-							"rotation": [-2.5, 0, 0],
-							"uv": {
-								"up": {"uv": [237, 246], "uv_size": [-11, 5]}
-							}
-						},
-						{
-							"origin": [-5.6, 37.9, 4],
-							"size": [11.2, 10.2, 4],
-							"uv": {
-								"east": {"uv": [252, 246], "uv_size": [4, 10]},
-								"west": {"uv": [237, 246], "uv_size": [4, 10]},
-								"up": {"uv": [252, 254], "uv_size": [-11, -4]},
-								"down": {"uv": [252, 250], "uv_size": [-11, -4]}
-							}
-						}
-					]
-				},
-				{
-					"name": "banner",
-					"parent": "saddle_back",
-					"pivot": [6, 54.1, 5],
-					"rotation": [-1, 45, 1]
 				},
 				{
 					"name": "Ttail1",

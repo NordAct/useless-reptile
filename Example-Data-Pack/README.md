@@ -25,7 +25,7 @@ Example data pack adds following:
 - `Barren Brown` and `Barren Orange` showcase different ways of declaring taming and food items
 
 To summon specific variant, you can use following command `/summon uselessreptile:dragon_id ~ ~ ~ {Variant:"VARIANT NAME"}`, where `uselessreptile:dragon_id` - entity id of the dragon, `VARIANT NAME` - name of the variant.
-
+Alternatively, you can give yourself **Variant Changing Orb** and use it to change dragon's variant without using commands.
 
 ## `variant` file structure
 Allows to add new variants to dragon species
@@ -84,6 +84,7 @@ Due to some technical limitations some sound key names are hardcoded and have to
 |  River Pikehorn  |               `idle`, `hurt`, `death`               |                                                                                    -                                                                                     |
 |   Swamp Wyvern   |           `idle`, `hurt`, `death`, `bite`           |                                                         `bite` is played when dragon uses melee attack in flight                                                         |
 | Lightning Chaser | `idle`, `hurt`, `death`, `roar`, `accept_challenge` | `roar` is played when dragon appears during thunderstorm and sometimes during it, `accept_challenge` is played when you manage to provoke an attack of challenger dragon |
+
 `idle` - sound that dragon emits when idle\
 `hurt` - played when dragon is hurt\
 `death` - played when dragon is dying

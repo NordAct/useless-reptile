@@ -8,6 +8,25 @@
         "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/saddle.animation.json"
       },
       "slot": "saddle"
-    }
+    },
+    "passenger_positions": [
+      [0.0, 0.0, 0.0]
+    ]
+  },
+  "uselessreptile:dual_saddle": {
+    "hid_bones": [
+      "spikes_front",
+      "spikes_back"
+    ],
+    "model_data": {
+      "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/dual_saddle.animation.json",
+      "model": "example:biscuit_roll/models/wyvern/barren_dual_saddle.json",
+      "texture": "example:textures/wyvern/dual_saddle_barren.png"
+    },
+    "passenger_positions": [
+      [0.0, 0.0, 0.0],
+      [0.0, 0.0, -0.8125]
+    ],
+    "slot": "saddle"
   }
 }
