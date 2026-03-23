@@ -2,23 +2,27 @@
 Useless Reptile is a Fabric mod that aimed to bring some dragons into your world that you can tame (or kill).
 **Warning:** mod is Work-in-Progress and a lot of stuff may change in the future updates.
 
-[Discord Server](https://discord.gg/JjYE4vEf3s)\
-Currently supported game versions: whatever is current Minecraft latest release *until modded community picks their new favorite ~~toy~~ version because I literally cannot backport this to 1.21.1 or lower for technical reasons* (well... not saying it's impossible, but some stuff will be lacking, and it's a lot of work I'm not willing to do for free)
+The following description is relevant for mod version 0.13.x\
+To report issue with mod, either do that on [Discord Server](https://discord.gg/JjYE4vEf3s) or [GitHub Issues](https://github.com/NordAct/useless-reptile/issues) page
 
-## Showcase (made for 0.8.0, might be outdated)
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/x5ysfiDE4rk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+Minecraft version support:
+- 26.1
+- Latest Minecraft Version
+
+Versions between 26.1 and latest are automatically discontinued when new game version is released. Everything below 26.1 is also not supported\
+*If you ask for backport, I'll steal your kneecaps*
 
 ## Dependencies
-[YetAnotherConfigLib](https://modrinth.com/mod/yacl) and [Fabric API](https://modrinth.com/mod/fabric-api) are **required**.
-Mod versions below 0.12.0 require [Geckolib](https://modrinth.com/mod/geckolib).
-For mod versions below 0.3.0 [Cloth Config API](https://modrinth.com/mod/cloth-config) is required instead of YetAnotherConfigLib.
+[YetAnotherConfigLib](https://modrinth.com/mod/yacl) and [Fabric API](https://modrinth.com/mod/fabric-api) are **required**.\
+Mod versions below 0.12.0 require [Geckolib](https://modrinth.com/mod/geckolib).\
+For mod versions below 0.3.0 [Cloth Config API](https://modrinth.com/mod/cloth-config) is required instead of YetAnotherConfigLib.\
 Some mod versions for 1.19.2 may require [AzureLib](https://modrinth.com/mod/azurelib) instead of Geckolib
 
 ## Features
-Note: older versions may not contain all features listed.
+*Note: older versions may not contain all features listed.*
 
 ### Mobs
-- **Swamp Wyvern** - can be found on swamps and tamed with 1-2 stacks of raw chicken. You can ride tamed Swamp Wyverns with use of a saddle. You can also get acid from it by right-clicking with empty bottle and use the acid later as any other potion. Cannot equip armor. \
+- **Swamp Wyvern** - can be found on swamps and tamed with 1-2 stacks of raw or cooked chicken or 4 stacks of any other meat (rotten flesh included). You can ride tamed Swamp Wyverns with use of a saddle. You can also get acid from it by right-clicking with empty bottle and use the acid later as any other potion. Cannot equip armor, but can equip saddle that can hold 2 passengers. \
   Can shoot acid blasts with mediocre accuracy and bite.
 
 
@@ -27,31 +31,40 @@ Note: older versions may not contain all features listed.
   Has only melee AoE attacks.
 
 
-- **River Pikehorn** - can be found near non-frozen rivers and on beaches. You can tame it with bucket of tropical fish and use flute for extra level of control over your Pikehorns, like sending them to fish for you or attack some mob. Oh, and also you can put one on your head (you have to crouch to put dragon on and off). \
+- **River Pikehorn** - can be found near non-frozen rivers. You can tame it with bucket of tropical fish or 4-8 tropical fish (as item) and use flute for extra level of control over your Pikehorns, like sending them to fish for you or attack some mob. Oh, and also you can put one on your head (you have to crouch and click on block with to put dragon on and off). \
   Has only melee attacks.
 
 
 - **Lightning Chaser** - can appear during thunderstorms near any player. To tame it you have to defeat it in a fight by taking down to low HP and successfully hitting it with lightning at least 3 times (you can use Trident with Channelling enchantment for that). Can be ridden with saddle on. \
   Lightning breath attacks can trigger same effect as normal lightning strike (i.e. transforming Villagers into Witches, creating charged Creepers, e.t.c.), but without setting target on fire. And also destroys blocks. Shockwave attack can be used to deflect projectiles and push back mobs. Shockwave can be used only if dragon is flying, otherwise dragon can use bite. \
-  Both shockwave and lightning breath inflict shock effect that decreases attack and movement speed and obscures vision. \
-  __**Note: some pre 0.8.0 mod versions (like versions for Minecraft 1.20.1) have this dragon, but it cannot appear naturally and lacks some parts of AI**__
+  Both shockwave and lightning breath inflict shock effect that decreases attack and movement speed and obscures vision.
 
 
 - **Magmamuncher** - can be found in The Nether near lava lakes. To tame you have to give it 4-12 Blaze Rods. From time to time will attempt to dig up Magma Blocks, turning those into Depleted Magma blocks and sometimes digging up coal in process. Depleted Magma can turn back into magma over time if placed in either The Nether or near lava. \
- Dragon itself can be put on head. When on head, if it has any furnace fuel items in inventory, it can consume those to apply Fire Resistance effect on its owner if they manage to catch on fire. \
+ Dragon itself can be put on head similarly to River Pikehorn. When on head, if it has any furnace fuel items in inventory, it can consume those to apply Fire Resistance effect on its owner if they manage to catch on fire. \
  Dragon has only melee attacks with chance to set target on fire. Immune to fire.
 
 ### Items
 - **Vortex Horn** - upgraded version of Goat Horn that can be used to store your dragons inside it
 - **Flute** - special item, that allows you more versatile control over your River Pikehorns
 - **Wyvern Skin** - initially supposed to be a crafting material for *something*, but currently can only be used to get 2 Leather
+- **Dual Saddle** - upgraded version of normal saddle. Can be equipped on Swamp Wyvern and used to ride with another player together
+- **Variant Changing Orb** - utility item, obtainable only via Creative Mode or commands. Allows to easily change any dragon variant
 
 ### Interaction with dragons
 - You can use goat horns (or anything that is considered an instrument by game) to call up dragons even if they're sitting. For that, you have first to "bind" instrument sound to the dragon by right-clicking with the instrument item on the dragon. After that, dragon will respond exclusively on this specific instrument sound.
-- To sit down/up your dragon, use stick or goat horn while crouching.
+- To sit down/up your dragon, use stick or goat horn while crouching. Alternatively you can do that via command menu in dragon's inventory
 - You can give normal potions to your dragon while crouching.
-- To open dragon's inventory, crouch and right-click on dragon with something that is not stick, potion or goat horn. Note: some dragons don't have it.
+- To open dragon's inventory, crouch and right-click on dragon with something that is not stick, potion or goat horn.
 - Rideable dragons can equip **banners** and display them as long as saddle is presented.
+
+### Command menu
+Once you open inventory, you can notice several buttons on the left. This is dragon's command menu. Each button does the following:
+- **Order to follow** - dragon now will follow you
+- **Order to stay** - dragon will wander around point where it was left at
+- **Order to sit** - dragon will sit down
+- **Wander radius** - defines how far dragon will wander away from staying point or owner if it's following
+- **Unbind instrument sound** - unbinds goat horn or other instrument sound, so dragon will not respond to it when it's used
 
 ### Controls
 - W/S - forward/backwards
@@ -64,8 +77,10 @@ Note: older versions may not contain all features listed.
 ### Custom dragon variants, equipment and spawns
 You can add custom dragon variants and dragon equipment via power of data and resource packs, that Mojang gladly made very useful for mod makers too.\
 You can read more about those features and see examples here:
-- [Example Data Pack](https://github.com/NordAct/useless-reptile/tree/1.21.11/Example-Data-Pack)
-- [Example Resource Pack](https://github.com/NordAct/useless-reptile/tree/1.21.11/Example-Resource-Pack)
+- [Example Data Pack](https://github.com/NordAct/useless-reptile/tree/26.1/Example-Data-Pack)
+- [Example Resource Pack](https://github.com/NordAct/useless-reptile/tree/26.1/Example-Resource-Pack)
+
+*Note: if you need to see example packs for another game version, change branch to one with name that matches your game version*
 
 ## FAQ
 **Q:** I found a bug! How can I report it?\
@@ -106,9 +121,10 @@ Following translations are **outdated** (meaning they are not full and may not b
 - Turkish - translation by double_axe (last updated 0.1.11)
 - Spanish - translation by kota_araya (last updated 0.4.0)
 - Polish - translation by karolofgutovo (last updated 0.3.0)
-- French - translation by thefiredragon, carputelechat and daelyx (last updated 0.6.0)
+- French - translation by thefiredragon, carputelechat and daelyx (last updated 0.13.0)
 - Japanese - translation by mash1133 (last updated 0.6.3)
 - Vietnamese by godkyo98 (last updated 0.8.0)
 - Hungarian by bombadil6870 (last updated 0.7.4)
 
-If you want to contribute into translating the feel free to suggest your help at [Discord Server](https://discord.gg/JjYE4vEf3s) :)
+If you want to contribute into translating the feel free to suggest your help at [Discord Server](https://discord.gg/JjYE4vEf3s) :)\
+Alternatively, you can make [Pull Request](https://github.com/NordAct/useless-reptile/pulls) to dev branch with translation file ready
