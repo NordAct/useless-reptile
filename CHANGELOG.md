@@ -6,7 +6,6 @@
 - Changed warnings to errors when variant of existing dragon is not registered properly or doesn't exist
 - Fix Swamp Wyvern spikes not displaying properly when there are several Swamp Wyverns with same model file being rendered
 - Whether dragon can equip an item now is defined by its variant equipment list and not hardcoded tags
-  - If custom name variant specifies its own list, it will override only appearance of the item, but not if dragon can equip the item
 - Removed `uselessreptile:dragon_saddles` tag and all dragon specific equipment tags besides `uselessreptile:protects_moleclaw_from_light` as now their functionality was taken over by equipment lists
 - Equipment tooltip now groups dragons based on their variant display name rather than base entity
 - Tooltip for dragon equipment now also shows which slot it goes in
@@ -14,14 +13,12 @@
 - River Pikehorn now takes caught fish in offhand instead of main hand
 - River Pikehorn now has inventory screen
   - It still does not have an inventory space
-- Now to pick up dragon that can ride on your head you have to click on it while not crouching with empty hand. To put it down you still have to couch
+- Now to pick up dragon that can ride on your head you have to click on it while not crouching with empty hand. To put it down you still have to crouch
   - This means you now able to open dragon's inventory without having to have an item in your hand in this case
-- Added dual saddle
+- Added Dual Saddle
   - Dual saddle is equipable by Swamp Wyvern only
   - Support for other dragons can be added via data and resource packs (you need both for it to work correctly)
   - When another non-owner player is riding dragon, they cannot interact with dragon's inventory
-  - Second player can start riding dragon as passenger only if owner is riding the dragon as primary rider
-  - When owner disconnects or dismounts dragon, all other passengers get ejected
 - Added command menu to dragon inventory screen
   - You can order dragon to either sit, follow or stay at place, change wander radius and unbind instrument sound
   - When dragon is ordered to stay, it will wander around point where it was left at within specified wander radius
@@ -45,7 +42,7 @@
   - Additionally, any non-chicken meat will also heal 2 health when consumed by dragon
 - Adjusted River Pikehorn's taming conditions:
   - Base taming progress is now 8
-  - Tropical Fish Bucket now gives 8 taming progress, meaning you still need 1 to tame the dragon
+  - Bucket of Tropical Fish now gives 8 taming progress, meaning you still need 1 to tame the dragon
   - As alternative, River Pikehorn now also takes just Tropical Fish as taming item. Tropical Fish will give from 1 to 2 of taming progress, meaning you'll need from 4 to 8 of Tropical Fishes (items, not stacks) to tame it
 - Updated French translation (credits to coucoufe)
 - Fixed flying dragons sometimes jumping around when trying to follow owner when owner is on land and dragon is flying
@@ -54,19 +51,21 @@
   - You can use the orb to change dragon's variant
   - This item can be only obtained via commands or creative mode
   - It also allows you to preview all available for this world variants, including ones added by datapacks
-- Removed support for custom name variants since internally they were a mess
+- Removed support for custom name variants (ones that were available only via nametags) since internally they were a mess
   - Idea of custom name variants will be revisited later
   - For alternative, you can use Variant Changing Orb for now
 - Improved multipart entity handling
 
 ## Data and resource pack format changes
+For more details on changes, please check  [README in Example Data Pack](https://github.com/NordAct/useless-reptile/tree/26.1/Example-Data-Pack)
+
 - Due to some internal refactoring, `id` field in dragon variant file is now called `type`
 - Custom name variants are no longer supported as of now
 - Breaking changes to equipment lists:
   - Equipment list is now specified as object that holds values in format `"item_id": {...}`
   - You now must specify animation file for your dragon equipment
     - All existing mod dragons have empty animation file for placeholder for cases when equipment piece does not have animation
-    - Equipment animation file must have only animations that dragon it belongs to has
+    - Equipment animation file needs to have all animations that dragon it belongs to has, even if those animations do nothing
   - Each equipment piece now must specify slot: `helmet`, `chestplate`, `tail_armor` or `saddle`
 - When specifying saddle in equipment list, you now can specify max amount of supported passengers by specifying their positions in list
   - To specify position of passenger on saddle model, you need to place locator called `passengerN`, where `N` is ordinal of passenger, starting from 0
@@ -80,10 +79,7 @@
 - Added new conditions for spawn conditions
   - `light_level` allows to specify required block and sky light level ranges. Note: sky light level is constant even at night
   - `time_period` allows to specify time of the day when dragon can spawn
-- Added `spacing` as condition to make spawns more rare
-  - `range` field controls check zone size
-  - `max_entity_count` is max amount of dragons with same id that is allowed to be within check radius for it to pass
-  - For convenience, spacing check is ignored when trying to spawn dragon from command, spawner or spawn egg
+  - `spacing` allows max amount of dragons that can be presented in area before spawning
 - Added optional `priority` field to `taming_items` and `food_items` entries
   - Defines which entries get highest priority when getting data for item and there are several entries that fit for it
   - Entries with no priority specified will have lowest priority

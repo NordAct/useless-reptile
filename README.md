@@ -31,7 +31,7 @@ Some mod versions for 1.19.2 may require [AzureLib](https://modrinth.com/mod/azu
   Has only melee AoE attacks.
 
 
-- **River Pikehorn** - can be found near non-frozen rivers. You can tame it with bucket of tropical fish or 4-8 tropical fish (as item) and use flute for extra level of control over your Pikehorns, like sending them to fish for you or attack some mob. Oh, and also you can put one on your head (you have to crouch and click on block with to put dragon on and off). \
+- **River Pikehorn** - can be found near non-frozen rivers and beaches. You can tame it with bucket of tropical fish or 4-8 tropical fish (as item). Also you can use flute for extra level of control over your Pikehorns, like sending them to fish for you or attack some mob. Oh, and also you can put one on your head (you have to crouch and click on block with to put dragon on and off). \
   Has only melee attacks.
 
 
