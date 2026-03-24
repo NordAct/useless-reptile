@@ -185,9 +185,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                 .stream()
                 .filter(passenger -> !(passenger instanceof Placeholder))
                 .count()
-                + (!getPassengers().isEmpty()
-                && getFirstPassenger() instanceof Placeholder
-                && !(entity instanceof LivingEntity living && isOwnedBy(living)) ? 1 : 0); //first placeholder always reserved for rider-owner
+                + (!getPassengers().isEmpty() && getFirstPassenger() instanceof Placeholder && !(entity instanceof LivingEntity living && isOwnedBy(living)) //first placeholder always reserved for rider-owner
+                || getPassengers().isEmpty() && !(entity instanceof LivingEntity living && isOwnedBy(living)) ? 1 : 0);
         return count < getMaxPassengerCount();
     }
 
