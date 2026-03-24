@@ -264,9 +264,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @NonNull
     public DragonVariant getDragonVariant() {
         if (dragonVariant == null) {
-            dragonVariant = DragonVariant.get(getVariantType(), getVariant(), level());
+            dragonVariant = DragonVariant.get(getVariantType(), getVariant(), level().registryAccess());
             if (dragonVariant == null) {
-                dragonVariant = DragonVariant.get(getVariantType(), getDefaultVariant(), level());
+                dragonVariant = DragonVariant.get(getVariantType(), getDefaultVariant(), level().registryAccess());
                 invalidVariant = true;
             }
         }
@@ -275,7 +275,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public Map<Identifier, EquipmentModelData.Equipment> getDragonEquipment() {
         if (dragonEquipment == null) {
-            dragonEquipment = DragonVariantUtil.getEquipmentModelDataMap(getDragonVariant(), level());
+            dragonEquipment = DragonVariantUtil.getEquipmentModelDataMap(getDragonVariant(), level().registryAccess());
         }
         return dragonEquipment;
     }
@@ -409,7 +409,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     private SoundInfo createSoundInfo(String name) {
-        DragonModelData model = DragonVariantUtil.getDragonModelData(getDragonVariant(), level());
+        DragonModelData model = DragonVariantUtil.getDragonModelData(getDragonVariant(), level().registryAccess());
         if (model != null) {
             if (model.sounds().isPresent()) {
                 DragonModelData.Sound sound = model.sounds().get().stream()

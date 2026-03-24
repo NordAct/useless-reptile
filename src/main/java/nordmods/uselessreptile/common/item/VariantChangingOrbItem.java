@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.item;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -34,7 +33,7 @@ public class VariantChangingOrbItem extends Item {
         if (URDragonPart.getPartParent(user) instanceof URDragonEntity dragon) entity = dragon;
         if (entity instanceof URDragonEntity dragon && (dragon.getOwner() == user || user.isCreative())) {
             DragonVariantComponent component = user.getItemInHand(hand).get(URItemComponents.DRAGON_VARIANT);
-            if (component.type() == dragon.getVariantType() && DragonVariant.get(component.type(), component.variant(), user.level()) != null) {
+            if (component.type() == dragon.getVariantType() && DragonVariant.get(component.type(), component.variant(), user.level().registryAccess()) != null) {
                 if (!user.level().isClientSide()) {
                     dragon.setVariant(component.variant());
                     stack.consume(1, user);
@@ -47,16 +46,18 @@ public class VariantChangingOrbItem extends Item {
 
     @Override
     public void appendHoverText(@NonNull ItemStack itemStack, @NonNull TooltipContext tooltipContext, @NonNull TooltipDisplay tooltipDisplay, @NonNull Consumer<Component> consumer, @NonNull TooltipFlag tooltipFlag) {
-        ComponentUtil.addHidden(consumer, ComponentUtil.getParsedText("tooltip.uselessreptile.variant_changing_orb"), ChatFormatting.GRAY);
-        DragonVariantComponent component = itemStack.get(URItemComponents.DRAGON_VARIANT);
-        DragonVariant variant = DragonVariant.get(component.type(), component.variant(), Minecraft.getInstance().level);
-        if (variant != null) {
-            consumer.accept(Component.translatable("tooltip.uselessreptile.can_be_applied_to", Component.translatable(component.type().getTranslationKey())).withStyle(ChatFormatting.GRAY));
-            variant.common().displayNameKey().ifPresent(key -> {
-                consumer.accept(Component.translatable("tooltip.uselessreptile.dragon_display_name", Component.translatable(key)).withStyle(ChatFormatting.GRAY));
-            });
-            consumer.accept(Component.translatable("tooltip.uselessreptile.dragon_variant", Component.translatable(variant.common().variantNameKey())).withStyle(ChatFormatting.GRAY));
+            ComponentUtil.addHidden(consumer, ComponentUtil.getParsedText("tooltip.uselessreptile.variant_changing_orb"), ChatFormatting.GRAY);
+        if (tooltipContext.registries() != null) {
+            DragonVariantComponent component = itemStack.get(URItemComponents.DRAGON_VARIANT);
+            DragonVariant variant = DragonVariant.get(component.type(), component.variant(), tooltipContext.registries());
+            if (variant != null) {
+                consumer.accept(Component.translatable("tooltip.uselessreptile.can_be_applied_to", Component.translatable(component.type().getTranslationKey())).withStyle(ChatFormatting.GRAY));
+                variant.common().displayNameKey().ifPresent(key -> {
+                    consumer.accept(Component.translatable("tooltip.uselessreptile.dragon_display_name", Component.translatable(key)).withStyle(ChatFormatting.GRAY));
+                });
+                consumer.accept(Component.translatable("tooltip.uselessreptile.dragon_variant", Component.translatable(variant.common().variantNameKey())).withStyle(ChatFormatting.GRAY));
 
+            }
         }
         super.appendHoverText(itemStack, tooltipContext, tooltipDisplay, consumer, tooltipFlag);
     }

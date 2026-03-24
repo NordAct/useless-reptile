@@ -78,7 +78,7 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
     }
 
     protected void updateVariants() {
-        dragonVariants = DragonVariant.getSameType(variantType, Minecraft.getInstance().level).toArray(new DragonVariant[0]);
+        dragonVariants = DragonVariant.getSameType(variantType, Minecraft.getInstance().level.registryAccess()).toArray(new DragonVariant[0]);
     }
 
     protected float getAnimationTime(float tickDelta) {

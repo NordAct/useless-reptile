@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.mixin.client.gui;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -9,7 +9,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
-import net.minecraft.world.level.Level;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
@@ -37,16 +36,17 @@ public abstract class ItemMixin {
     @Inject(method = "appendHoverText", at = @At("HEAD"))
     private void addDragonEquipmentEntries(ItemStack stack, Item.TooltipContext context, TooltipDisplay displayComponent, Consumer<Component> textConsumer, TooltipFlag type, CallbackInfo ci) {
         if (URClientConfig.getConfig().hideEquipmentInfo) return;
-        Level level = Minecraft.getInstance().level;
-        if (level == null) return;
+        if (context.registries() == null) return;
         Set<Component> info = new HashSet<>();
         info.add(CAN_BE_EQUIPPED);
         info.addAll(CommonDragonVariantData.EQUIPMENT_INFO_MAP.computeIfAbsent(stack.getItem(), item -> {
             Set<Component> set = new HashSet<>();
-            level.registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT).forEach(dragonVariant -> {
-                Map<Identifier, EquipmentModelData.Equipment> equipmentMap = DragonVariantUtil.getEquipmentModelDataMap(dragonVariant, level);
-                if (equipmentMap.containsKey(BuiltInRegistries.ITEM.getKey(item))) addSetEntry(set, dragonVariant, equipmentMap.get(BuiltInRegistries.ITEM.getKey(item)).slot());
-            });
+            context.registries().lookupOrThrow(URResourceKeys.DRAGON_VARIANT)
+                    .listElements().map(Holder.Reference::value)
+                    .forEach(dragonVariant -> {
+                        Map<Identifier, EquipmentModelData.Equipment> equipmentMap = DragonVariantUtil.getEquipmentModelDataMap(dragonVariant, context.registries());
+                        if (equipmentMap.containsKey(BuiltInRegistries.ITEM.getKey(item))) addSetEntry(set, dragonVariant, equipmentMap.get(BuiltInRegistries.ITEM.getKey(item)).slot());
+                    });
             return set;
         }));
         if (info.size() > 1) {

@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.common.item;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -110,7 +109,7 @@ public class VortexHornItem extends InstrumentItem {
     public void appendHoverText(
             ItemStack stack, @NonNull TooltipContext context, @NonNull TooltipDisplay displayComponent, @NonNull Consumer<Component> textConsumer, @NonNull TooltipFlag type
     )  {
-        if (stack.getComponents().has(URItemComponents.DRAGON_STORAGE)) {
+        if (stack.getComponents().has(URItemComponents.DRAGON_STORAGE) && context.registries() != null) {
             URDragonDataStorageComponent dataComponent = stack.get(URItemComponents.DRAGON_STORAGE);
             if (dataComponent != null) {
                 boolean full = getCurrentCapacity(stack) >= getMaxCapacity(stack);
@@ -123,7 +122,7 @@ public class VortexHornItem extends InstrumentItem {
                         Component customName = nbt.read("CustomName", ComponentSerialization.CODEC).orElse(Component.empty());
                         toAdd.add(customName);
                     } else {
-                        DragonVariant variant = DragonVariant.get(DragonVariantType.fromId(Identifier.parse(nbt.getString("id").orElse(""))), nbt.getStringOr("Variant", ""), Minecraft.getInstance().level);
+                        DragonVariant variant = DragonVariant.get(DragonVariantType.fromId(Identifier.parse(nbt.getString("id").orElse(""))), nbt.getStringOr("Variant", ""), context.registries());
                         if (variant != null && variant.common().displayNameKey().isPresent()){
                             toAdd.add(Component.translatable(variant.common().displayNameKey().get()));
                         } else {
