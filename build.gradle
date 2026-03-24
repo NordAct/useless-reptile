@@ -48,8 +48,7 @@ dependencies {
     implementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     api "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    //removed until it's fixed (if it's even gonna be)
-    //implementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
+    implementation include("eu.pb4:common-protection-api:${project.protection_api_version}")
 
     implementation "maven.modrinth:jade:${project.jade_version}+fabric"
 
