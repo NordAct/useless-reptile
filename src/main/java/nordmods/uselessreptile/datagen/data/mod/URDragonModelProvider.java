@@ -2,52 +2,30 @@ package nordmods.uselessreptile.datagen.data.mod;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.datagen.data.URAbstractDataProvider;
 import org.jspecify.annotations.NonNull;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class URDragonModelProvider implements DataProvider {
-    protected final FabricPackOutput output;
-    private final PackOutput.PathProvider pathResolver;
-    private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
-    private final List<Tuple<Identifier, DragonModelData>> holder = new ArrayList<>();
+public class URDragonModelProvider extends URAbstractDataProvider<DragonModelData> {
 
     public URDragonModelProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
-        this.output = output;
-        this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/dragon_model");
-        this.registryLookupFuture = registryLookupFuture;
+        super(output, registryLookupFuture, DragonModelData.CODEC, "uselessreptile/dragon_model");
     }
 
     @Override
-    public @NonNull CompletableFuture<?> run(@NonNull CachedOutput writer) {
-        return registryLookupFuture.thenCompose((registryLookupFuture) -> {
-            addSpawnEntries();
-            List<CompletableFuture<?>> list = new ArrayList<>();
-            holder.forEach(entry -> {
-                Path path = pathResolver.json(entry.getA());
-                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonModelData.CODEC, entry.getB(), path));
-            });
-            return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
-        });
-    }
-
-    protected void addSpawnEntries() {
+    public void addEntries() {
         addWyvern("jeb_", true);
         addWyvern("green", false);
         addWyvern("brown", false);
@@ -143,10 +121,6 @@ public class URDragonModelProvider implements DataProvider {
         sounds.add(new DragonModelData.Sound("death", URSoundEvent.MAGMAMUNCHER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("apply_fire_resistance", SoundEvents.FIRECHARGE_USE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         addEntry(UREntities.MAGMAMUNCHER, variant, Optional.of(sounds), true, animatedTexture);
-    }
-
-    protected void addEntry(Identifier id, DragonModelData variant) {
-        holder.add(new Tuple<>(id, variant));
     }
 
     protected void addEntry(Identifier dragonId, String variant, Optional<List<DragonModelData.Sound>> sounds, boolean cull, boolean animatedTexture) {

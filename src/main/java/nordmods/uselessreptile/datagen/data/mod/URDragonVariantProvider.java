@@ -3,13 +3,9 @@ package nordmods.uselessreptile.datagen.data.mod;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.data.CachedOutput;
-import net.minecraft.data.DataProvider;
-import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
@@ -17,49 +13,21 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.*;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URRegistries;
+import nordmods.uselessreptile.datagen.data.URAbstractDataProvider;
 import org.jspecify.annotations.NonNull;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("deprecation")
-public class URDragonVariantProvider implements DataProvider {
-    private static final List<Tuple<Identifier, DragonVariant>> holder = new ArrayList<>();
-    protected final FabricPackOutput output;
-    private final PackOutput.PathProvider pathResolver;
-    private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
+public class URDragonVariantProvider extends URAbstractDataProvider<DragonVariant> {
 
     public URDragonVariantProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
-        this.output = output;
-        this.pathResolver = output.createPathProvider(PackOutput.Target.DATA_PACK, "uselessreptile/variant");
-        this.registryLookupFuture = registryLookupFuture;
+        super(output, registryLookupFuture, DragonVariant.CODEC, "uselessreptile/variant");
     }
 
-    public void addEntry(Identifier id, DragonVariant variant) {
-        holder.add(new Tuple<>(id, variant));
-    }
-
-    public void addSecretEntry(Identifier id, DragonVariant variant) {
-        holder.add(new Tuple<>(id, variant));
-    }
-
-    @Override
-    public @NonNull CompletableFuture<?> run(@NonNull CachedOutput writer) {
-        return registryLookupFuture.thenCompose((registryLookupFuture) -> {
-            addEntries();
-            List<CompletableFuture<?>> list = new ArrayList<>();
-            holder.forEach(variant -> {
-                Path path = pathResolver.json(variant.getA());
-                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonVariant.CODEC, variant.getB(), path));
-            });
-            return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
-        });
-    }
-
-    protected void addEntries() {
+    public void addEntries() {
         addWyvern("green");
         addWyvern("brown");
         CommonDragonVariantData jeb_ = new CommonDragonVariantData(
@@ -74,7 +42,7 @@ public class URDragonVariantProvider implements DataProvider {
                 Optional.empty(),
                 Optional.empty()
         );
-        addSecretEntry(UselessReptile.id("jeb_"), new WyvernVariant(jeb_));
+        addEntry(UselessReptile.id("jeb_"), new WyvernVariant(jeb_));
 
         addMoleclaw("black", false);
         addMoleclaw("brown", false);
