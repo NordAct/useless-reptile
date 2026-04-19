@@ -1,18 +1,20 @@
 package nordmods.uselessreptile.common.init;
 
-import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.block.DepletedMagmaBlock;
-
-import java.util.function.Function;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
+import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.block.DepletedMagmaBlock;
+import nordmods.uselessreptile.common.block.DragonPlaceholderBlock;
+
+import java.util.function.Function;
 
 public class URBlocks {
     public static final Block DEPLETED_MAGMA = register(
@@ -25,6 +27,17 @@ public class URBlocks {
                     .requiresCorrectToolForDrops()
                     .strength(0.4f)
                     .sound(SoundType.NETHERRACK));
+
+    public static final Block DRAGON_PLACEHOLDER = register(
+            "dragon_placeholder",
+            DragonPlaceholderBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .strength(-1.0F, 3600000.0F)
+                    .noLootTable()
+                    .isValidSpawn(Blocks::never)
+    );
 
     public static void init() {
 

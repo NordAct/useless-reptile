@@ -20,6 +20,7 @@ public class URTags {
     public static final TagKey<Biome> MOLECLAW_SPAWN_BLACKLIST = register(Registries.BIOME,"moleclaw_spawn_blacklist");
     public static final TagKey<Biome> LIGHTNING_CHASER_SPAWN_BLACKLIST = register(Registries.BIOME,"lightning_chaser_spawn_blacklist");
     public static final TagKey<Biome> MAGMAMUNCHER_SPAWN_BLACKLIST = register(Registries.BIOME,"magmamuncher_spawn_blacklist");
+    public static final TagKey<Biome> HAS_LIGHTNING_CHASER_NEST_DESERT = register(Registries.BIOME,"has_structure/lightning_chaser_nest_desert");
 
     public static final TagKey<Item> PROTECTS_MOLECLAW_FROM_LIGHT = register(Registries.ITEM, "protects_moleclaw_from_light");
     public static final TagKey<Item> VORTEX_HORNS = register(Registries.ITEM, "vortex_horns");

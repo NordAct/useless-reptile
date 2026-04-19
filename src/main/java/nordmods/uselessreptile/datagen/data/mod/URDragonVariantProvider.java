@@ -27,7 +27,7 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
         super(output, registryLookupFuture, DragonVariant.CODEC, "uselessreptile/variant");
     }
 
-    public void addEntries() {
+    public void addEntries(HolderLookup.Provider provider) {
         addWyvern("green");
         addWyvern("brown");
         CommonDragonVariantData jeb_ = new CommonDragonVariantData(

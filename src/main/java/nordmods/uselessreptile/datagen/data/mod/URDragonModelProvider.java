@@ -25,7 +25,7 @@ public class URDragonModelProvider extends URAbstractDataProvider<DragonModelDat
     }
 
     @Override
-    public void addEntries() {
+    public void addEntries(HolderLookup.Provider provider) {
         addWyvern("jeb_", true);
         addWyvern("green", false);
         addWyvern("brown", false);

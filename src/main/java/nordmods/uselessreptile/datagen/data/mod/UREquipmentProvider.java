@@ -30,7 +30,7 @@ public class UREquipmentProvider extends URAbstractDataProvider<EquipmentModelDa
     }
 
     @Override
-    public void addEntries() {
+    public void addEntries(HolderLookup.Provider provider) {
         addSaddle(UREntities.WYVERN, Items.SADDLE, List.of("spikes_front"), List.of(Vec3.ZERO));
         addSaddle(UREntities.WYVERN, URItems.DUAL_SADDLE, List.of("spikes_front", "spikes_back"), List.of(Vec3.ZERO, new Vec3(0, 0, -0.8125f)));
         addSaddle(UREntities.LIGHTNING_CHASER, Items.SADDLE, List.of(), List.of(Vec3.ZERO));

@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBiomeTags;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Blocks;
 import nordmods.uselessreptile.UselessReptile;
@@ -23,7 +24,7 @@ public class URSpawnConditionsProvider extends URAbstractDataProvider<List<Drago
     }
 
     @Override
-    public void addEntries() {
+    public void addEntries(HolderLookup.Provider provider) {
         addWyvernEntry("default", 1);
         addMoleclawEntry("default", 13);
         addMoleclawEntry("rare", 1);
@@ -33,7 +34,7 @@ public class URSpawnConditionsProvider extends URAbstractDataProvider<List<Drago
                 .setWeight(9)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
                 .setMinAltitude(62)
-                .addAllowedBlockTag(BlockTags.AIR)
+                .addAllowedSpawnReasons(EntitySpawnReason.EVENT, EntitySpawnReason.STRUCTURE)
                 .build();
         addEntry(UselessReptile.id("lightning_chaser/blue"), Collections.singletonList(lightningChaserBlueEvent));
 
@@ -41,7 +42,7 @@ public class URSpawnConditionsProvider extends URAbstractDataProvider<List<Drago
                 .setWeight(9)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_DRY)
                 .setMinAltitude(62)
-                .addAllowedBlockTag(BlockTags.AIR)
+                .addAllowedSpawnReasons(EntitySpawnReason.EVENT, EntitySpawnReason.STRUCTURE)
                 .build();
         addEntry(UselessReptile.id("lightning_chaser/brown"), Collections.singletonList(lightningChaserBrownEvent));
 
@@ -51,7 +52,7 @@ public class URSpawnConditionsProvider extends URAbstractDataProvider<List<Drago
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_OCEAN)
                 .addBannedBiomeTag(ConventionalBiomeTags.IS_DRY)
                 .setMinAltitude(62)
-                .addAllowedBlockTag(BlockTags.AIR)
+                .addAllowedSpawnReasons(EntitySpawnReason.EVENT, EntitySpawnReason.STRUCTURE)
                 .build();
         addEntry(UselessReptile.id("lightning_chaser/grey"), Collections.singletonList(lightningChaserGreyEvent));
 
@@ -59,7 +60,7 @@ public class URSpawnConditionsProvider extends URAbstractDataProvider<List<Drago
                 .setWeight(1)
                 .addAllowedBiomeTag(ConventionalBiomeTags.IS_OVERWORLD)
                 .setMinAltitude(62)
-                .addAllowedBlockTag(BlockTags.AIR)
+                .addAllowedSpawnReasons(EntitySpawnReason.EVENT, EntitySpawnReason.STRUCTURE)
                 .build();
         addEntry(UselessReptile.id("lightning_chaser/purple"), Collections.singletonList(lightningChaserPurpleEvent));
 

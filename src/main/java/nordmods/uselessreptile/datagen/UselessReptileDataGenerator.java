@@ -2,6 +2,8 @@ package nordmods.uselessreptile.datagen;
 
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
 import nordmods.uselessreptile.datagen.assets.URModelProvider;
 import nordmods.uselessreptile.datagen.assets.URSoundsProvider;
 import nordmods.uselessreptile.datagen.data.*;
@@ -9,11 +11,18 @@ import nordmods.uselessreptile.datagen.data.mod.URDragonModelProvider;
 import nordmods.uselessreptile.datagen.data.mod.URDragonVariantProvider;
 import nordmods.uselessreptile.datagen.data.mod.UREquipmentProvider;
 import nordmods.uselessreptile.datagen.data.mod.URSpawnConditionsProvider;
+import nordmods.uselessreptile.datagen.data.structure.URStructureProvider;
+import nordmods.uselessreptile.datagen.data.structure.URStructureSetProvider;
+import nordmods.uselessreptile.datagen.data.structure.URTemplatePoolProvider;
 import nordmods.uselessreptile.datagen.data.tags.*;
+import org.jspecify.annotations.NonNull;
 
 public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
+    public static boolean ENABLE_DATAGEN = true;
     @Override
-    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
+    public void onInitializeDataGenerator(@NonNull FabricDataGenerator fabricDataGenerator) {
+        if (!ENABLE_DATAGEN) return;
+
         final FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(URItemTagsProvider::new);
         pack.addProvider(URBiomeTagsProvider::new);
@@ -34,5 +43,16 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
 
         pack.addProvider(URModelProvider::new);
         pack.addProvider(URSoundsProvider::new);
+
+        pack.addProvider(URTemplatePoolProvider::new);
+        pack.addProvider(URStructureProvider::new);
+        pack.addProvider(URStructureSetProvider::new);
+    }
+
+    @Override
+    public void buildRegistry(@NonNull RegistrySetBuilder registryBuilder) {
+        registryBuilder.add(Registries.TEMPLATE_POOL, URTemplatePoolProvider::register);
+        registryBuilder.add(Registries.STRUCTURE, URStructureProvider::register);
+        registryBuilder.add(Registries.STRUCTURE_SET, URStructureSetProvider::register);
     }
 }

@@ -32,12 +32,12 @@ public abstract class URAbstractDataProvider<T> implements DataProvider {
 
     @Override
     public @NonNull CompletableFuture<?> run(@NonNull CachedOutput cache) {
-        return registryLookupFuture.thenCompose((registryLookupFuture) -> {
-            addEntries();
+        return registryLookupFuture.thenCompose((provider) -> {
+            addEntries(provider);
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach((key, value) -> {
                 Path path = pathResolver.json(key);
-                list.add(DataProvider.saveStable(cache, registryLookupFuture, codec, value, path));
+                list.add(DataProvider.saveStable(cache, provider, codec, value, path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
@@ -47,5 +47,5 @@ public abstract class URAbstractDataProvider<T> implements DataProvider {
         holder.put(id, entry);
     }
 
-    public abstract void addEntries();
+    public abstract void addEntries(HolderLookup.Provider provider);
 }

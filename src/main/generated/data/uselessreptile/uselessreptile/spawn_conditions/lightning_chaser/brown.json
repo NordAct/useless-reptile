@@ -3,8 +3,9 @@
     "allowed_biomes": [
       "#c:is_dry"
     ],
-    "allowed_blocks": [
-      "#minecraft:air"
+    "allowed_spawn_reasons": [
+      "EVENT",
+      "STRUCTURE"
     ],
     "altitude": {
       "min": 62

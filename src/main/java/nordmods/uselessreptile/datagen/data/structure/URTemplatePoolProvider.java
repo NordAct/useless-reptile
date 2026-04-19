@@ -1,0 +1,117 @@
+package nordmods.uselessreptile.datagen.data.structure;
+
+import com.mojang.datafixers.util.Pair;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.data.worldgen.Pools;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
+import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import nordmods.uselessreptile.UselessReptile;
+import org.jspecify.annotations.NonNull;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class URTemplatePoolProvider extends FabricDynamicRegistryProvider {
+    public URTemplatePoolProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+        super(output, registryLookupFuture);
+    }
+
+    public static final ResourceKey<StructureTemplatePool> LIGHTNING_CHASER_NEST_DESERT = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/desert"));
+    public static final ResourceKey<StructureTemplatePool> LOOT_BIG = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/loot/big"));
+    public static final ResourceKey<StructureTemplatePool> LOOT_MEDIUM = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/loot/medium"));
+    public static final ResourceKey<StructureTemplatePool> LOOT_SMALL = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/loot/small"));
+    public static final ResourceKey<StructureTemplatePool> LIGHTNING_CHASER = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/lightning_chaser"));
+
+    @Override
+    public void configure(HolderLookup.Provider provider, @NonNull Entries entries) {
+        entries.addAll(provider.lookupOrThrow(Registries.TEMPLATE_POOL));
+    }
+
+    public static void register(BootstrapContext<StructureTemplatePool> bootstrapContext) {
+        Holder<StructureTemplatePool> empty = bootstrapContext.lookup(Registries.TEMPLATE_POOL).getOrThrow(Pools.EMPTY);
+        bootstrapContext.register(
+                LIGHTNING_CHASER_NEST_DESERT,
+                new StructureTemplatePool(
+                        empty,
+                        List.of(
+                                Pair.of(StructurePoolElement.single(LIGHTNING_CHASER_NEST_DESERT.identifier().toString()), 1)
+                        ),
+                        StructureTemplatePool.Projection.RIGID
+                )
+        );
+        bootstrapContext.register(
+                LOOT_BIG,
+                new StructureTemplatePool(
+                        empty,
+                        List.of(
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_big").toString()), 7),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_big").toString()), 7),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_big").toString()), 7),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_medium").toString()), 11),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_medium").toString()), 11),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_medium").toString()), 11),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/chest").toString()), 10),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/heavy_core").toString()), 6),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 40)
+                        ),
+                        StructureTemplatePool.Projection.RIGID
+                )
+        );
+        bootstrapContext.register(
+                LOOT_MEDIUM,
+                new StructureTemplatePool(
+                        empty,
+                        List.of(
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_medium").toString()), 7),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_medium").toString()), 7),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_medium").toString()), 7),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_small").toString()), 13),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_small").toString()), 13),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small").toString()), 13),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/chest").toString()), 12),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/heavy_core").toString()), 3),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 25)
+
+                        ),
+                        StructureTemplatePool.Projection.RIGID
+                )
+        );
+
+        bootstrapContext.register(
+                LOOT_SMALL,
+                new StructureTemplatePool(
+                        empty,
+                        List.of(
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_small").toString()), 25),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_small").toString()), 25),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small").toString()), 25),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/chest").toString()), 15),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 10)
+                        ),
+                        StructureTemplatePool.Projection.RIGID
+                )
+        );
+
+        bootstrapContext.register(
+                LIGHTNING_CHASER,
+                new StructureTemplatePool(
+                        empty,
+                        List.of(
+                                Pair.of(StructurePoolElement.single(LIGHTNING_CHASER.identifier().toString()), 1)
+                        ),
+                        StructureTemplatePool.Projection.RIGID
+                )
+        );
+    }
+
+    @Override
+    public @NonNull String getName() {
+        return "Template Pools";
+    }
+}

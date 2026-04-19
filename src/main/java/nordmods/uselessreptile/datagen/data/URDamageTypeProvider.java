@@ -17,7 +17,7 @@ public class URDamageTypeProvider extends URAbstractDataProvider<DamageType> {
     }
 
     @Override
-    public void addEntries() {
+    public void addEntries(HolderLookup.Provider provider) {
         addEntry(UselessReptile.id("acid"), new DamageType("acid", DamageScaling.NEVER, 0));
     }
 

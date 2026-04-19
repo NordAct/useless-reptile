@@ -86,8 +86,8 @@ public class DragonSpawnUtil {
     public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, DragonVariantType<? extends DragonVariant> type , EntitySpawnReason spawnReason) {
         RegistryAccess registryManager = world.registryAccess();
         return registryManager.lookupOrThrow(URResourceKeys.DRAGON_VARIANT).stream()
-                .filter(varinat -> varinat.getType().equals(type))
                 .filter(variant -> {
+                    if (!variant.getType().equals(type)) return false;
                     if (variant.common().spawnConditions().isPresent()) {
                         List<DragonSpawnConditions> conditionsList = registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get());
                         if (conditionsList == null) return false;
@@ -104,6 +104,14 @@ public class DragonSpawnUtil {
     }
 
     private static boolean checkConditions(DragonSpawnConditions conditions, LevelAccessor world, BlockPos pos, DragonVariantType<? extends DragonVariant> type, EntitySpawnReason spawnReason) {
+        if (conditions.allowedOrBannedSpawnReasons().isPresent()) {
+            if (conditions.allowedOrBannedSpawnReasons().get().left().isPresent()
+                && !conditions.allowedOrBannedSpawnReasons().get().left().get().contains(spawnReason)) return false;
+
+            if (conditions.allowedOrBannedSpawnReasons().get().right().isPresent()
+                    && conditions.allowedOrBannedSpawnReasons().get().right().get().contains(spawnReason)) return false;
+        }
+
         //altitude check
         if (conditions.altitudeRestriction().isPresent()) {
             DragonSpawnConditions.IntRange restriction = conditions.altitudeRestriction().get();

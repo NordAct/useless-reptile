@@ -1,0 +1,14 @@
+{
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 5553535,
+    "separation": 16,
+    "spacing": 24
+  },
+  "structures": [
+    {
+      "structure": "uselessreptile:lightning_chaser_nest_desert",
+      "weight": 1
+    }
+  ]
+}
