@@ -11,6 +11,7 @@ import nordmods.uselessreptile.datagen.data.mod.URDragonModelProvider;
 import nordmods.uselessreptile.datagen.data.mod.URDragonVariantProvider;
 import nordmods.uselessreptile.datagen.data.mod.UREquipmentProvider;
 import nordmods.uselessreptile.datagen.data.mod.URSpawnConditionsProvider;
+import nordmods.uselessreptile.datagen.data.structure.URProcessorsListProvider;
 import nordmods.uselessreptile.datagen.data.structure.URStructureProvider;
 import nordmods.uselessreptile.datagen.data.structure.URStructureSetProvider;
 import nordmods.uselessreptile.datagen.data.structure.URTemplatePoolProvider;
@@ -44,6 +45,7 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URModelProvider::new);
         pack.addProvider(URSoundsProvider::new);
 
+        pack.addProvider(URProcessorsListProvider::new);
         pack.addProvider(URTemplatePoolProvider::new);
         pack.addProvider(URStructureProvider::new);
         pack.addProvider(URStructureSetProvider::new);
@@ -51,6 +53,7 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
 
     @Override
     public void buildRegistry(@NonNull RegistrySetBuilder registryBuilder) {
+        registryBuilder.add(Registries.PROCESSOR_LIST, URProcessorsListProvider::register);
         registryBuilder.add(Registries.TEMPLATE_POOL, URTemplatePoolProvider::register);
         registryBuilder.add(Registries.STRUCTURE, URStructureProvider::register);
         registryBuilder.add(Registries.STRUCTURE_SET, URStructureSetProvider::register);

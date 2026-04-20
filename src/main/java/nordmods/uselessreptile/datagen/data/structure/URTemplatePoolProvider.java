@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -11,6 +12,7 @@ import net.minecraft.data.worldgen.Pools;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.structure.pools.StructurePoolElement;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorList;
 import nordmods.uselessreptile.UselessReptile;
 import org.jspecify.annotations.NonNull;
 
@@ -26,7 +28,6 @@ public class URTemplatePoolProvider extends FabricDynamicRegistryProvider {
     public static final ResourceKey<StructureTemplatePool> LOOT_BIG = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/loot/big"));
     public static final ResourceKey<StructureTemplatePool> LOOT_MEDIUM = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/loot/medium"));
     public static final ResourceKey<StructureTemplatePool> LOOT_SMALL = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/loot/small"));
-    public static final ResourceKey<StructureTemplatePool> LIGHTNING_CHASER = ResourceKey.create(Registries.TEMPLATE_POOL, UselessReptile.id("lightning_chaser_nest/lightning_chaser"));
 
     @Override
     public void configure(HolderLookup.Provider provider, @NonNull Entries entries) {
@@ -35,12 +36,19 @@ public class URTemplatePoolProvider extends FabricDynamicRegistryProvider {
 
     public static void register(BootstrapContext<StructureTemplatePool> bootstrapContext) {
         Holder<StructureTemplatePool> empty = bootstrapContext.lookup(Registries.TEMPLATE_POOL).getOrThrow(Pools.EMPTY);
+        HolderGetter<StructureProcessorList> processorLists = bootstrapContext.lookup(Registries.PROCESSOR_LIST);
         bootstrapContext.register(
                 LIGHTNING_CHASER_NEST_DESERT,
                 new StructureTemplatePool(
                         empty,
                         List.of(
-                                Pair.of(StructurePoolElement.single(LIGHTNING_CHASER_NEST_DESERT.identifier().toString()), 1)
+                                Pair.of(
+                                        StructurePoolElement.single(
+                                                LIGHTNING_CHASER_NEST_DESERT.identifier().toString(),
+                                                processorLists.getOrThrow(URProcessorsListProvider.REMOVE_DRAGON_PLACEHOLDER)
+                                        ),
+                                        1
+                                )
                         ),
                         StructureTemplatePool.Projection.RIGID
                 )
@@ -93,17 +101,6 @@ public class URTemplatePoolProvider extends FabricDynamicRegistryProvider {
                                 Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small").toString()), 25),
                                 Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/chest").toString()), 15),
                                 Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 10)
-                        ),
-                        StructureTemplatePool.Projection.RIGID
-                )
-        );
-
-        bootstrapContext.register(
-                LIGHTNING_CHASER,
-                new StructureTemplatePool(
-                        empty,
-                        List.of(
-                                Pair.of(StructurePoolElement.single(LIGHTNING_CHASER.identifier().toString()), 1)
                         ),
                         StructureTemplatePool.Projection.RIGID
                 )

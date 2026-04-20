@@ -4,9 +4,7 @@
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "uselessreptile:lightning_chaser_nest/desert",
-        "processors": {
-          "processors": []
-        },
+        "processors": "uselessreptile:remove_dragon_placeholder",
         "projection": "rigid"
       },
       "weight": 1
