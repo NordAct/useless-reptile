@@ -15,6 +15,14 @@
       ],
       "slot": "saddle"
     },
+    "uselessreptile:dragon_chestplate_copper": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/moleclaw/chestplate.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_copper.png"
+      },
+      "slot": "chestplate"
+    },
     "uselessreptile:dragon_chestplate_diamond": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json",
@@ -46,6 +54,14 @@
         "texture": "uselessreptile:textures/entity/moleclaw/armor_netherite.png"
       },
       "slot": "chestplate"
+    },
+    "uselessreptile:dragon_helmet_copper": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_copper.png"
+      },
+      "slot": "helmet"
     },
     "uselessreptile:dragon_helmet_diamond": {
       "model_data": {
@@ -79,6 +95,14 @@
       },
       "slot": "helmet"
     },
+    "uselessreptile:dragon_tail_armor_copper": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/moleclaw/tail_armor.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/armor_copper.png"
+      },
+      "slot": "tail_armor"
+    },
     "uselessreptile:dragon_tail_armor_diamond": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json",
@@ -110,6 +134,15 @@
         "texture": "uselessreptile:textures/entity/moleclaw/armor_netherite.png"
       },
       "slot": "tail_armor"
+    },
+    "uselessreptile:moleclaw_helmet_copper": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/moleclaw/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/moleclaw/moleclaw_helmet_copper.png",
+        "translucent": true
+      },
+      "slot": "helmet"
     },
     "uselessreptile:moleclaw_helmet_diamond": {
       "model_data": {

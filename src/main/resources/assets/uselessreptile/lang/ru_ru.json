@@ -43,6 +43,10 @@
   "item.uselessreptile.dragon_tail_armor_netherite": "Незеритовая броня на хвост для дракона",
   "item.uselessreptile.dual_saddle" : "Двойное седло",
   "item.uselessreptile.variant_changing_orb" : "Шар для смены варианта",
+  "item.uselessreptile.moleclaw_helmet_copper" : "Медный шлем для кротолапа",
+  "item.uselessreptile.dragon_helmet_copper" : "Медный шлем для дракона",
+  "item.uselessreptile.dragon_chestplate_copper" : "Медный нагрудник для дракона",
+  "item.uselessreptile.dragon_tail_armor_copper" : "Медная броня на хвост для дракона",
 
   "tooltip.uselessreptile.hidden": "Зажмите Левый Шифт, чтобы узнать больше",
   "tooltip.uselessreptile.flute": "Может быть использована для отдачи команд речным пикорогам.\nНажмите ПКМ в присяди по воздуху, чтобы поменять режим",

@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": "minecraft:leather",
+    "M": "#c:ingots/copper"
+  },
+  "pattern": [
+    "MMM",
+    " L "
+  ],
+  "result": {
+    "id": "uselessreptile:dragon_tail_armor_copper"
+  }
+}

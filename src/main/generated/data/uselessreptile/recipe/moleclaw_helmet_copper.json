@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "G": "#c:glass_blocks/tinted",
+    "H": "uselessreptile:dragon_helmet_copper"
+  },
+  "pattern": [
+    "GHG"
+  ],
+  "result": {
+    "id": "uselessreptile:moleclaw_helmet_copper"
+  }
+}

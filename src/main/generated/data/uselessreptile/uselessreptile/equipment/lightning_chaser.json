@@ -15,6 +15,14 @@
       ],
       "slot": "saddle"
     },
+    "uselessreptile:dragon_chestplate_copper": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/chestplate.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_copper.png"
+      },
+      "slot": "chestplate"
+    },
     "uselessreptile:dragon_chestplate_diamond": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
@@ -47,6 +55,14 @@
       },
       "slot": "chestplate"
     },
+    "uselessreptile:dragon_helmet_copper": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/helmet.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_copper.png"
+      },
+      "slot": "helmet"
+    },
     "uselessreptile:dragon_helmet_diamond": {
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
@@ -78,6 +94,14 @@
         "texture": "uselessreptile:textures/entity/lightning_chaser/armor_netherite.png"
       },
       "slot": "helmet"
+    },
+    "uselessreptile:dragon_tail_armor_copper": {
+      "model_data": {
+        "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/empty.animation.json",
+        "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/tail_armor.geo.json",
+        "texture": "uselessreptile:textures/entity/lightning_chaser/armor_copper.png"
+      },
+      "slot": "tail_armor"
     },
     "uselessreptile:dragon_tail_armor_diamond": {
       "model_data": {

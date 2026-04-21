@@ -43,6 +43,10 @@
   "item.uselessreptile.dragon_tail_armor_netherite" : "Netherite Dragon Tail Armor",
   "item.uselessreptile.dual_saddle" : "Dual Saddle",
   "item.uselessreptile.variant_changing_orb" : "Variant Changing Orb",
+  "item.uselessreptile.moleclaw_helmet_copper" : "Copper Moleclaw Helmet",
+  "item.uselessreptile.dragon_helmet_copper" : "Copper Dragon Helmet",
+  "item.uselessreptile.dragon_chestplate_copper" : "Copper Dragon Chestplate",
+  "item.uselessreptile.dragon_tail_armor_copper" : "Copper Dragon Tail Armor",
 
   "tooltip.uselessreptile.hidden": "Hold Left Shift for more info",
   "tooltip.uselessreptile.flute": "Can be used to command River Pikehorns.\nRight-click in air while crouching to change mode",

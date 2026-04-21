@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "L": "minecraft:leather",
+    "M": "#c:ingots/copper"
+  },
+  "pattern": [
+    "MMM",
+    "M M",
+    "L L"
+  ],
+  "result": {
+    "id": "uselessreptile:dragon_helmet_copper"
+  }
+}

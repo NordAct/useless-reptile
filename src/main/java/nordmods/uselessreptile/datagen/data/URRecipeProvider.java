@@ -33,18 +33,22 @@ public class URRecipeProvider extends FabricRecipeProvider {
         return new RecipeProvider(wrapperLookup, recipeExporter) {
             @Override
             public void buildRecipes() {
+                offerDragonHelmetRecipe(this, output, URItems.DRAGON_HELMET_COPPER,ConventionalItemTags.COPPER_INGOTS);
                 offerDragonHelmetRecipe(this, output, URItems.DRAGON_HELMET_IRON,ConventionalItemTags.IRON_INGOTS);
                 offerDragonHelmetRecipe(this, output, URItems.DRAGON_HELMET_GOLD, ConventionalItemTags.GOLD_INGOTS);
                 offerDragonHelmetRecipe(this, output, URItems.DRAGON_HELMET_DIAMOND, ConventionalItemTags.DIAMOND_GEMS);
 
+                offerDragonChestplateRecipe(this, output, URItems.DRAGON_CHESTPLATE_COPPER,ConventionalItemTags.COPPER_INGOTS);
                 offerDragonChestplateRecipe(this, output, URItems.DRAGON_CHESTPLATE_IRON,ConventionalItemTags.IRON_INGOTS);
                 offerDragonChestplateRecipe(this, output, URItems.DRAGON_CHESTPLATE_GOLD, ConventionalItemTags.GOLD_INGOTS);
                 offerDragonChestplateRecipe(this, output, URItems.DRAGON_CHESTPLATE_DIAMOND, ConventionalItemTags.DIAMOND_GEMS);
 
+                offerDragonTailArmorRecipe(this, output, URItems.DRAGON_TAIL_ARMOR_COPPER,ConventionalItemTags.COPPER_INGOTS);
                 offerDragonTailArmorRecipe(this, output, URItems.DRAGON_TAIL_ARMOR_IRON,ConventionalItemTags.IRON_INGOTS);
                 offerDragonTailArmorRecipe(this, output, URItems.DRAGON_TAIL_ARMOR_GOLD, ConventionalItemTags.GOLD_INGOTS);
                 offerDragonTailArmorRecipe(this, output, URItems.DRAGON_TAIL_ARMOR_DIAMOND, ConventionalItemTags.DIAMOND_GEMS);
 
+                offerMoleclawHelmetRecipe(this, output, URItems.MOLECLAW_HELMET_COPPER, URItems.DRAGON_HELMET_COPPER);
                 offerMoleclawHelmetRecipe(this, output, URItems.MOLECLAW_HELMET_IRON, URItems.DRAGON_HELMET_IRON);
                 offerMoleclawHelmetRecipe(this, output, URItems.MOLECLAW_HELMET_GOLD, URItems.DRAGON_HELMET_GOLD);
                 offerMoleclawHelmetRecipe(this, output, URItems.MOLECLAW_HELMET_DIAMOND, URItems.DRAGON_HELMET_DIAMOND);

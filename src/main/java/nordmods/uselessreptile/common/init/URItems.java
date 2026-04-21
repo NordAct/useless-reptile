@@ -41,21 +41,25 @@ public class URItems {
     public static final Item VARIANT_CHANGING_ORB = registerItem("variant_changing_orb", properties -> new VariantChangingOrbItem(properties.stacksTo(1).component(URItemComponents.DRAGON_VARIANT, DragonVariantComponent.DEFAULT)));
     public static final Item DUAL_SADDLE = registerItem("dual_saddle", properties -> new Item(properties.stacksTo(1)));
 
+    public static final Item DRAGON_HELMET_COPPER = registerItem("dragon_helmet_copper", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));
     public static final Item DRAGON_HELMET_IRON = registerItem("dragon_helmet_iron", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));
     public static final Item DRAGON_HELMET_GOLD = registerItem("dragon_helmet_gold", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 3, 0, 0, properties));
     public static final Item DRAGON_HELMET_DIAMOND = registerItem("dragon_helmet_diamond", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 5, 1, 0, properties));
     public static final Item DRAGON_HELMET_NETHERITE = registerItem("dragon_helmet_netherite", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 7, 2, 1, properties));
 
+    public static final Item DRAGON_CHESTPLATE_COPPER = registerItem("dragon_chestplate_copper", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 3, 0, 0, properties));
     public static final Item DRAGON_CHESTPLATE_IRON = registerItem("dragon_chestplate_iron", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 4, 0, 0, properties));
     public static final Item DRAGON_CHESTPLATE_GOLD = registerItem("dragon_chestplate_gold", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 5, 0, 0, properties));
     public static final Item DRAGON_CHESTPLATE_DIAMOND = registerItem("dragon_chestplate_diamond", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 7, 1, 0, properties));
     public static final Item DRAGON_CHESTPLATE_NETHERITE = registerItem("dragon_chestplate_netherite", properties -> createDragonArmorItem(EquipmentSlot.CHEST, 10, 2, 1, properties));
 
+    public static final Item DRAGON_TAIL_ARMOR_COPPER = registerItem("dragon_tail_armor_copper", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 1, 0, 0, properties));
     public static final Item DRAGON_TAIL_ARMOR_IRON = registerItem("dragon_tail_armor_iron", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 1, 0, 0, properties));
     public static final Item DRAGON_TAIL_ARMOR_GOLD = registerItem("dragon_tail_armor_gold", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 2, 0, 0, properties));
     public static final Item DRAGON_TAIL_ARMOR_DIAMOND = registerItem("dragon_tail_armor_diamond", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 4, 1, 0, properties));
     public static final Item DRAGON_TAIL_ARMOR_NETHERITE = registerItem("dragon_tail_armor_netherite", properties -> createDragonArmorItem(EquipmentSlot.LEGS, 6, 2, 1, properties));
 
+    public static final Item MOLECLAW_HELMET_COPPER = registerItem("moleclaw_helmet_copper", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));
     public static final Item MOLECLAW_HELMET_IRON = registerItem("moleclaw_helmet_iron", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 2, 0, 0, properties));
     public static final Item MOLECLAW_HELMET_GOLD = registerItem("moleclaw_helmet_gold", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 3, 0, 0, properties));
     public static final Item MOLECLAW_HELMET_DIAMOND = registerItem("moleclaw_helmet_diamond", properties -> createDragonArmorItem(EquipmentSlot.HEAD, 5, 1, 0, properties));
@@ -95,10 +99,14 @@ public class URItems {
             c.accept(Items.BLAZE_ROD);
             c.accept(Items.SADDLE);
             c.accept(DUAL_SADDLE);
+            c.accept(MOLECLAW_HELMET_COPPER);
             c.accept(MOLECLAW_HELMET_IRON);
             c.accept(MOLECLAW_HELMET_GOLD);
             c.accept(MOLECLAW_HELMET_DIAMOND);
             c.accept(MOLECLAW_HELMET_NETHERITE);
+            c.accept(DRAGON_HELMET_COPPER);
+            c.accept(DRAGON_CHESTPLATE_COPPER);
+            c.accept(DRAGON_TAIL_ARMOR_COPPER);
             c.accept(DRAGON_HELMET_IRON);
             c.accept(DRAGON_CHESTPLATE_IRON);
             c.accept(DRAGON_TAIL_ARMOR_IRON);
