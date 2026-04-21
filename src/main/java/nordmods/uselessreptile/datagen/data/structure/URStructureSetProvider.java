@@ -37,7 +37,7 @@ public class URStructureSetProvider extends FabricDynamicRegistryProvider {
                         List.of(
                                 StructureSet.entry(structureLookup.getOrThrow(URStructureProvider.LIGHTNING_CHASER_NEST_DESERT), 1)
                         ),
-                        new RandomSpreadStructurePlacement(24, 16, RandomSpreadType.LINEAR, 5553535)
+                        new RandomSpreadStructurePlacement(32, 16, RandomSpreadType.LINEAR, 5553535)
                 )
         );
     }
@@ -45,7 +45,7 @@ public class URStructureSetProvider extends FabricDynamicRegistryProvider {
 
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Structure Set";
     }
 }

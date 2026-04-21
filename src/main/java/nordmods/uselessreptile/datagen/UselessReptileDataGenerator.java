@@ -6,7 +6,12 @@ import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import nordmods.uselessreptile.datagen.assets.URModelProvider;
 import nordmods.uselessreptile.datagen.assets.URSoundsProvider;
-import nordmods.uselessreptile.datagen.data.*;
+import nordmods.uselessreptile.datagen.data.URAdvancementProvider;
+import nordmods.uselessreptile.datagen.data.URDamageTypeProvider;
+import nordmods.uselessreptile.datagen.data.URRecipeProvider;
+import nordmods.uselessreptile.datagen.data.loot.URBlockLootTableProvider;
+import nordmods.uselessreptile.datagen.data.loot.URChestLootTableProvider;
+import nordmods.uselessreptile.datagen.data.loot.UREntityLootTableProvider;
 import nordmods.uselessreptile.datagen.data.mod.URDragonModelProvider;
 import nordmods.uselessreptile.datagen.data.mod.URDragonVariantProvider;
 import nordmods.uselessreptile.datagen.data.mod.UREquipmentProvider;
@@ -33,9 +38,11 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URRecipeProvider::new);
         pack.addProvider(URAdvancementProvider::new);
         pack.addProvider(URDamageTypeProvider::new);
-        pack.addProvider(UREntityLootTableProvider::new);
-        pack.addProvider(URBlockLootTableGenerator::new);
         pack.addProvider(UREntityTypeTagsProvider::new);
+
+        pack.addProvider(UREntityLootTableProvider::new);
+        pack.addProvider(URBlockLootTableProvider::new);
+        pack.addProvider(URChestLootTableProvider::new);
 
         pack.addProvider(UREquipmentProvider::new);
         pack.addProvider(URDragonVariantProvider::new);

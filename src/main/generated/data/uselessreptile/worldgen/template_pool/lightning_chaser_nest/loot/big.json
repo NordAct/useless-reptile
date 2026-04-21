@@ -3,76 +3,140 @@
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "uselessreptile:lightning_chaser_nest/loot/copper_pile_big",
+        "location": "uselessreptile:lightning_chaser_nest/loot/copper_pile_big1",
         "processors": {
           "processors": []
         },
         "projection": "rigid"
       },
-      "weight": 7
+      "weight": 4
     },
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "uselessreptile:lightning_chaser_nest/loot/gold_pile_big",
+        "location": "uselessreptile:lightning_chaser_nest/loot/gold_pile_big1",
         "processors": {
           "processors": []
         },
         "projection": "rigid"
       },
-      "weight": 7
+      "weight": 4
     },
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "uselessreptile:lightning_chaser_nest/loot/iron_pile_big",
+        "location": "uselessreptile:lightning_chaser_nest/loot/iron_pile_big1",
         "processors": {
           "processors": []
         },
         "projection": "rigid"
       },
-      "weight": 7
+      "weight": 4
     },
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "uselessreptile:lightning_chaser_nest/loot/copper_pile_medium",
+        "location": "uselessreptile:lightning_chaser_nest/loot/copper_pile_big1",
         "processors": {
           "processors": []
         },
         "projection": "rigid"
       },
-      "weight": 11
+      "weight": 4
     },
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "uselessreptile:lightning_chaser_nest/loot/gold_pile_medium",
+        "location": "uselessreptile:lightning_chaser_nest/loot/gold_pile_big1",
         "processors": {
           "processors": []
         },
         "projection": "rigid"
       },
-      "weight": 11
+      "weight": 4
     },
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
-        "location": "uselessreptile:lightning_chaser_nest/loot/iron_pile_medium",
+        "location": "uselessreptile:lightning_chaser_nest/loot/iron_pile_big1",
         "processors": {
           "processors": []
         },
         "projection": "rigid"
       },
-      "weight": 11
+      "weight": 4
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "uselessreptile:lightning_chaser_nest/loot/copper_pile_medium1",
+        "processors": {
+          "processors": []
+        },
+        "projection": "rigid"
+      },
+      "weight": 5
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "uselessreptile:lightning_chaser_nest/loot/gold_pile_medium1",
+        "processors": {
+          "processors": []
+        },
+        "projection": "rigid"
+      },
+      "weight": 5
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "uselessreptile:lightning_chaser_nest/loot/iron_pile_medium1",
+        "processors": {
+          "processors": []
+        },
+        "projection": "rigid"
+      },
+      "weight": 5
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "uselessreptile:lightning_chaser_nest/loot/copper_pile_medium2",
+        "processors": {
+          "processors": []
+        },
+        "projection": "rigid"
+      },
+      "weight": 5
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "uselessreptile:lightning_chaser_nest/loot/gold_pile_medium2",
+        "processors": {
+          "processors": []
+        },
+        "projection": "rigid"
+      },
+      "weight": 5
+    },
+    {
+      "element": {
+        "element_type": "minecraft:single_pool_element",
+        "location": "uselessreptile:lightning_chaser_nest/loot/iron_pile_medium2",
+        "processors": {
+          "processors": []
+        },
+        "projection": "rigid"
+      },
+      "weight": 5
     },
     {
       "element": {
         "element_type": "minecraft:single_pool_element",
         "location": "uselessreptile:lightning_chaser_nest/loot/chest",
-        "processors": {
-          "processors": []
-        },
+        "processors": "uselessreptile:lightning_chaser_nest/apply_loot",
         "projection": "rigid"
       },
       "weight": 10
@@ -86,7 +150,7 @@
         },
         "projection": "rigid"
       },
-      "weight": 6
+      "weight": 1
     },
     {
       "element": {
@@ -97,7 +161,7 @@
         },
         "projection": "rigid"
       },
-      "weight": 40
+      "weight": 35
     }
   ],
   "fallback": "minecraft:empty"

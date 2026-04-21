@@ -44,7 +44,14 @@ public class URTemplatePoolProvider extends FabricDynamicRegistryProvider {
                         List.of(
                                 Pair.of(
                                         StructurePoolElement.single(
-                                                LIGHTNING_CHASER_NEST_DESERT.identifier().toString(),
+                                                UselessReptile.id("lightning_chaser_nest/desert/nest1").toString(),
+                                                processorLists.getOrThrow(URProcessorsListProvider.REMOVE_DRAGON_PLACEHOLDER)
+                                        ),
+                                        1
+                                ),
+                                Pair.of(
+                                        StructurePoolElement.single(
+                                                UselessReptile.id("lightning_chaser_nest/desert/nest2").toString(),
                                                 processorLists.getOrThrow(URProcessorsListProvider.REMOVE_DRAGON_PLACEHOLDER)
                                         ),
                                         1
@@ -58,15 +65,27 @@ public class URTemplatePoolProvider extends FabricDynamicRegistryProvider {
                 new StructureTemplatePool(
                         empty,
                         List.of(
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_big").toString()), 7),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_big").toString()), 7),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_big").toString()), 7),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_medium").toString()), 11),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_medium").toString()), 11),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_medium").toString()), 11),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/chest").toString()), 10),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/heavy_core").toString()), 6),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 40)
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_big1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_big1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_big1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_big1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_big1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_big1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_medium1").toString()), 5),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_medium1").toString()), 5),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_medium1").toString()), 5),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_medium2").toString()), 5),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_medium2").toString()), 5),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_medium2").toString()), 5),
+                                Pair.of(
+                                        StructurePoolElement.single(
+                                                UselessReptile.id("lightning_chaser_nest/loot/chest").toString(),
+                                                processorLists.getOrThrow(URProcessorsListProvider.LIGHTNING_CHASER_NEST_APPLY_LOOT)
+                                        ),
+                                        10
+                                ),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/heavy_core").toString()), 1),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 35)
                         ),
                         StructureTemplatePool.Projection.RIGID
                 )
@@ -76,14 +95,26 @@ public class URTemplatePoolProvider extends FabricDynamicRegistryProvider {
                 new StructureTemplatePool(
                         empty,
                         List.of(
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_medium").toString()), 7),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_medium").toString()), 7),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_medium").toString()), 7),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_small").toString()), 13),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_small").toString()), 13),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small").toString()), 13),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/chest").toString()), 12),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/heavy_core").toString()), 3),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_medium1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_medium1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_medium1").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_medium2").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_medium2").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_medium2").toString()), 4),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_small1").toString()), 6),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_small1").toString()), 6),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small1").toString()), 6),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_small2").toString()), 6),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_small2").toString()), 6),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small2").toString()), 6),
+                                Pair.of(
+                                        StructurePoolElement.single(
+                                                UselessReptile.id("lightning_chaser_nest/loot/chest").toString(),
+                                                processorLists.getOrThrow(URProcessorsListProvider.LIGHTNING_CHASER_NEST_APPLY_LOOT)
+                                        ),
+                                        14
+                                ),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/heavy_core").toString()), 1),
                                 Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 25)
 
                         ),
@@ -96,11 +127,20 @@ public class URTemplatePoolProvider extends FabricDynamicRegistryProvider {
                 new StructureTemplatePool(
                         empty,
                         List.of(
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_small").toString()), 25),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_small").toString()), 25),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small").toString()), 25),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/chest").toString()), 15),
-                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 10)
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_small1").toString()), 12),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_small1").toString()), 12),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small1").toString()), 12),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/copper_pile_small2").toString()), 12),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/gold_pile_small2").toString()), 12),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/iron_pile_small2").toString()), 12),
+                                Pair.of(
+                                        StructurePoolElement.single(
+                                                UselessReptile.id("lightning_chaser_nest/loot/chest").toString(),
+                                                processorLists.getOrThrow(URProcessorsListProvider.LIGHTNING_CHASER_NEST_APPLY_LOOT)
+                                        ),
+                                        15
+                                ),
+                                Pair.of(StructurePoolElement.single(UselessReptile.id("lightning_chaser_nest/loot/nothing").toString()), 13)
                         ),
                         StructureTemplatePool.Projection.RIGID
                 )

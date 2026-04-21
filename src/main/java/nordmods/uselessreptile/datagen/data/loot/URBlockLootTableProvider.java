@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.datagen.data;
+package nordmods.uselessreptile.datagen.data.loot;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricBlockLootSubProvider;
@@ -9,9 +9,9 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 
-public class URBlockLootTableGenerator extends FabricBlockLootSubProvider {
+public class URBlockLootTableProvider extends FabricBlockLootSubProvider {
     protected final FabricPackOutput output;
-    public URBlockLootTableGenerator(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+    public URBlockLootTableProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         super(output, registryLookupFuture);
         this.output = output;
     }

@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.datagen.data;
+package nordmods.uselessreptile.datagen.data.loot;
 
 import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;

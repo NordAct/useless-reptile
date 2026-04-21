@@ -4,6 +4,10 @@
       "processor_type": "minecraft:rule",
       "rules": [
         {
+          "block_entity_modifier": {
+            "type": "minecraft:append_loot",
+            "loot_table": "uselessreptile:chests/lightning_chaser_nest"
+          },
           "input_predicate": {
             "block": "minecraft:chest",
             "predicate_type": "minecraft:block_match"

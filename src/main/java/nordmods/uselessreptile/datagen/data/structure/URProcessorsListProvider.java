@@ -8,9 +8,11 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.*;
+import net.minecraft.world.level.levelgen.structure.templatesystem.rule.blockentity.AppendLoot;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.block.DragonPlaceholderBlock;
 import nordmods.uselessreptile.common.init.URBlocks;
+import nordmods.uselessreptile.datagen.data.loot.URChestLootTableProvider;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -22,7 +24,7 @@ public class URProcessorsListProvider extends FabricDynamicRegistryProvider {
     }
 
     public static final ResourceKey<StructureProcessorList> REMOVE_DRAGON_PLACEHOLDER = ResourceKey.create(Registries.PROCESSOR_LIST, UselessReptile.id("remove_dragon_placeholder"));
-    public static final ResourceKey<StructureProcessorList> APPLY_LOOT = ResourceKey.create(Registries.PROCESSOR_LIST, UselessReptile.id("apply_loot"));
+    public static final ResourceKey<StructureProcessorList> LIGHTNING_CHASER_NEST_APPLY_LOOT = ResourceKey.create(Registries.PROCESSOR_LIST, UselessReptile.id("lightning_chaser_nest/apply_loot"));
 
     @Override
     protected void configure(HolderLookup.@NonNull Provider provider, @NonNull Entries entries) {
@@ -47,7 +49,7 @@ public class URProcessorsListProvider extends FabricDynamicRegistryProvider {
                 )
         );
         bootstrapContext.register(
-                APPLY_LOOT,
+                LIGHTNING_CHASER_NEST_APPLY_LOOT,
                 new StructureProcessorList(
                         List.of(
                                 new RuleProcessor(
@@ -55,7 +57,9 @@ public class URProcessorsListProvider extends FabricDynamicRegistryProvider {
                                                 new ProcessorRule(
                                                         new BlockMatchTest(Blocks.CHEST),
                                                         AlwaysTrueTest.INSTANCE,
-                                                        Blocks.CHEST.defaultBlockState()
+                                                        PosAlwaysTrueTest.INSTANCE,
+                                                        Blocks.CHEST.defaultBlockState(),
+                                                        new AppendLoot(URChestLootTableProvider.LIGHTNING_CHASER_NEST)
                                                 )
                                         )
                                 )
@@ -65,7 +69,7 @@ public class URProcessorsListProvider extends FabricDynamicRegistryProvider {
     }
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Structure Processors List";
     }
 }
