@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.1,
+  "ingredient": [
+    "uselessreptile:moleclaw_helmet_iron",
+    "uselessreptile:dragon_helmet_iron",
+    "uselessreptile:dragon_chestplate_iron",
+    "uselessreptile:dragon_tail_armor_iron"
+  ],
+  "result": {
+    "id": "minecraft:iron_nugget"
+  }
+}

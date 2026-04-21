@@ -9,10 +9,12 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CookingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import nordmods.uselessreptile.UselessReptile;
@@ -101,6 +103,63 @@ public class URRecipeProvider extends FabricRecipeProvider {
                         .pattern("#X#")
                         .unlockedBy("has_leather", this.has(Items.LEATHER))
                         .save(this.output);
+
+                SimpleCookingRecipeBuilder.smelting(
+                        Ingredient.of(
+                                URItems.MOLECLAW_HELMET_COPPER,
+                                URItems.DRAGON_HELMET_COPPER,
+                                URItems.DRAGON_CHESTPLATE_COPPER,
+                                URItems.DRAGON_TAIL_ARMOR_COPPER
+                        ),
+                        RecipeCategory.MISC,
+                        CookingBookCategory.MISC,
+                        Items.COPPER_NUGGET,
+                        0.1F,
+                        200
+                )
+                        .unlockedBy("has_moleclaw_helmet_copper", has(URItems.MOLECLAW_HELMET_COPPER))
+                        .unlockedBy("has_dragon_helmet_copper", has(URItems.DRAGON_HELMET_COPPER))
+                        .unlockedBy("has_dragon_chestplate_copper", has(URItems.DRAGON_CHESTPLATE_COPPER))
+                        .unlockedBy("has_dragon_tail_armor_copper", has(URItems.DRAGON_TAIL_ARMOR_COPPER))
+                        .save(output, getSmeltingRecipeName(Items.COPPER_NUGGET));
+
+                SimpleCookingRecipeBuilder.smelting(
+                        Ingredient.of(
+                                URItems.MOLECLAW_HELMET_IRON,
+                                URItems.DRAGON_HELMET_IRON,
+                                URItems.DRAGON_CHESTPLATE_IRON,
+                                URItems.DRAGON_TAIL_ARMOR_IRON
+                        ),
+                        RecipeCategory.MISC,
+                        CookingBookCategory.MISC,
+                        Items.IRON_NUGGET,
+                        0.1F,
+                        200
+                )
+                        .unlockedBy("has_moleclaw_helmet_iron", has(URItems.MOLECLAW_HELMET_IRON))
+                        .unlockedBy("has_dragon_helmet_iron", has(URItems.DRAGON_HELMET_IRON))
+                        .unlockedBy("has_dragon_chestplate_iron", has(URItems.DRAGON_CHESTPLATE_IRON))
+                        .unlockedBy("has_dragon_tail_armor_iron", has(URItems.DRAGON_TAIL_ARMOR_IRON))
+                        .save(output, getSmeltingRecipeName(Items.IRON_NUGGET));
+
+                SimpleCookingRecipeBuilder.smelting(
+                        Ingredient.of(
+                                URItems.MOLECLAW_HELMET_GOLD,
+                                URItems.DRAGON_HELMET_GOLD,
+                                URItems.DRAGON_CHESTPLATE_GOLD,
+                                URItems.DRAGON_TAIL_ARMOR_GOLD
+                        ),
+                        RecipeCategory.MISC,
+                        CookingBookCategory.MISC,
+                        Items.GOLD_NUGGET,
+                        0.1F,
+                        200
+                )
+                        .unlockedBy("has_moleclaw_helmet_gold", has(URItems.MOLECLAW_HELMET_GOLD))
+                        .unlockedBy("has_dragon_helmet_gold", has(URItems.DRAGON_HELMET_GOLD))
+                        .unlockedBy("has_dragon_chestplate_gold", has(URItems.DRAGON_CHESTPLATE_GOLD))
+                        .unlockedBy("has_dragon_tail_armor_gold", has(URItems.DRAGON_TAIL_ARMOR_GOLD))
+                        .save(output, getSmeltingRecipeName(Items.GOLD_NUGGET));
             }
         };
     }
