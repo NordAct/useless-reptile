@@ -974,7 +974,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public CommonDragonVariantData.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
         DragonVariant variant = getDragonVariant();
-        if (isInvalidVariant()) {
+        if (!isInvalidVariant()) {
             return variant.common().foodItems().orElse(List.of()).stream()
                     .filter(item -> {
                         ExtraCodecs.TagOrElementLocation entryId = item.item();
