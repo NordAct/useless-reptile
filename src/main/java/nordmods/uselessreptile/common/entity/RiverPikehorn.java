@@ -20,7 +20,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -33,6 +32,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornCall
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
 import nordmods.uselessreptile.common.entity.base.FluteListener;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.*;
@@ -40,8 +40,6 @@ import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.function.BiConsumer;
 
 public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDragon, FluteListener {
@@ -54,21 +52,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     protected final DynamicGameEventListener<FluteUsedEventListener> fluteUsedEventHandler = new DynamicGameEventListener<>(new FluteUsedEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.FLUTE_USED.value().notificationRadius()));
     private static final Identifier WATER_SPEED_MODIFIER_BONUS = UselessReptile.id("water_speed_modifier");
-    private final URDragonAnimationController<RiverPikehorn> mainController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<RiverPikehorn> turnController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<RiverPikehorn> attackController = new URDragonAnimationController<>(this, false) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final URDragonAnimationController<RiverPikehorn> blinkController = new URDragonAnimationController<>(this, true) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
 
     public static final float BASE_GROUND_SPEED = 0.2f;
 
@@ -95,11 +78,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         super.updateDynamicGameEventListener(callback);
     }
 
-    @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
-        return controllers;
-    }
-
     //todo reconsider structure and make it cleaner
     public void tickAnimations() {
         if (!level().isClientSide()) return;
@@ -110,15 +88,18 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     private void tickBlinkController() {
+        URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
     private void tickAttackController() {
+        URDragonAnimationController<URDragonEntity> attackController = getAnimationController(AnimationController.ATTACK);
         attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
         if (isPrimaryAttack()) attackController.playAnimation("attack" + getAttackType());
     }
 
     private void tickTurnController() {
+        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
         byte turnState = getTurningState();
         if (isFlying() && isMoving() && !isMovingBackwards()) {
             if (turnState == 1) {
@@ -142,6 +123,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     private void tickMainController() {
+        URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (isPassenger()) {

@@ -28,7 +28,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
@@ -38,6 +37,7 @@ import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
@@ -49,7 +49,6 @@ import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity, ShooterDragon {
@@ -62,21 +61,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     private final URDragonPart tail3 = new URDragonPart(this);
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
     private ShootingPoint shootingPoint = new ShootingPoint(position().toVector3f(), getLookAngle().toVector3f());
-    private final URDragonAnimationController<Wyvern> mainController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<Wyvern> turnController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<Wyvern> attackController = new URDragonAnimationController<>(this, false) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final URDragonAnimationController<Wyvern> blinkController = new URDragonAnimationController<>(this, true) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
 
     public static final float BASE_GROUND_SPEED = 0.2f;
 
@@ -154,10 +138,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().wyvernBaseSecondaryAttackCooldown);
     }
 
-    @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
-        return controllers;
-    }
+
 
     //todo reconsider structure and make it cleaner
     public void tickAnimations() {
@@ -169,10 +150,12 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     private void tickBlinkController() {
+        URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
     private void tickAttackController() {
+        URDragonAnimationController<URDragonEntity> attackController = getAnimationController(AnimationController.ATTACK);
         attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
         if (!isFlying() && isSecondaryAttack()) {
             attackController.playAnimation("attack.melee" + getAttackType());
@@ -188,6 +171,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     private void tickTurnController() {
+        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
         byte turnState = getTurningState();
         if (isFlying() && isMoving() && !isSecondaryAttack() && !isMovingBackwards()) {
             if (turnState == 1) {
@@ -211,6 +195,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     private void tickMainController() {
+        URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (isFlying()) {

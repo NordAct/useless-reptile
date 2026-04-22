@@ -26,7 +26,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
@@ -36,6 +35,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
@@ -45,7 +45,6 @@ import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public class Moleclaw extends URRideableDragonEntity {
@@ -53,21 +52,6 @@ public class Moleclaw extends URRideableDragonEntity {
     public static final float defaultWidth = 2f;
     public static final float defaultHeight = 2.9f;
     private int panicSoundDelay = 0;
-    private final URDragonAnimationController<Moleclaw> mainController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<Moleclaw> turnController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<Moleclaw> attackController = new URDragonAnimationController<>(this, false) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final URDragonAnimationController<Moleclaw> blinkController = new URDragonAnimationController<>(this, true) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
 
     public static final float BASE_GROUND_SPEED = 0.25f;
 
@@ -121,11 +105,6 @@ public class Moleclaw extends URRideableDragonEntity {
 
     }
 
-    @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
-        return controllers;
-    }
-
     //todo reconsider structure and make it cleaner
     public void tickAnimations() {
         if (!level().isClientSide()) return;
@@ -136,10 +115,12 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     private void tickBlinkController() {
+        URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
     private void tickAttackController() {
+        URDragonAnimationController<URDragonEntity> attackController = getAnimationController(AnimationController.ATTACK);
         if (isSecondaryAttack()) {
             attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
             attackController.playAnimation("attack.normal" + getAttackType());
@@ -155,6 +136,7 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     private void tickTurnController() {
+        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
         byte turnState = getTurningState();
         if (turnState == 1) {
             turnController.playAnimation("turn.left");
@@ -168,6 +150,7 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     private void tickMainController() {
+        URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (isOrderedToSit() && !isDancing() && !isPanicking()) {

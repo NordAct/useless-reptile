@@ -30,7 +30,6 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -50,9 +49,6 @@ import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
-import java.util.List;
-
 public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     public static int EAT_MAGMA_COOLDOWN_AVERAGE = 20*50;
     public int eatMagmaCooldown = 0;
@@ -60,21 +56,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     private static final int MAX_EATING_MAGMA_PROGRESS = 20*5;
     public static final float DISTANCE_TO_EAT = 1.25f;
     public static final ResourceKey<LootTable> MAGMA_EATEN_TABLE = ResourceKey.create(Registries.LOOT_TABLE, UselessReptile.id("entities/magmamuncher_from_magma"));
-    private final URDragonAnimationController<Magmamuncher> mainController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<Magmamuncher> turnController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<Magmamuncher> attackController = new URDragonAnimationController<>(this, false) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final URDragonAnimationController<Magmamuncher> blinkController = new URDragonAnimationController<>(this, true) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
 
     public static final float BASE_GROUND_SPEED = 0.2f;
 
@@ -96,11 +77,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         return "netherrack";
     }
 
-    @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
-        return controllers;
-    }
-
     //todo reconsider structure and make it cleaner
     public void tickAnimations() {
         if (!level().isClientSide()) return;
@@ -111,15 +87,18 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     }
 
     private void tickBlinkController() {
+        URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
     private void tickAttackController() {
+        URDragonAnimationController<URDragonEntity> attackController = getAnimationController(AnimationController.ATTACK);
         attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
         if (isPrimaryAttack()) attackController.playAnimation("attack" + getAttackType());
     }
 
     private void tickTurnController() {
+        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
         byte turnState = getTurningState();
         if (isMoving()) {
             if (turnState == 1) {
@@ -143,6 +122,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     }
 
     private void tickMainController() {
+        URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (isPassenger()) {

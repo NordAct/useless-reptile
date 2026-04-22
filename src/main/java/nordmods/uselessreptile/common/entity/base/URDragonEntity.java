@@ -25,10 +25,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.ByIdMap;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
+import net.minecraft.util.*;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -55,6 +52,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
 import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
@@ -76,14 +74,12 @@ import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
+import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner {
@@ -114,12 +110,37 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     private Map<Identifier, EquipmentModelData.Equipment> dragonEquipment;
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
+    private final URDragonAnimationController<URDragonEntity> mainController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<URDragonEntity> turnController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<URDragonEntity> attackController = new URDragonAnimationController<>(this, false) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final URDragonAnimationController<URDragonEntity> blinkController = new URDragonAnimationController<>(this, true) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final Map<AnimationController, BRAnimationController> controllers = Map.of(
+            AnimationController.MAIN , mainController,
+            AnimationController.TURN , turnController,
+            AnimationController.ATTACK , attackController,
+            AnimationController.BLINK , blinkController
+    );
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         navigation = new DragonNavigation(this, world);
         lookControl = new DragonLookControl(this);
         moveControl = new LandDragonMoveControl<>(this);
+    }
+
+    @Override
+    public final Collection<BRAnimationController> getAnimationControllers() {
+        return controllers.values();
     }
 
     @Override
@@ -1262,6 +1283,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public abstract DragonVariantType<? extends DragonVariant> getVariantType();
 
+    public final URDragonAnimationController<URDragonEntity> getAnimationController(AnimationController controller) {
+        return (URDragonAnimationController<URDragonEntity>) controllers.get(controller);
+    }
+
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -1345,6 +1370,25 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
         WanderRadius(int radius) {
             this.radius = radius;
+        }
+    }
+
+    public enum AnimationController implements StringRepresentable {
+        MAIN("main"),
+        TURN("turn"),
+        ATTACK("attack"),
+        BLINK("blink")
+        ;
+
+        private final String name;
+
+        AnimationController(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
         }
     }
 }
