@@ -21,6 +21,7 @@ import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.UREntityDataSerializers;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import org.jspecify.annotations.NonNull;
 
@@ -46,13 +47,13 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         super.defineSynchedData(builder);
         builder.define(FLYING, false);
         builder.define(FLY_GLIDING, false);
-        builder.define(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
+        builder.define(TILT_STATE, TiltState.NONE);//1 - вверх, 2 - вниз, 0 - летит прямо
         builder.define(IN_AIR_TIMER, 0);
     }
 
     public static final EntityDataAccessor<Boolean> FLYING = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> FLY_GLIDING = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Byte> TILT_STATE = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BYTE);
+    public static final EntityDataAccessor<TiltState> TILT_STATE = SynchedEntityData.defineId(URFlyingDragonEntity.class, UREntityDataSerializers.TILT_STATE);
     public static final EntityDataAccessor<Integer> IN_AIR_TIMER = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.INT);
 
 
@@ -65,8 +66,8 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     public boolean isFlying() {return entityData.get(FLYING);}
     public void setFlying (boolean state) {entityData.set(FLYING, state);}
 
-    public byte getTiltState() {return entityData.get(TILT_STATE);}
-    public void setTiltState(byte state) {entityData.set(TILT_STATE, state);}
+    public TiltState getTiltState() {return entityData.get(TILT_STATE);}
+    public void setTiltState(TiltState state) {entityData.set(TILT_STATE, state);}
 
     @Override
     public void addAdditionalSaveData(@NonNull ValueOutput tag) {
@@ -184,10 +185,10 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     private void updateTiltProgress() {
         switch (getTiltState()) {
-            case 1 -> {
+            case UP -> {
                 if (tiltProgress < TRANSITION_TICKS) tiltProgress++;
             }
-            case 2 -> {
+            case DOWN -> {
                 if (tiltProgress > -TRANSITION_TICKS) tiltProgress--;
             }
             default -> {

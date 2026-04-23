@@ -67,7 +67,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         float accelerationModifier = (float)accelerationDuration/entity.getMaxAccelerationDuration();
         if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
         entity.setMovingBackwards(false);
-        entity.setTiltState((byte) 0);
+        entity.setTiltState(FlyingDragon.TiltState.NONE);
         float verticalAccelerationModifier = Mth.clamp(accelerationModifier, 0.25f, 1.5f);
         float speed = getMovementSpeed(accelerationModifier, inWater);
 
@@ -143,14 +143,14 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.4) accelerationDuration -= 2;
         if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration -= 2;
         entity.setYya(entity.getVerticalSpeed() * verticalAccelerationModifier);
-        entity.setTiltState((byte) 1);
+        entity.setTiltState(FlyingDragon.TiltState.UP);
         return accelerationDuration;
     }
 
     private int flyDown (int accelerationDuration, float verticalAccelerationModifier) {
         if (accelerationDuration < entity.getMaxAccelerationDuration() * 3) accelerationDuration += 2;
         entity.setYya(-entity.getVerticalSpeed() * verticalAccelerationModifier * 1.3f);
-        entity.setTiltState((byte) 2);
+        entity.setTiltState(FlyingDragon.TiltState.DOWN);
         return accelerationDuration;
     }
 

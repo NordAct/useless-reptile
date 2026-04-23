@@ -26,6 +26,7 @@ import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.UREntityDataSerializers;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import nordmods.uselessreptile.common.network.c2s.RequestLiftoffPayload;
 import org.jspecify.annotations.NonNull;
@@ -54,12 +55,12 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         super.defineSynchedData(builder);
         builder.define(FLYING, false);
         builder.define(FLY_GLIDING, false);
-        builder.define(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
+        builder.define(TILT_STATE, TiltState.NONE);//1 - вверх, 2 - вниз, 0 - летит прямо
         builder.define(IN_AIR_TIMER, 0);
     }
     public static final EntityDataAccessor<Boolean> FLYING = SynchedEntityData.defineId(URRideableFlyingDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> FLY_GLIDING = SynchedEntityData.defineId(URRideableFlyingDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Byte> TILT_STATE = SynchedEntityData.defineId(URRideableFlyingDragonEntity.class, EntityDataSerializers.BYTE);
+    public static final EntityDataAccessor<TiltState> TILT_STATE = SynchedEntityData.defineId(URRideableFlyingDragonEntity.class, UREntityDataSerializers.TILT_STATE);
     public static final EntityDataAccessor<Integer> IN_AIR_TIMER = SynchedEntityData.defineId(URRideableFlyingDragonEntity.class, EntityDataSerializers.INT);
 
 
@@ -72,8 +73,8 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public boolean isFlyGliding() {return entityData.get(FLY_GLIDING);}
     public void setFlyGliding (boolean state) {entityData.set(FLY_GLIDING, state);}
 
-    public byte getTiltState() {return entityData.get(TILT_STATE);}
-    public void setTiltState(byte state) {entityData.set(TILT_STATE, state);}
+    public TiltState getTiltState() {return entityData.get(TILT_STATE);}
+    public void setTiltState(TiltState state) {entityData.set(TILT_STATE, state);}
 
     @Override
     public void addAdditionalSaveData(@NonNull ValueOutput tag) {
@@ -173,7 +174,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         if (accelerationDuration < 0) accelerationDuration = 0;
         float accelerationModifier = (float) accelerationDuration / getMaxAccelerationDuration();
         if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
-        if (isInputGiven && getTurningState() == 0) accelerationDuration++;
+        if (isInputGiven && getTurningState() == TurningState.NONE) accelerationDuration++;
         if (isJumpPressed() && !isDownPressed() && accelerationDuration > getMaxAccelerationDuration() * 0.4)
             accelerationDuration -= 2;
         if (isDownPressed() && accelerationDuration < getMaxAccelerationDuration() * 3 && isFlying())
@@ -214,13 +215,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
             if (isJumpPressed()) {
                 verticalSpeed = getVerticalSpeed();
-                setTiltState((byte) 1);
+                setTiltState(TiltState.UP);
                 if (!isMovingBackwards() && isMoving() && getXRot() > -getPitchLimit() && !isDownPressed())
                     setXRot(getXRot() - pitchSpeed);
             }
             if (isDownPressed()) {
                 verticalSpeed = -getVerticalSpeed() * 1.3f;
-                setTiltState((byte) 2);
+                setTiltState(TiltState.DOWN);
                 if (!isMovingBackwards() && isMoving() && getXRot() < getPitchLimit())
                     setXRot(getXRot() + pitchSpeed);
             }
@@ -232,7 +233,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
                     if (getXRot() < pitchSpeed && getXRot() > -pitchSpeed) setXRot(0);
                 }
                 if (currentVerticalSpeed != 0) verticalSpeed = currentVerticalSpeed * -0.5F;
-                setTiltState((byte) 0);
+                setTiltState(TiltState.NONE);
             }
             return new Vec3(0, verticalSpeed * Mth.clamp(accelerationModifier, 0.25, 1.5), flyingSpeed * accelerationModifier * 2.5F);
         }
@@ -307,10 +308,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     private void updateTiltProgress() {
         switch (getTiltState()) {
-            case 1 -> {
+            case UP -> {
                 if (tiltProgress < TRANSITION_TICKS) tiltProgress++;
             }
-            case 2 -> {
+            case DOWN -> {
                 if (tiltProgress > -TRANSITION_TICKS) tiltProgress--;
             }
             default -> {

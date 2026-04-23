@@ -163,36 +163,21 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
     private void tickTurnController() {
         URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
-        byte turnState = getTurningState();
-        if (isFlying()) {
-            if (isMoving() && !isMovingBackwards()) {
-                if (turnState == 1) {
-                    turnController.playAnimation("turn.fly.left");
-                    return;
-                }
-                if (turnState == 2) {
-                    turnController.playAnimation("turn.fly.right");
-                    return;
-                }
+        switch (getTurningState()) {
+            case LEFT -> {
+                if (isFlying()) {
+                    if (isMoving() && !isMovingBackwards()) turnController.playAnimation("turn.fly.left");
+                    else turnController.playAnimation("turn.fly.idle.left");
+                } else turnController.playAnimation("turn.left");
             }
-            if (turnState == 1) {
-                turnController.playAnimation("turn.fly.idle.left");
-                return;
+            case RIGHT -> {
+                if (isFlying()) {
+                    if (isMoving() && !isMovingBackwards()) turnController.playAnimation("turn.fly.right");
+                    else turnController.playAnimation("turn.fly.idle.right");
+                } else turnController.playAnimation("turn.right");
             }
-            if (turnState == 2) {
-                turnController.playAnimation("turn.fly.idle.right");
-                return;
-            }
+            default -> turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
         }
-        if (turnState == 1) {
-            turnController.playAnimation("turn.left");
-            return;
-        }
-        if (turnState == 2) {
-            turnController.playAnimation("turn.right");
-            return;
-        }
-        turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
     }
 
     private void tickMainController() {
@@ -210,11 +195,11 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
                     mainController.playAnimation("fly.back");
                     return;
                 }
-                if (getTiltState() == 1) {
+                if (getTiltState() == TiltState.UP) {
                     mainController.playAnimation("fly.straight.up");
                     return;
                 }
-                if (getTiltState() == 2) {
+                if (getTiltState() == TiltState.DOWN) {
                     mainController.playAnimation("fly.straight.down");
                     return;
                 }
@@ -680,7 +665,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSpecialAttack()) {
-                if (getTiltState() == 2) {
+                if (getTiltState() == TiltState.DOWN) {
                     wing1LeftPos = new Vector3f(2, 0, 0.5f);
                     wing1LeftScale = new Vec2(1, 1.5f);
 

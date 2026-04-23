@@ -172,26 +172,17 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
 
     private void tickTurnController() {
         URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
-        byte turnState = getTurningState();
-        if (isFlying() && isMoving() && !isSecondaryAttack() && !isMovingBackwards()) {
-            if (turnState == 1) {
-                turnController.playAnimation("turn.fly.left");
-                return;
+        switch (getTurningState()) {
+            case LEFT -> {
+                if (isFlying() && isMoving() && !isSecondaryAttack() && !isMovingBackwards()) turnController.playAnimation("turn.fly.left");
+                else turnController.playAnimation("turn.left");
             }
-            if (turnState == 2) {
-                turnController.playAnimation("turn.fly.right");
-                return;
+            case RIGHT -> {
+                if (isFlying() && isMoving() && !isSecondaryAttack() && !isMovingBackwards()) turnController.playAnimation("turn.fly.right");
+                else turnController.playAnimation("turn.right");
             }
+            default -> turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
         }
-        if (turnState == 1) {
-            turnController.playAnimation("turn.left");
-            return;
-        }
-        if (turnState == 2) {
-            turnController.playAnimation("turn.right");
-            return;
-        }
-        turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
     }
 
     private void tickMainController() {
@@ -209,11 +200,11 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                     mainController.playAnimation("fly.back");
                     return;
                 }
-                if (getTiltState() == 1) {
+                if (getTiltState() == TiltState.UP) {
                     mainController.playAnimation("fly.straight.up");
                     return;
                 }
-                if (getTiltState() == 2) {
+                if (getTiltState() == TiltState.DOWN) {
                     mainController.playAnimation("fly.straight.down");
                     return;
                 }
@@ -424,7 +415,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
 
         if (isFlying()) {
             if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
-                if (getTiltState() == 2) {
+                if (getTiltState() == TiltState.DOWN) {
                     wingLeftPos = new Vector3f(2, 0, -0.5f);
                     wingLeftScale = new Vec2(1, 1.5f);
 

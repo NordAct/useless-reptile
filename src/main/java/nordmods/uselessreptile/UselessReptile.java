@@ -20,6 +20,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
         URMobAttributesConfig.init();
 
         URDragonVariantTypes.init();
+        URDragonAbilityTypes.init();
         URAttributes.init();
         URResourceKeys.init();
         URSoundEvent.init();

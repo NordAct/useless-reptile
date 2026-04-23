@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.base;
 
 import eu.pb4.common.protection.api.CommonProtection;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -64,6 +65,7 @@ import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
+import nordmods.uselessreptile.common.entity.ability.DragonAbility;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
@@ -130,6 +132,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             AnimationController.ATTACK , attackController,
             AnimationController.BLINK , blinkController
     );
+    private final Int2ObjectOpenHashMap<DragonAbility> abilityStorage = new Int2ObjectOpenHashMap<>();
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -148,7 +151,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         super.defineSynchedData(builder);
         builder.define(MOVING_BACKWARDS, false);
         builder.define(DANCING, false);
-        builder.define(TURNING_STATE, (byte)0);//1 - left, 2 - right, 0 - straight
+        builder.define(TURNING_STATE, TurningState.NONE);
         builder.define(ROTATION_PROGRESS, (byte)0);
         builder.define(TAMING_PROGRESS, 1);
         builder.define(ATTACK_TYPE, 1);
@@ -168,7 +171,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> DANCING = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Byte> TURNING_STATE = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BYTE);
+    public static final EntityDataAccessor<TurningState> TURNING_STATE = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.TURNING_STATE);
     public static final EntityDataAccessor<Byte> ROTATION_PROGRESS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BYTE);
     public static final EntityDataAccessor<Integer> TAMING_PROGRESS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> MOUNTED_OFFSET = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
@@ -239,8 +242,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public String getVariant() {return entityData.get(VARIANT);}
     public void setVariant(String state) {entityData.set(VARIANT, state);}
 
-    public byte getTurningState() {return entityData.get(TURNING_STATE);}
-    public void setTurningState(byte state) {entityData.set(TURNING_STATE, state);}
+    public TurningState getTurningState() {return entityData.get(TURNING_STATE);}
+    public void setTurningState(TurningState state) {entityData.set(TURNING_STATE, state);}
 
     public byte getRotationProgress() {return entityData.get(ROTATION_PROGRESS);}
     public float getNormalizedRotationProgress() {return (float)getRotationProgress()/(float)TRANSITION_TICKS;}
@@ -717,18 +720,18 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
             if (yawDiff < -getRotationSpeed()) {
                 currentYaw += getRotationSpeed();
-                if (!level().isClientSide()) setTurningState((byte)2);
+                if (!level().isClientSide()) setTurningState(TurningState.RIGHT);
             }
             else if (yawDiff > getRotationSpeed()) {
                 currentYaw -= getRotationSpeed();
-                if (!level().isClientSide()) setTurningState((byte)1);
+                if (!level().isClientSide()) setTurningState(TurningState.LEFT);
             }
             else {
                 currentYaw = destinationYaw;
-                if (!level().isClientSide() && isMoving()) setTurningState((byte)0);
+                if (!level().isClientSide() && isMoving()) setTurningState(TurningState.NONE);
             }
         } else {
-            if (!level().isClientSide()) setTurningState((byte)0);
+            if (!level().isClientSide()) setTurningState(TurningState.NONE);
         }
         yRotO = yBodyRot = getYRot();
         super.setRot(currentYaw, Mth.clamp(pitch, -getPitchLimit(), getPitchLimit()));
@@ -789,7 +792,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return (float) (getAttributeValue(URAttributes.DRAGON_ACCELERATION_DURATION) * getMovementSpeedModifier());
     }
 
-    protected float getCooldownModifier() {
+    public float getCooldownModifier() {
         float mod = 1;
         if (hasEffect(MobEffects.SLOWNESS)) mod *= (float) (1 + 0.1 * (getEffect(MobEffects.SLOWNESS).getAmplifier() + 1));
         if (hasEffect(MobEffects.SPEED)) mod *= (float) (1 - 0.1 * Mth.clamp(getEffect(MobEffects.SPEED).getAmplifier() + 1, 1, 9));
@@ -855,10 +858,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 if (level().isClientSide()) {
                     yRotO = getYRot();
                     setYRot(player.getYRot());
-                    byte turnState = 0;
+                    TurningState turnState = TurningState.NONE;
                     float diff = yRotO - getYRot();
-                    if (diff > 0) turnState = 1;
-                    if (diff < 0) turnState = 2;
+                    if (diff > 0) turnState = TurningState.LEFT;
+                    if (diff < 0) turnState = TurningState.RIGHT;
                     setTurningState(turnState);
                 }
             } else getLookControl().setLockRotation(false);
@@ -1045,10 +1048,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     private void updateRotationProgress() {
         switch (getTurningState()) {
-            case 1 -> {
+            case LEFT -> {
                 if (getRotationProgress() < TRANSITION_TICKS) setRotationProgress((byte) (getRotationProgress() + 1));
             }
-            case 2 -> {
+            case RIGHT -> {
                 if (getRotationProgress() > -TRANSITION_TICKS) setRotationProgress((byte) (getRotationProgress() - 1));
             }
             default -> {
@@ -1287,6 +1290,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return (URDragonAnimationController<URDragonEntity>) controllers.get(controller);
     }
 
+    public Int2ObjectOpenHashMap<DragonAbility> getAbilityStorage() {
+        return abilityStorage;
+    }
+
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -1387,7 +1394,27 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
 
         @Override
-        public String getSerializedName() {
+        public @NonNull String getSerializedName() {
+            return name;
+        }
+    }
+
+    public enum TurningState implements StringRepresentable {
+        NONE("none"),
+        LEFT("left"),
+        RIGHT("right")
+        ;
+
+        private final String name;
+
+        public static final StreamCodec<ByteBuf, TurningState> STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
+
+        TurningState(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public @NonNull String getSerializedName() {
             return name;
         }
     }

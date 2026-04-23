@@ -137,16 +137,11 @@ public class Moleclaw extends URRideableDragonEntity {
 
     private void tickTurnController() {
         URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
-        byte turnState = getTurningState();
-        if (turnState == 1) {
-            turnController.playAnimation("turn.left");
-            return;
+        switch (getTurningState()) {
+            case LEFT -> turnController.playAnimation("turn.left");
+            case RIGHT -> turnController.playAnimation("turn.right");
+            default -> turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
         }
-        if (turnState == 2) {
-            turnController.playAnimation("turn.right");
-            return;
-        }
-        turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
     }
 
     private void tickMainController() {

@@ -10,12 +10,14 @@ import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
+import nordmods.uselessreptile.common.entity.ability.DragonAbilityType;
 
 import java.util.List;
 
 public class URResourceKeys {
     public static final ResourceKey<Registry<DragonVariant>> DRAGON_VARIANT = ResourceKey.createRegistryKey(UselessReptile.id("variant"));
     public static final ResourceKey<Registry<DragonVariantType<?>>> DRAGON_VARIANT_TYPE = ResourceKey.createRegistryKey(UselessReptile.id("variant_type"));
+    public static final ResourceKey<Registry<DragonAbilityType<?>>> DRAGON_ABILITY_TYPE = ResourceKey.createRegistryKey(UselessReptile.id("dragon_ability_type"));
     public static final ResourceKey<Registry<DragonModelData>> DRAGON_MODEL = ResourceKey.createRegistryKey(UselessReptile.id("dragon_model"));
     public static final ResourceKey<Registry<EquipmentModelData>> DRAGON_EQUIPMENT = ResourceKey.createRegistryKey(UselessReptile.id("equipment"));
     public static final ResourceKey<Registry<EquipmentModelData>> DRAGON_EQUIPMENT_INJECT = ResourceKey.createRegistryKey(UselessReptile.id("equipment_inject"));

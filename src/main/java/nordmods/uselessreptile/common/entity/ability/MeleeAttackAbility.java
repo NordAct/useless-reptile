@@ -1,0 +1,108 @@
+package nordmods.uselessreptile.common.entity.ability;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
+import nordmods.uselessreptile.common.init.URTags;
+
+import java.util.List;
+
+public class MeleeAttackAbility extends TriggerableAbility {
+    protected final boolean aoe;
+    protected final Vec3 attackBoxCenterOffset;
+    protected final boolean moveBoxVertically;
+    protected final float attackBoxWidth;
+    protected final float attackBoxHeight;
+
+    public static final MapCodec<MeleeAttackAbility> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            CommonDragonAbilityData.MAP_CODEC.forGetter(MeleeAttackAbility::common),
+            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("trigger_time").forGetter(c -> c.triggerTime),
+            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("active_time").forGetter(c -> c.activeTime),
+            Codec.BOOL.fieldOf("aoe").forGetter(c -> c.aoe),
+            Vec3.CODEC.fieldOf("attack_box_center_offset").forGetter(c -> c.attackBoxCenterOffset),
+            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_width").forGetter(c -> c.attackBoxWidth),
+            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_height").forGetter(c -> c.attackBoxHeight),
+            Codec.BOOL.fieldOf("move_box_vertically").forGetter(c -> c.moveBoxVertically)
+    ).apply(i, MeleeAttackAbility::new));
+
+    public MeleeAttackAbility(CommonDragonAbilityData common, float triggerTime, float activeTime, boolean aoe, Vec3 attackBoxCenterOffset, float attackBoxWidth, float attackBoxHeight, boolean moveBoxVertically) {
+        super(common, triggerTime, activeTime);
+        this.aoe = aoe;
+        this.attackBoxCenterOffset = attackBoxCenterOffset;
+        this.moveBoxVertically = moveBoxVertically;
+        this.attackBoxWidth = attackBoxWidth;
+        this.attackBoxHeight = attackBoxHeight;
+    }
+
+    @Override
+    public DragonAbilityType<?> getType() {
+        return URDragonAbilityTypes.MELEE_ATTACK;
+    }
+
+    @Override
+    public void trigger(URDragonEntity entity) {
+        if (entity.level() instanceof ServerLevel level) {
+            AABB attackBox = getAttackBox(entity);
+            List<Entity> list = entity.level().getEntities(
+                    entity,
+                    attackBox,
+                    target -> !entity.getPassengers().contains(target)
+                            && !target.is(entity)
+                            && (target instanceof LivingEntity livingEntity && entity.canAttack(livingEntity) || !(target instanceof LivingEntity))
+                            && !target.is(URTags.DRAGON_IMMUNE));
+
+            if (aoe) {
+                Entity target = null;
+                if (!list.isEmpty()) {
+                    target = list.getFirst();
+                    for (Entity entry : list) {
+                        if (entity.distanceToSqr(entry) < entity.distanceToSqr(target)) target = entry;
+                    }
+                }
+                if (target != null && !entity.getPassengers().contains(target)) {
+                    AABB targetBox = target.getBoundingBox();
+                    if (targetBox.intersects(attackBox)) entity.doHurtTarget(level, target);
+                }
+            } else {
+                if (!list.isEmpty()) for (Entity target: list) {
+                    AABB targetBox = target.getBoundingBox();
+                    if (targetBox.intersects(attackBox)) entity.doHurtTarget(level, target);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean canUseUncontrolled(URDragonEntity entity) {
+        return entity.getTarget() != null && entity.getTarget().getBoundingBox().intersects(getAttackBox(entity));
+    }
+
+    public AABB getAttackBox(URDragonEntity entity) {
+        double cosYaw = Math.cos(-entity.getYRot() * Mth.DEG_TO_RAD);
+        double sinYaw = Math.sin(-entity.getYRot() * Mth.DEG_TO_RAD);
+        double cosPitch = moveBoxVertically ? 0 : Math.cos(entity.getXRot() * Mth.DEG_TO_RAD);
+        double sinPitch = moveBoxVertically ? 0 : Math.sin(entity.getXRot() * Mth.DEG_TO_RAD);
+        float scale = entity.getScale();
+        return new AABB(
+                -attackBoxWidth / 2 * scale,
+                -attackBoxHeight / 2 * scale,
+                -attackBoxWidth / 2 * scale,
+                attackBoxWidth / 2 * scale,
+                attackBoxHeight / 2 * scale,
+                attackBoxWidth / 2 * scale
+        ).move(
+                entity.getX() + attackBoxCenterOffset.z * sinYaw * cosPitch + attackBoxCenterOffset.x * cosYaw + attackBoxCenterOffset.y * sinYaw * sinPitch,
+                entity.getY() + entity.getBbHeight() / 2 + attackBoxCenterOffset.z * -sinPitch + attackBoxCenterOffset.y * cosPitch,
+                entity.getZ() + attackBoxCenterOffset.z * cosYaw * cosPitch + attackBoxCenterOffset.x * -sinYaw + attackBoxCenterOffset.y * cosYaw * sinPitch
+        );
+    }
+}
