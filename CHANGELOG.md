@@ -1,2 +1,1 @@
-- Fixed food item not being recognized by dragon
-- Fixed River Pikehorns not picking up their food
+- Fixed crash related to animation library
