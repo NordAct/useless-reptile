@@ -17,20 +17,13 @@ import java.util.List;
 import java.util.Optional;
 
 public record CommonDragonAbilityData(
-        float cooldownSeconds,
+        float cooldownTimeSeconds,
         boolean blockOtherAbilitiesIfActive,
         List<ConditionedAnimation> animations,
         UseConditions conditions
 ) {
-    public static final Codec<CommonDragonAbilityData> CODEC = RecordCodecBuilder.create(i -> i.group(
-            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("cooldown_seconds").forGetter(CommonDragonAbilityData::cooldownSeconds),
-            Codec.BOOL.fieldOf("block_other_abilities_if_active").forGetter(CommonDragonAbilityData::blockOtherAbilitiesIfActive),
-            ConditionedAnimation.CODEC.listOf().fieldOf("animations").forGetter(CommonDragonAbilityData::animations),
-            UseConditions.CODEC.fieldOf("conditions").forGetter(CommonDragonAbilityData::conditions)
-    ).apply(i, CommonDragonAbilityData::new));
-
     public static final MapCodec<CommonDragonAbilityData> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("cooldown_seconds").forGetter(CommonDragonAbilityData::cooldownSeconds),
+            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("cooldown_time_seconds").forGetter(CommonDragonAbilityData::cooldownTimeSeconds),
             Codec.BOOL.fieldOf("block_other_abilities_if_active").forGetter(CommonDragonAbilityData::blockOtherAbilitiesIfActive),
             ConditionedAnimation.CODEC.listOf().fieldOf("animations").forGetter(CommonDragonAbilityData::animations),
             UseConditions.CODEC.fieldOf("conditions").forGetter(CommonDragonAbilityData::conditions)
@@ -53,9 +46,9 @@ public record CommonDragonAbilityData(
             if (!canInterruptPlayingAbilityAnimation) {
                 URDragonAnimationController<?> animationController = entity.getAnimationController(controller);
                 for (DragonAbility ability : entity.getAbilityStorage().values()) {
-                    if (ability.common().animations().isEmpty()) continue;
+                    if (ability.getCommonAbilityData().animations().isEmpty()) continue;
                     if (!ability.isActive(entity)) continue;
-                    for (ConditionedAnimation animation : ability.common().animations()) {
+                    for (ConditionedAnimation animation : ability.getCommonAbilityData().animations()) {
                         if (animation.controller != controller) continue;
                         BRPlayingAnimation playingAnimation = animationController.getAnimation(animation.animationName);
                         if (playingAnimation != null && !playingAnimation.isTransitioningOut()) return false;

@@ -10,14 +10,15 @@ public interface DragonAbility {
 
     DragonAbilityType<?> getType();
 
-    CommonDragonAbilityData common();
+    CommonDragonAbilityData getCommonAbilityData();
 
     float getCooldown();
     void setCooldown(URDragonEntity entity, float cooldown);
     boolean isActive(URDragonEntity entity);
+    void tickActive(URDragonEntity entity);
 
     default float getMaxCooldown() {
-        return common().cooldownSeconds() * 20;
+        return getCommonAbilityData().cooldownTimeSeconds() * 20;
     }
 
     default float getCooldownRecoverySpeed(URDragonEntity entity) {
@@ -27,8 +28,6 @@ public interface DragonAbility {
     default void tickCooldown(URDragonEntity entity) {
         if (getCooldown() > 0) setCooldown(entity, Math.max(getCooldown() - getCooldownRecoverySpeed(entity), 0));
     }
-
-    default void tickActive(URDragonEntity entity) {}
 
     default void tick(URDragonEntity entity) {
         if (isActive(entity)) tickActive(entity);
@@ -55,10 +54,10 @@ public interface DragonAbility {
     }
 
     default boolean canUseControlled(URDragonEntity entity) {
-        return true;
+        return entity.hasControllingPassenger();
     }
 
     default boolean blockOtherAbilitiesIfActive() {
-        return common().blockOtherAbilitiesIfActive();
+        return getCommonAbilityData().blockOtherAbilitiesIfActive();
     }
 }

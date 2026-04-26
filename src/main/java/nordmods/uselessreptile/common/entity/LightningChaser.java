@@ -71,16 +71,16 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     private boolean shouldBailOut = false;
     private boolean isChallenger = false;
     private static final Identifier THUNDERSTORM_BONUS = UselessReptile.id("thunderstorm_bonus");
-    private final URDragonPart wing1Left = new URDragonPart(this);
-    private final URDragonPart wing1Right = new URDragonPart(this);
-    private final URDragonPart wing2Left = new URDragonPart(this);
-    private final URDragonPart wing2Right = new URDragonPart(this);
-    private final URDragonPart neck1 = new URDragonPart(this);
-    private final URDragonPart neck2 = new URDragonPart(this);
-    private final URDragonPart head = new URDragonPart(this);
-    private final URDragonPart tail1 = new URDragonPart(this);
-    private final URDragonPart tail2 = new URDragonPart(this);
-    private final URDragonPart tail3 = new URDragonPart(this);
+    private final URDragonPart wing1Left = new URDragonPart(this, "wing1_left");
+    private final URDragonPart wing1Right = new URDragonPart(this, "wing1_right");
+    private final URDragonPart wing2Left = new URDragonPart(this, "wing2_left");
+    private final URDragonPart wing2Right = new URDragonPart(this, "wing2_right");
+    private final URDragonPart neck1 = new URDragonPart(this, "neck1");
+    private final URDragonPart neck2 = new URDragonPart(this, "neck2");
+    private final URDragonPart head = new URDragonPart(this, "head");
+    private final URDragonPart tail1 = new URDragonPart(this, "tail1");
+    private final URDragonPart tail2 = new URDragonPart(this, "tail2");
+    private final URDragonPart tail3 = new URDragonPart(this, "tail3");
     private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
     protected final DynamicGameEventListener<LightningStrikeEventListener> lightningStrikeEventHandler = new DynamicGameEventListener<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));

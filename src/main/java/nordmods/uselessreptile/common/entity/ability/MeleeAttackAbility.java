@@ -24,9 +24,8 @@ public class MeleeAttackAbility extends TriggerableAbility {
     protected final float attackBoxHeight;
 
     public static final MapCodec<MeleeAttackAbility> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-            CommonDragonAbilityData.MAP_CODEC.forGetter(MeleeAttackAbility::common),
-            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("trigger_time").forGetter(c -> c.triggerTime),
-            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("active_time").forGetter(c -> c.activeTime),
+            CommonDragonAbilityData.MAP_CODEC.forGetter(MeleeAttackAbility::getCommonAbilityData),
+            TriggerableAbility.Data.MAP_CODEC.forGetter(MeleeAttackAbility::getTriggerableAbilityData),
             Codec.BOOL.fieldOf("aoe").forGetter(c -> c.aoe),
             Vec3.CODEC.fieldOf("attack_box_center_offset").forGetter(c -> c.attackBoxCenterOffset),
             ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_width").forGetter(c -> c.attackBoxWidth),
@@ -34,8 +33,8 @@ public class MeleeAttackAbility extends TriggerableAbility {
             Codec.BOOL.fieldOf("move_box_vertically").forGetter(c -> c.moveBoxVertically)
     ).apply(i, MeleeAttackAbility::new));
 
-    public MeleeAttackAbility(CommonDragonAbilityData common, float triggerTime, float activeTime, boolean aoe, Vec3 attackBoxCenterOffset, float attackBoxWidth, float attackBoxHeight, boolean moveBoxVertically) {
-        super(common, triggerTime, activeTime);
+    public MeleeAttackAbility(CommonDragonAbilityData common, TriggerableAbility.Data triggerableAbilityData, boolean aoe, Vec3 attackBoxCenterOffset, float attackBoxWidth, float attackBoxHeight, boolean moveBoxVertically) {
+        super(common, triggerableAbilityData);
         this.aoe = aoe;
         this.attackBoxCenterOffset = attackBoxCenterOffset;
         this.moveBoxVertically = moveBoxVertically;

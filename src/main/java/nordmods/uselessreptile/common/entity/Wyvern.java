@@ -52,13 +52,13 @@ import org.jspecify.annotations.NonNull;
 import java.util.List;
 
 public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity, ShooterDragon {
-    private final URDragonPart wingLeft = new URDragonPart(this);
-    private final URDragonPart wingRight = new URDragonPart(this);
-    private final URDragonPart neck = new URDragonPart(this);
-    private final URDragonPart head = new URDragonPart(this);
-    private final URDragonPart tail1 = new URDragonPart(this);
-    private final URDragonPart tail2 = new URDragonPart(this);
-    private final URDragonPart tail3 = new URDragonPart(this);
+    private final URDragonPart wingLeft = new URDragonPart(this, "wing_left");
+    private final URDragonPart wingRight = new URDragonPart(this, "wing_right");
+    private final URDragonPart neck = new URDragonPart(this, "neck");
+    private final URDragonPart head = new URDragonPart(this, "head");
+    private final URDragonPart tail1 = new URDragonPart(this, "tail1");
+    private final URDragonPart tail2 = new URDragonPart(this, "tail2");
+    private final URDragonPart tail3 = new URDragonPart(this, "tail3");
     private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
     private ShootingPoint shootingPoint = new ShootingPoint(position().toVector3f(), getLookAngle().toVector3f());
 
