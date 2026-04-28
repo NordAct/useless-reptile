@@ -78,7 +78,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
             return;
         }
         state.length = entity.getBeamLength();
-        float alpha = Mth.clamp(1f - (state.ageInTicks < 3 ? 0 : state.ageInTicks / LightningBreath.MAX_AGE), 0f, 1f);
+        float alpha = Mth.clamp(1f - (state.ageInTicks < 3 ? 0 : state.ageInTicks / entity.getMaxAge()), 0f, 1f);
         state.alpha = Mth.lerp(tickDelta, entity.prevAlpha, alpha);
         entity.prevAlpha = state.alpha;
 

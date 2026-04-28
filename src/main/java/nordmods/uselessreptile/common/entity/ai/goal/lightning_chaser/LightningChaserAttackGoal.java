@@ -14,8 +14,6 @@ import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.LightningChaser;
-import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
-import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -26,7 +24,7 @@ public class LightningChaserAttackGoal extends Goal {
     private LivingEntity target;
     private int attackCooldown = 20;
     private static final int MIN_DISTANCE_SQUARED = 80;
-    private static final int MAX_DISTANCE_SQUARED = (int) (LightningBreath.MAX_LENGTH * LightningBreath.MAX_LENGTH * 0.81f);
+    private static final int MAX_DISTANCE_SQUARED = (int) (50 * 50 * 0.81f); //todo
 
     public LightningChaserAttackGoal(LightningChaser entity) {
         this.entity = entity;
@@ -141,10 +139,11 @@ public class LightningChaserAttackGoal extends Goal {
         return true;
     }
 
-    private boolean tryShockwaveAttack() {
+    private boolean tryShockwaveAttack() { //todo redo attack goals
         if (entity.getSpecialAttackCooldown() > 0) return false;
         if (!entity.isFlying()) return false;
-        double attackDistance = ShockwaveSphere.MAX_RADIUS * ShockwaveSphere.MAX_RADIUS * 0.49;
+        //double attackDistance = ShockwaveSphere.MAX_RADIUS * ShockwaveSphere.MAX_RADIUS * 0.49;
+        double attackDistance = 40 * 40 * 0.49;
         List<Entity> projectiles = entity.level().getEntities(entity, new AABB(entity.blockPosition()).inflate(attackDistance * 2), c -> c instanceof Projectile projectile && projectile.getOwner() == target && !projectile.getDeltaMovement().equals(Vec3.ZERO));
         if (!projectiles.isEmpty()) {
             entity.triggerShockwave();

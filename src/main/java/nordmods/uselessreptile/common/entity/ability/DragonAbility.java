@@ -50,11 +50,11 @@ public interface DragonAbility {
     }
 
     default boolean canUseUncontrolled(URDragonEntity entity) {
-        return true;
+        return getCommonAbilityData().conditions().controlledByRider().isEmpty() || !getCommonAbilityData().conditions().controlledByRider().get();
     }
 
     default boolean canUseControlled(URDragonEntity entity) {
-        return entity.hasControllingPassenger();
+        return getCommonAbilityData().conditions().controlledByRider().isEmpty() || getCommonAbilityData().conditions().controlledByRider().get();
     }
 
     default boolean blockOtherAbilitiesIfActive() {

@@ -82,7 +82,7 @@ public class MeleeAttackAbility extends TriggerableAbility {
 
     @Override
     public boolean canUseUncontrolled(URDragonEntity entity) {
-        return entity.getTarget() != null && entity.getTarget().getBoundingBox().intersects(getAttackBox(entity));
+        return super.canUseUncontrolled(entity) && entity.getTarget() != null && entity.getTarget().getBoundingBox().intersects(getAttackBox(entity));
     }
 
     public AABB getAttackBox(URDragonEntity entity) {

@@ -19,6 +19,8 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -39,9 +41,9 @@ import java.util.List;
 public class LightningBreath extends Projectile implements ProjectileDamageHelper {
     private boolean spawnSoundPlayed = false;
     private int tickCount;
-    public static final int MAX_AGE = 10;
-    public static final int MAX_LENGTH = 50;
     public float prevAlpha = 0.5f;
+    public float damageScaling = 2;
+    private float defaultDamage = 16;
     public final LightningBreathBolt[] lightningBreathBolts = new LightningBreathBolt[5];
 
     public LightningBreath(EntityType<? extends Projectile> entityType, Level world, Entity owner) {
@@ -58,14 +60,40 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         this(UREntities.LIGHTNING_BREATH, world, owner);
     }
 
+    @Override
+    protected void addAdditionalSaveData(@NonNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putFloat("DamageScaling", damageScaling);
+        output.putFloat("DefaultDamage", defaultDamage);
+        output.putInt("Color", getColor());
+    }
+
+    @Override
+    protected void readAdditionalSaveData(@NonNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        damageScaling = input.getFloatOr("DamageScaling", damageScaling);
+        defaultDamage = input.getFloatOr("DefaultDamage", defaultDamage);
+        setColor(input.getIntOr("Color", 0xFFFFFF));
+    }
+
     public static final EntityDataAccessor<Integer> BEAM_LENGTH = SynchedEntityData.defineId(LightningBreath.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> MAX_AGE = SynchedEntityData.defineId(LightningBreath.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(LightningBreath.class, EntityDataSerializers.INT);
 
     public void setBeamLength(int state) {entityData.set(BEAM_LENGTH, state);}
     public int getBeamLength() {return entityData.get(BEAM_LENGTH);}
 
+    public void setMaxAge(int state) {entityData.set(MAX_AGE, state);}
+    public int getMaxAge() {return entityData.get(MAX_AGE);}
+
+    public void setColor(int state) {entityData.set(COLOR, state);}
+    public int getColor() {return entityData.get(COLOR);}
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(BEAM_LENGTH, 0);
+        builder.define(MAX_AGE, 10);
+        builder.define(COLOR, 0xFFFFFF);
     }
 
     @Override
@@ -78,8 +106,8 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         if (target.hurtServer(serverWorld, source, getResultingDamage())) {
             target.playSound(URSoundEvent.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
             boolean wasOnFireBefore = target.isOnFire();
-            LightningBolt fakeLightningSoINoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityType.LIGHTNING_BOLT, serverWorld);
-            target.thunderHit(serverWorld, fakeLightningSoINoNullPointerExceptionWouldHappenIHope);
+            LightningBolt fakeLightningSoNoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityType.LIGHTNING_BOLT, serverWorld);
+            target.thunderHit(serverWorld, fakeLightningSoNoNullPointerExceptionWouldHappenIHope);
             if (!wasOnFireBefore) {
                 target.setRemainingFireTicks(0);
                 target.setSharedFlagOnFire(false);
@@ -93,7 +121,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
     public void tick() {
         super.tick();
         tryPlaySpawnSound();
-        if (++tickCount <= MAX_AGE) {
+        if (++tickCount <= getMaxAge()) {
             List<Entity> targets = level().getEntities(this, getBoundingBox(), this::canTarget);
             for (Entity target : targets) {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
@@ -181,25 +209,27 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
 
     @Override
     public float getDefaultDamage() {
-        return 16;
+        return defaultDamage;
     }
 
     @Override
     public float getDamageScaling() {
-        return 2;
+        return damageScaling;
     }
 
-    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos) {
+    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos, int maxLength, int maxAge, int color) {
         Vec3 rot = owner.calculateViewVector(pitch, yaw);
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreath firstSegment = null;
         Level world = owner.level();
 
-        for (int i = 1; i <= LightningBreath.MAX_LENGTH; i++) {
+        for (int i = 1; i <= maxLength; i++) {
             LightningBreath lightningBreathEntity = new LightningBreath(world, owner);
             lightningBreathEntity.setPos(startPos.add(rot.scale(i)));
             lightningBreathEntity.setDeltaMovement(Vec3.ZERO);
             lightningBreathEntity.setOwner(owner);
+            lightningBreathEntity.setMaxAge(maxAge);
+            lightningBreathEntity.setColor(color);
             world.addFreshEntity(lightningBreathEntity);
             if (i == 1) firstSegment = lightningBreathEntity;
 

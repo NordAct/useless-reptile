@@ -20,14 +20,17 @@ public record CommonDragonAbilityData(
         float cooldownTimeSeconds,
         boolean blockOtherAbilitiesIfActive,
         List<ConditionedAnimation> animations,
-        UseConditions conditions
+        UseConditions conditions,
+        Optional<URRideableDragonEntity.AttackType> attackType
 ) {
     public static final MapCodec<CommonDragonAbilityData> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("cooldown_time_seconds").forGetter(CommonDragonAbilityData::cooldownTimeSeconds),
             Codec.BOOL.fieldOf("block_other_abilities_if_active").forGetter(CommonDragonAbilityData::blockOtherAbilitiesIfActive),
             ConditionedAnimation.CODEC.listOf().fieldOf("animations").forGetter(CommonDragonAbilityData::animations),
-            UseConditions.CODEC.fieldOf("conditions").forGetter(CommonDragonAbilityData::conditions)
+            UseConditions.CODEC.fieldOf("conditions").forGetter(CommonDragonAbilityData::conditions),
+            StringRepresentable.fromEnum(URRideableDragonEntity.AttackType::values).optionalFieldOf("attack_type").forGetter(CommonDragonAbilityData::attackType)
     ).apply(i, CommonDragonAbilityData::new));
+    public static final Codec<CommonDragonAbilityData> CODEC = MAP_CODEC.codec();
 
     public record ConditionedAnimation(
             URDragonEntity.AnimationController controller,
@@ -98,11 +101,11 @@ public record CommonDragonAbilityData(
             }
             if (ridingPlayer.isPresent()) {
                 if (!(entity instanceof HeadMountDragon)) return false;
-                if (ridingPlayer.isPresent() && ridingPlayer.get() != entity.vehicle instanceof Player) return false;
+                if (ridingPlayer.get() != entity.vehicle instanceof Player) return false;
             }
             if (controlledByRider.isPresent()) {
                 if (!(entity instanceof URRideableDragonEntity)) return false;
-                if (controlledByRider.isPresent() && controlledByRider.get() != entity.hasControllingPassenger()) return false;
+                if (controlledByRider.get() != entity.hasControllingPassenger()) return false;
             }
             return true;
         }

@@ -1,14 +1,7 @@
 package nordmods.uselessreptile.common.entity.projectile;
 
-import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URSoundEvent;
-import nordmods.uselessreptile.common.init.URMobEffect;
-import nordmods.uselessreptile.common.init.URTags;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -21,20 +14,31 @@ import net.minecraft.world.entity.OwnableEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerExplosion;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import nordmods.primitive_multipart_entities.common.entity.EntityPart;
+import nordmods.uselessreptile.common.init.UREntities;
+import nordmods.uselessreptile.common.init.URMobEffect;
+import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.common.init.URTags;
 import org.jspecify.annotations.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class ShockwaveSphere extends Projectile implements ProjectileDamageHelper {
     private float currentRadius = 0;
     private float prevRadius = 0;
-    public static final float MAX_RADIUS = 40;
-    public static final float RADIUS_CHANGE_SPEED = 0.8f;
-    public static final float POWER = 1;
     private final List<Entity> affected = new ArrayList<>();
     private final List<Entity> prevAffected = new ArrayList<>();
     private boolean spawnSoundPlayed = false;
     public float prevAlpha = 1f;
+    public float damageScaling = 0.5f;
+    private float defaultDamage = 4;
+    public float power = 1;
 
     public ShockwaveSphere(EntityType<? extends Projectile> entityType, Level world) {
         super(entityType, world);
@@ -48,20 +52,60 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {}
+    protected void addAdditionalSaveData(@NonNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putFloat("DamageScaling", damageScaling);
+        output.putFloat("DefaultDamage", defaultDamage);
+        output.putFloat("Power", power);
+        output.putFloat("RadiusChangeSpeed", getRadiusChangeSpeed());
+        output.putFloat("MaxRadius", getMaxRadius());
+        output.putInt("Color", getColor());
+    }
+
+    @Override
+    protected void readAdditionalSaveData(@NonNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        damageScaling = input.getFloatOr("DamageScaling", damageScaling);
+        defaultDamage = input.getFloatOr("DefaultDamage", defaultDamage);
+        power = input.getFloatOr("Power", power);
+        setRadiusChangeSpeed(input.getFloatOr("RadiusChangeSpeed", 40));
+        setMaxRadius(input.getFloatOr("MaxRadius", 0.8f));
+        setColor(input.getIntOr("Color", 0xFFFFFF));
+    }
+
+    public static final EntityDataAccessor<Float> MAX_RADIUS = SynchedEntityData.defineId(ShockwaveSphere.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> RADIUS_CHANGE_SPEED = SynchedEntityData.defineId(ShockwaveSphere.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(ShockwaveSphere.class, EntityDataSerializers.INT);
+
+    public float getMaxRadius() {return entityData.get(MAX_RADIUS);}
+    public void setMaxRadius(float state) {entityData.set(MAX_RADIUS, state);}
+
+    public float getRadiusChangeSpeed() {return entityData.get(RADIUS_CHANGE_SPEED);}
+    public void setRadiusChangeSpeed(float state) {entityData.set(RADIUS_CHANGE_SPEED, state);}
+
+    public int getColor() {return entityData.get(COLOR);}
+    public void setColor(int state) {entityData.set(COLOR, state);}
+
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
+        builder.define(MAX_RADIUS, 40f);
+        builder.define(RADIUS_CHANGE_SPEED, 0.8f);
+        builder.define(COLOR, 0xFFFFFF);
+    }
 
     @Override
     public void tick() {
         super.tick();
         tryPlaySpawnSound();
         prevRadius = currentRadius;
-        if (currentRadius <= MAX_RADIUS) {
+        if (currentRadius <= getMaxRadius()) {
             List<Entity> targets = level().getEntities(this, getBoundingBox().inflate(currentRadius + 3), this::canTarget);
             for (Entity target : targets) {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
                 onHitEntity(entityHitResult);
             }
-            currentRadius += RADIUS_CHANGE_SPEED;
+            currentRadius += getRadiusChangeSpeed();
             prevAffected.clear();
             prevAffected.addAll(affected);
             affected.clear();
@@ -78,7 +122,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
             target.playSound(URSoundEvent.SHOCKWAVE_HIT, 1, 1 / exposure);
             Vec3 vec3d = target.position().subtract(getEyePosition());
             double lengthMod = currentRadius / vec3d.length();
-            target.addDeltaMovement(vec3d.normalize().scale(POWER * lengthMod * exposure));
+            target.addDeltaMovement(vec3d.normalize().scale(power * lengthMod * exposure));
             if (target instanceof LivingEntity livingEntity && livingEntity.level() instanceof ServerLevel world) {
                 livingEntity.addEffect(new MobEffectInstance(URMobEffect.SHOCK, (int) (100 * Mth.clamp(lengthMod, 1, 2) * exposure), 0, false, false), getOwner());
                 livingEntity.hurtServer(world, damageSources().source(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (getResultingDamage() * Mth.clamp(lengthMod, 1, 2)));
@@ -133,11 +177,11 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
 
     @Override
     public float getDefaultDamage() {
-        return 4;
+        return defaultDamage;
     }
 
     @Override
     public float getDamageScaling() {
-        return 0.5f;
+        return damageScaling;
     }
 }

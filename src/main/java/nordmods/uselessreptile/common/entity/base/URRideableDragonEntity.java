@@ -12,6 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
@@ -346,5 +347,21 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
             }
         }
         return super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor).add(offset.yRot(-getYRot() * Mth.DEG_TO_RAD));
+    }
+
+    public enum AttackType implements StringRepresentable {
+        PRIMARY("primary"),
+        SECONDARY("secondary")
+        ;
+        private final String name;
+
+        AttackType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
     }
 }

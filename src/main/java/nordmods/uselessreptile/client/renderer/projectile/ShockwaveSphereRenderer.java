@@ -37,23 +37,27 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
 
         RenderType layer = RenderTypes.entityTranslucentEmissive(TEXTURE, true);
 
+        float r = (state.color & 0xFF0000) / 255f;
+        float g = (state.color & 0x00FF00) / 255f;
+        float b = (state.color & 0x0000FF) / 255f;
+
         matrixStack.pushPose();
         matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha / 2f * 180f));
-        renderSphere(matrixStack, layer, Mth.clamp(state.alpha - 0.2f, 0, 1), state.radius);
+        renderSphere(matrixStack, layer, Mth.clamp(state.alpha - 0.2f, 0, 1), state.radius, r, g, b);
         matrixStack.popPose();
 
         matrixStack.pushPose();
         matrixStack.mulPose(Axis.YP.rotationDegrees(-state.alpha / 1.5f * 180f));
-        renderSphere(matrixStack, layer, Mth.clamp(state.alpha/1.5f - 0.1f, 0, 1), state.radius/1.5f);
+        renderSphere(matrixStack, layer, Mth.clamp(state.alpha/1.5f - 0.1f, 0, 1), state.radius/1.5f, r, g, b);
         matrixStack.popPose();
 
         matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha * 180f));
-        renderSphere(matrixStack, layer, state.alpha/2f, state.radius/2f);
+        renderSphere(matrixStack, layer, state.alpha/2f, state.radius/2f, r, g, b);
 
         matrixStack.popPose();
     }
 
-    private void renderSphere(PoseStack matrixStack, RenderType renderLayer, float alpha, float radius) {
+    private void renderSphere(PoseStack matrixStack, RenderType renderLayer, float alpha, float radius, float red, float green, float blue) {
         float dPhi = (float) (-Math.PI / SPHERE_ROWS);
         float dTheta = (float) (-2 * Math.PI / SPHERE_ROWS);
 
@@ -78,7 +82,8 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
 
                 RenderUtil.renderQuad(matrixStack.last().pose(), matrixStack.last(), renderLayer,
                         v0, v1 ,v2 ,v3,
-                        alpha, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
+                        alpha, red, green, blue,
+                        LightCoordsUtil.FULL_BRIGHT,
                         minU, maxU, minV, maxV);
             }
         }
@@ -92,16 +97,18 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
     }
 
     @Override
-    public void extractRenderState(ShockwaveSphere entity, ShockwaveSpereEntityRenderState state, float tickDelta) {
+    public void extractRenderState(@NonNull ShockwaveSphere entity, @NonNull ShockwaveSpereEntityRenderState state, float tickDelta) {
         super.extractRenderState(entity, state, tickDelta);
         state.radius = Mth.lerp(tickDelta, entity.getPrevRadius(), entity.getCurrentRadius());
-        float alpha = Mth.clamp(1f - (state.ageInTicks < 3 ? 0 : state.radius / ShockwaveSphere.MAX_RADIUS), 0f, 1f);
+        float alpha = Mth.clamp(1f - (state.ageInTicks < 3 ? 0 : state.radius / entity.getMaxRadius()), 0f, 1f);
         state.alpha = Mth.lerp(tickDelta, entity.prevAlpha, alpha);
         entity.prevAlpha = state.alpha;
+        state.color = entity.getColor();
     }
 
     public static class ShockwaveSpereEntityRenderState extends EntityRenderState {
         public float alpha = 1;
         public float radius;
+        public int color;
     }
 }

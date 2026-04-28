@@ -439,7 +439,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     public void shoot() {
-        LightningBreath.createBeam(this, getShootingPointPitch(), getShootingPointYaw(), new Vec3(getShootingPoint().position().add(0,  isFlying() ? -0.6f : -1.25f, 0)));
+        LightningBreath.createBeam(this, getShootingPointPitch(), getShootingPointYaw(), new Vec3(getShootingPoint().position()), 50, 10, 0xFFFFFF); //todo redo
     }
 
     public float getYawProgressLimit() {
@@ -562,7 +562,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
     @Override
     public Vector3f getShootingPointAnchor() {
-        return head.position().toVector3f().add(0, head.getBbHeight() / 2f, 0);
+        return head.position().toVector3f().add(0, head.getBbHeight() / 2f + (isFlying() ? -0.6f : -1.25f), 0);
     }
 
     @Override

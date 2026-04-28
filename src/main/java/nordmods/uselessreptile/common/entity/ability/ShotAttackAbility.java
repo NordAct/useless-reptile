@@ -64,19 +64,18 @@ public class ShotAttackAbility extends TriggerableAbility {
     @Override
     public void trigger(URDragonEntity entity) {
         if (!(entity.level() instanceof ServerLevel level)) return;
+        Vec3 rot = getRot(entity);
+        Vec3 pos = getPos(entity);
+        for (int i = 0; i < count; i++) {
+            Projectile projectile = createProjectile(level);
+            projectile.setPos(pos);
+            projectile.shoot(rot.x, rot.y, rot.z, speed, spread);
+            level.addFreshEntity(projectile);
+        }
+    }
 
-        Vec3 rot = switch (anchorPoint) {
-            case EYES, ENTITY_POS, MULTIPART_BOX -> entity.calculateViewVector(entity.getXRot(), entity.getYawWithAdjustment());
-            case SHOOTING_POINT -> {
-                if (entity instanceof ShooterDragon shooterDragon) {
-                    yield new Vec3(shooterDragon.getShootingPoint().rotation());
-                } else {
-                    throw new IllegalStateException("Cannot use shooting_point anchor for non ShooterDragon entities");
-                }
-            }
-        };
-
-        Vec3 pos = switch (anchorPoint) {
+    protected Vec3 getPos(URDragonEntity entity) {
+        return switch (anchorPoint) {
             case EYES -> entity.getEyePosition().add(anchorPointOffset.yRot(entity.getYawWithAdjustment()).xRot(entity.getXRot()));
             case ENTITY_POS -> entity.position().add(anchorPointOffset.yRot(entity.getYawWithAdjustment()).xRot(entity.getXRot()));
             case MULTIPART_BOX -> {
@@ -96,25 +95,41 @@ public class ShotAttackAbility extends TriggerableAbility {
                 yield new Vec3(shooterDragon.getShootingPoint().position())
                         .add(
                                 anchorPointOffset
-                                .yRot(shooterDragon.getShootingPointDesiredYaw())
-                                .xRot(shooterDragon.getShootingPointDesiredPitch())
+                                        .yRot(shooterDragon.getShootingPointDesiredYaw())
+                                        .xRot(shooterDragon.getShootingPointDesiredPitch())
                         );
             }
         };
+    }
 
-        for (int i = 0; i < count; i++) {
-            Entity presumablyProjectile = projectileEntityType.create(level, EntitySpawnReason.TRIGGERED);
-            if (presumablyProjectile instanceof Projectile projectile) {
-                projectile.setPos(pos);
-                projectile.shoot(rot.x, rot.y, rot.z, speed, spread);
-                level.addFreshEntity(projectile);
-            } else throw new IllegalStateException(getType().getId() + " cannot spawn non Projectile entities");
-        }
+    protected Vec3 getRot(URDragonEntity entity) {
+        return switch (anchorPoint) {
+            case EYES, ENTITY_POS, MULTIPART_BOX -> entity.calculateViewVector(entity.getXRot(), entity.getYawWithAdjustment());
+            case SHOOTING_POINT -> {
+                if (entity instanceof ShooterDragon shooterDragon) {
+                    yield new Vec3(shooterDragon.getShootingPoint().rotation());
+                } else {
+                    throw new IllegalStateException("Cannot use shooting_point anchor for non ShooterDragon entities");
+                }
+            }
+        };
     }
 
     @Override
     public DragonAbilityType<?> getType() {
         return URDragonAbilityTypes.SHOT_ATTACK;
+    }
+
+    @Override
+    public boolean canUseUncontrolled(URDragonEntity entity) {
+        return super.canUseUncontrolled(entity) && entity.getTarget() != null && entity.getLookControl().isLookingAtTarget();
+    }
+
+    protected Projectile createProjectile(ServerLevel level) {
+        Entity presumablyProjectile = EntityType.loadEntityRecursive(projectileEntityType, projectileEntityNbt, level, EntitySpawnReason.TRIGGERED, (e) -> e);
+        if (presumablyProjectile instanceof Projectile projectile) {
+            return projectile;
+        } else throw new IllegalStateException(getType().getId() + " cannot spawn non Projectile entities");
     }
 
     public enum AnchorPoint implements StringRepresentable {
