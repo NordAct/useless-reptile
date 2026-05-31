@@ -217,7 +217,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         return damageScaling;
     }
 
-    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos, int maxLength, int maxAge, int color) {
+    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos, int maxLength, int maxAge, float damageScaling, int color) {
         Vec3 rot = owner.calculateViewVector(pitch, yaw);
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreath firstSegment = null;
@@ -230,6 +230,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
             lightningBreathEntity.setOwner(owner);
             lightningBreathEntity.setMaxAge(maxAge);
             lightningBreathEntity.setColor(color);
+            lightningBreathEntity.damageScaling = damageScaling;
             world.addFreshEntity(lightningBreathEntity);
             if (i == 1) firstSegment = lightningBreathEntity;
 
