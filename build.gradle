@@ -1,7 +1,7 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.16-SNAPSHOT'
     id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
+    id "me.modmuss50.mod-publish-plugin" version "2.0.0-beta.2"
 }
 
 version = project.mod_version + "-" + project.minecraft_version
@@ -111,7 +111,9 @@ loom {
 }
 
 fabricApi {
-    configureDataGeneration()
+    configureDataGeneration(){
+        client = true
+    }
 }
 
 publishMods {
@@ -128,6 +130,8 @@ publishMods {
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
         minecraftVersions.add(project.property("minecraft_version") as String)
         requires("fabric-api", "yacl")
+        client = true
+        server = true
     }
     modrinth {
         projectId = "YE4QRt8F"
