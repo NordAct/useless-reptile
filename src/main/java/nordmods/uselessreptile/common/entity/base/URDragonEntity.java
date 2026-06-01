@@ -134,6 +134,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             AnimationController.BLINK , blinkController
     );
     private final Int2ObjectOpenHashMap<DragonAbilityHolder> abilityHolders = new Int2ObjectOpenHashMap<>();
+    private List<DragonAbilityHolder> availableAbilities = List.of();
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -888,6 +889,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             if (jukeboxReachable) updateJukeboxPos(jukeboxPos, true);
             else updateJukeboxPos(null, false);
         }
+
+        availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
     }
 
     @Override
@@ -1310,7 +1313,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public List<DragonAbilityHolder> getAvailableAbilities() {
-        return abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
+        return availableAbilities;
     }
 
     public void onAbilityActivated(DragonAbility ability) {}

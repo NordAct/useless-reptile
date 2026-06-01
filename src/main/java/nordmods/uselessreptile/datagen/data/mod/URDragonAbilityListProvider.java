@@ -34,9 +34,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                        URDragonEntity.AnimationController.ATTACK,
                                                        List.of("attack.melee1", "attack.melee2", "attack.melee3"),
                                                        true,
-                                                       CommonDragonAbilityData.UseConditions.builder()
-                                                               .flying(false)
-                                                               .build()
+                                                       CommonDragonAbilityData.UseConditions.builder().build()
                                                )
                                        ),
                                         CommonDragonAbilityData.UseConditions.builder()
@@ -46,8 +44,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 ),
                                 new TriggerableAbility.Data(0, 0.71f),
                                 false,
-                                new Vec3(0, 0.5, -1.5),
-                                2, 3, false
+                                new Vec3(0, -0.5, 1.75),
+                                3, 4, false
                         ),
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -58,20 +56,66 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         URDragonEntity.AnimationController.MAIN,
                                                         List.of("fly.attack"),
                                                         true,
-                                                        CommonDragonAbilityData.UseConditions.builder()
-                                                                .flying(true)
-                                                                .build()
+                                                        CommonDragonAbilityData.UseConditions.builder().build()
                                                 )
                                         ),
                                         CommonDragonAbilityData.UseConditions.builder()
                                                 .flying(true)
+                                                .moving(false)
                                                 .build(),
                                         Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
                                 ),
                                 new TriggerableAbility.Data(0, 1),
                                 false,
-                                new Vec3(0, 1.5f, -1.5),
-                                3, 5, false
+                                new Vec3(0, -1, 1.5),
+                                3.5f, 5.5f, false
+                        ),
+                        new MeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        1.5f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.MAIN,
+                                                        List.of("fly.attack"),
+                                                        true,
+                                                        CommonDragonAbilityData.UseConditions.builder().build()
+                                                )
+                                        ),
+                                        CommonDragonAbilityData.UseConditions.builder()
+                                                .flying(true)
+                                                .movingBackwards(true)
+                                                .build(),
+                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
+                                ),
+                                new TriggerableAbility.Data(0, 1),
+                                false,
+                                new Vec3(0, -1, 1.5),
+                                3.5f, 5.5f, false
+                        ),
+                        new MeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        1.5f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.MAIN,
+                                                        List.of("fly.attack"),
+                                                        true,
+                                                        CommonDragonAbilityData.UseConditions.builder().build()
+                                                )
+                                        ),
+                                        CommonDragonAbilityData.UseConditions.builder()
+                                                .flying(true)
+                                                .moving(true)
+                                                .movingBackwards(false)
+                                                .build(),
+                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
+                                ),
+                                new TriggerableAbility.Data(0, 1),
+                                false,
+                                new Vec3(0, -1.5, 1.5),
+                                3.5f, 4.5f, false
                         ),
                         new ShotAttackAbility(
                                 new CommonDragonAbilityData(
@@ -120,7 +164,6 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 ),
                                 new TriggerableAbility.Data(0, 0.7f),
                                 UREntities.ACID_BLAST,
-                                //EntityType.FIREBALL,
                                 new CompoundTag(),
                                 ShotAttackAbility.AnchorPoint.SHOOTING_POINT,
                                 Optional.empty(),

@@ -5,7 +5,6 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
@@ -52,7 +51,7 @@ public class MeleeAttackAbility extends TriggerableAbility {
     public void trigger(DragonAbilityHolder holder) {
         URDragonEntity entity = holder.getEntity();
         if (entity.level() instanceof ServerLevel level) {
-            AABB attackBox = getAttackBox(entity);
+            AABB attackBox = getAttackBox(holder);
             List<Entity> list = entity.level().getEntities(
                     entity,
                     attackBox,
@@ -83,27 +82,31 @@ public class MeleeAttackAbility extends TriggerableAbility {
     }
 
     @Override
-    public boolean canUseUncontrolled(DragonAbilityHolder holder) {
-        return super.canUseUncontrolled(holder) && holder.getEntity().getTarget() != null && holder.getEntity().getTarget().getBoundingBox().intersects(getAttackBox(holder.getEntity()));
+    public boolean canUse(DragonAbilityHolder holder) {
+        if (!holder.getEntity().hasControllingPassenger() &&
+                (holder.getEntity().getTarget() == null ||
+                        !holder.getEntity().getTarget().getBoundingBox().intersects(getAttackBox(holder))
+                )
+        ) return false;
+        return super.canUse(holder);
     }
 
-    public AABB getAttackBox(URDragonEntity entity) {
-        double cosYaw = Math.cos(-entity.getYRot() * Mth.DEG_TO_RAD);
-        double sinYaw = Math.sin(-entity.getYRot() * Mth.DEG_TO_RAD);
-        double cosPitch = moveBoxVertically ? 0 : Math.cos(entity.getXRot() * Mth.DEG_TO_RAD);
-        double sinPitch = moveBoxVertically ? 0 : Math.sin(entity.getXRot() * Mth.DEG_TO_RAD);
+    public AABB getAttackBox(DragonAbilityHolder holder) {
+        URDragonEntity entity = holder.getEntity();
         float scale = entity.getScale();
         return new AABB(
                 -attackBoxWidth / 2 * scale,
-                -attackBoxHeight / 2 * scale,
+                0,
                 -attackBoxWidth / 2 * scale,
                 attackBoxWidth / 2 * scale,
-                attackBoxHeight / 2 * scale,
+                attackBoxHeight * scale,
                 attackBoxWidth / 2 * scale
         ).move(
-                entity.getX() + attackBoxCenterOffset.z * sinYaw * cosPitch + attackBoxCenterOffset.x * cosYaw + attackBoxCenterOffset.y * sinYaw * sinPitch,
-                entity.getY() + entity.getBbHeight() / 2 + attackBoxCenterOffset.z * -sinPitch + attackBoxCenterOffset.y * cosPitch,
-                entity.getZ() + attackBoxCenterOffset.z * cosYaw * cosPitch + attackBoxCenterOffset.x * -sinYaw + attackBoxCenterOffset.y * cosYaw * sinPitch
+                ShotAttackAbility.rotateVec(attackBoxCenterOffset, entity.position(), moveBoxVertically ? entity.getXRot() : 0, entity.getYRot())
         );
+    }
+
+    public int getDebugAttackBoxColor() {
+        return 0xFFFF00FF;
     }
 }

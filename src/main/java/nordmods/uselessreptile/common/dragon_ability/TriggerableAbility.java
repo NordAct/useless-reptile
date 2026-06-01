@@ -39,7 +39,7 @@ public abstract class TriggerableAbility implements DragonAbility {
     @Override
     public void tick(DragonAbilityHolder holder) {
         DragonAbility.super.tick(holder);
-        if (holder instanceof TriggerableAbilityHolder triggerableAbilityHolder && !isActive(holder)) {
+        if (holder instanceof TriggerableAbilityHolder triggerableAbilityHolder && triggerableAbilityHolder.getCooldown() <= 0) {
             triggerableAbilityHolder.setWasTriggered(false);
         }
     }
@@ -73,5 +73,11 @@ public abstract class TriggerableAbility implements DragonAbility {
     @Override
     public DragonAbilityHolder createAbilityHolder(URDragonEntity entity) {
         return new TriggerableAbilityHolder(this, entity);
+    }
+
+    @Override
+    public boolean canUse(DragonAbilityHolder holder) {
+        if (((TriggerableAbilityHolder)holder).wasTriggered()) return false;
+        return DragonAbility.super.canUse(holder);
     }
 }

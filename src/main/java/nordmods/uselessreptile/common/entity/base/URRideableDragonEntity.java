@@ -86,15 +86,6 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     public boolean isPrimaryAttackPressed() {return entityData.get(PRIMARY_ATTACK_PRESSED);}
     public boolean freeLook() {return entityData.get(FREE_LOOK);}
 
-    @Override
-    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
-        super.onSyncedDataUpdated(data);
-        if (hasControllingPassenger()) {
-            if (data.equals(PRIMARY_ATTACK_PRESSED)) primaryRiderAbility.use();
-            if (data.equals(SECONDARY_ATTACK_PRESSED)) secondaryRiderAbility.use();
-        }
-    }
-
     protected void updateRiderAbilities() {
         List<DragonAbilityHolder> available = getAvailableAbilities();
         primaryRiderAbility = available.stream()
@@ -321,6 +312,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                                 getId()));
             }
         }
+        if (isPrimaryAttackPressed()) primaryRiderAbility.use();
+        if (isSecondaryAttackPressed()) secondaryRiderAbility.use();
         super.tickRidden(rider, movementInput);
     }
 
