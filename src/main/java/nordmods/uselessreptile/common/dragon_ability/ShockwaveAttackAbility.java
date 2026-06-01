@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.ability;
+package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -12,6 +12,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
@@ -69,7 +70,8 @@ public class ShockwaveAttackAbility extends ShotAttackAbility {
     }
 
     @Override
-    public boolean canUseUncontrolled(URDragonEntity entity) {
+    public boolean canUseUncontrolled(DragonAbilityHolder holder) {
+        URDragonEntity entity = holder.getEntity();
         if (!(getCommonAbilityData().conditions().controlledByRider().isEmpty() || !getCommonAbilityData().conditions().controlledByRider().get())) return false;
         if (entity.getLastAttacker() == null && entity.getTarget() == null) return false;
 

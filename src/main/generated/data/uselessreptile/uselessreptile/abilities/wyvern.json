@@ -1,0 +1,134 @@
+[
+  {
+    "type": "uselessreptile:melee_attack",
+    "active_time_seconds": 0.71,
+    "animations": [
+      {
+        "animations": [
+          "attack.melee1",
+          "attack.melee2",
+          "attack.melee3"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": {
+          "flying": false
+        },
+        "controller": "attack"
+      }
+    ],
+    "aoe": false,
+    "attack_box_center_offset": [
+      0.0,
+      0.5,
+      -1.5
+    ],
+    "attack_box_height": 3.0,
+    "attack_box_width": 2.0,
+    "attack_type": "secondary",
+    "block_other_abilities_if_active": true,
+    "conditions": {
+      "flying": false
+    },
+    "cooldown_time_seconds": 1.5,
+    "move_box_vertically": false,
+    "trigger_time_seconds": 0.0
+  },
+  {
+    "type": "uselessreptile:melee_attack",
+    "active_time_seconds": 1.0,
+    "animations": [
+      {
+        "animations": [
+          "fly.attack"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": {
+          "flying": true
+        },
+        "controller": "main"
+      }
+    ],
+    "aoe": false,
+    "attack_box_center_offset": [
+      0.0,
+      1.5,
+      -1.5
+    ],
+    "attack_box_height": 5.0,
+    "attack_box_width": 3.0,
+    "attack_type": "secondary",
+    "block_other_abilities_if_active": true,
+    "conditions": {
+      "flying": true
+    },
+    "cooldown_time_seconds": 1.5,
+    "move_box_vertically": false,
+    "trigger_time_seconds": 0.0
+  },
+  {
+    "type": "uselessreptile:shot_attack",
+    "active_time_seconds": 0.7,
+    "anchor_point": "shooting_point",
+    "anchor_point_offset": [
+      0.0,
+      -0.25,
+      1.0
+    ],
+    "animations": [
+      {
+        "animations": [
+          "attack.fly.range"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": {
+          "flying": true,
+          "moving": true,
+          "moving_backwards": false
+        },
+        "controller": "attack"
+      },
+      {
+        "animations": [
+          "attack.range"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": {
+          "flying": true,
+          "moving": false
+        },
+        "controller": "attack"
+      },
+      {
+        "animations": [
+          "attack.range"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": {
+          "flying": true,
+          "moving_backwards": true
+        },
+        "controller": "attack"
+      },
+      {
+        "animations": [
+          "attack.range"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": {
+          "flying": false
+        },
+        "controller": "attack"
+      }
+    ],
+    "attack_type": "primary",
+    "block_other_abilities_if_active": true,
+    "conditions": {},
+    "cooldown_time_seconds": 4.0,
+    "count": 5,
+    "projectile_entity_nbt": {},
+    "projectile_entity_type": "uselessreptile:acid_blast",
+    "speed": 3.0,
+    "spread": 5.0,
+    "trigger_time_seconds": 0.0
+  }
+]

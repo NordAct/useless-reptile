@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.ability;
+package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.Identifier;

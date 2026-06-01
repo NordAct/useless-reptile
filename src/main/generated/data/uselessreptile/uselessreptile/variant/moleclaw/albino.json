@@ -1,5 +1,6 @@
 {
   "type": "uselessreptile:moleclaw",
+  "abilities": "uselessreptile:moleclaw",
   "base_taming_progress": 64,
   "dragon_model": "uselessreptile:moleclaw/albino",
   "equipment": "uselessreptile:moleclaw",

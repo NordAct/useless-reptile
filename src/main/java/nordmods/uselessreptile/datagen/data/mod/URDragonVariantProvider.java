@@ -34,13 +34,14 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 "jeb_",
                 "variant.uselessreptile.wyvern.jeb_",
                 Optional.empty(),
-                UselessReptile.id("wyvern/" + "jeb_"),
+                UselessReptile.id("wyvern/jeb_"),
                 UselessReptile.id("wyvern"),
                 Optional.empty(),
                 Optional.empty(),
                 -1,
                 Optional.empty(),
-                Optional.empty()
+                Optional.empty(),
+                UselessReptile.id("wyvern")
         );
         addEntry(UselessReptile.id("jeb_"), new WyvernVariant(jeb_));
 
@@ -103,7 +104,8 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
                         )
-                )
+                ),
+                UselessReptile.id("wyvern")
         );
         addEntry(getId(id, name), new WyvernVariant(variant));
     }
@@ -132,7 +134,8 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                         List.of(
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
                         )
-                )
+                ),
+                UselessReptile.id("moleclaw")
         );
         addEntry(getId(id, name), new MoleclawVariant(variant));
     }
@@ -166,7 +169,8 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                         List.of(
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
                         )
-                )
+                ),
+                UselessReptile.id("river_pikehorn")
         );
         addEntry(getId(id, name), new RiverPikehornVariant(variant));
     }
@@ -187,7 +191,8 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                         List.of(
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
                         )
-                )
+                ),
+                UselessReptile.id("lightning_chaser")
         );
         addEntry(getId(id, name), new LightningChaserVariant(variant));
     }
@@ -217,7 +222,8 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4, Optional.empty()),
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
                         )
-                )
+                ),
+                UselessReptile.id("magmamuncher")
         );
         addEntry(getId(id, name), new MagmamuncherVariant(variant));
     }

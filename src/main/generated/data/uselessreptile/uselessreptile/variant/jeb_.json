@@ -1,5 +1,6 @@
 {
   "type": "uselessreptile:wyvern",
+  "abilities": "uselessreptile:wyvern",
   "base_taming_progress": -1,
   "dragon_model": "uselessreptile:wyvern/jeb_",
   "equipment": "uselessreptile:wyvern",

@@ -1,5 +1,6 @@
 {
   "type": "uselessreptile:river_pikehorn",
+  "abilities": "uselessreptile:river_pikehorn",
   "base_taming_progress": 8,
   "dragon_model": "uselessreptile:river_pikehorn/dark_purple",
   "equipment": "uselessreptile:empty",

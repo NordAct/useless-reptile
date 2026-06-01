@@ -1,5 +1,6 @@
 {
   "type": "uselessreptile:magmamuncher",
+  "abilities": "uselessreptile:magmamuncher",
   "base_taming_progress": 12,
   "dragon_model": "uselessreptile:magmamuncher/netherrack",
   "equipment": "uselessreptile:empty",

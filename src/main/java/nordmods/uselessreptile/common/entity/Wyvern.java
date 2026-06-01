@@ -145,33 +145,18 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         if (!level().isClientSide()) return;
         tickBlinkController();
         tickTurnController();
-        tickAttackController();
         tickMainController();
     }
 
     private void tickBlinkController() {
         URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
-        if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
-    }
-
-    private void tickAttackController() {
-        URDragonAnimationController<URDragonEntity> attackController = getAnimationController(AnimationController.ATTACK);
-        attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
-        if (!isFlying() && isSecondaryAttack()) {
-            attackController.playAnimation("attack.melee" + getAttackType());
-            return;
-        }
-        if (isPrimaryAttack()) {
-            if (isFlying() && isMoving() && !isMovingBackwards()) {
-                attackController.playAnimation("attack.fly.range");
-                return;
-            }
-            attackController.playAnimation("attack.range");
-        }
+        if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
+        blinkController.playAnimation("blink");
     }
 
     private void tickTurnController() {
         URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
+        if (turnController.isPlayingAbilityAnimation(AnimationController.TURN)) return;
         switch (getTurningState()) {
             case LEFT -> {
                 if (isFlying() && isMoving() && !isSecondaryAttack() && !isMovingBackwards()) turnController.playAnimation("turn.fly.left");
@@ -188,7 +173,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     private void tickMainController() {
         URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
-        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
+        if (mainController.isPlayingAbilityAnimation(AnimationController.MAIN)) return;
         if (isFlying()) {
             if (isSecondaryAttack()) {
                 mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1/ getCooldownModifier()));
@@ -268,12 +253,12 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         }
         setHitboxModifiers(dHeight, dWidth, dMountedOffset);
 
-        if (hasControllingPassenger()) {
-            if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) {
-                meleeAttack();
-            }
-            if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) shoot();
-        }
+        //if (hasControllingPassenger()) {
+        //    if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) {
+        //        meleeAttack();
+        //    }
+        //    if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) shoot();
+        //}
 
         updateChildParts();
         tickAnimations();

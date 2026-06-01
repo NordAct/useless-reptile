@@ -1,5 +1,6 @@
 {
   "type": "uselessreptile:wyvern",
+  "abilities": "uselessreptile:wyvern",
   "base_taming_progress": 256,
   "dragon_model": "uselessreptile:wyvern/brown",
   "equipment": "uselessreptile:wyvern",

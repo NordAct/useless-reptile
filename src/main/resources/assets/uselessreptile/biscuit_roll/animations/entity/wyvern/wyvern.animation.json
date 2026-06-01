@@ -5854,6 +5854,9 @@
 				}
 			},
 			"sound_effects": {
+				"0.0": {
+					"effect": "bite"
+				},
 				"1.0": {
 					"effect": "flap"
 				}

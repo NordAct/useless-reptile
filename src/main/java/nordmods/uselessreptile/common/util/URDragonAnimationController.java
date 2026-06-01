@@ -5,12 +5,14 @@ import net.minecraft.sounds.SoundEvent;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.uselessreptile.common.dragon_ability.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public class URDragonAnimationController<E extends URDragonEntity> extends BRAnimationController {
     private final E dragon;
     public URDragonAnimationController(E dragon, boolean singleAnimation) {
-        super( singleAnimation);
+        super(singleAnimation);
         this.dragon = dragon;
     }
 
@@ -39,5 +41,18 @@ public class URDragonAnimationController<E extends URDragonEntity> extends BRAni
     @Override
     public float getDefaultTransitionTime() {
         return URDragonEntity.TRANSITION_TICKS/20f;
+    }
+
+    public boolean isPlayingAbilityAnimation(URDragonEntity.AnimationController controller) {
+        for (DragonAbilityHolder holder : dragon.getAbilityHolders().values()) {
+            if (!holder.getAbility().isActive(holder)) continue;
+            for (CommonDragonAbilityData.ConditionedAnimation conditionedAnimation : holder.getAbility().getCommonAbilityData().animations()) {
+                if (conditionedAnimation.controller() != controller) continue;
+                for (String animation : conditionedAnimation.animations()) {
+                    if (playingAnimations.containsKey(animation) && !playingAnimations.get(animation).isTransitioningOut()) return true;
+                }
+            }
+        }
+        return false;
     }
 }

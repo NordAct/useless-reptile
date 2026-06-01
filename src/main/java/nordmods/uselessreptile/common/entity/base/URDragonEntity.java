@@ -58,6 +58,8 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
 import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
@@ -65,7 +67,6 @@ import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
-import nordmods.uselessreptile.common.entity.ability.DragonAbility;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
@@ -132,7 +133,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             AnimationController.ATTACK , attackController,
             AnimationController.BLINK , blinkController
     );
-    private final Int2ObjectOpenHashMap<DragonAbility> abilityStorage = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectOpenHashMap<DragonAbilityHolder> abilityHolders = new Int2ObjectOpenHashMap<>();
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -341,14 +342,29 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
         if (VARIANT.equals(data)) {
-            removeVariantModifiers();
-            applyVariantModifiers();
             clearVariant();
-
-            DragonInventory newInventory = createInventory();
-            if (inventory != null) inventory.forEach(newInventory::addItem);
-            inventory = newInventory;
+            updateVariantModifiers();
+            updateInventory();
+            updateAbilities();
         }
+    }
+
+    protected void updateAbilities() {
+        abilityHolders.clear();
+        CommonDragonVariantData variant = getDragonVariant().common();
+
+        registryAccess().lookupOrThrow(URResourceKeys.DRAGON_ABILITIES).get(variant.abilities()).ifPresentOrElse(
+                ref -> {
+                    for (int i = 0; i < ref.value().size(); i++) abilityHolders.put(i, ref.value().get(i).createAbilityHolder(this));
+                },
+                () -> UselessReptile.LOGGER.error("Couldn't find abilities list {} for variant {} ({})", variant.abilities(), getVariant(), getDragonId())
+        );
+    }
+
+    private void updateInventory() {
+        DragonInventory newInventory = createInventory();
+        if (inventory != null) inventory.forEach(newInventory::addItem);
+        inventory = newInventory;
     }
 
     public void clearVariant() {
@@ -359,7 +375,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         dragonEquipment = null;
     }
 
-    private void applyVariantModifiers() {
+    private void updateVariantModifiers() {
+        AttributeMap container = getAttributes();
+        registryAccess().lookupOrThrow(Registries.ATTRIBUTE).listElements().forEach(entityAttributeReference -> {
+            if (container.hasAttribute(entityAttributeReference))
+                container.getInstance(entityAttributeReference).removeModifier(VARIANT_BONUS_MODIFIER);
+        });
+
         CommonDragonVariantData variant = getDragonVariant().common();
         if (variant == null) {
             UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}). No variant attribute modifiers will be applied", getVariant(), getDragonId());
@@ -381,14 +403,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
                 }
             });
-        });
-    }
-
-    private void removeVariantModifiers() {
-        AttributeMap container = getAttributes();
-        registryAccess().lookupOrThrow(Registries.ATTRIBUTE).listElements().forEach(entityAttributeReference -> {
-            if (container.hasAttribute(entityAttributeReference))
-                container.getInstance(entityAttributeReference).removeModifier(VARIANT_BONUS_MODIFIER);
         });
     }
 
@@ -842,9 +856,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             );
         }
 
-        if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
-        if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
-        if (getSpecialAttackCooldown() > 0) setSpecialAttackCooldown(getSpecialAttackCooldown() - 1);
+        //if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
+        //if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
+        //if (getSpecialAttackCooldown() > 0) setSpecialAttackCooldown(getSpecialAttackCooldown() - 1);
+        getAbilityHolders().values().forEach(DragonAbilityHolder::tick);
 
         if (ticksUntilHeal > -1 && --healTimer <= 0) {
             heal(1);
@@ -1290,9 +1305,15 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return (URDragonAnimationController<URDragonEntity>) controllers.get(controller);
     }
 
-    public Int2ObjectOpenHashMap<DragonAbility> getAbilityStorage() {
-        return abilityStorage;
+    public Int2ObjectOpenHashMap<DragonAbilityHolder> getAbilityHolders() {
+        return abilityHolders;
     }
+
+    public List<DragonAbilityHolder> getAvailableAbilities() {
+        return abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
+    }
+
+    public void onAbilityActivated(DragonAbility ability) {}
 
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;

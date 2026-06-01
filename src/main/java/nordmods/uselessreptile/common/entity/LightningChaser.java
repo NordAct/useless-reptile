@@ -439,7 +439,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     public void shoot() {
-        LightningBreath.createBeam(this, getShootingPointPitch(), getShootingPointYaw(), new Vec3(getShootingPoint().position()), 50, 10, 0xFFFFFF); //todo redo
+        LightningBreath.createBeam(this, getShootingPointPitch(), getShootingPointYaw(), new Vec3(getShootingPoint().position()), 50, 10, 1, 0xFFFFFF); //todo redo
     }
 
     public float getYawProgressLimit() {

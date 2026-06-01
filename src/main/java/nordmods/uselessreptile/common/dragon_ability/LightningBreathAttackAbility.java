@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.ability;
+package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -7,6 +7,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
@@ -41,7 +42,8 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
     }
 
     @Override
-    public void trigger(URDragonEntity entity) {
+    public void trigger(DragonAbilityHolder holder) {
+        URDragonEntity entity = holder.getEntity();
         float pitch = switch (anchorPoint) {
             case EYES, ENTITY_POS, MULTIPART_BOX -> entity.getXRot();
             case SHOOTING_POINT -> {

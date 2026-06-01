@@ -33,7 +33,8 @@ public record CommonDragonVariantData(
         Optional<Identifier> variantAttributeModifiers,
         int baseTamingProgress,
         Optional<List<TamingItem>> tamingItems,
-        Optional<List<FoodItem>> foodItems
+        Optional<List<FoodItem>> foodItems,
+        Identifier abilities
 ) {
     public static final Codec<CommonDragonVariantData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                     Codec.STRING.fieldOf("name").forGetter(CommonDragonVariantData::name),
@@ -45,7 +46,8 @@ public record CommonDragonVariantData(
                     Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(CommonDragonVariantData::variantAttributeModifiers),
                     Codec.INT.fieldOf("base_taming_progress").forGetter(CommonDragonVariantData::baseTamingProgress),
                     TamingItem.LIST_CODEC.optionalFieldOf("taming_items").forGetter(CommonDragonVariantData::tamingItems),
-                    FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(CommonDragonVariantData::foodItems))
+                    FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(CommonDragonVariantData::foodItems),
+                    Identifier.CODEC.fieldOf("abilities").forGetter(CommonDragonVariantData::abilities))
             .apply(instance, CommonDragonVariantData::new));
 
     public static final MapCodec<CommonDragonVariantData> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
@@ -58,7 +60,8 @@ public record CommonDragonVariantData(
                     Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(CommonDragonVariantData::variantAttributeModifiers),
                     Codec.INT.fieldOf("base_taming_progress").forGetter(CommonDragonVariantData::baseTamingProgress),
                     TamingItem.LIST_CODEC.optionalFieldOf("taming_items").forGetter(CommonDragonVariantData::tamingItems),
-                    FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(CommonDragonVariantData::foodItems))
+                    FoodItem.LIST_CODEC.optionalFieldOf("food_items").forGetter(CommonDragonVariantData::foodItems),
+                    Identifier.CODEC.fieldOf("abilities").forGetter(CommonDragonVariantData::abilities))
             .apply(instance, CommonDragonVariantData::new));
 
     @ApiStatus.Internal //idk where else to put it

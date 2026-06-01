@@ -27,6 +27,8 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
+import nordmods.uselessreptile.common.dragon_ability.NoopAbility;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.misc.Placeholder;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
 import org.jspecify.annotations.NonNull;
@@ -35,6 +37,8 @@ import java.util.List;
 
 public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
     public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
+    private DragonAbilityHolder primaryRiderAbility = createNoopHolder();
+    private DragonAbilityHolder secondaryRiderAbility = createNoopHolder();
 
     protected URRideableDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -81,6 +85,47 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     public boolean isSecondaryAttackPressed() {return entityData.get(SECONDARY_ATTACK_PRESSED);}
     public boolean isPrimaryAttackPressed() {return entityData.get(PRIMARY_ATTACK_PRESSED);}
     public boolean freeLook() {return entityData.get(FREE_LOOK);}
+
+    @Override
+    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (hasControllingPassenger()) {
+            if (data.equals(PRIMARY_ATTACK_PRESSED)) primaryRiderAbility.use();
+            if (data.equals(SECONDARY_ATTACK_PRESSED)) secondaryRiderAbility.use();
+        }
+    }
+
+    protected void updateRiderAbilities() {
+        List<DragonAbilityHolder> available = getAvailableAbilities();
+        primaryRiderAbility = available.stream()
+                .filter(
+                        a -> a.getAbility().getCommonAbilityData().attackType().isPresent() &&
+                        a.getAbility().getCommonAbilityData().attackType().get() == AttackType.PRIMARY &&
+                        a.getCooldown() <= 0
+                )
+                .findFirst()
+                .orElse(available.stream()
+                        .filter(
+                                a -> a.getAbility().getCommonAbilityData().attackType().isPresent() &&
+                                a.getAbility().getCommonAbilityData().attackType().get() == AttackType.PRIMARY
+                        )
+                        .findFirst()
+                        .orElseGet(this::createNoopHolder)
+                );
+        secondaryRiderAbility = available.stream()
+                .filter(
+                        a -> a.getAbility().getCommonAbilityData().attackType().isPresent() &&
+                                a.getAbility().getCommonAbilityData().attackType().get() == AttackType.SECONDARY &&
+                                a.getCooldown() <= 0
+                ).findFirst()
+                .orElse(available.stream()
+                        .filter(
+                                a -> a.getAbility().getCommonAbilityData().attackType().isPresent() &&
+                                        a.getAbility().getCommonAbilityData().attackType().get() == AttackType.SECONDARY
+                        ).findFirst()
+                        .orElseGet(this::createNoopHolder)
+                );
+    }
 
     @Override
     public LivingEntity getControllingPassenger() {
@@ -238,6 +283,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     @Override
     protected void tickRidden(@NonNull Player rider, @NonNull Vec3 movementInput) {
+        updateRiderAbilities();
         if (level().isClientSide() && getControllingPassenger() instanceof LocalPlayer player) {
             boolean isSprintPressed = player.input.keyPresses.sprint();
             boolean isMoveForwardPressed = player.input.keyPresses.forward();
@@ -343,10 +389,15 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
             ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
             Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
             if (!saddle.isEmpty() && getDragonEquipment().containsKey(id)) {
-                offset = getDragonEquipment().get(id).passengerPositions().orElseThrow().get(ordinal);
+                List<Vec3> positions = getDragonEquipment().get(id).passengerPositions().orElseThrow();
+                offset = positions.get(Math.min(ordinal, positions.size() - 1));
             }
         }
         return super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor).add(offset.yRot(-getYRot() * Mth.DEG_TO_RAD));
+    }
+
+    protected DragonAbilityHolder createNoopHolder() {
+        return new DragonAbilityHolder(new NoopAbility(), this);
     }
 
     public enum AttackType implements StringRepresentable {

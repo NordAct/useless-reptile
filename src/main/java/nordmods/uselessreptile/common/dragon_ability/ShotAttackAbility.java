@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.ability;
+package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
@@ -62,7 +63,8 @@ public class ShotAttackAbility extends TriggerableAbility {
     }
 
     @Override
-    public void trigger(URDragonEntity entity) {
+    public void trigger(DragonAbilityHolder holder) {
+        URDragonEntity entity = holder.getEntity();
         if (!(entity.level() instanceof ServerLevel level)) return;
         Vec3 rot = getRot(entity);
         Vec3 pos = getPos(entity);
@@ -70,36 +72,63 @@ public class ShotAttackAbility extends TriggerableAbility {
             Projectile projectile = createProjectile(level);
             projectile.setPos(pos);
             projectile.shoot(rot.x, rot.y, rot.z, speed, spread);
+            projectile.setOwner(holder.getEntity());
             level.addFreshEntity(projectile);
         }
     }
 
     protected Vec3 getPos(URDragonEntity entity) {
         return switch (anchorPoint) {
-            case EYES -> entity.getEyePosition().add(anchorPointOffset.yRot(entity.getYawWithAdjustment()).xRot(entity.getXRot()));
-            case ENTITY_POS -> entity.position().add(anchorPointOffset.yRot(entity.getYawWithAdjustment()).xRot(entity.getXRot()));
+            case EYES -> rotateVec(
+                    anchorPointOffset,
+                    entity.getEyePosition(),
+                    entity.getXRot(),
+                    entity.getYawWithAdjustment()
+            );
+            case ENTITY_POS -> rotateVec(
+                    anchorPointOffset,
+                    entity.position(),
+                    entity.getXRot(),
+                    entity.getYawWithAdjustment()
+            );
             case MULTIPART_BOX -> {
                 if (entity instanceof MultipartEntity multipartEntity) {
-                    yield Arrays.stream(multipartEntity.getParts())
-                            .filter(entityPart -> entityPart instanceof URDragonPart dragonPart && dragonPart.name.equals(multipartBoxName.orElseThrow()))
-                            .findFirst()
-                            .orElseThrow(() -> new NoSuchElementException("Couldn't find multipart box with name " + multipartBoxName.orElseThrow()))
-                            .position()
-                            .add(anchorPointOffset.yRot(entity.getYawWithAdjustment()).xRot(entity.getXRot()));
+                    yield rotateVec(
+                            anchorPointOffset,
+                            Arrays.stream(multipartEntity.getParts())
+                                    .filter(entityPart -> entityPart instanceof URDragonPart dragonPart && dragonPart.name.equals(multipartBoxName.orElseThrow()))
+                                    .findFirst()
+                                    .orElseThrow(() -> new NoSuchElementException("Couldn't find multipart box with name " + multipartBoxName.orElseThrow()))
+                                    .position(),
+                            entity.getXRot(),
+                            entity.getYawWithAdjustment()
+                    );
                 } else {
                     throw new IllegalStateException("Cannot use multipart_box anchor for non MultipartEntity entities");
                 }
             }
             case SHOOTING_POINT -> {
                 ShooterDragon shooterDragon = (ShooterDragon) entity;
-                yield new Vec3(shooterDragon.getShootingPoint().position())
-                        .add(
-                                anchorPointOffset
-                                        .yRot(shooterDragon.getShootingPointDesiredYaw())
-                                        .xRot(shooterDragon.getShootingPointDesiredPitch())
-                        );
+                yield rotateVec(
+                        anchorPointOffset,
+                        new Vec3(shooterDragon.getShootingPoint().position()),
+                        shooterDragon.getShootingPointPitch(),
+                        shooterDragon.getShootingPointYaw()
+                );
             }
         };
+    }
+
+    public static Vec3 rotateVec(Vec3 vec3, Vec3 center, double rotX, double rotY) {
+        double cosYaw = Math.cos(-rotY * 0.017453292);
+        double sinYaw = Math.sin(-rotY * 0.017453292);
+        double cosPitch = Math.cos(rotX * 0.017453292);
+        double sinPitch = Math.sin(rotX * 0.017453292);
+        return new Vec3(
+                center.x + vec3.z * sinYaw * cosPitch + vec3.x * cosYaw + vec3.y * sinYaw * sinPitch,
+                center.y + vec3.z * -sinPitch + vec3.y * cosPitch,
+                center.z + vec3.z * cosYaw * cosPitch + vec3.x * -sinYaw + vec3.y * cosYaw * sinPitch
+        );
     }
 
     protected Vec3 getRot(URDragonEntity entity) {
@@ -121,8 +150,8 @@ public class ShotAttackAbility extends TriggerableAbility {
     }
 
     @Override
-    public boolean canUseUncontrolled(URDragonEntity entity) {
-        return super.canUseUncontrolled(entity) && entity.getTarget() != null && entity.getLookControl().isLookingAtTarget();
+    public boolean canUseUncontrolled(DragonAbilityHolder holder) {
+        return super.canUseUncontrolled(holder) && holder.getEntity().getTarget() != null && holder.getEntity().getLookControl().isLookingAtTarget();
     }
 
     protected Projectile createProjectile(ServerLevel level) {

@@ -1,5 +1,6 @@
 {
   "type": "uselessreptile:lightning_chaser",
+  "abilities": "uselessreptile:lightning_chaser",
   "base_taming_progress": 3,
   "dragon_model": "uselessreptile:lightning_chaser/grey",
   "equipment": "uselessreptile:lightning_chaser",

@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.ability;
+package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -7,6 +7,7 @@ import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.player.Player;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -34,32 +35,36 @@ public record CommonDragonAbilityData(
 
     public record ConditionedAnimation(
             URDragonEntity.AnimationController controller,
-            String animationName,
+            List<String> animations,
             boolean canInterruptPlayingAbilityAnimation,
             UseConditions conditions
     ) {
         public static final Codec<ConditionedAnimation> CODEC = RecordCodecBuilder.create(i -> i.group(
                 StringRepresentable.fromEnum(URDragonEntity.AnimationController::values).fieldOf("controller").forGetter(ConditionedAnimation::controller),
-                Codec.STRING.fieldOf("animation_name").forGetter(ConditionedAnimation::animationName),
+                Codec.STRING.listOf().fieldOf("animations").forGetter(ConditionedAnimation::animations),
                 Codec.BOOL.fieldOf("can_interrupt_playing_ability_animation").forGetter(ConditionedAnimation::canInterruptPlayingAbilityAnimation),
                 UseConditions.CODEC.fieldOf("conditions").forGetter(ConditionedAnimation::conditions)
         ).apply(i, ConditionedAnimation::new));
 
         public boolean tryPlay(URDragonEntity entity) {
+            if (animations.isEmpty()) return false;
+            String animationToPlay = animations.get(entity.getRandom().nextInt(animations.size()));
             if (!canInterruptPlayingAbilityAnimation) {
                 URDragonAnimationController<?> animationController = entity.getAnimationController(controller);
-                for (DragonAbility ability : entity.getAbilityStorage().values()) {
-                    if (ability.getCommonAbilityData().animations().isEmpty()) continue;
-                    if (!ability.isActive(entity)) continue;
-                    for (ConditionedAnimation animation : ability.getCommonAbilityData().animations()) {
+                for (DragonAbilityHolder abilityHolder : entity.getAbilityHolders().values()) {
+                    if (abilityHolder.getAbility().getCommonAbilityData().animations().isEmpty()) continue;
+                    if (!abilityHolder.getAbility().isActive(abilityHolder)) continue;
+                    for (ConditionedAnimation animation : abilityHolder.getAbility().getCommonAbilityData().animations()) {
                         if (animation.controller != controller) continue;
-                        BRPlayingAnimation playingAnimation = animationController.getAnimation(animation.animationName);
-                        if (playingAnimation != null && !playingAnimation.isTransitioningOut()) return false;
+                        for (String abilityAnimation : animation.animations()){
+                            BRPlayingAnimation playingAnimation = animationController.getAnimation(abilityAnimation);
+                            if (playingAnimation != null && !playingAnimation.isTransitioningOut()) return false;
+                        }
                     }
                 }
             }
             if (!conditions.test(entity)) return false;
-            entity.getAnimationController(controller).playAnimation(animationName);
+            entity.getAnimationController(controller).playAnimation(animationToPlay);
             return true;
         }
     }
@@ -110,7 +115,7 @@ public record CommonDragonAbilityData(
             return true;
         }
 
-        public Builder builder() {
+        public static Builder builder() {
             return new Builder();
         }
 

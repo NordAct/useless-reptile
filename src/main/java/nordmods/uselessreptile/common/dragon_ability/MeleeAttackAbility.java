@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.ability;
+package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -10,6 +10,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URTags;
@@ -48,7 +49,8 @@ public class MeleeAttackAbility extends TriggerableAbility {
     }
 
     @Override
-    public void trigger(URDragonEntity entity) {
+    public void trigger(DragonAbilityHolder holder) {
+        URDragonEntity entity = holder.getEntity();
         if (entity.level() instanceof ServerLevel level) {
             AABB attackBox = getAttackBox(entity);
             List<Entity> list = entity.level().getEntities(
@@ -81,8 +83,8 @@ public class MeleeAttackAbility extends TriggerableAbility {
     }
 
     @Override
-    public boolean canUseUncontrolled(URDragonEntity entity) {
-        return super.canUseUncontrolled(entity) && entity.getTarget() != null && entity.getTarget().getBoundingBox().intersects(getAttackBox(entity));
+    public boolean canUseUncontrolled(DragonAbilityHolder holder) {
+        return super.canUseUncontrolled(holder) && holder.getEntity().getTarget() != null && holder.getEntity().getTarget().getBoundingBox().intersects(getAttackBox(holder.getEntity()));
     }
 
     public AABB getAttackBox(URDragonEntity entity) {

@@ -1,12 +1,13 @@
-package nordmods.uselessreptile.common.entity.ability;
+package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
+import nordmods.uselessreptile.common.dragon_ability.holder.TriggerableAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public abstract class TriggerableAbility implements DragonAbility {
-    private float cooldown;
     protected final CommonDragonAbilityData commonAbilityData;
     protected final TriggerableAbility.Data triggerableAbilityData;
     protected boolean wasTriggered;
@@ -22,32 +23,25 @@ public abstract class TriggerableAbility implements DragonAbility {
     }
 
     @Override
-    public float getCooldown() {
-        return cooldown;
+    public boolean isActive(DragonAbilityHolder holder) {
+        return holder.getCooldown() >= getMaxCooldown() - getActiveTime();
     }
 
     @Override
-    public void setCooldown(URDragonEntity entity, float cooldown) {
-        this.cooldown = cooldown;
-    }
-
-    @Override
-    public boolean isActive(URDragonEntity entity) {
-        return cooldown >= getMaxCooldown() - getActiveTime();
-    }
-
-    @Override
-    public void tickActive(URDragonEntity entity) {
-        if (!wasTriggered && cooldown < getMaxCooldown() - getTriggerTime()) {
-            wasTriggered = true;
-            trigger(entity);
+    public void tickActive(DragonAbilityHolder holder) {
+        if (!(holder instanceof TriggerableAbilityHolder triggerableAbilityHolder)) return;
+        if (!triggerableAbilityHolder.wasTriggered() && holder.getCooldown() <= getMaxCooldown() - getTriggerTime()) {
+            triggerableAbilityHolder.setWasTriggered(true);
+            trigger(holder);
         }
     }
 
     @Override
-    public void tick(URDragonEntity entity) {
-        DragonAbility.super.tick(entity);
-        if (!isActive(entity)) wasTriggered = false;
+    public void tick(DragonAbilityHolder holder) {
+        DragonAbility.super.tick(holder);
+        if (holder instanceof TriggerableAbilityHolder triggerableAbilityHolder && !isActive(holder)) {
+            triggerableAbilityHolder.setWasTriggered(false);
+        }
     }
 
     public float getTriggerTime() {
@@ -62,7 +56,7 @@ public abstract class TriggerableAbility implements DragonAbility {
         return triggerableAbilityData;
     }
 
-    public abstract void trigger(URDragonEntity entity);
+    public abstract void trigger(DragonAbilityHolder holder);
 
     public record Data(float triggerTimeSeconds, float activeTimeSeconds) {
         public static final MapCodec<Data> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -74,5 +68,10 @@ public abstract class TriggerableAbility implements DragonAbility {
             if (triggerTimeSeconds > activeTimeSeconds)
                 throw new IllegalStateException("Trigger time must be less than or equal to active time");
         }
+    }
+
+    @Override
+    public DragonAbilityHolder createAbilityHolder(URDragonEntity entity) {
+        return new TriggerableAbilityHolder(this, entity);
     }
 }

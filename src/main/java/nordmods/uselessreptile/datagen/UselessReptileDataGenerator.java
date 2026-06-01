@@ -12,10 +12,7 @@ import nordmods.uselessreptile.datagen.data.URRecipeProvider;
 import nordmods.uselessreptile.datagen.data.loot.URBlockLootTableProvider;
 import nordmods.uselessreptile.datagen.data.loot.URChestLootTableProvider;
 import nordmods.uselessreptile.datagen.data.loot.UREntityLootTableProvider;
-import nordmods.uselessreptile.datagen.data.mod.URDragonModelProvider;
-import nordmods.uselessreptile.datagen.data.mod.URDragonVariantProvider;
-import nordmods.uselessreptile.datagen.data.mod.UREquipmentProvider;
-import nordmods.uselessreptile.datagen.data.mod.URSpawnConditionsProvider;
+import nordmods.uselessreptile.datagen.data.mod.*;
 import nordmods.uselessreptile.datagen.data.structure.URProcessorsListProvider;
 import nordmods.uselessreptile.datagen.data.structure.URStructureProvider;
 import nordmods.uselessreptile.datagen.data.structure.URStructureSetProvider;
@@ -48,6 +45,7 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URDragonVariantProvider::new);
         pack.addProvider(URSpawnConditionsProvider::new);
         pack.addProvider(URDragonModelProvider::new);
+        pack.addProvider(URDragonAbilityListProvider::new);
 
         pack.addProvider(URModelProvider::new);
         pack.addProvider(URSoundsProvider::new);
