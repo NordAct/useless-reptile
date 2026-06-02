@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.AABB;
@@ -14,13 +15,14 @@ import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URTags;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
 public class MeleeAttackAbility extends TriggerableAbility {
     protected final boolean aoe;
     protected final Vec3 attackBoxCenterOffset;
-    protected final boolean moveBoxVertically;
+    protected final VerticalAttackBoxMovement verticalAttackBoxMovement;
     protected final float attackBoxWidth;
     protected final float attackBoxHeight;
 
@@ -29,16 +31,16 @@ public class MeleeAttackAbility extends TriggerableAbility {
             TriggerableAbility.Data.MAP_CODEC.forGetter(MeleeAttackAbility::getTriggerableAbilityData),
             Codec.BOOL.fieldOf("aoe").forGetter(c -> c.aoe),
             Vec3.CODEC.fieldOf("attack_box_center_offset").forGetter(c -> c.attackBoxCenterOffset),
+            StringRepresentable.fromEnum(VerticalAttackBoxMovement::values).fieldOf("vertical_attack_box_movement").forGetter(c -> c.verticalAttackBoxMovement),
             ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_width").forGetter(c -> c.attackBoxWidth),
-            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_height").forGetter(c -> c.attackBoxHeight),
-            Codec.BOOL.fieldOf("move_box_vertically").forGetter(c -> c.moveBoxVertically)
+            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_height").forGetter(c -> c.attackBoxHeight)
     ).apply(i, MeleeAttackAbility::new));
 
-    public MeleeAttackAbility(CommonDragonAbilityData common, TriggerableAbility.Data triggerableAbilityData, boolean aoe, Vec3 attackBoxCenterOffset, float attackBoxWidth, float attackBoxHeight, boolean moveBoxVertically) {
+    public MeleeAttackAbility(CommonDragonAbilityData common, TriggerableAbility.Data triggerableAbilityData, boolean aoe, Vec3 attackBoxCenterOffset, VerticalAttackBoxMovement verticalAttackBoxMovement, float attackBoxWidth, float attackBoxHeight) {
         super(common, triggerableAbilityData);
         this.aoe = aoe;
         this.attackBoxCenterOffset = attackBoxCenterOffset;
-        this.moveBoxVertically = moveBoxVertically;
+        this.verticalAttackBoxMovement = verticalAttackBoxMovement;
         this.attackBoxWidth = attackBoxWidth;
         this.attackBoxHeight = attackBoxHeight;
     }
@@ -95,6 +97,16 @@ public class MeleeAttackAbility extends TriggerableAbility {
     public AABB getAttackBox(DragonAbilityHolder holder) {
         URDragonEntity entity = holder.getEntity();
         float scale = entity.getScale();
+        Vec3 offset = switch (verticalAttackBoxMovement) {
+            case NONE -> ShotAttackAbility.rotateVec(attackBoxCenterOffset, entity.position(), 0, entity.getYRot());
+            case SMOOTH -> ShotAttackAbility.rotateVec(attackBoxCenterOffset, entity.position(), entity.getXRot(), entity.getYRot());
+            case SNAPPED -> {
+                float y = 0;
+                if (entity.getXRot() > 25) y = -attackBoxHeight/4f;
+                if (entity.getXRot() < -25) y = attackBoxHeight/4f;
+                yield ShotAttackAbility.rotateVec(attackBoxCenterOffset, entity.position(), 0, entity.getYRot()).add(0, y, 0);
+            }
+        };
         return new AABB(
                 -attackBoxWidth / 2 * scale,
                 0,
@@ -102,12 +114,28 @@ public class MeleeAttackAbility extends TriggerableAbility {
                 attackBoxWidth / 2 * scale,
                 attackBoxHeight * scale,
                 attackBoxWidth / 2 * scale
-        ).move(
-                ShotAttackAbility.rotateVec(attackBoxCenterOffset, entity.position(), moveBoxVertically ? entity.getXRot() : 0, entity.getYRot())
-        );
+        ).move(offset);
     }
 
     public int getDebugAttackBoxColor() {
         return 0xFFFF00FF;
+    }
+
+    public enum VerticalAttackBoxMovement implements StringRepresentable{
+        NONE("none"),
+        SNAPPED("snapped"),
+        SMOOTH("smooth")
+        ;
+
+        private final String name;
+
+        VerticalAttackBoxMovement(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public @NonNull String getSerializedName() {
+            return name;
+        }
     }
 }

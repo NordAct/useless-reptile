@@ -31,7 +31,7 @@ public interface DragonAbility {
 
     default boolean canUse(DragonAbilityHolder holder) {
         for (DragonAbilityHolder abilityHolder : holder.getEntity().getAbilityHolders().values()) {
-            if (abilityHolder.getAbility().blockOtherAbilitiesIfActive() && abilityHolder.getAbility().isActive(holder)) return false;
+            if (abilityHolder.getAbility().blockOtherAbilitiesIfActive() && abilityHolder.getAbility().isActive(abilityHolder)) return false;
         }
         if (holder.getEntity().hasControllingPassenger()) {
             if (!canUseControlled(holder)) return false;

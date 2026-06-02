@@ -31,8 +31,8 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
-    "move_box_vertically": false,
-    "trigger_time_seconds": 0.0
+    "trigger_time_seconds": 0.0,
+    "vertical_attack_box_movement": "none"
   },
   {
     "type": "uselessreptile:melee_attack",
@@ -68,8 +68,8 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
-    "move_box_vertically": false,
-    "trigger_time_seconds": 0.0
+    "trigger_time_seconds": 0.0,
+    "vertical_attack_box_movement": "none"
   },
   {
     "type": "uselessreptile:melee_attack",
@@ -105,8 +105,8 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
-    "move_box_vertically": false,
-    "trigger_time_seconds": 0.0
+    "trigger_time_seconds": 0.0,
+    "vertical_attack_box_movement": "none"
   },
   {
     "type": "uselessreptile:melee_attack",
@@ -143,8 +143,8 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
-    "move_box_vertically": false,
-    "trigger_time_seconds": 0.0
+    "trigger_time_seconds": 0.0,
+    "vertical_attack_box_movement": "none"
   },
   {
     "type": "uselessreptile:shot_attack",

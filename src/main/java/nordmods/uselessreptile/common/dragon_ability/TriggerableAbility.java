@@ -11,7 +11,6 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 public abstract class TriggerableAbility implements DragonAbility {
     protected final CommonDragonAbilityData commonAbilityData;
     protected final TriggerableAbility.Data triggerableAbilityData;
-    protected boolean wasTriggered;
 
     protected TriggerableAbility(CommonDragonAbilityData commonAbilityData, TriggerableAbility.Data triggerableAbilityData) {
         this.commonAbilityData = commonAbilityData;

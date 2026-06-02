@@ -5,17 +5,13 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
-import nordmods.uselessreptile.common.dragon_ability.MeleeAttackAbility;
-import nordmods.uselessreptile.common.dragon_ability.ShotAttackAbility;
-import nordmods.uselessreptile.common.dragon_ability.TriggerableAbility;
-import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
-import nordmods.uselessreptile.common.dragon_ability.data.FlyingMovementUseCondition;
-import nordmods.uselessreptile.common.dragon_ability.data.MovementUseCondition;
+import nordmods.uselessreptile.common.dragon_ability.*;
+import nordmods.uselessreptile.common.dragon_ability.data.*;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.datagen.data.URAbstractDataProvider;
+import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +51,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 new TriggerableAbility.Data(0, 0.71f),
                                 false,
                                 new Vec3(0, -0.5, 1.75),
-                                3, 4, false
+                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
+                                3, 4
                         ),
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -86,7 +83,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 new TriggerableAbility.Data(0, 1),
                                 false,
                                 new Vec3(0, -1, 1.5),
-                                3.5f, 5.5f, false
+                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
+                                3.5f, 5.5f
                         ),
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -117,7 +115,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 new TriggerableAbility.Data(0, 1),
                                 false,
                                 new Vec3(0, -1, 1.5),
-                                3.5f, 5.5f, false
+                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
+                                3.5f, 5.5f
                         ),
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -148,7 +147,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 new TriggerableAbility.Data(0, 1),
                                 false,
                                 new Vec3(0, -1.5, 1.5),
-                                3.5f, 4.5f, false
+                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
+                                3.5f, 4.5f
                         ),
                         new ShotAttackAbility(
                                 new CommonDragonAbilityData(
@@ -232,10 +232,90 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         )
                 )
         );
+        addEntry(
+                UselessReptile.id("moleclaw"),
+                List.of(
+                        new MeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        1.75f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        List.of("attack.normal1", "attack.normal2"),
+                                                        true,
+                                                        List.of()
+                                                )
+                                        ),
+                                        List.of(),
+                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
+                                ),
+                                new TriggerableAbility.Data(0.5f, 1.6f),
+                                true,
+                                new Vec3(0, -0.25f, 2),
+                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
+                                3, 3.5f
+                        ),
+                        new BlockBreakingMeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        3f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        List.of("attack.strong"),
+                                                        true,
+                                                        List.of(new MoleclawUseCondition(false))
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        List.of("attack.strong.panic"),
+                                                        true,
+                                                        List.of(new MoleclawUseCondition(true))
+                                                )
+                                        ),
+                                        List.of(new RideableUseCondition(false)),
+                                        Optional.empty()
+                                ),
+                                new TriggerableAbility.Data(0.5f, 1.6f),
+                                true,
+                                new Vec3(0, 0, 1.5),
+                                MeleeAttackAbility.VerticalAttackBoxMovement.SMOOTH,
+                                2.5f, 3.5f
+                        ),
+                        new BlockBreakingMeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        3f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        List.of("attack.strong"),
+                                                        true,
+                                                        List.of(new MoleclawUseCondition(false))
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        List.of("attack.strong.panic"),
+                                                        true,
+                                                        List.of(new MoleclawUseCondition(true))
+                                                )
+                                        ),
+                                        List.of(new RideableUseCondition(true)),
+                                        Optional.of(URRideableDragonEntity.AttackType.PRIMARY)
+                                ),
+                                new TriggerableAbility.Data(0.5f, 1.6f),
+                                true,
+                                new Vec3(0, 0.25, 1.5),
+                                MeleeAttackAbility.VerticalAttackBoxMovement.SNAPPED,
+                                2.5f, 4.25f
+                        )
+                )
+        );
     }
 
     @Override
-    public String getName() {
+    public @NonNull String getName() {
         return "Dragon Abilities";
     }
 }

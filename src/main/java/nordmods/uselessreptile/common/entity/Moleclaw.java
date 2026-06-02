@@ -109,33 +109,18 @@ public class Moleclaw extends URRideableDragonEntity {
         if (!level().isClientSide()) return;
         tickBlinkController();
         tickTurnController();
-        tickAttackController();
         tickMainController();
     }
 
     private void tickBlinkController() {
         URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
-        if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
-    }
-
-    private void tickAttackController() {
-        URDragonAnimationController<URDragonEntity> attackController = getAnimationController(AnimationController.ATTACK);
-        if (isSecondaryAttack()) {
-            attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
-            attackController.playAnimation("attack.normal" + getAttackType());
-            return;
-        }
-        if (isPrimaryAttack()) {
-            if (isPanicking()) {
-                attackController.playAnimation("attack.strong.panic");
-                return;
-            }
-            attackController.playAnimation("attack.strong");
-        }
+        if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
+        blinkController.playAnimation("blink");
     }
 
     private void tickTurnController() {
         URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
+        if (turnController.isPlayingAbilityAnimation(AnimationController.TURN)) return;
         switch (getTurningState()) {
             case LEFT -> turnController.playAnimation("turn.left");
             case RIGHT -> turnController.playAnimation("turn.right");
@@ -147,6 +132,7 @@ public class Moleclaw extends URRideableDragonEntity {
         URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
+        if (mainController.isPlayingAbilityAnimation(AnimationController.MAIN)) return;
         if (isOrderedToSit() && !isDancing() && !isPanicking()) {
             mainController.playAnimation("sit");
             return;
@@ -183,14 +169,6 @@ public class Moleclaw extends URRideableDragonEntity {
             if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) scheduleStrongAttack();
         }
 
-        if (attackDelay > 0) {
-            attackDelay++;
-            if (attackDelay > TRANSITION_TICKS + 1) {
-                if (isPrimaryAttack()) strongAttack();
-                if (isSecondaryAttack()) meleeAttack();
-                attackDelay = 0;
-            }
-        }
         tickAnimations();
     }
 

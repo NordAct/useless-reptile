@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.entity.player.Player;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.init.URUseConditionTypes;
 
 public record HeadMountUseCondition(boolean isRidingPlayer) implements UseCondition{
     public static final MapCodec<HeadMountUseCondition> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
@@ -13,12 +14,12 @@ public record HeadMountUseCondition(boolean isRidingPlayer) implements UseCondit
     ).apply(i, HeadMountUseCondition::new));
     @Override
     public UseConditionType<?> getType() {
-        return null;
+        return URUseConditionTypes.HEAD_MOUNT_CONDITION;
     }
 
     @Override
     public boolean test(URDragonEntity entity) {
-        if (entity instanceof HeadMountDragon headMountDragon) {
+        if (entity instanceof HeadMountDragon) {
             return entity.vehicle instanceof Player;
         } else {
             throw new IllegalStateException("Cannot use " + getType().getId() + " on non HeadMountDragon entity");

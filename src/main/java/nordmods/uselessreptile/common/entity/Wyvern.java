@@ -138,8 +138,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().wyvernBaseSecondaryAttackCooldown);
     }
 
-
-
     //todo reconsider structure and make it cleaner
     public void tickAnimations() {
         if (!level().isClientSide()) return;
@@ -253,13 +251,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
             dWidth = 1.8f;
         }
         setHitboxModifiers(dHeight, dWidth, dMountedOffset);
-
-        //if (hasControllingPassenger()) {
-        //    if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) {
-        //        meleeAttack();
-        //    }
-        //    if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) shoot();
-        //}
 
         updateChildParts();
         tickAnimations();

@@ -1,0 +1,132 @@
+[
+  {
+    "type": "uselessreptile:melee_attack",
+    "active_time_seconds": 1.6,
+    "animations": [
+      {
+        "animations": [
+          "attack.normal1",
+          "attack.normal2"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [],
+        "controller": "attack"
+      }
+    ],
+    "aoe": true,
+    "attack_box_center_offset": [
+      0.0,
+      -0.25,
+      2.0
+    ],
+    "attack_box_height": 3.5,
+    "attack_box_width": 3.0,
+    "attack_type": "secondary",
+    "block_other_abilities_if_active": true,
+    "conditions": [],
+    "cooldown_time_seconds": 1.75,
+    "trigger_time_seconds": 0.5,
+    "vertical_attack_box_movement": "none"
+  },
+  {
+    "type": "uselessreptile:block_breaking_melee_attack",
+    "active_time_seconds": 1.6,
+    "animations": [
+      {
+        "animations": [
+          "attack.strong"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:moleclaw",
+            "is_panicking": false
+          }
+        ],
+        "controller": "attack"
+      },
+      {
+        "animations": [
+          "attack.strong.panic"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:moleclaw",
+            "is_panicking": true
+          }
+        ],
+        "controller": "attack"
+      }
+    ],
+    "aoe": true,
+    "attack_box_center_offset": [
+      0.0,
+      0.0,
+      1.5
+    ],
+    "attack_box_height": 3.5,
+    "attack_box_width": 2.5,
+    "block_other_abilities_if_active": true,
+    "conditions": [
+      {
+        "type": "uselessreptile:rideable",
+        "controlled_by_rider": false
+      }
+    ],
+    "cooldown_time_seconds": 3.0,
+    "trigger_time_seconds": 0.5,
+    "vertical_attack_box_movement": "smooth"
+  },
+  {
+    "type": "uselessreptile:block_breaking_melee_attack",
+    "active_time_seconds": 1.6,
+    "animations": [
+      {
+        "animations": [
+          "attack.strong"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:moleclaw",
+            "is_panicking": false
+          }
+        ],
+        "controller": "attack"
+      },
+      {
+        "animations": [
+          "attack.strong.panic"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:moleclaw",
+            "is_panicking": true
+          }
+        ],
+        "controller": "attack"
+      }
+    ],
+    "aoe": true,
+    "attack_box_center_offset": [
+      0.0,
+      0.25,
+      1.5
+    ],
+    "attack_box_height": 4.25,
+    "attack_box_width": 2.5,
+    "attack_type": "primary",
+    "block_other_abilities_if_active": true,
+    "conditions": [
+      {
+        "type": "uselessreptile:rideable",
+        "controlled_by_rider": true
+      }
+    ],
+    "cooldown_time_seconds": 3.0,
+    "trigger_time_seconds": 0.5,
+    "vertical_attack_box_movement": "snapped"
+  }
+]
