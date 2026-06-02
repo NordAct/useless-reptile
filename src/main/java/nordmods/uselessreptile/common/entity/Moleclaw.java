@@ -38,7 +38,7 @@ import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
+import nordmods.uselessreptile.common.event.DragonGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URTags;
@@ -101,8 +101,7 @@ public class Moleclaw extends URRideableDragonEntity {
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().moleclawRotationSpeedGround)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().moleclawBasePrimaryAttackCooldown)
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().moleclawBaseSecondaryAttackCooldown)
-                .add(URAttributes.MOLECLAW_MINING_LEVEL, 0);
-
+                ;
     }
 
     //todo reconsider structure and make it cleaner
@@ -234,7 +233,7 @@ public class Moleclaw extends URRideableDragonEntity {
         if (!canBreakBlocks()) return;
 
         Iterable<BlockPos> blocks = BlockPos.betweenClosed(getPrimaryAttackBox());
-        float maxMiningLevel = (float) getAttributeValue(URAttributes.MOLECLAW_MINING_LEVEL);
+        float maxMiningLevel = (float) getAttributeValue(URAttributes.DRAGON_MINING_LEVEL);
         if (hasEffect(MobEffects.STRENGTH)) maxMiningLevel += getEffect(MobEffects.STRENGTH).getAmplifier() + 1;
         if (hasEffect(MobEffects.WEAKNESS)) maxMiningLevel -= getEffect(MobEffects.WEAKNESS).getAmplifier() + 1;
         for (BlockPos blockPos : blocks) {
@@ -243,7 +242,7 @@ public class Moleclaw extends URRideableDragonEntity {
             BlockState blockState = world.getBlockState(blockPos);
             if (blockState.getBlock().defaultDestroyTime() < 0) continue;
 
-            float miningLevel = MoleclawGetBlockMiningLevelEvent.EVENT.invoker().getMiningLevel(blockState);
+            float miningLevel = DragonGetBlockMiningLevelEvent.EVENT.invoker().getMiningLevel(blockState);
             if (!blockState.isAir() && miningLevel <= maxMiningLevel) {
                 boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
                 world.destroyBlock(blockPos, shouldDrop, this);

@@ -478,7 +478,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED)
                 .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN)
                 .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN)
-                .add(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN);
+                .add(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN)
+                .add(URAttributes.DRAGON_MINING_LEVEL);
 
     }
 

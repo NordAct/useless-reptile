@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.Codec;
+import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URRegistries;

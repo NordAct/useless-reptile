@@ -13,6 +13,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
+import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;

@@ -12,6 +12,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;

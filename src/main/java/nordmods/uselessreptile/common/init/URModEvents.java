@@ -21,14 +21,14 @@ import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.entity.LightningChaser;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
-import nordmods.uselessreptile.common.event.MoleclawGetBlockMiningLevelEvent;
+import nordmods.uselessreptile.common.event.DragonGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 
 public class URModEvents {
 
     public static void init() {
         spawnLightningChaser();
-        getDefaultBlockMiningLevelForMoleclaw();
+        getDefaultBlockMiningLevelForDragon();
         onItemConsumedEvents();
         clearEquipmentInfo();
         ensureNoOneElseIsRidingOnLogOut();
@@ -78,8 +78,8 @@ public class URModEvents {
     }
 
 
-    public static void getDefaultBlockMiningLevelForMoleclaw() {
-        MoleclawGetBlockMiningLevelEvent.EVENT.register(blockState -> {
+    public static void getDefaultBlockMiningLevelForDragon() {
+        DragonGetBlockMiningLevelEvent.EVENT.register(blockState -> {
             if (blockState.is(BlockTags.INCORRECT_FOR_NETHERITE_TOOL)) return 5;
             if (blockState.is(BlockTags.INCORRECT_FOR_DIAMOND_TOOL)) return 4;
             if (blockState.is(BlockTags.INCORRECT_FOR_IRON_TOOL)) return 3;
