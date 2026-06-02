@@ -33,22 +33,22 @@ public interface DragonAbility {
         for (DragonAbilityHolder abilityHolder : holder.getEntity().getAbilityHolders().values()) {
             if (abilityHolder.getAbility().blockOtherAbilitiesIfActive() && abilityHolder.getAbility().isActive(holder)) return false;
         }
+        if (holder.getEntity().hasControllingPassenger()) {
+            if (!canUseControlled(holder)) return false;
+        } else if (!canUseUncontrolled(holder)) return false;
         return canBeUsed(holder);
     }
 
     default boolean canBeUsed(DragonAbilityHolder holder) {
-        if (holder.getEntity().hasControllingPassenger()) {
-            if (!canUseControlled(holder)) return false;
-        } else if (!canUseUncontrolled(holder)) return false;
-        return getCommonAbilityData().conditions().test(holder.getEntity());
+        return getCommonAbilityData().conditions().isEmpty() || getCommonAbilityData().conditions().stream().allMatch(c -> c.test(holder.getEntity())) ;
     }
 
     default boolean canUseUncontrolled(DragonAbilityHolder holder) {
-        return getCommonAbilityData().conditions().controlledByRider().isEmpty() || !getCommonAbilityData().conditions().controlledByRider().get();
+        return true;
     }
 
     default boolean canUseControlled(DragonAbilityHolder holder) {
-        return getCommonAbilityData().conditions().controlledByRider().isEmpty() || getCommonAbilityData().conditions().controlledByRider().get();
+        return true;
     }
 
     default boolean blockOtherAbilitiesIfActive() {

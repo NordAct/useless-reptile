@@ -83,13 +83,13 @@ public class MeleeAttackAbility extends TriggerableAbility {
     }
 
     @Override
-    public boolean canUse(DragonAbilityHolder holder) {
+    public boolean canUseUncontrolled(DragonAbilityHolder holder) {
         if (!holder.getEntity().hasControllingPassenger() &&
                 (holder.getEntity().getTarget() == null ||
                         !holder.getEntity().getTarget().getBoundingBox().intersects(getAttackBox(holder))
                 )
         ) return false;
-        return super.canUse(holder);
+        return super.canUseUncontrolled(holder);
     }
 
     public AABB getAttackBox(DragonAbilityHolder holder) {

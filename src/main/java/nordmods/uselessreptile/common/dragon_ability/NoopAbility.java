@@ -2,7 +2,6 @@ package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.MapCodec;
 import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
-import nordmods.uselessreptile.common.dragon_ability.data.UseConditions;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
@@ -15,7 +14,7 @@ public class NoopAbility implements DragonAbility{
             0,
             false,
             List.of(),
-            UseConditions.builder().build(),
+            List.of(),
             Optional.empty()
             );
 

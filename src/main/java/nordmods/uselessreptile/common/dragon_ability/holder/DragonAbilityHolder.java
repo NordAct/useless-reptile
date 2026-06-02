@@ -28,9 +28,6 @@ public class DragonAbilityHolder {
     public void tick() {
         ability.tick(this);
         if (getCooldown() > 0) {
-            //Minecraft.getInstance().player.sendSystemMessage(Component
-            //        .literal(getCooldown() + "(" + Minecraft.getInstance().player.tickCount + ")" + (entity.level().isClientSide() ? " - Client" : " - Server"))
-            //        .withStyle(entity.level().isClientSide() ? ChatFormatting.AQUA : ChatFormatting.GOLD));
             setCooldown(Math.max(getCooldown() - ability.getCooldownRecoverySpeed(this), 0));
         }
     }

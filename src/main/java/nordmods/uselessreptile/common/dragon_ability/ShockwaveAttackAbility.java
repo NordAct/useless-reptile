@@ -73,7 +73,6 @@ public class ShockwaveAttackAbility extends ShotAttackAbility {
     @Override
     public boolean canUseUncontrolled(DragonAbilityHolder holder) {
         URDragonEntity entity = holder.getEntity();
-        if (!(getCommonAbilityData().conditions().controlledByRider().isEmpty() || !getCommonAbilityData().conditions().controlledByRider().get())) return false;
         if (entity.getLastAttacker() == null && entity.getTarget() == null) return false;
 
         boolean canUse = false;
@@ -95,6 +94,6 @@ public class ShockwaveAttackAbility extends ShotAttackAbility {
             canUse = attackDistance < targetDistance && isTargetExposed;
         }
 
-        return canUse;
+        return super.canUseUncontrolled(holder) && canUse;
     }
 }
