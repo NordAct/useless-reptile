@@ -38,6 +38,11 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
 
         matrices.pushPose();
         matrices.translate(-state.x, -state.y, -state.z);
+
+        float r = (state.color & 0xFF0000 >> 16) / 255f;
+        float g = (state.color & 0x00FF00 >> 8) / 255f;
+        float b = (state.color & 0x0000FF) / 255f;
+
         for (LightningBreath.LightningBreathBolt lightningBreathBolt : state.lightningBreathBolts)
             for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
                 LightningBreath.LightningBreathBolt.Segment current = lightningBreathBolt.segments.get(i);
@@ -47,7 +52,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
                         new Vector3f(current.startPoint()).add(0, -0.1f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.1f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.1f, 0),
-                        state.alpha, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
+                        state.alpha, r, g ,b, LightCoordsUtil.FULL_BRIGHT,
                         0, 1, 0, 1);
                 RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
                         RenderTypes.entityTranslucentEmissive(TEXTURE),
@@ -55,7 +60,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
                         new Vector3f(current.startPoint()).add(0, 0.2f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.2f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.2f, 0),
-                        state.alpha / 1.5f, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
+                        state.alpha / 1.5f, r, g ,b, LightCoordsUtil.FULL_BRIGHT,
                         0, 1, 0, 1);
                 RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
                         RenderTypes.entityTranslucentEmissive(TEXTURE),
@@ -63,7 +68,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
                         new Vector3f(current.startPoint()).add(0, 0.3f, 0),
                         new Vector3f(current.endPoint()).add(0, 0.3f, 0),
                         new Vector3f(current.endPoint()).add(0, -0.3f, 0),
-                        state.alpha / 3f, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
+                        state.alpha / 3f, r, g ,b, LightCoordsUtil.FULL_BRIGHT,
                         0, 1, 0, 1);
         }
         matrices.popPose();
@@ -81,6 +86,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
         float alpha = Mth.clamp(1f - (state.ageInTicks < 3 ? 0 : state.ageInTicks / entity.getMaxAge()), 0f, 1f);
         state.alpha = Mth.lerp(tickDelta, entity.prevAlpha, alpha);
         entity.prevAlpha = state.alpha;
+        state.color = entity.getColor();
 
         for (int i = 0; i < entity.lightningBreathBolts.length; i++) {
             LightningBreath.LightningBreathBolt lightningBreathBolt = entity.lightningBreathBolts[i];
@@ -119,6 +125,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
     public static class LightningBreathEntityRenderState extends EntityRenderState {
         public int length;
         public float alpha = 1;
+        public int color;
         public LightningBreath.LightningBreathBolt[] lightningBreathBolts = new LightningBreath.LightningBreathBolt[0];
     }
 }

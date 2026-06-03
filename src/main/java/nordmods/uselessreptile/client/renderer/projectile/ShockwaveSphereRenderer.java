@@ -37,8 +37,8 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
 
         RenderType layer = RenderTypes.entityTranslucentEmissive(TEXTURE, true);
 
-        float r = (state.color & 0xFF0000) / 255f;
-        float g = (state.color & 0x00FF00) / 255f;
+        float r = (state.color & 0xFF0000 >> 16) / 255f;
+        float g = (state.color & 0x00FF00 >> 8) / 255f;
         float b = (state.color & 0x0000FF) / 255f;
 
         matrixStack.pushPose();

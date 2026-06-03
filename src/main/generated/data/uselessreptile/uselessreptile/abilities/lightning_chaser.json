@@ -142,7 +142,7 @@
     "conditions": [
       {
         "type": "uselessreptile:flying_movement",
-        "flying": false
+        "flying": true
       }
     ],
     "cooldown_time_seconds": 20.0,
@@ -151,6 +151,6 @@
     "power": 1.0,
     "projectile_entity_nbt": {},
     "radius_change_speed": 0.8,
-    "trigger_time_seconds": 0.2
+    "trigger_time_seconds": 0.5
   }
 ]

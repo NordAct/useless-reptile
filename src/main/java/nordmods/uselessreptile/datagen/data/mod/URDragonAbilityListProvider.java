@@ -514,7 +514,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 Optional.empty(),
                                 Vec3.ZERO,
                                 1,
-                                0xFFFFFF,
+                                0x00FFFFFF,
                                 50,
                                 10
                         ),
@@ -532,18 +532,18 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                         ),
                                         List.of(
                                                 new FlyingMovementUseCondition(
-                                                        Optional.of(false),
+                                                        Optional.of(true),
                                                         Optional.empty(),
                                                         Optional.empty()
                                                 )
                                         ),
                                         Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
                                 ),
-                                new TriggerableAbility.Data(0.2f, 1.13f),
+                                new TriggerableAbility.Data(0.5f, 1.13f),
                                 new CompoundTag(),
                                 40, 0.8f,
                                 1, 1,
-                                0xFFFFFF
+                                0x00FFFFFF
                         )
                 )
         );
