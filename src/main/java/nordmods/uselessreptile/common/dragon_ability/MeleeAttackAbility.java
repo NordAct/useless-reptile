@@ -6,8 +6,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
@@ -25,6 +27,8 @@ public class MeleeAttackAbility extends TriggerableAbility {
     protected final VerticalAttackBoxMovement verticalAttackBoxMovement;
     protected final float attackBoxWidth;
     protected final float attackBoxHeight;
+    protected final List<MobEffectInstance> attackEffects;
+    protected final boolean setOnFire;
 
     public static final MapCodec<MeleeAttackAbility> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             CommonDragonAbilityData.MAP_CODEC.forGetter(MeleeAttackAbility::getCommonAbilityData),
@@ -33,16 +37,20 @@ public class MeleeAttackAbility extends TriggerableAbility {
             Vec3.CODEC.fieldOf("attack_box_center_offset").forGetter(c -> c.attackBoxCenterOffset),
             StringRepresentable.fromEnum(VerticalAttackBoxMovement::values).fieldOf("vertical_attack_box_movement").forGetter(c -> c.verticalAttackBoxMovement),
             ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_width").forGetter(c -> c.attackBoxWidth),
-            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_height").forGetter(c -> c.attackBoxHeight)
+            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_height").forGetter(c -> c.attackBoxHeight),
+            MobEffectInstance.CODEC.listOf().fieldOf("attack_effects").forGetter(c -> c.attackEffects),
+            Codec.BOOL.fieldOf("set_on_fire").forGetter(c -> c.setOnFire)
     ).apply(i, MeleeAttackAbility::new));
 
-    public MeleeAttackAbility(CommonDragonAbilityData common, TriggerableAbility.Data triggerableAbilityData, boolean aoe, Vec3 attackBoxCenterOffset, VerticalAttackBoxMovement verticalAttackBoxMovement, float attackBoxWidth, float attackBoxHeight) {
+    public MeleeAttackAbility(CommonDragonAbilityData common, TriggerableAbility.Data triggerableAbilityData, boolean aoe, Vec3 attackBoxCenterOffset, VerticalAttackBoxMovement verticalAttackBoxMovement, float attackBoxWidth, float attackBoxHeight, List<MobEffectInstance> attackEffects, boolean setOnFire) {
         super(common, triggerableAbilityData);
         this.aoe = aoe;
         this.attackBoxCenterOffset = attackBoxCenterOffset;
         this.verticalAttackBoxMovement = verticalAttackBoxMovement;
         this.attackBoxWidth = attackBoxWidth;
         this.attackBoxHeight = attackBoxHeight;
+        this.attackEffects = attackEffects;
+        this.setOnFire = setOnFire;
     }
 
     @Override
@@ -64,6 +72,14 @@ public class MeleeAttackAbility extends TriggerableAbility {
                             && !target.is(URTags.DRAGON_IMMUNE));
 
             if (aoe) {
+                if (!list.isEmpty()) for (Entity target: list) {
+                    AABB targetBox = target.getBoundingBox();
+                    if (targetBox.intersects(attackBox) && entity.doHurtTarget(level, target)) {
+                        if (setOnFire) target.igniteForSeconds((float) (0.5f * entity.getAttributeValue(Attributes.ATTACK_DAMAGE)));
+                        if (target instanceof LivingEntity livingEntity) attackEffects.forEach(e -> livingEntity.addEffect(new MobEffectInstance(e)));
+                    }
+                }
+            } else {
                 Entity target = null;
                 if (!list.isEmpty()) {
                     target = list.getFirst();
@@ -73,16 +89,16 @@ public class MeleeAttackAbility extends TriggerableAbility {
                 }
                 if (target != null && !entity.getPassengers().contains(target)) {
                     AABB targetBox = target.getBoundingBox();
-                    if (targetBox.intersects(attackBox)) entity.doHurtTarget(level, target);
-                }
-            } else {
-                if (!list.isEmpty()) for (Entity target: list) {
-                    AABB targetBox = target.getBoundingBox();
-                    if (targetBox.intersects(attackBox)) entity.doHurtTarget(level, target);
+                    if (targetBox.intersects(attackBox) && entity.doHurtTarget(level, target)) {
+                        if (setOnFire) target.igniteForSeconds((float) (0.5f * entity.getAttributeValue(Attributes.ATTACK_DAMAGE)));
+                        if (target instanceof LivingEntity livingEntity) attackEffects.forEach(e -> livingEntity.addEffect(new MobEffectInstance(e)));
+                    }
                 }
             }
         }
     }
+
+
 
     @Override
     public boolean canUseUncontrolled(DragonAbilityHolder holder) {

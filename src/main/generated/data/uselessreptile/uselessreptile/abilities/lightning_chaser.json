@@ -1,0 +1,156 @@
+[
+  {
+    "type": "uselessreptile:melee_attack",
+    "active_time_seconds": 1.0,
+    "animations": [
+      {
+        "animations": [
+          "attack.melee1",
+          "attack.melee2",
+          "attack.melee3"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [],
+        "controller": "attack"
+      }
+    ],
+    "aoe": false,
+    "attack_box_center_offset": [
+      0.0,
+      -0.1,
+      2.5
+    ],
+    "attack_box_height": 3.0,
+    "attack_box_width": 3.0,
+    "attack_effects": [],
+    "attack_type": "secondary",
+    "block_other_abilities_if_active": true,
+    "conditions": [
+      {
+        "type": "uselessreptile:flying_movement",
+        "flying": false
+      }
+    ],
+    "cooldown_time_seconds": 1.5,
+    "set_on_fire": false,
+    "trigger_time_seconds": 0.0,
+    "vertical_attack_box_movement": "none"
+  },
+  {
+    "type": "uselessreptile:lightning_breath_attack",
+    "active_time_seconds": 1.0,
+    "anchor_point": "shooting_point",
+    "anchor_point_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "animations": [
+      {
+        "animations": [
+          "attack.range"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": false
+          }
+        ],
+        "controller": "attack"
+      },
+      {
+        "animations": [
+          "attack.range.fly"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:movement",
+            "moving": true,
+            "moving_backwards": false
+          }
+        ],
+        "controller": "attack"
+      },
+      {
+        "animations": [
+          "attack.range.fly.idle"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:movement",
+            "moving": true,
+            "moving_backwards": true
+          }
+        ],
+        "controller": "attack"
+      },
+      {
+        "animations": [
+          "attack.range.fly.idle"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:movement",
+            "moving": false
+          }
+        ],
+        "controller": "attack"
+      }
+    ],
+    "attack_type": "primary",
+    "block_other_abilities_if_active": true,
+    "color": 16777215,
+    "conditions": [],
+    "cooldown_time_seconds": 5.0,
+    "damage_scaling": 1.0,
+    "max_age": 10,
+    "max_length": 50,
+    "trigger_time_seconds": 0.35
+  },
+  {
+    "type": "uselessreptile:shockwave_attack",
+    "active_time_seconds": 1.13,
+    "animations": [
+      {
+        "animations": [
+          "fly.shockwave"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [],
+        "controller": "main"
+      }
+    ],
+    "attack_type": "secondary",
+    "block_other_abilities_if_active": true,
+    "color": 16777215,
+    "conditions": [
+      {
+        "type": "uselessreptile:flying_movement",
+        "flying": false
+      }
+    ],
+    "cooldown_time_seconds": 20.0,
+    "damage_scaling": 1.0,
+    "max_radius": 40.0,
+    "power": 1.0,
+    "projectile_entity_nbt": {},
+    "radius_change_speed": 0.8,
+    "trigger_time_seconds": 0.2
+  }
+]

@@ -68,8 +68,8 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
         damageScaling = input.getFloatOr("DamageScaling", damageScaling);
         defaultDamage = input.getFloatOr("DefaultDamage", defaultDamage);
         power = input.getFloatOr("Power", power);
-        setRadiusChangeSpeed(input.getFloatOr("RadiusChangeSpeed", 40));
-        setMaxRadius(input.getFloatOr("MaxRadius", 0.8f));
+        setRadiusChangeSpeed(input.getFloatOr("RadiusChangeSpeed", 0.8f));
+        setMaxRadius(input.getFloatOr("MaxRadius", 40));
         setColor(input.getIntOr("Color", 0xFFFFFF));
     }
 

@@ -149,7 +149,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     private void tickBlinkController() {
         URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
-        blinkController.playAnimation("blink");
+        if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
     private void tickTurnController() {

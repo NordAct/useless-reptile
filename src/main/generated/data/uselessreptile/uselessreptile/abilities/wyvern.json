@@ -22,6 +22,7 @@
     ],
     "attack_box_height": 4.0,
     "attack_box_width": 3.0,
+    "attack_effects": [],
     "attack_type": "secondary",
     "block_other_abilities_if_active": true,
     "conditions": [
@@ -31,6 +32,7 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
+    "set_on_fire": false,
     "trigger_time_seconds": 0.0,
     "vertical_attack_box_movement": "none"
   },
@@ -55,6 +57,7 @@
     ],
     "attack_box_height": 5.5,
     "attack_box_width": 3.5,
+    "attack_effects": [],
     "attack_type": "secondary",
     "block_other_abilities_if_active": true,
     "conditions": [
@@ -68,6 +71,7 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
+    "set_on_fire": false,
     "trigger_time_seconds": 0.0,
     "vertical_attack_box_movement": "none"
   },
@@ -92,6 +96,7 @@
     ],
     "attack_box_height": 5.5,
     "attack_box_width": 3.5,
+    "attack_effects": [],
     "attack_type": "secondary",
     "block_other_abilities_if_active": true,
     "conditions": [
@@ -105,6 +110,7 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
+    "set_on_fire": false,
     "trigger_time_seconds": 0.0,
     "vertical_attack_box_movement": "none"
   },
@@ -129,6 +135,7 @@
     ],
     "attack_box_height": 4.5,
     "attack_box_width": 3.5,
+    "attack_effects": [],
     "attack_type": "secondary",
     "block_other_abilities_if_active": true,
     "conditions": [
@@ -143,6 +150,7 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
+    "set_on_fire": false,
     "trigger_time_seconds": 0.0,
     "vertical_attack_box_movement": "none"
   },

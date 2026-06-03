@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -17,19 +18,23 @@ import nordmods.uselessreptile.common.event.DragonGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 
+import java.util.List;
+
 public class BlockBreakingMeleeAttackAbility extends MeleeAttackAbility{
     public static final MapCodec<BlockBreakingMeleeAttackAbility> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
-            CommonDragonAbilityData.MAP_CODEC.forGetter(BlockBreakingMeleeAttackAbility::getCommonAbilityData),
-            TriggerableAbility.Data.MAP_CODEC.forGetter(BlockBreakingMeleeAttackAbility::getTriggerableAbilityData),
+            CommonDragonAbilityData.MAP_CODEC.forGetter(MeleeAttackAbility::getCommonAbilityData),
+            TriggerableAbility.Data.MAP_CODEC.forGetter(MeleeAttackAbility::getTriggerableAbilityData),
             Codec.BOOL.fieldOf("aoe").forGetter(c -> c.aoe),
             Vec3.CODEC.fieldOf("attack_box_center_offset").forGetter(c -> c.attackBoxCenterOffset),
             StringRepresentable.fromEnum(VerticalAttackBoxMovement::values).fieldOf("vertical_attack_box_movement").forGetter(c -> c.verticalAttackBoxMovement),
             ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_width").forGetter(c -> c.attackBoxWidth),
-            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_height").forGetter(c -> c.attackBoxHeight)
+            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_height").forGetter(c -> c.attackBoxHeight),
+            MobEffectInstance.CODEC.listOf().fieldOf("attack_effects").forGetter(c -> c.attackEffects),
+            Codec.BOOL.fieldOf("set_on_fire").forGetter(c -> c.setOnFire)
     ).apply(i, BlockBreakingMeleeAttackAbility::new));
 
-    public BlockBreakingMeleeAttackAbility(CommonDragonAbilityData common, Data triggerableAbilityData, boolean aoe, Vec3 attackBoxCenterOffset, VerticalAttackBoxMovement verticalAttackBoxMovement, float attackBoxWidth, float attackBoxHeight) {
-        super(common, triggerableAbilityData, aoe, attackBoxCenterOffset, verticalAttackBoxMovement, attackBoxWidth, attackBoxHeight);
+    public BlockBreakingMeleeAttackAbility(CommonDragonAbilityData common, Data triggerableAbilityData, boolean aoe, Vec3 attackBoxCenterOffset, VerticalAttackBoxMovement verticalAttackBoxMovement, float attackBoxWidth, float attackBoxHeight, List<MobEffectInstance> attackEffects, boolean setOnFire) {
+        super(common, triggerableAbilityData, aoe, attackBoxCenterOffset, verticalAttackBoxMovement, attackBoxWidth, attackBoxHeight, attackEffects, setOnFire);
     }
 
 

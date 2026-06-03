@@ -1,0 +1,33 @@
+[
+  {
+    "type": "uselessreptile:melee_attack",
+    "active_time_seconds": 0.75,
+    "animations": [
+      {
+        "animations": [
+          "attack1",
+          "attack2",
+          "attack3"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [],
+        "controller": "attack"
+      }
+    ],
+    "aoe": false,
+    "attack_box_center_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "attack_box_height": 0.35,
+    "attack_box_width": 1.7,
+    "attack_effects": [],
+    "block_other_abilities_if_active": true,
+    "conditions": [],
+    "cooldown_time_seconds": 1.5,
+    "set_on_fire": true,
+    "trigger_time_seconds": 0.0,
+    "vertical_attack_box_movement": "none"
+  }
+]

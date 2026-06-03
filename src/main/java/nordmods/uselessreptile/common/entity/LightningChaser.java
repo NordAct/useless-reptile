@@ -128,41 +128,18 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         if (!level().isClientSide()) return;
         tickBlinkController();
         tickTurnController();
-        tickAttackController();
         tickMainController();
     }
 
     private void tickBlinkController() {
         URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
+        if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
-    }
-
-    private void tickAttackController() {
-        URDragonAnimationController<URDragonEntity> attackController = getAnimationController(AnimationController.ATTACK);
-        attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
-        if (!isFlying() && isSecondaryAttack()) {
-            attackController.playAnimation("attack.melee" + getAttackType());
-            return;
-        }
-        if (isPrimaryAttack()) {
-            if (isFlying()) {
-                if (isSpecialAttack()) {
-                    attackController.playAnimation("attack.range.fly.shockwave");
-                    return;
-                }
-                if (isMoving() && !isMovingBackwards()) {
-                    attackController.playAnimation("attack.range.fly");
-                    return;
-                }
-                attackController.playAnimation("attack.range.fly.idle");
-                return;
-            }
-            attackController.playAnimation("attack.range");
-        }
     }
 
     private void tickTurnController() {
         URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
+        if (turnController.isPlayingAbilityAnimation(AnimationController.TURN)) return;
         switch (getTurningState()) {
             case LEFT -> {
                 if (isFlying()) {
@@ -184,6 +161,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
+        if (mainController.isPlayingAbilityAnimation(AnimationController.MAIN)) return;
         if (isFlying()) {
             if (isSpecialAttack()) {
                 mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1/ getCooldownModifier()));
@@ -322,16 +300,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
         if (shootDelay == 0) shoot();
         if (shootDelay > -1) shootDelay--;
-
-        if (hasControllingPassenger()) {
-            if (isFlying()) {
-                if (isSecondaryAttackPressed() && getSpecialAttackCooldown() == 0) triggerShockwave();
-            }
-            else if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) {
-                meleeAttack();
-            }
-            if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) triggerShoot();
-        }
 
         updateThunderstormBonus();
 
