@@ -23,7 +23,7 @@ public record FlyingMovementUseCondition(
 
     @Override
     public UseConditionType<?> getType() {
-        return URUseConditionTypes.FLYING_MOVEMENT_CONDITION;
+        return URUseConditionTypes.FLYING_MOVEMENT;
     }
 
     @Override

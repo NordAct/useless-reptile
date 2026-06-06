@@ -10,6 +10,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.DimensionType;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbilityType;
 
 public class URTags {
     public static final TagKey<Block> DRAGON_UNBREAKABLE = register(Registries.BLOCK, "dragon_unbreakable");
@@ -29,6 +30,12 @@ public class URTags {
 
     public static final TagKey<EntityType<?>> DRAGON_IMMUNE = register(Registries.ENTITY_TYPE, "dragon_immune");
     public static final TagKey<EntityType<?>> DRAGON = register(Registries.ENTITY_TYPE, "dragon");
+
+    public static final TagKey<DragonAbilityType<?>> ATTACK = register(URResourceKeys.DRAGON_ABILITY_TYPE, "attack");
+    public static final TagKey<DragonAbilityType<?>> MELEE_ATTACK = register(URResourceKeys.DRAGON_ABILITY_TYPE, "melee_attack");
+    public static final TagKey<DragonAbilityType<?>> RANGED_ATTACK = register(URResourceKeys.DRAGON_ABILITY_TYPE, "ranged_attack");
+    public static final TagKey<DragonAbilityType<?>> SUPPORT_ABILITY = register(URResourceKeys.DRAGON_ABILITY_TYPE, "support_ability");
+    public static final TagKey<DragonAbilityType<?>> DEFENSIVE_ABILITY = register(URResourceKeys.DRAGON_ABILITY_TYPE, "support_ability");
 
     private static<T> TagKey<T> register(ResourceKey<? extends Registry<T>> registryKey, String id) {
         return TagKey.create(registryKey, UselessReptile.id(id));

@@ -15,7 +15,7 @@ public record MoleclawUseCondition(
     ).apply(i, MoleclawUseCondition::new));
     @Override
     public UseConditionType<?> getType() {
-        return URUseConditionTypes.MOLECLAW_CONDITION;
+        return URUseConditionTypes.MOLECLAW;
     }
 
     @Override

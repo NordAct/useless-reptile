@@ -14,7 +14,7 @@ public record HeadMountUseCondition(boolean isRidingPlayer) implements UseCondit
     ).apply(i, HeadMountUseCondition::new));
     @Override
     public UseConditionType<?> getType() {
-        return URUseConditionTypes.HEAD_MOUNT_CONDITION;
+        return URUseConditionTypes.HEAD_MOUNT;
     }
 
     @Override

@@ -13,7 +13,7 @@ public record RideableUseCondition(boolean controlledByRider) implements UseCond
     ).apply(i, RideableUseCondition::new));
     @Override
     public UseConditionType<?> getType() {
-        return URUseConditionTypes.RIDEABLE_CONDITION;
+        return URUseConditionTypes.RIDEABLE;
     }
 
     @Override

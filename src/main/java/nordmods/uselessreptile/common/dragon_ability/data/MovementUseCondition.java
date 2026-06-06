@@ -22,7 +22,7 @@ public record MovementUseCondition(
 
     @Override
     public UseConditionType<?> getType() {
-        return URUseConditionTypes.MOVEMENT_CONDITION;
+        return URUseConditionTypes.MOVEMENT;
     }
 
     @Override
