@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.mixin.client.camera;
 
 import net.minecraft.client.Camera;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.ClipContext;
@@ -9,7 +10,6 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import org.joml.Vector3fc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -23,21 +23,25 @@ public abstract class CameraMixin {
 
     @Shadow private Entity entity;
 
-    @Shadow protected abstract void move(float f, float g, float h);
+    @Shadow protected abstract void move(float forwards, float up, float right);
 
     @Shadow
     public abstract Vec3 position();
 
     @Shadow
-    public abstract Vector3fc forwardVector();
+    private Level level;
 
     @Shadow
-    private Level level;
-    @Unique private static final int ROUNDS = 1000;
+    public abstract float yRot();
+
+    @Shadow
+    public abstract float xRot();
+
+    @Unique private static final int ROUNDS = 50;
 
     /// Offsets camera by specified in config amount
     @Inject(method = "alignWithEntity",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(FFF)V"),
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Camera;move(FFF)V", shift = At.Shift.AFTER),
             slice = @Slice(
                     from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;isPassenger()Z"),
                     to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;isSleeping()Z")
@@ -52,9 +56,7 @@ public abstract class CameraMixin {
             float verticalOffset = URClientConfig.getConfig().cameraVerticalOffset * dragonEntity.getScale() * scale;
             float horizontalOffset = -URClientConfig.getConfig().cameraHorizontalOffset * dragonEntity.getScale() * scale;
 
-            if (verticalOffset != 0) moveUntilCollision(0, verticalOffset, 0);
-            if (horizontalOffset != 0) moveUntilCollision(0, 0, horizontalOffset);
-            if (distanceToCameraOffset != 0) moveUntilCollision(distanceToCameraOffset, 0 ,0);
+            moveUntilCollision(distanceToCameraOffset, verticalOffset, horizontalOffset);
         }
     }
 
@@ -63,14 +65,13 @@ public abstract class CameraMixin {
         float dx = x / ROUNDS;
         float dy = y / ROUNDS;
         float dz = z / ROUNDS;
-        double dl = new Vec3(dx, dy, dz).length();
         for(int i = 0; i < ROUNDS; ++i) {
-            float h = (float)((i & 1) * 2 - 1);
-            float j = (float)((i >> 1 & 1) * 2 - 1);
-            float k = (float)((i >> 2 & 1) * 2 - 1);
-            Vec3 vec3d = position().add(h * 0.1F, j * 0.1F, k * 0.1F);
-            Vec3 vec3d2 = vec3d.add((new Vec3(forwardVector())).scale(-dl));
-            HitResult hitResult = level.clip(new ClipContext(vec3d, vec3d2, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, entity));
+            float posX = (float)((i & 1) * 2 - 1);
+            float posY = (float)((i >> 1 & 1) * 2 - 1);
+            float posZ = (float)((i >> 2 & 1) * 2 - 1);
+            Vec3 from = position().add(posX * 0.1F, posY * 0.1F, posZ * 0.1F);
+            Vec3 to = from.add(new Vec3(-x, -y, -z).yRot(yRot() * Mth.DEG_TO_RAD).xRot(xRot() * Mth.DEG_TO_RAD));
+            HitResult hitResult = level.clip(new ClipContext(from, to, ClipContext.Block.VISUAL, ClipContext.Fluid.NONE, entity));
             if (hitResult.getType() == HitResult.Type.MISS) move(dx, dy, dz);
             else {
                 move(-dx, -dy, -dz);
