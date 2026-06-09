@@ -14,28 +14,27 @@ import org.joml.Vector3f;
 
 public class RenderUtil {
     public static void renderQuad(
-            Matrix4f positionMatrix, PoseStack.Pose normalMatrix, VertexConsumer vertexConsumer,
+            Matrix4f positionMatrix, PoseStack.Pose normalMatrix, VertexConsumer vertices,
             Vector3f v0, Vector3f v1, Vector3f v2, Vector3f v3,
             float a, float r, float g, float b, int light,
             float minU, float maxU, float minV, float maxV
     ) {
-
-        vertexConsumer.addVertex(positionMatrix, v0.x, v0.y, v0.z) //00
+        vertices.addVertex(positionMatrix, v0.x, v0.y, v0.z) //00
                 .setColor(r, g, b, a).setUv(minU, minV)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
                 .setNormal(normalMatrix, 0.0F, 1.0F, 0.0F);
-        vertexConsumer.addVertex(positionMatrix, v1.x, v1.y, v1.z) //10
+        vertices.addVertex(positionMatrix, v1.x, v1.y, v1.z) //10
                 .setColor(r, g, b, a).setUv(maxU, minV)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
                 .setNormal(normalMatrix, 0.0F, 1.0F, 0.0F);
-        vertexConsumer.addVertex(positionMatrix, v2.x, v2.y, v2.z) //11
+        vertices.addVertex(positionMatrix, v2.x, v2.y, v2.z) //11
                 .setColor(r, g, b, a).setUv(maxU, maxV)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)
                 .setNormal(normalMatrix, 0.0F, 1.0F, 0.0F);
-        vertexConsumer.addVertex(positionMatrix, v3.x, v3.y, v3.z) //01
+        vertices.addVertex(positionMatrix, v3.x, v3.y, v3.z) //01
                 .setColor(r, g, b, a).setUv(minU, maxV)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
                 .setLight(light)

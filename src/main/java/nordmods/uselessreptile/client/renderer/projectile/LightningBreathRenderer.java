@@ -1,12 +1,12 @@
 package nordmods.uselessreptile.client.renderer.projectile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
@@ -45,28 +45,30 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
         float g = (state.color & 0x00FF00 >> 8) / 255f;
         float b = (state.color & 0x0000FF) / 255f;
 
-        for (LightningBreath.LightningBreathBolt lightningBreathBolt : state.lightningBreathBolts) {
-            for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
-                LightningBreath.LightningBreathBolt.Segment segment = lightningBreathBolt.segments.get(i);
-                renderSegment(segment, matrices, 0.2f, -0.01f, r, g, b, state.alpha);
-                //Gizmos.line(new Vec3(segment.startPoint()), new Vec3(segment.endPoint()), 0xFFFF0000);
-            }
+        queue.submitCustomGeometry(matrices, RenderTypes.entityTranslucentEmissive(TEXTURE), ((pose, buffer) -> {
+            for (LightningBreath.LightningBreathBolt lightningBreathBolt : state.lightningBreathBolts) {
+                for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
+                    LightningBreath.LightningBreathBolt.Segment segment = lightningBreathBolt.segments.get(i);
+                    renderSegment(segment, pose, buffer, 0.2f, -0.01f, r, g, b, state.alpha);
+                }
 
-            for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
-                LightningBreath.LightningBreathBolt.Segment segment = lightningBreathBolt.segments.get(i);
-                renderSegment(segment, matrices, 0.4f, 0.01f, r, g, b, state.alpha / 4f);
-            }
+                for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
+                    LightningBreath.LightningBreathBolt.Segment segment = lightningBreathBolt.segments.get(i);
+                    renderSegment(segment, pose, buffer, 0.4f, 0.01f, r, g, b, state.alpha / 4f);
+                }
 
-            for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
-                LightningBreath.LightningBreathBolt.Segment segment = lightningBreathBolt.segments.get(i);
-                renderSegment(segment, matrices, 0.6f, 0.02f, r, g, b, state.alpha / 8f);
+                for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
+                    LightningBreath.LightningBreathBolt.Segment segment = lightningBreathBolt.segments.get(i);
+                    renderSegment(segment, pose, buffer, 0.6f, 0.02f, r, g, b, state.alpha / 8f);
+                }
             }
-        }
+        }));
         matrices.popPose();
     }
     private void renderSegment(
             LightningBreath.LightningBreathBolt.Segment segment,
-            PoseStack poseStack,
+            PoseStack.Pose pose,
+            VertexConsumer buffer,
             float size, float lengthExtension,
             float red, float green, float blue, float alpha
     ) {
@@ -96,40 +98,38 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
         Vector3f v6 = segment.isEndingSegment() ? segment.endPoint() : new Vector3f(segment.endPoint()).sub(r).sub(u).add(extraLength);
         Vector3f v7 = segment.isEndingSegment() ? segment.endPoint() : new Vector3f(segment.endPoint()).sub(r).add(u).add(extraLength);
 
-        RenderType renderType = RenderTypes.entityTranslucentEmissive(TEXTURE);
-
-        RenderUtil.renderQuad(poseStack.last().pose(), poseStack.last(),
-                renderType,
+        RenderUtil.renderQuad(pose.pose(), pose,
+                buffer,
                 v0, v1, v5, v4,
                 alpha, red, green ,blue, LightCoordsUtil.FULL_BRIGHT,
                 0, 1, 0, 1);
 
-        RenderUtil.renderQuad(poseStack.last().pose(), poseStack.last(),
-                renderType,
+        RenderUtil.renderQuad(pose.pose(), pose,
+                buffer,
                 v1, v2, v6, v5,
                 alpha, red, green ,blue, LightCoordsUtil.FULL_BRIGHT,
                 0, 1, 0, 1);
 
-        RenderUtil.renderQuad(poseStack.last().pose(), poseStack.last(),
-                renderType,
+        RenderUtil.renderQuad(pose.pose(), pose,
+                buffer,
                 v2, v3, v7, v6,
                 alpha, red, green ,blue, LightCoordsUtil.FULL_BRIGHT,
                 0, 1, 0, 1);
 
-        RenderUtil.renderQuad(poseStack.last().pose(), poseStack.last(),
-                renderType,
+        RenderUtil.renderQuad(pose.pose(), pose,
+                buffer,
                 v3, v0, v4, v7,
                 alpha, red, green ,blue, LightCoordsUtil.FULL_BRIGHT,
                 0, 1, 0, 1);
 
-        RenderUtil.renderQuad(poseStack.last().pose(), poseStack.last(),
-                renderType,
+        RenderUtil.renderQuad(pose.pose(), pose,
+                buffer,
                 v0, v3, v2, v1,
                 alpha, red, green ,blue, LightCoordsUtil.FULL_BRIGHT,
                 0, 1, 0, 1);
 
-        RenderUtil.renderQuad(poseStack.last().pose(), poseStack.last(),
-                renderType,
+        RenderUtil.renderQuad(pose.pose(), pose,
+                buffer,
                 v4, v5, v6, v7,
                 alpha, red, green ,blue, LightCoordsUtil.FULL_BRIGHT,
                 0, 1, 0, 1);

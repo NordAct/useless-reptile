@@ -50,7 +50,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
         super(entityType, world);
         setNoGravity(true);
         setInvulnerable(true);
-        setYRot(new Random(getId()).nextInt(360));
+        setYRot(new Random().nextInt(360));
     }
 
     public ShockwaveSphere(Level world) {
