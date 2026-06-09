@@ -15,6 +15,8 @@ import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -35,10 +37,12 @@ import java.util.List;
 public class LightningBreath extends Projectile implements ProjectileDamageHelper {
     private boolean spawnSoundPlayed = false;
     private int tickCount;
-    public static final int MAX_AGE = 10;
+    public static final int MAX_AGE_TICKS = 10;
     public static final int MAX_LENGTH = 50;
     public float prevAlpha = 0.5f;
-    public final LightningBreathBolt[] lightningBreathBolts = new LightningBreathBolt[5];
+    public float damageScaling = 2;
+    private float defaultDamage = 16;
+    public final LightningBreathBolt[] lightningBreathBolts = new LightningBreathBolt[3];
 
     public LightningBreath(EntityType<? extends Projectile> entityType, Level world, Entity owner) {
         super(entityType, world);
@@ -54,14 +58,40 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         this(UREntities.LIGHTNING_BREATH, world, owner);
     }
 
+    @Override
+    protected void addAdditionalSaveData(@NonNull ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        output.putFloat("DamageScaling", damageScaling);
+        output.putFloat("DefaultDamage", defaultDamage);
+        output.putInt("Color", getColor());
+    }
+
+    @Override
+    protected void readAdditionalSaveData(@NonNull ValueInput input) {
+        super.readAdditionalSaveData(input);
+        damageScaling = input.getFloatOr("DamageScaling", damageScaling);
+        defaultDamage = input.getFloatOr("DefaultDamage", defaultDamage);
+        setColor(input.getIntOr("Color", 0xFFFFFF));
+    }
+
     public static final EntityDataAccessor<Integer> BEAM_LENGTH = SynchedEntityData.defineId(LightningBreath.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> MAX_AGE = SynchedEntityData.defineId(LightningBreath.class, EntityDataSerializers.INT);
+    public static final EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(LightningBreath.class, EntityDataSerializers.INT);
 
     public void setBeamLength(int state) {entityData.set(BEAM_LENGTH, state);}
     public int getBeamLength() {return entityData.get(BEAM_LENGTH);}
 
+    public void setMaxAge(int state) {entityData.set(MAX_AGE, state);}
+    public int getMaxAge() {return entityData.get(MAX_AGE);}
+
+    public void setColor(int state) {entityData.set(COLOR, state);}
+    public int getColor() {return entityData.get(COLOR);}
+
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(BEAM_LENGTH, 0);
+        builder.define(MAX_AGE, MAX_AGE_TICKS);
+        builder.define(COLOR, 0xFFFFFF);
     }
 
     @Override
@@ -89,7 +119,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
     public void tick() {
         super.tick();
         tryPlaySpawnSound();
-        if (++tickCount <= MAX_AGE) {
+        if (++tickCount <= getMaxAge()) {
             List<Entity> targets = level().getEntities(this, getBoundingBox(), this::canTarget);
             for (Entity target : targets) {
                 EntityHitResult entityHitResult = new EntityHitResult(target);
@@ -176,56 +206,94 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
 
     @Override
     public float getDefaultDamage() {
-        return 16;
+        return defaultDamage;
     }
 
     @Override
     public float getDamageScaling() {
-        return 2;
+        return damageScaling;
     }
 
-    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos) {
-        if (owner.level() instanceof  ServerLevel serverLevel) {
-            Vec3 rot = owner.calculateViewVector(pitch, yaw);
-            ArrayList<Integer> ids = new ArrayList<>();
-            LightningBreath firstSegment = null;
+    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos, int maxLength, int maxAge, float damageScaling, int color) {
+        Vec3 rot = owner.calculateViewVector(pitch, yaw);
+        ArrayList<Integer> ids = new ArrayList<>();
+        LightningBreath firstSegment = null;
+        Level world = owner.level();
 
-            for (int i = 1; i <= LightningBreath.MAX_LENGTH; i++) {
-                LightningBreath lightningBreathEntity = new LightningBreath(serverLevel, owner);
-                lightningBreathEntity.setPos(startPos.add(rot.scale(i)));
-                lightningBreathEntity.setDeltaMovement(Vec3.ZERO);
-                lightningBreathEntity.setOwner(owner);
-                serverLevel.addFreshEntity(lightningBreathEntity);
-                if (i == 1) firstSegment = lightningBreathEntity;
+        for (int i = 1; i <= maxLength; i++) {
+            LightningBreath lightningBreathEntity = new LightningBreath(world, owner);
+            lightningBreathEntity.setPos(startPos.add(rot.scale(i)));
+            lightningBreathEntity.setDeltaMovement(Vec3.ZERO);
+            lightningBreathEntity.setOwner(owner);
+            lightningBreathEntity.setMaxAge(maxAge);
+            lightningBreathEntity.setColor(color);
+            lightningBreathEntity.damageScaling = damageScaling;
+            world.addFreshEntity(lightningBreathEntity);
+            if (i == 1) firstSegment = lightningBreathEntity;
 
-                ids.add(lightningBreathEntity.getId());
+            ids.add(lightningBreathEntity.getId());
 
-                AABB box = lightningBreathEntity.getBoundingBox().contract(0.5f, 0.5f, 0.5f);
-                boolean collides = BlockPos.betweenClosedStream(box).noneMatch(pos -> {
-                    BlockState blockState = serverLevel.getBlockState(pos);
-                    return blockState.is(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS) || blockState.getDestroySpeed(serverLevel, pos) == 0;
-                }) || !serverLevel.getEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
-                    LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof OwnableEntity tameable ? tameable.getOwner() : null;
-                    if (entity instanceof OwnableEntity tameable && tameable.getOwner() != null && tameable.getOwner() == ownerOwner)
-                        return false;
-                    if (owner.getControllingPassenger() == entity) return false;
-                    return entity instanceof LivingEntity;
-                }).isEmpty();
-                if (collides) break;
-            }
-            firstSegment.setBeamLength(ids.size());
-
-            int[] array = new int[ids.size()];
-            for (int i = 0; i < ids.size(); i++) array[i] = ids.get(i);
-
-            for (ServerPlayer player : PlayerLookup.tracking(serverLevel, owner.blockPosition()))
-                SyncLightningBreathRotationsPayload.send(player, array, pitch, yaw);
+            AABB box = lightningBreathEntity.getBoundingBox().contract(0.5f, 0.5f, 0.5f);
+            boolean collides = BlockPos.betweenClosedStream(box).noneMatch(pos -> {
+                BlockState blockState = world.getBlockState(pos);
+                return blockState.is(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS) || blockState.getDestroySpeed(world, pos) == 0;
+            }) || !world.getEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
+                LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof OwnableEntity tameable ? tameable.getOwner() : null;
+                if (entity instanceof OwnableEntity tameable && tameable.getOwner() != null && tameable.getOwner() == ownerOwner)
+                    return false;
+                if (owner.getControllingPassenger() == entity) return false;
+                return entity instanceof LivingEntity;
+            }).isEmpty();
+            if (collides) break;
         }
+
+        firstSegment.setBeamLength(ids.size());
+
+        int[] array = new int[ids.size()];
+        for (int i = 0; i < ids.size(); i++) array[i] = ids.get(i);
+
+        if (world instanceof ServerLevel serverWorld)
+            for (ServerPlayer player : PlayerLookup.tracking(serverWorld, owner.blockPosition()))
+                SyncLightningBreathRotationsPayload.send(player, array, pitch, yaw);
     }
 
     public static class LightningBreathBolt {
         public final List<Segment> segments = new ArrayList<>();
 
-        public record Segment (Vector3f startPoint, Vector3f endPoint) {}
+        public static final class Segment {
+            private final Vector3f startPoint;
+            private final Vector3f endPoint;
+            private boolean startingSegment;
+            private boolean endingSegment;
+
+            public Segment(Vector3f startPoint, Vector3f endPoint) {
+                this.startPoint = startPoint;
+                this.endPoint = endPoint;
+            }
+
+            public Vector3f startPoint() {
+                return startPoint;
+            }
+
+            public Vector3f endPoint() {
+                return endPoint;
+            }
+
+            public void markStarting() {
+                startingSegment = true;
+            }
+
+            public void markEnding() {
+                endingSegment = true;
+            }
+
+            public boolean isStartingSegment() {
+                return startingSegment;
+            }
+
+            public boolean isEndingSegment() {
+                return endingSegment;
+            }
+        }
     }
 }

@@ -144,7 +144,7 @@ public class LightningChaserAttackGoal extends Goal {
     private boolean tryShockwaveAttack() {
         if (entity.getSpecialAttackCooldown() > 0) return false;
         if (!entity.isFlying()) return false;
-        double attackDistance = ShockwaveSphere.MAX_RADIUS * ShockwaveSphere.MAX_RADIUS * 0.49;
+        double attackDistance = ShockwaveSphere.MAX_RADIUS_BLOCKS * ShockwaveSphere.MAX_RADIUS_BLOCKS * 0.49;
         List<Entity> projectiles = entity.level().getEntities(entity, new AABB(entity.blockPosition()).inflate(attackDistance * 2), c -> c instanceof Projectile projectile && projectile.getOwner() == target && !projectile.getDeltaMovement().equals(Vec3.ZERO));
         if (!projectiles.isEmpty()) {
             entity.triggerShockwave();
