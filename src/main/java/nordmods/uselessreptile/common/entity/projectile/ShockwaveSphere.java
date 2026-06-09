@@ -18,6 +18,8 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URMobEffect;
@@ -26,10 +28,11 @@ import nordmods.uselessreptile.common.init.URTags;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
-public class ShockwaveSphere extends Projectile implements ProjectileDamageHelper {
+public class ShockwaveSphere extends Projectile implements ProjectileDamageHelper, BRAnimatedObject {
     private float currentRadius = 0;
     private float prevRadius = 0;
     private final List<Entity> affected = new ArrayList<>();
@@ -183,5 +186,10 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
     @Override
     public float getDamageScaling() {
         return damageScaling;
+    }
+
+    @Override
+    public Collection<BRAnimationController> getAnimationControllers() {
+        return List.of();
     }
 }

@@ -530,7 +530,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
     @Override
     public Vector3f getShootingPointAnchor() {
-        return head.position().toVector3f().add(0, head.getBbHeight() / 2f + (isFlying() ? -0.6f : -1.25f), 0);
+        return head.position().toVector3f().add(0, head.getBbHeight() / 2f, 0);
     }
 
     @Override

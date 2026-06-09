@@ -3,27 +3,41 @@ package nordmods.uselessreptile.client.renderer.projectile;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
+import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.model.BRModelProvider;
+import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.state.StateDataType;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
-import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
-public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, ShockwaveSphereRenderer.ShockwaveSpereEntityRenderState> {
+public class ShockwaveSphereRenderer extends BREntityRenderer<ShockwaveSphere, ShockwaveSphereRenderer.ShockwaveSpereEntityRenderState> {
     private static final Identifier TEXTURE = UselessReptile.id("textures/entity/shockwave_sphere/shockwave.png");
-    private static final int SPHERE_ROWS = 16;
+    private static final Identifier MODEL = UselessReptile.id("biscuit_roll/models/entity/shockwave/shockwave.geo.json");
 
     public ShockwaveSphereRenderer(EntityRendererProvider.Context ctx) {
-        super(ctx);
+        super(ctx, new BRModelProvider() {
+            @Override
+            public Identifier getModelId(BRState state) {
+                return MODEL;
+            }
+
+            @Override
+            public Identifier getAnimationId(BRState state) {
+                throw new UnsupportedOperationException("If you see this please send a bug report");
+            }
+        });
     }
 
     @Override
@@ -33,67 +47,22 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
 
     @Override
     public void submit(ShockwaveSpereEntityRenderState state, PoseStack matrixStack, @NonNull SubmitNodeCollector commandQueue, @NonNull CameraRenderState cameraRenderState) {
-        matrixStack.pushPose();
-
-        RenderType layer = RenderTypes.entityTranslucentEmissive(TEXTURE, true);
-
-        float r = (state.color & 0xFF0000 >> 16) / 255f;
-        float g = (state.color & 0x00FF00 >> 8) / 255f;
-        float b = (state.color & 0x0000FF) / 255f;
 
         matrixStack.pushPose();
         matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha / 2f * 180f));
-        renderSphere(matrixStack, layer, Mth.clamp(state.alpha - 0.2f, 0, 1), state.radius, r, g, b);
+        matrixStack.scale(state.radius);
+        submitBRModel(state.copyWithStuff(Mth.clamp(state.alpha, 0, 1), state.radius), matrixStack, commandQueue, cameraRenderState);
         matrixStack.popPose();
 
         matrixStack.pushPose();
         matrixStack.mulPose(Axis.YP.rotationDegrees(-state.alpha / 1.5f * 180f));
-        renderSphere(matrixStack, layer, Mth.clamp(state.alpha/1.5f - 0.1f, 0, 1), state.radius/1.5f, r, g, b);
+        submitBRModel(state.copyWithStuff(state.alpha/1.5f, state.radius), matrixStack, commandQueue, cameraRenderState);
         matrixStack.popPose();
 
+        matrixStack.pushPose();
         matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha * 180f));
-        renderSphere(matrixStack, layer, state.alpha/2f, state.radius/2f, r, g, b);
-
+        submitBRModel(state.copyWithStuff(state.alpha/2f, state.radius/1.5f), matrixStack, commandQueue, cameraRenderState);
         matrixStack.popPose();
-    }
-
-    private void renderSphere(PoseStack matrixStack, RenderType renderLayer, float alpha, float radius, float red, float green, float blue) {
-        float dPhi = (float) (-Math.PI / SPHERE_ROWS);
-        float dTheta = (float) (-2 * Math.PI / SPHERE_ROWS);
-
-        for (int i = 0; i < SPHERE_ROWS; i++) {
-            float minV = i / (float) SPHERE_ROWS;
-            float maxV = (i + 1f) / (float) SPHERE_ROWS;
-
-            float minPhi = i * dPhi;
-            float maxPhi = (i + 1) * dPhi;
-
-            for (int j = 0; j < SPHERE_ROWS; j++) {
-                float minU =  j / (float) SPHERE_ROWS;
-                float maxU = (j + 1) / (float) SPHERE_ROWS;
-
-                float minTheta = j * dTheta;
-                float maxTheta = (j + 1) * dTheta;
-
-                Vector3f v0 = getSphereDot(minPhi, minTheta, radius);
-                Vector3f v1 = getSphereDot(minPhi, maxTheta, radius);
-                Vector3f v2 = getSphereDot(maxPhi, maxTheta, radius);
-                Vector3f v3 = getSphereDot(maxPhi, minTheta, radius);
-
-                RenderUtil.renderQuad(matrixStack.last().pose(), matrixStack.last(), renderLayer,
-                        v0, v1 ,v2 ,v3,
-                        alpha, red, green, blue,
-                        LightCoordsUtil.FULL_BRIGHT,
-                        minU, maxU, minV, maxV);
-            }
-        }
-    }
-
-    private Vector3f getSphereDot(float phi, float theta, float radius) {
-        float x = (float) (Math.sin(phi) * Math.cos(theta));
-        float y = (float) Math.cos(phi);
-        float z = (float) (Math.sin(phi) * Math.sin(theta));
-        return new Vector3f(x, y, z).mul(radius);
     }
 
     @Override
@@ -104,11 +73,38 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
         state.alpha = Mth.lerp(tickDelta, entity.prevAlpha, alpha);
         entity.prevAlpha = state.alpha;
         state.color = entity.getColor();
+        state.setStateData(ClientStateDataTypes.COLOR, ARGB.color(state.alpha, state.color));
+        state.setStateData(ClientStateDataTypes.LIGHT, LightCoordsUtil.FULL_BRIGHT);
+    }
+
+    @Override
+    public void adjustAnimation(BRState state, BRModel model) {
+        model.getRootBones().forEach(b -> b.getAnimationPose().scale().mul(((ShockwaveSpereEntityRenderState)state).radius));
+    }
+
+    @Override
+    public RenderType getRenderType(BRState state, Identifier texture) {
+        return RenderTypes.entityTranslucentEmissive(texture, true);
+    }
+
+    @Override
+    public Identifier getTextureId(BRState state) {
+        return TEXTURE;
     }
 
     public static class ShockwaveSpereEntityRenderState extends EntityRenderState {
         public float alpha = 1;
         public float radius;
         public int color;
+
+        private ShockwaveSpereEntityRenderState copyWithStuff(float alpha, float radius) {
+            ShockwaveSpereEntityRenderState state = new ShockwaveSpereEntityRenderState();
+            getDataMap().forEach(((stateDataType, holder) -> state.setStateData((StateDataType) stateDataType, holder.value())));
+            state.color = this.color;
+            state.alpha = alpha;
+            state.radius = radius;
+            state.setStateData(ClientStateDataTypes.COLOR, ARGB.color(state.alpha, state.color));
+            return state;
+        }
     }
 }

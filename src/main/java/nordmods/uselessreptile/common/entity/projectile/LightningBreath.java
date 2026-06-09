@@ -10,11 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
@@ -28,8 +24,8 @@ import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.init.URMobEffect;
+import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPayload;
 import org.joml.Vector3f;
@@ -44,7 +40,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
     public float prevAlpha = 0.5f;
     public float damageScaling = 2;
     private float defaultDamage = 16;
-    public final LightningBreathBolt[] lightningBreathBolts = new LightningBreathBolt[5];
+    public final LightningBreathBolt[] lightningBreathBolts = new LightningBreathBolt[3];
 
     public LightningBreath(EntityType<? extends Projectile> entityType, Level world, Entity owner) {
         super(entityType, world);
@@ -263,6 +259,40 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
     public static class LightningBreathBolt {
         public final List<Segment> segments = new ArrayList<>();
 
-        public record Segment (Vector3f startPoint, Vector3f endPoint) {}
+        public static final class Segment {
+            private final Vector3f startPoint;
+            private final Vector3f endPoint;
+            private boolean startingSegment;
+            private boolean endingSegment;
+
+            public Segment(Vector3f startPoint, Vector3f endPoint) {
+                this.startPoint = startPoint;
+                this.endPoint = endPoint;
+            }
+
+            public Vector3f startPoint() {
+                return startPoint;
+            }
+
+            public Vector3f endPoint() {
+                return endPoint;
+            }
+
+            public void markStarting() {
+                startingSegment = true;
+            }
+
+            public void markEnding() {
+                endingSegment = true;
+            }
+
+            public boolean isStartingSegment() {
+                return startingSegment;
+            }
+
+            public boolean isEndingSegment() {
+                return endingSegment;
+            }
+        }
     }
 }
