@@ -1,3 +1,4 @@
 - 26.2 port
 - Updated Spanish translation (pvpeuve)
 - Fixed camera clipping in third person when riding a dragon
+- Updated Lightning Chaser Shockwave and Lightning Breath attack visuals
