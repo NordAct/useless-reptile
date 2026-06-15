@@ -3,12 +3,15 @@ package nordmods.uselessreptile.common.item;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -127,8 +130,8 @@ public class VortexHornItem extends InstrumentItem {
                             toAdd.add(Component.translatable(variant.common().displayNameKey().get()));
                         } else {
                             String string = nbt.getString("id").orElse("");
-                            Optional<EntityType<?>> entityType = EntityType.byString(string);
-                            toAdd.add(entityType.map(value -> Component.translatable(value.getDescriptionId())).orElseGet(() -> Component.literal("ERROR").withStyle(ChatFormatting.RED)));
+                            Optional<Holder.Reference<EntityType<?>>> entityType = context.registries().get(ResourceKey.create(Registries.ENTITY_TYPE, Identifier.parse(string)));
+                            toAdd.add(entityType.map(value -> Component.translatable(value.value().getDescriptionId())).orElseGet(() -> Component.literal("ERROR").withStyle(ChatFormatting.RED)));
                         }
                     }
 

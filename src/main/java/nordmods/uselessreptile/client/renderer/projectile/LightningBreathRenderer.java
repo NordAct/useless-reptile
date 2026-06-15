@@ -38,34 +38,36 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
 
         matrices.pushPose();
         matrices.translate(-state.x, -state.y, -state.z);
-        for (LightningBreath.LightningBreathBolt lightningBreathBolt : state.lightningBreathBolts)
-            for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
-                LightningBreath.LightningBreathBolt.Segment current = lightningBreathBolt.segments.get(i);
-                RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
-                        RenderTypes.entityTranslucentEmissive(TEXTURE),
-                        new Vector3f(current.startPoint()).add(0, 0.1f, 0),
-                        new Vector3f(current.startPoint()).add(0, -0.1f, 0),
-                        new Vector3f(current.endPoint()).add(0, -0.1f, 0),
-                        new Vector3f(current.endPoint()).add(0, 0.1f, 0),
-                        state.alpha, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
-                        0, 1, 0, 1);
-                RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
-                        RenderTypes.entityTranslucentEmissive(TEXTURE),
-                        new Vector3f(current.startPoint()).add(0, -0.2f, 0),
-                        new Vector3f(current.startPoint()).add(0, 0.2f, 0),
-                        new Vector3f(current.endPoint()).add(0, 0.2f, 0),
-                        new Vector3f(current.endPoint()).add(0, -0.2f, 0),
-                        state.alpha / 1.5f, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
-                        0, 1, 0, 1);
-                RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
-                        RenderTypes.entityTranslucentEmissive(TEXTURE),
-                        new Vector3f(current.startPoint()).add(0, -0.3f, 0),
-                        new Vector3f(current.startPoint()).add(0, 0.3f, 0),
-                        new Vector3f(current.endPoint()).add(0, 0.3f, 0),
-                        new Vector3f(current.endPoint()).add(0, -0.3f, 0),
-                        state.alpha / 3f, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
-                        0, 1, 0, 1);
-        }
+        queue.submitCustomGeometry(matrices, RenderTypes.entityTranslucentEmissive(TEXTURE), (pose, buffer) -> {
+            for (LightningBreath.LightningBreathBolt lightningBreathBolt : state.lightningBreathBolts)
+                for (int i = 0; i < lightningBreathBolt.segments.size(); i++) {
+                    LightningBreath.LightningBreathBolt.Segment current = lightningBreathBolt.segments.get(i);
+                    RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
+                            buffer,
+                            new Vector3f(current.startPoint()).add(0, 0.1f, 0),
+                            new Vector3f(current.startPoint()).add(0, -0.1f, 0),
+                            new Vector3f(current.endPoint()).add(0, -0.1f, 0),
+                            new Vector3f(current.endPoint()).add(0, 0.1f, 0),
+                            state.alpha, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
+                            0, 1, 0, 1);
+                    RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
+                            buffer,
+                            new Vector3f(current.startPoint()).add(0, -0.2f, 0),
+                            new Vector3f(current.startPoint()).add(0, 0.2f, 0),
+                            new Vector3f(current.endPoint()).add(0, 0.2f, 0),
+                            new Vector3f(current.endPoint()).add(0, -0.2f, 0),
+                            state.alpha / 1.5f, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
+                            0, 1, 0, 1);
+                    RenderUtil.renderQuad(matrices.last().pose(), matrices.last(),
+                            buffer,
+                            new Vector3f(current.startPoint()).add(0, -0.3f, 0),
+                            new Vector3f(current.startPoint()).add(0, 0.3f, 0),
+                            new Vector3f(current.endPoint()).add(0, 0.3f, 0),
+                            new Vector3f(current.endPoint()).add(0, -0.3f, 0),
+                            state.alpha / 3f, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
+                            0, 1, 0, 1);
+                }
+        });
         matrices.popPose();
     }
 

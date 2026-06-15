@@ -15,13 +15,9 @@ import java.util.function.Consumer;
 public class ComponentUtil {
     public static List<Component> getParsedText(String translationKey, ChatFormatting... formats) {
         List<Component> toReturn = new ArrayList<>();
-
-        if (I18n.exists(translationKey)) {
-            String info = I18n.get(translationKey);
-            String[] infoLines = info.split("\\r?\\n");
-            for (String infoLine : infoLines) toReturn.add(Component.literal(infoLine).withStyle(formats));
-        } else toReturn.add(Component.literal(I18n.get(translationKey)).withStyle(formats));
-
+        String info = I18n.get(translationKey);
+        String[] infoLines = info.split("\\r?\\n");
+        for (String infoLine : infoLines) toReturn.add(Component.literal(infoLine).withStyle(formats));
         return toReturn;
     }
 

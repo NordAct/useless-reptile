@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
+import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
@@ -7,7 +8,6 @@ import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
@@ -26,7 +26,7 @@ public class URDragonModelProvider implements DataProvider {
     protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
-    private final List<Tuple<Identifier, DragonModelData>> holder = new ArrayList<>();
+    private final List<Pair<Identifier, DragonModelData>> holder = new ArrayList<>();
 
     public URDragonModelProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         this.output = output;
@@ -40,8 +40,8 @@ public class URDragonModelProvider implements DataProvider {
             addSpawnEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach(entry -> {
-                Path path = pathResolver.json(entry.getA());
-                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonModelData.CODEC, entry.getB(), path));
+                Path path = pathResolver.json(entry.getFirst());
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonModelData.CODEC, entry.getSecond(), path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });
@@ -146,7 +146,7 @@ public class URDragonModelProvider implements DataProvider {
     }
 
     protected void addEntry(Identifier id, DragonModelData variant) {
-        holder.add(new Tuple<>(id, variant));
+        holder.add(new Pair<>(id, variant));
     }
 
     protected void addEntry(Identifier dragonId, String variant, Optional<List<DragonModelData.Sound>> sounds, boolean cull, boolean animatedTexture) {

@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.ValueInput;
@@ -36,7 +37,7 @@ public abstract class PrepareSpawnTaskMixin {
                     TagValueInput.create(UselessReptile.ERROR_REPORTER,
                             serverWorld.registryAccess(),
                             nbt.read("HeadMountDragon", CompoundTag.CODEC).orElse(new CompoundTag())),
-                    serverWorld, EntitySpawnReason.LOAD)
+                    serverWorld, new EntitySpawnRequest(EntitySpawnReason.LOAD, false))
                     .ifPresent(dragon -> {
                         serverWorld.addWithUUID(dragon);
                         dragon.setPos(player.position());

@@ -8,6 +8,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.Level;
@@ -71,6 +72,6 @@ public record URDragonDataStorageComponent(List<CustomData> entityData) {
         Objects.requireNonNull(nbtComponent);
         CompoundTag nbtCompound = nbtComponent.copyTag();
         IGNORED_NBT.forEach(nbtCompound::remove);
-        return EntityType.loadEntityRecursive(nbtCompound, world, EntitySpawnReason.SPAWN_ITEM_USE, (entityx) -> entityx);
+        return EntityType.loadEntityRecursive(nbtCompound, world, new EntitySpawnRequest(EntitySpawnReason.SPAWN_ITEM_USE, false), (entityx) -> entityx);
     }
 }

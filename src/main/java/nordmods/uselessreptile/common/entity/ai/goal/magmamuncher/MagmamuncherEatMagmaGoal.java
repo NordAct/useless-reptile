@@ -1,11 +1,5 @@
 package nordmods.uselessreptile.common.entity.ai.goal.magmamuncher;
 
-import nordmods.uselessreptile.common.entity.Magmamuncher;
-
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Set;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -13,6 +7,13 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.entity.Magmamuncher;
+
+import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Set;
 
 public class MagmamuncherEatMagmaGoal extends Goal {
     private final Magmamuncher entity;
@@ -65,10 +66,10 @@ public class MagmamuncherEatMagmaGoal extends Goal {
 
     @Override
     public void tick() {
-        if (entity.isEatingMagma()) entity.lookAt(EntityAnchorArgument.Anchor.EYES, entity.getMagmaBlockPos().getCenter());
+        if (entity.isEatingMagma()) entity.lookAt(EntityAnchorArgument.Anchor.EYES, Vec3.atCenterOf(entity.getMagmaBlockPos()));
 
         BlockPos targetPos = entity.getMagmaBlockPos();
-        double dist = targetPos.getCenter().distanceToSqr(entity.position());
+        double dist = Vec3.atCenterOf(targetPos).distanceToSqr(entity.position());
         if (dist < Magmamuncher.DISTANCE_TO_EAT * Magmamuncher.DISTANCE_TO_EAT && entity.getLookControl().isLookingAtTarget()) {
             entity.setEatingMagma(true);
         }
@@ -82,7 +83,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
         if (entity.getNavigation().isDone()) {
             //bandaid fix for a dumbass not getting close enough to eat its magma
             if (dist > Magmamuncher.DISTANCE_TO_EAT * Magmamuncher.DISTANCE_TO_EAT && dist < 3) {
-                entity.push(targetPos.getCenter().subtract(entity.position()).normalize().scale(0.1));
+                entity.push(Vec3.atCenterOf(targetPos).subtract(entity.position()).normalize().scale(0.1));
                 return;
             } else if (entity.getNavigation().getTargetPos() != null && entity.getNavigation().getTargetPos().getY() < entity.getMagmaBlockPos().getY()) {
                 invalidPos.add(entity.getMagmaBlockPos());

@@ -1,14 +1,14 @@
 package nordmods.uselessreptile.common.item;
 
 import com.google.common.collect.ImmutableSortedMap;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,7 +36,7 @@ import java.util.function.Consumer;
 
 //todo expand functionality to other dragons
 public class FluteItem extends Item {
-    public static final ImmutableSortedMap<String, Tuple<SoundEvent, FluteAction>> FLUTE_MODES = createFluteModeMap();
+    public static final ImmutableSortedMap<String, Pair<SoundEvent, FluteAction>> FLUTE_MODES = createFluteModeMap();
     public FluteItem(Properties settings) {
         super(settings);
     }
@@ -50,7 +50,7 @@ public class FluteItem extends Item {
 
             if (world.isClientSide() && user == Minecraft.getInstance().player) {
                 Component text = Component.translatable("tooltip.uselessreptile.flute_mode." + getFluteMode(itemStack));
-                Minecraft.getInstance().gui.setOverlayMessage(text, false);
+                Minecraft.getInstance().gui.hud.setOverlayMessage(text, false);
             }
             return InteractionResult.SUCCESS;
         }
@@ -79,8 +79,8 @@ public class FluteItem extends Item {
     }
 
     public static SoundEvent getFluteSound(String mode) {
-        Tuple<SoundEvent, FluteAction> pair = FLUTE_MODES.get(mode);
-        return pair != null ? pair.getA() : FLUTE_MODES.firstEntry().getValue().getA();
+        Pair<SoundEvent, FluteAction> pair = FLUTE_MODES.get(mode);
+        return pair != null ? pair.getFirst() : FLUTE_MODES.firstEntry().getValue().getFirst();
     }
 
     public static String getFluteMode(ItemStack stack) {
@@ -88,7 +88,7 @@ public class FluteItem extends Item {
     }
 
     public static FluteAction getFluteModeAction(ItemStack stack) {
-        return FLUTE_MODES.get(getFluteMode(stack)).getB();
+        return FLUTE_MODES.get(getFluteMode(stack)).getSecond();
     }
 
     public static String getNextMode(ItemStack stack) {
@@ -97,15 +97,15 @@ public class FluteItem extends Item {
         return FLUTE_MODES.keySet().asList().get(nextOrdinal);
     }
 
-    private static ImmutableSortedMap<String, Tuple<SoundEvent, FluteAction>>createFluteModeMap() {
-        HashMap<String, Tuple<SoundEvent, FluteAction>> mutable = new HashMap<>();
-        mutable.put("call", new Tuple<>(URSoundEvent.FLUTE_CALL, dragon -> {
+    private static ImmutableSortedMap<String, Pair<SoundEvent, FluteAction>>createFluteModeMap() {
+        HashMap<String, Pair<SoundEvent, FluteAction>> mutable = new HashMap<>();
+        mutable.put("call", new Pair<>(URSoundEvent.FLUTE_CALL, dragon -> {
             if (!dragon.isOrderedToSit()) dragon.shouldFollow = true;
         }));
-        mutable.put("gather", new Tuple<>(URSoundEvent.FLUTE_GATHER, dragon -> {
+        mutable.put("gather", new Pair<>(URSoundEvent.FLUTE_GATHER, dragon -> {
             if (dragon instanceof FluteListener gathererDragon) gathererDragon.startGathering();
         }));
-        mutable.put("target", new Tuple<>(URSoundEvent.FLUTE_TARGET, dragon -> {
+        mutable.put("target", new Pair<>(URSoundEvent.FLUTE_TARGET, dragon -> {
             if (!(dragon.getOwner() instanceof Player player)) return;
 
             int range = URGameEvents.FLUTE_USED.value().notificationRadius();
@@ -119,8 +119,8 @@ public class FluteItem extends Item {
 
             if (hitResult != null) dragon.setTarget((LivingEntity) hitResult.getEntity());
         }));
-        mutable.put("sit_down", new Tuple<>(URSoundEvent.FLUTE_SIT_DOWN, dragon -> dragon.setOrderedToSit(true)));
-        mutable.put("stand_up", new Tuple<>(URSoundEvent.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(false)));
+        mutable.put("sit_down", new Pair<>(URSoundEvent.FLUTE_SIT_DOWN, dragon -> dragon.setOrderedToSit(true)));
+        mutable.put("stand_up", new Pair<>(URSoundEvent.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(false)));
         return ImmutableSortedMap.copyOf(mutable);
     }
 

@@ -2,6 +2,7 @@ package nordmods.uselessreptile.datagen.assets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -19,7 +20,6 @@ import net.minecraft.client.renderer.item.SelectItemModel;
 import net.minecraft.client.renderer.item.properties.select.ComponentContents;
 import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Item;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.init.URBlocks;
@@ -271,7 +271,7 @@ public class URModelProvider extends FabricModelProvider {
 
     protected void registerFlute(ItemModelGenerators itemModelGenerator, Item item) {
         List<SelectItemModel.SwitchCase<FluteComponent>> entries = new ArrayList<>();
-        for (Map.Entry<String, Tuple<SoundEvent, FluteItem.FluteAction>> entry :FluteItem.FLUTE_MODES.entrySet()) {
+        for (Map.Entry<String, Pair<SoundEvent, FluteItem.FluteAction>> entry :FluteItem.FLUTE_MODES.entrySet()) {
             String mode = entry.getKey();
             ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModelGenerator.createFlatItemModel(item, "/" + mode, ModelTemplates.FLAT_HANDHELD_ITEM));
             entries.add(new SelectItemModel.SwitchCase<>(List.of(new FluteComponent(mode)), model));

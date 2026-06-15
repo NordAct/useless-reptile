@@ -23,7 +23,7 @@
     "client.debug.EnitiyHitboxDebugMixin",
     "client.debug.ResourceLoadStateTrackerMixin",
     "client.gui.EffectsInInventoryMixin",
-    "client.gui.GuiMixin",
+    "client.gui.HudMixin",
     "client.gui.ItemMixin",
     "client.gui.MinecraftMixin",
     "client.render.AvatarRendererMixin",

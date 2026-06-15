@@ -54,7 +54,7 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
         BlockPos div = null;
         for (int i = 0; i < 5; i++) {
             BlockPos fuzz = RandomPos.generateRandomDirection(mob.getRandom(), range, 20);
-            if (fuzz.getCenter().length() < 10) continue;
+            if (Vec3.atCenterOf(fuzz).length() < 10) continue;
             BlockPos result = mob.blockPosition().offset(fuzz);
             if (mob.level().getBlockState(result).isAir() && mob.level().getBlockState(result.below()).isAir()) {
                 div = result;
@@ -69,7 +69,7 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
     @Override
     protected Vec3 getPosition() {
         BlockPos target = findRandomAirSpot();
-        if (target != null) return target.getCenter();
+        if (target != null) return Vec3.atCenterOf(target);
         else return null;
     }
 

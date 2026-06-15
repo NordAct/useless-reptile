@@ -12,6 +12,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
@@ -286,7 +287,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         return DEFAULT_TEXTURES.computeIfAbsent(entity, (id) -> {
             CompoundTag nbtCompound = new CompoundTag();
             nbtCompound.putString("id", id.toString());
-            URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER,  Minecraft.getInstance().level.registryAccess(), nbtCompound), Minecraft.getInstance().level, EntitySpawnReason.TRIGGERED).get();
+            URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER,  Minecraft.getInstance().level.registryAccess(), nbtCompound), Minecraft.getInstance().level, new EntitySpawnRequest(EntitySpawnReason.TRIGGERED, false)).get();
             dragon.discard();
             return UselessReptile.id("textures/entity/"+ id.getPath() + "/" + dragon.getDefaultVariant() + ".png");
         });

@@ -10,11 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LightningBolt;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.OwnableEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
@@ -78,7 +74,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         if (target.hurtServer(serverWorld, source, getResultingDamage())) {
             target.playSound(URSoundEvent.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
             boolean wasOnFireBefore = target.isOnFire();
-            LightningBolt fakeLightningSoINoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityType.LIGHTNING_BOLT, serverWorld);
+            LightningBolt fakeLightningSoINoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityTypes.LIGHTNING_BOLT, serverWorld);
             target.thunderHit(serverWorld, fakeLightningSoINoNullPointerExceptionWouldHappenIHope);
             if (!wasOnFireBefore) {
                 target.setRemainingFireTicks(0);
@@ -138,9 +134,8 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
             }
 
             sorted.forEach(fallingBlockEntity -> {
-                Vec3 velocity = blockPosition()
-                        .getCenter()
-                        .subtract(fallingBlockEntity.blockPosition().getCenter())
+                Vec3 velocity = Vec3.atCenterOf(blockPosition())
+                        .subtract(Vec3.atCenterOf(fallingBlockEntity.blockPosition()))
                         .add(getRandom().nextFloat() - 0.5f, 1, getRandom().nextFloat() - 0.5f)
                         .normalize()
                         .scale(0.75);

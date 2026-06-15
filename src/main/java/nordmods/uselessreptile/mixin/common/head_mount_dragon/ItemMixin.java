@@ -4,6 +4,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,7 +20,7 @@ public abstract class ItemMixin {
         Player player = context.getPlayer();
         if (player != null && player.isShiftKeyDown() && player.getFirstPassenger() instanceof HeadMountDragon headMountDragon && headMountDragon instanceof URDragonEntity dragon) {
             dragon.stopRiding();
-            dragon.setPos(context.getClickedPos().above().getCenter());
+            dragon.setPos(Vec3.atCenterOf(context.getClickedPos().above()));
             cir.setReturnValue(InteractionResult.SUCCESS);
         }
     }

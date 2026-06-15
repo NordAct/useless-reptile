@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URTags;
 import org.jspecify.annotations.NonNull;
@@ -19,7 +20,7 @@ public class UREntityTypeTagsProvider extends FabricTagsProvider<EntityType<?>>{
     @Override
     protected void addTags(HolderLookup.@NonNull Provider wrapperLookup) {
         getOrCreateRawBuilder(URTags.DRAGON_IMMUNE)
-                .addElement(EntityType.getKey(EntityType.ITEM));
+                .addElement(EntityType.getKey(EntityTypes.ITEM));
 
         getOrCreateRawBuilder(URTags.DRAGON)
                 .addElement(EntityType.getKey(UREntities.MAGMAMUNCHER))

@@ -3,6 +3,7 @@ package nordmods.uselessreptile.mixin.common.head_mount_dragon;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EntitySpawnRequest;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -52,7 +53,7 @@ public abstract class PlayerMixin extends LivingEntity implements HeadMountDrago
     private void removeHeadMountDragon(RemovalReason reason, CallbackInfo ci) {
         if (!headMountDragon.isEmpty() && level() instanceof ServerLevel world) {
             if (!reason.shouldDestroy()) {
-                EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), headMountDragon), world, EntitySpawnReason.LOAD).ifPresent(dragon -> dragon.remove(reason));
+                EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER, world.registryAccess(), headMountDragon), world, new EntitySpawnRequest(EntitySpawnReason.LOAD, false)).ifPresent(dragon -> dragon.remove(reason));
             }
         }
     }

@@ -9,6 +9,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -23,7 +24,7 @@ public abstract class BlockBehaviourMixin {
     private void putDragonAssOff(BlockState state, Level world, BlockPos pos, Player player, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir) {
         if (player.isShiftKeyDown() && player.getFirstPassenger() instanceof HeadMountDragon headMountDragon && headMountDragon instanceof URDragonEntity dragon) {
             dragon.stopRiding();
-            dragon.setPos(pos.above().getCenter());
+            dragon.setPos(Vec3.atCenterOf(pos.above()));
             cir.setReturnValue(InteractionResult.SUCCESS);
         }
     }
@@ -32,7 +33,7 @@ public abstract class BlockBehaviourMixin {
     private void putDragonAssOff(ItemStack stack, BlockState state, Level world, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit, CallbackInfoReturnable<InteractionResult> cir){
         if (player.isShiftKeyDown() && player.getFirstPassenger() instanceof HeadMountDragon headMountDragon && headMountDragon instanceof URDragonEntity dragon) {
             dragon.stopRiding();
-            dragon.setPos(pos.above().getCenter());
+            dragon.setPos(Vec3.atCenterOf(pos.above()));
             cir.setReturnValue(InteractionResult.SUCCESS);
         }
     }

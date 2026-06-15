@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.client.renderer.projectile;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -37,23 +38,24 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
 
         RenderType layer = RenderTypes.entityTranslucentEmissive(TEXTURE, true);
 
-        matrixStack.pushPose();
-        matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha / 2f * 180f));
-        renderSphere(matrixStack, layer, Mth.clamp(state.alpha - 0.2f, 0, 1), state.radius);
-        matrixStack.popPose();
+        commandQueue.submitCustomGeometry(matrixStack, layer, (pose, buffer) -> {
+            matrixStack.pushPose();
+            matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha / 2f * 180f));
+            renderSphere(matrixStack, buffer, Mth.clamp(state.alpha - 0.2f, 0, 1), state.radius);
+            matrixStack.popPose();
 
-        matrixStack.pushPose();
-        matrixStack.mulPose(Axis.YP.rotationDegrees(-state.alpha / 1.5f * 180f));
-        renderSphere(matrixStack, layer, Mth.clamp(state.alpha/1.5f - 0.1f, 0, 1), state.radius/1.5f);
-        matrixStack.popPose();
+            matrixStack.pushPose();
+            matrixStack.mulPose(Axis.YP.rotationDegrees(-state.alpha / 1.5f * 180f));
+            renderSphere(matrixStack, buffer, Mth.clamp(state.alpha / 1.5f - 0.1f, 0, 1), state.radius / 1.5f);
+            matrixStack.popPose();
 
-        matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha * 180f));
-        renderSphere(matrixStack, layer, state.alpha/2f, state.radius/2f);
-
+            matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha * 180f));
+            renderSphere(matrixStack, buffer, state.alpha / 2f, state.radius / 2f);
+        });
         matrixStack.popPose();
     }
 
-    private void renderSphere(PoseStack matrixStack, RenderType renderLayer, float alpha, float radius) {
+    private void renderSphere(PoseStack matrixStack, VertexConsumer vertexConsumer, float alpha, float radius) {
         float dPhi = (float) (-Math.PI / SPHERE_ROWS);
         float dTheta = (float) (-2 * Math.PI / SPHERE_ROWS);
 
@@ -76,7 +78,7 @@ public class ShockwaveSphereRenderer extends EntityRenderer<ShockwaveSphere, Sho
                 Vector3f v2 = getSphereDot(maxPhi, maxTheta, radius);
                 Vector3f v3 = getSphereDot(maxPhi, minTheta, radius);
 
-                RenderUtil.renderQuad(matrixStack.last().pose(), matrixStack.last(), renderLayer,
+                RenderUtil.renderQuad(matrixStack.last().pose(), matrixStack.last(), vertexConsumer,
                         v0, v1 ,v2 ,v3,
                         alpha, 1, 1, 1, LightCoordsUtil.FULL_BRIGHT,
                         minU, maxU, minV, maxV);

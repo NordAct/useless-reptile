@@ -38,7 +38,7 @@ public abstract class URMovingProjectile extends AbstractArrow {
 
     @Override
     protected @NonNull ItemStack getDefaultPickupItem() { //this is a pain in my ass
-        return Items.BROWN_DYE.getDefaultInstance();
+        return Items.DYE.brown().getDefaultInstance();
     }
 
     @Override

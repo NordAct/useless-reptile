@@ -58,7 +58,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
             nodeChecked = false;
         }
 
-        if (currentTarget.distanceTo(getTargetPos().getCenter()) > entity.position().distanceTo(getTargetPos().getCenter())) recomputePath();
+        if (currentTarget.distanceTo(Vec3.atCenterOf(getTargetPos())) > entity.position().distanceTo(Vec3.atCenterOf(getTargetPos()))) recomputePath();
     }
 
     protected boolean shouldTargetNextNodeInDirection(Vec3 currentPos) {

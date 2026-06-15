@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
+import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
@@ -9,7 +10,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("deprecation")
 public class URDragonVariantProvider implements DataProvider {
-    private static final List<Tuple<Identifier, DragonVariant>> holder = new ArrayList<>();
+    private static final List<Pair<Identifier, DragonVariant>> holder = new ArrayList<>();
     protected final FabricPackOutput output;
     private final PackOutput.PathProvider pathResolver;
     private final CompletableFuture<HolderLookup.Provider> registryLookupFuture;
@@ -39,11 +39,11 @@ public class URDragonVariantProvider implements DataProvider {
     }
 
     public void addEntry(Identifier id, DragonVariant variant) {
-        holder.add(new Tuple<>(id, variant));
+        holder.add(new Pair<>(id, variant));
     }
 
     public void addSecretEntry(Identifier id, DragonVariant variant) {
-        holder.add(new Tuple<>(id, variant));
+        holder.add(new Pair<>(id, variant));
     }
 
     @Override
@@ -52,8 +52,8 @@ public class URDragonVariantProvider implements DataProvider {
             addEntries();
             List<CompletableFuture<?>> list = new ArrayList<>();
             holder.forEach(variant -> {
-                Path path = pathResolver.json(variant.getA());
-                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonVariant.CODEC, variant.getB(), path));
+                Path path = pathResolver.json(variant.getFirst());
+                list.add(DataProvider.saveStable(writer, registryLookupFuture, DragonVariant.CODEC, variant.getSecond(), path));
             });
             return CompletableFuture.allOf(list.toArray(CompletableFuture[]::new));
         });

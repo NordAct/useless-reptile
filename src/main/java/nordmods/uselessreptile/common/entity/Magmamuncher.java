@@ -20,7 +20,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.monster.MagmaCube;
+import net.minecraft.world.entity.monster.cubemob.MagmaCube;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -30,8 +30,9 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.phys.AABB;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
@@ -238,7 +239,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
             BlockPos pos = getMagmaBlockPos();
             if (!level().isClientSide() &&
                     (level().getBlockState(pos).getBlock() != Blocks.MAGMA_BLOCK
-                            || pos.getCenter().distanceToSqr(position()) >= DISTANCE_TO_EAT * DISTANCE_TO_EAT)) {
+                            || Vec3.atCenterOf(pos).distanceToSqr(position()) >= DISTANCE_TO_EAT * DISTANCE_TO_EAT)) {
                 setEatingMagma(false);
             } else if (!level().isClientSide() && ++eatingMagmaProgress >= MAX_EATING_MAGMA_PROGRESS) {
                 setEatingMagma(false);

@@ -7,8 +7,8 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.Hud;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -28,8 +28,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-@Mixin(Gui.class)
-public abstract class GuiMixin {
+@Mixin(Hud.class)
+public abstract class HudMixin {
     @Unique private float prevStrength;
     @Shadow @Final private Minecraft minecraft;
 
@@ -73,7 +73,7 @@ public abstract class GuiMixin {
         float g = 0.82f * strength;
         float b = 0.9f * strength;
         int color = ARGB.colorFromFloat(1.0F, r, g, b);
-        context.blit(URRenderPipelines.GUI_SHOCK_OVERLAY, Gui.NAUSEA_LOCATION, 0, 0, 0, 0, width, height, width, height, color);
+        context.blit(URRenderPipelines.GUI_SHOCK_OVERLAY, Hud.NAUSEA_LOCATION, 0, 0, 0, 0, width, height, width, height, color);
 
         context.pose().popMatrix();
     }
