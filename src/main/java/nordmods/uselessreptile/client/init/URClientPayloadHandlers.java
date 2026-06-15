@@ -28,7 +28,7 @@ public class URClientPayloadHandlers {
             if (entity instanceof URDragonEntity dragon) {
                 URDragonMenu dragonMenu = new URDragonMenu(packet.containterId(), context.player().getInventory(), dragon.getInventory());
                 context.player().containerMenu = dragonMenu;
-                Minecraft.getInstance().setScreenAndShow(new URDragonScreen<>(dragonMenu, context.player().getInventory(), dragon));
+                Minecraft.getInstance().gui.setScreen(new URDragonScreen<>(dragonMenu, context.player().getInventory(), dragon));
             }
         });
     }
@@ -62,7 +62,7 @@ public class URClientPayloadHandlers {
 
     private static void handleOpenVariantChangingOrbScreen() {
         ClientPlayNetworking.registerGlobalReceiver(OpenVariantChangingOrbScreenPayload.PAYLOAD_ID, (packet, _) -> {
-            Minecraft.getInstance().setScreenAndShow(new VariantChangingOrbScreen(packet.variantType(), packet.variant()));
+            Minecraft.getInstance().gui.setScreen(new VariantChangingOrbScreen(packet.variantType(), packet.variant()));
         });
     }
 }
