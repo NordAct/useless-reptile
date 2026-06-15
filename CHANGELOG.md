@@ -1,1 +1,3 @@
-- Fixed crash related to animation library
+- 26.2 port
+- Updated Spanish translation (pvpeuve)
+- Fixed camera clipping in third person when riding a dragon

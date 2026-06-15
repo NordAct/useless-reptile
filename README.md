@@ -116,10 +116,10 @@ Mod is currently fully translated into the following languages:
 - English 
 - Russian
 
-Following translations are **outdated** (meaning they are not full and may not be accurate), but still presented in the mod:
+Following translations are presented in the mod, but may be outdated or/and not complete:
 - Portuguese - translation by rauanrochabarbosa and giotm0833 (last updated 0.4.0)
 - Turkish - translation by double_axe (last updated 0.1.11)
-- Spanish - translation by kota_araya (last updated 0.4.0)
+- Spanish - translation by kota_araya and pvpeuve (last updated 0.13.3)
 - Polish - translation by karolofgutovo (last updated 0.3.0)
 - French - translation by thefiredragon, carputelechat, daelyx and coucoufe (last updated 0.13.0)
 - Japanese - translation by mash1133 (last updated 0.6.3)
