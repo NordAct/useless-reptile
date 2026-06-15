@@ -15,7 +15,7 @@ import java.util.Arrays;
 @Mixin(MobCategory.class)
 public class MobCategoryMixin {
     @SuppressWarnings("unused")
-    MobCategoryMixin(String enumname, int ordinal, String name, int spawnCap, boolean peaceful, boolean rare, int immediateDespawnRange) {
+    MobCategoryMixin(String enumname, int ordinal, String name, String debugAbbreviation, int spawnCap, boolean peaceful, boolean rare, int immediateDespawnRange) {
         throw new AssertionError();
     }
 
@@ -27,7 +27,7 @@ public class MobCategoryMixin {
 
     @Unique
     private static MobCategory createSpawnGroup(String enumname, int ordinal, URMobCategory spawnGroup) {
-        return ((MobCategory)(Object) new MobCategoryMixin(enumname, ordinal, spawnGroup.name, spawnGroup.spawnCap, spawnGroup.peaceful, spawnGroup.rare, spawnGroup.immediateDespawnRange));
+        return ((MobCategory)(Object) new MobCategoryMixin(enumname, ordinal, spawnGroup.name, spawnGroup.debugAbbreviation, spawnGroup.spawnCap, spawnGroup.peaceful, spawnGroup.rare, spawnGroup.immediateDespawnRange));
     }
 
     @Inject(method = "<clinit>", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/MobCategory;$VALUES:[Lnet/minecraft/world/entity/MobCategory;", shift = At.Shift.AFTER, opcode = Opcodes.PUTSTATIC))
