@@ -1,7 +1,7 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
     id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
+    id "me.modmuss50.mod-publish-plugin" version "2.0.0"
 }
 
 version = project.mod_version + "-" + project.minecraft_version
@@ -121,18 +121,22 @@ publishMods {
     displayName = "Useless Reptile ${project.version}"
     modLoaders.add("fabric")
     dryRun = true
+    var versions = new ArrayList<>()
+    versions.add(project.property("minecraft_version") as String)
 
     curseforge {
         projectId = "677634"
         projectSlug = "useless-reptile"
         accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
-        minecraftVersions.add(project.property("minecraft_version") as String)
+        minecraftVersions.addAll(versions)
         requires("fabric-api", "yacl")
+        client = true
+        server = true
     }
     modrinth {
         projectId = "YE4QRt8F"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")
-        minecraftVersions.add(project.property("minecraft_version") as String)
+        minecraftVersions.addAll(versions)
         requires("fabric-api", "yacl")
     }
 }
