@@ -123,6 +123,7 @@ publishMods {
     dryRun = true
     var versions = new ArrayList<>()
     versions.add(project.property("minecraft_version") as String)
+    versions.addAll("26.1", "26.1.1")
 
     curseforge {
         projectId = "677634"
