@@ -1,4 +1,2 @@
-- 26.2 port
-- Updated Spanish translation (pvpeuve)
-- Fixed camera clipping in third person when riding a dragon
-- Updated Lightning Chaser Shockwave and Lightning Breath attack visuals
+- Fixed dragon inventory rendering twice, which also caused crash with Blur+
+- Fixed occasional crash with Held Item Tooltips
