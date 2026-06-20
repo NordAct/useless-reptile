@@ -182,12 +182,6 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
 
     }
 
-    @Override
-    public void extractRenderState(@NonNull GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
-        extractBackground(context, mouseX, mouseY, delta);
-        super.extractRenderState(context, mouseX, mouseY, delta);
-    }
-
     protected void extractSaddle(GuiGraphicsExtractor context, int x, int y) {
         if (entity.getInventory().hasSaddle)
             context.blit( //saddle
