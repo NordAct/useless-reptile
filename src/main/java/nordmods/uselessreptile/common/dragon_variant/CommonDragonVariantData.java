@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 
@@ -62,7 +63,7 @@ public record CommonDragonVariantData(
             .apply(instance, CommonDragonVariantData::new));
 
     @ApiStatus.Internal //idk where else to put it
-    public static final Map<Item, Set<Component>> EQUIPMENT_INFO_MAP = new HashMap<>();
+    public static final ConcurrentHashMap<Item, Set<Component>> EQUIPMENT_INFO_MAP = new ConcurrentHashMap<>();
 
     public record TamingItem(ExtraCodecs.TagOrElementLocation item, Pair<Integer, Integer> tamingProgressIncrease, Optional<Integer> priority) {
         private static final Codec<Pair<Integer, Integer>> PAIR_CODEC = Codec.pair(
