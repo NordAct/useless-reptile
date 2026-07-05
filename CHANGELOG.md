@@ -1,2 +1,2 @@
-- Fixed dragon inventory rendering twice, which also caused crash with Blur+
-- Fixed occasional crash with Held Item Tooltips
+- (26.2) Fixed crash with LambDynamicLights by changing how default dragon texture is grabbed now
+- (26.1) Changed way how default dragon texture is grabbed
