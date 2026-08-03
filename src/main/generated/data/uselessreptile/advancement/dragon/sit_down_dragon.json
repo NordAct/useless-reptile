@@ -1,11 +1,12 @@
 {
-  "parent": "uselessreptile:dragon/root",
+  "parent": "uselessreptile:dragon/tame_any_dragon",
   "criteria": {
     "triggered_from_code": {
       "trigger": "minecraft:impossible"
     }
   },
   "display": {
+    "announce_to_chat": false,
     "description": {
       "translate": "advancement.uselessreptile.sit_down_dragon.desc"
     },

@@ -8,7 +8,7 @@
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
-              "minecraft:entity_type": "uselessreptile:river_pikehorn"
+              "minecraft:entity_type": "#uselessreptile:dragon"
             }
           }
         ]
@@ -17,7 +17,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:flute"
+        "recipe": "uselessreptile:flute4"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -30,7 +30,7 @@
   ],
   "rewards": {
     "recipes": [
-      "uselessreptile:flute"
+      "uselessreptile:flute4"
     ]
   }
 }

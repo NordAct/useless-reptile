@@ -46,7 +46,7 @@ Some mod versions for 1.19.2 may require [AzureLib](https://modrinth.com/mod/azu
 
 ### Items
 - **Vortex Horn** - upgraded version of Goat Horn that can be used to store your dragons inside it
-- **Flute** - special item, that allows you more versatile control over your River Pikehorns
+- **Flute** - special item, that allows you to give out commands on distance to your dragons
 - **Wyvern Skin** - initially supposed to be a crafting material for *something*, but currently can only be used to get 2 Leather
 - **Dual Saddle** - upgraded version of normal saddle. Can be equipped on Swamp Wyvern and used to ride with another player together
 - **Variant Changing Orb** - utility item, obtainable only via Creative Mode or commands. Allows to easily change any dragon variant

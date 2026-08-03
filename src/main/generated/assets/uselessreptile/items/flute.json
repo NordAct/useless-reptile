@@ -19,9 +19,9 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute/stand_up"
+          "model": "uselessreptile:item/flute/target"
         },
-        "when": "uselessreptile:stand_up"
+        "when": "uselessreptile:target"
       },
       {
         "model": {
@@ -33,9 +33,9 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute/target"
+          "model": "uselessreptile:item/flute/stand_up"
         },
-        "when": "uselessreptile:target"
+        "when": "uselessreptile:stand_up"
       }
     ],
     "property": "uselessreptile:current_flute_mode"

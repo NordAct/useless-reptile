@@ -2,7 +2,6 @@ package nordmods.uselessreptile.common.item;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.advancements.triggers.CriteriaTriggers;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -41,9 +40,8 @@ public class FluteItem extends Item {
             FluteConfigurationComponent component = getFluteConfig(itemStack);
             itemStack.set(URItemComponents.FLUTE_CONFIGURATION, new FluteConfigurationComponent(component.dragon(), nextMode, component.availableModes()));
 
-            if (world.isClientSide() && user == Minecraft.getInstance().player) {
-                Component text = Component.translatable(getFluteModeLocalisationKey(itemStack));
-                Minecraft.getInstance().gui.setOverlayMessage(text, false);
+            if (user.isLocalPlayer()) {
+                user.sendOverlayMessage(Component.translatable(getFluteModeLocalisationKey(itemStack)));
             }
             return InteractionResult.SUCCESS;
         }
@@ -61,7 +59,10 @@ public class FluteItem extends Item {
     public @NonNull InteractionResult interactLivingEntity(@NonNull ItemStack itemStack, @NonNull Player player, @NonNull LivingEntity target, @NonNull InteractionHand type) {
         if (target instanceof URDragonEntity dragonEntity) {
             FluteConfigurationComponent component = new FluteConfigurationComponent(dragonEntity.getType(), dragonEntity.getPermittedFluteModes().getFirst(), dragonEntity.getPermittedFluteModes());
-            itemStack.set(URItemComponents.FLUTE_CONFIGURATION, component);
+            player.getItemInHand(type).set(URItemComponents.FLUTE_CONFIGURATION, component);
+            if (player.isLocalPlayer()) {
+                player.sendOverlayMessage(Component.translatable("tooltip.uselessreptile.flute_listener", getFluteConfig(itemStack).dragon().getDescription()));
+            }
             return InteractionResult.SUCCESS;
         }
         return super.interactLivingEntity(itemStack, player, target, type);
@@ -76,8 +77,8 @@ public class FluteItem extends Item {
     @Override
     public void appendHoverText(@NonNull ItemStack stack, @NonNull TooltipContext context, @NonNull TooltipDisplay displayComponent, @NonNull Consumer<Component> textConsumer, @NonNull TooltipFlag type) {
         ComponentUtil.addHidden(textConsumer, ComponentUtil.getParsedText("tooltip.uselessreptile.flute"), ChatFormatting.GRAY);
-        String tooltipString = "tooltip.uselessreptile.flute_mode";
-        textConsumer.accept(Component.translatable(tooltipString, Component.translatable(getFluteModeLocalisationKey(stack))).withStyle(ChatFormatting.GRAY));
+        textConsumer.accept(Component.translatable("tooltip.uselessreptile.flute_mode", Component.translatable(getFluteModeLocalisationKey(stack))).withStyle(ChatFormatting.GRAY));
+        textConsumer.accept(Component.translatable("tooltip.uselessreptile.flute_listener", getFluteConfig(stack).dragon().getDescription()).withStyle(ChatFormatting.GRAY));
     }
 
     public static String getFluteModeLocalisationKey(ItemStack stack) {
@@ -100,7 +101,7 @@ public class FluteItem extends Item {
         return config.availableModes().get(nextOrdinal);
     }
 
-    public static record FluteMode(SoundEvent sound, FluteAction action) {
+    public record FluteMode(SoundEvent sound, FluteAction action) {
 
         public interface FluteAction {
             void run(URDragonEntity dragon);

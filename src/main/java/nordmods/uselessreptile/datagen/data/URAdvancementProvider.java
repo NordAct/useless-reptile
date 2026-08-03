@@ -55,6 +55,19 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         AdvancementHolder tameRiverPikehorn = tamingAdvancementEntry(registryLookup, UREntities.RIVER_PIKEHORN, root);
         AdvancementHolder tameMagmamuncher = tamingAdvancementEntry(registryLookup, UREntities.MAGMAMUNCHER, root);
 
+        AdvancementHolder tameAnyDragon = Advancement.Builder.recipeAdvancement()
+                .display(Items.STICK,
+                        Component.translatable("advancement.uselessreptile.tame_any_dragon"),
+                        Component.translatable("advancement.uselessreptile.tame_any_dragon.desc"),
+                        null,
+                        AdvancementType.TASK,
+                        true,
+                        true,
+                        false)
+                .addCriterion("tame", AdvancementCriterions.entityTamedCondition(registryLookup.lookupOrThrow(Registries.ENTITY_TYPE), URTags.DRAGON))
+                .parent(root)
+                .build(UselessReptile.id("dragon/tame_any_dragon"));
+
         AdvancementHolder useFlute = Advancement.Builder.recipeAdvancement()
                 .display(URItems.FLUTE,
                         Component.translatable("advancement.uselessreptile.use_flute"),
@@ -62,10 +75,10 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("use_item", AdvancementCriterions.useItemCondition(registryEntryLookup, URItems.FLUTE))
-                .parent(tameRiverPikehorn)
+                .parent(tameAnyDragon)
                 .build(UselessReptile.id("dragon/use_flute"));
 
         AdvancementHolder moleclawHelmet = Advancement.Builder.recipeAdvancement()
@@ -75,7 +88,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("obtain_item", AdvancementCriterions.obtainItem(registryEntryLookup, URTags.PROTECTS_MOLECLAW_FROM_LIGHT))
                 .parent(tameMoleclaw)
@@ -89,7 +102,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("obtain_item", AdvancementCriterions.obtainItem(registryEntryLookup, potion))
                 .parent(tameWyvern)
@@ -102,7 +115,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
                 .parent(tameMagmamuncher)
@@ -115,10 +128,10 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
-                .parent(root)
+                .parent(tameAnyDragon)
                 .build(UselessReptile.id("dragon/sit_down_dragon"));
 
         AdvancementHolder useHorn = Advancement.Builder.recipeAdvancement()
@@ -128,10 +141,10 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
-                .parent(sitDownDragon)
+                .parent(tameAnyDragon)
                 .build(UselessReptile.id("dragon/use_horn"));
 
         AdvancementHolder equipFullDiamondDragonArmor = Advancement.Builder.recipeAdvancement()
@@ -141,10 +154,10 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.GOAL,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
-                .parent(sitDownDragon)
+                .parent(tameAnyDragon)
                 .build(UselessReptile.id("dragon/equip_full_diamond_dragon_armor"));
 
         AdvancementHolder equipFullNetheriteDragonArmor = Advancement.Builder.recipeAdvancement()
@@ -167,7 +180,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("get_vortex_horn", AdvancementCriterions.obtainItem(registryEntryLookup, URTags.VORTEX_HORNS))
                 .parent(useHorn)
@@ -199,10 +212,10 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
-                .parent(sitDownDragon)
+                .parent(tameAnyDragon)
                 .build(UselessReptile.id("dragon/eat_from_inventory"));
 
         ItemStackTemplate potion1 = new ItemStackTemplate(Items.POTION, DataComponentPatch.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.STRENGTH)).build());
@@ -213,7 +226,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
                         null,
                         AdvancementType.TASK,
                         true,
-                        true,
+                        false,
                         false)
                 .addCriterion("triggered_from_code", AdvancementCriterions.triggeredFromCode())
                 .parent(eatFromInventory)
@@ -235,7 +248,7 @@ public class URAdvancementProvider extends FabricAdvancementProvider {
         consumer.accept(equipFullNetheriteDragonArmor);
         consumer.accept(getVortexHorn);
         consumer.accept(fullVortexHorn);
-        consumer.accept(sitDownDragon);
+        consumer.accept(tameAnyDragon);
         consumer.accept(eatFromInventory);
         consumer.accept(givePotion);
     }

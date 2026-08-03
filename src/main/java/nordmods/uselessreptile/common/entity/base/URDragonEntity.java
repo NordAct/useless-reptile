@@ -550,11 +550,14 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
-        if (player.getItemInHand(InteractionHand.MAIN_HAND).is(URItems.VARIANT_CHANGING_ORB)
-                || player.getItemInHand(InteractionHand.OFF_HAND).is(URItems.VARIANT_CHANGING_ORB))
-            return InteractionResult.PASS;
+    public InteractionResult interact(Player player, InteractionHand hand, Vec3 location) {
+        ItemStack itemStack = player.getItemInHand(hand);
+        if (itemStack.is(URItems.VARIANT_CHANGING_ORB) || itemStack.is(URItems.FLUTE)) return InteractionResult.PASS;
+        return super.interact(player, hand, location);
+    }
 
+    @Override
+    public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (isTameable()) {

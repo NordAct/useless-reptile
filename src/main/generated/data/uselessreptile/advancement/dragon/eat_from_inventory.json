@@ -1,11 +1,12 @@
 {
-  "parent": "uselessreptile:dragon/sit_down_dragon",
+  "parent": "uselessreptile:dragon/tame_any_dragon",
   "criteria": {
     "triggered_from_code": {
       "trigger": "minecraft:impossible"
     }
   },
   "display": {
+    "announce_to_chat": false,
     "description": {
       "translate": "advancement.uselessreptile.eat_from_inventory.desc"
     },
