@@ -66,6 +66,7 @@ import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
+import nordmods.uselessreptile.common.entity.RiverPikehorn;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
@@ -75,6 +76,7 @@ import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.VortexHornItem;
+import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jspecify.annotations.NonNull;
@@ -102,6 +104,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             (new EntityPositionSource(this, getEyeHeight()), GameEvent.JUKEBOX_PLAY.value().notificationRadius()));
     protected final DynamicGameEventListener<HornUsedEventListener> hornUsedEventHandler = new DynamicGameEventListener<>(new HornUsedEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.INSTRUMENT_USED.value().notificationRadius()));
+    protected final DynamicGameEventListener<FluteUsedEventListener> fluteUsedEventHandler = new DynamicGameEventListener<>(new RiverPikehorn.FluteUsedEventListener
+            (new EntityPositionSource(this, getEyeHeight()), URGameEvents.FLUTE_USED.value().notificationRadius()));
     protected @Nullable BlockPos jukeboxPos;
     private DragonInventory inventory;
     public boolean shouldFollow = false;
@@ -114,6 +118,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     private Map<Identifier, EquipmentModelData.Equipment> dragonEquipment;
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
+    private static final List<FluteItem.FluteMode> FLUTE_MODES = List.of(
+            URFluteModes.CALL,
+            URFluteModes.SIT_DOWN,
+            URFluteModes.STAND_UP,
+            URFluteModes.TARGET
+    );
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -466,8 +476,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     public void updateDynamicGameEventListener(@NonNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
         if (level() instanceof ServerLevel serverWorld) {
-            callback.accept(this.jukeboxEventHandler, serverWorld);
-            callback.accept(this.hornUsedEventHandler, serverWorld);
+            callback.accept(jukeboxEventHandler, serverWorld);
+            callback.accept(hornUsedEventHandler, serverWorld);
+            callback.accept(fluteUsedEventHandler, serverWorld);
         }
         super.updateDynamicGameEventListener(callback);
     }
@@ -1262,6 +1273,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public abstract DragonVariantType<? extends DragonVariant> getVariantType();
 
+    public List<FluteItem.FluteMode> getPermittedFluteModes() {
+        return FLUTE_MODES;
+    }
+
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -1321,6 +1336,40 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 return true;
             }
             return false;
+        }
+    }
+
+    protected class FluteUsedEventListener implements GameEventListener {
+        private final PositionSource positionSource;
+        private final int range;
+
+        public FluteUsedEventListener(PositionSource positionSource, int range) {
+            this.positionSource = positionSource;
+            this.range = range;
+        }
+
+        public @NonNull PositionSource getListenerSource() {return this.positionSource;}
+
+        public int getListenerRadius() {return this.range;}
+
+        @Override
+        public boolean handleGameEvent(@NonNull ServerLevel world, @NonNull Holder<GameEvent> event, GameEvent.@NonNull Context emitter, @NonNull Vec3 emitterPos) {
+            if (event != URGameEvents.FLUTE_USED) return false;
+            if (!(emitter.sourceEntity() instanceof Player player)) return false;
+            if (getOwner() != player) return false;
+
+            ItemStack stack = player.getMainHandItem();
+            if (!stack.is(URItems.FLUTE)) stack = player.getOffhandItem();
+            if (!stack.is(URItems.FLUTE)) return false;
+
+            FluteItem.FluteMode mode = FluteItem.getFluteMode(stack);
+            if (mode == null) return false;
+            if (this instanceof GathererDragon gathererDragon && !URFluteModes.GATHER.equals(mode))
+                gathererDragon.stopGathering();
+
+            mode.action().run(URDragonEntity.this);
+
+            return true;
         }
     }
 
