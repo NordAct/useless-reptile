@@ -6,3 +6,4 @@
 - Added new advancement "Not so Useless" for taming any dragon
 - Changed "The Pied Piper" parent advancement to "Not so Useless" and updated advancement description to reflect changes in flute
 - Most advancements now no longer give out message in chat
+- *Hopefully* fixed case when rideable flying dragon started to fly to some point on flown path when was ordered to stay and rider dismounted them
