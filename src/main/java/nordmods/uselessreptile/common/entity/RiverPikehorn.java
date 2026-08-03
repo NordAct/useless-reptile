@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -17,11 +16,10 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
@@ -31,28 +29,28 @@ import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornCallBackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
-import nordmods.uselessreptile.common.entity.base.FluteListener;
+import nordmods.uselessreptile.common.entity.base.GathererDragon;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.*;
+import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URDragonVariantTypes;
+import nordmods.uselessreptile.common.init.URFluteModes;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.BiConsumer;
 
-public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDragon, FluteListener {
+public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDragon, GathererDragon {
     private final int huntCooldown = 1200;
     private int huntTimer = getRandom().nextInt(huntCooldown);
     public boolean forceTargetInWater = false;
     private final int eatCooldown = 200;
     private int eatTimer = eatCooldown;
     private boolean isHunting = false;
-    protected final DynamicGameEventListener<FluteUsedEventListener> fluteUsedEventHandler = new DynamicGameEventListener<>(new FluteUsedEventListener
-            (new EntityPositionSource(this, getEyeHeight()), URGameEvents.FLUTE_USED.value().notificationRadius()));
+
     private static final Identifier WATER_SPEED_MODIFIER_BONUS = UselessReptile.id("water_speed_modifier");
     private final URDragonAnimationController<RiverPikehorn> mainController = new URDragonAnimationController<>(this, true);
     private final URDragonAnimationController<RiverPikehorn> turnController = new URDragonAnimationController<>(this, true);
@@ -71,6 +69,13 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
 
     public static final float BASE_GROUND_SPEED = 0.2f;
+    public static final List<FluteItem.FluteMode> FLUTE_MODES = List.of(
+            URFluteModes.CALL,
+            URFluteModes.TARGET,
+            URFluteModes.GATHER,
+            URFluteModes.SIT_DOWN,
+            URFluteModes.STAND_UP
+    );
 
     public RiverPikehorn(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -87,12 +92,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
     public void setHunting(boolean state) {
         isHunting = state;
-    }
-
-    @Override
-    public void updateDynamicGameEventListener(@NonNull BiConsumer<DynamicGameEventListener<?>, ServerLevel> callback) {
-        if (level() instanceof ServerLevel serverWorld) callback.accept(fluteUsedEventHandler, serverWorld);
-        super.updateDynamicGameEventListener(callback);
     }
 
     @Override
@@ -201,7 +200,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
                     heal(foodItem.healingAmount());
                     setItemSlot(EquipmentSlot.OFFHAND, consumeGivenItem(this, itemStack, SoundEvents.GENERIC_EAT.value(), null));
                 } else spawnAtLocation(world, itemStack);
-                stopHunt();
+                stopGathering();
             }
 
             getItemBySlot(EquipmentSlot.OFFHAND);
@@ -327,7 +326,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         return super.getRotationSpeed() * (isInWater() ? 2f : 1f);
     }
 
-    public void stopHunt() {
+    public void stopGathering() {
         setHunting(false);
         huntTimer = huntCooldown + getRandom().nextInt(huntCooldown / 2);
         eatTimer = eatCooldown + getRandom().nextInt(eatCooldown / 2);
@@ -375,38 +374,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    public void respondToFlute(FluteItem.FluteAction action) {
-        action.run(this);
-    }
-
-    protected class FluteUsedEventListener implements GameEventListener {
-        private final PositionSource positionSource;
-        private final int range;
-
-        public FluteUsedEventListener(PositionSource positionSource, int range) {
-            this.positionSource = positionSource;
-            this.range = range;
-        }
-
-        public @NonNull PositionSource getListenerSource() {return this.positionSource;}
-
-        public int getListenerRadius() {return this.range;}
-
-        @Override
-        public boolean handleGameEvent(@NonNull ServerLevel world, @NonNull Holder<GameEvent> event, GameEvent.@NonNull Context emitter, @NonNull Vec3 emitterPos) {
-            if (event != URGameEvents.FLUTE_USED) return false;
-            if (!(emitter.sourceEntity() instanceof Player player)) return false;
-            if (getOwner() != player) return false;
-
-            ItemStack stack = player.getMainHandItem();
-            if (!stack.is(URItems.FLUTE)) stack = player.getOffhandItem();
-            if (!stack.is(URItems.FLUTE)) return false;
-
-            FluteItem.FluteAction action = FluteItem.getFluteModeAction(stack);
-            if (!stack.getComponents().get(URItemComponents.FLUTE_MODE).mode().equals("gather")) stopHunt();
-            respondToFlute(action);
-
-            return true;
-        }
+    public List<FluteItem.FluteMode> getPermittedFluteModes() {
+        return FLUTE_MODES;
     }
 }

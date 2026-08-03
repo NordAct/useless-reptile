@@ -5,40 +5,39 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute/call"
-        },
-        "when": "call"
-      },
-      {
-        "model": {
-          "type": "minecraft:model",
-          "model": "uselessreptile:item/flute/gather"
-        },
-        "when": "gather"
-      },
-      {
-        "model": {
-          "type": "minecraft:model",
           "model": "uselessreptile:item/flute/sit_down"
         },
-        "when": "sit_down"
+        "when": "uselessreptile:sit_down"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "uselessreptile:item/flute/call"
+        },
+        "when": "uselessreptile:call"
       },
       {
         "model": {
           "type": "minecraft:model",
           "model": "uselessreptile:item/flute/stand_up"
         },
-        "when": "stand_up"
+        "when": "uselessreptile:stand_up"
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "uselessreptile:item/flute/gather"
+        },
+        "when": "uselessreptile:gather"
       },
       {
         "model": {
           "type": "minecraft:model",
           "model": "uselessreptile:item/flute/target"
         },
-        "when": "target"
+        "when": "uselessreptile:target"
       }
     ],
-    "component": "uselessreptile:flute_mode",
-    "property": "minecraft:component"
+    "property": "uselessreptile:current_flute_mode"
   }
 }

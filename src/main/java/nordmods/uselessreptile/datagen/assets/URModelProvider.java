@@ -2,31 +2,24 @@ package nordmods.uselessreptile.datagen.assets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.mojang.datafixers.util.Pair;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
-import net.minecraft.client.data.models.model.ItemModelUtils;
-import net.minecraft.client.data.models.model.ModelInstance;
-import net.minecraft.client.data.models.model.ModelLocationUtils;
-import net.minecraft.client.data.models.model.ModelTemplate;
-import net.minecraft.client.data.models.model.ModelTemplates;
-import net.minecraft.client.data.models.model.TextureSlot;
+import net.minecraft.client.data.models.model.*;
 import net.minecraft.client.renderer.block.dispatch.Variant;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
-import net.minecraft.client.renderer.item.properties.select.ComponentContents;
 import net.minecraft.resources.Identifier;
-import net.minecraft.sounds.SoundEvent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.util.CurrentFluteModeProperty;
 import nordmods.uselessreptile.common.init.URBlocks;
-import nordmods.uselessreptile.common.init.URItemComponents;
 import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URRegistries;
 import nordmods.uselessreptile.common.item.FluteItem;
-import nordmods.uselessreptile.common.item.component.FluteComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -270,13 +263,13 @@ public class URModelProvider extends FabricModelProvider {
     }
 
     protected void registerFlute(ItemModelGenerators itemModelGenerator, Item item) {
-        List<SelectItemModel.SwitchCase<FluteComponent>> entries = new ArrayList<>();
-        for (Map.Entry<String, Pair<SoundEvent, FluteItem.FluteAction>> entry :FluteItem.FLUTE_MODES.entrySet()) {
-            String mode = entry.getKey();
+        List<SelectItemModel.SwitchCase<FluteItem.FluteMode>> entries = new ArrayList<>();
+        for (Map.Entry<ResourceKey<FluteItem.FluteMode>, FluteItem.FluteMode> entry : URRegistries.FLUTE_MODE.entrySet()) {
+            String mode = entry.getKey().identifier().getPath();
             ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModelGenerator.createFlatItemModel(item, "/" + mode, ModelTemplates.FLAT_HANDHELD_ITEM));
-            entries.add(new SelectItemModel.SwitchCase<>(List.of(new FluteComponent(mode)), model));
+            entries.add(new SelectItemModel.SwitchCase<>(List.of(entry.getValue()), model));
         }
 
-        itemModelGenerator.itemModelOutput.accept(item, ItemModelUtils.select(new ComponentContents<>(URItemComponents.FLUTE_MODE), entries));
+        itemModelGenerator.itemModelOutput.accept(item, ItemModelUtils.select(new CurrentFluteModeProperty(), entries));
     }
 }

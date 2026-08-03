@@ -199,7 +199,7 @@ public class PikehornHuntGoal extends Goal {
     private void stopHunt() {
         startingPos = null;
 
-        entity.stopHunt();
+        entity.stopGathering();
     }
 
     private boolean isGoingToDrown() {
