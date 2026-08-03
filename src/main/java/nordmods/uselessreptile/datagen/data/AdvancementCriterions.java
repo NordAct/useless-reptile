@@ -22,6 +22,10 @@ public class AdvancementCriterions {
         return CriteriaTriggers.TAME_ANIMAL.createCriterion(TameAnimalTrigger.TriggerInstance.tamedAnimal(EntityPredicate.Builder.entity().of(registryEntryLookup, type)).triggerInstance());
     }
 
+    public static Criterion<TameAnimalTrigger.TriggerInstance> entityTamedCondition(HolderGetter<EntityType<?>> registryEntryLookup, TagKey<EntityType<?>> entityTypeTagKey) {
+        return CriteriaTriggers.TAME_ANIMAL.createCriterion(TameAnimalTrigger.TriggerInstance.tamedAnimal(EntityPredicate.Builder.entity().of(registryEntryLookup, entityTypeTagKey)).triggerInstance());
+    }
+
     public static Criterion<PlayerTrigger.TriggerInstance> gameTickCondition() {
         return CriteriaTriggers.TICK.createCriterion(PlayerTrigger.TriggerInstance.tick().triggerInstance());
     }

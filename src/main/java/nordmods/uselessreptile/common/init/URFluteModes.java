@@ -33,7 +33,7 @@ public class URFluteModes {
         if (hitResult != null) dragon.setTarget((LivingEntity) hitResult.getEntity());
     }));
     public static final FluteItem.FluteMode SIT_DOWN = register("sit_down", new FluteItem.FluteMode(URSoundEvent.FLUTE_SIT_DOWN, dragon -> dragon.setOrderedToSit(true)));
-    public static final FluteItem.FluteMode STAND_UP = register("stand_up", new FluteItem.FluteMode(URSoundEvent.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(true)));
+    public static final FluteItem.FluteMode STAND_UP = register("stand_up", new FluteItem.FluteMode(URSoundEvent.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(false)));
 
     private static FluteItem.FluteMode register(String id, FluteItem.FluteMode fluteMode) {
         return register(UselessReptile.id(id), fluteMode);

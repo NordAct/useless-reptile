@@ -1,2 +1,8 @@
-- (26.2) Fixed crash with LambDynamicLights by changing how default dragon texture is grabbed now
-- (26.1) Changed way how default dragon texture is grabbed
+- Flute rework: now it works with all dragons
+- Just like previously, you can give commands to all dragons of the same type without needing to bind flute to specific dragon
+- To bind flute to dragon of specific type, just right-click with flute on it. Current type of binded dragon can be seen in tooltip
+- All dragons got similar set of available flute modes except for River Pikehorn. River Pikehorn has additional "Gather" mode
+- Added additional crafting recipes for flute, so order of dyes no longer matters. However, you still need red, green and blue dye to craft the flute
+- Added new advancement "Not so Useless" for taming any dragon
+- Changed "The Pied Piper" parent advancement to "Not so Useless" and updated advancement description to reflect changes in flute
+- Most advancements now no longer give out message in chat

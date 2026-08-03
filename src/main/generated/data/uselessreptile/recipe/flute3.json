@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
+  "group": "flute",
   "key": {
     "B": "#c:dyes/blue",
     "G": "#c:dyes/green",
@@ -9,8 +10,8 @@
     "W": "#minecraft:planks"
   },
   "pattern": [
-    "RGI",
-    "BW ",
+    "BGI",
+    "RW ",
     "W  "
   ],
   "result": {

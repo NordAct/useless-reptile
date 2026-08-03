@@ -1,5 +1,5 @@
 {
-  "parent": "uselessreptile:dragon/tame_river_pikehorn",
+  "parent": "uselessreptile:dragon/tame_any_dragon",
   "criteria": {
     "use_item": {
       "conditions": {
@@ -11,6 +11,7 @@
     }
   },
   "display": {
+    "announce_to_chat": false,
     "description": {
       "translate": "advancement.uselessreptile.use_flute.desc"
     },
