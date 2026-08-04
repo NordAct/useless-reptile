@@ -3,13 +3,16 @@ package nordmods.uselessreptile.client.renderer.base;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BRObjectRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
+import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
+import nordmods.uselessreptile.client.init.URAtlases;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
@@ -93,5 +96,10 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     @Override
     public DragonEquipmentModelProvider getModelProvider() {
         return (DragonEquipmentModelProvider) super.getModelProvider();
+    }
+
+    @Override
+    public @Nullable TextureAtlasSprite getSpriteForTexture(Identifier texture) {
+        return TextureAtlasSpriteUtil.getTextureAtlasSprite(URAtlases.ANIMATED_TEXTURES_ATLAS_MAPPER, texture);
     }
 }

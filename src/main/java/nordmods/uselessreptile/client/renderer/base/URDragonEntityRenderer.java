@@ -8,12 +8,14 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -22,6 +24,7 @@ import nordmods.uselessreptile.client.asset_cache.AssetCache;
 import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.client.asset_cache.EquipmentAssetCache;
 import nordmods.uselessreptile.client.dragon_equipment.DragonEquipment;
+import nordmods.uselessreptile.client.init.URAtlases;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
@@ -33,6 +36,7 @@ import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
@@ -296,5 +300,10 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     @Override
     public URDragonEntityModelProvider getModelProvider() {
         return (URDragonEntityModelProvider) super.getModelProvider();
+    }
+
+    @Override
+    public @Nullable TextureAtlasSprite getSpriteForTexture(Identifier texture) {
+        return TextureAtlasSpriteUtil.getTextureAtlasSprite(URAtlases.ANIMATED_TEXTURES_ATLAS_MAPPER, texture);
     }
 }

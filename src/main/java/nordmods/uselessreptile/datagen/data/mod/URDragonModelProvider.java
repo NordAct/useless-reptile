@@ -54,7 +54,7 @@ public class URDragonModelProvider extends URAbstractDataProvider<DragonModelDat
     }
 
     protected ModelData getModelData(Identifier id, String variant, boolean cull, boolean animatedTexture) {
-        Identifier texture = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/" + (animatedTexture ? "animated_textures/" : "") + "entity/" + id.getPath() + "/" + variant + ".png");
+        Identifier texture = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/" + (animatedTexture ? "entity/animated_dragon_textures/" : "entity/") + id.getPath() + "/" + variant + ".png");
         Identifier model = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/" + id.getPath() + ".geo.json");
         Identifier animation = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/animations/entity/" + id.getPath() + "/" + id.getPath() + ".animation.json");
         return new ModelData(texture, model, animation, cull, false);

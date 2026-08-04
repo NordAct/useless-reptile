@@ -41,7 +41,7 @@
   "accessWidener" : "uselessreptile.accesswidener",
   "depends": {
     "fabricloader": ">=0.15",
-    "fabric-api": "*",
+    "fabric-api": ">=0.155.2",
     "minecraft": "~26.1",
     "biscuit_roll": "*",
     "yet_another_config_lib_v3": "*"
