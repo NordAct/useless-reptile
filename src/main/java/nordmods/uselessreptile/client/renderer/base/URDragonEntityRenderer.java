@@ -9,13 +9,9 @@ import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.TagValueInput;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
 import nordmods.biscuit_roll.common.model.BRModel;
@@ -34,10 +30,12 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
+import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends BREntityRenderer<T, LivingEntityRenderState> {
@@ -284,11 +282,9 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
     public static Identifier getDefaultTexture(Identifier entity) {
         return DEFAULT_TEXTURES.computeIfAbsent(entity, (id) -> {
-            CompoundTag nbtCompound = new CompoundTag();
-            nbtCompound.putString("id", id.toString());
-            URDragonEntity dragon = (URDragonEntity) EntityType.create(TagValueInput.create(UselessReptile.ERROR_REPORTER,  Minecraft.getInstance().level.registryAccess(), nbtCompound), Minecraft.getInstance().level, EntitySpawnReason.TRIGGERED).get();
-            dragon.discard();
-            return UselessReptile.id("textures/entity/"+ id.getPath() + "/" + dragon.getDefaultVariant() + ".png");
+            List<DragonVariant> available = DragonVariant.getSameType(DragonVariantType.fromId(id),Minecraft.getInstance().level.registryAccess());
+            if (available.isEmpty()) return null;
+            return DragonVariantUtil.getDragonModelData(available.getFirst(), Minecraft.getInstance().level.registryAccess()).modelData().texture();
         });
     }
 

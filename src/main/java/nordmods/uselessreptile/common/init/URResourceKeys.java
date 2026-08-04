@@ -13,6 +13,7 @@ import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
 import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
 import nordmods.uselessreptile.common.dragon_ability.DragonAbilityType;
+import nordmods.uselessreptile.common.item.FluteItem;
 
 import java.util.List;
 
@@ -27,6 +28,8 @@ public class URResourceKeys {
     public static final ResourceKey<Registry<List<DragonSpawnConditions>>> DRAGON_SPAWN_CONDITIONS = ResourceKey.createRegistryKey(UselessReptile.id("spawn_conditions"));
     public static final ResourceKey<Registry<List<AttributeModifier>>> DRAGON_VARIANT_ATTRIBUTE_MODIFIERS = ResourceKey.createRegistryKey(UselessReptile.id("attribute_modifiers"));
     public static final ResourceKey<Registry<UseConditionType<?>>> USE_CONDITION_TYPE = ResourceKey.createRegistryKey(UselessReptile.id("use_condition_type"));
+    public static final ResourceKey<Registry<FluteItem.FluteMode>> FLUTE_MODE = ResourceKey.createRegistryKey(UselessReptile.id("flute_mode"));
+
 
     public static void init() {
         DynamicRegistries.registerSynced(DRAGON_MODEL, DragonModelData.CODEC);

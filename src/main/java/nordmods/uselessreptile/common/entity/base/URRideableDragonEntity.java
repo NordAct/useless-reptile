@@ -214,6 +214,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         }
 
         entity.boardingCooldown = 60;
+        if (isTame()) setHomePoint(blockPosition());
     }
 
     @Override

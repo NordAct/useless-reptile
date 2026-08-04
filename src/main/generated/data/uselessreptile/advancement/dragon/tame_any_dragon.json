@@ -1,0 +1,35 @@
+{
+  "parent": "uselessreptile:dragon/root",
+  "criteria": {
+    "tame": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "#uselessreptile:dragon"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:tame_animal"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancement.uselessreptile.tame_any_dragon.desc"
+    },
+    "icon": {
+      "id": "minecraft:stick"
+    },
+    "title": {
+      "translate": "advancement.uselessreptile.tame_any_dragon"
+    }
+  },
+  "requirements": [
+    [
+      "tame"
+    ]
+  ]
+}

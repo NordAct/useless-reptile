@@ -8,7 +8,7 @@ import nordmods.uselessreptile.common.init.URRegistries;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface DragonVariant {
     Codec<DragonVariant> CODEC = URRegistries.VARIANT_TYPE.byNameCodec()
@@ -28,7 +28,7 @@ public interface DragonVariant {
                 .orElse(null);
     }
 
-    static Collection<DragonVariant> getSameType(DragonVariantType<?> type, HolderLookup.Provider provider) {
+    static List<DragonVariant> getSameType(DragonVariantType<?> type, HolderLookup.Provider provider) {
         HolderLookup.RegistryLookup<DragonVariant> registry = provider.lookupOrThrow(URResourceKeys.DRAGON_VARIANT);
         return registry.listElements()
                 .map(Holder.Reference::value)

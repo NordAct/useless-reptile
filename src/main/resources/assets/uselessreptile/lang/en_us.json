@@ -49,7 +49,7 @@
   "item.uselessreptile.dragon_tail_armor_copper" : "Copper Dragon Tail Armor",
 
   "tooltip.uselessreptile.hidden": "Hold Left Shift for more info",
-  "tooltip.uselessreptile.flute": "Can be used to command River Pikehorns.\nRight-click in air while crouching to change mode",
+  "tooltip.uselessreptile.flute": "Can be used to command your dragons.\nRight-click in air while crouching to change mode. \nRight-click on dragon to change type of dragons commands will be given to",
   "tooltip.uselessreptile.flute_mode": "Flute Mode: %s",
   "tooltip.uselessreptile.flute_mode.call": "Call",
   "tooltip.uselessreptile.flute_mode.gather": "Gather Fish",
@@ -63,6 +63,7 @@
   "tooltip.uselessreptile.can_be_applied_to": "Can be applied to: %s",
   "tooltip.uselessreptile.dragon_display_name": "Dragon display name: %s",
   "tooltip.uselessreptile.dragon_variant": "Variant: %s",
+  "tooltip.uselessreptile.flute_listener": "Will give commands to: %s",
 
   "entity.uselessreptile.wyvern": "Swamp Wyvern",
   "entity.uselessreptile.moleclaw": "Moleclaw",
@@ -244,14 +245,15 @@
   "advancement.uselessreptile.full_vortex_horn": "High Density Residence",
   "advancement.uselessreptile.eat_from_inventory": "Yoink",
   "advancement.uselessreptile.give_potion": "Power Up",
+  "advancement.uselessreptile.tame_any_dragon": "Not so Useless",
 
-  "advancement.uselessreptile.root.desc": "To progress check out advancements",
+  "advancement.uselessreptile.root.desc": "Tame any dragon from Useless Reptile",
   "advancement.uselessreptile.gather_acid.desc": "Gather acid with bottle from Swamp Wyvern",
   "advancement.uselessreptile.moleclaw_helmet.desc": "Craft Moleclaw Helmet to help it to stop fear the light",
   "advancement.uselessreptile.tame_moleclaw.desc": "Tame Moleclaw with Beetroot",
   "advancement.uselessreptile.tame_wyvern.desc": "Tame Swamp Wyvern with Raw Chicken",
   "advancement.uselessreptile.tame_river_pikehorn.desc": "Tame River Pikehorn with Tropical Fish within the bucket",
-  "advancement.uselessreptile.use_flute.desc": "Use Flute to command your River Pikehorns",
+  "advancement.uselessreptile.use_flute.desc": "Use Flute to command your dragons",
   "advancement.uselessreptile.tame_lightning_chaser.desc": "Tame Lightning Chaser by challenging it in a battle (Tip: you'll need a Trident with Channelling)",
   "advancement.uselessreptile.tame_magmamuncher.desc": "Tame Magmamuncher with Blaze Rods",
   "advancement.uselessreptile.magmamuncher_apply_fire_resistance.desc": "Give Magmamuncher some fuel to save you from being set on fire",
@@ -263,6 +265,7 @@
   "advancement.uselessreptile.full_vortex_horn.desc": "Fill Netherite Vortex Horn to max capacity",
   "advancement.uselessreptile.eat_from_inventory.desc": "Put food in dragon's inventory and let it eat the food",
   "advancement.uselessreptile.give_potion.desc": "Give your dragon a potion",
+  "advancement.uselessreptile.tame_any_dragon.desc": "Tame any dragon from the mod",
 
   "tag.item.uselessreptile.protects_moleclaw_from_light": "Protects Moleclaw From Light",
   "tag.item.uselessreptile.vortex_horns": "Vortex Horns",

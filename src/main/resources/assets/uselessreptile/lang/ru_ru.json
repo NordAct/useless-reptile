@@ -49,7 +49,7 @@
   "item.uselessreptile.dragon_tail_armor_copper" : "Медная броня на хвост для дракона",
 
   "tooltip.uselessreptile.hidden": "Зажмите Левый Шифт, чтобы узнать больше",
-  "tooltip.uselessreptile.flute": "Может быть использована для отдачи команд речным пикорогам.\nНажмите ПКМ в присяди по воздуху, чтобы поменять режим",
+  "tooltip.uselessreptile.flute": "Может быть использована для отдачи команд вашим драконам.\nНажмите ПКМ в присяди по воздуху, чтобы поменять режим. \nНажмите ПКМ по дракону, чтобы выбрать тип драконов, которым будут отдаваться команды",
   "tooltip.uselessreptile.flute_mode": "Режим флейты: %s",
   "tooltip.uselessreptile.flute_mode.call": "Сбор",
   "tooltip.uselessreptile.flute_mode.gather": "Рыбалка",
@@ -63,6 +63,7 @@
   "tooltip.uselessreptile.can_be_applied_to": "Применимо к: %s",
   "tooltip.uselessreptile.dragon_display_name": "Отображаемое название дракона: %s",
   "tooltip.uselessreptile.dragon_variant": "Вариант: %s",
+  "tooltip.uselessreptile.flute_listener": "Отдает приказы для: %s",
 
   "entity.uselessreptile.wyvern": "Болотная виверна",
   "entity.uselessreptile.moleclaw": "Кротолап",
@@ -244,6 +245,7 @@
   "advancement.uselessreptile.full_vortex_horn": "Жилье в Кудрово",
   "advancement.uselessreptile.eat_from_inventory": "Обед на ходу",
   "advancement.uselessreptile.give_potion": "Усиление",
+  "advancement.uselessreptile.tame_any_dragon": "Не очень-то и бестолковый",
 
   "advancement.uselessreptile.root.desc": "Для изучения мода загляните в достижения",
   "advancement.uselessreptile.gather_acid.desc": "Соберите кислоту с болотной виверны с помощью бутылки",
@@ -251,7 +253,7 @@
   "advancement.uselessreptile.tame_moleclaw.desc": "Приручите кротолапа с помощью свеклы",
   "advancement.uselessreptile.tame_wyvern.desc": "Приручите болотную виверну с помощью сырой курицы",
   "advancement.uselessreptile.tame_river_pikehorn.desc": "Приручите речного пикорога с помощью тропической рыбы в ведре",
-  "advancement.uselessreptile.use_flute.desc": "Используйте флейту, чтобы отдать команду вашим речным пикорогам",
+  "advancement.uselessreptile.use_flute.desc": "Используйте флейту, чтобы отдать команду вашим драконам",
   "advancement.uselessreptile.tame_lightning_chaser.desc": "Приручите ловца молний, одолев его в бою (Совет: вам понадобится трезубец с зачарованием \"Громовержец\")",
   "advancement.uselessreptile.tame_magmamuncher.desc": "Приручите магмаеда с помощью стержней ифрита",
   "advancement.uselessreptile.magmamuncher_apply_fire_resistance.desc": "Дайте магмаеду немного топлива, чтобы спасти вас от огня",
@@ -263,6 +265,7 @@
   "advancement.uselessreptile.full_vortex_horn.desc": "Полностью заполните незеритовый вихревой рог",
   "advancement.uselessreptile.eat_from_inventory.desc": "Положите еду в инвентарь дракона и позвольте ему ее съесть",
   "advancement.uselessreptile.give_potion.desc": "Дайте вашему дракону зелье",
+  "advancement.uselessreptile.tame_any_dragon.desc": "Приручите любого дракона из мода",
 
   "tag.item.uselessreptile.protects_moleclaw_from_light": "Защищает кротолапа от света",
   "tag.item.uselessreptile.vortex_horns": "Вихревые рога",

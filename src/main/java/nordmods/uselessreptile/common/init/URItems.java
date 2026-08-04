@@ -16,23 +16,17 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Instrument;
-import net.minecraft.world.item.InstrumentItem;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.item.DragonEquipmentItem;
-import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.item.VariantChangingOrbItem;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.item.component.DragonVariantComponent;
-import nordmods.uselessreptile.common.item.component.FluteComponent;
+import nordmods.uselessreptile.common.item.component.FluteConfigurationComponent;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
+import nordmods.uselessreptile.common.item.FluteItem;
 
 import java.util.function.Function;
 
@@ -71,7 +65,7 @@ public class URItems {
     public static final Item LIGHTNING_CHASER_SPAWN_EGG = registerItem("lightning_chaser_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.LIGHTNING_CHASER)));
     public static final Item MAGMAMUNCHER_SPAWN_EGG = registerItem("magmamuncher_spawn_egg", properties -> new SpawnEggItem(properties.spawnEgg(UREntities.MAGMAMUNCHER)));
 
-    public static final Item FLUTE = registerItem("flute", properties -> new FluteItem(properties.stacksTo(1).component(URItemComponents.FLUTE_MODE, FluteComponent.DEFAULT)));
+    public static final Item FLUTE = registerItem("flute", properties -> new FluteItem(properties.stacksTo(1).component(URItemComponents.FLUTE_CONFIGURATION, FluteConfigurationComponent.DEFAULT)));
     public static final Item VORTEX_HORN = registerItem("vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, VortexHornItem.NORMAL_CAPACITY)));
     public static final Item IRON_VORTEX_HORN = registerItem("iron_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, VortexHornItem.IRON_CAPACITY)));
     public static final Item GOLD_VORTEX_HORN = registerItem("gold_vortex_horn", properties -> new VortexHornItem(createVortexHornItemProperties(properties, VortexHornItem.GOLD_CAPACITY)));

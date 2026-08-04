@@ -6,6 +6,7 @@
     }
   },
   "display": {
+    "announce_to_chat": false,
     "description": {
       "translate": "advancement.uselessreptile.magmamuncher_apply_fire_resistance.desc"
     },

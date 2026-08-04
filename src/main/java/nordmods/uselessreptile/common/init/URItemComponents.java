@@ -5,15 +5,15 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.item.component.DragonVariantComponent;
-import nordmods.uselessreptile.common.item.component.FluteComponent;
+import nordmods.uselessreptile.common.item.component.FluteConfigurationComponent;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 
 import java.util.function.UnaryOperator;
 
 public class URItemComponents {
-    public static final DataComponentType<FluteComponent> FLUTE_MODE = register("flute_mode",
-            builder -> builder.persistent(FluteComponent.CODEC).networkSynchronized(FluteComponent.PACKET_CODEC));
+    public static final DataComponentType<FluteConfigurationComponent> FLUTE_CONFIGURATION = register("flute_configuration",
+            builder -> builder.persistent(FluteConfigurationComponent.CODEC).networkSynchronized(FluteConfigurationComponent.PACKET_CODEC));
     public static final DataComponentType<URDragonDataStorageComponent> DRAGON_STORAGE = register("dragon_storage",
             builder -> builder.persistent(URDragonDataStorageComponent.CODEC).networkSynchronized(URDragonDataStorageComponent.PACKET_CODEC));
     public static final DataComponentType<VortexHornCapacityComponent> VORTEX_HORN_CAPACITY = register("vortex_horn_capacity",

@@ -10,6 +10,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -18,8 +19,8 @@ import net.minecraft.world.item.crafting.CookingBookCategory;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
+import nordmods.uselessreptile.common.init.URTags;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -56,7 +57,7 @@ public class URRecipeProvider extends FabricRecipeProvider {
                 offerMoleclawHelmetRecipe(this, output, URItems.MOLECLAW_HELMET_DIAMOND, URItems.DRAGON_HELMET_DIAMOND);
                 offerMoleclawHelmetRecipe(this, output, URItems.MOLECLAW_HELMET_NETHERITE, URItems.DRAGON_HELMET_NETHERITE);
 
-                shaped(RecipeCategory.TOOLS, (URItems.FLUTE))
+                shaped(RecipeCategory.TOOLS, URItems.FLUTE)
                         .define('R', ConventionalItemTags.RED_DYES)
                         .define('G', ConventionalItemTags.GREEN_DYES)
                         .define('B', ConventionalItemTags.BLUE_DYES)
@@ -65,8 +66,75 @@ public class URRecipeProvider extends FabricRecipeProvider {
                         .pattern("RGI")
                         .pattern("BW ")
                         .pattern("W  ")
-                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), UREntities.RIVER_PIKEHORN))
-                        .save(output);
+                        .group("flute")
+                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), URTags.DRAGON))
+                        .save(output, ResourceKey.create(Registries.RECIPE, UselessReptile.id("flute1")));
+
+                shaped(RecipeCategory.TOOLS, (URItems.FLUTE))
+                        .define('R', ConventionalItemTags.RED_DYES)
+                        .define('G', ConventionalItemTags.GREEN_DYES)
+                        .define('B', ConventionalItemTags.BLUE_DYES)
+                        .define('W', ItemTags.PLANKS)
+                        .define('I', ConventionalItemTags.IRON_INGOTS)
+                        .pattern("GBI")
+                        .pattern("RW ")
+                        .pattern("W  ")
+                        .group("flute")
+                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), URTags.DRAGON))
+                        .save(output, ResourceKey.create(Registries.RECIPE, UselessReptile.id("flute2")));
+
+                shaped(RecipeCategory.TOOLS, (URItems.FLUTE))
+                        .define('R', ConventionalItemTags.RED_DYES)
+                        .define('G', ConventionalItemTags.GREEN_DYES)
+                        .define('B', ConventionalItemTags.BLUE_DYES)
+                        .define('W', ItemTags.PLANKS)
+                        .define('I', ConventionalItemTags.IRON_INGOTS)
+                        .pattern("BGI")
+                        .pattern("RW ")
+                        .pattern("W  ")
+                        .group("flute")
+                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), URTags.DRAGON))
+                        .save(output, ResourceKey.create(Registries.RECIPE, UselessReptile.id("flute3")));
+
+                shaped(RecipeCategory.TOOLS, (URItems.FLUTE))
+                        .define('R', ConventionalItemTags.RED_DYES)
+                        .define('G', ConventionalItemTags.GREEN_DYES)
+                        .define('B', ConventionalItemTags.BLUE_DYES)
+                        .define('W', ItemTags.PLANKS)
+                        .define('I', ConventionalItemTags.IRON_INGOTS)
+                        .pattern("RBI")
+                        .pattern("GW ")
+                        .pattern("W  ")
+                        .group("flute")
+                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), URTags.DRAGON))
+                        .save(output, ResourceKey.create(Registries.RECIPE, UselessReptile.id("flute4")));
+
+                shaped(RecipeCategory.TOOLS, (URItems.FLUTE))
+                        .define('R', ConventionalItemTags.RED_DYES)
+                        .define('G', ConventionalItemTags.GREEN_DYES)
+                        .define('B', ConventionalItemTags.BLUE_DYES)
+                        .define('W', ItemTags.PLANKS)
+                        .define('I', ConventionalItemTags.IRON_INGOTS)
+                        .pattern("BRI")
+                        .pattern("GW ")
+                        .pattern("W  ")
+                        .group("flute")
+                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), URTags.DRAGON))
+                        .save(output, ResourceKey.create(Registries.RECIPE, UselessReptile.id("flute5")));
+
+                shaped(RecipeCategory.TOOLS, (URItems.FLUTE))
+                        .define('R', ConventionalItemTags.RED_DYES)
+                        .define('G', ConventionalItemTags.GREEN_DYES)
+                        .define('B', ConventionalItemTags.BLUE_DYES)
+                        .define('W', ItemTags.PLANKS)
+                        .define('I', ConventionalItemTags.IRON_INGOTS)
+                        .pattern("GRI")
+                        .pattern("BW ")
+                        .pattern("W  ")
+                        .group("flute")
+                        .unlockedBy("entity_tamed", AdvancementCriterions.entityTamedCondition(wrapperLookup.lookupOrThrow(Registries.ENTITY_TYPE), URTags.DRAGON))
+                        .save(output, ResourceKey.create(Registries.RECIPE, UselessReptile.id("flute6")));
+
 
                 shapeless(RecipeCategory.MISC, Items.LEATHER, 2)
                         .requires(URItems.WYVERN_SKIN)
