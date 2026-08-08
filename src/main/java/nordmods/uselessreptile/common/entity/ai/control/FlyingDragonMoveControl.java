@@ -47,7 +47,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                 destinationPitch = rotlerp(
                         entity.getXRot(),
                         (float) (-(Mth.atan2(diffTargetY, distanceTargetXZ) * Mth.RAD_TO_DEG)),
-                        entity.getPitchLimit()
+                        entity.getMaxHeadXRot()
                 );
                 destinationYaw = (float) (Mth.atan2(diffTargetZ, diffTargetX) * Mth.RAD_TO_DEG) - 90.0F;
             } else {
@@ -71,7 +71,8 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         float verticalAccelerationModifier = Mth.clamp(accelerationModifier, 0.25f, 1.5f);
         float speed = getMovementSpeed(accelerationModifier, inWater);
 
-        entity.setRot(destinationYaw, destinationPitch);
+        if (!entity.getLookControl().isLookingAtTarget())
+            entity.getLookControl().setLookAt(wantedX, wantedY, wantedZ, entity.getMaxHeadYRot(), entity.getMaxHeadXRot());
 
         switch (operation) {
             case STRAFE -> { //there's no strafe for dragons, but it's used for backwards movement
@@ -90,7 +91,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                     entity.setZza(0.0F);
                     return;
                 }
-                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getXRot(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
+                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getXRot(), destinationYaw, entity.getMaxHeadXRot(), Math.max(50, entity.getHeadRotSpeed() * 2))) {
                     if (accelerationDuration < entity.getMaxAccelerationDuration()) accelerationDuration++;
                     if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration--;
 
@@ -116,7 +117,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                 if (forceFlyDown) accelerationDuration = flyDown(accelerationDuration, verticalAccelerationModifier);
             } else if (Math.abs(diffY) > 9.999999747378752E-6D || Math.abs(distanceXZ) > 9.999999747378752E-6D) {
                 destinationPitch = (float)(-(Mth.atan2(diffY, distanceXZ) * 57.2957763671875D));
-                entity.setXRot(rotlerp(entity.getXRot(), destinationPitch, entity.getPitchLimit()));
+                entity.setXRot(rotlerp(entity.getXRot(), destinationPitch, entity.getMaxHeadXRot()));
                 entity.setYya(0);
 
                 if (!entity.isInWater() || entity.hasTargetInWater()) {

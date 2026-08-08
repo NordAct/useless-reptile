@@ -33,6 +33,7 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -68,6 +69,7 @@ import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
+import nordmods.uselessreptile.common.entity.ai.control.DragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
@@ -736,36 +738,44 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return (float) (0.125 * getScale());
     }
 
-    @Override
-    public void setRot(float yaw, float pitch) {
-        float currentYaw = getYRot() % 360;
-        float destinationYaw = yaw % 360;
-        //т.к. у игрока поворот измеряется от -180 до 180, а у других энтити от 0 до 360, то приведенная ниже дичь необходима
-        //due player having rotation from -180 to 180 while all other entities have it from 0 to 360, this check is necessary
-        if (destinationYaw < 0) destinationYaw += 360;
-        float yawDiff = (currentYaw - destinationYaw) % 360;
-        if (yawDiff != 0) {
-            if (yawDiff > 180) yawDiff -= 360;
-            else if (yawDiff < -180) yawDiff +=360;
+//    @Override
+//    public void setRot(float yaw, float pitch) {
+//        float currentYaw = getYRot() % 360;
+//        float destinationYaw = yaw % 360;
+//        //т.к. у игрока поворот измеряется от -180 до 180, а у других энтити от 0 до 360, то приведенная ниже дичь необходима
+//        //due player having rotation from -180 to 180 while all other entities have it from 0 to 360, this check is necessary
+//        if (destinationYaw < 0) destinationYaw += 360;
+//        float yawDiff = (currentYaw - destinationYaw) % 360;
+//        if (yawDiff != 0) {
+//            if (yawDiff > 180) yawDiff -= 360;
+//            else if (yawDiff < -180) yawDiff +=360;
+//
+//            if (yawDiff < -getHeadRotSpeed()) {
+//                currentYaw += getHeadRotSpeed();
+//                if (!level().isClientSide()) setTurningState(TurningState.RIGHT);
+//            }
+//            else if (yawDiff > getHeadRotSpeed()) {
+//                currentYaw -= getHeadRotSpeed();
+//                if (!level().isClientSide()) setTurningState(TurningState.LEFT);
+//            }
+//            else {
+//                currentYaw = destinationYaw;
+//                if (!level().isClientSide() && isMoving()) setTurningState(TurningState.NONE);
+//            }
+//        } else {
+//            if (!level().isClientSide()) setTurningState(TurningState.NONE);
+//        }
+//        super.setRot(currentYaw, Mth.clamp(pitch, -getMaxHeadXRot(), getMaxHeadXRot()));
+//    }
 
-            if (yawDiff < -getRotationSpeed()) {
-                currentYaw += getRotationSpeed();
-                if (!level().isClientSide()) setTurningState(TurningState.RIGHT);
-            }
-            else if (yawDiff > getRotationSpeed()) {
-                currentYaw -= getRotationSpeed();
-                if (!level().isClientSide()) setTurningState(TurningState.LEFT);
-            }
-            else {
-                currentYaw = destinationYaw;
-                if (!level().isClientSide() && isMoving()) setTurningState(TurningState.NONE);
-            }
-        } else {
-            if (!level().isClientSide()) setTurningState(TurningState.NONE);
-        }
-        yRotO = yBodyRot = getYRot();
-        super.setRot(currentYaw, Mth.clamp(pitch, -getPitchLimit(), getPitchLimit()));
-        yHeadRot = currentYaw;
+    @Override
+    public int getHeadRotSpeed() { //todo fix inheritors
+        return (int) (getGroundRotationSpeed() * getMovementSpeedModifier() / 2f);
+    }
+
+    @Override
+    protected @NonNull BodyRotationControl createBodyControl() {
+        return new DragonBodyRotationControl(this);
     }
 
     protected void setHitboxModifiers(float destinationHeight, float destinationWidth, float destinationMountedOffset) {
@@ -805,17 +815,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         refreshDimensions();
     }
 
-    //because rotation is called twice within one tick... somehow
-    public float getRotationSpeed() {
-        return getGroundRotationSpeed() * getMovementSpeedModifier() / 2f;
-    }
-
     public float getGroundRotationSpeed() {
         return (float) getAttributeValue(URAttributes.DRAGON_GROUND_ROTATION_SPEED);
-    }
-
-    public float getPitchLimit() {
-        return pitchLimitGround;
     }
 
     public float getMaxAccelerationDuration() {
@@ -1070,11 +1071,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 && !isAffectedByFluids();
     }
 
-    @Override
-    public int getHeadRotSpeed() {
-        return (int) getRotationSpeed();
-    }
-
     public final Identifier getDragonId() {
         return EntityType.getKey(getType());
     }
@@ -1100,7 +1096,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         float yaw = getYRot();
         if (!hasControllingPassenger() && getTarget() != null) {
             float targetYaw = getLookControl().getYRotD().orElse(0f);
-            float difference = Math.clamp((yaw - targetYaw) % 360, -getRotationSpeed(), getRotationSpeed());
+            float difference = Math.clamp((yaw - targetYaw) % 360, -getHeadRotSpeed(), getHeadRotSpeed());
             return yaw + difference; //making it easier for dum-dum to aim on its own
         }
         return (yaw - getNormalizedRotationProgress() * getYawProgressLimit()) % 360;

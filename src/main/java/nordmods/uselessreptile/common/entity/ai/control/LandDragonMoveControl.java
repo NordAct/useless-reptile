@@ -43,7 +43,7 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
                 destinationPitch = rotlerp(
                         entity.getXRot(),
                         (float) (-(Mth.atan2(diffTargetY, distanceTargetXZ) * Mth.RAD_TO_DEG)),
-                        entity.getPitchLimit()
+                        entity.getMaxHeadXRot()
                 );
                 destinationYaw = (float) (Mth.atan2(diffTargetZ, diffTargetX) * Mth.RAD_TO_DEG) - 90.0F;
             } else {
@@ -56,7 +56,9 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
         }
         entity.setMovingBackwards(false);
         float speed = getMovementSpeed();
-        entity.setRot(destinationYaw, destinationPitch);
+
+        if (!entity.getLookControl().isLookingAtTarget())
+            entity.getLookControl().setLookAt(wantedX, wantedY, wantedZ, entity.getMaxHeadYRot(), entity.getMaxHeadXRot());
 
         switch (operation) {
             case STRAFE -> { //there's no strafe for dragons, but it's used for backwards movement
@@ -71,7 +73,7 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
                     entity.setZza(0.0F);
                     return;
                 }
-                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getXRot(), destinationYaw, entity.getPitchLimit(), Math.max(50, entity.getRotationSpeed() * 2))) {
+                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getXRot(), destinationYaw, entity.getMaxHeadXRot(), Math.max(50, entity.getHeadRotSpeed() * 2))) {
                     entity.setSpeed(speed);
                 } else entity.setZza(0.0F);
             }

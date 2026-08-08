@@ -82,9 +82,9 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public float getRotationSpeed() {
-        if (isFlying()) return getFlyingRotationSpeed() * getMovementSpeedModifier() / 2f;
-        return super.getRotationSpeed();
+    public int getHeadRotSpeed() {
+        if (isFlying()) return (int) (getFlyingRotationSpeed() * getMovementSpeedModifier() / 2f);
+        return super.getHeadRotSpeed();
     }
 
     @Override
@@ -93,9 +93,9 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public float getPitchLimit() {
-        if (isFlying() && isMoving() && !isMovingBackwards()) return pitchLimitAir;
-        return pitchLimitGround;
+    public int getMaxHeadXRot() {
+        if (isFlying() && isMoving() && !isMovingBackwards()) return (int) pitchLimitAir;
+        return (int) pitchLimitGround;
     }
 
     @Override

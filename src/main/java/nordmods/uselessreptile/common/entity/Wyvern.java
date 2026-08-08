@@ -28,7 +28,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -68,8 +67,8 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         super(entityType, world);
         xpReward = 20;
 
-        pitchLimitGround = 50;
-        pitchLimitAir = 20;
+        pitchLimitGround = 80;
+        pitchLimitAir = 45;
         ticksUntilHeal = 200;
         sprintSpeedModifier = 1.2f;
 
@@ -142,7 +141,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     public void tickAnimations() {
         if (!level().isClientSide()) return;
         tickBlinkController();
-        tickTurnController();
         tickMainController();
     }
 
@@ -152,52 +150,23 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
-    private void tickTurnController() {
-        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
-        if (turnController.isPlayingAbilityAnimation(AnimationController.TURN)) return;
-        switch (getTurningState()) {
-            case LEFT -> {
-                if (isFlying() && isMoving() && !isSecondaryAttack() && !isMovingBackwards()) turnController.playAnimation("turn.fly.left");
-                else turnController.playAnimation("turn.left");
-            }
-            case RIGHT -> {
-                if (isFlying() && isMoving() && !isSecondaryAttack() && !isMovingBackwards()) turnController.playAnimation("turn.fly.right");
-                else turnController.playAnimation("turn.right");
-            }
-            default -> turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
-        }
-    }
-
     private void tickMainController() {
         URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (mainController.isPlayingAbilityAnimation(AnimationController.MAIN)) return;
         if (isFlying()) {
-            if (isSecondaryAttack()) {
-                mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1/ getCooldownModifier()));
-                mainController.playAnimation("fly.attack");
-                return;
-            }
             if (isMoving()) {
                 if (isMovingBackwards()) {
                     mainController.playAnimation("fly.back");
                     return;
                 }
-                if (getTiltState() == TiltState.UP) {
-                    mainController.playAnimation("fly.straight.up");
-                    return;
-                }
                 if (getTiltState() == TiltState.DOWN) {
-                    mainController.playAnimation("fly.straight.down");
+                    mainController.playAnimation("fly.down");
                     return;
                 }
                 if (isFlyGliding()) {
-                    mainController.playAnimation("fly.straight.glide");
-                    return;
-                }
-                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) {
-                    mainController.playAnimation("fly.straight.heavy");
+                    mainController.playAnimation("fly.glide");
                     return;
                 }
                 mainController.playAnimation("fly.straight");

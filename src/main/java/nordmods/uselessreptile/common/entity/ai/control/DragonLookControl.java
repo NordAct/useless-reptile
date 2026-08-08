@@ -23,7 +23,7 @@ public class DragonLookControl extends LookControl {
     }
 
     public boolean isLookingAtTarget() {
-        return isLookingAtTarget(entity.getPitchLimit(), entity.getRotationSpeed());
+        return isLookingAtTarget(entity.getMaxHeadXRot(), entity.getHeadRotSpeed());
     }
 
     public boolean isLookingAtTarget(float pitchTolerance, float yawTolerance) {
@@ -33,7 +33,7 @@ public class DragonLookControl extends LookControl {
     }
 
     public boolean canLookAtTarget() {
-        return canLookAtTarget(entity.getPitchLimit() / 1.25f);
+        return canLookAtTarget(entity.getMaxHeadXRot() / 1.25f);
     }
 
     public boolean canLookAtTarget(float pitchTolerance) {
@@ -43,15 +43,18 @@ public class DragonLookControl extends LookControl {
 
     @Override
     public void tick() {
-        if (entity.hasControllingPassenger()) return;
         if (lockRotation) return;
         if (lookAtCooldown > 0) {
             --lookAtCooldown;
             getYRotD().ifPresent(yaw -> {
                 float pitch = getXRotD().orElse(0f);
-                entity.setRot(yaw, pitch);
+                entity.yHeadRot = rotateTowards(entity.yHeadRot, yaw, yMaxRotSpeed);
+                entity.setXRot(rotateTowards(entity.getXRot(), pitch, xMaxRotAngle));
             });
-        }
+        } else entity.yHeadRot = rotateTowards(entity.yHeadRot, entity.yBodyRot, yMaxRotSpeed);
+
+        if (!entity.getNavigation().isDone())
+            entity.yHeadRot = Mth.rotateIfNecessary(entity.yHeadRot, entity.yBodyRot, yMaxRotSpeed);
     }
 
     @Override

@@ -262,7 +262,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         if (isMovingBackwards()) setSprinting(false);
         setRotation(rider);
-        setXRot(Mth.clamp(rider.getXRot(), -getPitchLimit(), getPitchLimit()));
+        setXRot(Mth.clamp(rider.getXRot(), -getMaxHeadXRot(), getMaxHeadXRot()));
         if (isJumpPressed() && onGround()) jumpFromGround();
         //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
         return new Vec3(0, movementInput.y  - 0.001, landSpeed);
@@ -348,8 +348,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     protected void setRotation(Player rider) {
-        if (freeLook()) setRot(getYRot(), getXRot());
-        else setRot(rider.getYRot(), rider.getXRot());
+        yHeadRot = rider.yHeadRot;
     }
 
     public int vortexHornCapacity() {

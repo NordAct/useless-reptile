@@ -192,7 +192,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         setAccelerationDuration(accelerationDuration);
 
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
-        setXRot(Mth.clamp(rider.getXRot(), -getPitchLimit(), getPitchLimit()));
+        setXRot(Mth.clamp(rider.getXRot(), -getMaxHeadXRot(), getMaxHeadXRot()));
         if (!isFlying()) {
             double landSpeed = zza * getAttributeValue(Attributes.MOVEMENT_SPEED);
             if (isSprintPressed())
@@ -216,13 +216,13 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             if (isJumpPressed()) {
                 verticalSpeed = getVerticalSpeed();
                 setTiltState(TiltState.UP);
-                if (!isMovingBackwards() && isMoving() && getXRot() > -getPitchLimit() && !isDownPressed())
+                if (!isMovingBackwards() && isMoving() && getXRot() > -getMaxHeadXRot() && !isDownPressed())
                     setXRot(getXRot() - pitchSpeed);
             }
             if (isDownPressed()) {
                 verticalSpeed = -getVerticalSpeed() * 1.3f;
                 setTiltState(TiltState.DOWN);
-                if (!isMovingBackwards() && isMoving() && getXRot() < getPitchLimit())
+                if (!isMovingBackwards() && isMoving() && getXRot() < getMaxHeadXRot())
                     setXRot(getXRot() + pitchSpeed);
             }
             float currentVerticalSpeed = (float) getDeltaMovement().y();
@@ -273,9 +273,9 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    public float getRotationSpeed() {
-        if (isFlying()) return getFlyingRotationSpeed() * getMovementSpeedModifier() / 2f;
-        return super.getRotationSpeed();
+    public int getHeadRotSpeed() {
+        if (isFlying()) return (int) (getFlyingRotationSpeed() * getMovementSpeedModifier() / 2f);
+        return super.getHeadRotSpeed();
     }
 
     @Override
@@ -284,9 +284,9 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    public float getPitchLimit() {
-        if (isFlying() && isMoving() && !isMovingBackwards()) return pitchLimitAir;
-        return pitchLimitGround;
+    public int getMaxHeadXRot() {
+        if (isFlying() && isMoving() && !isMovingBackwards()) return (int) pitchLimitAir;
+        return (int) pitchLimitGround;
     }
 
     @Override

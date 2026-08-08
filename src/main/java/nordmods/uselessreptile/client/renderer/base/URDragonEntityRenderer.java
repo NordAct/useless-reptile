@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -107,6 +108,14 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         }
 
         if (animatable instanceof ShooterDragon shooterDragon) renderState.setStateData(URStateDataTypes.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
+    }
+
+    @Override
+    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T entity, float tickDelta) {
+        super.updateControllerVariables(builder, entity, tickDelta);
+        builder.setQuery("body_x_rotation", -entity.getViewXRot(tickDelta));
+        builder.setQuery("body_y_rotation", -entity.getPreciseBodyRotation(tickDelta));
+        builder.setQuery("head_y_rotation", -entity.getViewYRot(tickDelta));
     }
 
     @Override
