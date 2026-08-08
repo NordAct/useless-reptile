@@ -109,6 +109,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                 passengersList.add(entity);
             } else {
                 Placeholder placeholder = new Placeholder(level());
+                if (level().isClientSide()) placeholder.setId(-1);
                 level().addFreshEntity(placeholder);
                 placeholder.vehicle = this;
                 passengersList.add(placeholder);
