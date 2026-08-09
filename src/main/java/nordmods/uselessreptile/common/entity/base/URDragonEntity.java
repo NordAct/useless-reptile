@@ -147,6 +147,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             URFluteModes.STAND_UP,
             URFluteModes.TARGET
     );
+    public float yBodyRotChange = 0;
+    private LinkedList<Float> yBodyRotChangeO = new LinkedList<>();
+    protected int maxYBodyRotChangeSamples = 10;
+    public float xBodyRot = 0;
+    private LinkedList<Float> xBodyRotO = new LinkedList<>();
+    protected int maxXBodyRotSamples = 10;
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -770,12 +776,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     public int getHeadRotSpeed() { //todo fix inheritors
-        return (int) (getGroundRotationSpeed() * getMovementSpeedModifier() / 2f);
+        return (int) (getGroundRotationSpeed() * getMovementSpeedModifier());
     }
 
     @Override
     protected @NonNull BodyRotationControl createBodyControl() {
-        return new DragonBodyRotationControl(this);
+        return new DragonBodyRotationControl<>(this);
     }
 
     protected void setHitboxModifiers(float destinationHeight, float destinationWidth, float destinationMountedOffset) {
@@ -849,6 +855,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     public void tick() {
+        yBodyRotChangeO.addLast(yBodyRotChange);
+        if (yBodyRotChangeO.size() >= maxYBodyRotChangeSamples) yBodyRotChangeO.removeFirst();
+
+        xBodyRotO.addLast(xBodyRot);
+        if (xBodyRotO.size() >= maxXBodyRotSamples) xBodyRotO.removeFirst();
+
         super.tick();
         if (!level().isClientSide()) {
             updateRotationProgress();
@@ -1332,6 +1344,24 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public void onAbilityActivated(DragonAbility ability) {}
+
+    public float getYBodyRotChange(float tickDelta) {
+        float sum = 0;
+        for (int i = 0; i < yBodyRotChangeO.size(); i++) {
+            if (i != yBodyRotChangeO.size() - 1) sum += Mth.lerp(tickDelta, yBodyRotChangeO.get(i), yBodyRotChangeO.get(i + 1));
+            else sum += Mth.lerp(tickDelta, yBodyRotChangeO.get(i), yBodyRotChange);
+        }
+        return sum / yBodyRotChangeO.size();
+    }
+
+    public float getXBodyRot(float tickDelta) {
+        float sum = 0;
+        for (int i = 0; i < xBodyRotO.size(); i++) {
+            if (i != xBodyRotO.size() - 1) sum += Mth.lerp(tickDelta, xBodyRotO.get(i), xBodyRotO.get(i + 1));
+            else sum += Mth.lerp(tickDelta, xBodyRotO.get(i), xBodyRot);
+        }
+        return sum / xBodyRotO.size();
+    }
 
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;

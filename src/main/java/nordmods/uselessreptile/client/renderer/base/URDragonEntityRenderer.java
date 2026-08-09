@@ -19,7 +19,6 @@ import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
 import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.asset_cache.AssetCache;
 import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
@@ -113,9 +112,11 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     @Override
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T entity, float tickDelta) {
         super.updateControllerVariables(builder, entity, tickDelta);
-        builder.setQuery("body_x_rotation", -entity.getViewXRot(tickDelta));
+        builder.setQuery("body_x_rotation", -Math.clamp(entity.getXBodyRot(tickDelta), -45, 45));
+        builder.setQuery("head_x_rotation", -entity.getViewXRot(tickDelta));
         builder.setQuery("body_y_rotation", -entity.getPreciseBodyRotation(tickDelta));
         builder.setQuery("head_y_rotation", -entity.getViewYRot(tickDelta));
+        builder.setQuery("yaw_speed", -entity.getYBodyRotChange(tickDelta));
     }
 
     @Override
@@ -271,13 +272,13 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
     @Override
     public void afterSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
-            if (equipment != null && equipment.getAssetCache().canRender()) {
-                DragonEquipmentRenderer usedRenderer = equipment.isSaddle ? saddleRenderer : equipmentRenderer;
-                usedRenderer.submitObjectOrdered(equipment, poseStack, submitNodeCollector, cameraRenderState, state.getStateData(StateDataTypes.TICK_DELTA), 1);
-            }
-        }
+//        for (EquipmentSlot slot : EquipmentSlot.values()) { //todo fix equipment renderer
+//            DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
+//            if (equipment != null && equipment.getAssetCache().canRender()) {
+//                DragonEquipmentRenderer usedRenderer = equipment.isSaddle ? saddleRenderer : equipmentRenderer;
+//                usedRenderer.submitObjectOrdered(equipment, poseStack, submitNodeCollector, cameraRenderState, state.getStateData(StateDataTypes.TICK_DELTA), 1);
+//            }
+//        }
     }
 
     @Override

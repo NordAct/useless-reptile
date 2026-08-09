@@ -291,11 +291,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         }
     }
 
-    @Override
-    public int getHeadRotSpeed() {
-        return (int) (super.getHeadRotSpeed() * (isInWater() ? 2f : 1f));
-    }
-
     public void stopGathering() {
         setHunting(false);
         huntTimer = huntCooldown + getRandom().nextInt(huntCooldown / 2);

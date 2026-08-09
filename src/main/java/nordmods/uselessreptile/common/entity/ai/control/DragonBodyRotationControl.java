@@ -5,9 +5,9 @@ import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 
-public class DragonBodyRotationControl extends BodyRotationControl {
-    private final URDragonEntity dragon;
-    public DragonBodyRotationControl(URDragonEntity mob) {
+public class DragonBodyRotationControl<T extends URDragonEntity> extends BodyRotationControl {
+    protected final T dragon;
+    public DragonBodyRotationControl(T mob) {
         super(mob);
         dragon = mob;
     }
@@ -18,10 +18,11 @@ public class DragonBodyRotationControl extends BodyRotationControl {
         if (!(dragon instanceof URRideableDragonEntity rideableDragon) || !rideableDragon.freeLook())
             dragon.setYRot(dragon.yBodyRot = Mth.rotateIfNecessary(dragon.getYHeadRot(), dragon.yBodyRot, dragon.getHeadRotSpeed()));
 
+        dragon.yBodyRotChange = Mth.degreesDifference(dragon.yBodyRotO, dragon.yBodyRot);
+
         if (!dragon.level().isClientSide()) {
-            float diff = Mth.degreesDifference(dragon.yBodyRotO, dragon.yBodyRot);
-            if (diff < 0) dragon.setTurningState(URDragonEntity.TurningState.LEFT);
-            else if (diff > 0) dragon.setTurningState(URDragonEntity.TurningState.RIGHT);
+            if (dragon.yBodyRotChange < 0) dragon.setTurningState(URDragonEntity.TurningState.LEFT);
+            else if (dragon.yBodyRotChange > 0) dragon.setTurningState(URDragonEntity.TurningState.RIGHT);
             else dragon.setTurningState(URDragonEntity.TurningState.NONE);
         }
     }

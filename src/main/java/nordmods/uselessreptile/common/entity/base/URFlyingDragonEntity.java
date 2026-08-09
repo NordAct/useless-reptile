@@ -12,11 +12,13 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
@@ -83,7 +85,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     @Override
     public int getHeadRotSpeed() {
-        if (isFlying()) return (int) (getFlyingRotationSpeed() * getMovementSpeedModifier() / 2f);
+        if (isFlying()) return (int) (getFlyingRotationSpeed() * getMovementSpeedModifier());
         return super.getHeadRotSpeed();
     }
 
@@ -224,5 +226,10 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     public boolean shouldFlyDown() {
         return getInAirTimer() >= getMaxInAirTimer();
+    }
+
+    @Override
+    protected @NonNull BodyRotationControl createBodyControl() {
+        return new FlyingDragonBodyRotationControl<>(this);
     }
 }

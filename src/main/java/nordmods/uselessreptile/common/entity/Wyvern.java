@@ -161,7 +161,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                     mainController.playAnimation("fly.back");
                     return;
                 }
-                if (getTiltState() == TiltState.DOWN) {
+                if (getTiltState() == TiltState.DOWN && getMovementSpeedModifier() > 0.25 && getXBodyRot(1) > 0) {
                     mainController.playAnimation("fly.down");
                     return;
                 }
