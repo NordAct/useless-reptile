@@ -152,7 +152,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     protected int maxYBodyRotChangeSamples = 10;
     public float xBodyRot = 0;
     private LinkedList<Float> xBodyRotO = new LinkedList<>();
-    protected int maxXBodyRotSamples = 10;
+    protected int maxXBodyRotSamples = 5;
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);

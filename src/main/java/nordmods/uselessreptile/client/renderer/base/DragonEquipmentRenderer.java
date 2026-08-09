@@ -1,5 +1,7 @@
 package nordmods.uselessreptile.client.renderer.base;
 
+import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import libs.gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -8,6 +10,7 @@ import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.renderer.BRObjectRenderer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
+import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
@@ -47,45 +50,58 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
 
     @Override
     public void extractRenderState(DragonEquipment animatable, BRState.Impl state, float tickDelta) {
+        animatable.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), animatable, tickDelta));
         state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_ID));
         state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerRenderState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
         state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerRenderState.getStateData(ClientStateDataTypes.LIGHT));
 
         Collection<BRAnimationController> ownerControllers = animatable.ownerRenderState.getStateData(StateDataTypes.CONTROLLERS);
-        //todo fix
-//        animatable.cloneController.copyFrom(ownerControllers);
-//        ownerControllers.forEach(controller -> {
-//            controller.getPlayingAnimations().forEach(playingAnimation -> {
-//                if (playingAnimation.isDone()) return;
-//                String name = playingAnimation.getAnimation().name();
-//                if (animatable.controller.getAnimation(name) != null) {
-//                    animatable.controller.playAnimation(
-//                            name,
-//                            playingAnimation.getTransitionInTime(),
-//                            playingAnimation.getTransitionOutTime(),
-//                            playingAnimation.getTransitionInLerp(),
-//                            playingAnimation.getTransitionOutLerp()
-//                    );
-//                    return;
-//                }
-//                BRPlayingAnimation animation = new BRPlayingAnimation(
-//                        animatable.controller.getAnimationData(name),
-//                        playingAnimation.getTransitionInTime(),
-//                        playingAnimation.getTransitionOutTime(),
-//                        playingAnimation.getTransitionInLerp(),
-//                        playingAnimation.getTransitionOutLerp(),
-//                        playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
-//                );
-//                animation.setAnimationTime(playingAnimation.getAnimationTime());
-//                animatable.controller.playAnimation(animation);
-//            });
-//            animatable.controller.checkAgainstOtherController(controller);
-//        });
+        animatable.cloneController.copyFrom(ownerControllers);
+        ownerControllers.forEach(controller -> {
+            controller.getPlayingAnimations().forEach(playingAnimation -> {
+                if (playingAnimation.isDone()) return;
+                String name = playingAnimation.getAnimation().name();
+                if (animatable.controller.getAnimation(name) != null) {
+                    animatable.controller.playAnimation(
+                            name,
+                            playingAnimation.getTransitionInTime(),
+                            playingAnimation.getTransitionOutTime(),
+                            playingAnimation.getTransitionInLerp(),
+                            playingAnimation.getTransitionOutLerp()
+                    );
+                    return;
+                }
+                BRPlayingAnimation animation = new BRPlayingAnimation(
+                        animatable.controller.getAnimationData(name),
+                        playingAnimation.getTransitionInTime(),
+                        playingAnimation.getTransitionOutTime(),
+                        playingAnimation.getTransitionInLerp(),
+                        playingAnimation.getTransitionOutLerp(),
+                        playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
+                );
+                animation.setAnimationTime(playingAnimation.getAnimationTime());
+                animatable.controller.playAnimation(animation);
+            });
+            animatable.controller.checkAgainstOtherController(controller);
+        });
         state.setStateData(StateDataTypes.CONTROLLERS, animatable.getAnimationControllers());
 
         state.setStateData(StateDataTypes.ANIMATION_TIME, animatable.ownerRenderState.getStateData(StateDataTypes.ANIMATION_TIME));
         state.setStateData(StateDataTypes.MODEL_PROVIDER, this.getModelProvider());
+    }
+
+    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, DragonEquipment animatable, float tickDelta) {
+        BRAnimationController ownerController = animatable.ownerRenderState.getStateData(StateDataTypes.CONTROLLERS).toArray(new BRAnimationController[4])[0];
+        try {
+            builder.setQuery("body_x_rotation", ownerController.getEnvironment().getQuery().get("body_x_rotation"));
+            builder.setQuery("head_x_rotation", ownerController.getEnvironment().getQuery().get("head_x_rotation"));
+            builder.setQuery("body_y_rotation", ownerController.getEnvironment().getQuery().get("body_y_rotation"));
+            builder.setQuery("head_y_rotation", ownerController.getEnvironment().getQuery().get("head_y_rotation"));
+            builder.setQuery("yaw_speed", ownerController.getEnvironment().getQuery().get("yaw_speed"));
+        } catch (MolangRuntimeException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

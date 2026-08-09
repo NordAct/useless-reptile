@@ -1,18 +1,6 @@
 {
 	"format_version": "1.8.0",
 	"animations": {
-		"walk": {
-			"loop": true,
-			"bones": {}
-		},
-		"sit": {
-			"loop": true,
-			"bones": {}
-		},
-		"panic": {
-			"loop": true,
-			"bones": {}
-		},
 		"panic.idle": {
 			"loop": true,
 			"bones": {
@@ -37,26 +25,6 @@
 				}
 			}
 		},
-		"attack.normal1": {
-			"loop": true,
-			"bones": {}
-		},
-		"attack.normal2": {
-			"loop": true,
-			"bones": {}
-		},
-		"attack.strong": {
-			"loop": true,
-			"bones": {}
-		},
-		"attack.strong.panic": {
-			"loop": true,
-			"bones": {}
-		},
-		"blink": {
-			"loop": true,
-			"bones": {}
-		},
 		"dance": {
 			"loop": true,
 			"bones": {
@@ -73,6 +41,5 @@
 				}
 			}
 		}
-	},
-	"geckolib_format_version": 2
+	}
 }

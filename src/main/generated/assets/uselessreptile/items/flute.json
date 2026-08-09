@@ -12,9 +12,9 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute/gather"
+          "model": "uselessreptile:item/flute/sit_down"
         },
-        "when": "uselessreptile:gather"
+        "when": "uselessreptile:sit_down"
       },
       {
         "model": {
@@ -26,9 +26,9 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute/sit_down"
+          "model": "uselessreptile:item/flute/gather"
         },
-        "when": "uselessreptile:sit_down"
+        "when": "uselessreptile:gather"
       },
       {
         "model": {

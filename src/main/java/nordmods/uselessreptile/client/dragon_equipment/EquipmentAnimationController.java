@@ -6,6 +6,9 @@ import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.util.BRAnimationManager;
+
+import java.util.Arrays;
 
 //todo sounds and stuff
 public class EquipmentAnimationController extends BRAnimationController {
@@ -39,5 +42,17 @@ public class EquipmentAnimationController extends BRAnimationController {
                 animation.setSpeed(parentAnimation.getSpeed());
             }
         });
+    }
+
+    @Override
+    public AnimationData getAnimationData(String animation) {
+        AnimationData[] data = BRAnimationManager.getAnimationManager(true).getAnimations(animationFile);
+        return data == null ?
+                AnimationData.EMPTY :
+                Arrays
+                .stream(data)
+                .filter(animationData -> animationData.name().equals(animation))
+                .findFirst()
+                .orElse(AnimationData.EMPTY);
     }
 }

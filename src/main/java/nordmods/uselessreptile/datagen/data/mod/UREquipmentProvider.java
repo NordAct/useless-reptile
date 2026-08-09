@@ -24,7 +24,7 @@ import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("deprecation")
 public class UREquipmentProvider extends URAbstractDataProvider<EquipmentModelData> {
-
+    private static final Identifier EMPTY_ANIMATION = UselessReptile.id("biscuit_roll/animations/entity/empty.animation.json");
     public UREquipmentProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         super(output, registryLookupFuture, EquipmentModelData.CODEC, "uselessreptile/equipment");
     }
@@ -40,12 +40,11 @@ public class UREquipmentProvider extends URAbstractDataProvider<EquipmentModelDa
         addCommonArmor(UREntities.MOLECLAW);
 
         Identifier moleclawHelmet = UselessReptile.id("biscuit_roll/models/entity/moleclaw/helmet.geo.json");
-        Identifier moleclawEmptyAnimation = UselessReptile.id("biscuit_roll/animations/entity/moleclaw/empty.animation.json");
-        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_COPPER, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_copper.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_iron.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_gold.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_diamond.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_netherite.png"), moleclawHelmet, moleclawEmptyAnimation, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_COPPER, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_copper.png"), moleclawHelmet, EMPTY_ANIMATION, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_iron.png"), moleclawHelmet, EMPTY_ANIMATION, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_gold.png"), moleclawHelmet, EMPTY_ANIMATION, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_diamond.png"), moleclawHelmet, EMPTY_ANIMATION, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(UREntities.MOLECLAW, URItems.MOLECLAW_HELMET_NETHERITE, UselessReptile.id("textures/entity/moleclaw/moleclaw_helmet_netherite.png"), moleclawHelmet, EMPTY_ANIMATION, true,  Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
         addEntry(UselessReptile.id("empty"), new EquipmentModelData(Optional.empty(), Map.of()));
     }
 
@@ -74,22 +73,21 @@ public class UREquipmentProvider extends URAbstractDataProvider<EquipmentModelDa
         Identifier modelHelmet = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/helmet.geo.json");
         Identifier modelChestplate = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/chestplate.geo.json");
         Identifier modelTailArmor = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/tail_armor.geo.json");
-        Identifier emptyAnimation = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/animations/entity/" + id.getPath() + "/empty.animation.json");
-        addEntry(type, URItems.DRAGON_HELMET_COPPER, textureCopper, modelHelmet, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(type, URItems.DRAGON_HELMET_IRON, textureIron, modelHelmet, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(type, URItems.DRAGON_HELMET_GOLD, textureGold, modelHelmet, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(type, URItems.DRAGON_HELMET_DIAMOND, textureDiamond, modelHelmet, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(type, URItems.DRAGON_HELMET_NETHERITE, textureNetherite, modelHelmet, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
-        addEntry(type, URItems.DRAGON_CHESTPLATE_COPPER, textureCopper, modelChestplate, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
-        addEntry(type, URItems.DRAGON_CHESTPLATE_IRON, textureIron, modelChestplate, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
-        addEntry(type, URItems.DRAGON_CHESTPLATE_GOLD, textureGold, modelChestplate, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
-        addEntry(type, URItems.DRAGON_CHESTPLATE_DIAMOND, textureDiamond, modelChestplate, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
-        addEntry(type, URItems.DRAGON_CHESTPLATE_NETHERITE, textureNetherite, modelChestplate, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_COPPER, textureCopper, modelTailArmor, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_IRON, textureIron, modelTailArmor, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_GOLD, textureGold, modelTailArmor, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_DIAMOND, textureDiamond, modelTailArmor, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
-        addEntry(type, URItems.DRAGON_TAIL_ARMOR_NETHERITE, textureNetherite, modelTailArmor, emptyAnimation, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
+        addEntry(type, URItems.DRAGON_HELMET_COPPER, textureCopper, modelHelmet, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(type, URItems.DRAGON_HELMET_IRON, textureIron, modelHelmet, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(type, URItems.DRAGON_HELMET_GOLD, textureGold, modelHelmet, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(type, URItems.DRAGON_HELMET_DIAMOND, textureDiamond, modelHelmet, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(type, URItems.DRAGON_HELMET_NETHERITE, textureNetherite, modelHelmet, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.HELMET, Optional.empty());
+        addEntry(type, URItems.DRAGON_CHESTPLATE_COPPER, textureCopper, modelChestplate, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
+        addEntry(type, URItems.DRAGON_CHESTPLATE_IRON, textureIron, modelChestplate, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
+        addEntry(type, URItems.DRAGON_CHESTPLATE_GOLD, textureGold, modelChestplate, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
+        addEntry(type, URItems.DRAGON_CHESTPLATE_DIAMOND, textureDiamond, modelChestplate, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
+        addEntry(type, URItems.DRAGON_CHESTPLATE_NETHERITE, textureNetherite, modelChestplate, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.CHESTPLATE, Optional.empty());
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_COPPER, textureCopper, modelTailArmor, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_IRON, textureIron, modelTailArmor, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_GOLD, textureGold, modelTailArmor, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_DIAMOND, textureDiamond, modelTailArmor, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
+        addEntry(type, URItems.DRAGON_TAIL_ARMOR_NETHERITE, textureNetherite, modelTailArmor, EMPTY_ANIMATION, false, Optional.empty(), DragonInventory.Slot.TAIL_ARMOR, Optional.empty());
     }
 
     @Override

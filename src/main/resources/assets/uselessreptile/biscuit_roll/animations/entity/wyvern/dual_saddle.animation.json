@@ -10,10 +10,6 @@
 				},
 				"also_ropes": {
 					"rotation": [-4, 0, 0]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -26,10 +22,6 @@
 				"ropes": {
 					"rotation": ["-47-math.cos(query.anim_time*360/1.7917)*4 ", 0, 0],
 					"position": [0, 1.5, 1]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -42,10 +34,6 @@
 				"ropes": {
 					"rotation": ["-47-math.cos(query.anim_time*360/1.7917)*0.5", 0, 0],
 					"position": [0, 1.5, 1]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -59,10 +47,6 @@
 					"rotation": ["-48.5-math.cos(query.anim_time*360/1.7917)", 0, 0],
 					"position": [0, 1.5, 1],
 					"scale": [1, 1.1, 1]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -75,10 +59,6 @@
 				"ropes": {
 					"rotation": ["-24.5-math.cos(query.anim_time*360/1.7917)*2", 0, 0],
 					"position": [0, 0.5, 0]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -88,10 +68,6 @@
 			"bones": {
 				"ropes": {
 					"rotation": [-17.5, 0, 0]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -102,10 +78,6 @@
 				"ropes": {
 					"rotation": [-35, 0, 0],
 					"position": [0, 1, 0]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -115,10 +87,6 @@
 				"ropes": {
 					"rotation": [-30, 0, 0],
 					"position": [0, 1, 0]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -127,10 +95,6 @@
 			"bones": {
 				"ropes": {
 					"rotation": [-7.5, 0, 0]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -138,10 +102,6 @@
 			"loop": true,
 			"animation_length": 2,
 			"bones": {
-				"saddle_front": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
-				},
 				"ropes": {
 					"rotation": {
 						"0.0": {
@@ -169,38 +129,6 @@
 							"lerp_mode": "catmullrom"
 						}
 					}
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
-				}
-			}
-		},
-		"sit": {
-			"loop": true,
-			"animation_length": 8,
-			"bones": {
-				"saddle_front": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
-				}
-			}
-		},
-		"dance": {
-			"loop": true,
-			"animation_length": 1.5,
-			"bones": {
-				"saddle_front": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
-				},
-				"rider": {
-					"rotation": [0, 0, 0],
-					"position": [0, 0, 0]
 				}
 			}
 		},
@@ -373,10 +301,6 @@
 					}
 				}
 			}
-		},
-		"blink": {
-			"loop": true,
-			"bones": {}
 		}
 	}
 }
