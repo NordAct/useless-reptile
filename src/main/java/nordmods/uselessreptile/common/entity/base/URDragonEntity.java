@@ -743,36 +743,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return (float) (0.125 * getScale());
     }
 
-//    @Override
-//    public void setRot(float yaw, float pitch) {
-//        float currentYaw = getYRot() % 360;
-//        float destinationYaw = yaw % 360;
-//        //т.к. у игрока поворот измеряется от -180 до 180, а у других энтити от 0 до 360, то приведенная ниже дичь необходима
-//        //due player having rotation from -180 to 180 while all other entities have it from 0 to 360, this check is necessary
-//        if (destinationYaw < 0) destinationYaw += 360;
-//        float yawDiff = (currentYaw - destinationYaw) % 360;
-//        if (yawDiff != 0) {
-//            if (yawDiff > 180) yawDiff -= 360;
-//            else if (yawDiff < -180) yawDiff +=360;
-//
-//            if (yawDiff < -getHeadRotSpeed()) {
-//                currentYaw += getHeadRotSpeed();
-//                if (!level().isClientSide()) setTurningState(TurningState.RIGHT);
-//            }
-//            else if (yawDiff > getHeadRotSpeed()) {
-//                currentYaw -= getHeadRotSpeed();
-//                if (!level().isClientSide()) setTurningState(TurningState.LEFT);
-//            }
-//            else {
-//                currentYaw = destinationYaw;
-//                if (!level().isClientSide() && isMoving()) setTurningState(TurningState.NONE);
-//            }
-//        } else {
-//            if (!level().isClientSide()) setTurningState(TurningState.NONE);
-//        }
-//        super.setRot(currentYaw, Mth.clamp(pitch, -getMaxHeadXRot(), getMaxHeadXRot()));
-//    }
-
     @Override
     public int getHeadRotSpeed() { //todo fix inheritors
         return (int) (getGroundRotationSpeed() * getMovementSpeedModifier());
