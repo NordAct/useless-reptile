@@ -1,0 +1,45 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"panic.idle": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [-1, 0, 0]
+				}
+			}
+		},
+		"turn.left": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [-1, 0, -2]
+				}
+			}
+		},
+		"turn.right": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [-1, 0, 2]
+				}
+			}
+		},
+		"dance": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": ["-2+math.cos(query.anim_time*360)*0.5", 0, 0]
+				}
+			}
+		},
+		"idle": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [-1, 0, 0]
+				}
+			}
+		}
+	}
+}

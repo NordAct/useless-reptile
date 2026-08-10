@@ -5,6 +5,7 @@ import net.minecraft.sounds.SoundEvent;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
+import nordmods.biscuit_roll.common.util.BRAnimationManager;
 import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -54,5 +55,10 @@ public class URDragonAnimationController<E extends URDragonEntity> extends BRAni
             }
         }
         return false;
+    }
+
+    @Override
+    public AnimationData getAnimationData(String animation) {
+        return BRAnimationManager.getAnimationManager(dragon.level().isClientSide()).getAnimation(animationFile, animation);
     }
 }

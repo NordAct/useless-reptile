@@ -29,7 +29,11 @@ public class URDragonPart extends EntityPart {
     }
 
     public URDragonPart(URDragonEntity owner, String name, float damageMultiplier) {
-        super(owner, 1, 1);
+        this(owner, name, 1, 1, damageMultiplier);
+    }
+
+    public URDragonPart(URDragonEntity owner, String name, float width, float height, float damageMultiplier) {
+        super(owner, width, height);
         this.name = name;
         this.damageMultiplier = damageMultiplier;
         refreshDimensions();
@@ -122,6 +126,7 @@ public class URDragonPart extends EntityPart {
         setScale(scale.x, scale.y);
     }
 
+    @Override
     public void setRelativePos(double x, double y, double z) {
         setRelativePos(x * getOwner().getScale(), y * getOwner().getScale(), z * getOwner().getScale(), 0, getOwner().getYRot());
     }

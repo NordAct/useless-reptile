@@ -1,0 +1,306 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"fly.straight": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": ["-47-math.cos(query.anim_time*360/1.7917)*2", 0, 0],
+					"position": [0, 1.5, 1]
+				},
+				"also_ropes": {
+					"rotation": [-4, 0, 0]
+				}
+			}
+		},
+		"fly.straight.heavy": {
+			"loop": true,
+			"bones": {
+				"also_ropes": {
+					"rotation": [-4, 0, 0]
+				},
+				"ropes": {
+					"rotation": ["-47-math.cos(query.anim_time*360/1.7917)*4 ", 0, 0],
+					"position": [0, 1.5, 1]
+				}
+			}
+		},
+		"fly.straight.glide": {
+			"loop": true,
+			"bones": {
+				"also_ropes": {
+					"rotation": [-4, 0, 0]
+				},
+				"ropes": {
+					"rotation": ["-47-math.cos(query.anim_time*360/1.7917)*0.5", 0, 0],
+					"position": [0, 1.5, 1]
+				}
+			}
+		},
+		"fly.straight.down": {
+			"loop": true,
+			"bones": {
+				"also_ropes": {
+					"rotation": [-6.5, 0, 0]
+				},
+				"ropes": {
+					"rotation": ["-48.5-math.cos(query.anim_time*360/1.7917)", 0, 0],
+					"position": [0, 1.5, 1],
+					"scale": [1, 1.1, 1]
+				}
+			}
+		},
+		"fly.straight.up": {
+			"loop": true,
+			"bones": {
+				"also_ropes": {
+					"rotation": [3.5, 0, 0]
+				},
+				"ropes": {
+					"rotation": ["-24.5-math.cos(query.anim_time*360/1.7917)*2", 0, 0],
+					"position": [0, 0.5, 0]
+				}
+			}
+		},
+		"fly.idle": {
+			"loop": true,
+			"animation_length": 1.7917,
+			"bones": {
+				"ropes": {
+					"rotation": [-17.5, 0, 0]
+				}
+			}
+		},
+		"fly.back": {
+			"loop": true,
+			"animation_length": 1.7917,
+			"bones": {
+				"ropes": {
+					"rotation": [-35, 0, 0],
+					"position": [0, 1, 0]
+				}
+			}
+		},
+		"fly.attack": {
+			"animation_length": 1,
+			"bones": {
+				"ropes": {
+					"rotation": [-30, 0, 0],
+					"position": [0, 1, 0]
+				}
+			}
+		},
+		"idle": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [-7.5, 0, 0]
+				}
+			}
+		},
+		"walk": {
+			"loop": true,
+			"animation_length": 2,
+			"bones": {
+				"ropes": {
+					"rotation": {
+						"0.0": {
+							"post": [-7.5, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.25": {
+							"post": [-10, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"0.75": {
+							"post": [-5, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"1.25": {
+							"post": [-10, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"1.75": {
+							"post": [-5, 0, 0],
+							"lerp_mode": "catmullrom"
+						},
+						"2.0": {
+							"post": [-7.5, 0, 0],
+							"lerp_mode": "catmullrom"
+						}
+					}
+				}
+			}
+		},
+		"turn.left": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [-7.5, 0, 8],
+					"scale": [1.07, 1, 1]
+				}
+			}
+		},
+		"turn.right": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [-7.5, 0, -8],
+					"scale": [1.07, 1, 1]
+				}
+			}
+		},
+		"turn.fly.left": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [6.2268, 6.51932, 10.02706],
+					"position": [-0.2, -0.8, -0.6],
+					"scale": [1.06, 1.1, 1.1]
+				}
+			}
+		},
+		"turn.fly.right": {
+			"loop": true,
+			"bones": {
+				"ropes": {
+					"rotation": [6.2268, -6.51932, -10.02706],
+					"position": [0.2, -0.8, -0.6],
+					"scale": [1.06, 1.1, 1.1]
+				}
+			}
+		},
+		"attack.melee1": {
+			"animation_length": 0.7083,
+			"bones": {
+				"also_ropes": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.2083": [-5.00749, -8.12356, -6.81895],
+						"0.4167": [-5.82228, -4.46759, 1.02875],
+						"0.7083": [0, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.2083": [0, 0.1, 0.3],
+						"0.7083": [0, 0, 0]
+					}
+				},
+				"ropes": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.2083": [-45.53521, 1.00857, -4.16341],
+						"0.4167": [-45.53521, 1.00857, -4.16341],
+						"0.7083": [0, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.2083": [0, 2, 0.4],
+						"0.4167": [0, 2, 0.4],
+						"0.7083": [0, 0, 0]
+					},
+					"scale": {
+						"0.0": [1, 1, 1],
+						"0.2083": [1.02, 1.05, 1],
+						"0.4167": [1.02, 1.05, 1],
+						"0.7083": [1, 1, 1]
+					}
+				}
+			}
+		},
+		"attack.melee2": {
+			"animation_length": 0.7083,
+			"bones": {
+				"also_ropes": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.2083": [-5.00749, 8.12356, 6.81895],
+						"0.4167": [-5.82228, 4.46759, -1.02875],
+						"0.7083": [0, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.2083": [0, 0.1, 0.3],
+						"0.7083": [0, 0, 0]
+					}
+				},
+				"ropes": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.2083": [-45.53521, -1.00857, 4.16341],
+						"0.4167": [-45.53521, -1.00857, 4.16341],
+						"0.7083": [0, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.2083": [0, 2, 0.4],
+						"0.4167": [0, 2, 0.4],
+						"0.7083": [0, 0, 0]
+					},
+					"scale": {
+						"0.0": [1, 1, 1],
+						"0.2083": [1.02, 1.05, 1],
+						"0.4167": [1.02, 1.05, 1],
+						"0.7083": [1, 1, 1]
+					}
+				}
+			}
+		},
+		"attack.melee3": {
+			"animation_length": 0.7083,
+			"bones": {
+				"also_ropes": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.2083": [-4, 0, 0],
+						"0.4167": [-4, 0, 0],
+						"0.7083": [0, 0, 0]
+					}
+				},
+				"ropes": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.2083": [-45, 0, 0],
+						"0.4167": [-47.5, 0, 0],
+						"0.7083": [0, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.2083": [0, 2, 0],
+						"0.4167": [0, 2, 0],
+						"0.7083": [0, 0, 0]
+					}
+				}
+			}
+		},
+		"attack.fly.range": {
+			"animation_length": 0.5,
+			"bones": {
+				"ropes": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.1667": [12.5, 0, 0],
+						"0.5": [0, 0, 0]
+					},
+					"position": {
+						"0.0": [0, 0, 0],
+						"0.1667": [0, 2, 0],
+						"0.5": [0, 0, 0]
+					}
+				}
+			}
+		},
+		"attack.range": {
+			"animation_length": 0.7,
+			"bones": {
+				"ropes": {
+					"rotation": {
+						"0.0": [0, 0, 0],
+						"0.2": [-40, 0, 0],
+						"0.7": [0, 0, 0]
+					}
+				}
+			}
+		}
+	}
+}

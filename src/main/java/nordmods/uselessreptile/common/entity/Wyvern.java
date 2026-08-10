@@ -1,8 +1,10 @@
 package nordmods.uselessreptile.common.entity;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
@@ -26,40 +28,46 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.entity.base.URDragonPart;
-import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
+import nordmods.uselessreptile.common.entity.base.*;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
+import nordmods.uselessreptile.common.entity.server_animation_processor.DragonAnimationProcessor;
+import nordmods.uselessreptile.common.entity.server_animation_processor.MultipartDragonAnimationProcessor;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
+import nordmods.uselessreptile.common.network.s2c.SyncEntityPartsPosPayload;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity, ShooterDragon {
-    private final URDragonPart wingLeft = new URDragonPart(this, "wing_left");
-    private final URDragonPart wingRight = new URDragonPart(this, "wing_right");
-    private final URDragonPart neck = new URDragonPart(this, "neck");
-    private final URDragonPart head = new URDragonPart(this, "head");
-    private final URDragonPart tail1 = new URDragonPart(this, "tail1");
-    private final URDragonPart tail2 = new URDragonPart(this, "tail2");
-    private final URDragonPart tail3 = new URDragonPart(this, "tail3");
-    private final URDragonPart[] parts = new URDragonPart[]{wingLeft, wingRight, neck, head, tail1, tail2, tail3};
+public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDragon, ShooterDragon {
+    private final URDragonPart head = new URDragonPart(this, "head", 0.5f, 0.5f, 1);
+    private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.5f, 0.5f, 1);
+    private final URDragonPart neck2 = new URDragonPart(this, "neck2", 0.5f, 0.5f, 1);
+    private final URDragonPart neck3 = new URDragonPart(this, "neck3", 0.5f, 0.5f, 1);
+    private final URDragonPart neck4 = new URDragonPart(this, "neck4", 0.5f, 0.5f, 1);
+    private final URDragonPart neck5 = new URDragonPart(this, "neck5", 0.5f, 0.5f, 1);
+    private final URDragonPart front = new URDragonPart(this, "front");
+    private final URDragonPart back = new URDragonPart(this, "back");
+    private final URDragonPart tail1 = new URDragonPart(this, "tail1", 0.75f, 0.75f, 1);
+    private final URDragonPart tail2 = new URDragonPart(this, "tail2", 0.75f, 0.75f, 1);
+    private final URDragonPart tail3 = new URDragonPart(this, "tail3", 0.75f, 0.75f, 1);
+    private final URDragonPart tail4 = new URDragonPart(this, "tail4", 0.75f, 0.75f, 1);
+    private final URDragonPart tail5 = new URDragonPart(this, "tail5", 0.75f, 0.75f, 1);
+    private final URDragonPart[] parts = new URDragonPart[]{head, neck1, neck2, neck3, neck4, neck5, front, back, tail1, tail2, tail3, tail4, tail5};
     private ShootingPoint shootingPoint = new ShootingPoint(position().toVector3f(), getLookAngle().toVector3f());
+    private final DragonAnimationProcessor<Wyvern> processor = new MultipartDragonAnimationProcessor<>(this); //todo perhaps move this to main class?
+    private List<Vec3> nextPoses = List.of();
 
     public static final float BASE_GROUND_SPEED = 0.2f;
 
@@ -139,7 +147,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
 
     //todo reconsider structure and make it cleaner
     public void tickAnimations() {
-        if (!level().isClientSide()) return;
+        //if (!level().isClientSide()) return;
         tickBlinkController();
         tickMainController();
     }
@@ -221,8 +229,16 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         }
         setHitboxModifiers(dHeight, dWidth, dMountedOffset);
 
-        updateChildParts();
+        //updateChildParts();
         tickAnimations();
+        if (!level().isClientSide()) processor.tick();
+        else {
+            for (int i = 0; i < nextPoses.size(); i++) {
+                EntityPart part = getParts()[i];
+                part.setOldPosAndRot();
+                part.setPos(nextPoses.get(i));
+            }
+        }
     }
 
     @Override
@@ -344,102 +360,15 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         return parts;
     }
 
-    public void updateChildParts() {
-        Vec2 wingLeftScale;
-        Vec2 wingRightScale;
+    @Override
+    public void sendSyncPayload() {
+        if (level() instanceof ServerLevel serverWorld)
+            for (ServerPlayer player : PlayerLookup.tracking(serverWorld, blockPosition()))
+                SyncEntityPartsPosPayload.send(player, this);
+    }
 
-        Vector3f wingLeftPos;
-        Vector3f wingRightPos;
-        Vector3f neckPos;
-        Vector3f headPos;
-        Vector3f tail1Pos;
-        Vector3f tail2Pos;
-        Vector3f tail3Pos;
-
-        float yawOffset = getNormalizedRotationProgress();
-        float pitchOffset = tiltProgress / TRANSITION_TICKS;
-
-        if (isFlying()) {
-            if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
-                if (getTiltState() == TiltState.DOWN) {
-                    wingLeftPos = new Vector3f(2, 0, -0.5f);
-                    wingLeftScale = new Vec2(1, 1.5f);
-
-                    wingRightPos = new Vector3f(-2, 0, -0.5f);
-                    wingRightScale = new Vec2(1, 1.5f);
-                } else {
-                    wingLeftPos = new Vector3f(2.5f, 0, -0.5f);
-                    wingLeftScale = new Vec2(1, 2.5f);
-
-                    wingRightPos = new Vector3f(-2.5f, 0, -0.5f);
-                    wingRightScale = new Vec2(1, 2.5f);
-                }
-                neckPos = new Vector3f(yawOffset * 0.5f, pitchOffset * 1, 1.75f);
-                headPos = new Vector3f(yawOffset * 1.25f, pitchOffset * 1.5f, 2.75f - Math.abs(yawOffset) * 0.5f);
-                tail1Pos = new Vector3f(yawOffset * 0.5f, -pitchOffset * 0.25f, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, -pitchOffset * 0.625f, -3 + Math.abs(yawOffset) * 0.5f);
-                tail3Pos = new Vector3f(yawOffset * 2f, -pitchOffset * 1 , -4 + Math.abs(yawOffset) * 1);
-            } else {
-                wingLeftPos = new Vector3f(3, 0, -0.5f);
-                wingLeftScale = new Vec2(3, 3);
-
-                wingRightPos = new Vector3f(-3, 0, -0.5f);
-                wingRightScale = new Vec2(3, 3);
-
-                neckPos = new Vector3f(0, 3, 1);
-                headPos = new Vector3f(yawOffset, 3.1f, 1.9f);
-                tail1Pos = new Vector3f(yawOffset * 0.5f, 1, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, 0.5f, -2.6f + Math.abs(yawOffset) * 0.5f);
-                tail3Pos = new Vector3f(yawOffset * 2f, -0.2f , -3.2f + Math.abs(yawOffset) * 1);
-            }
-        } else {
-            if (isOrderedToSit()) {
-                wingLeftPos = new Vector3f(1.3333334f, 0, 0);
-                wingLeftScale = new Vec2(1.5f, 2);
-
-                wingRightPos = new Vector3f(-1.3333334f, 0, 0);
-                wingRightScale = new Vec2(1.5f, 2);
-
-                neckPos = new Vector3f(0,  2.75f, 0.5f);
-                headPos = new Vector3f(0, 3, 1f);
-                tail1Pos = new Vector3f(0, 0.3f, -1.6f);
-                tail2Pos = new Vector3f(0, 0.2f, -2.6f);
-                tail3Pos = new Vector3f(0, 0.1f , -3.6f);
-
-            } else {
-                wingLeftPos = new Vector3f(1, 0.5f, 0);
-                wingLeftScale = new Vec2(2, 1.5f);
-
-                wingRightPos = new Vector3f(-1, 0.5f, 0);
-                wingRightScale = new Vec2(2, 1.5f);
-
-                neckPos = new Vector3f(0, 3, 1);
-                headPos = new Vector3f(yawOffset, 3.1f, 1.9f);
-                tail1Pos = new Vector3f(yawOffset * 0.25f, 1.5f, -1.6f);
-                tail2Pos = new Vector3f(yawOffset * 0.75f, 1.0f, -2.6f);
-                tail3Pos = new Vector3f(yawOffset * 1.45f, 0.25f, -3.2f);
-            }
-        }
-
-        wingLeft.setRelativePos(wingLeftPos);
-        wingLeft.setScale(wingLeftScale);
-
-        wingRight.setRelativePos(wingRightPos);
-        wingRight.setScale(wingRightScale);
-
-        head.setRelativePos(headPos);
-        head.setScale(1 ,1);
-
-        neck.setRelativePos(neckPos);
-        neck.setScale(1 ,1);
-
-        tail1.setRelativePos(tail1Pos);
-        tail1.setScale(1 ,1);
-
-        tail2.setRelativePos(tail2Pos);
-        tail2.setScale(1 ,1);
-
-        tail3.setRelativePos(tail3Pos);
-        tail3.setScale(1 ,1);
+    @Override
+    public void handleSyncPayload(SyncEntityPartsPosPayload payload) {
+        nextPoses = payload.poses();
     }
 }

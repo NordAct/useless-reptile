@@ -5,6 +5,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
+import nordmods.biscuit_roll.BiscuitRoll;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.init.*;
@@ -45,6 +46,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
 
     @Override
     public void onPreLaunch() {
+        BiscuitRoll.loadServerside = true; //todo implement better system on library's side
         URConfig.init();
     }
 

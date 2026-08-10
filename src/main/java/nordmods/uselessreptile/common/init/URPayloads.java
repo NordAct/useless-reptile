@@ -2,10 +2,7 @@ package nordmods.uselessreptile.common.init;
 
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import nordmods.uselessreptile.common.network.c2s.*;
-import nordmods.uselessreptile.common.network.s2c.OpenDragonInventoryPayload;
-import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
-import nordmods.uselessreptile.common.network.s2c.OpenVariantChangingOrbScreenPayload;
-import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPayload;
+import nordmods.uselessreptile.common.network.s2c.*;
 
 public class URPayloads {
     public static void init() {
@@ -13,6 +10,7 @@ public class URPayloads {
         PayloadTypeRegistry.clientboundPlay().register(LiftoffParticlesPayload.PAYLOAD_ID, LiftoffParticlesPayload.PACKET_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncLightningBreathRotationsPayload.PAYLOAD_ID, SyncLightningBreathRotationsPayload.PACKET_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(OpenVariantChangingOrbScreenPayload.PAYLOAD_ID, OpenVariantChangingOrbScreenPayload.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncEntityPartsPosPayload.PAYLOAD_ID, SyncEntityPartsPosPayload.PACKET_CODEC);
 
         PayloadTypeRegistry.serverboundPlay().register(KeyInputPayload.PAYLOAD_ID, KeyInputPayload.PACKET_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(RequestLiftoffPayload.PAYLOAD_ID, RequestLiftoffPayload.PACKET_CODEC);
