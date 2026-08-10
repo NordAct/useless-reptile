@@ -35,9 +35,11 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
-import nordmods.uselessreptile.common.entity.base.*;
+import nordmods.uselessreptile.common.entity.base.MultipartDragon;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.base.URDragonPart;
+import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
 import nordmods.uselessreptile.common.entity.server_animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.server_animation_processor.MultipartDragonAnimationProcessor;
@@ -45,12 +47,11 @@ import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.network.s2c.SyncEntityPartsPosPayload;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
-import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDragon, ShooterDragon {
+public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDragon {
     private final URDragonPart head = new URDragonPart(this, "head", 0.5f, 0.5f, 1);
     private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.5f, 0.5f, 1);
     private final URDragonPart neck2 = new URDragonPart(this, "neck2", 0.5f, 0.5f, 1);
@@ -65,7 +66,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
     private final URDragonPart tail4 = new URDragonPart(this, "tail4", 0.75f, 0.75f, 1);
     private final URDragonPart tail5 = new URDragonPart(this, "tail5", 0.75f, 0.75f, 1);
     private final URDragonPart[] parts = new URDragonPart[]{head, neck1, neck2, neck3, neck4, neck5, front, back, tail1, tail2, tail3, tail4, tail5};
-    private ShootingPoint shootingPoint = new ShootingPoint(position().toVector3f(), getLookAngle().toVector3f());
     private final DragonAnimationProcessor<Wyvern> processor = new MultipartDragonAnimationProcessor<>(this); //todo perhaps move this to main class?
     private List<Vec3> nextPoses = List.of();
 
@@ -82,31 +82,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
 
         secondaryAttackDuration = 14;
         primaryAttackDuration = 14;
-    }
-
-    @Override
-    public void setShootingPoint(ShootingPoint point) {
-        shootingPoint = point;
-    }
-
-    @Override
-    public ShootingPoint getShootingPoint() {
-        return shootingPoint;
-    }
-
-    @Override
-    public Vector3f getShootingPointAnchor() {
-        return head.position().toVector3f().add(0, head.getBbHeight() / 2f, 0);
-    }
-
-    @Override
-    public float getShootingPointDesiredPitch() {
-        return getXRot();
-    }
-
-    @Override
-    public float getShootingPointDesiredYaw() {
-        return getYawWithAdjustment();
     }
 
     @Override
@@ -277,8 +252,8 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
     public void shoot() {
         if (level().isClientSide()) return;
         setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        Vec3 rot = new Vec3(getShootingPoint().rotation()).scale(0.5f);
-        Vec3 pos = new Vec3(getShootingPoint().position());
+        Vec3 rot = getHeadLookAngle().scale(0.5f);
+        Vec3 pos = position();
         for (int i = 0; i < 5; ++i) {
             AcidBlast projectileEntity = new AcidBlast(level(), this);
             projectileEntity.setPos(pos);

@@ -15,7 +15,6 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
@@ -108,15 +107,6 @@ public class ShotAttackAbility extends TriggerableAbility {
                     throw new IllegalStateException("Cannot use multipart_box anchor for non MultipartEntity entities");
                 }
             }
-            case SHOOTING_POINT -> {
-                ShooterDragon shooterDragon = (ShooterDragon) entity;
-                yield rotateVec(
-                        anchorPointOffset,
-                        new Vec3(shooterDragon.getShootingPoint().position()),
-                        shooterDragon.getShootingPointPitch(),
-                        shooterDragon.getShootingPointYaw()
-                );
-            }
         };
     }
 
@@ -133,16 +123,7 @@ public class ShotAttackAbility extends TriggerableAbility {
     }
 
     protected Vec3 getRot(URDragonEntity entity) {
-        return switch (anchorPoint) {
-            case EYES, ENTITY_POS, MULTIPART_BOX -> entity.calculateViewVector(entity.getXRot(), entity.getYawWithAdjustment());
-            case SHOOTING_POINT -> {
-                if (entity instanceof ShooterDragon shooterDragon) {
-                    yield new Vec3(shooterDragon.getShootingPoint().rotation());
-                } else {
-                    throw new IllegalStateException("Cannot use shooting_point anchor for non ShooterDragon entities");
-                }
-            }
-        };
+        return entity.calculateViewVector(entity.getXRot(), entity.getYawWithAdjustment());
     }
 
     @Override
@@ -165,8 +146,7 @@ public class ShotAttackAbility extends TriggerableAbility {
     public enum AnchorPoint implements StringRepresentable {
         EYES("eyes"),
         ENTITY_POS("entity_pos"),
-        MULTIPART_BOX("multipart_box"),
-        SHOOTING_POINT("shooting_point")
+        MULTIPART_BOX("multipart_box")
         ;
 
         private final String name;

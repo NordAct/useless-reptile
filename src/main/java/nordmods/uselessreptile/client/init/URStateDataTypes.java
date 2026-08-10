@@ -9,7 +9,6 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.state.StateDataType;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.asset_cache.AssetCache;
-import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +20,6 @@ public class URStateDataTypes {
     //specific dragon data - used for some dragons
     public static final StateDataType<UUID> DRAGON_UUID = new StateDataType<>(UselessReptile.id("dragon_uuid"));
     public static final StateDataType<Boolean> DRAGON_IS_RIDING_PLAYER = new StateDataType<>(UselessReptile.id("dragon_is_riding_player"));
-    public static final StateDataType<ShootingPoint> DRAGON_SHOOTING_POINT = new StateDataType<>(UselessReptile.id("dragon_shooting_point"));
     //equipment data for rendering
     public static final StateDataType<ItemStackRenderState> FISH = new StateDataType<>(UselessReptile.id("fish"));
     public static final StateDataType<ItemStackRenderState> BANNER = new StateDataType<>(UselessReptile.id("banner"));

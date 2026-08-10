@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity.ai.control;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.control.LookControl;
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jspecify.annotations.NonNull;
 
@@ -57,32 +56,6 @@ public class DragonLookControl extends LookControl {
             entity.yHeadRot = Mth.rotateIfNecessary(entity.yHeadRot, entity.yBodyRot, yMaxRotSpeed);
     }
 
-    @Override
-    public @NonNull Optional<Float> getXRotD() {
-        if (entity instanceof ShooterDragon shooterDragon) {
-            double x = this.wantedX - shooterDragon.getShootingPoint().position().x();
-            double y = this.wantedY - shooterDragon.getShootingPoint().position().y();
-            double z = this.wantedZ - shooterDragon.getShootingPoint().position().z();
-            double distZX = Math.sqrt(x * x + z * z);
-            return !(Math.abs(y) > 1.0E-5F) && !(Math.abs(distZX) > 1.0E-5F) ?
-                    Optional.empty()
-                    : Optional.of((float)(-(Mth.atan2(y, distZX) * 180 / Math.PI)));
-        }
-        return super.getXRotD();
-    }
-
-    @Override
-    public @NonNull Optional<Float> getYRotD() {
-        if (entity instanceof ShooterDragon shooterDragon) {
-            double x = this.wantedX - shooterDragon.getShootingPoint().position().x();
-            double z = this.wantedZ - shooterDragon.getShootingPoint().position().z();
-            return !(Math.abs(x) > 1.0E-5F) && !(Math.abs(z) > 1.0E-5F)
-                    ? Optional.empty()
-                    : Optional.of((float)(Mth.atan2(z, x) * 180 /Math.PI) - 90);
-        }
-        return super.getYRotD();
-    }
-
     public void setLockRotation(boolean state) {
         lockRotation = state;
     }
@@ -90,5 +63,10 @@ public class DragonLookControl extends LookControl {
     @Override
     public void setLookAt(@NonNull Entity target, float maxYawChange, float maxPitchChange) {
         if (entity.getSensing().hasLineOfSight(target)) super.setLookAt(target, maxYawChange, maxPitchChange);
+    }
+
+    @Override
+    public Optional<Float> getYRotD() {
+        return super.getYRotD();
     }
 }

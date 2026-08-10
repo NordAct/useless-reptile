@@ -74,12 +74,11 @@ import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
-import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
@@ -873,18 +872,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             }
         }
 
-        if (this instanceof ShooterDragon shooterDragon) {
-            shooterDragon.setShootingPoint(
-                    new ShootingPoint(
-                            shooterDragon.getShootingPointAnchor(),
-                            calculateViewVector(
-                                    shooterDragon.getShootingPointDesiredPitch(),
-                                    shooterDragon.getShootingPointDesiredYaw()
-                            ).toVector3f()
-                    )
-            );
-        }
-
         //if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
         //if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
         //if (getSpecialAttackCooldown() > 0) setSpecialAttackCooldown(getSpecialAttackCooldown() - 1);
@@ -1258,8 +1245,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
         if (yaw < 0) yaw += 360;
-        float dYaw = Math.abs(Mth.wrapDegrees((this instanceof ShooterDragon shooterDragon ? shooterDragon.getShootingPointYaw() : getYRot()) - yaw));
-        float dPitch = Math.abs((this instanceof ShooterDragon shooterDragon ? shooterDragon.getShootingPointPitch() : getXRot()) - pitch);
+        float dYaw = Math.abs(Mth.wrapDegrees(getYRot()) - yaw);
+        float dPitch = Math.abs(getXRot() - pitch);
         return dPitch < pitchTolerance
                 && dYaw % 360 < yawTolerance;
     }

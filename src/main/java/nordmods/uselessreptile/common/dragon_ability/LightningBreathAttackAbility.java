@@ -9,7 +9,6 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
@@ -45,26 +44,8 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
     @Override
     public void trigger(DragonAbilityHolder holder) {
         URDragonEntity entity = holder.getEntity();
-        float pitch = switch (anchorPoint) {
-            case EYES, ENTITY_POS, MULTIPART_BOX -> entity.getXRot();
-            case SHOOTING_POINT -> {
-                if (entity instanceof ShooterDragon shooterDragon) {
-                    yield shooterDragon.getShootingPointPitch();
-                } else {
-                    throw new IllegalStateException("Cannot use shooting_point anchor for non ShooterDragon entities");
-                }
-            }
-        };
-        float yaw = switch (anchorPoint) {
-            case EYES, ENTITY_POS, MULTIPART_BOX -> entity.getYHeadRot();
-            case SHOOTING_POINT -> {
-                if (entity instanceof ShooterDragon shooterDragon) {
-                    yield shooterDragon.getShootingPointYaw();
-                } else {
-                    throw new IllegalStateException("Cannot use shooting_point anchor for non ShooterDragon entities");
-                }
-            }
-        };
+        float pitch = entity.getXRot();
+        float yaw =  entity.getYHeadRot();
 
         LightningBreath.createBeam(
                 entity,

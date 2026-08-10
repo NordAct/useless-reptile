@@ -39,7 +39,7 @@
   {
     "type": "uselessreptile:lightning_breath_attack",
     "active_time_seconds": 1.0,
-    "anchor_point": "shooting_point",
+    "anchor_point": "multipart_box",
     "anchor_point_offset": [
       0.0,
       0.0,
@@ -121,6 +121,7 @@
     "damage_scaling": 1.0,
     "max_age": 10,
     "max_length": 50,
+    "multipart_box_name": "head",
     "trigger_time_seconds": 0.35
   },
   {

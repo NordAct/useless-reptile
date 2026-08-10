@@ -46,12 +46,10 @@ import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningC
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserBailOutGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRevengeGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRoamAroundGoal;
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
 import nordmods.uselessreptile.common.init.*;
@@ -64,7 +62,7 @@ import org.jspecify.annotations.Nullable;
 import java.util.List;
 import java.util.function.BiConsumer;
 
-public class LightningChaser extends URRideableFlyingDragonEntity implements MultipartEntity, ShooterDragon {
+public class LightningChaser extends URRideableFlyingDragonEntity implements MultipartEntity {
     private int shockwaveDelay = -1;
     private int shootDelay = -1;
     private int bailOutTimer = 6000;
@@ -84,7 +82,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
     protected final DynamicGameEventListener<LightningStrikeEventListener> lightningStrikeEventHandler = new DynamicGameEventListener<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
-    private ShootingPoint shootingPoint = new ShootingPoint(position().toVector3f(), getLookAngle().toVector3f());
 
     public static final float BASE_GROUND_SPEED = 0.25f;
 
@@ -407,7 +404,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     public void shoot() {
-        LightningBreath.createBeam(this, getShootingPointPitch(), getShootingPointYaw(), new Vec3(getShootingPoint().position()), 50, 10, 1, 0xFFFFFF); //todo redo
+        LightningBreath.createBeam(this, getXRot(), getYawWithAdjustment(), head.position(), 50, 10, 1, 0xFFFFFF); //todo redo
     }
 
     public float getYawProgressLimit() {
@@ -516,31 +513,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     public boolean canAttack(LivingEntity target) {
         if (hasSurrendered() || getShouldBailOut()) return false;
         return super.canAttack(target);
-    }
-
-    @Override
-    public void setShootingPoint(ShootingPoint point) {
-        shootingPoint = point;
-    }
-
-    @Override
-    public ShootingPoint getShootingPoint() {
-        return shootingPoint;
-    }
-
-    @Override
-    public Vector3f getShootingPointAnchor() {
-        return head.position().toVector3f().add(0, head.getBbHeight() / 2f, 0);
-    }
-
-    @Override
-    public float getShootingPointDesiredPitch() {
-        return getXRot();
-    }
-
-    @Override
-    public float getShootingPointDesiredYaw() {
-        return getYawWithAdjustment();
     }
 
     protected class LightningStrikeEventListener implements GameEventListener {

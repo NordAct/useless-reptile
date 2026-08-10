@@ -229,8 +229,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 new TriggerableAbility.Data(0, 0.7f),
                                 UREntities.ACID_BLAST,
                                 new CompoundTag(),
-                                ShotAttackAbility.AnchorPoint.SHOOTING_POINT,
-                                Optional.empty(),
+                                ShotAttackAbility.AnchorPoint.MULTIPART_BOX,
+                                Optional.of("head"),
                                 new Vec3(0, -0.25, 1),
                                 5, 3, 5
                         )
@@ -510,8 +510,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                         Optional.of(URRideableDragonEntity.AttackType.PRIMARY)
                                 ),
                                 new TriggerableAbility.Data(0.35f, 1),
-                                ShotAttackAbility.AnchorPoint.SHOOTING_POINT,
-                                Optional.empty(),
+                                ShotAttackAbility.AnchorPoint.MULTIPART_BOX,
+                                Optional.of("head"),
                                 Vec3.ZERO,
                                 1,
                                 0x00FFFFFF,

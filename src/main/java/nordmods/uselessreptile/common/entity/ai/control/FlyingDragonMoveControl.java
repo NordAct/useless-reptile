@@ -1,11 +1,9 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> extends MoveControl {
@@ -38,22 +36,8 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         float destinationYaw;
         float destinationPitch;
         if (!entity.isOrderedToSit()) {
-            if (entity.getTarget() != null && entity instanceof ShooterDragon shooterDragon) {
-                Entity target = entity.getTarget();
-                double diffTargetX = target.getX() - shooterDragon.getShootingPoint().position().x;
-                double diffTargetY = target.getY() - shooterDragon.getShootingPoint().position().y;
-                double diffTargetZ = target.getZ() - shooterDragon.getShootingPoint().position().z;
-                double distanceTargetXZ = Math.sqrt(diffTargetX * diffTargetX + diffTargetZ * diffTargetZ);
-                destinationPitch = rotlerp(
-                        entity.getXRot(),
-                        (float) (-(Mth.atan2(diffTargetY, distanceTargetXZ) * Mth.RAD_TO_DEG)),
-                        entity.getMaxHeadXRot()
-                );
-                destinationYaw = (float) (Mth.atan2(diffTargetZ, diffTargetX) * Mth.RAD_TO_DEG) - 90.0F;
-            } else {
-                destinationYaw = (float) (Mth.atan2(diffZ, diffX) * Mth.RAD_TO_DEG) - 90.0F;
-                destinationPitch = entity.getXRot();
-            }
+            destinationYaw = (float) (Mth.atan2(diffZ, diffX) * Mth.RAD_TO_DEG) - 90.0F;
+            destinationPitch = entity.getXRot();
         } else {
             destinationYaw = entity.getYRot();
             destinationPitch = entity.getXRot();

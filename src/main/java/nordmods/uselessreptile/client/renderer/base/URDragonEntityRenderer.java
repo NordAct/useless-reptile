@@ -35,7 +35,6 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jspecify.annotations.Nullable;
 
@@ -106,8 +105,6 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                 dragonEquipment.ownerRenderState = renderState;
             }
         }
-
-        if (animatable instanceof ShooterDragon shooterDragon) renderState.setStateData(URStateDataTypes.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
     }
 
     @Override

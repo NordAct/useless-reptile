@@ -157,7 +157,7 @@
   {
     "type": "uselessreptile:shot_attack",
     "active_time_seconds": 0.7,
-    "anchor_point": "shooting_point",
+    "anchor_point": "multipart_box",
     "anchor_point_offset": [
       0.0,
       -0.25,
@@ -235,6 +235,7 @@
     "conditions": [],
     "cooldown_time_seconds": 4.0,
     "count": 5,
+    "multipart_box_name": "head",
     "projectile_entity_nbt": {},
     "projectile_entity_type": "uselessreptile:acid_blast",
     "speed": 3.0,

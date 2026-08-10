@@ -1,13 +1,10 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.ai.goal.Goal;
-import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 public class DragonLookAroundGoal extends Goal {
     protected final URDragonEntity mob;
@@ -43,10 +40,6 @@ public class DragonLookAroundGoal extends Goal {
     @Override
     public void tick() {
         --lookTimer;
-        if (mob instanceof ShooterDragon shooterDragon) {
-            Vector3f point = shooterDragon.getShootingPoint().position();
-            mob.getLookControl().setLookAt(point.x + x, point.y, point.z + z);
-        }
-        else mob.getLookControl().setLookAt(mob.getX() + x, mob.getEyeY(), mob.getZ() + z);
+        mob.getLookControl().setLookAt(mob.getX() + x, mob.getEyeY(), mob.getZ() + z);
     }
 }
