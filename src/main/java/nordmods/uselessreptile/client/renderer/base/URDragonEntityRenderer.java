@@ -2,6 +2,7 @@ package nordmods.uselessreptile.client.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import libs.gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -35,6 +36,7 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
+import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jspecify.annotations.Nullable;
 
@@ -58,12 +60,17 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
     @Override
     public void extractRenderState(T animatable, LivingEntityRenderState renderState, float tickDelta) {
+        renderState.setStateData(URStateDataTypes.BODY_X_ROTATION, -animatable.getXBodyRot(tickDelta));
+        renderState.setStateData(URStateDataTypes.BODY_Y_ROTATION, -animatable.getPreciseBodyRotation(tickDelta));
+        renderState.setStateData(URStateDataTypes.HEAD_X_ROTATION, -animatable.getViewXRot(tickDelta));
+        renderState.setStateData(URStateDataTypes.HEAD_Y_ROTATION, -animatable.getViewYRot(tickDelta));
+        renderState.setStateData(URStateDataTypes.YAW_SPEED, -animatable.getYBodyRotChange(tickDelta));
         super.extractRenderState(animatable, renderState, tickDelta);
         DragonAssetCache assetCache = animatable.getAssetCache();
         renderState.setStateData(URStateDataTypes.ASSET_CACHE, assetCache);
         Identifier dragonId = animatable.getDragonId();
         renderState.setStateData(URStateDataTypes.DRAGON_ID, dragonId);
-
+        renderState.setStateData(URStateDataTypes.ANIMATION_PROCESSOR, animatable.getAnimationProcessor());
         if (ResourceUtil.isResourceReloadFinished) {
             fillDragonCache(
                     assetCache,
@@ -110,7 +117,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     @Override
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T entity, float tickDelta) {
         super.updateControllerVariables(builder, entity, tickDelta);
-        builder.setQuery("body_x_rotation", -Math.clamp(entity.getXBodyRot(tickDelta), -45, 45));
+        builder.setQuery("body_x_rotation", -entity.getXBodyRot(tickDelta));
         builder.setQuery("head_x_rotation", -entity.getViewXRot(tickDelta));
         builder.setQuery("body_y_rotation", -entity.getPreciseBodyRotation(tickDelta));
         builder.setQuery("head_y_rotation", -entity.getViewYRot(tickDelta));
@@ -120,7 +127,15 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     @Override
     public void adjustAnimation(BRState state, BRModel model) {
         if (!ResourceUtil.isResourceReloadFinished) return;
-        model.getRootBones().forEach(animatedBone -> animatedBone.setVisible(true));
+        DragonAnimationProcessor<? extends URDragonEntity> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
+        float tickDelta = state.getStateData(StateDataTypes.TICK_DELTA, 0f);
+        model.getRootBones().forEach(bone -> bone.setVisible(true));
+
+        if (animationProcessor != null) {
+            for (AnimatedBone animatedBone : model.getBones()) {
+                animationProcessor.syncPose(animatedBone.getBone().name(), animatedBone.getAnimationPose(), tickDelta);
+            }
+        }
 
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);

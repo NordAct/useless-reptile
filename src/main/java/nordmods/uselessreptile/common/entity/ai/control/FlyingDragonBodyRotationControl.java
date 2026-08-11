@@ -11,7 +11,7 @@ public class FlyingDragonBodyRotationControl<T extends URDragonEntity & FlyingDr
     @Override
     public void clientTick() {
         super.clientTick();
-        dragon.xBodyRot = !dragon.isFlying() || !dragon.isMoving() || dragon.isMovingBackwards() ? 0 : dragon.getDeltaMovement().rotation().x;
+        dragon.xBodyRot = !dragon.isFlying() || !dragon.isMoving() || dragon.isMovingBackwards() ? 0 : Math.clamp(dragon.getDeltaMovement().rotation().x, -45, 45);
         if (!dragon.level().isClientSide()) {
             if (dragon.xBodyRot < -3) dragon.setTiltState(FlyingDragon.TiltState.UP);
             else if (dragon.xBodyRot > 3) dragon.setTiltState(FlyingDragon.TiltState.DOWN);

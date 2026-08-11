@@ -1,7 +1,6 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
-import libs.gg.moonflower.molangcompiler.api.exception.MolangRuntimeException;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -92,16 +91,11 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     }
 
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, DragonEquipment animatable, float tickDelta) {
-        BRAnimationController ownerController = animatable.ownerRenderState.getStateData(StateDataTypes.CONTROLLERS).toArray(new BRAnimationController[4])[0];
-        try {
-            builder.setQuery("body_x_rotation", ownerController.getEnvironment().getQuery().get("body_x_rotation"));
-            builder.setQuery("head_x_rotation", ownerController.getEnvironment().getQuery().get("head_x_rotation"));
-            builder.setQuery("body_y_rotation", ownerController.getEnvironment().getQuery().get("body_y_rotation"));
-            builder.setQuery("head_y_rotation", ownerController.getEnvironment().getQuery().get("head_y_rotation"));
-            builder.setQuery("yaw_speed", ownerController.getEnvironment().getQuery().get("yaw_speed"));
-        } catch (MolangRuntimeException e) {
-            throw new RuntimeException(e);
-        }
+        builder.setQuery("body_x_rotation", animatable.ownerRenderState.getStateData(URStateDataTypes.BODY_X_ROTATION, 0f));
+        builder.setQuery("head_x_rotation", animatable.ownerRenderState.getStateData(URStateDataTypes.HEAD_X_ROTATION, 0f));
+        builder.setQuery("body_y_rotation", animatable.ownerRenderState.getStateData(URStateDataTypes.BODY_Y_ROTATION, 0f));
+        builder.setQuery("head_y_rotation", animatable.ownerRenderState.getStateData(URStateDataTypes.HEAD_Y_ROTATION, 0f));
+        builder.setQuery("yaw_speed", animatable.ownerRenderState.getStateData(URStateDataTypes.YAW_SPEED, 0f));
     }
 
     @Override

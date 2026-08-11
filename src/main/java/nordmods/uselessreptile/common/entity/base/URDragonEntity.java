@@ -74,6 +74,7 @@ import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
+import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
@@ -152,6 +153,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public float xBodyRot = 0;
     private LinkedList<Float> xBodyRotO = new LinkedList<>();
     protected int maxXBodyRotSamples = 5;
+    private final DragonAnimationProcessor<? extends URDragonEntity> processor = createServerAnimationProcessor();
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -162,7 +164,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     public final Collection<BRAnimationController> getAnimationControllers() {
-        return controllers.values();
+        return level().isClientSide() ? List.of() : controllers.values();
     }
 
     @Override
@@ -730,7 +732,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public void playSound(@NonNull SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) level().playLocalSound(getX(), getY(),getZ(), sound, SoundSource.NEUTRAL, volume, pitch,true);
+        if (!isSilent()) {
+            if (level().isClientSide()) level().playLocalSound(getX(), getY(),getZ(), sound, getSoundSource(), volume, pitch,true);
+            else level().playSound(null, getX(), getY(),getZ(), sound,  getSoundSource(), volume, pitch);
+        }
     }
 
     public float getWidthModTransSpeed() {
@@ -876,6 +881,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
 
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
+        if (processor != null) processor.tick();
     }
 
     @Override
@@ -1318,6 +1324,16 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             else sum += Mth.lerp(tickDelta, xBodyRotO.get(i), xBodyRot);
         }
         return sum / xBodyRotO.size();
+    }
+
+    @Nullable
+    public DragonAnimationProcessor<? extends URDragonEntity> createServerAnimationProcessor() {
+        return null;
+    }
+
+    @Nullable
+    public DragonAnimationProcessor<? extends URDragonEntity> getAnimationProcessor() {
+        return processor;
     }
 
     protected class JukeboxEventListener implements GameEventListener {

@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.server_animation_processor;
+package nordmods.uselessreptile.common.entity.animation_processor;
 
 import com.mojang.math.Axis;
 import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
@@ -18,6 +18,7 @@ public class MultipartDragonAnimationProcessor<T extends URDragonEntity & Multip
     @Override
     public void tick() {
         super.tick();
+        if (animatable.level().isClientSide()) return;
         BRModel model = getModel();
         if (model == null) return;
         for (EntityPart part : animatable.getParts()) {

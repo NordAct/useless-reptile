@@ -41,13 +41,14 @@ import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
-import nordmods.uselessreptile.common.entity.server_animation_processor.DragonAnimationProcessor;
-import nordmods.uselessreptile.common.entity.server_animation_processor.MultipartDragonAnimationProcessor;
+import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
+import nordmods.uselessreptile.common.entity.animation_processor.MultipartDragonAnimationProcessor;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.network.s2c.SyncEntityPartsPosPayload;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
@@ -66,7 +67,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
     private final URDragonPart tail4 = new URDragonPart(this, "tail4", 0.75f, 0.75f, 1);
     private final URDragonPart tail5 = new URDragonPart(this, "tail5", 0.75f, 0.75f, 1);
     private final URDragonPart[] parts = new URDragonPart[]{head, neck1, neck2, neck3, neck4, neck5, front, back, tail1, tail2, tail3, tail4, tail5};
-    private final DragonAnimationProcessor<Wyvern> processor = new MultipartDragonAnimationProcessor<>(this); //todo perhaps move this to main class?
     private List<Vec3> nextPoses = List.of();
 
     public static final float BASE_GROUND_SPEED = 0.2f;
@@ -144,7 +144,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
                     mainController.playAnimation("fly.back");
                     return;
                 }
-                if (getTiltState() == TiltState.DOWN && getMovementSpeedModifier() > 0.25 && getXBodyRot(1) > 0) {
+                if (getTiltState() == TiltState.DOWN && getMovementSpeedModifier() > 0.25 && getXBodyRot(1) > 10) {
                     mainController.playAnimation("fly.down");
                     return;
                 }
@@ -206,14 +206,12 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
 
         //updateChildParts();
         tickAnimations();
-        if (!level().isClientSide()) processor.tick();
-        else {
+        if (level().isClientSide())
             for (int i = 0; i < nextPoses.size(); i++) {
                 EntityPart part = getParts()[i];
                 part.setOldPosAndRot();
                 part.setPos(nextPoses.get(i));
             }
-        }
     }
 
     @Override
@@ -345,5 +343,10 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
     @Override
     public void handleSyncPayload(SyncEntityPartsPosPayload payload) {
         nextPoses = payload.poses();
+    }
+
+    @Override
+    public @Nullable DragonAnimationProcessor<Wyvern> createServerAnimationProcessor() {
+        return new MultipartDragonAnimationProcessor<>(this);
     }
 }

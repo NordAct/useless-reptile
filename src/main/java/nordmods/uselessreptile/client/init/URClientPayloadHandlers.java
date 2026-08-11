@@ -19,6 +19,7 @@ public class URClientPayloadHandlers {
         handleSyncLightningBreathRotations();
         handleOpenVariantChangingOrbScreen();
         handleSyncEntityPartsPosPayload();
+        handleSyncBoneTransformsPayload();
     }
 
     private static void handleOpenDragonInventory() {
@@ -70,6 +71,15 @@ public class URClientPayloadHandlers {
             Entity entity = context.player().level().getEntity(packet.ownerId());
             if (entity instanceof MultipartDragon multipartEntity) {
                 multipartEntity.handleSyncPayload(packet);
+            }
+        });
+    }
+
+    private static void handleSyncBoneTransformsPayload() {
+        ClientPlayNetworking.registerGlobalReceiver(SyncBoneTransformsPayload.PAYLOAD_ID, (packet, context) -> {
+            Entity entity = context.player().level().getEntity(packet.id());
+            if (entity instanceof URDragonEntity dragon && dragon.getAnimationProcessor() != null) {
+                dragon.getAnimationProcessor().handleSyncBoneTransformsPayload(packet);
             }
         });
     }

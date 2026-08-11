@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -133,5 +134,15 @@ public class URDragonPart extends EntityPart {
 
     public void setRelativePos(Vector3f vector3f) {
         setRelativePos(vector3f.x, vector3f.y, vector3f.z);
+    }
+
+    @Override
+    public boolean isPassengerOfSameVehicle(Entity other) {
+        return owner.isPassengerOfSameVehicle(other);
+    }
+
+    @Override
+    public boolean canCollideWith(Entity entity) {
+        return entity != owner && owner.canCollideWith(entity);
     }
 }

@@ -1,6 +1,7 @@
-package nordmods.uselessreptile.common.entity.server_animation_processor;
+package nordmods.uselessreptile.common.entity.animation_processor;
 
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import libs.gg.moonflower.pinwheel.api.geometry.GeometryCompileException;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
@@ -16,12 +17,12 @@ import java.util.HashMap;
 // todo redo literally everything to make it work on dedicated server
 // THIS IS A PROTOTYPE
 // Maybe I also should move this to a library
-public abstract class ServerAnimationProcessor<T extends BRAnimatedObject> {
+public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     protected final T animatable;
     protected final BRState state = new BRState.Impl(new HashMap<>());
     @Nullable
     protected BRModel model;
-    public ServerAnimationProcessor(T animatable) {
+    public AnimationProcessor(T animatable) {
         this.animatable = animatable;
     }
 
@@ -56,7 +57,11 @@ public abstract class ServerAnimationProcessor<T extends BRAnimatedObject> {
         if (model == null) {
             BRModelProvider modelProvider = state.getStateData(StateDataTypes.MODEL_PROVIDER);
             if (modelProvider == null) throw new IllegalStateException("Cannot get model before model provider is provided");
-            model = ServerModelManager.instance().getModel(modelProvider.getModelId(state));
+            try {
+                model = new BRModel(ServerModelManager.instance().getModelData(modelProvider.getModelId(state)));
+            } catch (GeometryCompileException e) {
+                throw new RuntimeException(e);
+            }
         }
         return model;
     }
