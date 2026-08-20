@@ -92,9 +92,6 @@ import java.util.function.BiConsumer;
 public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner {
     public static final int TRANSITION_TICKS = 10;
     protected float pitchLimitGround = 90;
-    protected int primaryAttackDuration = 20;
-    protected int secondaryAttackDuration = 20;
-    protected int specialAttackDuration = 20;
     protected int eatFromInventoryTimer = 20;
     protected int ticksUntilHeal = -1;
     protected float sprintSpeedModifier = 1.1f;
@@ -148,10 +145,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             URFluteModes.TARGET
     );
     public float yBodyRotChange = 0;
-    private LinkedList<Float> yBodyRotChangeO = new LinkedList<>();
+    private final LinkedList<Float> yBodyRotChangeO = new LinkedList<>();
     protected int maxYBodyRotChangeSamples = 10;
     public float xBodyRot = 0;
-    private LinkedList<Float> xBodyRotO = new LinkedList<>();
+    private final LinkedList<Float> xBodyRotO = new LinkedList<>();
     protected int maxXBodyRotSamples = 5;
     private final DragonAnimationProcessor<? extends URDragonEntity> processor = createServerAnimationProcessor();
 
@@ -171,17 +168,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(MOVING_BACKWARDS, false);
+        builder.define(MOVING, false);
         builder.define(DANCING, false);
         builder.define(TURNING_STATE, TurningState.NONE);
-        builder.define(ROTATION_PROGRESS, (byte)0);
         builder.define(TAMING_PROGRESS, 1);
-        builder.define(ATTACK_TYPE, 1);
-        builder.define(MOUNTED_OFFSET, 0.35f);
-        builder.define(HEIGHT_MODIFIER, 1f);
-        builder.define(WIDTH_MODIFIER, 1f);
-        builder.define(SECONDARY_ATTACK_COOLDOWN, 0);
-        builder.define(PRIMARY_ATTACK_COOLDOWN, 0);
-        builder.define(SPECIAL_ATTACK_COOLDOWN, 0);
         builder.define(ACCELERATION_DURATION, 0);
         builder.define(BOUNDED_INSTRUMENT_SOUND, "");
         builder.define(VARIANT, "");
@@ -191,41 +181,19 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> MOVING = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> DANCING = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<TurningState> TURNING_STATE = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.TURNING_STATE);
-    public static final EntityDataAccessor<Byte> ROTATION_PROGRESS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BYTE);
     public static final EntityDataAccessor<Integer> TAMING_PROGRESS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Float> MOUNTED_OFFSET = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Float> HEIGHT_MODIFIER = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Float> WIDTH_MODIFIER = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Integer> SECONDARY_ATTACK_COOLDOWN = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer> PRIMARY_ATTACK_COOLDOWN = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer> SPECIAL_ATTACK_COOLDOWN = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> ACCELERATION_DURATION = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer> ATTACK_TYPE = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<String> BOUNDED_INSTRUMENT_SOUND = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> VARIANT = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<Order> CURRENT_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
     public static final EntityDataAccessor<Order> PREVIOUS_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
     public static final EntityDataAccessor<WanderRadius> WANDER_RADIUS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.WANDER_RADIUS);
 
-    public boolean isSecondaryAttack() {return getSecondaryAttackCooldown() > getMaxSecondaryAttackCooldown() - secondaryAttackDuration;} //old melee
-    public int getSecondaryAttackCooldown() {return  entityData.get(SECONDARY_ATTACK_COOLDOWN);}
-    public void setSecondaryAttackCooldown(int state) {entityData.set(SECONDARY_ATTACK_COOLDOWN, state);}
-
-    public boolean isPrimaryAttack() {return getPrimaryAttackCooldown() > getMaxPrimaryAttackCooldown() - primaryAttackDuration;} //old range
-    public void setPrimaryAttackCooldown(int state) {entityData.set(PRIMARY_ATTACK_COOLDOWN, state);}
-    public int getPrimaryAttackCooldown() {return  entityData.get(PRIMARY_ATTACK_COOLDOWN);}
-
-    public boolean isSpecialAttack() {return getSpecialAttackCooldown() > getMaxSpecialAttackCooldown() - specialAttackDuration;}
-    public void setSpecialAttackCooldown(int state) {entityData.set(SPECIAL_ATTACK_COOLDOWN, state);}
-    public int getSpecialAttackCooldown() {return  entityData.get(SPECIAL_ATTACK_COOLDOWN);}
-
     public int getAccelerationDuration() {return entityData.get(ACCELERATION_DURATION);}
     public void setAccelerationDuration(int state) {entityData.set(ACCELERATION_DURATION, state);}
-
-    public int getAttackType() {return entityData.get(ATTACK_TYPE);}
-    public void setAttackType(int state) {entityData.set(ATTACK_TYPE, state);}
 
     public boolean isMovingBackwards() {return entityData.get(MOVING_BACKWARDS);}
     public void setMovingBackwards(boolean state) {entityData.set(MOVING_BACKWARDS, state);}
@@ -233,7 +201,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public boolean isDancing() {return entityData.get(DANCING);}
     public void setDancing(boolean state) {entityData.set(DANCING, state);}
 
-    public boolean isMoving() {return getDeltaMovement().z() != 0 || getDeltaMovement().x() != 0;}
+    public boolean isMoving() {return entityData.get(MOVING);}
+    public void setMoving(boolean state) {entityData.set(MOVING, state);}
 
     @Override
     public boolean isOrderedToSit() {
@@ -266,21 +235,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public TurningState getTurningState() {return entityData.get(TURNING_STATE);}
     public void setTurningState(TurningState state) {entityData.set(TURNING_STATE, state);}
 
-    public byte getRotationProgress() {return entityData.get(ROTATION_PROGRESS);}
-    public float getNormalizedRotationProgress() {return (float)getRotationProgress()/(float)TRANSITION_TICKS;}
-    public void setRotationProgress(byte state) {entityData.set(ROTATION_PROGRESS, state);}
-
     public int getTamingProgress() {return entityData.get(TAMING_PROGRESS);}
     public void setTamingProgress(int state) {entityData.set(TAMING_PROGRESS, state);}
-
-    public float getMountedOffset() {return entityData.get(MOUNTED_OFFSET);}
-    public void setMountedOffset(float state) {entityData.set(MOUNTED_OFFSET, state);}
-
-    public float getHeightMod() {return entityData.get(HEIGHT_MODIFIER);}
-    public void setHeightMod(float state) {entityData.set(HEIGHT_MODIFIER, state);}
-
-    public float getWidthMod() {return entityData.get(WIDTH_MODIFIER);}
-    public void setWidthMod(float state) {entityData.set(WIDTH_MODIFIER, state);}
 
     public String getBoundedInstrumentSound() {return  entityData.get(BOUNDED_INSTRUMENT_SOUND);}
     public void setBoundedInstrumentSound(String state) {entityData.set(BOUNDED_INSTRUMENT_SOUND, state);}
@@ -495,9 +451,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED)
                 .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN)
-                .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN)
-                .add(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN)
                 .add(URAttributes.DRAGON_MINING_LEVEL);
 
     }
@@ -585,11 +538,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 URNetworkHelper.playSound(this, SoundEvents.ARMOR_EQUIP_GENERIC.value(), getSoundSource(), 1, 1, 6);
         }
         super.onEquipItem(slot, oldStack, newStack);
-    }
-
-    @Override
-    public @NonNull EntityDimensions getDefaultDimensions(@NonNull Pose pose) {
-        return super.getDefaultDimensions(pose).scale(getWidthMod()/getScale(), getHeightMod()/getScale());
     }
 
     @Nullable
@@ -758,43 +706,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return new DragonBodyRotationControl<>(this);
     }
 
-    protected void setHitboxModifiers(float destinationHeight, float destinationWidth, float destinationMountedOffset) {
-        destinationHeight *= getScale();
-        destinationWidth *= getScale();
-        destinationMountedOffset *= getScale();
-
-        float widthMod = getWidthMod();
-        float heightMod = getHeightMod();
-        float mountedOffset = getMountedOffset();
-        float widthDiff = widthMod - destinationWidth;
-        float heightDiff = heightMod - destinationHeight;
-        float mountedOffsetDiff = mountedOffset - destinationMountedOffset;
-
-        if (widthDiff != 0) {
-            if (widthDiff > getWidthModTransSpeed()) widthMod -= getWidthModTransSpeed();
-            else if (widthDiff < -getWidthModTransSpeed()) widthMod += getWidthModTransSpeed();
-            else widthMod = destinationWidth;
-        }
-
-        if (heightDiff != 0) {
-            if (heightDiff > getHeightModTransSpeed()) heightMod -= getHeightModTransSpeed();
-            else if (heightDiff < -getHeightModTransSpeed()) heightMod += getHeightModTransSpeed();
-            else heightMod = destinationHeight;
-        }
-
-        if (mountedOffsetDiff != 0) {
-            if (mountedOffsetDiff > getMountedOffsetTransSpeed()) mountedOffset -= getHeightModTransSpeed();
-            else if (mountedOffsetDiff < -getHeightModTransSpeed()) mountedOffset += getHeightModTransSpeed();
-            else mountedOffset = destinationMountedOffset;
-        }
-
-        setMountedOffset(mountedOffset);
-        setHeightMod(heightMod);
-        setWidthMod(widthMod);
-
-        refreshDimensions();
-    }
-
     public float getGroundRotationSpeed() {
         return (float) getAttributeValue(URAttributes.DRAGON_GROUND_ROTATION_SPEED);
     }
@@ -817,16 +728,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return (float) (speed / baseSpeed);
     }
 
-    public int getMaxSecondaryAttackCooldown() {
-        return (int) (getAttributeValue(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN) * getCooldownModifier());
-    }
-    public int getMaxPrimaryAttackCooldown() {
-        return (int) (getAttributeValue(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN) * getCooldownModifier());
-    }
-    public int getMaxSpecialAttackCooldown() {
-        return (int) (getAttributeValue(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN) * getCooldownModifier());
-    }
-
     @Override
     public void tick() {
         yBodyRotChangeO.addLast(yBodyRotChange);
@@ -837,19 +738,15 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
         super.tick();
         if (!level().isClientSide()) {
-            updateRotationProgress();
-
             if (getOwner() != null && getCurrentOrder() == Order.FOLLOW) {
                 if (distanceTo(getOwner()) > getWanderRadius().radius) {
                     shouldFollow = true;
                     setHomePoint(getOwner().blockPosition());
                 }
             }
+            setMoving(getDeltaMovement().z() != 0 || getDeltaMovement().x() != 0);
         }
 
-        //if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
-        //if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
-        //if (getSpecialAttackCooldown() > 0) setSpecialAttackCooldown(getSpecialAttackCooldown() - 1);
         getAbilityHolders().values().forEach(DragonAbilityHolder::tick);
 
         if (ticksUntilHeal > -1 && --healTimer <= 0) {
@@ -947,7 +844,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     protected SoundEvent getDeathSound() {
-        SoundInfo soundInfo = getSoundInfo("death");
+        SoundInfo soundInfo = getSoundInfo("death");  //don't ask about this either
         if (soundInfo != null) playSound(SoundEvent.createVariableRangeEvent(soundInfo.id()), soundInfo.volume(), getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()));
         return null;
     }
@@ -964,11 +861,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (target.is(URTags.DRAGON_IMMUNE)) return false;
         if (getOwner() != null && target instanceof OwnableEntity tameable && tameable.getOwner() == getOwner()) return false;
         return super.canAttack(target);
-    }
-
-    @Override
-    protected @NonNull Vec3 getPassengerAttachmentPoint(@NonNull Entity passenger, @NonNull EntityDimensions dimensions, float scaleFactor) {
-        return new Vec3(0, getMountedOffset(), 0);
     }
 
     @Override
@@ -990,7 +882,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return false;
     }
 
-    public CommonDragonVariantData.@Nullable TamingItem getTamingItem(ItemStack itemStack) {
+    public CommonDragonVariantData.@Nullable TamingItem getTamingItem(ItemStack itemStack) { //todo remove taming items for dragons that cannot be tamed with food
         DragonVariant variant = getDragonVariant();
         if (!isInvalidVariant()) {
             return variant.common().tamingItems().orElse(List.of()).stream()
@@ -1048,37 +940,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public final Identifier getDragonId() {
         return EntityType.getKey(getType());
-    }
-
-    private void updateRotationProgress() {
-        switch (getTurningState()) {
-            case LEFT -> {
-                if (getRotationProgress() < TRANSITION_TICKS) setRotationProgress((byte) (getRotationProgress() + 1));
-            }
-            case RIGHT -> {
-                if (getRotationProgress() > -TRANSITION_TICKS) setRotationProgress((byte) (getRotationProgress() - 1));
-            }
-            default -> {
-                if (getRotationProgress() != 0) {
-                    if (getRotationProgress() > 0) setRotationProgress((byte) (getRotationProgress() - 1));
-                    else setRotationProgress((byte) (getRotationProgress() + 1));
-                }
-            }
-        }
-    }
-
-    public float getYawWithAdjustment() {
-        float yaw = getYRot();
-        if (!hasControllingPassenger() && getTarget() != null) {
-            float targetYaw = getLookControl().getYRotD().orElse(0f);
-            float difference = Math.clamp((yaw - targetYaw) % 360, -getHeadRotSpeed(), getHeadRotSpeed());
-            return yaw + difference; //making it easier for dum-dum to aim on its own
-        }
-        return (yaw - getNormalizedRotationProgress() * getYawProgressLimit()) % 360;
-    }
-
-    public float getYawProgressLimit() {
-        return 0;
     }
 
     @Override
@@ -1326,16 +1187,19 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return sum / xBodyRotO.size();
     }
 
+    /// @return creates server animation processor for dragon
     @Nullable
     public DragonAnimationProcessor<? extends URDragonEntity> createServerAnimationProcessor() {
         return null;
     }
 
+    /// @return server animation processor for dragon. If it exists, entity will be animated serverside and send transformed bones back to client
     @Nullable
     public DragonAnimationProcessor<? extends URDragonEntity> getAnimationProcessor() {
         return processor;
     }
 
+    /// Makes dragons dance to jukebox
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -1363,6 +1227,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
     }
 
+    /// Calls dragon upon using instrument. It's called "HornUsedEventListener" because initially it was used only for goat horns
     protected class HornUsedEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -1398,6 +1263,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
     }
 
+    /// Handles flute commands
     protected class FluteUsedEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;

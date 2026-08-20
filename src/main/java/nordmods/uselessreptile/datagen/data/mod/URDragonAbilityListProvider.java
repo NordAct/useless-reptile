@@ -397,39 +397,6 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                         ),
                                         Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
                                 ),
-                                new TriggerableAbility.Data(0, 0.71f),
-                                false,
-                                new Vec3(0, -0.5, 1.75),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                3, 4,
-                                List.of(), false
-                        )
-                )
-        );
-        addEntry(
-                UselessReptile.id("lightning_chaser"),
-                List.of(
-                        new MeleeAttackAbility(
-                                new CommonDragonAbilityData(
-                                        1.5f,
-                                        true,
-                                        List.of(
-                                                new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
-                                                        List.of("attack.melee1", "attack.melee2", "attack.melee3"),
-                                                        true,
-                                                        List.of()
-                                                )
-                                        ),
-                                        List.of(
-                                                new FlyingMovementUseCondition(
-                                                        Optional.of(false),
-                                                        Optional.empty(),
-                                                        Optional.empty()
-                                                )
-                                        ),
-                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
-                                ),
                                 new TriggerableAbility.Data(0, 1),
                                 false,
                                 new Vec3(0, -0.1, 2.5),

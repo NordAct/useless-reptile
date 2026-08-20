@@ -360,7 +360,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    public boolean canBeLeashed() {
+    public boolean canBeLeashed() { //Leads have too much whimsy when they interact with server authoritative mount logic
         return false;
     }
 
@@ -393,6 +393,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         return new DragonAbilityHolder(new NoopAbility(), this);
     }
 
+    /// Rider's attacks
     public enum AttackType implements StringRepresentable {
         PRIMARY("primary"),
         SECONDARY("secondary")

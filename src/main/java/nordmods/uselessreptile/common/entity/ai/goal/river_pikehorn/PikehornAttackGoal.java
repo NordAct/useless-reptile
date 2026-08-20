@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 
 import java.util.EnumSet;
 
@@ -62,7 +63,7 @@ public class PikehornAttackGoal extends Goal {
         entity.setSprinting(true);
         entity.getNavigation().moveTo(target, 1);
 
-        if (entity.getPrimaryAttackCooldown() > 0 || !entity.getPrimaryAttackBox().intersects(target.getBoundingBox())) return;
+        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0) || !entity.getPrimaryAttackBox().intersects(target.getBoundingBox())) return;
 
         entity.attackMelee(target);
     }

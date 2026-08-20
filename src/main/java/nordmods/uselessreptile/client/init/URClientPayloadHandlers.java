@@ -37,7 +37,7 @@ public class URClientPayloadHandlers {
         ClientPlayNetworking.registerGlobalReceiver(LiftoffParticlesPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.id());
             if (entity instanceof URDragonEntity dragon) {
-                float span = dragon.getWidthMod()/2;
+                float span = dragon.getBbWidth()/2;
                 for (int i = 0; i < 25 * span; i++)
                     context.player().level().addParticle(ParticleTypes.CLOUD,
                             dragon.getX(), dragon.getY() + 1, dragon.getZ(),

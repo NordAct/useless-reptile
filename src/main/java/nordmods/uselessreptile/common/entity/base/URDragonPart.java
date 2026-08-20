@@ -23,20 +23,14 @@ public class URDragonPart extends EntityPart {
     public final String name;
     private float heightMod = 1;
     private float widthMod = 1;
-    private final float damageMultiplier;
 
     public URDragonPart(URDragonEntity owner, String name) {
-        this(owner, name, 1);
+        this(owner, name, 1, 1);
     }
 
-    public URDragonPart(URDragonEntity owner, String name, float damageMultiplier) {
-        this(owner, name, 1, 1, damageMultiplier);
-    }
-
-    public URDragonPart(URDragonEntity owner, String name, float width, float height, float damageMultiplier) {
+    public URDragonPart(URDragonEntity owner, String name, float width, float height) {
         super(owner, width, height);
         this.name = name;
-        this.damageMultiplier = damageMultiplier;
         refreshDimensions();
     }
 
@@ -76,7 +70,7 @@ public class URDragonPart extends EntityPart {
     @Override
     public boolean hurtServer(ServerLevel world, DamageSource source, float amount) {
         if (checkInvulnerability(world, source)) return false;
-        return super.hurtServer(world, source, amount * damageMultiplier);
+        return super.hurtServer(world, source, amount);
     }
 
     @Override

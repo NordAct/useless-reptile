@@ -646,24 +646,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.wyvernFlyingSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Integer> wyvernBaseSecondaryAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.wyvernBaseSecondaryAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.wyvernBaseSecondaryAttackCooldown,
-                        () -> config.wyvernBaseSecondaryAttackCooldown,
-                        val -> config.wyvernBaseSecondaryAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
-        Option<Integer> wyvernBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.wyvernBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.wyvernBasePrimaryAttackCooldown,
-                        () -> config.wyvernBasePrimaryAttackCooldown,
-                        val -> config.wyvernBasePrimaryAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
         Option<Integer> wyvernBaseAccelerationDuration = Option.<Integer>createBuilder()
                 .name(Component.translatable(URAttributes.DRAGON_ACCELERATION_DURATION.value().getDescriptionId()))
                 .description(OptionDescription.createBuilder()
@@ -703,8 +685,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
         wyvernAttributesGroup.option(wyvernDamage);
         wyvernAttributesGroup.option(wyvernKnockback);
-        wyvernAttributesGroup.option(wyvernBasePrimaryAttackCooldown);
-        wyvernAttributesGroup.option(wyvernBaseSecondaryAttackCooldown);
         wyvernAttributesGroup.option(wyvernHealth);
         wyvernAttributesGroup.option(wyvernArmor);
         wyvernAttributesGroup.option(wyvernArmorToughness);
@@ -777,24 +757,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.moleclawGroundSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Integer> moleclawBaseSecondaryAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.moleclawBaseSecondaryAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.moleclawBaseSecondaryAttackCooldown,
-                        () -> config.moleclawBaseSecondaryAttackCooldown,
-                        val -> config.moleclawBaseSecondaryAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
-        Option<Integer> moleclawBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.moleclawBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.moleclawBasePrimaryAttackCooldown,
-                        () -> config.moleclawBasePrimaryAttackCooldown,
-                        val -> config.moleclawBasePrimaryAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
         Option<Float> moleclawRotationSpeedGround = Option.<Float>createBuilder()
                 .name(Component.translatable(URAttributes.DRAGON_GROUND_ROTATION_SPEED.value().getDescriptionId()))
                 .description(OptionDescription.createBuilder()
@@ -807,8 +769,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
         moleclawAttributesGroup.option(moleclawDamage);
         moleclawAttributesGroup.option(moleclawKnockback);
-        moleclawAttributesGroup.option(moleclawBasePrimaryAttackCooldown);
-        moleclawAttributesGroup.option(moleclawBaseSecondaryAttackCooldown);
         moleclawAttributesGroup.option(moleclawHealth);
         moleclawAttributesGroup.option(moleclawArmor);
         moleclawAttributesGroup.option(moleclawArmorToughness);
@@ -886,15 +846,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.riverPikehornFlyingSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Integer> riverPikehornBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.riverPikehornBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.riverPikehornBasePrimaryAttackCooldown,
-                        () -> config.riverPikehornBasePrimaryAttackCooldown,
-                        val -> config.riverPikehornBasePrimaryAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
         Option<Integer> riverPikehornBaseAccelerationDuration = Option.<Integer>createBuilder()
                 .name(Component.translatable(URAttributes.DRAGON_ACCELERATION_DURATION.value().getDescriptionId()))
                 .description(OptionDescription.createBuilder()
@@ -934,7 +885,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
         riverPikehornAttributesGroup.option(riverPikehornDamage);
         riverPikehornAttributesGroup.option(riverPikehornKnockback);
-        riverPikehornAttributesGroup.option(riverPikehornBasePrimaryAttackCooldown);
         riverPikehornAttributesGroup.option(riverPikehornHealth);
         riverPikehornAttributesGroup.option(riverPikehornArmor);
         riverPikehornAttributesGroup.option(riverPikehornArmorToughness);
@@ -1016,33 +966,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.lightningChaserFlyingSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Integer> lightningChaserBaseSecondaryAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.lightningChaserBaseSecondaryAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.lightningChaserBaseSecondaryAttackCooldown,
-                        () -> config.lightningChaserBaseSecondaryAttackCooldown,
-                        val -> config.lightningChaserBaseSecondaryAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
-        Option<Integer> lightningChaserBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.lightningChaserBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.lightningChaserBasePrimaryAttackCooldown,
-                        () -> config.lightningChaserBasePrimaryAttackCooldown,
-                        val -> config.lightningChaserBasePrimaryAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
-        Option<Integer> lightningChaserBaseSpecialAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.lightningChaserBaseSpecialAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.lightningChaserBaseSpecialAttackCooldown,
-                        () -> config.lightningChaserBaseSpecialAttackCooldown,
-                        val -> config.lightningChaserBaseSpecialAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
         Option<Integer> lightningChaserBaseAccelerationDuration = Option.<Integer>createBuilder()
                 .name(Component.translatable(URAttributes.DRAGON_ACCELERATION_DURATION.value().getDescriptionId()))
                 .description(OptionDescription.createBuilder()
@@ -1082,9 +1005,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
         lightningChaserAttributesGroup.option(lightningChaserDamage);
         lightningChaserAttributesGroup.option(lightningChaserKnockback);
-        lightningChaserAttributesGroup.option(lightningChaserBasePrimaryAttackCooldown);
-        lightningChaserAttributesGroup.option(lightningChaserBaseSecondaryAttackCooldown);
-        lightningChaserAttributesGroup.option(lightningChaserBaseSpecialAttackCooldown);
         lightningChaserAttributesGroup.option(lightningChaserHealth);
         lightningChaserAttributesGroup.option(lightningChaserArmor);
         lightningChaserAttributesGroup.option(lightningChaserArmorToughness);
@@ -1157,15 +1077,6 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.magmamuncherGroundSpeed = val)
                 .customController(FloatFieldController::new)
                 .build();
-        Option<Integer> magmamuncherBasePrimaryAttackCooldown = Option.<Integer>createBuilder()
-                .name(Component.translatable(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN.value().getDescriptionId()))
-                .description(OptionDescription.createBuilder()
-                        .text(Component.translatable("config.uselessreptile.option.magmamuncherBasePrimaryAttackCooldown.@Tooltip"), requiresRestart()).build())
-                .binding(defaults.magmamuncherBasePrimaryAttackCooldown,
-                        () -> config.magmamuncherBasePrimaryAttackCooldown,
-                        val -> config.magmamuncherBasePrimaryAttackCooldown = val)
-                .customController(IntegerFieldController::new)
-                .build();
         Option<Float> magmamuncherRotationSpeedGround = Option.<Float>createBuilder()
                 .name(Component.translatable(URAttributes.DRAGON_GROUND_ROTATION_SPEED.value().getDescriptionId()))
                 .description(OptionDescription.createBuilder()
@@ -1178,7 +1089,6 @@ public class ModMenuIntegration implements ModMenuApi {
 
         magmamuncherAttributesGroup.option(magmamuncherDamage);
         magmamuncherAttributesGroup.option(magmamuncherKnockback);
-        magmamuncherAttributesGroup.option(magmamuncherBasePrimaryAttackCooldown);
         magmamuncherAttributesGroup.option(magmamuncherHealth);
         magmamuncherAttributesGroup.option(magmamuncherArmor);
         magmamuncherAttributesGroup.option(magmamuncherArmorToughness);

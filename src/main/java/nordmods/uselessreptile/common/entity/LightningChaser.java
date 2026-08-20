@@ -39,6 +39,7 @@ import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -51,7 +52,6 @@ import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
-import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
@@ -59,12 +59,9 @@ import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
 import java.util.function.BiConsumer;
 
 public class LightningChaser extends URRideableFlyingDragonEntity implements MultipartEntity {
-    private int shockwaveDelay = -1;
-    private int shootDelay = -1;
     private int bailOutTimer = 6000;
     private boolean shouldBailOut = false;
     private boolean isChallenger = false;
@@ -82,8 +79,9 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
     protected final DynamicGameEventListener<LightningStrikeEventListener> lightningStrikeEventHandler = new DynamicGameEventListener<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
-
     public static final float BASE_GROUND_SPEED = 0.25f;
+    private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(2.95f, 1).withEyeHeight(0.9f);
+    private static final EntityDimensions ON_GROUND = EntityDimensions.scalable(2.95f, 2.95f).withEyeHeight(2.9f);
 
     public LightningChaser(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -91,7 +89,14 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         pitchLimitGround = 50;
         pitchLimitAir = 20;
         ticksUntilHeal = 500;
-        specialAttackDuration = 27;
+    }
+
+    @Override
+    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (data == FLYING || data == MOVING || data == MOVING_BACKWARDS) {
+            refreshDimensions();
+        }
     }
 
     @Override
@@ -160,11 +165,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (mainController.isPlayingAbilityAnimation(AnimationController.MAIN)) return;
         if (isFlying()) {
-            if (isSpecialAttack()) {
-                mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1/ getCooldownModifier()));
-                mainController.playAnimation("fly.shockwave");
-                return;
-            }
             if (isMoving()) {
                 if (isMovingBackwards()) {
                     mainController.playAnimation("fly.back");
@@ -221,10 +221,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
                 .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().lightningChaserVerticalSpeed)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().lightningChaserBaseAccelerationDuration)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().lightningChaserRotationSpeedGround)
-                .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().lightningChaserRotationSpeedAir)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().lightningChaserBasePrimaryAttackCooldown)
-                .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().lightningChaserBaseSecondaryAttackCooldown)
-                .add(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN, attributes().lightningChaserBaseSpecialAttackCooldown);
+                .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().lightningChaserRotationSpeedAir);
     }
 
     @Override
@@ -273,31 +270,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     @Override
     public void tick() {
         super.tick();
-
-        float dHeight;
-        float dWidth;
-        float dMountedOffset;
-        dWidth = 2.95f;
-        if (isFlying()) {
-            if (isMoving() && !isMovingBackwards() && !isSecondaryAttack()) {
-                dHeight = 1f;
-                dMountedOffset = 0.75f;
-            } else {
-                dHeight = 2.95f;
-                dMountedOffset = 2.3f;
-            }
-        } else {
-            dHeight = 2.95f;
-            dMountedOffset = 2.3f;
-        }
-        setHitboxModifiers(dHeight, dWidth, dMountedOffset);
-
-        if (shockwaveDelay == 0) shockwave();
-        if (shockwaveDelay > -1) shockwaveDelay--;
-
-        if (shootDelay == 0) shoot();
-        if (shootDelay > -1) shootDelay--;
-
         updateThunderstormBonus();
 
         if (!level().isClientSide() && !shouldBailOut) {
@@ -321,6 +293,18 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
         updateChildParts();
         tickAnimations();
+    }
+
+    @Override
+    protected EntityDimensions getDefaultDimensions(Pose pose) {
+        EntityDimensions dimensions;
+        if (isFlying()) {
+            if (isMoving() && !isMovingBackwards()) dimensions = FLYING_FORWARD;
+            else dimensions = ON_GROUND;
+        } else {
+            dimensions = ON_GROUND;
+        }
+        return dimensions.scale(getAgeScale());
     }
 
     @Override
@@ -398,56 +382,37 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         lightning.discard();
     }
 
-    public void triggerShoot() {
-        setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        shootDelay = 7;
+    public void triggerShoot() { //todo remove
+        getAvailableAbilities()
+                .stream()
+                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK))
+                .findFirst()
+                .ifPresent(DragonAbilityHolder::use);
     }
 
     public void shoot() {
-        LightningBreath.createBeam(this, getXRot(), getYawWithAdjustment(), head.position(), 50, 10, 1, 0xFFFFFF); //todo redo
+        LightningBreath.createBeam(this, getViewXRot(1), getViewYRot(1), head.position(), 50, 10, 1, 0xFFFFFF); //todo redo
     }
 
-    public float getYawProgressLimit() {
+    @Override
+    public int getMaxHeadYRot() {
         return 45;
     }
 
-    private void shockwave() {
-        ShockwaveSphere shockwaveSphereEntity = new ShockwaveSphere(level());
-        shockwaveSphereEntity.setOwner(this);
-        shockwaveSphereEntity.setPos(position().add(0, getHeightMod(), 0));
-        shockwaveSphereEntity.setDeltaMovement(Vec3.ZERO);
-        shockwaveSphereEntity.setNoGravity(true);
-        level().addFreshEntity(shockwaveSphereEntity);
+    public void triggerShockwave() { //todo remove
+        getAvailableAbilities()
+                .stream()
+                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.SHOCKWAVE_ATTACK))
+                .findFirst()
+                .ifPresent(DragonAbilityHolder::use);
     }
 
-    public void triggerShockwave() {
-        setSpecialAttackCooldown(getMaxSpecialAttackCooldown());
-        shockwaveDelay = TRANSITION_TICKS/2;
-    }
-
-    public void meleeAttack() {
-        if (!(level() instanceof ServerLevel world)) return;
-        List<Entity> list = world.getEntities(
-                this,
-                getPrimaryAttackBox(),
-                entity -> !getPassengers().contains(entity)
-                        && !entity.is(this)
-                        && !entity.is(URTags.DRAGON_IMMUNE)
-                        && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
-        );
-        Entity target = null;
-        if (!list.isEmpty()) {
-            target = list.getFirst();
-            for (Entity entry : list) {
-                if (distanceToSqr(entry) < distanceToSqr(target)) target = entry;
-            }
-        }
-        setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
-        setAttackType(random.nextInt(3)+1);
-        if (target != null && !getPassengers().contains(target)) {
-            AABB targetBox = target.getBoundingBox();
-            if (targetBox.intersects(getPrimaryAttackBox())) doHurtTarget(world, target);
-        }
+    public void meleeAttack() { //todo remove
+        getAvailableAbilities()
+                .stream()
+                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
+                .findFirst()
+                .ifPresent(DragonAbilityHolder::use);
     }
 
     @Override
@@ -455,9 +420,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         Vec3 rotationVec = calculateViewVector(0, getYRot()).scale(2.5);
         return getBoundingBox().move(rotationVec);
     }
-
-    @Override
-    public boolean isSecondaryAttack() {return isFlying() ? getSecondaryAttackCooldown() > getMaxSecondaryAttackCooldown() - 24 : super.isSecondaryAttack();}
 
     @Override
     protected int getTicksUntilHeal() {
@@ -552,11 +514,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public float getSecondsToDisableBlocking() {
-        return isSecondaryAttack() || isPrimaryAttack() ? 5.0F : 0f;
-    }
-
-    @Override
     public boolean canBreakBlocks() {
         if (!(level() instanceof ServerLevel world)) return false;
         boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().lightningChaserGriefing.canTamedBreak() : URConfig.getConfig().lightningChaserGriefing.canUntamedBreak();
@@ -600,11 +557,11 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         Vector3f tail2Pos;
         Vector3f tail3Pos;
 
-        float yawOffset = getNormalizedRotationProgress();
+        float yawOffset = 0; //todo redo LC multipart to same system as wyvern
         float pitchOffset = tiltProgress / TRANSITION_TICKS;
 
         if (isFlying()) {
-            if (isMoving() && !isMovingBackwards() && !isSpecialAttack()) {
+            if (isMoving() && !isMovingBackwards()) {
                 if (getTiltState() == TiltState.DOWN) {
                     wing1LeftPos = new Vector3f(2, 0, 0.5f);
                     wing1LeftScale = new Vec2(1, 1.5f);

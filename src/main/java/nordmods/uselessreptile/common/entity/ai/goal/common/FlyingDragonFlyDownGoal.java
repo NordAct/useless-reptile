@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import nordmods.uselessreptile.common.entity.base.FlyingDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-
-import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.entity.base.FlyingDragon;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jspecify.annotations.Nullable;
+
+import java.util.Optional;
 
 public class FlyingDragonFlyDownGoal<T extends URDragonEntity & FlyingDragon> extends FlyingDragonFlyAroundGoal<T> {
     public FlyingDragonFlyDownGoal(T entity, int range) {
@@ -36,7 +36,7 @@ public class FlyingDragonFlyDownGoal<T extends URDragonEntity & FlyingDragon> ex
                 (blockPos -> {
                     if (blockPos.getY() < world.dimensionType().minY() || blockPos.getY() > 320) return false;
                     if (!isFullCube(blockPos)) return false;
-                    float height = mob.getHeightMod();
+                    float height = mob.getBbHeight();
                     for (int i = 1; i <= height + 0.5; i++) {
                         BlockPos above = blockPos.above(i);
                         if (isFullCube(above) || !world.getBlockState(above).getFluidState().isEmpty()) return false;

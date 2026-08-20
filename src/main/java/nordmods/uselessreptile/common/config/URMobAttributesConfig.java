@@ -31,7 +31,6 @@ public class URMobAttributesConfig {
             Armor toughness: [0;20]
             Ground, flying and vertical speed: [0;1024]
             Rotation speeds: [0;180]
-            Attack cooldowns: [0;2048]
             Acceleration duration: [0;2048]
             Attack cooldowns and acceleration duration are measured in ticks, rotation speeds - in degrees. Movement speed is measured in corgi-sized meteors
             
@@ -49,10 +48,6 @@ public class URMobAttributesConfig {
     public float wyvernGroundSpeed = Wyvern.BASE_GROUND_SPEED;
     @SerialEntry
     public float wyvernFlyingSpeed = 0.7f;
-    @SerialEntry
-    public int wyvernBaseSecondaryAttackCooldown = 30;
-    @SerialEntry
-    public int wyvernBasePrimaryAttackCooldown = 80;
     @SerialEntry
     public int wyvernBaseAccelerationDuration = 400;
     @SerialEntry
@@ -75,10 +70,6 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float moleclawGroundSpeed = Moleclaw.BASE_GROUND_SPEED;
     @SerialEntry
-    public int moleclawBaseSecondaryAttackCooldown = 30;
-    @SerialEntry
-    public int moleclawBasePrimaryAttackCooldown = 60;
-    @SerialEntry
     public float moleclawRotationSpeedGround = 6;
 
     @SerialEntry(comment = "RIVER PIKEHORN ATTRIBUTES")
@@ -95,8 +86,6 @@ public class URMobAttributesConfig {
     public float riverPikehornGroundSpeed = RiverPikehorn.BASE_GROUND_SPEED;
     @SerialEntry
     public float riverPikehornFlyingSpeed = 0.8f;
-    @SerialEntry
-    public int riverPikehornBasePrimaryAttackCooldown = 20;
     @SerialEntry
     public int riverPikehornBaseAccelerationDuration = 200;
     @SerialEntry
@@ -121,12 +110,6 @@ public class URMobAttributesConfig {
     @SerialEntry
     public float lightningChaserFlyingSpeed = 0.9f;
     @SerialEntry
-    public int lightningChaserBaseSecondaryAttackCooldown = 30;
-    @SerialEntry
-    public int lightningChaserBasePrimaryAttackCooldown = 100;
-    @SerialEntry
-    public int lightningChaserBaseSpecialAttackCooldown = 300;
-    @SerialEntry
     public int lightningChaserBaseAccelerationDuration = 800;
     @SerialEntry
     public float lightningChaserRotationSpeedGround = 9;
@@ -147,8 +130,6 @@ public class URMobAttributesConfig {
     public float magmamuncherArmorToughness = 0;
     @SerialEntry
     public float magmamuncherGroundSpeed = Magmamuncher.BASE_GROUND_SPEED;
-    @SerialEntry
-    public int magmamuncherBasePrimaryAttackCooldown = 30;
     @SerialEntry
     public float magmamuncherRotationSpeedGround = 20;
 

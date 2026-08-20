@@ -21,6 +21,7 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
@@ -34,6 +35,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URFluteModes;
 import nordmods.uselessreptile.common.item.FluteItem;
@@ -65,9 +67,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         super(entityType, world);
         xpReward = 5;
         setCanPickUpLoot(true);
-
-        secondaryAttackDuration = 11;
-        primaryAttackDuration = 11;
         ticksUntilHeal = 400;
     }
 
@@ -157,8 +156,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     @Override
     public void tick() {
         super.tick();
-        if (getVehicle() instanceof Player) setHitboxModifiers(0.7f, 0.6f, 0);
-        else setHitboxModifiers(0.7f, 0.8f, 0);
 
         if (!isTame() && level() instanceof ServerLevel world) {
             if (!isHunting() && --huntTimer <= 0) setHunting(true);
@@ -216,8 +213,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
                 .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().riverPikehornVerticalSpeed)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().riverPikehornBaseAccelerationDuration)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().riverPikehornRotationSpeedGround)
-                .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().riverPikehornRotationSpeedAir)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().riverPikehornBasePrimaryAttackCooldown);
+                .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().riverPikehornRotationSpeedAir);
     }
 
     @Override
@@ -237,11 +233,12 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
     }
 
-    public void attackMelee(LivingEntity target) {
-        if (!(level() instanceof ServerLevel world)) return;
-        setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        setAttackType(random.nextInt(3)+1);
-        doHurtTarget(world, target);
+    public void attackMelee(LivingEntity target) { //todo remove
+        getAvailableAbilities()
+                .stream()
+                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
+                .findFirst()
+                .ifPresent(DragonAbilityHolder::use);
     }
 
     @Override

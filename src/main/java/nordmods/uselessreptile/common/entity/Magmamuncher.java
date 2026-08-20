@@ -11,7 +11,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -33,6 +32,7 @@ import net.minecraft.world.phys.AABB;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -45,6 +45,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
@@ -144,8 +145,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
                 .add(Attributes.ARMOR, attributes().magmamuncherArmor)
                 .add(Attributes.ARMOR_TOUGHNESS, attributes().magmamuncherArmorToughness)
                 .add(Attributes.MOVEMENT_SPEED, attributes().magmamuncherGroundSpeed)
-                .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().magmamuncherRotationSpeedGround)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().magmamuncherBasePrimaryAttackCooldown);
+                .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().magmamuncherRotationSpeedGround);
     }
 
     @Override
@@ -193,8 +193,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     @Override
     public void tick() {
         super.tick();
-        if (getVehicle() instanceof Player) setHitboxModifiers(0.35f, 0.6f, 0);
-        else setHitboxModifiers(0.35f, 0.7f, 0);
         if (eatMagmaCooldown > 0) eatMagmaCooldown--;
         checkIfEatingMagma();
         tickAnimations();
@@ -223,16 +221,12 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         }
     }
 
-    public void attackMelee(LivingEntity target) {
-        if (!(level() instanceof ServerLevel world)) return;
-        setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        setAttackType(random.nextInt(3)+1);
-        AttributeModifier modifier = new AttributeModifier(UselessReptile.id("magma_cube_bonus"), 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        if (target instanceof MagmaCube) getAttribute(Attributes.ATTACK_DAMAGE).addTransientModifier(modifier);
-        if (doHurtTarget(world, target)) {
-            target.igniteForSeconds((float) (0.75f * getAttributeValue(Attributes.ATTACK_DAMAGE)));
-        }
-        getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(modifier);
+    public void attackMelee(LivingEntity target) { //todo remove
+        getAvailableAbilities()
+                .stream()
+                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
+                .findFirst()
+                .ifPresent(DragonAbilityHolder::use);
     }
 
     public BlockPos getMagmaBlockPos() {

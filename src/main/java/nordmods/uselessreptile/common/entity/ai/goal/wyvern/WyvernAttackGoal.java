@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.entity.ai.goal.wyvern;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import nordmods.uselessreptile.common.entity.Wyvern;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 
 import java.util.EnumSet;
 
@@ -19,7 +20,6 @@ public class WyvernAttackGoal extends Goal {
 
     @Override
     public void start() {
-        entity.setPrimaryAttackCooldown(Math.max(entity.getPrimaryAttackCooldown(), 20));
         target = entity.getTarget();
     }
 
@@ -65,13 +65,13 @@ public class WyvernAttackGoal extends Goal {
         entity.getNavigation().moveTo(target, 1);
         boolean doesCollide = entity.getPrimaryAttackBox().intersects(target.getBoundingBox());
 
-        if (!doesCollide && entity.getPrimaryAttackCooldown() == 0 && (distance > attackDistance * 4 || !target.onGround() || distance < attackDistance && entity.getY() - target.getY() >= 1)) {
+        if (!doesCollide && entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.SHOT_ATTACK) && a.getCooldown() <= 0) && (distance > attackDistance * 4 || !target.onGround() || distance < attackDistance && entity.getY() - target.getY() >= 1)) {
             entity.getLookControl().setLookAt(target);
             if (entity.getLookControl().isLookingAtTarget())
                 entity.shoot();
         }
 
-        if (entity.getSecondaryAttackCooldown() > 0) return;
+        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return;
         if (doesCollide) entity.meleeAttack();
     }
 }

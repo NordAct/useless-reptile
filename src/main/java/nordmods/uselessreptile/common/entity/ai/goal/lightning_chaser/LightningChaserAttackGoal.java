@@ -14,6 +14,7 @@ import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.LightningChaser;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 
 import java.util.EnumSet;
 import java.util.List;
@@ -120,7 +121,7 @@ public class LightningChaserAttackGoal extends Goal {
     }
 
     private boolean tryMeleeAttack() {
-        if (entity.getSecondaryAttackCooldown() > 0) return false;
+        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return false;
         if (entity.isFlying()) return false;
         boolean doesCollide = entity.getPrimaryAttackBox().intersects(target.getBoundingBox());
         if (!doesCollide) return false;
@@ -130,7 +131,7 @@ public class LightningChaserAttackGoal extends Goal {
     }
 
     private boolean tryRangedAttack() {
-        if (entity.getPrimaryAttackCooldown() > 0) return false;
+        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK) && a.getCooldown() <= 0)) return false;
         if (!entity.getLookControl().isLookingAtTarget()) return false;
         double distance = entity.distanceToSqr(target);
         if (distance > MAX_DISTANCE_SQUARED || distance < MIN_DISTANCE_SQUARED) return false;
@@ -140,7 +141,7 @@ public class LightningChaserAttackGoal extends Goal {
     }
 
     private boolean tryShockwaveAttack() { //todo redo attack goals
-        if (entity.getSpecialAttackCooldown() > 0) return false;
+        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.SHOCKWAVE_ATTACK) && a.getCooldown() <= 0)) return false;
         if (!entity.isFlying()) return false;
         //double attackDistance = ShockwaveSphere.MAX_RADIUS * ShockwaveSphere.MAX_RADIUS * 0.49;
         double attackDistance = 40 * 40 * 0.49;

@@ -7,6 +7,7 @@ import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import nordmods.uselessreptile.common.entity.Moleclaw;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 
 public class MoleclawEscapeLightGoal extends PanicGoal {
 
@@ -83,7 +84,7 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
         mob.setSprinting(true);
         timer++;
 
-        if (timer >= nextStrongAttackTimer && mob.getPrimaryAttackCooldown() == 0) {
+        if (timer >= nextStrongAttackTimer && mob.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY) && a.getCooldown() <= 0)) {
             for (VoxelShape shape : mob.level().getBlockCollisions(mob, mob.getSecondaryAttackBox())) {
                 if (!shape.isEmpty()) {
                     mob.scheduleStrongAttack();

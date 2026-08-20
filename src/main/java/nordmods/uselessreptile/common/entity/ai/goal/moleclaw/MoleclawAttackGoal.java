@@ -4,6 +4,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import nordmods.uselessreptile.common.entity.Moleclaw;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 
 import java.util.EnumSet;
 
@@ -22,7 +23,6 @@ public class MoleclawAttackGoal extends Goal {
 
     @Override
     public void start() {
-        entity.setPrimaryAttackCooldown(Math.max(entity.getPrimaryAttackCooldown(), 20));
         target = entity.getTarget();
     }
 
@@ -64,7 +64,7 @@ public class MoleclawAttackGoal extends Goal {
 
         if (!entity.isMoving()) notMovingTimer++;
         else notMovingTimer = 0;
-        if (notMovingTimer >= nextStrongAttackTimer && entity.getPrimaryAttackCooldown() == 0) {
+        if (notMovingTimer >= nextStrongAttackTimer && entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY) && a.getCooldown() <= 0)) {
             int any = 0;
             for (VoxelShape ignored : entity.level().getBlockCollisions(null, entity.getPrimaryAttackBox())) any++;
             if (any > 0) {
@@ -73,7 +73,7 @@ public class MoleclawAttackGoal extends Goal {
             }
         }
 
-        if (entity.getSecondaryAttackCooldown() > 0) return;
+        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return;
         boolean doesCollide = entity.getSecondaryAttackBox().intersects(target.getBoundingBox());
         if (doesCollide) entity.scheduleNormalAttack();
     }

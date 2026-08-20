@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import org.jspecify.annotations.Nullable;
 
 import java.util.EnumSet;
@@ -101,7 +102,7 @@ public class PikehornHuntGoal extends Goal {
                     //kill the fish
                     entity.getLookControl().setLookAt(fish);
                     entity.getNavigation().moveTo(fish, 1);
-                    if (entity.getPrimaryAttackCooldown() > 0) return;
+                    if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return;
                     if (entity.getPrimaryAttackBox().intersects(fish.getBoundingBox())) entity.attackMelee(fish);
                 }
             }
@@ -122,7 +123,7 @@ public class PikehornHuntGoal extends Goal {
 
     @Nullable
     protected BlockPos liquidAdjustment(BlockPos destination) {
-        float height = entity.getHeightMod() + 0.5f;
+        float height = entity.getBbHeight() + 0.5f;
         int adjustment = 0;
         for (int y = 0; y < height; y++) {
             BlockState blockState = entity.level().getBlockState(destination.above(y));

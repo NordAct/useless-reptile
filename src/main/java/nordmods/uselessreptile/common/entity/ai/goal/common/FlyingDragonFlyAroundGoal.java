@@ -33,7 +33,7 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
     }
     
     protected BlockPos liquidAdjustment(BlockPos destination) {
-        float height = mob.getHeightMod() + 0.5f;
+        float height = mob.getBbHeight() + 0.5f;
         int adjustment = 0;
         for (int y = 0; y < height; y++) {
             BlockState blockState = mob.level().getBlockState(destination.above(y));

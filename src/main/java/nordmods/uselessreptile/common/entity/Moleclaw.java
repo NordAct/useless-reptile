@@ -7,11 +7,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.attribute.EnvironmentAttributes;
-import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
@@ -22,12 +18,12 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -38,22 +34,19 @@ import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.event.DragonGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
-import java.util.List;
-
 public class Moleclaw extends URRideableDragonEntity {
-    public int attackDelay = 0;
-    public static final float defaultWidth = 2f;
-    public static final float defaultHeight = 2.9f;
     private int panicSoundDelay = 0;
 
     public static final float BASE_GROUND_SPEED = 0.25f;
+    private static final EntityDimensions SITTING = EntityDimensions.scalable(2, 2.175f);
+    private static final EntityDimensions STANDING = EntityDimensions.scalable(2, 2.9f);
 
     public Moleclaw(EntityType<? extends URRideableDragonEntity> entityType, Level world) {
         super(entityType, world);
@@ -62,6 +55,12 @@ public class Moleclaw extends URRideableDragonEntity {
 
         pitchLimitGround = 50;
         ticksUntilHeal = 400;
+    }
+
+    @Override
+    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (data == CURRENT_ORDER) refreshDimensions();
     }
 
     @Override
@@ -99,8 +98,6 @@ public class Moleclaw extends URRideableDragonEntity {
                 .add(Attributes.ARMOR_TOUGHNESS, attributes().moleclawArmorToughness)
                 .add(Attributes.MOVEMENT_SPEED, attributes().moleclawGroundSpeed)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().moleclawRotationSpeedGround)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().moleclawBasePrimaryAttackCooldown)
-                .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN, attributes().moleclawBaseSecondaryAttackCooldown)
                 ;
     }
 
@@ -160,72 +157,21 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     public void tick() {
         super.tick();
-        if (!isOrderedToSit()) setHitboxModifiers(1, 1, 2.5f);
-        else setHitboxModifiers(0.75f, 1f, 2.5f);
         tryPanic();
-
-        if (hasControllingPassenger()) {
-            if (isSecondaryAttackPressed() && getSecondaryAttackCooldown() == 0) scheduleNormalAttack();
-            if (isPrimaryAttackPressed() && getPrimaryAttackCooldown() == 0) scheduleStrongAttack();
-        }
-
         tickAnimations();
+    }
+
+    @Override
+    protected EntityDimensions getDefaultDimensions(Pose pose) {
+        EntityDimensions dimensions;
+        if (isOrderedToSit()) dimensions = STANDING;
+        else dimensions = SITTING;
+        return dimensions.scale(getAgeScale());
     }
 
     @Override
     protected float getBaseGroundSpeed() {
         return BASE_GROUND_SPEED;
-    }
-
-    public void meleeAttack() {
-        if (!(level() instanceof ServerLevel world)) return;
-        List<Entity> targets = level()
-                .getEntities(
-                        this,
-                        getSecondaryAttackBox(),
-                        entity -> !getPassengers().contains(entity)
-                                && !entity.is(URTags.DRAGON_IMMUNE)
-                                && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
-                );
-        if (!targets.isEmpty()) for (Entity mob: targets) {
-            AABB targetBox = mob.getBoundingBox();
-            if (targetBox.intersects(getSecondaryAttackBox())) doHurtTarget(world, mob);
-        }
-    }
-
-    public void strongAttack() {
-        if (!(level() instanceof ServerLevel world)) return;
-        List<Entity> targets = level()
-                .getEntities(
-                        this,
-                        getPrimaryAttackBox(),
-                        entity -> !getPassengers().contains(entity)
-                                && !entity.is(URTags.DRAGON_IMMUNE)
-                                && (entity instanceof LivingEntity livingEntity && canAttack(livingEntity) || !(entity instanceof LivingEntity))
-                );
-        if (!targets.isEmpty()) for (Entity mob : targets) {
-            AABB targetBox = mob.getBoundingBox();
-            if (targetBox.intersects(getPrimaryAttackBox())) doHurtTarget(world, mob);
-        }
-
-        if (!canBreakBlocks()) return;
-
-        Iterable<BlockPos> blocks = BlockPos.betweenClosed(getPrimaryAttackBox());
-        float maxMiningLevel = (float) getAttributeValue(URAttributes.DRAGON_MINING_LEVEL);
-        if (hasEffect(MobEffects.STRENGTH)) maxMiningLevel += getEffect(MobEffects.STRENGTH).getAmplifier() + 1;
-        if (hasEffect(MobEffects.WEAKNESS)) maxMiningLevel -= getEffect(MobEffects.WEAKNESS).getAmplifier() + 1;
-        for (BlockPos blockPos : blocks) {
-            if (isBlockProtected(blockPos)) continue;
-
-            BlockState blockState = world.getBlockState(blockPos);
-            if (blockState.getBlock().defaultDestroyTime() < 0) continue;
-
-            float miningLevel = DragonGetBlockMiningLevelEvent.EVENT.invoker().getMiningLevel(blockState);
-            if (!blockState.isAir() && miningLevel <= maxMiningLevel) {
-                boolean shouldDrop = getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
-                world.destroyBlock(blockPos, shouldDrop, this);
-            }
-        }
     }
 
     @Override
@@ -301,20 +247,25 @@ public class Moleclaw extends URRideableDragonEntity {
         return super.getControllingPassenger();
     }
 
-    public void scheduleNormalAttack() {
-        setSecondaryAttackCooldown(getMaxSecondaryAttackCooldown());
-        if (attackDelay == 0) attackDelay = 6;
-        setAttackType(random.nextInt(2)+1);
+    public void scheduleNormalAttack() { //todo remove
+        getAvailableAbilities()
+                .stream()
+                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
+                .findFirst()
+                .ifPresent(DragonAbilityHolder::use);
     }
 
-    public void scheduleStrongAttack() {
-        if (attackDelay == 0) attackDelay = 6;
-        setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
+    public void scheduleStrongAttack() { //todo remove
+        getAvailableAbilities()
+                .stream()
+                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY))
+                .findFirst()
+                .ifPresent(DragonAbilityHolder::use);
     }
 
     @Override
     public float getSecondsToDisableBlocking() {
-        return isPrimaryAttack() ? 5.0F : 1F;
+        return 1F;
     }
 
     @Override

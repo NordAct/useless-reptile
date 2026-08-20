@@ -105,7 +105,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                 entity.setYya(0);
 
                 if (!entity.isInWater() || entity.hasTargetInWater()) {
-                    double divergence = Math.clamp(Math.max(0, (distanceXZ - (entity.getWidthMod() < 2 ? 0 : 4)) * 0.5), 0, 3);
+                    double divergence = Math.clamp(Math.max(0, (distanceXZ - (entity.getBbWidth() < 2 ? 0 : 4)) * 0.5), 0, 3);
                     if (diffY > divergence) accelerationDuration = flyUp(accelerationDuration, verticalAccelerationModifier);
                     if (diffY < -divergence) accelerationDuration = flyDown(accelerationDuration, verticalAccelerationModifier);
                 } else accelerationDuration = flyUp(accelerationDuration, verticalAccelerationModifier);

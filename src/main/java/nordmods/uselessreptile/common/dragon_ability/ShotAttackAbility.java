@@ -82,14 +82,14 @@ public class ShotAttackAbility extends TriggerableAbility {
             case EYES -> rotateVec(
                     anchorPointOffset,
                     entity.getEyePosition(),
-                    entity.getXRot(),
-                    entity.getYawWithAdjustment()
+                    entity.getViewXRot(1),
+                    entity.getViewYRot(1)
             );
             case ENTITY_POS -> rotateVec(
                     anchorPointOffset,
                     entity.position(),
-                    entity.getXRot(),
-                    entity.getYawWithAdjustment()
+                    entity.getViewXRot(1),
+                    entity.getViewYRot(1)
             );
             case MULTIPART_BOX -> {
                 if (entity instanceof MultipartEntity multipartEntity) {
@@ -100,8 +100,8 @@ public class ShotAttackAbility extends TriggerableAbility {
                                     .findFirst()
                                     .orElseThrow(() -> new NoSuchElementException("Couldn't find multipart box with name " + multipartBoxName.orElseThrow()))
                                     .position(),
-                            entity.getXRot(),
-                            entity.getYawWithAdjustment()
+                            entity.getViewXRot(1),
+                            entity.getViewYRot(1)
                     );
                 } else {
                     throw new IllegalStateException("Cannot use multipart_box anchor for non MultipartEntity entities");
@@ -123,7 +123,7 @@ public class ShotAttackAbility extends TriggerableAbility {
     }
 
     protected Vec3 getRot(URDragonEntity entity) {
-        return entity.calculateViewVector(entity.getXRot(), entity.getYawWithAdjustment());
+        return entity.calculateViewVector(entity.getViewXRot(1), entity.getViewYRot(1));
     }
 
     @Override
