@@ -6,9 +6,9 @@ import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
+import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
-import nordmods.biscuit_roll.common.util.ServerModelManager;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -58,7 +58,7 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
             BRModelProvider modelProvider = state.getStateData(StateDataTypes.MODEL_PROVIDER);
             if (modelProvider == null) throw new IllegalStateException("Cannot get model before model provider is provided");
             try {
-                model = new BRModel(ServerModelManager.instance().getModelData(modelProvider.getModelId(state)));
+                model = new BRModel(BRModelManager.getModelManager(false).getModelData(modelProvider.getModelId(state)), null);
             } catch (GeometryCompileException e) {
                 throw new RuntimeException(e);
             }

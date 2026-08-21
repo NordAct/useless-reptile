@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.client.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -8,10 +9,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.client.util.ClientModelManager;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
 import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
@@ -23,7 +24,6 @@ import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.init.URRegistries;
 import nordmods.uselessreptile.common.util.SimpleAnimationController;
 
-import java.util.Collection;
 import java.util.List;
 
 public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
@@ -48,13 +48,14 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
         for (currentVariantOrdinal = 0; currentVariantOrdinal < dragonVariants.length; currentVariantOrdinal++) {
             if (dragonVariants[currentVariantOrdinal].common().name().equals(variantName)) break;
         }
+        if (currentVariantOrdinal >= dragonVariants.length) currentVariantOrdinal = 0;
         //it's there because otherwise first AABB calculation happens when model is t-posing
         createDragonRenderState();
         clearModel();
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 
@@ -131,6 +132,15 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
         LivingEntityRenderState renderState = new LivingEntityRenderState();
         float tickDelta = RenderUtil.getTickDelta(false);
 
+        getAnimationControllers().forEach(c -> {
+            MolangEnvironmentBuilder<?> builder = c.getEnvironment().edit();
+            builder.setQuery("body_x_rotation", 0);
+            builder.setQuery("head_x_rotation", 0);
+            builder.setQuery("body_y_rotation", 0);
+            builder.setQuery("head_y_rotation", 0);
+            builder.setQuery("yaw_speed", 0);
+        });
+
         DragonAssetCache assetCache = getAssetCache();
         Identifier dragonId = getVariantType().getId();
         URDragonEntityRenderer.fillDragonCache(
@@ -150,7 +160,7 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
         renderState.setStateData(StateDataTypes.MODEL_PROVIDER, MODEL_PROVIDER);
 
         if (modelAABB == null) {
-            modelAABB = computeModelAABB(ClientModelManager.instance().getModel(MODEL_PROVIDER.getModelId(renderState)), renderState);
+            modelAABB = computeModelAABB(BRModelManager.getModelManager(true).getModel(MODEL_PROVIDER.getModelId(renderState)), renderState);
         }
         renderState.boundingBoxHeight = (float) modelAABB.getYsize();
         renderState.boundingBoxWidth = (float) Math.max(modelAABB.getXsize(), modelAABB.getZsize());

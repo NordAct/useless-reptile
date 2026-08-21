@@ -2,11 +2,11 @@ package nordmods.uselessreptile.client.dragon_equipment;
 
 import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.resources.Identifier;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.resource_managers.BRAnimationManager;
 import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.biscuit_roll.common.util.BRAnimationManager;
 
 import java.util.Arrays;
 

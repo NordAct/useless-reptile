@@ -8,7 +8,6 @@ import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
 import nordmods.uselessreptile.client.asset_cache.EquipmentAssetCache;
 
-import java.util.Collection;
 import java.util.List;
 
 public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
@@ -17,7 +16,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     private final EquipmentAssetCache assetCache;
     public final CloneAnimationController cloneController = new CloneAnimationController();
     public final EquipmentAnimationController controller;
-    public final Collection<BRAnimationController> controllers;
+    public final List<BRAnimationController> controllers;
     public final boolean isSaddle;
 
     public EquipmentAssetCache getAssetCache() {
@@ -33,7 +32,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 }

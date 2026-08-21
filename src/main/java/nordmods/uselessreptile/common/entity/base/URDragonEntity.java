@@ -136,6 +136,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             AnimationController.ATTACK , attackController,
             AnimationController.BLINK , blinkController
     );
+    private final List<BRAnimationController> controllerList = List.copyOf(controllers.values());
     private final Int2ObjectOpenHashMap<DragonAbilityHolder> abilityHolders = new Int2ObjectOpenHashMap<>();
     private List<DragonAbilityHolder> availableAbilities = List.of();
     private static final List<FluteItem.FluteMode> FLUTE_MODES = List.of(
@@ -160,8 +161,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public final Collection<BRAnimationController> getAnimationControllers() {
-        return level().isClientSide() ? List.of() : controllers.values();
+    public final List<BRAnimationController> getAnimationControllers() {
+        return getAnimationProcessor() != null && level().isClientSide() ? List.of() : controllerList;
     }
 
     @Override
