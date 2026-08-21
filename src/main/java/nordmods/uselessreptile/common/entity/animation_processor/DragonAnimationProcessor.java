@@ -97,7 +97,7 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
         //model
         if (assetCache.getModelLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, animatable.level().registryAccess()).modelData().model();
-            if (ResourceUtil.doesExist(id)) {
+            if (ResourceUtil.doesModelExist(id, false)) {
                 assetCache.setModelLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
@@ -112,7 +112,7 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, animatable.level().registryAccess()).modelData().animation();
-            if (ResourceUtil.doesExist(id)) {
+            if (ResourceUtil.doesAnimationExist(id, false)) {
                 assetCache.setAnimationLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",

@@ -50,7 +50,7 @@ public class URGlowingLayer extends TextureRenderLayer {
         AssetCache assetCache = state.getStateData(URStateDataTypes.ASSET_CACHE);
         if (assetCache.hasGlowing() && assetCache.getGlowLayerLocationCache() == null) {
             Identifier id = getGlowingTexture(state);
-            if (!ResourceUtil.doesExist(id, false)) {
+            if (!ResourceUtil.doesResourceExist(id, false)) {
                 assetCache.setHasGlowing(false);
             } else {
                 assetCache.setGlowLayerLocationCache(id);

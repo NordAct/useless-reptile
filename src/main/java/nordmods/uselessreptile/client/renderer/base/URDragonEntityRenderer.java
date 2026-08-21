@@ -159,7 +159,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         //texture
         if (assetCache.getTextureLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().texture();
-            if (ResourceUtil.doesExist(id)) {
+            if (ResourceUtil.doesResourceExist(id)) {
                 assetCache.setTextureLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead",
@@ -174,7 +174,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         //model
         if (assetCache.getModelLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().model();
-            if (ResourceUtil.doesExist(id)) {
+            if (ResourceUtil.doesModelExist(id, true)) {
                 assetCache.setModelLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
@@ -189,7 +189,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().animation();
-            if (ResourceUtil.doesExist(id)) {
+            if (ResourceUtil.doesAnimationExist(id, true)) {
                 assetCache.setAnimationLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
@@ -231,7 +231,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
 
         Identifier id = equipment.modelData().texture();
-        if (ResourceUtil.doesExist(id)) {
+        if (ResourceUtil.doesResourceExist(id)) {
             assetCache.setTextureLocationCache(id);
         } else {
             UselessReptile.LOGGER.warn("Failed to find texture for equipment ({}) for {} ({}) of variant {}",
@@ -246,7 +246,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //model
         id = equipment.modelData().model();
-        if (ResourceUtil.doesExist(id)) {
+        if (ResourceUtil.doesModelExist(id, true)) {
             assetCache.setModelLocationCache(id);
         } else {
             UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}",
@@ -261,7 +261,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //animation cache
         id = equipment.modelData().animation();
-        if (ResourceUtil.doesExist(id)) {
+        if (ResourceUtil.doesAnimationExist(id, true)) {
             assetCache.setAnimationLocationCache(id);
         } else {
             UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}",
