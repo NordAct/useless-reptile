@@ -3,31 +3,15 @@ package nordmods.uselessreptile.client.init;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.item.ItemStackRenderState;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.state.StateDataType;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.asset_cache.AssetCache;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 
 import java.util.List;
 import java.util.UUID;
 
-public class URStateDataTypes {
-    //common dragon data - used for all dragons
-    public static final StateDataType<Identifier> DRAGON_ID = new StateDataType<>(UselessReptile.id("dragon_id"));
-    public static final StateDataType<AssetCache> ASSET_CACHE = new StateDataType<>(UselessReptile.id("asset_cache"));
-    public static final StateDataType<DragonAnimationProcessor<? extends URDragonEntity>> ANIMATION_PROCESSOR = new StateDataType<>(UselessReptile.id("animation_processor"));
-    public static final StateDataType<Float> BODY_X_ROTATION = new StateDataType<>(UselessReptile.id("body_x_rotation"));
-    public static final StateDataType<Float> BODY_Y_ROTATION = new StateDataType<>(UselessReptile.id("body_y_rotation"));
-    public static final StateDataType<Float> HEAD_X_ROTATION = new StateDataType<>(UselessReptile.id("head_x_rotation"));
-    public static final StateDataType<Float> HEAD_Y_ROTATION = new StateDataType<>(UselessReptile.id("head_y_rotation"));
-    public static final StateDataType<Float> YAW_SPEED = new StateDataType<>(UselessReptile.id("yaw_speed"));
-    //specific dragon data - used for some dragons
-    public static final StateDataType<UUID> DRAGON_UUID = new StateDataType<>(UselessReptile.id("dragon_uuid"));
-    public static final StateDataType<Boolean> DRAGON_IS_RIDING_PLAYER = new StateDataType<>(UselessReptile.id("dragon_is_riding_player"));
+public class URClientStateDataTypes {
     //equipment data for rendering
     public static final StateDataType<ItemStackRenderState> FISH = new StateDataType<>(UselessReptile.id("fish"));
     public static final StateDataType<ItemStackRenderState> BANNER = new StateDataType<>(UselessReptile.id("banner"));

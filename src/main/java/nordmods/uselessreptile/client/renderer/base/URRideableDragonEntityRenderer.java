@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.client.config.URClientConfig;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.client.init.URClientStateDataTypes;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 
@@ -39,10 +39,10 @@ public class URRideableDragonEntityRenderer<T extends URRideableDragonEntity> ex
                     URClientConfig.getConfig().renderPassengers.canRenderSelf() && !Minecraft.getInstance().options.getCameraType().isFirstPerson():
                     URClientConfig.getConfig().renderPassengers.canRenderOthers());
         });
-        renderState.setStateData(URStateDataTypes.PASSENGERS_RENDER_STATE, renderStates);
-        renderState.setStateData(URStateDataTypes.PASSENGERS_RENDERERS, renderers);
-        renderState.setStateData(URStateDataTypes.PASSENGERS_UUID, uuids);
-        renderState.setStateData(URStateDataTypes.PASSENGERS_ATTACHMENT_POS, attachmentPos);
-        renderState.setStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, shouldRenderToClient);
+        renderState.setStateData(URClientStateDataTypes.PASSENGERS_RENDER_STATE, renderStates);
+        renderState.setStateData(URClientStateDataTypes.PASSENGERS_RENDERERS, renderers);
+        renderState.setStateData(URClientStateDataTypes.PASSENGERS_UUID, uuids);
+        renderState.setStateData(URClientStateDataTypes.PASSENGERS_ATTACHMENT_POS, attachmentPos);
+        renderState.setStateData(URClientStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, shouldRenderToClient);
     }
 }

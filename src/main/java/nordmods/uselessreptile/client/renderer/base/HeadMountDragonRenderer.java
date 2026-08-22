@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.world.entity.player.Player;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.common.init.URStateDataTypes;
 import nordmods.uselessreptile.client.renderer.layers.HeadMountDragonRenderLayer;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;

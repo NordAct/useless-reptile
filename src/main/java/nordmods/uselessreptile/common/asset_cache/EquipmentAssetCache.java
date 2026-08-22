@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.asset_cache;
+package nordmods.uselessreptile.common.asset_cache;
 
 public class EquipmentAssetCache extends AssetCache {
     private boolean canRender = true;

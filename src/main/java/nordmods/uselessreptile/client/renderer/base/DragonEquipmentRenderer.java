@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import libs.gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.texture.TextureAtlas;
@@ -11,19 +12,23 @@ import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
-import nordmods.uselessreptile.client.asset_cache.AssetCache;
-import nordmods.uselessreptile.client.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.client.init.URAtlases;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
-import nordmods.uselessreptile.client.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.common.asset_cache.AssetCache;
+import nordmods.uselessreptile.common.entity.animation_processor.BoneTransform;
+import nordmods.uselessreptile.common.entity.animation_processor.SyncronizedAnimationProcessor;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
+import nordmods.uselessreptile.common.entity.model_provider.DragonEquipmentModelProvider;
+import nordmods.uselessreptile.common.init.URStateDataTypes;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, BRState.Impl> {
     public static final Identifier DEFAULT_TEXTURE = TextureAtlas.LOCATION_BLOCKS;
@@ -50,13 +55,13 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     @Override
     public void extractRenderState(DragonEquipment animatable, BRState.Impl state, float tickDelta) {
         animatable.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), animatable, tickDelta));
-        state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerRenderState.getStateData(URStateDataTypes.DRAGON_ID));
+        state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerState.getStateData(URStateDataTypes.DRAGON_ID));
         state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
-        state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerRenderState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
-        state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerRenderState.getStateData(ClientStateDataTypes.LIGHT));
-
-        Collection<BRAnimationController> ownerControllers = animatable.ownerRenderState.getStateData(StateDataTypes.CONTROLLERS);
-        animatable.cloneController.copyFrom(ownerControllers);
+        state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
+        state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerState.getStateData(ClientStateDataTypes.LIGHT));
+        state.setStateData(URStateDataTypes.BONE_TRANSFORMS, animatable.ownerState.getStateData(URStateDataTypes.BONE_TRANSFORMS));
+        state.setStateData(URStateDataTypes.ANIMATION_PROCESSOR, animatable.getAnimationProcessor());
+        Collection<BRAnimationController> ownerControllers = animatable.ownerState.getStateData(StateDataTypes.CONTROLLERS);
         ownerControllers.forEach(controller -> {
             controller.getPlayingAnimations().forEach(playingAnimation -> {
                 if (playingAnimation.isDone()) return;
@@ -86,16 +91,41 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
         });
         state.setStateData(StateDataTypes.CONTROLLERS, animatable.getAnimationControllers());
 
-        state.setStateData(StateDataTypes.ANIMATION_TIME, animatable.ownerRenderState.getStateData(StateDataTypes.ANIMATION_TIME));
+        state.setStateData(StateDataTypes.ANIMATION_TIME, animatable.ownerState.getStateData(StateDataTypes.ANIMATION_TIME));
         state.setStateData(StateDataTypes.MODEL_PROVIDER, this.getModelProvider());
     }
 
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, DragonEquipment animatable, float tickDelta) {
-        builder.setQuery("body_x_rotation", animatable.ownerRenderState.getStateData(URStateDataTypes.BODY_X_ROTATION, 0f));
-        builder.setQuery("head_x_rotation", animatable.ownerRenderState.getStateData(URStateDataTypes.HEAD_X_ROTATION, 0f));
-        builder.setQuery("body_y_rotation", animatable.ownerRenderState.getStateData(URStateDataTypes.BODY_Y_ROTATION, 0f));
-        builder.setQuery("head_y_rotation", animatable.ownerRenderState.getStateData(URStateDataTypes.HEAD_Y_ROTATION, 0f));
-        builder.setQuery("yaw_speed", animatable.ownerRenderState.getStateData(URStateDataTypes.YAW_SPEED, 0f));
+        builder.setQuery("body_x_rotation", animatable.ownerState.getStateData(URStateDataTypes.BODY_X_ROTATION, 0f));
+        builder.setQuery("head_x_rotation", animatable.ownerState.getStateData(URStateDataTypes.HEAD_X_ROTATION, 0f));
+        builder.setQuery("body_y_rotation", animatable.ownerState.getStateData(URStateDataTypes.BODY_Y_ROTATION, 0f));
+        builder.setQuery("head_y_rotation", animatable.ownerState.getStateData(URStateDataTypes.HEAD_Y_ROTATION, 0f));
+        builder.setQuery("yaw_speed", animatable.ownerState.getStateData(URStateDataTypes.YAW_SPEED, 0f));
+    }
+
+    @Override
+    public void adjustAnimation(BRState state, BRModel model) {
+        super.adjustAnimation(state, model);
+        if (!ResourceUtil.isResourceReloadFinished) return;
+        SyncronizedAnimationProcessor<?> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
+        float tickDelta = state.getStateData(StateDataTypes.TICK_DELTA, 0f);
+        model.getRootBones().forEach(bone -> bone.setVisible(true));
+
+        if (animationProcessor != null) {
+            for (AnimatedBone animatedBone : model.getBones()) {
+                animationProcessor.syncPose(animatedBone.getBone().name(), animatedBone.getAnimationPose(), tickDelta);
+            }
+        } else {
+            state.getStateData(URStateDataTypes.BONE_TRANSFORMS, Map.of()).forEach((bone, transform) -> {
+                AnimatedBone animatedBone = model.getBone(bone);
+                if (animatedBone == null) return;
+                AnimatedBone.AnimationPose pose = animatedBone.getAnimationPose();
+                pose.position().add(transform.pos().orElse(BoneTransform.ZERO));
+                pose.rotation().add(transform.rot().orElse(BoneTransform.ZERO));
+                pose.scale().mul(transform.scale().orElse(BoneTransform.ONE));
+            });
+        }
+
     }
 
     @Override

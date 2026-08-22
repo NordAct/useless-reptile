@@ -8,6 +8,7 @@ import nordmods.uselessreptile.client.gui.URDragonScreen;
 import nordmods.uselessreptile.client.gui.VariantChangingOrbScreen;
 import nordmods.uselessreptile.common.entity.base.MultipartDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.network.s2c.*;
@@ -78,8 +79,13 @@ public class URClientPayloadHandlers {
     private static void handleSyncBoneTransformsPayload() {
         ClientPlayNetworking.registerGlobalReceiver(SyncBoneTransformsPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.id());
-            if (entity instanceof URDragonEntity dragon && dragon.getAnimationProcessor() != null) {
-                dragon.getAnimationProcessor().handleSyncBoneTransformsPayload(packet);
+            if (entity instanceof URDragonEntity dragon) {
+                if (packet.equipmentSlot().isEmpty()) {
+                    if (dragon.getAnimationProcessor() != null) dragon.getAnimationProcessor().handleSyncBoneTransformsPayload(packet);
+                } else {
+                    DragonEquipment equipment = dragon.getAssetCache().getEquipment(packet.equipmentSlot().get());
+                    if (equipment != null && equipment.getAnimationProcessor() != null) equipment.getAnimationProcessor().handleSyncBoneTransformsPayload(packet);
+                }
             }
         });
     }

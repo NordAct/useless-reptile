@@ -56,8 +56,8 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
-import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
+import nordmods.uselessreptile.common.asset_cache.AssetCahceOwner;
+import nordmods.uselessreptile.common.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
@@ -73,6 +73,7 @@ import nordmods.uselessreptile.common.entity.ai.control.DragonBodyRotationContro
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
@@ -780,6 +781,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
         if (processor != null) processor.tick();
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            DragonEquipment equipment = getAssetCache().getEquipment(slot);
+            if (equipment != null) equipment.tick();
+        }
     }
 
     @Override

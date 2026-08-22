@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.client.asset_cache;
+package nordmods.uselessreptile.common.asset_cache;
 
 import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;

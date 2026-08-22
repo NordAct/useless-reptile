@@ -49,6 +49,7 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
             model.applyAnimations(state);
             model.updateLocators();
             controllers.forEach(c -> c.triggerAnimationEffects(model, state));
+            postAnimation();
         }
     }
 
@@ -71,4 +72,6 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     public abstract float getAnimationTime();
 
     public void adjustAnimation(BRState state, BRModel model){}
+
+    public void postAnimation() {}
 }

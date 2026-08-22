@@ -24,22 +24,24 @@ import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.asset_cache.AssetCache;
-import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
-import nordmods.uselessreptile.client.asset_cache.EquipmentAssetCache;
-import nordmods.uselessreptile.client.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.client.init.URAtlases;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
-import nordmods.uselessreptile.client.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.common.asset_cache.AssetCache;
+import nordmods.uselessreptile.common.asset_cache.DragonAssetCache;
+import nordmods.uselessreptile.common.asset_cache.EquipmentAssetCache;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
-import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
+import nordmods.uselessreptile.common.entity.animation_processor.BoneTransform;
+import nordmods.uselessreptile.common.entity.animation_processor.SyncronizedAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
+import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
+import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelProvider;
+import nordmods.uselessreptile.common.init.URStateDataTypes;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
@@ -98,6 +100,8 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                     EquipmentAssetCache equipmentAssetCache = new EquipmentAssetCache();
                     Identifier itemId = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
                     dragonEquipment = getDragonEquipment(
+                            animatable,
+                            slot,
                             itemStack,
                             itemId,
                             equipmentAssetCache,
@@ -111,7 +115,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                     );
                     assetCache.setEquipment(slot, dragonEquipment);
                 }
-                dragonEquipment.ownerRenderState = renderState;
+                dragonEquipment.ownerState = renderState;
             }
         }
     }
@@ -129,7 +133,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     @Override
     public void adjustAnimation(BRState state, BRModel model) {
         if (!ResourceUtil.isResourceReloadFinished) return;
-        DragonAnimationProcessor<? extends URDragonEntity> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
+        SyncronizedAnimationProcessor<?> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
         float tickDelta = state.getStateData(StateDataTypes.TICK_DELTA, 0f);
         model.getRootBones().forEach(bone -> bone.setVisible(true));
 
@@ -216,6 +220,8 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     }
 
     public static DragonEquipment getDragonEquipment(
+            URDragonEntity owner,
+            EquipmentSlot slot,
             ItemStack itemStack,
             Identifier itemId,
             EquipmentAssetCache assetCache,
@@ -230,7 +236,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         if (equipment == null) {
             assetCache.setCanRender(false);
-            return new DragonEquipment(itemStack, assetCache, false);
+            return new DragonEquipment(owner, itemStack, assetCache, slot);
         }
 
 
@@ -286,15 +292,18 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         equipment.hidBones().ifPresent(bones -> assetCache.setHidBones(bones.toArray(new String[0])));
 
-        return new DragonEquipment(itemStack, assetCache, equipment.passengerPositions().isPresent() && !equipment.passengerPositions().get().isEmpty());
+        return equipment.passengerPositions().isPresent() && !equipment.passengerPositions().get().isEmpty()
+                ? new SaddleEquipment(owner, itemStack, assetCache, slot)
+                : new DragonEquipment(owner, itemStack, assetCache, slot);
     }
 
     @Override
     public void afterSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
+        state.setStateData(URStateDataTypes.BONE_TRANSFORMS, BoneTransform.collectBoneTransforms(getModel(state).getBones()));
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
             if (equipment != null && equipment.getAssetCache().canRender()) {
-                DragonEquipmentRenderer usedRenderer = equipment.isSaddle ? saddleRenderer : equipmentRenderer;
+                DragonEquipmentRenderer usedRenderer = equipment instanceof SaddleEquipment ? saddleRenderer : equipmentRenderer;
                 usedRenderer.submitObjectOrdered(equipment, poseStack, submitNodeCollector, cameraRenderState, state.getStateData(StateDataTypes.TICK_DELTA), 1);
             }
         }
