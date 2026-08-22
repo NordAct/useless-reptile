@@ -13,6 +13,6 @@ public class SaddleEquipment extends DragonEquipment {
 
     @Override
     public EquipmentAnimationProcessor createServerAnimationProcessor() {
-        return new EquipmentAnimationProcessor(this);
+        return owner.getAnimationProcessor() != null ? new EquipmentAnimationProcessor(this) : null;
     }
 }

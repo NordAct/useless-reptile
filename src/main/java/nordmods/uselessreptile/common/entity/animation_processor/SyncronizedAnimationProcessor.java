@@ -9,6 +9,7 @@ import nordmods.uselessreptile.common.network.s2c.BoneSyncPayload;
 import java.util.HashMap;
 import java.util.Map;
 
+//todo figure our why model processing seems to stutter with several dragons
 public abstract class SyncronizedAnimationProcessor<T extends BRAnimatedObject, P extends CustomPacketPayload & BoneSyncPayload> extends AnimationProcessor<T>{
     protected Map<String, BoneTransform> nextBoneTransforms;
     protected Map<String, BoneTransform> boneTransforms = new HashMap<>();

@@ -35,9 +35,9 @@ public record BoneTransform(Optional<Vector3fc> scale, Optional<Vector3fc> pos, 
         Map<String, BoneTransform> boneTransforms = new HashMap<>();
         for (AnimatedBone bone : bones) {
             AnimatedBone.AnimationPose pose = bone.getAnimationPose();
-            Optional<Vector3fc> scale = pose.scale().equals(ONE) ? Optional.empty() : Optional.of(pose.scale());
-            Optional<Vector3fc> pos = pose.position().equals(ZERO) ? Optional.empty() : Optional.of(pose.position());
-            Optional<Vector3fc> rot = pose.rotation().equals(ZERO) ? Optional.empty() : Optional.of(pose.rotation());
+            Optional<Vector3fc> scale = pose.scale().equals(ONE) ? Optional.empty() : Optional.of(new Vector3f(pose.scale()));
+            Optional<Vector3fc> pos = pose.position().equals(ZERO) ? Optional.empty() : Optional.of(new Vector3f(pose.position()));
+            Optional<Vector3fc> rot = pose.rotation().equals(ZERO) ? Optional.empty() : Optional.of(new Vector3f(pose.rotation()));
 
             if (scale.isPresent() || pos.isPresent() || rot.isPresent()) boneTransforms.put(bone.getBone().name(), new BoneTransform(scale, pos, rot));
         }

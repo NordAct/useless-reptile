@@ -61,6 +61,7 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
         state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerState.getStateData(ClientStateDataTypes.LIGHT));
         state.setStateData(URStateDataTypes.BONE_TRANSFORMS, animatable.ownerState.getStateData(URStateDataTypes.BONE_TRANSFORMS));
         state.setStateData(URStateDataTypes.ANIMATION_PROCESSOR, animatable.getAnimationProcessor());
+        state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
         Collection<BRAnimationController> ownerControllers = animatable.ownerState.getStateData(StateDataTypes.CONTROLLERS);
         ownerControllers.forEach(controller -> {
             controller.getPlayingAnimations().forEach(playingAnimation -> {

@@ -21,7 +21,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     public final EquipmentAnimationController controller;
     public final List<BRAnimationController> controllers;
     @Nullable
-    private final EquipmentAnimationProcessor processor = createServerAnimationProcessor();
+    private final EquipmentAnimationProcessor processor;
     public final EquipmentSlot equipmentSlot;
 
     public EquipmentAssetCache getAssetCache() {
@@ -35,6 +35,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
         this.controller = new EquipmentAnimationController(assetCache.getAnimationLocationCache());
         this.equipmentSlot = equipmentSlot;
         this.controllers = List.of(controller);
+        this.processor = createServerAnimationProcessor();
     }
 
     @Override
