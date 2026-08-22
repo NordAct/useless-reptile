@@ -1,16 +1,18 @@
 package nordmods.uselessreptile.common.entity.animation_processor;
 
 import libs.gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.util.Mth;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
-import nordmods.uselessreptile.common.network.s2c.SyncBoneTransformsPayload;
+import nordmods.uselessreptile.common.network.s2c.BoneSyncPayload;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
+import java.util.Map;
 
-public abstract class SyncronizedAnimationProcessor<T extends BRAnimatedObject> extends AnimationProcessor<T>{
-    private final ConcurrentHashMap<String, BoneTransform> nextBoneTransforms = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, BoneTransform> boneTransforms = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, BoneTransform> prevBoneTransforms = new ConcurrentHashMap<>();
+public abstract class SyncronizedAnimationProcessor<T extends BRAnimatedObject, P extends CustomPacketPayload & BoneSyncPayload> extends AnimationProcessor<T>{
+    protected Map<String, BoneTransform> nextBoneTransforms;
+    protected Map<String, BoneTransform> boneTransforms = new HashMap<>();
+    protected Map<String, BoneTransform> prevBoneTransforms = new HashMap<>();
     public SyncronizedAnimationProcessor(T animatable) {
         super(animatable);
     }
@@ -18,12 +20,10 @@ public abstract class SyncronizedAnimationProcessor<T extends BRAnimatedObject> 
     @Override
     public void tick() {
         if (isClientSide()) {
-            if (!nextBoneTransforms.isEmpty()) {
-                prevBoneTransforms.clear();
-                prevBoneTransforms.putAll(boneTransforms);
-                boneTransforms.clear();
-                boneTransforms.putAll(nextBoneTransforms);
-                nextBoneTransforms.clear();
+            if (nextBoneTransforms != null) {
+                prevBoneTransforms = boneTransforms;
+                boneTransforms = nextBoneTransforms;
+                nextBoneTransforms = null;
             }
         } else {
             super.tick();
@@ -35,8 +35,9 @@ public abstract class SyncronizedAnimationProcessor<T extends BRAnimatedObject> 
 
     public abstract void sendSyncPacket();
 
-    public void handleSyncBoneTransformsPayload(SyncBoneTransformsPayload payload) {
-        nextBoneTransforms.putAll(payload.boneTransforms());
+    public void handleSyncBoneTransformsPayload(P payload) {
+        if (nextBoneTransforms != null) return;
+        nextBoneTransforms = payload.boneTransforms();
     }
 
     public void syncPose(String bone, AnimatedBone.AnimationPose pose, float tickDelta) {

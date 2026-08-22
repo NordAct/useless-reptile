@@ -21,6 +21,7 @@ public class URClientPayloadHandlers {
         handleOpenVariantChangingOrbScreen();
         handleSyncEntityPartsPosPayload();
         handleSyncBoneTransformsPayload();
+        handleSyncEquipmentBoneTransformsPayload();
     }
 
     private static void handleOpenDragonInventory() {
@@ -80,12 +81,17 @@ public class URClientPayloadHandlers {
         ClientPlayNetworking.registerGlobalReceiver(SyncBoneTransformsPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.id());
             if (entity instanceof URDragonEntity dragon) {
-                if (packet.equipmentSlot().isEmpty()) {
-                    if (dragon.getAnimationProcessor() != null) dragon.getAnimationProcessor().handleSyncBoneTransformsPayload(packet);
-                } else {
-                    DragonEquipment equipment = dragon.getAssetCache().getEquipment(packet.equipmentSlot().get());
-                    if (equipment != null && equipment.getAnimationProcessor() != null) equipment.getAnimationProcessor().handleSyncBoneTransformsPayload(packet);
-                }
+                if (dragon.getAnimationProcessor() != null) dragon.getAnimationProcessor().handleSyncBoneTransformsPayload(packet);
+            }
+        });
+    }
+
+    private static void handleSyncEquipmentBoneTransformsPayload() {
+        ClientPlayNetworking.registerGlobalReceiver(SyncEquipmentBoneTransformsPayload.PAYLOAD_ID, (packet, context) -> {
+            Entity entity = context.player().level().getEntity(packet.ownerId());
+            if (entity instanceof URDragonEntity dragon) {
+                DragonEquipment equipment = dragon.getAssetCache().getEquipment(packet.equipmentSlot());
+                if (equipment != null && equipment.getAnimationProcessor() != null) equipment.getAnimationProcessor().handleSyncBoneTransformsPayload(packet);
             }
         });
     }

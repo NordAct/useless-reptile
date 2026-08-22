@@ -107,7 +107,7 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     public void adjustAnimation(BRState state, BRModel model) {
         super.adjustAnimation(state, model);
         if (!ResourceUtil.isResourceReloadFinished) return;
-        SyncronizedAnimationProcessor<?> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
+        SyncronizedAnimationProcessor<?, ?> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
         float tickDelta = state.getStateData(StateDataTypes.TICK_DELTA, 0f);
         model.getRootBones().forEach(bone -> bone.setVisible(true));
 

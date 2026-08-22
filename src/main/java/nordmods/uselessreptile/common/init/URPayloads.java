@@ -12,6 +12,7 @@ public class URPayloads {
         PayloadTypeRegistry.clientboundPlay().register(OpenVariantChangingOrbScreenPayload.PAYLOAD_ID, OpenVariantChangingOrbScreenPayload.PACKET_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncEntityPartsPosPayload.PAYLOAD_ID, SyncEntityPartsPosPayload.PACKET_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncBoneTransformsPayload.PAYLOAD_ID, SyncBoneTransformsPayload.STREAM_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncEquipmentBoneTransformsPayload.PAYLOAD_ID, SyncEquipmentBoneTransformsPayload.STREAM_CODEC);
 
         PayloadTypeRegistry.serverboundPlay().register(KeyInputPayload.PAYLOAD_ID, KeyInputPayload.PACKET_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(RequestLiftoffPayload.PAYLOAD_ID, RequestLiftoffPayload.PACKET_CODEC);

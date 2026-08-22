@@ -14,7 +14,7 @@ public class URStateDataTypes {
     //common dragon data - used for all dragons
     public static final StateDataType<Identifier> DRAGON_ID = new StateDataType<>(UselessReptile.id("dragon_id"));
     public static final StateDataType<AssetCache> ASSET_CACHE = new StateDataType<>(UselessReptile.id("asset_cache"));
-    public static final StateDataType<SyncronizedAnimationProcessor<?>> ANIMATION_PROCESSOR = new StateDataType<>(UselessReptile.id("animation_processor"));
+    public static final StateDataType<SyncronizedAnimationProcessor<?, ?>> ANIMATION_PROCESSOR = new StateDataType<>(UselessReptile.id("animation_processor"));
     public static final StateDataType<Float> BODY_X_ROTATION = new StateDataType<>(UselessReptile.id("body_x_rotation"));
     public static final StateDataType<Float> BODY_Y_ROTATION = new StateDataType<>(UselessReptile.id("body_y_rotation"));
     public static final StateDataType<Float> HEAD_X_ROTATION = new StateDataType<>(UselessReptile.id("head_x_rotation"));

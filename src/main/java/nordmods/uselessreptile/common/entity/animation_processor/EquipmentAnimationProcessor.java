@@ -14,12 +14,12 @@ import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
-import nordmods.uselessreptile.common.network.s2c.SyncBoneTransformsPayload;
+import nordmods.uselessreptile.common.network.s2c.SyncEquipmentBoneTransformsPayload;
 
 import java.util.Collection;
 import java.util.Map;
 
-public class EquipmentAnimationProcessor extends SyncronizedAnimationProcessor<DragonEquipment> {
+public class EquipmentAnimationProcessor extends SyncronizedAnimationProcessor<DragonEquipment, SyncEquipmentBoneTransformsPayload> {
     private static final DragonEquipmentModelProvider MODEL_PROVIDER = new DragonEquipmentModelProvider();
     public EquipmentAnimationProcessor(DragonEquipment animatable) {
         super(animatable);
@@ -34,12 +34,13 @@ public class EquipmentAnimationProcessor extends SyncronizedAnimationProcessor<D
     public void sendSyncPacket() {
         if (animatable.owner.level() instanceof ServerLevel serverLevel) {
             for (ServerPlayer player : PlayerLookup.tracking(serverLevel, animatable.owner.blockPosition()))
-                SyncBoneTransformsPayload.send(player, animatable.owner, animatable.equipmentSlot);
+                SyncEquipmentBoneTransformsPayload.send(player, animatable);
         }
     }
 
     @Override
     public void updateBRState() {
+        state.setStateData(URStateDataTypes.BONE_TRANSFORMS, animatable.ownerState.getStateData(URStateDataTypes.BONE_TRANSFORMS));
         Collection<BRAnimationController> ownerControllers = animatable.ownerState.getStateData(StateDataTypes.CONTROLLERS);
         ownerControllers.forEach(controller -> {
             controller.getPlayingAnimations().forEach(playingAnimation -> {
@@ -71,7 +72,6 @@ public class EquipmentAnimationProcessor extends SyncronizedAnimationProcessor<D
         super.updateBRState();
         state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerState.getStateData(URStateDataTypes.DRAGON_ID));
         state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
-        state.setStateData(URStateDataTypes.BONE_TRANSFORMS, animatable.ownerState.getStateData(URStateDataTypes.BONE_TRANSFORMS));
     }
 
     @Override

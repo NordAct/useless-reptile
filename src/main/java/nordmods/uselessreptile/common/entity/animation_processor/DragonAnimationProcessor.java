@@ -23,7 +23,7 @@ import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelP
 import nordmods.uselessreptile.common.init.URStateDataTypes;
 import nordmods.uselessreptile.common.network.s2c.SyncBoneTransformsPayload;
 
-public class DragonAnimationProcessor<T extends URDragonEntity> extends SyncronizedAnimationProcessor<T> {
+public class DragonAnimationProcessor<T extends URDragonEntity> extends SyncronizedAnimationProcessor<T, SyncBoneTransformsPayload> {
     private static final URDragonEntityModelProvider MODEL_PROVIDER = new URDragonEntityModelProvider();
     public DragonAnimationProcessor(T animatable) {
         super(animatable);
@@ -38,7 +38,7 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Syncroni
     public void sendSyncPacket() {
         if (animatable.level() instanceof ServerLevel serverLevel) {
             for (ServerPlayer player : PlayerLookup.tracking(serverLevel, animatable.blockPosition()))
-                SyncBoneTransformsPayload.send(player, animatable, null);
+                SyncBoneTransformsPayload.send(player, animatable);
         }
     }
 
@@ -163,11 +163,11 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Syncroni
     @Override
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T animatable, float tickDelta) {
         super.updateControllerVariables(builder, animatable, tickDelta);
-        builder.setQuery("body_x_rotation", -animatable.getXBodyRot(tickDelta));
-        builder.setQuery("head_x_rotation", -animatable.getViewXRot(tickDelta));
-        builder.setQuery("body_y_rotation", -animatable.getPreciseBodyRotation(tickDelta));
-        builder.setQuery("head_y_rotation", -animatable.getViewYRot(tickDelta));
-        builder.setQuery("yaw_speed", -animatable.getYBodyRotChange(tickDelta));
+        builder.setQuery("body_x_rotation", state.getStateData(URStateDataTypes.BODY_X_ROTATION));
+        builder.setQuery("head_x_rotation", state.getStateData(URStateDataTypes.HEAD_X_ROTATION));
+        builder.setQuery("body_y_rotation", state.getStateData(URStateDataTypes.BODY_Y_ROTATION));
+        builder.setQuery("head_y_rotation", state.getStateData(URStateDataTypes.HEAD_Y_ROTATION));
+        builder.setQuery("yaw_speed", state.getStateData(URStateDataTypes.YAW_SPEED));
     }
 
     @Override

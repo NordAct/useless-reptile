@@ -133,7 +133,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     @Override
     public void adjustAnimation(BRState state, BRModel model) {
         if (!ResourceUtil.isResourceReloadFinished) return;
-        SyncronizedAnimationProcessor<?> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
+        SyncronizedAnimationProcessor<?, ?> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
         float tickDelta = state.getStateData(StateDataTypes.TICK_DELTA, 0f);
         model.getRootBones().forEach(bone -> bone.setVisible(true));
 
