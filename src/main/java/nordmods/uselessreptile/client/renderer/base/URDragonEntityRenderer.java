@@ -17,6 +17,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.client.resource_managers.ClientAnimationManager;
+import nordmods.biscuit_roll.client.resource_managers.ClientModelManager;
 import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
@@ -174,10 +176,11 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         //model
         if (assetCache.getModelLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().model();
-            if (ResourceUtil.doesModelExist(id, true)) {
+            if (ClientModelManager.instance().hasModel(id)) {
                 assetCache.setModelLocationCache(id);
             } else {
-                UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
+                UselessReptile.LOGGER.warn("Failed to find model {} for {} ({}) of variant {}. Default will be used instead",
+                        id,
                         dragonName,
                         dragonId,
                         variantName
@@ -189,10 +192,11 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().animation();
-            if (ResourceUtil.doesAnimationExist(id, true)) {
+            if (ClientAnimationManager.instance().hasAnimations(id)) {
                 assetCache.setAnimationLocationCache(id);
             } else {
-                UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
+                UselessReptile.LOGGER.warn("Failed to find animations {} for {} ({}) of variant {}. Default will be used instead",
+                        id,
                         dragonName,
                         dragonId,
                         variantName
@@ -246,10 +250,11 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //model
         id = equipment.modelData().model();
-        if (ResourceUtil.doesModelExist(id, true)) {
+        if (ClientModelManager.instance().hasModel(id)) {
             assetCache.setModelLocationCache(id);
         } else {
-            UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}",
+            UselessReptile.LOGGER.warn("Failed to find model {} for equipment ({}) for {} ({}) of variant {}",
+                    id,
                     itemId,
                     dragonName,
                     dragonId,
@@ -261,10 +266,11 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //animation cache
         id = equipment.modelData().animation();
-        if (ResourceUtil.doesAnimationExist(id, true)) {
+        if (ClientAnimationManager.instance().hasAnimations(id)) {
             assetCache.setAnimationLocationCache(id);
         } else {
-            UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}",
+            UselessReptile.LOGGER.warn("Failed to find animation {} for equipment ({}) for {} ({}) of variant {}",
+                    id,
                     itemId,
                     dragonName,
                     dragonId,

@@ -7,11 +7,12 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
+import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.model_provider.URDragonEntityModelProvider;
-import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -97,10 +98,11 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
         //model
         if (assetCache.getModelLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, animatable.level().registryAccess()).modelData().model();
-            if (ResourceUtil.doesModelExist(id, false)) {
+            if (ServerModelManager.instance().hasModel(id)) {
                 assetCache.setModelLocationCache(id);
             } else {
-                UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
+                UselessReptile.LOGGER.warn("Failed to find model {} for {} ({}) of variant {}. Default will be used instead",
+                        id,
                         dragonName,
                         dragonId,
                         variantName
@@ -112,10 +114,11 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, animatable.level().registryAccess()).modelData().animation();
-            if (ResourceUtil.doesAnimationExist(id, false)) {
+            if (ServerAnimationManager.instance().hasAnimations(id)) {
                 assetCache.setAnimationLocationCache(id);
             } else {
-                UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
+                UselessReptile.LOGGER.warn("Failed to find animation {} for {} ({}) of variant {}. Default will be used instead",
+                        id,
                         dragonName,
                         dragonId,
                         variantName
