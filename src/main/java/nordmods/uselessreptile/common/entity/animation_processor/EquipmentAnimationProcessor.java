@@ -2,40 +2,25 @@ package nordmods.uselessreptile.common.entity.animation_processor;
 
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import libs.gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
+import nordmods.uselessreptile.common.asset_cache.EquipmentAssetCache;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
-import nordmods.uselessreptile.common.network.s2c.SyncEquipmentBoneTransformsPayload;
 
 import java.util.Collection;
 import java.util.Map;
 
-public class EquipmentAnimationProcessor extends SyncronizedAnimationProcessor<DragonEquipment, SyncEquipmentBoneTransformsPayload> {
+public class EquipmentAnimationProcessor extends AnimationProcessor<DragonEquipment> {
     private static final DragonEquipmentModelProvider MODEL_PROVIDER = new DragonEquipmentModelProvider();
+    private final EquipmentAssetCache assetCache = new EquipmentAssetCache();
     public EquipmentAnimationProcessor(DragonEquipment animatable) {
         super(animatable);
-    }
-
-    @Override
-    public boolean isClientSide() {
-        return animatable.owner.level().isClientSide();
-    }
-
-    @Override
-    public void sendSyncPacket() {
-        if (animatable.owner.level() instanceof ServerLevel serverLevel) {
-            for (ServerPlayer player : PlayerLookup.tracking(serverLevel, animatable.owner.blockPosition()))
-                SyncEquipmentBoneTransformsPayload.send(player, animatable);
-        }
     }
 
     @Override
@@ -71,7 +56,7 @@ public class EquipmentAnimationProcessor extends SyncronizedAnimationProcessor<D
         });
         super.updateBRState();
         state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerState.getStateData(URStateDataTypes.DRAGON_ID));
-        state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
+        state.setStateData(URStateDataTypes.ASSET_CACHE, assetCache);
     }
 
     @Override
@@ -104,5 +89,9 @@ public class EquipmentAnimationProcessor extends SyncronizedAnimationProcessor<D
         builder.setQuery("body_y_rotation", animatable.ownerState.getStateData(URStateDataTypes.BODY_Y_ROTATION, 0f));
         builder.setQuery("head_y_rotation", animatable.ownerState.getStateData(URStateDataTypes.HEAD_Y_ROTATION, 0f));
         builder.setQuery("yaw_speed", animatable.ownerState.getStateData(URStateDataTypes.YAW_SPEED, 0f));
+    }
+
+    public EquipmentAssetCache getAssetCache() {
+        return assetCache;
     }
 }

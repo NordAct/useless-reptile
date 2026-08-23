@@ -2,7 +2,6 @@ package nordmods.uselessreptile.client.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
-import libs.gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -36,7 +35,6 @@ import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.animation_processor.BoneTransform;
-import nordmods.uselessreptile.common.entity.animation_processor.SyncronizedAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
@@ -74,7 +72,6 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         renderState.setStateData(URStateDataTypes.ASSET_CACHE, assetCache);
         Identifier dragonId = animatable.getDragonId();
         renderState.setStateData(URStateDataTypes.DRAGON_ID, dragonId);
-        renderState.setStateData(URStateDataTypes.ANIMATION_PROCESSOR, animatable.getAnimationProcessor());
         if (ResourceUtil.isResourceReloadFinished) {
             fillDragonCache(
                     assetCache,
@@ -133,15 +130,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     @Override
     public void adjustAnimation(BRState state, BRModel model) {
         if (!ResourceUtil.isResourceReloadFinished) return;
-        SyncronizedAnimationProcessor<?, ?> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
-        float tickDelta = state.getStateData(StateDataTypes.TICK_DELTA, 0f);
         model.getRootBones().forEach(bone -> bone.setVisible(true));
-
-        if (animationProcessor != null) {
-            for (AnimatedBone animatedBone : model.getBones()) {
-                animationProcessor.syncPose(animatedBone.getBone().name(), animatedBone.getAnimationPose(), tickDelta);
-            }
-        }
 
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);

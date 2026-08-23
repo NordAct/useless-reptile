@@ -20,7 +20,6 @@ import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 import nordmods.uselessreptile.common.asset_cache.AssetCache;
 import nordmods.uselessreptile.common.entity.animation_processor.BoneTransform;
-import nordmods.uselessreptile.common.entity.animation_processor.SyncronizedAnimationProcessor;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
@@ -60,10 +59,9 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
         state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerState.getStateData(ClientStateDataTypes.LIGHT));
         state.setStateData(URStateDataTypes.BONE_TRANSFORMS, animatable.ownerState.getStateData(URStateDataTypes.BONE_TRANSFORMS));
-        state.setStateData(URStateDataTypes.ANIMATION_PROCESSOR, animatable.getAnimationProcessor());
         state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
         Collection<BRAnimationController> ownerControllers = animatable.ownerState.getStateData(StateDataTypes.CONTROLLERS);
-        ownerControllers.forEach(controller -> {
+        ownerControllers.forEach(controller -> { //todo move to equipment object
             controller.getPlayingAnimations().forEach(playingAnimation -> {
                 if (playingAnimation.isDone()) return;
                 String name = playingAnimation.getAnimation().name();
@@ -108,25 +106,16 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     public void adjustAnimation(BRState state, BRModel model) {
         super.adjustAnimation(state, model);
         if (!ResourceUtil.isResourceReloadFinished) return;
-        SyncronizedAnimationProcessor<?, ?> animationProcessor = state.getStateData(URStateDataTypes.ANIMATION_PROCESSOR);
-        float tickDelta = state.getStateData(StateDataTypes.TICK_DELTA, 0f);
         model.getRootBones().forEach(bone -> bone.setVisible(true));
 
-        if (animationProcessor != null) {
-            for (AnimatedBone animatedBone : model.getBones()) {
-                animationProcessor.syncPose(animatedBone.getBone().name(), animatedBone.getAnimationPose(), tickDelta);
-            }
-        } else {
-            state.getStateData(URStateDataTypes.BONE_TRANSFORMS, Map.of()).forEach((bone, transform) -> {
-                AnimatedBone animatedBone = model.getBone(bone);
-                if (animatedBone == null) return;
-                AnimatedBone.AnimationPose pose = animatedBone.getAnimationPose();
-                pose.position().add(transform.pos().orElse(BoneTransform.ZERO));
-                pose.rotation().add(transform.rot().orElse(BoneTransform.ZERO));
-                pose.scale().mul(transform.scale().orElse(BoneTransform.ONE));
-            });
-        }
-
+        state.getStateData(URStateDataTypes.BONE_TRANSFORMS, Map.of()).forEach((bone, transform) -> {
+            AnimatedBone animatedBone = model.getBone(bone);
+            if (animatedBone == null) return;
+            AnimatedBone.AnimationPose pose = animatedBone.getAnimationPose();
+            pose.position().add(transform.pos().orElse(BoneTransform.ZERO));
+            pose.rotation().add(transform.rot().orElse(BoneTransform.ZERO));
+            pose.scale().mul(transform.scale().orElse(BoneTransform.ONE));
+        });
     }
 
     @Override

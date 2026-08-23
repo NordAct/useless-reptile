@@ -129,6 +129,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
 
     //todo reconsider structure and make it cleaner
     public void tickAnimations() {
+        if (level().isClientSide()) return;
         tickBlinkController();
         tickMainController();
     }
@@ -189,8 +190,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
 
     @Override
     public void tick() {
-        super.tick();
-        tickAnimations();
         if (level().isClientSide()) {
             for (int i = 0; i < nextPoses.size(); i++) {
                 EntityPart part = getParts()[i];
@@ -198,6 +197,8 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
                 part.setPos(nextPoses.get(i));
             }
         }
+        tickAnimations();
+        super.tick();
     }
 
     @Override

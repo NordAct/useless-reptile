@@ -13,6 +13,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 
 // todo redo literally everything to make it work on dedicated server
 // THIS IS A PROTOTYPE
@@ -27,8 +28,8 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     }
 
     public void updateBRState() {
-        state.setStateData(StateDataTypes.CONTROLLERS, animatable.getAnimationControllers());
-        animatable.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), animatable, 1));
+        state.setStateData(StateDataTypes.CONTROLLERS, getAnimationControllers());
+        getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), animatable, 1));
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
         state.setStateData(StateDataTypes.ANIMATION_TIME, getAnimationTime());
     }
@@ -51,6 +52,10 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
             controllers.forEach(c -> c.triggerAnimationEffects(model, state));
             postAnimation();
         }
+    }
+
+    public List<BRAnimationController> getAnimationControllers() {
+        return animatable.getAnimationControllers();
     }
 
     @Nullable

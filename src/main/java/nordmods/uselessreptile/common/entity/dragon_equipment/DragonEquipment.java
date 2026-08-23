@@ -19,7 +19,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     public final ItemStack itemStack;
     private final EquipmentAssetCache assetCache;
     public final EquipmentAnimationController controller;
-    public final List<BRAnimationController> controllers;
+    private final List<BRAnimationController> controllers;
     @Nullable
     private final EquipmentAnimationProcessor processor;
     public final EquipmentSlot equipmentSlot;
@@ -36,15 +36,21 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
         this.equipmentSlot = equipmentSlot;
         this.controllers = List.of(controller);
         this.processor = createServerAnimationProcessor();
+        if (processor != null) {
+            processor.getAssetCache().setModelLocationCache(assetCache.getModelLocationCache());
+            processor.getAssetCache().setAnimationLocationCache(assetCache.getAnimationLocationCache());
+        }
     }
 
     @Override
     public List<BRAnimationController> getAnimationControllers() {
-        return processor != null && processor.isClientSide() ? List.of() : controllers;
+        return controllers;
     }
 
-    public void tick() {
-        if (processor != null) processor.tick();
+    public void tick() { //todo controller animation syncronization
+        if (processor != null) {
+            processor.tick();
+        }
     }
 
     public EquipmentAnimationProcessor createServerAnimationProcessor() {

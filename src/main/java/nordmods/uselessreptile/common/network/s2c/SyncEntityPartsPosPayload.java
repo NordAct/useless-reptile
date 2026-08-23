@@ -17,6 +17,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+//todo remove this and handle positions on client
 public record SyncEntityPartsPosPayload(int ownerId, List<Vec3> poses)  implements CustomPacketPayload{
     public static final Identifier ID = UselessReptile.id("sync_entity_parts_pos");
     public static final CustomPacketPayload.Type<SyncEntityPartsPosPayload> PAYLOAD_ID = new CustomPacketPayload.Type<>(ID);

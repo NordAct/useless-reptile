@@ -15,7 +15,7 @@ public abstract class LivingEntityMixin extends Entity {
     public LivingEntityMixin(EntityType<?> type, Level world) {
         super(type, world);
     }
-    /// Fix for when ridden dragon (URideableDragonEntity) gets its velocity reset on client-side of other player. This is needed for correct animation playing
+    /// Fix for when ridden dragon (URideableDragonEntity) gets its velocity reset on client-side of other player. This is needed for correct animation playingAnimations
     @ModifyArg(method = "travelRidden", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;setDeltaMovement(Lnet/minecraft/world/phys/Vec3;)V"))
     private Vec3 clientVelocityResetFix(Vec3 par1) {
         if (getControllingPassenger() instanceof RemotePlayer) return getDeltaMovement();

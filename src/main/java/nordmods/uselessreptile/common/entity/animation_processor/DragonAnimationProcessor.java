@@ -1,11 +1,8 @@
 package nordmods.uselessreptile.common.entity.animation_processor;
 
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
@@ -21,25 +18,12 @@ import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
 import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
-import nordmods.uselessreptile.common.network.s2c.SyncBoneTransformsPayload;
 
-public class DragonAnimationProcessor<T extends URDragonEntity> extends SyncronizedAnimationProcessor<T, SyncBoneTransformsPayload> {
+public class DragonAnimationProcessor<T extends URDragonEntity> extends AnimationProcessor<T> {
     private static final URDragonEntityModelProvider MODEL_PROVIDER = new URDragonEntityModelProvider();
+    private final DragonAssetCache assetCache = new DragonAssetCache();
     public DragonAnimationProcessor(T animatable) {
         super(animatable);
-    }
-
-    @Override
-    public boolean isClientSide() {
-        return animatable.level().isClientSide();
-    }
-
-    @Override
-    public void sendSyncPacket() {
-        if (animatable.level() instanceof ServerLevel serverLevel) {
-            for (ServerPlayer player : PlayerLookup.tracking(serverLevel, animatable.blockPosition()))
-                SyncBoneTransformsPayload.send(player, animatable);
-        }
     }
 
     @Override
@@ -60,7 +44,6 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Syncroni
         state.setStateData(URStateDataTypes.HEAD_Y_ROTATION, -animatable.getViewYRot(1));
         state.setStateData(URStateDataTypes.YAW_SPEED, -animatable.getYBodyRotChange(1));
         super.updateBRState();
-        DragonAssetCache assetCache = animatable.getAssetCache();
         state.setStateData(URStateDataTypes.ASSET_CACHE, assetCache);
         Identifier dragonId = animatable.getDragonId();
         state.setStateData(URStateDataTypes.DRAGON_ID, dragonId);
