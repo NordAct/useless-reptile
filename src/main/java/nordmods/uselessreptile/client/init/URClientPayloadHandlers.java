@@ -6,6 +6,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.client.gui.URDragonScreen;
 import nordmods.uselessreptile.client.gui.VariantChangingOrbScreen;
+import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
 import nordmods.uselessreptile.common.entity.base.MultipartDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
@@ -19,6 +20,7 @@ public class URClientPayloadHandlers {
         handleSyncLightningBreathRotations();
         handleOpenVariantChangingOrbScreen();
         handleSyncEntityPartsPosPayload();
+        handleSSyncAnimationsPayload();
     }
 
     private static void handleOpenDragonInventory() {
@@ -70,6 +72,15 @@ public class URClientPayloadHandlers {
             Entity entity = context.player().level().getEntity(packet.ownerId());
             if (entity instanceof MultipartDragon multipartEntity) {
                 multipartEntity.handleSyncPayload(packet);
+            }
+        });
+    }
+
+    private static void handleSSyncAnimationsPayload() {
+        ClientPlayNetworking.registerGlobalReceiver(SyncAnimationsPayload.PAYLOAD_ID, (packet, context) -> {
+            Entity entity = context.player().level().getEntity(packet.ownerId());
+            if (entity instanceof URDragonEntity dragon) {
+                ControllerState.applyControllerStates(packet.controllerStates(), dragon.getAnimationControllers());
             }
         });
     }

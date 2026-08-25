@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import libs.gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
@@ -75,16 +76,19 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
                     );
                     return;
                 }
-                BRPlayingAnimation animation = new BRPlayingAnimation(
-                        animatable.controller.getAnimationData(name),
-                        playingAnimation.getTransitionInTime(),
-                        playingAnimation.getTransitionOutTime(),
-                        playingAnimation.getTransitionInLerp(),
-                        playingAnimation.getTransitionOutLerp(),
-                        playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
-                );
-                animation.setAnimationTime(playingAnimation.getAnimationTime());
-                animatable.controller.playAnimation(animation);
+                AnimationData data = animatable.controller.getAnimationData(name);
+                if (data != null) {
+                    BRPlayingAnimation animation = new BRPlayingAnimation(
+                            data,
+                            playingAnimation.getTransitionInTime(),
+                            playingAnimation.getTransitionOutTime(),
+                            playingAnimation.getTransitionInLerp(),
+                            playingAnimation.getTransitionOutLerp(),
+                            playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
+                    );
+                    animation.setAnimationTime(playingAnimation.getAnimationTime());
+                    animatable.controller.playAnimation(animation);
+                }
             });
             animatable.controller.checkAgainstOtherController(controller);
         });

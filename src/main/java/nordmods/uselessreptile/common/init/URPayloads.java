@@ -11,6 +11,7 @@ public class URPayloads {
         PayloadTypeRegistry.clientboundPlay().register(SyncLightningBreathRotationsPayload.PAYLOAD_ID, SyncLightningBreathRotationsPayload.PACKET_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(OpenVariantChangingOrbScreenPayload.PAYLOAD_ID, OpenVariantChangingOrbScreenPayload.PACKET_CODEC);
         PayloadTypeRegistry.clientboundPlay().register(SyncEntityPartsPosPayload.PAYLOAD_ID, SyncEntityPartsPosPayload.PACKET_CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(SyncAnimationsPayload.PAYLOAD_ID, SyncAnimationsPayload.PACKET_CODEC);
 
         PayloadTypeRegistry.serverboundPlay().register(KeyInputPayload.PAYLOAD_ID, KeyInputPayload.PACKET_CODEC);
         PayloadTypeRegistry.serverboundPlay().register(RequestLiftoffPayload.PAYLOAD_ID, RequestLiftoffPayload.PACKET_CODEC);

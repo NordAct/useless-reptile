@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.common.entity.animation_processor;
 
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import libs.gg.moonflower.pinwheel.api.geometry.bone.AnimatedBone;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
@@ -14,6 +15,7 @@ import nordmods.uselessreptile.common.entity.model_provider.DragonEquipmentModel
 import nordmods.uselessreptile.common.init.URStateDataTypes;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 public class EquipmentAnimationProcessor extends AnimationProcessor<DragonEquipment> {
@@ -26,7 +28,7 @@ public class EquipmentAnimationProcessor extends AnimationProcessor<DragonEquipm
     @Override
     public void updateBRState() {
         state.setStateData(URStateDataTypes.BONE_TRANSFORMS, animatable.ownerState.getStateData(URStateDataTypes.BONE_TRANSFORMS));
-        Collection<BRAnimationController> ownerControllers = animatable.ownerState.getStateData(StateDataTypes.CONTROLLERS);
+        Collection<BRAnimationController> ownerControllers = animatable.ownerState.getStateData(StateDataTypes.CONTROLLERS, List.of());
         ownerControllers.forEach(controller -> {
             controller.getPlayingAnimations().forEach(playingAnimation -> {
                 if (playingAnimation.isDone()) return;
@@ -41,16 +43,19 @@ public class EquipmentAnimationProcessor extends AnimationProcessor<DragonEquipm
                     );
                     return;
                 }
-                BRPlayingAnimation animation = new BRPlayingAnimation(
-                        animatable.controller.getAnimationData(name),
-                        playingAnimation.getTransitionInTime(),
-                        playingAnimation.getTransitionOutTime(),
-                        playingAnimation.getTransitionInLerp(),
-                        playingAnimation.getTransitionOutLerp(),
-                        playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
-                );
-                animation.setAnimationTime(playingAnimation.getAnimationTime());
-                animatable.controller.playAnimation(animation);
+                AnimationData data = animatable.controller.getAnimationData(name);
+                if (data != null) {
+                    BRPlayingAnimation animation = new BRPlayingAnimation(
+                            data,
+                            playingAnimation.getTransitionInTime(),
+                            playingAnimation.getTransitionOutTime(),
+                            playingAnimation.getTransitionInLerp(),
+                            playingAnimation.getTransitionOutLerp(),
+                            playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
+                    );
+                    animation.setAnimationTime(playingAnimation.getAnimationTime());
+                    animatable.controller.playAnimation(animation);
+                }
             });
             animatable.controller.checkAgainstOtherController(controller);
         });
