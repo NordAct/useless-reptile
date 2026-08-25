@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.common.entity.animation_processor;
 
 import io.netty.buffer.ByteBuf;
+import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
@@ -34,6 +35,7 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
             for (BRPlayingAnimation anim : controller.getPlayingAnimations()) {
                 if (!anim.isDone() || !anim.canClearOut()) playingAnimations.add(new PlayingAnimation(
                         anim.getAnimation().name(),
+                        anim.getActualAnimationTime(),
                         anim.getSpeed(),
                         anim.isPaused()
                 ));
@@ -65,6 +67,7 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
 
     public record PlayingAnimation(
             String name,
+            float time,
             float speed,
             boolean paused
     ) {
@@ -73,13 +76,15 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
             public PlayingAnimation decode(ByteBuf input) {
                 String name = ByteBufCodecs.STRING_UTF8.decode(input);
                 float time = input.readFloat();
+                float speed = input.readFloat();
                 boolean paused = input.readBoolean();
-                return new PlayingAnimation(name, time, paused);
+                return new PlayingAnimation(name, time, speed, paused);
             }
 
             @Override
             public void encode(ByteBuf output, PlayingAnimation value) {
                 ByteBufCodecs.STRING_UTF8.encode(output, value.name());
+                output.writeFloat(value.time());
                 output.writeFloat(value.speed());
                 output.writeBoolean(value.paused());
             }
@@ -104,6 +109,42 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
 
             animation.setSpeed(playingAnimation.speed());
             if (playingAnimation.paused() != animation.isPaused()) animation.setPaused(playingAnimation.paused());
+            if (animation.isTransitioningIn() || animation.isTransitioningOut()) return;
+
+            float clientTime = animation.getActualAnimationTime();
+            float serverTime = playingAnimation.time();
+            float diff = serverTime - clientTime;
+
+            float length = animation.getAnimation().animationLength();
+            if (animation.getAnimation().loop() == AnimationData.Loop.LOOP && length > 0) {
+                float clientRenderTime = animation.getRenderAnimationTime();
+                float serverRenderTime = getRenderAnimationTime(serverTime, animation);
+                diff = getDiff(clientRenderTime, serverRenderTime, length);
+                serverTime = clientTime + diff;
+            }
+
+            float relativeDiff = Math.abs(diff / length);
+            if (relativeDiff > 0.5f) {
+                animation.setAnimationTime(serverTime);
+                return;
+            }
+            animation.setSpeed(animation.getSpeed() * (1 - relativeDiff));
+        }
+
+        private static float getRenderAnimationTime(float actualTime, BRPlayingAnimation animation) {
+            float time = Math.max(0, actualTime - animation.getTransitionInTime());
+            float animationLength = animation.getAnimation().animationLength();
+            return switch (animation.getAnimation().loop()) {
+                case LOOP -> animationLength > 0 ? time % animationLength : time;
+                case HOLD_ON_LAST_FRAME -> Math.min(time, animationLength);
+                case NONE -> time;
+            };
+        }
+
+        private static float getDiff(float current, float target, float length) {
+            float diff = target - current;
+            diff = ((diff + length / 2) % length + length) % length - length / 2;
+            return diff;
         }
     }
 }
