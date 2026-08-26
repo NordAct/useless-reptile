@@ -98,7 +98,7 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
         public static void applyPlayingAnimation(BRAnimationController controller, PlayingAnimation playingAnimation) {
             BRPlayingAnimation animation = controller.getAnimation(playingAnimation.name());
 
-            if (animation == null) {
+            if (animation == null) { //todo: come up with a way to "resume" animations that does not mess up transitions
                 controller.playAnimation(playingAnimation.name());
                 animation = controller.getAnimation(playingAnimation.name());
                 if (animation == null) return;
@@ -123,12 +123,17 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
                 serverTime = clientTime + diff;
             }
 
-            float relativeDiff = Math.abs(diff / length);
-            if (relativeDiff > 0.5f) {
+//            if (Minecraft.getInstance().player != null) {
+//                Minecraft.getInstance().player.sendOverlayMessage(Component.literal(diff + ""));
+//            }
+
+            float relativeDiff =  diff / Math.abs(length);
+            float relativeDiffAbs = Math.abs(relativeDiff);
+            if (relativeDiffAbs > 0.1f || Math.abs(diff) > 0.2f) {
                 animation.setAnimationTime(serverTime);
                 return;
             }
-            animation.setSpeed(animation.getSpeed() * (1 - relativeDiff));
+            animation.setSpeed(animation.getSpeed() * (1 + relativeDiff));
         }
 
         private static float getRenderAnimationTime(float actualTime, BRPlayingAnimation animation) {

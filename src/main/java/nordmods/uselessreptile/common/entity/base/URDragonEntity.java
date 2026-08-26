@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity.base;
 import eu.pb4.common.protection.api.CommonProtection;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -784,10 +783,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (!level().isClientSide()) {
             if (processor != null) {
                 processor.tick();
-                if (level() instanceof ServerLevel serverLevel) {
-                    for (ServerPlayer player : PlayerLookup.tracking(serverLevel, blockPosition()))
-                        SyncAnimationsPayload.send(player, this);
-                }
+                SyncAnimationsPayload.send(this);
             }
         }
     }

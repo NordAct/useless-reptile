@@ -1,10 +1,12 @@
 package nordmods.uselessreptile.common.network.s2c;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
@@ -24,8 +26,15 @@ public record SyncAnimationsPayload(int ownerId, List<ControllerState> controlle
             buf -> new SyncAnimationsPayload(buf.readInt(), ControllerState.LIST_STREAM_CODEC.decode(buf))
     );
 
-    public static void send(ServerPlayer player, URDragonEntity dragon) {
-        ServerPlayNetworking.send(player, new SyncAnimationsPayload(dragon.getId(), ControllerState.collectControllerStates(dragon.getAnimationControllers())));
+    public static void send(URDragonEntity dragon) {
+        if (dragon.level() instanceof ServerLevel serverLevel) {
+            SyncAnimationsPayload payload = new SyncAnimationsPayload(dragon.getId(), ControllerState.collectControllerStates(dragon.getAnimationControllers()));
+            for (ServerPlayer player : PlayerLookup.tracking(serverLevel, dragon.blockPosition())) send(player, payload);
+        }
+    }
+
+    public static void send(ServerPlayer player, SyncAnimationsPayload payload) {
+        ServerPlayNetworking.send(player, payload);
     }
 
     @Override

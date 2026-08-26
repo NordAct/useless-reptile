@@ -60,4 +60,9 @@ public class URDragonAnimationController<E extends URDragonEntity> extends BRAni
     @Override
     public AnimationData getAnimationData(String animation) {
         return this.animationFile == null ? null : BRAnimationManager.getAnimationManager(dragon.level().isClientSide()).getAnimation(this.animationFile, animation);    }
+
+    @Override
+    public void playAnimation(String animation) {
+        if (dragon.getAnimationProcessor() == null || getAnimation(animation) == null) super.playAnimation(animation);
+    }
 }
