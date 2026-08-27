@@ -5,6 +5,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
 import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
 import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
 import nordmods.uselessreptile.UselessReptile;
@@ -19,9 +21,13 @@ import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
 import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
 
+import java.util.List;
+
 public class DragonAnimationProcessor<T extends URDragonEntity> extends AnimationProcessor<T> {
     private static final URDragonEntityModelProvider MODEL_PROVIDER = new URDragonEntityModelProvider();
     private final DragonAssetCache assetCache = new DragonAssetCache();
+    private final CloneAnimationController cloneController = new CloneAnimationController();
+    private final List<BRAnimationController> cloneControllerList = List.of(cloneController);
     public DragonAnimationProcessor(T animatable) {
         super(animatable);
     }
@@ -143,22 +149,6 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
                 : new DragonEquipment(owner, itemStack, assetCache, slot);
     }
 
-    @Override
-    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T animatable, float tickDelta) {
-        super.updateControllerVariables(builder, animatable, tickDelta);
-        builder.setQuery("body_x_rotation", state.getStateData(URStateDataTypes.BODY_X_ROTATION));
-        builder.setQuery("head_x_rotation", state.getStateData(URStateDataTypes.HEAD_X_ROTATION));
-        builder.setQuery("body_y_rotation", state.getStateData(URStateDataTypes.BODY_Y_ROTATION));
-        builder.setQuery("head_y_rotation", state.getStateData(URStateDataTypes.HEAD_Y_ROTATION));
-        builder.setQuery("yaw_speed", state.getStateData(URStateDataTypes.YAW_SPEED));
-    }
-
-    @Override
-    public void postAnimation() {
-        super.postAnimation();
-        state.setStateData(URStateDataTypes.BONE_TRANSFORMS, BoneTransform.collectBoneTransforms(getModel().getBones()));
-    }
-
     protected void fillDragonCache(
             DragonAssetCache assetCache,
             DragonVariant variant,
@@ -200,5 +190,32 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
                 assetCache.setAnimationLocationCache(defaultAnimation);
             }
         }
+    }
+
+    @Override
+    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T animatable, float tickDelta) {
+        super.updateControllerVariables(builder, animatable, tickDelta);
+        builder.setQuery("body_x_rotation", state.getStateData(URStateDataTypes.BODY_X_ROTATION, 0f));
+        builder.setQuery("head_x_rotation", state.getStateData(URStateDataTypes.HEAD_X_ROTATION, 0f));
+        builder.setQuery("body_y_rotation", state.getStateData(URStateDataTypes.BODY_Y_ROTATION, 0f));
+        builder.setQuery("head_y_rotation", state.getStateData(URStateDataTypes.HEAD_Y_ROTATION, 0f));
+        builder.setQuery("yaw_speed", state.getStateData(URStateDataTypes.YAW_SPEED, 0f));
+    }
+
+    @Override
+    public void postAnimation() {
+        super.postAnimation();
+        state.setStateData(URStateDataTypes.BONE_TRANSFORMS, BoneTransform.collectBoneTransforms(getModel().getBones()));
+    }
+
+    @Override
+    public void tick() {
+        if (animatable.level().isClientSide()) cloneController.copyFrom(animatable);
+        super.tick();
+    }
+
+    @Override
+    public List<BRAnimationController> getAnimationControllers() {
+        return animatable.level().isClientSide() ? cloneControllerList : super.getAnimationControllers();
     }
 }

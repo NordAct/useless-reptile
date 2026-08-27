@@ -565,7 +565,10 @@
 								"down": {"uv": [66, 134], "uv_size": [26, -14]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"wing_left": [13, 43.075, 5]
+					}
 				},
 				{
 					"name": "shoulder_arm_left",
@@ -599,7 +602,10 @@
 								"down": {"uv": [115, 70], "uv_size": [32, -35]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"shoulder_arm_left": [35.8, 43.6, 10.3]
+					}
 				},
 				{
 					"name": "fingers_left",
@@ -895,7 +901,10 @@
 								"down": {"uv": [92, 134], "uv_size": [-26, -14]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"wing_right": [-13, 43.075, 5]
+					}
 				},
 				{
 					"name": "shoulder_arm_right",
@@ -929,7 +938,10 @@
 								"down": {"uv": [147, 70], "uv_size": [-32, -35]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"shoulder_arm_right": [-35.8, 43.6, 10.3]
+					}
 				},
 				{
 					"name": "fingers_right",

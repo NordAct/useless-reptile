@@ -19,6 +19,7 @@ public class URDragonAnimationController<E extends URDragonEntity> extends BRAni
 
     @Override
     protected void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state) {
+        if (dragon.getAnimationProcessor() != null && dragon.level().isClientSide()) return;
         URDragonEntity.SoundInfo soundInfo = dragon.getSoundInfo(soundEffect.effect());
         if (soundInfo != null)
             dragon.playSound(

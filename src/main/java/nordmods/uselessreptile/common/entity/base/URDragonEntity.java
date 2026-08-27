@@ -780,11 +780,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
 
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
-        if (!level().isClientSide()) {
-            if (processor != null) {
-                processor.tick();
-                SyncAnimationsPayload.send(this);
-            }
+        if (processor != null) {
+            processor.tick();
+            SyncAnimationsPayload.send(this);
         }
     }
 

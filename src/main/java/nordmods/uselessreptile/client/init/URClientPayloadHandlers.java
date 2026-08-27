@@ -7,7 +7,6 @@ import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.client.gui.URDragonScreen;
 import nordmods.uselessreptile.client.gui.VariantChangingOrbScreen;
 import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
-import nordmods.uselessreptile.common.entity.base.MultipartDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
@@ -19,7 +18,6 @@ public class URClientPayloadHandlers {
         handleLiftoffParticles();
         handleSyncLightningBreathRotations();
         handleOpenVariantChangingOrbScreen();
-        handleSyncEntityPartsPosPayload();
         handleSSyncAnimationsPayload();
     }
 
@@ -64,15 +62,6 @@ public class URClientPayloadHandlers {
     private static void handleOpenVariantChangingOrbScreen() {
         ClientPlayNetworking.registerGlobalReceiver(OpenVariantChangingOrbScreenPayload.PAYLOAD_ID, (packet, _) -> {
             Minecraft.getInstance().setScreen(new VariantChangingOrbScreen(packet.variantType(), packet.variant()));
-        });
-    }
-
-    private static void handleSyncEntityPartsPosPayload() {
-        ClientPlayNetworking.registerGlobalReceiver(SyncEntityPartsPosPayload.PAYLOAD_ID, (packet, context) -> {
-            Entity entity = context.player().level().getEntity(packet.ownerId());
-            if (entity instanceof MultipartDragon multipartEntity) {
-                multipartEntity.handleSyncPayload(packet);
-            }
         });
     }
 

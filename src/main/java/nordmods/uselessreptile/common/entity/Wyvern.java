@@ -1,11 +1,8 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -30,8 +27,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
+import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
@@ -40,20 +37,16 @@ import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.animation_processor.MultipartDragonAnimationProcessor;
-import nordmods.uselessreptile.common.entity.base.MultipartDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.*;
-import nordmods.uselessreptile.common.network.s2c.SyncEntityPartsPosPayload;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
-public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDragon {
+public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity {
     private final URDragonPart head = new URDragonPart(this, "head", 0.5f, 0.5f);
     private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.5f, 0.5f);
     private final URDragonPart neck2 = new URDragonPart(this, "neck2", 0.5f, 0.5f);
@@ -67,8 +60,11 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
     private final URDragonPart tail3 = new URDragonPart(this, "tail3", 0.75f, 0.75f);
     private final URDragonPart tail4 = new URDragonPart(this, "tail4", 0.75f, 0.75f);
     private final URDragonPart tail5 = new URDragonPart(this, "tail5", 0.75f, 0.75f);
-    private final URDragonPart[] parts = new URDragonPart[]{head, neck1, neck2, neck3, neck4, neck5, front, back, tail1, tail2, tail3, tail4, tail5};
-    private List<Vec3> nextPoses = List.of();
+    private final URDragonPart wingLeft = new URDragonPart(this, "wing_left", 1.25f, 1f);
+    private final URDragonPart wingRight = new URDragonPart(this, "wing_right", 1.25f, 1f);
+    private final URDragonPart shoulderArmLeft = new URDragonPart(this, "shoulder_arm_left", 2f, 1f);
+    private final URDragonPart shoulderArmRight = new URDragonPart(this, "shoulder_arm_right", 2f, 1f);
+    private final URDragonPart[] parts = new URDragonPart[]{head, neck1, neck2, neck3, neck4, neck5, front, back, tail1, tail2, tail3, tail4, tail5, wingLeft, wingRight, shoulderArmLeft, shoulderArmRight};
     private static final EntityDimensions FLYING_IDLE = EntityDimensions.scalable(2.95f, 2.95f).withEyeHeight(2.9f);
     private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(2.95f, 1).withEyeHeight(0.9f);
     private static final EntityDimensions ON_GROUND = EntityDimensions.scalable(1.8f, 2.95f).withEyeHeight(2.9f);
@@ -196,13 +192,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
 
     @Override
     public void tick() {
-        if (level().isClientSide()) {
-            for (int i = 0; i < nextPoses.size(); i++) {
-                EntityPart part = getParts()[i];
-                part.setOldPosAndRot();
-                part.setPos(nextPoses.get(i));
-            }
-        }
         tickAnimations();
         super.tick();
     }
@@ -301,18 +290,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartDra
     @Override
     public EntityPart[] getParts() {
         return parts;
-    }
-
-    @Override
-    public void sendSyncPayload() {
-        if (level() instanceof ServerLevel serverWorld)
-            for (ServerPlayer player : PlayerLookup.tracking(serverWorld, blockPosition()))
-                SyncEntityPartsPosPayload.send(player, this);
-    }
-
-    @Override
-    public void handleSyncPayload(SyncEntityPartsPosPayload payload) {
-        nextPoses = payload.poses();
     }
 
     @Override

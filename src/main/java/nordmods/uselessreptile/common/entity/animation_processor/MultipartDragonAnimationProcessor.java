@@ -4,13 +4,13 @@ import com.mojang.math.Axis;
 import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
-import nordmods.uselessreptile.common.entity.base.MultipartDragon;
+import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class MultipartDragonAnimationProcessor<T extends URDragonEntity & MultipartDragon> extends DragonAnimationProcessor<T>{
+public class MultipartDragonAnimationProcessor<T extends URDragonEntity & MultipartEntity> extends DragonAnimationProcessor<T> {
     public MultipartDragonAnimationProcessor(T animatable) {
         super(animatable);
     }
@@ -18,7 +18,6 @@ public class MultipartDragonAnimationProcessor<T extends URDragonEntity & Multip
     @Override
     public void tick() {
         super.tick();
-        if (animatable.level().isClientSide()) return;
         BRModel model = getModel();
         if (model == null) return;
         for (EntityPart part : animatable.getParts()) {
@@ -30,7 +29,5 @@ public class MultipartDragonAnimationProcessor<T extends URDragonEntity & Multip
                 dragonPart.setRelativePos(pos);
             }
         }
-
-        animatable.sendSyncPayload();
     }
 }
