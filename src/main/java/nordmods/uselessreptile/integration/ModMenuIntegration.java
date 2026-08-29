@@ -427,6 +427,15 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> clientConfig.enableCameraOffset = val)
                 .customController(BooleanController::new)
                 .build();
+        Option<Boolean> enableCameraRoll = Option.<Boolean>createBuilder()
+                .name(Component.translatable("config.uselessreptile.option.enableCameraRoll"))
+                .description(OptionDescription.createBuilder()
+                        .text(Component.translatable("config.uselessreptile.option.enableCameraRoll.@Tooltip")).build())
+                .binding(clientDefaults.enableCameraRoll,
+                        () -> clientConfig.enableCameraRoll,
+                        val -> clientConfig.enableCameraRoll = val)
+                .customController(BooleanController::new)
+                .build();
         Option<Boolean> enableCrosshair = Option.<Boolean>createBuilder()
                 .name(Component.translatable("config.uselessreptile.option.enableCrosshair"))
                 .description(OptionDescription.createBuilder()
@@ -515,6 +524,7 @@ public class ModMenuIntegration implements ModMenuApi {
         cameraGroup.option(cameraVerticalOffset);
         cameraGroup.option(cameraHorizontalOffset);
         cameraGroup.option(enableCameraOffset);
+        cameraGroup.option(enableCameraRoll);
         cameraGroup.option(enableCrosshair);
         cameraGroup.option(autoThirdPerson);
         cameraGroup.option(upDownCameraControl);

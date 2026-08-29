@@ -27,6 +27,7 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
+import nordmods.uselessreptile.client.util.duck.PassengerCameraRollOwner;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_ability.NoopAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
@@ -34,6 +35,7 @@ import nordmods.uselessreptile.common.entity.animation_processor.EquipmentAnimat
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
 import nordmods.uselessreptile.common.entity.misc.Placeholder;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.jspecify.annotations.NonNull;
 
@@ -387,6 +389,13 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                     if (transformation != null) {
                         Vector4f v = transformation.matrix().transform(new Vector4f());
                         offset = new Vec3(-v.x, v.y - getBbHeight(), -v.z);
+                        if (passenger instanceof PassengerCameraRollOwner cameraRollOwner) {
+                            float zRot = transformation.matrix().getEulerAnglesZYX(new Vector3f()).z;
+                            if (Float.isNaN(zRot)) zRot = 0;
+                            else if (zRot < 0) zRot += Mth.PI;
+                            else zRot -= Mth.PI;
+                            cameraRollOwner.useless_reptile$updateZRot(zRot);
+                        }
                     }
                 }
             }

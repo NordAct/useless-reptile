@@ -165,6 +165,7 @@
   "config.uselessreptile.option.magmamuncherMinGroupSize": "Magmamuncher Minimum Group Size",
   "config.uselessreptile.option.magmamuncherMaxGroupSize": "Magmamuncher Max Group Size",
   "config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier": "Fire Resistance from Magmamuncher Time Multiplier",
+  "config.uselessreptile.option.enableCameraRoll": "Enable Camera Roll",
 
   "config.uselessreptile.requires_restart.@Tooltip" : "\nChanging this option requires game restart",
   "config.uselessreptile.group.mobCategories.@Tooltip": "Capacities of mob categories added by this mod",
@@ -211,6 +212,7 @@
   "config.uselessreptile.option.upDownCameraControl.@Tooltip": "Allows using camera pitch for up/down input for flying dragons",
   "config.uselessreptile.option.upDownCameraPitchThreshold.@Tooltip": "Defines minimal deviation of camera pitch for up/down input to be active",
   "config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier.@Tooltip": "Defines for how long fire resistance from Magmamuncher consuming fuel item will last.\nSetting value to 0 will disable this feature",
+  "config.uselessreptile.option.enableCameraRoll.@Tooltip": "Adds roll angle to the camera while riding the dragon. Disable this setting if you feel motion sickness due such camera movement",
 
   "effect.uselessreptile.acid": "Acid",
   "effect.uselessreptile.shock": "Shock",

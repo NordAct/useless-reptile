@@ -20,6 +20,7 @@
     "client.camera.CameraMixin",
     "client.camera.EntityMixin",
     "client.camera.LivingEntityMixin",
+    "client.camera.LocalPlayerMixin",
     "client.debug.EnitiyHitboxDebugMixin",
     "client.debug.ResourceLoadStateTrackerMixin",
     "client.gui.EffectsInInventoryMixin",

@@ -24,6 +24,8 @@ public class URClientConfig {
     @SerialEntry
     public boolean enableCameraOffset = true;
     @SerialEntry
+    public boolean enableCameraRoll = true;
+    @SerialEntry
     public boolean enableCrosshair = true;
     @SerialEntry
     public boolean autoThirdPerson = true;
