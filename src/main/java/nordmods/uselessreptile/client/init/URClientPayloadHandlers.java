@@ -6,12 +6,13 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.client.gui.URDragonScreen;
 import nordmods.uselessreptile.client.gui.VariantChangingOrbScreen;
-import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
-import nordmods.uselessreptile.common.network.s2c.*;
+import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
+import nordmods.uselessreptile.common.network.s2c.OpenDragonInventoryPayload;
+import nordmods.uselessreptile.common.network.s2c.OpenVariantChangingOrbScreenPayload;
+import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPayload;
 
 public class URClientPayloadHandlers {
     public static void init() {
@@ -19,7 +20,6 @@ public class URClientPayloadHandlers {
         handleLiftoffParticles();
         handleSyncLightningBreathRotations();
         handleOpenVariantChangingOrbScreen();
-        handleSSyncAnimationsPayload();
     }
 
     private static void handleOpenDragonInventory() {
@@ -63,22 +63,6 @@ public class URClientPayloadHandlers {
     private static void handleOpenVariantChangingOrbScreen() {
         ClientPlayNetworking.registerGlobalReceiver(OpenVariantChangingOrbScreenPayload.PAYLOAD_ID, (packet, _) -> {
             Minecraft.getInstance().setScreen(new VariantChangingOrbScreen(packet.variantType(), packet.variant()));
-        });
-    }
-
-    private static void handleSSyncAnimationsPayload() {
-        ClientPlayNetworking.registerGlobalReceiver(SyncAnimationsPayload.PAYLOAD_ID, (packet, context) -> {
-            Entity entity = context.player().level().getEntity(packet.ownerId());
-            if (entity instanceof URDragonEntity dragon) {
-                ControllerState.applyControllerStates(packet.controllerStates(), dragon.getAnimationControllers());
-                packet.equipmentControllerStates().forEach((equipmentSlot, controllerStates) -> {
-                    DragonEquipment equipment = dragon.getAssetCache().getEquipment(equipmentSlot);
-                    if (equipment != null) {
-                        ControllerState.applyControllerStates(controllerStates, equipment.getAnimationControllers());
-                        equipment.cloneAnimationController.copyFrom(dragon);
-                    }
-                });
-            }
         });
     }
 }

@@ -73,6 +73,7 @@ import nordmods.uselessreptile.common.entity.ai.control.DragonBodyRotationContro
 import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
+import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
@@ -82,7 +83,6 @@ import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
-import nordmods.uselessreptile.common.network.s2c.SyncAnimationsPayload;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jspecify.annotations.NonNull;
@@ -181,6 +181,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         builder.define(CURRENT_ORDER, Order.FOLLOW);
         builder.define(PREVIOUS_ORDER, Order.SIT);
         builder.define(WANDER_RADIUS, WanderRadius.MEDIUM);
+        builder.define(CONTROLLER_STATES, List.of());
+        builder.define(EQUIPMENT_CONTROLLER_STATES, Map.of());
     }
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -194,6 +196,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public static final EntityDataAccessor<Order> CURRENT_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
     public static final EntityDataAccessor<Order> PREVIOUS_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
     public static final EntityDataAccessor<WanderRadius> WANDER_RADIUS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.WANDER_RADIUS);
+    public static final EntityDataAccessor<List<ControllerState>> CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.CONTROLLER_STATES);
+    public static final EntityDataAccessor<Map<EquipmentSlot, List<ControllerState>>> EQUIPMENT_CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.EQUIPMENT_CONTROLLER_STATES);
 
     public int getAccelerationDuration() {return entityData.get(ACCELERATION_DURATION);}
     public void setAccelerationDuration(int state) {entityData.set(ACCELERATION_DURATION, state);}
@@ -325,6 +329,21 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             updateVariantModifiers();
             updateInventory();
             updateAbilities();
+        }
+        if (level().isClientSide()) {
+            if (CONTROLLER_STATES.equals(data)) ControllerState.applyControllerStates(
+                    entityData.get(CONTROLLER_STATES),
+                    getAnimationControllers()
+            );
+            if (EQUIPMENT_CONTROLLER_STATES.equals(data)) {
+                entityData.get(EQUIPMENT_CONTROLLER_STATES).forEach((equipmentSlot, controllerStates) -> {
+                    DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
+                    if (equipment != null) {
+                        ControllerState.applyControllerStates(controllerStates, equipment.getAnimationControllers());
+                        equipment.cloneAnimationController.copyFrom(this);
+                    }
+                });
+            }
         }
     }
 
@@ -783,6 +802,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
         if (processor != null) {
             processor.tick();
+            needsSync = true;
         }
         for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
@@ -792,7 +812,15 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     protected void syncAnimations() {
-        if (processor != null) SyncAnimationsPayload.send(this);
+        if (processor != null && !level().isClientSide()) {
+            entityData.set(CONTROLLER_STATES, ControllerState.collectControllerStates(getAnimationControllers()));
+            Map<EquipmentSlot, List<ControllerState>> equipmentControllerStates = new HashMap<>();
+            for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+                DragonEquipment equipment = getAssetCache().getEquipment(equipmentSlot);
+                if (equipment != null && equipment.getAnimationProcessor() != null) equipmentControllerStates.put(equipmentSlot, ControllerState.collectControllerStates(equipment.getAnimationControllers()));
+            }
+            entityData.set(EQUIPMENT_CONTROLLER_STATES, equipmentControllerStates);
+        }
     }
 
     @Override

@@ -130,8 +130,7 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
 //            }
 
             float relativeDiff =  diff / Math.abs(length);
-            float relativeDiffAbs = Math.abs(relativeDiff);
-            if (relativeDiffAbs > 0.1f || Math.abs(diff) > 0.2f) {
+            if (Math.abs(relativeDiff) > 0.15f || Math.abs(diff) > 0.5f) {
                 animation.setAnimationTime(serverTime);
                 return;
             }

@@ -78,7 +78,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
                                 playingAnimation.getTransitionOutLerp(),
                                 playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
                         );
-                        animation.setAnimationTime(playingAnimation.getAnimationTime());
+                        animation.setAnimationTime(playingAnimation.getActualAnimationTime());
                         equipmentAnimationController.playAnimation(animation);
                     }
                 });
