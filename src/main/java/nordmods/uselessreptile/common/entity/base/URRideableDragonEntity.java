@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.base;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -29,8 +30,11 @@ import nordmods.uselessreptile.client.init.URKeyMappings;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_ability.NoopAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
+import nordmods.uselessreptile.common.entity.animation_processor.EquipmentAnimationProcessor;
+import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
 import nordmods.uselessreptile.common.entity.misc.Placeholder;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
+import org.joml.Vector4f;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -368,25 +372,27 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
         Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
         if (saddle.isEmpty() || !getDragonEquipment().containsKey(id)) return 0;
-        return getDragonEquipment().get(id).passengerPositions().orElse(List.of()).size();
+        return getDragonEquipment().get(id).maxPassengers().orElse(0);
     }
 
     @Override
     protected @NonNull Vec3 getPassengerAttachmentPoint(@NonNull Entity passenger, @NonNull EntityDimensions dimensions, float scaleFactor) {
-        int ordinal = getPassengers().size();
+        int ordinal = getPassengers().indexOf(passenger);
         Vec3 offset = Vec3.ZERO;
-        while (--ordinal > -1) {
-            if (getPassengers().get(ordinal) == passenger) break;
-        }
+
         if (ordinal > -1) {
-            ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
-            Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
-            if (!saddle.isEmpty() && getDragonEquipment().containsKey(id)) {
-                List<Vec3> positions = getDragonEquipment().get(id).passengerPositions().orElseThrow();
-                offset = positions.get(Math.min(ordinal, positions.size() - 1));
+            if (getAssetCache().getEquipment(EquipmentSlot.SADDLE) instanceof SaddleEquipment saddleEquipment) {
+                if (saddleEquipment.getAnimationProcessor() instanceof EquipmentAnimationProcessor processor && processor.getModelDirect() != null) {
+                    LocatorTransformation transformation = processor.getModelDirect().getLocatorTransformation("passenger" + ordinal);
+                    if (transformation != null) {
+                        Vector4f v = transformation.matrix().transform(new Vector4f());
+                        offset = new Vec3(-v.x, v.y - getBbHeight(), -v.z);
+                    }
+                }
             }
         }
-        return super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor).add(offset.yRot(-getYRot() * Mth.DEG_TO_RAD));
+        return super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor)
+                .add(offset.yRot(-getYRot() * Mth.DEG_TO_RAD));
     }
 
     protected DragonAbilityHolder createNoopHolder() {

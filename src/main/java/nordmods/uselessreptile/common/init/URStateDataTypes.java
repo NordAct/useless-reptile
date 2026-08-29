@@ -4,9 +4,7 @@ import net.minecraft.resources.Identifier;
 import nordmods.biscuit_roll.common.state.StateDataType;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.asset_cache.AssetCache;
-import nordmods.uselessreptile.common.entity.animation_processor.BoneTransform;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class URStateDataTypes {
@@ -18,7 +16,6 @@ public class URStateDataTypes {
     public static final StateDataType<Float> HEAD_X_ROTATION = new StateDataType<>(UselessReptile.id("head_x_rotation"));
     public static final StateDataType<Float> HEAD_Y_ROTATION = new StateDataType<>(UselessReptile.id("head_y_rotation"));
     public static final StateDataType<Float> YAW_SPEED = new StateDataType<>(UselessReptile.id("yaw_speed"));
-    public static final StateDataType<Map<String, BoneTransform>> BONE_TRANSFORMS = new StateDataType<>(UselessReptile.id("bone_transforms"));
     //specific dragon data - used for some dragons
     public static final StateDataType<UUID> DRAGON_UUID = new StateDataType<>(UselessReptile.id("dragon_uuid"));
     public static final StateDataType<Boolean> DRAGON_IS_RIDING_PLAYER = new StateDataType<>(UselessReptile.id("dragon_is_riding_player"));

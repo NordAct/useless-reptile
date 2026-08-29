@@ -74,6 +74,7 @@ import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
 import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
@@ -782,8 +783,16 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
         if (processor != null) {
             processor.tick();
-            SyncAnimationsPayload.send(this);
         }
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
+            if (equipment != null) equipment.tick();
+        }
+        syncAnimations();
+    }
+
+    protected void syncAnimations() {
+        if (processor != null) SyncAnimationsPayload.send(this);
     }
 
     @Override

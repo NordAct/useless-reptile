@@ -34,10 +34,10 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
-import nordmods.uselessreptile.common.entity.animation_processor.BoneTransform;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
 import org.jspecify.annotations.Nullable;
@@ -281,14 +281,13 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         equipment.hidBones().ifPresent(bones -> assetCache.setHidBones(bones.toArray(new String[0])));
 
-        return equipment.passengerPositions().isPresent() && !equipment.passengerPositions().get().isEmpty()
+        return equipment.slot().equals(DragonInventory.Slot.SADDLE)
                 ? new SaddleEquipment(owner, itemStack, assetCache, slot)
                 : new DragonEquipment(owner, itemStack, assetCache, slot);
     }
 
     @Override
     public void afterSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        state.setStateData(URStateDataTypes.BONE_TRANSFORMS, BoneTransform.collectBoneTransforms(getModel(state).getBones()));
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
             if (equipment != null && equipment.getAssetCache().canRender()) {

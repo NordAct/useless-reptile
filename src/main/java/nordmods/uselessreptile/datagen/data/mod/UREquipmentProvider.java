@@ -8,18 +8,20 @@ import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
+import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URItems;
-import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
-import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.datagen.data.URAbstractDataProvider;
 import org.jspecify.annotations.NonNull;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("deprecation")
@@ -31,10 +33,10 @@ public class UREquipmentProvider extends URAbstractDataProvider<EquipmentModelDa
 
     @Override
     public void addEntries(HolderLookup.Provider provider) {
-        addSaddle(UREntities.WYVERN, Items.SADDLE, List.of("spikes_front"), List.of(Vec3.ZERO));
-        addSaddle(UREntities.WYVERN, URItems.DUAL_SADDLE, List.of("spikes_front", "spikes_back"), List.of(Vec3.ZERO, new Vec3(0, 0, -0.8125f)));
-        addSaddle(UREntities.LIGHTNING_CHASER, Items.SADDLE, List.of(), List.of(Vec3.ZERO));
-        addSaddle(UREntities.MOLECLAW, Items.SADDLE, List.of(), List.of(Vec3.ZERO));
+        addSaddle(UREntities.WYVERN, Items.SADDLE, List.of("spikes_front"), 1);
+        addSaddle(UREntities.WYVERN, URItems.DUAL_SADDLE, List.of("spikes_front", "spikes_back"), 2);
+        addSaddle(UREntities.LIGHTNING_CHASER, Items.SADDLE, List.of(), 1);
+        addSaddle(UREntities.MOLECLAW, Items.SADDLE, List.of(), 1);
 
         addCommonArmor(UREntities.LIGHTNING_CHASER);
         addCommonArmor(UREntities.MOLECLAW);
@@ -48,19 +50,19 @@ public class UREquipmentProvider extends URAbstractDataProvider<EquipmentModelDa
         addEntry(UselessReptile.id("empty"), new EquipmentModelData(Optional.empty(), Map.of()));
     }
 
-    protected void addEntry(EntityType<? extends URDragonEntity> type, Item item, Identifier texture, Identifier model, Identifier animation, boolean translucent, Optional<List<String>> hidBones, DragonInventory.Slot slot, Optional<List<Vec3>> passengerPositions) {
-        EquipmentModelData.Equipment equipmentModelData = new EquipmentModelData.Equipment(new ModelData(texture, model, animation, true, translucent), hidBones, slot, passengerPositions);
+    protected void addEntry(EntityType<? extends URDragonEntity> type, Item item, Identifier texture, Identifier model, Identifier animation, boolean translucent, Optional<List<String>> hidBones, DragonInventory.Slot slot, Optional<Integer> maxPassengers) {
+        EquipmentModelData.Equipment equipmentModelData = new EquipmentModelData.Equipment(new ModelData(texture, model, animation, true, translucent), hidBones, slot, maxPassengers);
         Identifier id = EntityType.getKey(type);
         if (holder.containsKey(id)) holder.get(id).equipment().put(BuiltInRegistries.ITEM.getKey(item), equipmentModelData);
         else addEntry(id, new EquipmentModelData(Optional.empty(), Util.make(new HashMap<>(), map -> map.put(BuiltInRegistries.ITEM.getKey(item), equipmentModelData))));
     }
 
-    protected void addSaddle(EntityType<? extends URDragonEntity> type, Item saddleItem, List<String> hidBones, List<Vec3> passengerPositions) {
+    protected void addSaddle(EntityType<? extends URDragonEntity> type, Item saddleItem, List<String> hidBones, int maxPassengers) {
         Identifier id = EntityType.getKey(type);
         Identifier texture = Identifier.fromNamespaceAndPath(id.getNamespace(), "textures/entity/" + id.getPath() + "/" + saddleItem.builtInRegistryHolder().key().identifier().getPath() + ".png");
         Identifier model = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/models/entity/" + id.getPath() + "/" + saddleItem.builtInRegistryHolder().key().identifier().getPath() + ".geo.json");
         Identifier animation = Identifier.fromNamespaceAndPath(id.getNamespace(), "biscuit_roll/animations/entity/" + id.getPath() + "/" + saddleItem.builtInRegistryHolder().key().identifier().getPath() + ".animation.json");
-        addEntry(type, saddleItem, texture, model, animation, false, hidBones.isEmpty() ? Optional.empty() : Optional.of(hidBones), DragonInventory.Slot.SADDLE, Optional.of(passengerPositions));
+        addEntry(type, saddleItem, texture, model, animation, false, hidBones.isEmpty() ? Optional.empty() : Optional.of(hidBones), DragonInventory.Slot.SADDLE, Optional.of(maxPassengers));
     }
 
     protected void addCommonArmor(EntityType<? extends URDragonEntity> type) {

@@ -7,13 +7,16 @@ import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.resource_managers.BRAnimationManager;
 import nordmods.biscuit_roll.common.state.BRState;
+import org.jspecify.annotations.Nullable;
 
 import java.util.Arrays;
 
 //todo sounds and stuff
 public class EquipmentAnimationController extends BRAnimationController {
-    public EquipmentAnimationController(Identifier initialAnimFile) {
+    private final boolean isClient;
+    public EquipmentAnimationController(Identifier initialAnimFile, boolean isClient) {
         super(true);
+        this.isClient = isClient;
         animationFile = initialAnimFile;
     }
 
@@ -45,8 +48,9 @@ public class EquipmentAnimationController extends BRAnimationController {
     }
 
     @Override
+    @Nullable
     public AnimationData getAnimationData(String animation) {
-        AnimationData[] data = BRAnimationManager.getAnimationManager(true).getAnimations(animationFile);
+        AnimationData[] data = BRAnimationManager.getAnimationManager(isClient).getAnimations(animationFile);
         return data == null ?
                 AnimationData.EMPTY :
                 Arrays

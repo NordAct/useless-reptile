@@ -8,6 +8,7 @@ import nordmods.uselessreptile.client.gui.URDragonScreen;
 import nordmods.uselessreptile.client.gui.VariantChangingOrbScreen;
 import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.network.s2c.*;
@@ -70,6 +71,13 @@ public class URClientPayloadHandlers {
             Entity entity = context.player().level().getEntity(packet.ownerId());
             if (entity instanceof URDragonEntity dragon) {
                 ControllerState.applyControllerStates(packet.controllerStates(), dragon.getAnimationControllers());
+                packet.equipmentControllerStates().forEach((equipmentSlot, controllerStates) -> {
+                    DragonEquipment equipment = dragon.getAssetCache().getEquipment(equipmentSlot);
+                    if (equipment != null) {
+                        ControllerState.applyControllerStates(controllerStates, equipment.getAnimationControllers());
+                        equipment.cloneAnimationController.copyFrom(dragon);
+                    }
+                });
             }
         });
     }

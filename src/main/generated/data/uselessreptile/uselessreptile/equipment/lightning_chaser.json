@@ -1,18 +1,12 @@
 {
   "equipment": {
     "minecraft:saddle": {
+      "max_passengers": 1,
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/lightning_chaser/saddle.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/lightning_chaser/saddle.geo.json",
         "texture": "uselessreptile:textures/entity/lightning_chaser/saddle.png"
       },
-      "passenger_positions": [
-        [
-          0.0,
-          0.0,
-          0.0
-        ]
-      ],
       "slot": "saddle"
     },
     "uselessreptile:dragon_chestplate_copper": {

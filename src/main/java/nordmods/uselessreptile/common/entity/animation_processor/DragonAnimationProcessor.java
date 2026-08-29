@@ -18,6 +18,7 @@ import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
 
@@ -25,11 +26,12 @@ import java.util.List;
 
 public class DragonAnimationProcessor<T extends URDragonEntity> extends AnimationProcessor<T> {
     private static final URDragonEntityModelProvider MODEL_PROVIDER = new URDragonEntityModelProvider();
-    private final DragonAssetCache assetCache = new DragonAssetCache();
     private final CloneAnimationController cloneController = new CloneAnimationController();
     private final List<BRAnimationController> cloneControllerList = List.of(cloneController);
+    private final boolean isClient;
     public DragonAnimationProcessor(T animatable) {
         super(animatable);
+        isClient = animatable.level().isClientSide();
     }
 
     @Override
@@ -50,46 +52,49 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
         state.setStateData(URStateDataTypes.HEAD_Y_ROTATION, -animatable.getViewYRot(1));
         state.setStateData(URStateDataTypes.YAW_SPEED, -animatable.getYBodyRotChange(1));
         super.updateBRState();
-        state.setStateData(URStateDataTypes.ASSET_CACHE, assetCache);
+        state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
         Identifier dragonId = animatable.getDragonId();
         state.setStateData(URStateDataTypes.DRAGON_ID, dragonId);
-        fillDragonCache(
-                assetCache,
-                animatable.getDragonVariant(),
-                dragonId,
-                animatable.getName().getString(),
-                animatable.getVariant(),
-                getModelProvider().getDefaultModel(dragonId),
-                getModelProvider().getDefaultAnimation(dragonId)
-        );
-        for (EquipmentSlot slot : EquipmentSlot.values()) {
-            ItemStack itemStack = animatable.getItemBySlot(slot);
-            if (itemStack.isEmpty()) {
-                animatable.getAssetCache().setEquipment(slot, null);
-                continue;
-            }
+        //renderer is responsible for filling asset caches on client
+        if (!isClient) {
+            fillDragonCache(
+                    animatable.getAssetCache(),
+                    animatable.getDragonVariant(),
+                    dragonId,
+                    animatable.getName().getString(),
+                    animatable.getVariant(),
+                    getModelProvider().getDefaultModel(dragonId),
+                    getModelProvider().getDefaultAnimation(dragonId)
+            );
+            for (EquipmentSlot slot : EquipmentSlot.values()) {
+                ItemStack itemStack = animatable.getItemBySlot(slot);
+                if (itemStack.isEmpty()) {
+                    animatable.getAssetCache().setEquipment(slot, null);
+                    continue;
+                }
 
-            DragonEquipment dragonEquipment = assetCache.getEquipment(slot);
-            //create new equipment if none exists or items don't match
-            if (dragonEquipment == null || dragonEquipment.itemStack != itemStack) {
-                EquipmentAssetCache equipmentAssetCache = new EquipmentAssetCache();
-                Identifier itemId = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
-                dragonEquipment = getDragonEquipment(
-                        animatable,
-                        slot,
-                        itemStack,
-                        itemId,
-                        equipmentAssetCache,
-                        animatable.getDragonEquipment().get(itemId),
-                        dragonId,
-                        animatable.getName().getString(),
-                        animatable.getVariant(),
-                        getModelProvider().getDefaultModel(dragonId),
-                        getModelProvider().getDefaultAnimation(dragonId)
-                );
-                assetCache.setEquipment(slot, dragonEquipment);
+                DragonEquipment dragonEquipment = animatable.getAssetCache().getEquipment(slot);
+                //create new equipment if none exists or items don't match
+                if (dragonEquipment == null || dragonEquipment.itemStack != itemStack) {
+                    EquipmentAssetCache equipmentAssetCache = new EquipmentAssetCache();
+                    Identifier itemId = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
+                    dragonEquipment = getDragonEquipment(
+                            animatable,
+                            slot,
+                            itemStack,
+                            itemId,
+                            equipmentAssetCache,
+                            animatable.getDragonEquipment().get(itemId),
+                            dragonId,
+                            animatable.getName().getString(),
+                            animatable.getVariant(),
+                            getModelProvider().getDefaultModel(dragonId),
+                            getModelProvider().getDefaultAnimation(dragonId)
+                    );
+                    animatable.getAssetCache().setEquipment(slot, dragonEquipment);
+                }
+                dragonEquipment.ownerState = state;
             }
-            dragonEquipment.ownerState = state;
         }
     }
 
@@ -144,7 +149,7 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
             assetCache.setAnimationLocationCache(defaultAnimation);
         }
 
-        return equipment.passengerPositions().isPresent() && !equipment.passengerPositions().get().isEmpty()
+        return equipment.slot().equals(DragonInventory.Slot.SADDLE)
                 ? new SaddleEquipment(owner, itemStack, assetCache, slot)
                 : new DragonEquipment(owner, itemStack, assetCache, slot);
     }
@@ -158,7 +163,6 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
             Identifier defaultModel,
             Identifier defaultAnimation
     ) {
-
         //model
         if (assetCache.getModelLocationCache() == null) {
             Identifier id = DragonVariantUtil.getDragonModelData(variant, animatable.level().registryAccess()).modelData().model();
@@ -203,19 +207,16 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
     }
 
     @Override
-    public void postAnimation() {
-        super.postAnimation();
-        state.setStateData(URStateDataTypes.BONE_TRANSFORMS, BoneTransform.collectBoneTransforms(getModel().getBones()));
-    }
-
-    @Override
     public void tick() {
-        if (animatable.level().isClientSide()) cloneController.copyFrom(animatable);
+        if (isClient) {
+            cloneController.copyFrom(animatable);
+            if (animatable.getAssetCache().getModelLocationCache() == null) return;
+        }
         super.tick();
     }
 
     @Override
     public List<BRAnimationController> getAnimationControllers() {
-        return animatable.level().isClientSide() ? cloneControllerList : super.getAnimationControllers();
+        return isClient ? cloneControllerList : super.getAnimationControllers();
     }
 }

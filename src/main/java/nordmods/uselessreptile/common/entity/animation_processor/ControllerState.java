@@ -6,6 +6,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,13 +33,14 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
         for (int i = 0; i < controllers.size(); i++) {
             BRAnimationController controller = controllers.get(i);
             List<PlayingAnimation> playingAnimations = new ArrayList<>();
-            for (BRPlayingAnimation anim : controller.getPlayingAnimations()) {
-                if (!anim.isDone() || !anim.canClearOut()) playingAnimations.add(new PlayingAnimation(
-                        anim.getAnimation().name(),
-                        anim.getActualAnimationTime(),
-                        anim.getSpeed(),
-                        anim.isPaused()
-                ));
+            if (!(controller instanceof CloneAnimationController))
+                for (BRPlayingAnimation anim : controller.getPlayingAnimations()) {
+                    if (!anim.isDone() || !anim.canClearOut()) playingAnimations.add(new PlayingAnimation(
+                            anim.getAnimation().name(),
+                            anim.getActualAnimationTime(),
+                            anim.getSpeed(),
+                            anim.isPaused()
+                    ));
             }
             list.add(new ControllerState(i, playingAnimations));
         }
@@ -48,7 +50,7 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
     public static void applyControllerStates(List<ControllerState> states, List<BRAnimationController> controllers) {
         for (ControllerState controllerState : states) {
             BRAnimationController controller = controllers.get(controllerState.controllerOrdinal());
-            if (controller == null) continue;
+            if (controller == null || controller instanceof CloneAnimationController) continue;
 
             Set<String> shouldPlay = new HashSet<>();
             for (PlayingAnimation playingAnimation : controllerState.playingAnimations()) {

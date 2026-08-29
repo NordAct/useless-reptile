@@ -4,18 +4,12 @@
       "hid_bones": [
         "spikes_front"
       ],
+      "max_passengers": 1,
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/saddle.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/wyvern/saddle.geo.json",
         "texture": "uselessreptile:textures/entity/wyvern/saddle.png"
       },
-      "passenger_positions": [
-        [
-          0.0,
-          0.0,
-          0.0
-        ]
-      ],
       "slot": "saddle"
     },
     "uselessreptile:dual_saddle": {
@@ -23,23 +17,12 @@
         "spikes_front",
         "spikes_back"
       ],
+      "max_passengers": 2,
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/dual_saddle.animation.json",
         "model": "uselessreptile:biscuit_roll/models/entity/wyvern/dual_saddle.geo.json",
         "texture": "uselessreptile:textures/entity/wyvern/dual_saddle.png"
       },
-      "passenger_positions": [
-        [
-          0.0,
-          0.0,
-          0.0
-        ],
-        [
-          0.0,
-          0.0,
-          -0.8125
-        ]
-      ],
       "slot": "saddle"
     }
   }

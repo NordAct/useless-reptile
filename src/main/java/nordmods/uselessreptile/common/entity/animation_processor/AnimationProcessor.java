@@ -9,6 +9,7 @@ import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
@@ -22,7 +23,7 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     protected final T animatable;
     protected final BRState state = new BRState.Impl(new HashMap<>());
     @Nullable
-    protected BRModel model;
+    private BRModel model;
     public AnimationProcessor(T animatable) {
         this.animatable = animatable;
     }
@@ -43,22 +44,20 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     public void tick() {
         updateBRState();
         BRModel model = getModel();
-        if (model != null) {
-            Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
-            controllers.forEach(c -> c.update(state));
-            state.setStateData(StateDataTypes.ANIMATION_ADJUSTMENT, this::adjustAnimation);
-            model.applyAnimations(state);
-            model.updateLocators();
-            controllers.forEach(c -> c.triggerAnimationEffects(model, state));
-            postAnimation();
-        }
+        Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
+        controllers.forEach(c -> c.update(state));
+        state.setStateData(StateDataTypes.ANIMATION_ADJUSTMENT, this::adjustAnimation);
+        model.applyAnimations(state);
+        model.updateLocators();
+        controllers.forEach(c -> c.triggerAnimationEffects(model, state));
+        postAnimation();
     }
 
     public List<BRAnimationController> getAnimationControllers() {
         return animatable.getAnimationControllers();
     }
 
-    @Nullable
+    @NonNull
     public BRModel getModel() {
         if (model == null) {
             BRModelProvider modelProvider = state.getStateData(StateDataTypes.MODEL_PROVIDER);
@@ -69,6 +68,11 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
                 throw new RuntimeException(e);
             }
         }
+        return model;
+    }
+
+    @Nullable
+    public BRModel getModelDirect() {
         return model;
     }
 
