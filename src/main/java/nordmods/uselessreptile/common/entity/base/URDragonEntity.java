@@ -347,6 +347,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                     if (equipment != null) {
                         ControllerState.applyControllerStates(controllerStates, equipment.getAnimationControllers());
                         equipment.cloneAnimationController.copyFrom(this);
+                        equipment.markAnimationUpdated();
                     }
                 });
             }

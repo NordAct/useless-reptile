@@ -28,6 +28,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     @Nullable
     private final EquipmentAnimationProcessor processor;
     public final EquipmentSlot equipmentSlot;
+    private boolean firstAnimationUpdate = true;
 
     public EquipmentAssetCache getAssetCache() {
         return assetCache;
@@ -88,5 +89,14 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
         equipmentAnimationController.getPlayingAnimations().forEach(animation -> {
             if (!shouldPlay.containsKey(animation.getAnimation().name())) animation.stop();
         });
+        markAnimationUpdated();
+    }
+
+    public boolean isFirstAnimationUpdate() {
+        return firstAnimationUpdate;
+    }
+
+    public void markAnimationUpdated() {
+        firstAnimationUpdate = false;
     }
 }

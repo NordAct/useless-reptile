@@ -290,7 +290,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     public void afterSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
-            if (equipment != null && equipment.getAssetCache().canRender()) {
+            if (equipment != null && !equipment.isFirstAnimationUpdate() && equipment.getAssetCache().canRender()) {
                 DragonEquipmentRenderer usedRenderer = equipment instanceof SaddleEquipment ? saddleRenderer : equipmentRenderer;
                 usedRenderer.submitObjectOrdered(equipment, poseStack, submitNodeCollector, cameraRenderState, state.getStateData(StateDataTypes.TICK_DELTA), 1);
             }
