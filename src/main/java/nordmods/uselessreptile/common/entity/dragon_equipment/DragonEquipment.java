@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.entity.dragon_equipment;
 
-import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
@@ -14,14 +13,16 @@ import nordmods.uselessreptile.common.entity.animation_processor.EquipmentAnimat
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     public final URDragonEntity owner;
     public BRState ownerState;
     public final ItemStack itemStack;
     private final EquipmentAssetCache assetCache;
-    public final EquipmentAnimationController equipmentAnimationController;
+    protected final EquipmentAnimationController equipmentAnimationController;
     public final CloneAnimationController cloneAnimationController = new CloneAnimationController();
     private final List<BRAnimationController> controllers;
     @Nullable
@@ -36,7 +37,7 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
         this.owner = owner;
         this.itemStack = itemStack;
         this.assetCache = assetCache;
-        this.equipmentAnimationController = new EquipmentAnimationController(assetCache.getAnimationLocationCache(), owner.level().isClientSide());
+        this.equipmentAnimationController = new EquipmentAnimationController(this);
         this.equipmentSlot = equipmentSlot;
         this.controllers = List.of(equipmentAnimationController, cloneAnimationController);
         this.processor = createServerAnimationProcessor();
@@ -52,40 +53,8 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     }
 
     public void tick() {
-        if (owner.getAnimationProcessor() == null || !owner.level().isClientSide()){
-            cloneAnimationController.copyFrom(owner.getAnimationControllers());
-            owner.getAnimationControllers().forEach(controller -> {
-                controller.getPlayingAnimations().forEach(playingAnimation -> {
-                    if (playingAnimation.isDone()) return;
-                    String name = playingAnimation.getAnimation().name();
-                    if (equipmentAnimationController.getAnimation(name) != null) {
-                        equipmentAnimationController.playAnimation(
-                                name,
-                                playingAnimation.getTransitionInTime(),
-                                playingAnimation.getTransitionOutTime(),
-                                playingAnimation.getTransitionInLerp(),
-                                playingAnimation.getTransitionOutLerp()
-                        );
-                        return;
-                    }
-                    AnimationData data = equipmentAnimationController.getAnimationData(name);
-                    if (data != null) {
-                        BRPlayingAnimation animation = new BRPlayingAnimation(
-                                data,
-                                playingAnimation.getTransitionInTime(),
-                                playingAnimation.getTransitionOutTime(),
-                                playingAnimation.getTransitionInLerp(),
-                                playingAnimation.getTransitionOutLerp(),
-                                playingAnimation.getTransitionInTime() * playingAnimation.getTransitionInLerp().apply(playingAnimation.getTransitionInProgress())
-                        );
-                        animation.setAnimationTime(playingAnimation.getActualAnimationTime());
-                        equipmentAnimationController.playAnimation(animation);
-                    }
-                });
-                equipmentAnimationController.checkAgainstOtherController(controller);
-            });
-        }
-        if (processor != null) {
+        if (owner.getAnimationProcessor() != null && !owner.level().isClientSide()) updateAnimations();
+        if (processor != null && owner.getAnimationProcessor() != null) {
             processor.tick();
         }
     }
@@ -97,5 +66,27 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     @Nullable
     public EquipmentAnimationProcessor getAnimationProcessor() {
         return processor;
+    }
+
+    public void updateAnimations() {
+        cloneAnimationController.copyFrom(owner.getAnimationControllers());
+
+        Map<String, BRPlayingAnimation> shouldPlay = new HashMap<>();
+        cloneAnimationController.getPlayingAnimations().forEach(animation -> {
+            if (!animation.isFinished()) shouldPlay.put(animation.getAnimation().name(), animation);
+        });
+
+        shouldPlay.forEach((name, playingAnimation) -> {
+            if (equipmentAnimationController.getAnimation(name) != null) return;
+
+            equipmentAnimationController.playAnimation(name);
+            BRPlayingAnimation animation = equipmentAnimationController.getAnimation(name);
+            if (animation != null) {
+                animation.setAnimationTime(playingAnimation.getActualAnimationTime());
+            }
+        });
+        equipmentAnimationController.getPlayingAnimations().forEach(animation -> {
+            if (!shouldPlay.containsKey(animation.getAnimation().name())) animation.stop();
+        });
     }
 }

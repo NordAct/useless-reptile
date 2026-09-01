@@ -113,7 +113,7 @@ public class URDragonPart extends EntityPart {
 
         this.heightMod = heightMod;
         this.widthMod = widthMod;
-        refreshDimensions();
+        if (destinationWidth != getBbWidth() || destinationHeight != getBbHeight()) refreshDimensions();
     }
 
     @SuppressWarnings("SuspiciousNameCombination")

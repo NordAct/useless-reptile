@@ -116,7 +116,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
         if (!level().isClientSide()) {
             glideTimer--;
-            float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
+            float accelerationModifier = getAccelerationModifier();
             setFlyGliding(accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9);
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         } else {
@@ -174,7 +174,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         //The acceleration logic. Looks like a mess, but it's still understandable I guess
         int accelerationDuration = getAccelerationDuration();
         if (accelerationDuration < 0) accelerationDuration = 0;
-        float accelerationModifier = (float) accelerationDuration / getMaxAccelerationDuration();
+        float accelerationModifier = getAccelerationModifier();
         if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
         if (isInputGiven && getTurningState() == TurningState.NONE) accelerationDuration++;
         if (isJumpPressed() && !isDownPressed() && accelerationDuration > getMaxAccelerationDuration() * 0.4)
@@ -292,7 +292,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     }
 
     @Override
-    protected float getMovementSpeedModifier() {
+    public float getMovementSpeedModifier() {
         if (!isFlying()) return super.getMovementSpeedModifier();
         double baseSpeed = getAttributeBaseValue(Attributes.FLYING_SPEED);
         double speed = getAttributeValue(Attributes.FLYING_SPEED);

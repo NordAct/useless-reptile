@@ -79,6 +79,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         pitchLimitAir = 45;
         ticksUntilHeal = 200;
         sprintSpeedModifier = 1.2f;
+        maxXBodyRotSamples = 5;
     }
 
     @Override
@@ -123,7 +124,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                 .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().wyvernRotationSpeedAir);
     }
 
-    //todo reconsider structure and make it cleaner
     public void tickAnimations() {
         if (level().isClientSide()) return;
         tickBlinkController();
@@ -147,12 +147,12 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
                     mainController.playAnimation("fly.back");
                     return;
                 }
-                if (getTiltState() == TiltState.DOWN && getMovementSpeedModifier() > 0.5) {
-                    if (getXBodyRot(1) > 20) {
+                if (getTiltState() == TiltState.DOWN) {
+                    if (getAccelerationModifier() > 0.5f && getXBodyRot(1) > 20) {
                         mainController.playAnimation("fly.down");
                         return;
                     }
-                    if (getXBodyRot(1) > 5) {
+                    if (getAccelerationModifier() > 0.15f && getXBodyRot(1) > 5) {
                         mainController.playAnimation("fly.glide");
                         return;
                     }
@@ -194,6 +194,13 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     public void tick() {
         tickAnimations();
         super.tick();
+        if (isFlying()) {
+            shoulderArmRight.setScale(1, 1);
+            shoulderArmLeft.setScale(1, 1);
+        } else {
+            shoulderArmRight.setScale(0.75f, 0.75f);
+            shoulderArmLeft.setScale(0.75f, 0.75f);
+        }
     }
 
     @Override

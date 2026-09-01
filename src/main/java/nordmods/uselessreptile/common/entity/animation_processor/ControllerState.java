@@ -39,7 +39,8 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
                             anim.getAnimation().name(),
                             anim.getActualAnimationTime(),
                             anim.getSpeed(),
-                            anim.isPaused()
+                            anim.isPaused(),
+                            anim.isFinished()
                     ));
             }
             list.add(new ControllerState(i, playingAnimations));
@@ -54,7 +55,7 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
 
             Set<String> shouldPlay = new HashSet<>();
             for (PlayingAnimation playingAnimation : controllerState.playingAnimations()) {
-                shouldPlay.add(playingAnimation.name());
+                if (!playingAnimation.finished()) shouldPlay.add(playingAnimation.name());
                 PlayingAnimation.applyPlayingAnimation(controller, playingAnimation);
             }
 
@@ -71,7 +72,8 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
             String name,
             float time,
             float speed,
-            boolean paused
+            boolean paused,
+            boolean finished
     ) {
         public static final StreamCodec<ByteBuf, PlayingAnimation> STREAM_CODEC = new StreamCodec<>() {
             @Override
@@ -80,7 +82,8 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
                 float time = input.readFloat();
                 float speed = input.readFloat();
                 boolean paused = input.readBoolean();
-                return new PlayingAnimation(name, time, speed, paused);
+                boolean finished = input.readBoolean();
+                return new PlayingAnimation(name, time, speed, paused, finished);
             }
 
             @Override
@@ -89,6 +92,7 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
                 output.writeFloat(value.time());
                 output.writeFloat(value.speed());
                 output.writeBoolean(value.paused());
+                output.writeBoolean(value.finished());
             }
         };
 

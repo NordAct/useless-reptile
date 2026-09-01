@@ -32,9 +32,7 @@ import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
@@ -47,15 +45,15 @@ import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningC
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserBailOutGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRevengeGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRoamAroundGoal;
+import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
+import nordmods.uselessreptile.common.entity.animation_processor.MultipartDragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
-import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -66,17 +64,23 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     private boolean shouldBailOut = false;
     private boolean isChallenger = false;
     private static final Identifier THUNDERSTORM_BONUS = UselessReptile.id("thunderstorm_bonus");
-    private final URDragonPart wing1Left = new URDragonPart(this, "wing1_left");
-    private final URDragonPart wing1Right = new URDragonPart(this, "wing1_right");
-    private final URDragonPart wing2Left = new URDragonPart(this, "wing2_left");
-    private final URDragonPart wing2Right = new URDragonPart(this, "wing2_right");
-    private final URDragonPart neck1 = new URDragonPart(this, "neck1");
-    private final URDragonPart neck2 = new URDragonPart(this, "neck2");
-    private final URDragonPart head = new URDragonPart(this, "head");
+    private final URDragonPart head = new URDragonPart(this, "head", 0.875f, 0.875f);
+    private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.875f, 0.875f);
+    private final URDragonPart neck2 = new URDragonPart(this, "neck2", 0.875f, 0.875f);
+    private final URDragonPart neck3 = new URDragonPart(this, "neck3", 0.875f, 0.875f);
+    private final URDragonPart front = new URDragonPart(this, "front", 1.125f, 1.125f);
+    private final URDragonPart back = new URDragonPart(this, "back", 1.125f, 1.125f);
     private final URDragonPart tail1 = new URDragonPart(this, "tail1");
     private final URDragonPart tail2 = new URDragonPart(this, "tail2");
     private final URDragonPart tail3 = new URDragonPart(this, "tail3");
-    private final URDragonPart[] parts = new URDragonPart[]{wing1Left, wing2Left, wing1Right, wing2Right, neck1, neck2, head, tail1, tail2, tail3};
+    private final URDragonPart tail4 = new URDragonPart(this, "tail4");
+    private final URDragonPart wingLeft = new URDragonPart(this, "wing_left", 1.5f, 1f);
+    private final URDragonPart wingRight = new URDragonPart(this, "wing_right", 1.5f, 1f);
+    private final URDragonPart shoulderArmLeft = new URDragonPart(this, "shoulder_arm_left", 3f, 1.5f);
+    private final URDragonPart shoulderArmRight = new URDragonPart(this, "shoulder_arm_right", 3f, 1.5f);
+    private final URDragonPart fingersLeft = new URDragonPart(this, "fingers_left", 3f, 2f);
+    private final URDragonPart fingersRight = new URDragonPart(this, "fingers_right", 3f, 2f);
+    private final URDragonPart[] parts = new URDragonPart[]{head, neck1, neck2, neck3, front, back, tail1, tail2, tail3, tail4, wingLeft, wingRight, shoulderArmLeft, shoulderArmRight, fingersLeft, fingersRight};
     protected final DynamicGameEventListener<LightningStrikeEventListener> lightningStrikeEventHandler = new DynamicGameEventListener<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
     public static final float BASE_GROUND_SPEED = 0.25f;
@@ -86,8 +90,8 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     public LightningChaser(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         xpReward = 20;
-        pitchLimitGround = 50;
-        pitchLimitAir = 20;
+        pitchLimitGround = 70;
+        pitchLimitAir = 45;
         ticksUntilHeal = 500;
     }
 
@@ -125,11 +129,9 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
-    //todo reconsider structure and make it cleaner
     public void tickAnimations() {
-        if (!level().isClientSide()) return;
+        if (level().isClientSide()) return;
         tickBlinkController();
-        tickTurnController();
         tickMainController();
     }
 
@@ -137,26 +139,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
-    }
-
-    private void tickTurnController() {
-        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
-        if (turnController.isPlayingAbilityAnimation(AnimationController.TURN)) return;
-        switch (getTurningState()) {
-            case LEFT -> {
-                if (isFlying()) {
-                    if (isMoving() && !isMovingBackwards()) turnController.playAnimation("turn.fly.left");
-                    else turnController.playAnimation("turn.fly.idle.left");
-                } else turnController.playAnimation("turn.left");
-            }
-            case RIGHT -> {
-                if (isFlying()) {
-                    if (isMoving() && !isMovingBackwards()) turnController.playAnimation("turn.fly.right");
-                    else turnController.playAnimation("turn.fly.idle.right");
-                } else turnController.playAnimation("turn.right");
-            }
-            default -> turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
-        }
     }
 
     private void tickMainController() {
@@ -170,20 +152,18 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
                     mainController.playAnimation("fly.back");
                     return;
                 }
-                if (getTiltState() == TiltState.UP) {
-                    mainController.playAnimation("fly.straight.up");
-                    return;
-                }
                 if (getTiltState() == TiltState.DOWN) {
-                    mainController.playAnimation("fly.straight.down");
-                    return;
+                    if (getAccelerationModifier() > 0.5f && getXBodyRot(1) > 20) {
+                        mainController.playAnimation("fly.down");
+                        return;
+                    }
+                    if (getAccelerationModifier() > 0.15f && getXBodyRot(1) > 5) {
+                        mainController.playAnimation("fly.glide");
+                        return;
+                    }
                 }
                 if (isFlyGliding()) {
-                    mainController.playAnimation("fly.straight.glide");
-                    return;
-                }
-                if ((float)getAccelerationDuration()/getMaxAccelerationDuration() < 0.9f) {
-                    mainController.playAnimation("fly.straight.heavy");
+                    mainController.playAnimation("fly.glide");
                     return;
                 }
                 mainController.playAnimation("fly.straight");
@@ -269,6 +249,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
     @Override
     public void tick() {
+        tickAnimations();
         super.tick();
         updateThunderstormBonus();
 
@@ -291,8 +272,17 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
         getLookControl().setLockRotation(hasSurrendered() && !isFlying());
 
-        updateChildParts();
-        tickAnimations();
+        if (isFlying()) {
+            fingersRight.setScale(1, 1);
+            fingersLeft.setScale(1, 1);
+            shoulderArmRight.setScale(1, 1);
+            shoulderArmLeft.setScale(1, 1);
+        } else {
+            fingersRight.setScale(1f, 0.5f);
+            fingersLeft.setScale(1f, 0.5f);
+            shoulderArmRight.setScale(1.25f, 0.5f);
+            shoulderArmLeft.setScale(1.25f, 0.5f);
+        }
     }
 
     @Override
@@ -390,13 +380,9 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
                 .ifPresent(DragonAbilityHolder::use);
     }
 
-    public void shoot() {
-        LightningBreath.createBeam(this, getViewXRot(1), getViewYRot(1), head.position(), 50, 10, 1, 0xFFFFFF); //todo redo
-    }
-
     @Override
     public int getMaxHeadYRot() {
-        return 45;
+        return 70;
     }
 
     public void triggerShockwave() { //todo remove
@@ -540,160 +526,8 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         return parts;
     }
 
-    public void updateChildParts() {
-        Vec2 wing1LeftScale;
-        Vec2 wing1RightScale;
-        Vec2 wing2LeftScale;
-        Vec2 wing2RightScale;
-        
-        Vector3f wing1LeftPos;
-        Vector3f wing1RightPos;
-        Vector3f wing2LeftPos;
-        Vector3f wing2RightPos;
-        Vector3f neck1Pos;
-        Vector3f neck2Pos;
-        Vector3f headPos;
-        Vector3f tail1Pos;
-        Vector3f tail2Pos;
-        Vector3f tail3Pos;
-
-        float yawOffset = 0; //todo redo LC multipart to same system as wyvern
-        float pitchOffset = tiltProgress / TRANSITION_TICKS;
-
-        if (isFlying()) {
-            if (isMoving() && !isMovingBackwards()) {
-                if (getTiltState() == TiltState.DOWN) {
-                    wing1LeftPos = new Vector3f(2, 0, 0.5f);
-                    wing1LeftScale = new Vec2(1, 1.5f);
-
-                    wing2LeftPos = new Vector3f(2, 0, -0.5f);
-                    wing2LeftScale = new Vec2(1, 1.5f);
-
-                    wing1RightPos = new Vector3f(-2, 0, 0.5f);
-                    wing1RightScale = new Vec2(1, 1.5f);
-
-                    wing2RightPos = new Vector3f(-2, 0, -0.5f);
-                    wing2RightScale = new Vec2(1, 1.5f);
-                } else {
-                    wing1LeftPos = new Vector3f(2.5f, 0, 0);
-                    wing1LeftScale = new Vec2(1, 2.5f);
-
-                    wing2LeftPos = new Vector3f(5, 0, 0);
-                    wing2LeftScale = new Vec2(1, 2.5f);
-
-                    wing1RightPos = new Vector3f(-2.5f, 0, 0);
-                    wing1RightScale = new Vec2(1, 2.5f);
-
-                    wing2RightPos = new Vector3f(-5, 0, 0);
-                    wing2RightScale = new Vec2(1, 2.5f);
-                }
-                neck1Pos = new Vector3f(yawOffset * 0.25f, pitchOffset * 0.75f, 2f);
-                neck2Pos = new Vector3f(yawOffset * 0.75f, pitchOffset * 1, 2.75f - Math.abs(yawOffset) * 0.25f);
-                headPos = new Vector3f(yawOffset * 1.5f, pitchOffset * 1.25f, 3.5f - Math.abs(yawOffset) * 0.5f);
-
-                tail1Pos = new Vector3f(yawOffset * 0.25f, -pitchOffset * 1, -2);
-                tail2Pos = new Vector3f(yawOffset * 0.5f, -pitchOffset * 1.25f, -3);
-                tail3Pos = new Vector3f(yawOffset * 1.25f, -pitchOffset * 1.5f , -4 + Math.abs(yawOffset) * 0.25f);
-            } else {
-                wing1LeftPos = new Vector3f(3, 0.75f, -0.5f);
-                wing1LeftScale = new Vec2(1.5f, 3);
-
-                wing2LeftPos = new Vector3f(3.5f, 0.75f, -1);
-                wing2LeftScale = new Vec2(1.5f, 2);
-
-                wing1RightPos = new Vector3f(-3, 0.75f, -0.5f);
-                wing1RightScale = new Vec2(1.5f, 3);
-
-                wing2RightPos = new Vector3f(-3.5f, 0.75f, -1);
-                wing2RightScale = new Vec2(1.5f, 2);
-
-                neck1Pos = new Vector3f(0, 3, 1);
-                neck2Pos = new Vector3f(yawOffset * 0.5f, 3, 1.5f);
-                headPos = new Vector3f(yawOffset,  3.1f, 2f);
-
-                tail1Pos = new Vector3f(yawOffset * 0.5f, -0.5f, -2);
-                tail2Pos = new Vector3f(yawOffset * 1.25f, -1.5f, -2.25f);
-                tail3Pos = new Vector3f(yawOffset * 2f, -2.5f , -2.5f);
-            }
-        } else {
-            if (isOrderedToSit()) {
-                wing1LeftPos = new Vector3f(1.5f, 0, 0.5f);
-                wing1LeftScale = new Vec2(2, 1.5f);
-
-                wing2LeftPos = new Vector3f(1.75f, 0.75f, -0.5f);
-                wing2LeftScale = new Vec2(1.5f, 1.5f);
-
-                wing1RightPos = new Vector3f(-1.5f, 0, 0.5f);
-                wing1RightScale = new Vec2(2, 1.5f);
-
-                wing2RightPos = new Vector3f(-1.75f, 0.75f, -0.5f);
-                wing2RightScale = new Vec2(1.5f, 1.5f);
-
-                if (hasSurrendered()) {
-                    neck1Pos = new Vector3f(0, 1.6f, 1);
-                    neck2Pos = new Vector3f(yawOffset * 0.4f, 1.3f, 1.7f);
-                    headPos = new Vector3f(yawOffset * 0.8f,  0.5f, 2.4f);
-                } else {
-                    neck1Pos = new Vector3f(0, 2.5f, 1);
-                    neck2Pos = new Vector3f(yawOffset * 0.4f, 2.8f, 1.5f);
-                    headPos = new Vector3f(yawOffset * 0.8f, 3.1f, 2f);
-                }
-
-                tail1Pos = new Vector3f(0, 0.3f, -2.2f);
-                tail2Pos = new Vector3f(0, 0.35f, -3.2f);
-                tail3Pos = new Vector3f(0, 0.4f , -4.2f);
-
-            } else {
-                wing1LeftPos = new Vector3f(1.5f, 0, 0.5f);
-                wing1LeftScale = new Vec2(2, 1.5f);
-
-                wing2LeftPos = new Vector3f(1.75f, 0.75f, -0.5f);
-                wing2LeftScale = new Vec2(1.5f, 1.5f);
-
-                wing1RightPos = new Vector3f(-1.5f, 0, 0.5f);
-                wing1RightScale = new Vec2(2, 1.5f);
-
-                wing2RightPos = new Vector3f(-1.75f, 0.75f, -0.5f);
-                wing2RightScale = new Vec2(1.5f, 1.5f);
-
-                neck1Pos = new Vector3f(0, 2, 1);
-                neck2Pos = new Vector3f(yawOffset * 0.4f, 2.25f, 1.5f);
-                headPos = new Vector3f(yawOffset * 0.8f, 2.6f, 2f);
-
-                tail1Pos = new Vector3f(yawOffset * 0.2f, 1.5f, -2.1f);
-                tail2Pos = new Vector3f(yawOffset * 0.4f, 2.2f, -2.8f);
-                tail3Pos = new Vector3f(yawOffset * 0.8f, 2.5f, -3.7f);
-            }
-        }
-
-        wing1Left.setRelativePos(wing1LeftPos);
-        wing1Left.setScale(wing1LeftScale);
-
-        wing2Left.setRelativePos(wing2LeftPos);
-        wing2Left.setScale(wing2LeftScale);
-
-        wing1Right.setRelativePos(wing1RightPos);
-        wing1Right.setScale(wing1RightScale);
-
-        wing2Right.setRelativePos(wing2RightPos);
-        wing2Right.setScale(wing2RightScale);
-
-        head.setRelativePos(headPos);
-        head.setScale(1, 1);
-
-        neck1.setRelativePos(neck1Pos);
-        neck1.setScale(1, 1);
-
-        neck2.setRelativePos(neck2Pos);
-        neck2.setScale(1, 1);
-
-        tail1.setRelativePos(tail1Pos);
-        tail1.setScale(1, 1);
-
-        tail2.setRelativePos(tail2Pos);
-        tail2.setScale(1, 1);
-
-        tail3.setRelativePos(tail3Pos);
-        tail3.setScale(1, 1);
+    @Override
+    public @Nullable DragonAnimationProcessor<? extends URDragonEntity> createServerAnimationProcessor() {
+        return new MultipartDragonAnimationProcessor<>(this);
     }
 }

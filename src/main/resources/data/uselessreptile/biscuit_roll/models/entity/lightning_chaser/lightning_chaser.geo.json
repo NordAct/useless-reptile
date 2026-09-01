@@ -6,7 +6,7 @@
 				"identifier": "geometry.lightning_chaser",
 				"texture_width": 512,
 				"texture_height": 512,
-				"visible_bounds_width": 20,
+				"visible_bounds_width": 21,
 				"visible_bounds_height": 13,
 				"visible_bounds_offset": [0, 2.5, 0]
 			},
@@ -21,7 +21,10 @@
 					"pivot": [0, 22.7, 4],
 					"cubes": [
 						{"origin": [-6.5, 19.75, -14], "size": [13, 13, 18], "uv": [162, 188]}
-					]
+					],
+					"locators": {
+						"front": [0, 26.25, -5]
+					}
 				},
 				{
 					"name": "wing_left",
@@ -79,7 +82,10 @@
 								"down": {"uv": [218, 188], "uv_size": [-23, -23]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"wing_left": [16, 27.75, 0]
+					}
 				},
 				{
 					"name": "shoulder_arm_left",
@@ -102,7 +108,10 @@
 								"down": {"uv": [121, 165], "uv_size": [40, -41]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"shoulder_arm_left": [49, 27.75, 7]
+					}
 				},
 				{
 					"name": "fingers_left",
@@ -159,7 +168,13 @@
 								"down": {"uv": [128, 42], "uv_size": [60, -34]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"fingers_left": {
+							"offset": [98.54683, 27.75, -7.96967],
+							"rotation": [0, 45, 0]
+						}
+					}
 				},
 				{
 					"name": "wing_finger3_left",
@@ -262,7 +277,10 @@
 								"down": {"uv": [195, 188], "uv_size": [23, -23]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"wing_right": [-16, 27.75, 0]
+					}
 				},
 				{
 					"name": "shoulder_arm_right",
@@ -285,7 +303,10 @@
 								"down": {"uv": [161, 165], "uv_size": [-40, -41]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"shoulder_arm_right": [-49, 27.75, 7]
+					}
 				},
 				{
 					"name": "fingers_right",
@@ -342,7 +363,13 @@
 								"down": {"uv": [188, 42], "uv_size": [-60, -34]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"fingers_right": {
+							"offset": [-98.54683, 27.75, -7.96967],
+							"rotation": [0, -45, 0]
+						}
+					}
 				},
 				{
 					"name": "wing_finger3_right",
@@ -395,7 +422,10 @@
 					"pivot": [0, 26.85, -14],
 					"cubes": [
 						{"origin": [-3.5, 22.75, -27], "size": [7, 8, 15], "uv": [35, 210]}
-					]
+					],
+					"locators": {
+						"neck1": [0, 26.75, -20]
+					}
 				},
 				{
 					"name": "neck2",
@@ -403,7 +433,10 @@
 					"pivot": [0, 30.35, -27],
 					"cubes": [
 						{"origin": [-3, 23.25, -39.5], "size": [6, 7, 15], "uv": [0, 0]}
-					]
+					],
+					"locators": {
+						"neck2": [0, 26.75, -32.5]
+					}
 				},
 				{
 					"name": "neck3",
@@ -411,7 +444,10 @@
 					"pivot": [0, 29.7, -39.5],
 					"cubes": [
 						{"origin": [-2.5, 23.75, -54.5], "size": [5, 6, 17], "uv": [135, 202]}
-					]
+					],
+					"locators": {
+						"neck3": [0, 26.75, -46]
+					}
 				},
 				{
 					"name": "spike4",
@@ -487,6 +523,7 @@
 						{"origin": [-1, 26.1, -72.45], "size": [2, 1, 13], "pivot": [0, 30, -59.5], "rotation": [7.5, 0, 0], "uv": [64, 210]}
 					],
 					"locators": {
+						"head": [0, 26.75, -60.5],
 						"breath": [0, 25.5, -60]
 					}
 				},
@@ -770,7 +807,10 @@
 					"pivot": [0, 21.7, 4],
 					"cubes": [
 						{"origin": [-5.5, 21.75, 1], "size": [11, 10, 18], "uv": [201, 124]}
-					]
+					],
+					"locators": {
+						"back": [0, 26.75, 10]
+					}
 				},
 				{
 					"name": "tail1",
@@ -778,7 +818,10 @@
 					"pivot": [0, 30.75, 19],
 					"cubes": [
 						{"origin": [-3, 22.75, 17], "size": [6, 8, 19], "uv": [205, 200]}
-					]
+					],
+					"locators": {
+						"tail1": [0, 26.75, 26.5]
+					}
 				},
 				{
 					"name": "tail2",
@@ -786,7 +829,10 @@
 					"pivot": [0, 29.75, 36],
 					"cubes": [
 						{"origin": [-2.5, 23.75, 35], "size": [5, 6, 17], "uv": [0, 67]}
-					]
+					],
+					"locators": {
+						"tail2": [0, 26.75, 43.5]
+					}
 				},
 				{
 					"name": "tail3",
@@ -794,7 +840,10 @@
 					"pivot": [0, 28.75, 52],
 					"cubes": [
 						{"origin": [-2, 24.75, 51], "size": [4, 4, 17], "uv": [79, 210]}
-					]
+					],
+					"locators": {
+						"tail3": [0, 26.75, 59.5]
+					}
 				},
 				{
 					"name": "tail4",
@@ -802,7 +851,10 @@
 					"pivot": [0, 27.75, 68],
 					"cubes": [
 						{"origin": [-1.5, 25.75, 67], "size": [3, 2, 17], "uv": [0, 120]}
-					]
+					],
+					"locators": {
+						"tail4": [0, 26.75, 75.5]
+					}
 				},
 				{
 					"name": "spike35",

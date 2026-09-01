@@ -152,7 +152,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     protected int maxYBodyRotChangeSamples = 10;
     public float xBodyRot = 0;
     private final LinkedList<Float> xBodyRotO = new LinkedList<>();
-    protected int maxXBodyRotSamples = 5;
+    protected int maxXBodyRotSamples = 10;
     private final DragonAnimationProcessor<? extends URDragonEntity> processor = createServerAnimationProcessor();
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
@@ -331,10 +331,16 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             updateAbilities();
         }
         if (level().isClientSide()) {
-            if (CONTROLLER_STATES.equals(data)) ControllerState.applyControllerStates(
-                    entityData.get(CONTROLLER_STATES),
-                    getAnimationControllers()
-            );
+            if (CONTROLLER_STATES.equals(data)) {
+                ControllerState.applyControllerStates(
+                        entityData.get(CONTROLLER_STATES),
+                        getAnimationControllers()
+                );
+                for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+                    DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
+                    if (equipment != null && equipment.getAnimationProcessor() == null) equipment.updateAnimations();
+                }
+            }
             if (EQUIPMENT_CONTROLLER_STATES.equals(data)) {
                 entityData.get(EQUIPMENT_CONTROLLER_STATES).forEach((equipmentSlot, controllerStates) -> {
                     DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
@@ -744,10 +750,14 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return mod;
     }
 
-    protected float getMovementSpeedModifier() {
+    public float getMovementSpeedModifier() {
         double baseSpeed = getBaseGroundSpeed();
         double speed = getAttributeValue(Attributes.MOVEMENT_SPEED);
         return (float) (speed / baseSpeed);
+    }
+
+    public float getAccelerationModifier() {
+        return getAccelerationDuration() / getMaxAccelerationDuration();
     }
 
     @Override
@@ -758,6 +768,15 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         xBodyRotO.addLast(xBodyRot);
         if (xBodyRotO.size() >= maxXBodyRotSamples) xBodyRotO.removeFirst();
 
+        if (processor != null) {
+            processor.tick();
+            needsSync = true;
+        }
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
+            if (equipment != null) equipment.tick();
+        }
+        syncAnimations();
         super.tick();
         if (!level().isClientSide()) {
             if (getOwner() != null && getCurrentOrder() == Order.FOLLOW) {
@@ -800,15 +819,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
 
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
-        if (processor != null) {
-            processor.tick();
-            needsSync = true;
-        }
-        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-            DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
-            if (equipment != null) equipment.tick();
-        }
-        syncAnimations();
     }
 
     protected void syncAnimations() {
@@ -1217,7 +1227,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             if (i != yBodyRotChangeO.size() - 1) sum += Mth.lerp(tickDelta, yBodyRotChangeO.get(i), yBodyRotChangeO.get(i + 1));
             else sum += Mth.lerp(tickDelta, yBodyRotChangeO.get(i), yBodyRotChange);
         }
-        return sum / yBodyRotChangeO.size();
+        return sum / maxYBodyRotChangeSamples;
     }
 
     public float getXBodyRot(float tickDelta) {
@@ -1226,7 +1236,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             if (i != xBodyRotO.size() - 1) sum += Mth.lerp(tickDelta, xBodyRotO.get(i), xBodyRotO.get(i + 1));
             else sum += Mth.lerp(tickDelta, xBodyRotO.get(i), xBodyRot);
         }
-        return sum / xBodyRotO.size();
+        return sum / maxXBodyRotSamples;
     }
 
     /// @return creates server animation processor for dragon

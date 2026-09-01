@@ -48,7 +48,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         if (Double.isNaN(entity.getDeltaMovement().y)) entity.setDeltaMovement(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z);
         int accelerationDuration = entity.getAccelerationDuration();
         if (accelerationDuration < 0) accelerationDuration = 0;
-        float accelerationModifier = (float)accelerationDuration/entity.getMaxAccelerationDuration();
+        float accelerationModifier = entity.getAccelerationDuration();
         if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
         entity.setMovingBackwards(false);
         entity.setTiltState(FlyingDragon.TiltState.NONE);

@@ -101,7 +101,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    protected float getMovementSpeedModifier() {
+    public float getMovementSpeedModifier() {
         if (!isFlying()) return super.getMovementSpeedModifier();
         double baseSpeed = getAttributeBaseValue(Attributes.FLYING_SPEED);
         double speed = getAttributeBaseValue(Attributes.FLYING_SPEED);
@@ -128,7 +128,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
         if (!level().isClientSide()) {
             glideTimer--;
-            float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
+            float accelerationModifier = getAccelerationModifier();
             setFlyGliding(accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9);
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }

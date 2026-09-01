@@ -56,6 +56,7 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
         state.setStateData(StateDataTypes.CONTROLLERS, animatable.getAnimationControllers());
         state.setStateData(StateDataTypes.ANIMATION_TIME, animatable.ownerState.getStateData(StateDataTypes.ANIMATION_TIME));
         state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
+        if (animatable.owner.getAnimationProcessor() == null) animatable.updateAnimations();
     }
 
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, DragonEquipment animatable, float tickDelta) {

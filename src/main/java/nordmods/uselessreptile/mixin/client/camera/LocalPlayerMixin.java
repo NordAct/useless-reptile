@@ -19,7 +19,7 @@ public abstract class LocalPlayerMixin extends AbstractClientPlayer implements P
     @Unique
     private final LinkedList<Float> zRotO = new LinkedList<>();
     @Unique
-    private static final int MAX_Z_ROT_SAMPLES = 20;
+    private static final int MAX_Z_ROT_SAMPLES = 40;
 
     public LocalPlayerMixin(ClientLevel level, GameProfile gameProfile) {
         super(level, gameProfile);
