@@ -38,7 +38,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     protected float pitchLimitAir = 90;
     private int flyUpWindow;
     private boolean jumpWasPressed;
-    protected float tiltProgress;
     private int glideTimer = 100;
     private boolean forceFlight = false;
     private final FlyingDragonLandNavigation<URRideableFlyingDragonEntity> landNavigation;
@@ -107,12 +106,12 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
                 else jumpWasPressed = false;
             }
         }
+        if (FLYING.equals(data)) updateNavigation();
     }
 
     @Override
     public void tick() {
         super.tick();
-        updateTiltProgress();
 
         if (!level().isClientSide()) {
             glideTimer--;
@@ -123,14 +122,12 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             if (flyUpWindow > 0) flyUpWindow--;
         }
         checkForceFlight();
-
-        updateNavigation();
     }
 
     private void updateNavigation() {
         PathNavigation current = navigation;
         navigation = isFlying() ? airNavigation : landNavigation;
-        if (current != navigation) current.stop();
+        current.stop();
     }
 
     @Override
@@ -306,23 +303,6 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     protected float getFlyingSpeed() {
         float movementSpeed = getSpeed();
         return hasControllingPassenger() ? movementSpeed * 0.1f : movementSpeed *  0.14f;
-    }
-
-    private void updateTiltProgress() {
-        switch (getTiltState()) {
-            case UP -> {
-                if (tiltProgress < TRANSITION_TICKS) tiltProgress++;
-            }
-            case DOWN -> {
-                if (tiltProgress > -TRANSITION_TICKS) tiltProgress--;
-            }
-            default -> {
-                if (tiltProgress != 0) {
-                    if (tiltProgress > 0) tiltProgress--;
-                    else  tiltProgress++;
-                }
-            }
-        }
     }
 
     @Override

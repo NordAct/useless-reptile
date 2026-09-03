@@ -30,7 +30,6 @@ import org.jspecify.annotations.NonNull;
 public abstract class URFlyingDragonEntity extends URDragonEntity implements FlyingDragon {
     protected final int maxInAirTimer = 600;
     protected float pitchLimitAir = 90;
-    protected float tiltProgress;
     private int glideTimer = 100;
     private boolean forceFlight = false;
     private final FlyingDragonLandNavigation<URFlyingDragonEntity> landNavigation;
@@ -70,6 +69,12 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     public TiltState getTiltState() {return entityData.get(TILT_STATE);}
     public void setTiltState(TiltState state) {entityData.set(TILT_STATE, state);}
+
+    @Override
+    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (FLYING.equals(data)) updateNavigation();
+    }
 
     @Override
     public void addAdditionalSaveData(@NonNull ValueOutput tag) {
@@ -124,7 +129,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     public void tick() {
         super.tick();
-        updateTiltProgress();
 
         if (!level().isClientSide()) {
             glideTimer--;
@@ -133,14 +137,12 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();
-
-        updateNavigation();
     }
 
     private void updateNavigation() {
         PathNavigation current = navigation;
         navigation = isFlying() ? airNavigation : landNavigation;
-        if (current != navigation) current.stop();
+        current.stop();
     }
 
     @Override
@@ -183,23 +185,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     protected float getFlyingSpeed() {
         return getSpeed() *  0.14f;
-    }
-
-    private void updateTiltProgress() {
-        switch (getTiltState()) {
-            case UP -> {
-                if (tiltProgress < TRANSITION_TICKS) tiltProgress++;
-            }
-            case DOWN -> {
-                if (tiltProgress > -TRANSITION_TICKS) tiltProgress--;
-            }
-            default -> {
-                if (tiltProgress != 0) {
-                    if (tiltProgress > 0) tiltProgress--;
-                    else  tiltProgress++;
-                }
-            }
-        }
     }
 
     @Override
