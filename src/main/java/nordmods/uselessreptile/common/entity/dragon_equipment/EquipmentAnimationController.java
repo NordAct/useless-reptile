@@ -1,9 +1,9 @@
 package nordmods.uselessreptile.common.entity.dragon_equipment;
 
 import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
+import nordmods.biscuit_roll.common.resource_managers.BRAnimationManager;
 import nordmods.biscuit_roll.common.state.BRState;
 
 //todo sounds and stuff
@@ -30,15 +30,8 @@ public class EquipmentAnimationController extends BRAnimationController {
 
     }
 
-    public void checkAgainstOtherController(BRAnimationController controller) {
-        playingAnimations.forEach((name, animation) -> {
-            BRPlayingAnimation parentAnimation = controller.getAnimation(name);
-            if (parentAnimation != null) {
-                if (parentAnimation.isFinished())
-                    animation.stop();
-                animation.setPaused(parentAnimation.isPaused());
-                animation.setSpeed(parentAnimation.getSpeed());
-            }
-        });
+    @Override
+    public AnimationData getAnimationData(String animation) {
+        return this.animationFile == null ? null : BRAnimationManager.getAnimationManager(equipment.owner.level().isClientSide()).getAnimation(this.animationFile, animation, false);
     }
 }
