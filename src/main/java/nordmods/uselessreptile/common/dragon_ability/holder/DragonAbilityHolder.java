@@ -35,7 +35,7 @@ public class DragonAbilityHolder {
     public void use() {
         if (cooldown <= 0 && ability.canUse(this)) {
             setCooldown(ability.getMaxCooldown());
-            ability.getCommonAbilityData().animations().forEach(a -> a.tryPlay(entity));
+            if (getEntity().getAnimationProcessor() == null || !getEntity().level().isClientSide()) ability.getCommonAbilityData().animations().forEach(a -> a.tryPlay(entity));
             entity.onAbilityActivated(ability);
         }
     }

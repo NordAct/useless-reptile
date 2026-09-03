@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.dragon_ability;
 
 import com.mojang.serialization.Codec;
 import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.data.UseCondition;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URRegistries;
@@ -40,7 +41,7 @@ public interface DragonAbility {
     }
 
     default boolean canBeUsed(DragonAbilityHolder holder) {
-        return getCommonAbilityData().conditions().isEmpty() || getCommonAbilityData().conditions().stream().allMatch(c -> c.test(holder.getEntity())) ;
+        return UseCondition.testAll(getCommonAbilityData().conditions(), holder.getEntity());
     }
 
     default boolean canUseUncontrolled(DragonAbilityHolder holder) {

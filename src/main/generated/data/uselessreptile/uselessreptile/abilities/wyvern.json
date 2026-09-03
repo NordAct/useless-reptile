@@ -10,149 +10,115 @@
           "attack.melee3"
         ],
         "can_interrupt_playing_ability_animation": true,
-        "conditions": [],
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": false
+          }
+        ],
         "controller": "attack"
-      }
-    ],
-    "aoe": false,
-    "attack_box_center_offset": [
-      0.0,
-      -0.5,
-      1.75
-    ],
-    "attack_box_height": 4.0,
-    "attack_box_width": 3.0,
-    "attack_effects": [],
-    "attack_type": "secondary",
-    "block_other_abilities_if_active": true,
-    "conditions": [
-      {
-        "type": "uselessreptile:flying_movement",
-        "flying": false
-      }
-    ],
-    "cooldown_time_seconds": 1.5,
-    "set_on_fire": false,
-    "trigger_time_seconds": 0.0,
-    "vertical_attack_box_movement": "none"
-  },
-  {
-    "type": "uselessreptile:melee_attack",
-    "active_time_seconds": 1.0,
-    "animations": [
+      },
       {
         "animations": [
           "fly.attack"
         ],
         "can_interrupt_playing_ability_animation": true,
-        "conditions": [],
-        "controller": "main"
-      }
-    ],
-    "aoe": false,
-    "attack_box_center_offset": [
-      0.0,
-      -1.0,
-      1.5
-    ],
-    "attack_box_height": 5.5,
-    "attack_box_width": 3.5,
-    "attack_effects": [],
-    "attack_type": "secondary",
-    "block_other_abilities_if_active": true,
-    "conditions": [
-      {
-        "type": "uselessreptile:flying_movement",
-        "flying": true
-      },
-      {
-        "type": "uselessreptile:movement",
-        "moving": false
-      }
-    ],
-    "cooldown_time_seconds": 1.5,
-    "set_on_fire": false,
-    "trigger_time_seconds": 0.0,
-    "vertical_attack_box_movement": "none"
-  },
-  {
-    "type": "uselessreptile:melee_attack",
-    "active_time_seconds": 1.0,
-    "animations": [
-      {
-        "animations": [
-          "fly.attack"
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": true
+          }
         ],
-        "can_interrupt_playing_ability_animation": true,
-        "conditions": [],
         "controller": "main"
       }
     ],
     "aoe": false,
-    "attack_box_center_offset": [
-      0.0,
-      -1.0,
-      1.5
-    ],
-    "attack_box_height": 5.5,
-    "attack_box_width": 3.5,
-    "attack_effects": [],
-    "attack_type": "secondary",
-    "block_other_abilities_if_active": true,
-    "conditions": [
+    "attack_box": [
       {
-        "type": "uselessreptile:flying_movement",
-        "flying": true
-      },
-      {
-        "type": "uselessreptile:movement",
-        "moving_backwards": true
-      }
-    ],
-    "cooldown_time_seconds": 1.5,
-    "set_on_fire": false,
-    "trigger_time_seconds": 0.0,
-    "vertical_attack_box_movement": "none"
-  },
-  {
-    "type": "uselessreptile:melee_attack",
-    "active_time_seconds": 1.0,
-    "animations": [
-      {
-        "animations": [
-          "fly.attack"
+        "center_offset": [
+          0.0,
+          -0.5,
+          1.75
         ],
-        "can_interrupt_playing_ability_animation": true,
-        "conditions": [],
-        "controller": "main"
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": false
+          }
+        ],
+        "height": 4.0,
+        "vertical_box_movement": "none",
+        "width": 3.0
+      },
+      {
+        "center_offset": [
+          0.0,
+          -1.0,
+          1.5
+        ],
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:movement",
+            "moving": false
+          }
+        ],
+        "height": 5.5,
+        "vertical_box_movement": "none",
+        "width": 3.5
+      },
+      {
+        "center_offset": [
+          0.0,
+          -1.0,
+          1.5
+        ],
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:movement",
+            "moving_backwards": true
+          }
+        ],
+        "height": 5.5,
+        "vertical_box_movement": "none",
+        "width": 3.5
+      },
+      {
+        "center_offset": [
+          0.0,
+          -1.0,
+          1.5
+        ],
+        "conditions": [
+          {
+            "type": "uselessreptile:flying_movement",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:movement",
+            "moving": true,
+            "moving_backwards": false
+          }
+        ],
+        "height": 4.5,
+        "vertical_box_movement": "none",
+        "width": 3.5
       }
     ],
-    "aoe": false,
-    "attack_box_center_offset": [
-      0.0,
-      -1.5,
-      1.5
-    ],
-    "attack_box_height": 4.5,
-    "attack_box_width": 3.5,
     "attack_effects": [],
     "attack_type": "secondary",
     "block_other_abilities_if_active": true,
-    "conditions": [
-      {
-        "type": "uselessreptile:flying_movement",
-        "flying": true
-      },
-      {
-        "type": "uselessreptile:movement",
-        "moving": true,
-        "moving_backwards": false
-      }
-    ],
+    "conditions": [],
     "cooldown_time_seconds": 1.5,
     "set_on_fire": false,
-    "trigger_time_seconds": 0.0,
-    "vertical_attack_box_movement": "none"
+    "trigger_time_seconds": 0.0
   },
   {
     "type": "uselessreptile:shot_attack",

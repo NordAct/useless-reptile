@@ -60,7 +60,7 @@ public record CommonDragonAbilityData(
                     }
                 }
             }
-            if (!conditions().isEmpty() && !conditions.stream().allMatch(c -> c.test(entity))) return false;
+            if (!UseCondition.testAll(conditions, entity)) return false;
             entity.getAnimationController(controller).playAnimation(animationToPlay);
             return true;
         }

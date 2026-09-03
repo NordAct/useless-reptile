@@ -15,13 +15,19 @@
       }
     ],
     "aoe": false,
-    "attack_box_center_offset": [
-      0.0,
-      -0.1,
-      2.5
+    "attack_box": [
+      {
+        "center_offset": [
+          0.0,
+          -0.1,
+          2.5
+        ],
+        "conditions": [],
+        "height": 3.0,
+        "vertical_box_movement": "none",
+        "width": 3.0
+      }
     ],
-    "attack_box_height": 3.0,
-    "attack_box_width": 3.0,
     "attack_effects": [],
     "attack_type": "secondary",
     "block_other_abilities_if_active": true,
@@ -33,8 +39,7 @@
     ],
     "cooldown_time_seconds": 1.5,
     "set_on_fire": false,
-    "trigger_time_seconds": 0.0,
-    "vertical_attack_box_movement": "none"
+    "trigger_time_seconds": 0.0
   },
   {
     "type": "uselessreptile:lightning_breath_attack",

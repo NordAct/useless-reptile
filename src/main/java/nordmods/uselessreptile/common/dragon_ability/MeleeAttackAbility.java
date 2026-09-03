@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.data.UseCondition;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
@@ -23,34 +24,25 @@ import java.util.List;
 
 public class MeleeAttackAbility extends TriggerableAbility {
     protected final boolean aoe;
-    protected final Vec3 attackBoxCenterOffset;
-    protected final VerticalAttackBoxMovement verticalAttackBoxMovement;
-    protected final float attackBoxWidth;
-    protected final float attackBoxHeight;
     protected final List<MobEffectInstance> attackEffects;
     protected final boolean setOnFire;
+    protected final List<ConditionedAttackBox> attackBox;
 
     public static final MapCodec<MeleeAttackAbility> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             CommonDragonAbilityData.MAP_CODEC.forGetter(MeleeAttackAbility::getCommonAbilityData),
             TriggerableAbility.Data.MAP_CODEC.forGetter(MeleeAttackAbility::getTriggerableAbilityData),
             Codec.BOOL.fieldOf("aoe").forGetter(c -> c.aoe),
-            Vec3.CODEC.fieldOf("attack_box_center_offset").forGetter(c -> c.attackBoxCenterOffset),
-            StringRepresentable.fromEnum(VerticalAttackBoxMovement::values).fieldOf("vertical_attack_box_movement").forGetter(c -> c.verticalAttackBoxMovement),
-            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_width").forGetter(c -> c.attackBoxWidth),
-            ExtraCodecs.POSITIVE_FLOAT.fieldOf("attack_box_height").forGetter(c -> c.attackBoxHeight),
             MobEffectInstance.CODEC.listOf().fieldOf("attack_effects").forGetter(c -> c.attackEffects),
-            Codec.BOOL.fieldOf("set_on_fire").forGetter(c -> c.setOnFire)
+            Codec.BOOL.fieldOf("set_on_fire").forGetter(c -> c.setOnFire),
+            ConditionedAttackBox.CODEC.listOf().fieldOf("attack_box").forGetter(c -> c.attackBox)
     ).apply(i, MeleeAttackAbility::new));
 
-    public MeleeAttackAbility(CommonDragonAbilityData common, TriggerableAbility.Data triggerableAbilityData, boolean aoe, Vec3 attackBoxCenterOffset, VerticalAttackBoxMovement verticalAttackBoxMovement, float attackBoxWidth, float attackBoxHeight, List<MobEffectInstance> attackEffects, boolean setOnFire) {
+    public MeleeAttackAbility(CommonDragonAbilityData common, TriggerableAbility.Data triggerableAbilityData, boolean aoe, List<MobEffectInstance> attackEffects, boolean setOnFire, List<ConditionedAttackBox> attackBox) {
         super(common, triggerableAbilityData);
         this.aoe = aoe;
-        this.attackBoxCenterOffset = attackBoxCenterOffset;
-        this.verticalAttackBoxMovement = verticalAttackBoxMovement;
-        this.attackBoxWidth = attackBoxWidth;
-        this.attackBoxHeight = attackBoxHeight;
         this.attackEffects = attackEffects;
         this.setOnFire = setOnFire;
+        this.attackBox = attackBox;
     }
 
     @Override
@@ -112,24 +104,43 @@ public class MeleeAttackAbility extends TriggerableAbility {
 
     public AABB getAttackBox(DragonAbilityHolder holder) {
         URDragonEntity entity = holder.getEntity();
+        ConditionedAttackBox box = null;
+        for (int i = 0; i < attackBox.size(); i++) {
+            ConditionedAttackBox temp = attackBox.get(i);
+            if (UseCondition.testAll(temp.conditions, holder.getEntity())) {
+                box = attackBox.get(i);
+                break;
+            }
+        }
+
+        if (box == null) {
+            StringBuilder builder = new StringBuilder();
+            builder.append("Could not find any attack box for ");
+            builder.append(getType().getId());
+            builder.append(" of dragon ").append(entity.getName().getString());
+            builder.append(" (").append(entity.getDragonId()).append(" of variant ").append(entity.getVariant()).append(")");
+            builder.append(" in its current state");
+            throw new IllegalStateException(builder.toString());
+        }
+
         float scale = entity.getScale();
-        Vec3 offset = switch (verticalAttackBoxMovement) {
-            case NONE -> ShotAttackAbility.rotateVec(attackBoxCenterOffset, entity.position(), 0, entity.getYRot());
-            case SMOOTH -> ShotAttackAbility.rotateVec(attackBoxCenterOffset, entity.position(), entity.getXRot(), entity.getYRot());
+        Vec3 offset = switch (box.verticalBoxMovement) {
+            case NONE -> ShotAttackAbility.rotateVec(box.centerOffset, entity.position(), 0, entity.getYRot());
+            case SMOOTH -> ShotAttackAbility.rotateVec(box.centerOffset, entity.position(), entity.getXRot(), entity.getYRot());
             case SNAPPED -> {
                 float y = 0;
-                if (entity.getXRot() > 25) y = -attackBoxHeight/4f;
-                if (entity.getXRot() < -25) y = attackBoxHeight/4f;
-                yield ShotAttackAbility.rotateVec(attackBoxCenterOffset, entity.position(), 0, entity.getYRot()).add(0, y, 0);
+                if (entity.getXRot() > 25) y = -box.height/4f;
+                if (entity.getXRot() < -25) y = box.height/4f;
+                yield ShotAttackAbility.rotateVec(box.centerOffset, entity.position(), 0, entity.getYRot()).add(0, y, 0);
             }
         };
         return new AABB(
-                -attackBoxWidth / 2 * scale,
+                -box.width / 2 * scale,
                 0,
-                -attackBoxWidth / 2 * scale,
-                attackBoxWidth / 2 * scale,
-                attackBoxHeight * scale,
-                attackBoxWidth / 2 * scale
+                -box.width / 2 * scale,
+                box.width / 2 * scale,
+                box.height * scale,
+                box.width / 2 * scale
         ).move(offset);
     }
 
@@ -137,21 +148,37 @@ public class MeleeAttackAbility extends TriggerableAbility {
         return 0xFFFF00FF;
     }
 
-    public enum VerticalAttackBoxMovement implements StringRepresentable{
-        NONE("none"),
-        SNAPPED("snapped"),
-        SMOOTH("smooth")
-        ;
+    public record ConditionedAttackBox(
+            float width,
+            float height,
+            Vec3 centerOffset,
+            VerticalAttackBoxMovement verticalBoxMovement,
+            List<UseCondition> conditions
+            ) {
+        public static final Codec<ConditionedAttackBox> CODEC = RecordCodecBuilder.create(i -> i.group(
+                ExtraCodecs.POSITIVE_FLOAT.fieldOf("width").forGetter(c -> c.width),
+                ExtraCodecs.POSITIVE_FLOAT.fieldOf("height").forGetter(c -> c.height),
+                Vec3.CODEC.fieldOf("center_offset").forGetter(c -> c.centerOffset),
+                StringRepresentable.fromEnum(ConditionedAttackBox.VerticalAttackBoxMovement::values).fieldOf("vertical_box_movement").forGetter(c -> c.verticalBoxMovement),
+                UseCondition.CODEC.listOf().fieldOf("conditions").forGetter(c -> c.conditions)
+        ).apply(i, ConditionedAttackBox::new));
 
-        private final String name;
+        public enum VerticalAttackBoxMovement implements StringRepresentable{
+            NONE("none"),
+            SNAPPED("snapped"),
+            SMOOTH("smooth")
+            ;
 
-        VerticalAttackBoxMovement(String name) {
-            this.name = name;
-        }
+            private final String name;
 
-        @Override
-        public @NonNull String getSerializedName() {
-            return name;
+            VerticalAttackBoxMovement(String name) {
+                this.name = name;
+            }
+
+            @Override
+            public @NonNull String getSerializedName() {
+                return name;
+            }
         }
     }
 }

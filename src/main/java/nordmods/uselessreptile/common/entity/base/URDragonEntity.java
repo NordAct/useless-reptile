@@ -769,15 +769,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         xBodyRotO.addLast(xBodyRot);
         if (xBodyRotO.size() >= maxXBodyRotSamples) xBodyRotO.removeFirst();
 
-        if (processor != null) {
-            processor.tick();
-            needsSync = true;
-        }
-        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-            DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
-            if (equipment != null) equipment.tick();
-        }
-        syncAnimations();
         super.tick();
         if (!level().isClientSide()) {
             if (getOwner() != null && getCurrentOrder() == Order.FOLLOW) {
@@ -820,6 +811,15 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
 
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
+        if (processor != null) {
+            processor.tick();
+            needsSync = true;
+        }
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
+            if (equipment != null) equipment.tick();
+        }
+        syncAnimations();
     }
 
     protected void syncAnimations() {

@@ -36,123 +36,99 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                        URDragonEntity.AnimationController.ATTACK,
                                                        List.of("attack.melee1", "attack.melee2", "attack.melee3"),
                                                        true,
-                                                       List.of()
+                                                       List.of(
+                                                               new FlyingMovementUseCondition(
+                                                                       Optional.of(false),
+                                                                       Optional.empty(),
+                                                                       Optional.empty()
+                                                               )
+                                                       )
+                                               ),
+                                               new CommonDragonAbilityData.ConditionedAnimation(
+                                                       URDragonEntity.AnimationController.MAIN,
+                                                       List.of("fly.attack"),
+                                                       true,
+                                                       List.of(
+                                                               new FlyingMovementUseCondition(
+                                                                       Optional.of(true),
+                                                                       Optional.empty(),
+                                                                       Optional.empty()
+                                                               )
+                                                       )
                                                )
                                        ),
-                                        List.of(
-                                                new FlyingMovementUseCondition(
-                                                        Optional.of(false),
-                                                        Optional.empty(),
-                                                        Optional.empty()
-                                                )
-                                        ),
+                                        List.of(),
                                         Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
                                 ),
                                 new TriggerableAbility.Data(0, 0.71f),
                                 false,
-                                new Vec3(0, -0.5, 1.75),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                3, 4,
-                                List.of(), false
-                        ),
-                        new MeleeAttackAbility(
-                                new CommonDragonAbilityData(
-                                        1.5f,
-                                        true,
-                                        List.of(
-                                                new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.MAIN,
-                                                        List.of("fly.attack"),
-                                                        true,
-                                                        List.of()
-                                                )
-                                        ),
-                                        List.of(
-                                                new FlyingMovementUseCondition(
-                                                        Optional.of(true),
-                                                        Optional.empty(),
-                                                        Optional.empty()
-                                                ),
-                                                new MovementUseCondition(
-                                                        Optional.of(false),
-                                                        Optional.empty(),
-                                                        Optional.empty()
-                                                )
-                                        ),
-                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
-                                ),
-                                new TriggerableAbility.Data(0, 1),
+                                List.of(),
                                 false,
-                                new Vec3(0, -1, 1.5),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                3.5f, 5.5f,
-                                List.of(), false
-                        ),
-                        new MeleeAttackAbility(
-                                new CommonDragonAbilityData(
-                                        1.5f,
-                                        true,
-                                        List.of(
-                                                new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.MAIN,
-                                                        List.of("fly.attack"),
-                                                        true,
-                                                        List.of()
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3, 4,
+                                                new Vec3(0, -0.5, 1.75),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of(
+                                                        new FlyingMovementUseCondition(
+                                                                Optional.of(false),
+                                                                Optional.empty(),
+                                                                Optional.empty()
+                                                        )
                                                 )
                                         ),
-                                        List.of(
-                                                new FlyingMovementUseCondition(
-                                                        Optional.of(true),
-                                                        Optional.empty(),
-                                                        Optional.empty()
-                                                ),
-                                                new MovementUseCondition(
-                                                        Optional.empty(),
-                                                        Optional.of(true),
-                                                        Optional.empty()
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3.5f, 5.5f,
+                                                new Vec3(0, -1, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of(
+                                                        new FlyingMovementUseCondition(
+                                                                Optional.of(true),
+                                                                Optional.empty(),
+                                                                Optional.empty()
+                                                        ),
+                                                        new MovementUseCondition(
+                                                                Optional.of(false),
+                                                                Optional.empty(),
+                                                                Optional.empty()
+                                                        )
                                                 )
                                         ),
-                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
-                                ),
-                                new TriggerableAbility.Data(0, 1),
-                                false,
-                                new Vec3(0, -1, 1.5),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                3.5f, 5.5f,
-                                List.of(), false
-                        ),
-                        new MeleeAttackAbility(
-                                new CommonDragonAbilityData(
-                                        1.5f,
-                                        true,
-                                        List.of(
-                                                new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.MAIN,
-                                                        List.of("fly.attack"),
-                                                        true,
-                                                        List.of()
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3.5f, 5.5f,
+                                                new Vec3(0, -1, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of(
+                                                        new FlyingMovementUseCondition(
+                                                                Optional.of(true),
+                                                                Optional.empty(),
+                                                                Optional.empty()
+                                                        ),
+                                                        new MovementUseCondition(
+                                                                Optional.empty(),
+                                                                Optional.of(true),
+                                                                Optional.empty()
+                                                        )
                                                 )
                                         ),
-                                        List.of(
-                                                new FlyingMovementUseCondition(
-                                                        Optional.of(true),
-                                                        Optional.empty(),
-                                                        Optional.empty()
-                                                ),
-                                                new MovementUseCondition(
-                                                        Optional.of(true),
-                                                        Optional.of(false),
-                                                        Optional.empty()
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3.5f, 4.5f,
+                                                new Vec3(0, -1, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of(
+                                                        new FlyingMovementUseCondition(
+                                                                Optional.of(true),
+                                                                Optional.empty(),
+                                                                Optional.empty()
+                                                        ),
+                                                        new MovementUseCondition(
+                                                                Optional.of(true),
+                                                                Optional.of(false),
+                                                                Optional.empty()
+                                                        )
                                                 )
-                                        ),
-                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
-                                ),
-                                new TriggerableAbility.Data(0, 1),
-                                false,
-                                new Vec3(0, -1.5, 1.5),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                3.5f, 4.5f,
-                                List.of(), false
+                                        )
+                                )
                         ),
                         new ShotAttackAbility(
                                 new CommonDragonAbilityData(
@@ -256,10 +232,16 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 ),
                                 new TriggerableAbility.Data(0.5f, 1.6f),
                                 true,
-                                new Vec3(0, -0.25f, 2),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                3, 3.5f,
-                                List.of(), false
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3, 3.5f,
+                                                new Vec3(0, -0.25f, 2),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        )
+                                )
                         ),
                         new BlockBreakingMeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -279,43 +261,27 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of(new MoleclawUseCondition(true))
                                                 )
                                         ),
-                                        List.of(new RideableUseCondition(false)),
-                                        Optional.empty()
-                                ),
-                                new TriggerableAbility.Data(0.5f, 1.6f),
-                                true,
-                                new Vec3(0, 0, 1.5),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.SMOOTH,
-                                2.5f, 3.5f,
-                                List.of(), false
-                        ),
-                        new BlockBreakingMeleeAttackAbility(
-                                new CommonDragonAbilityData(
-                                        3f,
-                                        true,
-                                        List.of(
-                                                new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
-                                                        List.of("attack.strong"),
-                                                        true,
-                                                        List.of(new MoleclawUseCondition(false))
-                                                ),
-                                                new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
-                                                        List.of("attack.strong.panic"),
-                                                        true,
-                                                        List.of(new MoleclawUseCondition(true))
-                                                )
-                                        ),
-                                        List.of(new RideableUseCondition(true)),
+                                        List.of(),
                                         Optional.of(URRideableDragonEntity.AttackType.PRIMARY)
                                 ),
                                 new TriggerableAbility.Data(0.5f, 1.6f),
                                 true,
-                                new Vec3(0, 0.25, 1.5),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.SNAPPED,
-                                2.5f, 4.25f,
-                                List.of(), false
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                2.5f, 3.5f,
+                                                new Vec3(0, 0, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.SMOOTH,
+                                                List.of(new RideableUseCondition(false))
+                                        ),
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                2.5f, 4.25f,
+                                                new Vec3(0, 0.25, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.SNAPPED,
+                                                List.of(new RideableUseCondition(true))
+                                        )
+                                )
                         )
                 )
         );
@@ -339,10 +305,16 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 ),
                                 new TriggerableAbility.Data(0, 0.58f),
                                 false,
-                                Vec3.ZERO,
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                1.8f, 0.7f,
-                                List.of(), false
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                1.8f, 0.7f,
+                                                Vec3.ZERO,
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        )
+                                )
                         )
                 )
         );
@@ -366,10 +338,16 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 ),
                                 new TriggerableAbility.Data(0, 0.75f),
                                 false,
-                                Vec3.ZERO,
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                1.7f, 0.35f,
-                                List.of(), true
+                                List.of(),
+                                true,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                1.7f, 0.35f,
+                                                Vec3.ZERO,
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        )
+                                )
                         )
                 )
         );
@@ -399,10 +377,16 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 ),
                                 new TriggerableAbility.Data(0, 1),
                                 false,
-                                new Vec3(0, -0.1, 2.5),
-                                MeleeAttackAbility.VerticalAttackBoxMovement.NONE,
-                                3, 3,
-                                List.of(), false
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3, 3,
+                                                new Vec3(0, -0.1, 2.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        )
+                                )
                         ),
                         new LightningBreathAttackAbility(
                                 new CommonDragonAbilityData(
