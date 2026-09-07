@@ -2,8 +2,8 @@ package nordmods.uselessreptile.common.entity.ai.navigation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
-import net.minecraft.world.entity.ai.util.GoalUtils;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.phys.Vec3;
@@ -14,9 +14,6 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & FlyingDragon> extends FlyingPathNavigation {
     protected final T entity;
-    protected int jumpCount;
-    protected boolean nodeChecked;
-    protected boolean isSurroundingEmpty;
 
     public FlyingDragonBaseNavigation(T entity, Level world) {
         super(entity, world);
@@ -25,10 +22,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
     @Override
     public void tick() {
-        boolean isFullBlock = entity.getBlockStateOn().isCollisionShapeFullBlock(entity.level(), entity.getOnPos());
-        if (GoalUtils.isSolid(entity, entity.blockPosition()) && isFullBlock) entity.getJumpControl().jump();
-        if (entity.isInWater() && entity.getFluidHeight(FluidTags.WATER) > entity.getFluidJumpThreshold() && !entity.hasTargetInWater() || entity.isInLava())
-            startToFly(jumpCount > 9 || entity.isInLava());
+        checkFlight(entity.isInWater() && entity.getFluidHeight(FluidTags.WATER) > entity.getFluidJumpThreshold() && !entity.hasTargetInWater() || entity.isInLava());
         entity.setPathfindingMalus(PathType.WATER, !entity.hasTargetInWater() ? 8 : 0);
         entity.setPathfindingMalus(PathType.WATER_BORDER, !entity.hasTargetInWater() ? 8 : 0);
 
@@ -37,6 +31,8 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
     @Override
     protected void followThePath() {
+        if (isDone()) return;
+
         Vec3 vec3d = getTempMobPos();
         Vec3 currentTarget = Vec3.atBottomCenterOf(path.getNextNodePos());
         getMoveControl().setWantedPosition(currentTarget.x, currentTarget.y, currentTarget.z, 1);
@@ -47,55 +43,35 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
         boolean bl = !entity.isFlying() && xDiff < (double)maxDistanceToWaypoint && zDiff < (double)maxDistanceToWaypoint &&  yDiff <= entity.maxUpStep() && yDiff > -10.0D;
 
-        if (bl || canCutCorner(path.getNextNode().type) && shouldTargetNextNodeInDirection(vec3d)) {
+        if (bl || (entity.isFlying() || mob.level().noCollision(mob.getBoundingBox().inflate(0.5f, 0, 0.5f))) && canCutCorner(path.getNextNode().type) && shouldTargetNextNodeInDirection(vec3d)) {
             path.advance();
             if (!path.isDone()) {
                 currentTarget = Vec3.atBottomCenterOf(getTargetPos());
                 getMoveControl().setWantedPosition(currentTarget.x, currentTarget.y, currentTarget.z, 1);
+
+                float destinationYaw = (float) (Mth.atan2(currentTarget.x - entity.getX(), currentTarget.z - entity.getZ()) * Mth.RAD_TO_DEG) - 90.0F;
+                boolean isRotatedTowards = (entity.getTarget() != null && entity.hasLineOfSight(entity.getTarget()))
+                        || entity.isRotatedTowardsDirection(entity.getXRot(), destinationYaw, 90, entity.getHeadRotSpeed() * 2);
+
+                if (!isRotatedTowards)
+                    entity.getLookControl().setLookAt(currentTarget.x, entity.isFlying() ? currentTarget.y : currentTarget.y + entity.getEyeHeight(), currentTarget.z);
             }
-            jumpCount = 0;
             lastStuckCheck = tick;
-            nodeChecked = false;
         }
 
         if (currentTarget.distanceTo(getTargetPos().getCenter()) > entity.position().distanceTo(getTargetPos().getCenter())) recomputePath();
     }
 
-    protected boolean shouldTargetNextNodeInDirection(Vec3 currentPos) {
-        if (path.getNextNodeIndex() + 1 >= path.getNodeCount()) return false;
-        if (!entity.horizontalCollision && canMoveDirectly(currentPos, path.getNextEntityPos(entity))) return true;
-        BlockPos currentNode = path.getNextNodePos();
-
-        if (!nodeChecked) {
-            isSurroundingEmpty = true;
-            BlockPos[] toCheck = entity.isFlying() ?
-                    new BlockPos[]{currentNode.east(), currentNode.west(), currentNode.south(), currentNode.north(), currentNode.above(), currentNode.below()} :
-                    new BlockPos[]{currentNode.east(), currentNode.west(), currentNode.south(), currentNode.north()};
-
-
-            for (BlockPos pos : toCheck) {
-                if (entity.getPathfindingMalus(nodeEvaluator.getTarget(pos.getX(), pos.getY(), pos.getZ()).type) == 0) continue;
-                isSurroundingEmpty = false;
-                break;
-            }
-            nodeChecked = true;
-        }
-
-        return currentPos.closerThan(new Vec3(currentNode.getX() + 0.5, isSurroundingEmpty ? entity.getY() + 0.5 : currentNode.getY(), currentNode.getZ() + 0.5), maxDistanceToWaypoint);
-    }
-
-    protected void startToFly(boolean shouldFly) {
-        if (shouldFly){
+    protected void checkFlight(boolean shouldFly) {
+        if (!entity.isFlying() && shouldFly){
             entity.push(0, 0.1, 0);
             entity.startToFly();
-            jumpCount = 0;
-        } else jumpCount++;
+        }
     }
 
     protected void moveOrStop(BlockPos target) {
         double distance = entity.distanceToSqr(target.getX(), target.getY(), target.getZ());
-        maxDistanceToWaypoint = entity.getBbWidth() / 2;
-        if (!entity.isFlying()) maxDistanceToWaypoint = Math.clamp(maxDistanceToWaypoint, 0, .5f) ;
+        maxDistanceToWaypoint = Math.clamp(entity.getBbWidth() / 2, 0, 1) ;
         if (distance <= maxDistanceToWaypoint) stop();
     }
 

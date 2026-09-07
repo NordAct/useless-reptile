@@ -176,6 +176,27 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
+    public void tickAccelerationUncontrolled() {
+        int accelerationDuration = getAccelerationDuration();
+        if (accelerationDuration < 0) accelerationDuration = 0;
+
+        if ((isMoving() || isMovingBackwards()) && getTurningState() == TurningState.NONE) accelerationDuration++;
+        if (getTiltState() == TiltState.UP && accelerationDuration > getMaxAccelerationDuration() * 0.4)
+            accelerationDuration -= 2;
+        if (getTiltState() == TiltState.DOWN && accelerationDuration < getMaxAccelerationDuration() * 3 && isFlying())
+            accelerationDuration += 2;
+
+        if (isMovingBackwards() && accelerationDuration > getMaxAccelerationDuration() * 0.25)
+            accelerationDuration -= 2;
+        if (getTiltState() != TiltState.DOWN  && accelerationDuration > getMaxAccelerationDuration()) {
+            accelerationDuration -= 2;
+            if (getTiltState() == TiltState.UP ) accelerationDuration -= 2;
+        }
+
+        setAccelerationDuration(accelerationDuration);
+    }
+
+    @Override
     protected int calculateFallDamage(double fallDistance, float damageMultiplier) {
         return 0;
     }
@@ -216,5 +237,16 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     protected @NonNull BodyRotationControl createBodyControl() {
         return new FlyingDragonBodyRotationControl<>(this);
+    }
+
+    @Override
+    public int getMaxFallDistance() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public float getAccelerationModifier() {
+        if (isFlying()) return Math.clamp(getAccelerationDuration() / (float) getMaxAccelerationDuration(), 0, 1.5f);
+        return super.getAccelerationModifier();
     }
 }

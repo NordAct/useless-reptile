@@ -76,6 +76,8 @@ public class DragonCallBackGoal extends Goal {
                     && (distance > entity.getWanderRadius().radius * entity.getWanderRadius().radius * 4 || distance > (proximityRange * 4) && forceTeleportCountdown <= 0)) entity.tryToTeleportToOwner();
         }
 
+        entity.lookAt(owner, entity.getMaxHeadYRot(), entity.getMaxHeadXRot());
+
         prevDistance = distance;
     }
 

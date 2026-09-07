@@ -15,8 +15,14 @@ public class DragonBodyRotationControl<T extends URDragonEntity> extends BodyRot
     @Override
     public void clientTick() {
         dragon.yHeadRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getMaxHeadYRot());
-        if (!(dragon instanceof URRideableDragonEntity rideableDragon) || !rideableDragon.freeLook())
-            dragon.setYRot(dragon.yBodyRot = Mth.rotateIfNecessary(dragon.getYHeadRot(), dragon.yBodyRot, dragon.getHeadRotSpeed()));
+        if (dragon.hasControllingPassenger()) {
+            if (!(dragon instanceof URRideableDragonEntity rideableDragon) || !rideableDragon.freeLook())
+                dragon.setYRot(dragon.yBodyRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getHeadRotSpeed()));
+        } else {
+            if (!dragon.isOrderedToSit() && (dragon.isMoving() || dragon.getLookYaw().isEmpty() || Math.abs(Mth.degreesDifference(dragon.getLookYaw().get(), dragon.yBodyRot)) > dragon.getMaxHeadYRot()))
+                dragon.setYRot(dragon.yBodyRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getHeadRotSpeed()));
+        }
+
 
         dragon.yBodyRotChange = Mth.degreesDifference(dragon.yBodyRotO, dragon.yBodyRot);
 

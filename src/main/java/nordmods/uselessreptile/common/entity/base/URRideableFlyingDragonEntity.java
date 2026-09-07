@@ -29,8 +29,8 @@ import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNaviga
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.UREntityDataSerializers;
-import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import nordmods.uselessreptile.common.network.c2s.RequestLiftoffPayload;
+import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import org.jspecify.annotations.NonNull;
 
 public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntity implements FlyingDragon {
@@ -122,6 +122,10 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             if (flyUpWindow > 0) flyUpWindow--;
         }
         checkForceFlight();
+//
+//        if (Minecraft.getInstance().player != null) {
+//            Minecraft.getInstance().player.sendSystemMessage(Component.literal((getY() - yo) + ""));
+//        }
     }
 
     private void updateNavigation() {
@@ -167,12 +171,45 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         if (isMoveForwardPressed()) zza = 1;
         if (isMoveBackPressed()) zza = -1;
 
+
+
+        setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
+
+        setRotation(rider);
+        if (!isFlying()) {
+            double landSpeed = zza * getAttributeValue(Attributes.MOVEMENT_SPEED);
+            if (isSprintPressed())
+                setSprinting(true);
+            if (isMovingBackwards() && (isMoveBackPressed() || isMoveBackPressed()))
+                setSprinting(false);
+
+            if (isJumpPressed() && !jumpWasPressed) {
+                jumpWasPressed = true;
+                if (onGround()) jumpFromGround();
+            } else if (!isJumpPressed() && jumpWasPressed) jumpWasPressed = false;
+            //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
+            return new Vec3(0, movementInput.y - 0.001, landSpeed);
+        } else {
+            double flyingSpeed = zza * getAttributeValue(Attributes.FLYING_SPEED);
+
+            float verticalSpeed = 0F;
+            if (isJumpPressed()) verticalSpeed = getVerticalSpeed();
+            if (isDownPressed()) verticalSpeed = -getVerticalSpeed() * 1.3f;
+            float currentVerticalSpeed = (float) getDeltaMovement().y();
+            if (!(isJumpPressed() || isDownPressed()) && currentVerticalSpeed != 0) verticalSpeed = currentVerticalSpeed * -0.5F;
+
+            float accelerationModifier = getAccelerationModifier();
+            return new Vec3(0, verticalSpeed * Mth.clamp(accelerationModifier, 0.25, 1.5), flyingSpeed * accelerationModifier * 2.5F);
+        }
+    }
+
+    @Override
+    public void tickAccelerationControlled(Player rider) {
         boolean isInputGiven = isMoveBackPressed() || isMoveForwardPressed() || isDownPressed() || isJumpPressed();
-        //The acceleration logic. Looks like a mess, but it's still understandable I guess
+
         int accelerationDuration = getAccelerationDuration();
         if (accelerationDuration < 0) accelerationDuration = 0;
-        float accelerationModifier = getAccelerationModifier();
-        if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
+
         if (isInputGiven && getTurningState() == TurningState.NONE) accelerationDuration++;
         if (isJumpPressed() && !isDownPressed() && accelerationDuration > getMaxAccelerationDuration() * 0.4)
             accelerationDuration -= 2;
@@ -189,53 +226,27 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             if (isJumpPressed()) accelerationDuration -= 2;
         }
         setAccelerationDuration(accelerationDuration);
+    }
 
-        setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
-        setXRot(Mth.clamp(rider.getXRot(), -getMaxHeadXRot(), getMaxHeadXRot()));
-        if (!isFlying()) {
-            double landSpeed = zza * getAttributeValue(Attributes.MOVEMENT_SPEED);
-            if (isSprintPressed())
-                setSprinting(true);
-            if (isMovingBackwards() && (isMoveBackPressed() || isMoveBackPressed()))
-                setSprinting(false);
-            setRotation(rider);
+    @Override
+    public void tickAccelerationUncontrolled() {
+        int accelerationDuration = getAccelerationDuration();
+        if (accelerationDuration < 0) accelerationDuration = 0;
 
-            if (isJumpPressed() && !jumpWasPressed) {
-                jumpWasPressed = true;
-                if (onGround()) jumpFromGround();
-            } else if (!isJumpPressed() && jumpWasPressed) jumpWasPressed = false;
-            //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
-            return new Vec3(0, movementInput.y - 0.001, landSpeed);
-        } else {
-            double flyingSpeed = zza * getAttributeValue(Attributes.FLYING_SPEED);
-            float pitchSpeed = 2;
-            setRotation(rider);
-            float verticalSpeed = 0F;
+        if ((isMoving() || isMovingBackwards()) && getTurningState() == TurningState.NONE) accelerationDuration++;
+        if (getTiltState() == TiltState.UP && accelerationDuration > getMaxAccelerationDuration() * 0.4)
+            accelerationDuration -= 2;
+        if (getTiltState() == TiltState.DOWN && accelerationDuration < getMaxAccelerationDuration() * 3 && isFlying())
+            accelerationDuration += 2;
 
-            if (isJumpPressed()) {
-                verticalSpeed = getVerticalSpeed();
-                setTiltState(TiltState.UP);
-                if (!isMovingBackwards() && isMoving() && getXRot() > -getMaxHeadXRot() && !isDownPressed())
-                    setXRot(getXRot() - pitchSpeed);
-            }
-            if (isDownPressed()) {
-                verticalSpeed = -getVerticalSpeed() * 1.3f;
-                setTiltState(TiltState.DOWN);
-                if (!isMovingBackwards() && isMoving() && getXRot() < getMaxHeadXRot())
-                    setXRot(getXRot() + pitchSpeed);
-            }
-            float currentVerticalSpeed = (float) getDeltaMovement().y();
-            if (!(isJumpPressed() || isDownPressed())) {
-                if (getXRot() != 0) {
-                    if (getXRot() < 0 && getXRot() < -pitchSpeed) setXRot(getXRot() + pitchSpeed);
-                    if (getXRot() > 0 && getXRot() > pitchSpeed) setXRot(getXRot() - pitchSpeed);
-                    if (getXRot() < pitchSpeed && getXRot() > -pitchSpeed) setXRot(0);
-                }
-                if (currentVerticalSpeed != 0) verticalSpeed = currentVerticalSpeed * -0.5F;
-                setTiltState(TiltState.NONE);
-            }
-            return new Vec3(0, verticalSpeed * Mth.clamp(accelerationModifier, 0.25, 1.5), flyingSpeed * accelerationModifier * 2.5F);
+        if (isMovingBackwards() && accelerationDuration > getMaxAccelerationDuration() * 0.25)
+            accelerationDuration -= 2;
+        if (getTiltState() != TiltState.DOWN  && accelerationDuration > getMaxAccelerationDuration()) {
+            accelerationDuration -= 2;
+            if (getTiltState() == TiltState.UP ) accelerationDuration -= 2;
         }
+
+        setAccelerationDuration(accelerationDuration);
     }
 
     protected void updateRiderBonus(boolean hasRider) {
@@ -339,5 +350,16 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     @Override
     protected @NonNull BodyRotationControl createBodyControl() {
         return new FlyingDragonBodyRotationControl<>(this);
+    }
+
+    @Override
+    public int getMaxFallDistance() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public float getAccelerationModifier() {
+        if (isFlying()) return Math.clamp(getAccelerationDuration() / (float) getMaxAccelerationDuration(), 0, 1.5f);
+        return super.getAccelerationModifier();
     }
 }

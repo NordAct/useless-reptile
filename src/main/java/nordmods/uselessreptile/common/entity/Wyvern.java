@@ -12,6 +12,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -101,6 +102,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         goalSelector.addGoal(8, new DragonReturnToHomePoint(this));
         goalSelector.addGoal(9, new DragonWanderAroundGoal(this));
         goalSelector.addGoal(9, new FlyingDragonFlyAroundGoal<>(this, 30));
+        goalSelector.addGoal(10, new DragonLookAtEntityGoal(this, LivingEntity.class, 16));
         goalSelector.addGoal(10, new DragonLookAroundGoal(this));
         targetSelector.addGoal(6, new NonTameRandomTargetGoal<>(this, Chicken.class, true, null));
         targetSelector.addGoal(5, new OwnerHurtTargetGoal(this));

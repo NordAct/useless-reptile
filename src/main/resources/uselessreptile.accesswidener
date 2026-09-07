@@ -12,3 +12,6 @@ accessible method net/minecraft/data/recipes/ShapedRecipeBuilder <init> (Lnet/mi
 # Recipes
 accessible field net/minecraft/world/item/crafting/ShapedRecipe pattern Lnet/minecraft/world/item/crafting/ShapedRecipePattern;
 accessible field net/minecraft/world/item/crafting/ShapedRecipe result Lnet/minecraft/world/item/ItemStackTemplate;
+# Pathfinding
+accessible method net/minecraft/world/level/pathfinder/WalkNodeEvaluator hasCollisions (Lnet/minecraft/world/phys/AABB;)Z
+accessible method net/minecraft/world/entity/ai/navigation/PathNavigation shouldTargetNextNodeInDirection (Lnet/minecraft/world/phys/Vec3;)Z

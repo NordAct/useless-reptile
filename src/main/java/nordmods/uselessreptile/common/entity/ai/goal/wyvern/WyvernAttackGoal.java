@@ -55,7 +55,7 @@ public class WyvernAttackGoal extends Goal {
 
     @Override
     public void tick() {
-        if (target.isRemoved()) {
+        if (target == null || target.isRemoved()) {
             stop();
             return;
         }

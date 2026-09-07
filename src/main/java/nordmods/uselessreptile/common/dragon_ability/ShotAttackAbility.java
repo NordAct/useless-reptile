@@ -68,6 +68,13 @@ public class ShotAttackAbility extends TriggerableAbility {
         if (!(entity.level() instanceof ServerLevel level)) return;
         Vec3 rot = getRot(entity);
         Vec3 pos = getPos(entity);
+        if (entity.getControllingPassenger() == null && anchorPoint != AnchorPoint.EYES) { //gotta cheat a bit here, otherwise accuracy sucks
+            rot = new Vec3(
+                    entity.getLookControl().getWantedX(),
+                    entity.getLookControl().getWantedY(),
+                    entity.getLookControl().getWantedZ()
+            ).subtract(pos).normalize();
+        }
         for (int i = 0; i < count; i++) {
             Projectile projectile = createProjectile(level);
             projectile.setPos(pos);
@@ -133,7 +140,7 @@ public class ShotAttackAbility extends TriggerableAbility {
 
     @Override
     public boolean canUseUncontrolled(DragonAbilityHolder holder) {
-        return super.canUseUncontrolled(holder) && holder.getEntity().getTarget() != null && holder.getEntity().getLookControl().isLookingAtTarget();
+        return super.canUseUncontrolled(holder) && holder.getEntity().getTarget() != null && holder.getEntity().getLookControl().isLookingAtTarget() && holder.getEntity().hasLineOfSight(holder.getEntity().getTarget());
     }
 
     protected Projectile createProjectile(ServerLevel level) {

@@ -1,8 +1,14 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.MoveControl;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
@@ -33,85 +39,76 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         double diffZ = wantedZ - entity.getZ();
         double distanceSquared = diffX * diffX + diffY * diffY + diffZ * diffZ;
         double distanceXZ = Math.sqrt(diffX * diffX + diffZ * diffZ);
-        float destinationYaw;
-        float destinationPitch;
-        if (!entity.isOrderedToSit()) {
-            destinationYaw = (float) (Mth.atan2(diffZ, diffX) * Mth.RAD_TO_DEG) - 90.0F;
-            destinationPitch = entity.getXRot();
-        } else {
-            destinationYaw = entity.getYRot();
-            destinationPitch = entity.getXRot();
-        }
+        float destinationYaw = (float) (Mth.atan2(diffZ, diffX) * Mth.RAD_TO_DEG) - 90.0F;
 
-        boolean inWater = entity.isInWater() && entity.isAffectedByFluids();
+        boolean navigationDone = entity.getNavigation().isDone();
+        boolean isRotatedTowards = entity.getNavigation().isDone()
+                || (entity.getTarget() != null && entity.hasLineOfSight(entity.getTarget()))
+                || entity.isRotatedTowardsDirection(entity.getXRot(), destinationYaw, 90, entity.getHeadRotSpeed() * 2);
 
         if (Double.isNaN(entity.getDeltaMovement().y)) entity.setDeltaMovement(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z);
-        int accelerationDuration = entity.getAccelerationDuration();
-        if (accelerationDuration < 0) accelerationDuration = 0;
-        float accelerationModifier = entity.getAccelerationDuration();
-        if (accelerationModifier > 1.5) accelerationModifier = 1.5f;
+        float accelerationModifier = Math.max(entity.getAccelerationModifier() , 0.25f);
         entity.setMovingBackwards(false);
-        entity.setTiltState(FlyingDragon.TiltState.NONE);
         float verticalAccelerationModifier = Mth.clamp(accelerationModifier, 0.25f, 1.5f);
-        float speed = getMovementSpeed(accelerationModifier, inWater);
+        float speed = getMovementSpeed(accelerationModifier);
 
-        if (!entity.getLookControl().isLookingAtTarget())
-            entity.getLookControl().setLookAt(wantedX, wantedY, wantedZ, entity.getMaxHeadYRot(), entity.getMaxHeadXRot());
+        if (!isRotatedTowards) {
+            entity.getLookControl().setLookAt(wantedX, entity.isFlying() ? wantedY : wantedY + entity.getEyeHeight(), wantedZ);
+        }
 
         switch (operation) {
             case STRAFE -> { //there's no strafe for dragons, but it's used for backwards movement
                 operation = Operation.WAIT;
                 entity.setMovingBackwards(true);
-
-                if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.25) accelerationDuration -= 2;
-                else accelerationDuration++;
-
                 entity.setSpeed(-speed);
             }
+
             case MOVE_TO -> {
                 operation = Operation.WAIT;
+                entity.setSpeed(speed);
                 if (distanceSquared < 2.500000277905201E-7D) {
                     entity.setYya(0.0F);
                     entity.setZza(0.0F);
                     return;
                 }
-                if (entity.getLookControl().isLookingAtTarget() || entity.isLookingAtDirection(entity.getXRot(), destinationYaw, entity.getMaxHeadXRot(), Math.max(50, entity.getHeadRotSpeed() * 2))) {
-                    if (accelerationDuration < entity.getMaxAccelerationDuration()) accelerationDuration++;
-                    if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration--;
 
-                    entity.setSpeed(speed);
-                } else entity.setZza(0.0F);
+                if (!entity.isFlying() && !navigationDone) {
+                    BlockPos pos = this.mob.blockPosition();
+                    BlockState blockState = this.mob.level().getBlockState(pos);
+                    VoxelShape shape = blockState.getCollisionShape(this.mob.level(), pos);
+                    if (diffY > this.mob.maxUpStep() && distanceXZ < Math.max(1.0F, this.mob.getBbWidth())
+                            || !shape.isEmpty() && this.mob.getY() < shape.max(Direction.Axis.Y) + pos.getY() && !blockState.is(BlockTags.DOORS) && !blockState.is(BlockTags.FENCES)
+                            || entity.isInWater() && entity.getFluidHeight(FluidTags.WATER) > entity.getFluidJumpThreshold() && !entity.hasTargetInWater() || entity.isInLava()) {
+                        entity.getJumpControl().jump();
+                        this.operation = MoveControl.Operation.JUMPING;
+                    }
+                }
             }
             case JUMPING -> {
                 entity.setSpeed(speed);
-                if (entity.onGround()) operation = Operation.WAIT;
+                if (entity.onGround() || entity.isFlying()) operation = Operation.WAIT;
             }
             default -> {
                 entity.setYya(0.0F);
                 entity.setZza(0.0F);
                 entity.setMovingBackwards(entity.isMoving());
-                accelerationDuration /= 2;
-                if (!entity.isMoving()) accelerationDuration = 0;
             }
         }
 
         if (entity.isFlying()) {
             if (isFlyDirectionEnforced()) {
-                if (forceFlyUp) accelerationDuration = flyUp(accelerationDuration, verticalAccelerationModifier);
-                if (forceFlyDown) accelerationDuration = flyDown(accelerationDuration, verticalAccelerationModifier);
-            } else if (Math.abs(diffY) > 9.999999747378752E-6D || Math.abs(distanceXZ) > 9.999999747378752E-6D) {
-                destinationPitch = (float)(-(Mth.atan2(diffY, distanceXZ) * 57.2957763671875D));
-                entity.setXRot(rotlerp(entity.getXRot(), destinationPitch, entity.getMaxHeadXRot()));
+                if (forceFlyUp) flyUp(verticalAccelerationModifier);
+                if (forceFlyDown) flyDown(verticalAccelerationModifier);
+            } else if (!navigationDone && (Math.abs(diffY) > 9.999999747378752E-6D || Math.abs(distanceXZ) > 9.999999747378752E-6D)) {
                 entity.setYya(0);
 
-                if (!entity.isInWater() || entity.hasTargetInWater()) {
+                if ((!entity.isInWater() || entity.hasTargetInWater())) {
                     double divergence = Math.clamp(Math.max(0, (distanceXZ - (entity.getBbWidth() < 2 ? 0 : 4)) * 0.5), 0, 3);
-                    if (diffY > divergence) accelerationDuration = flyUp(accelerationDuration, verticalAccelerationModifier);
-                    if (diffY < -divergence) accelerationDuration = flyDown(accelerationDuration, verticalAccelerationModifier);
-                } else accelerationDuration = flyUp(accelerationDuration, verticalAccelerationModifier);
+                    if (diffY > divergence) flyUp(verticalAccelerationModifier);
+                    if (diffY < -divergence) flyDown(verticalAccelerationModifier);
+                } else flyUp(verticalAccelerationModifier);
             }
         }
-        entity.setAccelerationDuration(accelerationDuration);
         forceFlyUp = false;
         forceFlyDown = false;
     }
@@ -124,31 +121,23 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         forceFlyDown = true;
     }
 
-    private int flyUp (int accelerationDuration, float verticalAccelerationModifier) {
-        if (accelerationDuration > entity.getMaxAccelerationDuration() * 0.4) accelerationDuration -= 2;
-        if (accelerationDuration > entity.getMaxAccelerationDuration()) accelerationDuration -= 2;
+    private void flyUp (float verticalAccelerationModifier) {
         entity.setYya(entity.getVerticalSpeed() * verticalAccelerationModifier);
-        entity.setTiltState(FlyingDragon.TiltState.UP);
-        return accelerationDuration;
     }
 
-    private int flyDown (int accelerationDuration, float verticalAccelerationModifier) {
-        if (accelerationDuration < entity.getMaxAccelerationDuration() * 3) accelerationDuration += 2;
-        entity.setYya(-entity.getVerticalSpeed() * verticalAccelerationModifier * 1.3f);
-        entity.setTiltState(FlyingDragon.TiltState.DOWN);
-        return accelerationDuration;
+    private void flyDown (float verticalAccelerationModifier) {
+        entity.setYya(-entity.getVerticalSpeed() * verticalAccelerationModifier);
     }
 
     private boolean isFlyDirectionEnforced() {
         return forceFlyDown || forceFlyUp;
     }
 
-    private float getMovementSpeed(float accelerationModifier, boolean inWater) {
+    private float getMovementSpeed(float accelerationModifier) {
         float speed;
         if (entity.isFlying()) {
-            speed = (float) entity.getAttributeValue(Attributes.FLYING_SPEED) * accelerationModifier;
-            if (inWater || entity.getLastDamageSource() == entity.damageSources().lava()) entity.getJumpControl().jump();
+            speed = (float) entity.getAttributeValue(Attributes.FLYING_SPEED);
         } else speed = (float) entity.getAttributeValue(Attributes.MOVEMENT_SPEED);
-        return speed;
+        return (float) (speed * speedModifier * accelerationModifier);
     }
 }

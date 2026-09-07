@@ -258,6 +258,16 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         super.travel(movementInput);
     }
 
+    @Override
+    public void tickAcceleration() {
+        if (getControllingPassenger() instanceof Player player) tickAccelerationControlled(player);
+        else super.tickAcceleration();
+    }
+
+    public void tickAccelerationControlled(Player rider) {
+        setAccelerationDuration(getMaxAccelerationDuration());
+    }
+
     public Vec3 updateMovementInput(Player rider, Vec3 movementInput) {
         zza = 0;
         if (isMoveForwardPressed()) zza = 1;
@@ -268,7 +278,6 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         if (isMovingBackwards()) setSprinting(false);
         setRotation(rider);
-        setXRot(Mth.clamp(rider.getXRot(), -getMaxHeadXRot(), getMaxHeadXRot()));
         if (isJumpPressed() && onGround()) jumpFromGround();
         //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
         return new Vec3(0, movementInput.y  - 0.001, landSpeed);
@@ -355,6 +364,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     protected void setRotation(Player rider) {
         yHeadRot = rider.yHeadRot;
+        setXRot(Mth.clamp(rider.getXRot(), -getMaxHeadXRot(), getMaxHeadXRot()));
     }
 
     public int vortexHornCapacity() {

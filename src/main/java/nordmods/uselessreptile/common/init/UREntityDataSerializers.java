@@ -13,6 +13,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 public class UREntityDataSerializers {
     public static final EntityDataSerializer<URDragonEntity.Order> ORDER = EntityDataSerializer.forValueType(URDragonEntity.Order.STREAM_CODEC);
@@ -29,6 +30,7 @@ public class UREntityDataSerializers {
                     2
             )
     );
+    public static final EntityDataSerializer<Optional<Float>> OPTIONAL_FLOAT = EntityDataSerializer.forValueType(ByteBufCodecs.optional(ByteBufCodecs.FLOAT));
 
     public static void init() {
         FabricEntityDataRegistry.register(UselessReptile.id("order"), ORDER);
@@ -38,5 +40,6 @@ public class UREntityDataSerializers {
         FabricEntityDataRegistry.register(UselessReptile.id("vec3"), VEC3);
         FabricEntityDataRegistry.register(UselessReptile.id("controller_states"), CONTROLLER_STATES);
         FabricEntityDataRegistry.register(UselessReptile.id("equipment_controller_states"), EQUIPMENT_CONTROLLER_STATES);
+        FabricEntityDataRegistry.register(UselessReptile.id("optional_float"), OPTIONAL_FLOAT);
     }
 }

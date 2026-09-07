@@ -183,6 +183,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         builder.define(WANDER_RADIUS, WanderRadius.MEDIUM);
         builder.define(CONTROLLER_STATES, List.of());
         builder.define(EQUIPMENT_CONTROLLER_STATES, Map.of());
+        builder.define(LOOK_YAW, Optional.empty());
     }
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -198,6 +199,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public static final EntityDataAccessor<WanderRadius> WANDER_RADIUS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.WANDER_RADIUS);
     public static final EntityDataAccessor<List<ControllerState>> CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.CONTROLLER_STATES);
     public static final EntityDataAccessor<Map<EquipmentSlot, List<ControllerState>>> EQUIPMENT_CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.EQUIPMENT_CONTROLLER_STATES);
+    public static final EntityDataAccessor<Optional<Float>> LOOK_YAW = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.OPTIONAL_FLOAT);
 
     public int getAccelerationDuration() {return entityData.get(ACCELERATION_DURATION);}
     public void setAccelerationDuration(int state) {entityData.set(ACCELERATION_DURATION, state);}
@@ -247,6 +249,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public String getBoundedInstrumentSound() {return  entityData.get(BOUNDED_INSTRUMENT_SOUND);}
     public void setBoundedInstrumentSound(String state) {entityData.set(BOUNDED_INSTRUMENT_SOUND, state);}
+
+    public Optional<Float> getLookYaw() {return entityData.get(LOOK_YAW);}
+    public void setLookYaw(Optional<Float> state) {entityData.set(LOOK_YAW, state);}
 
     @NonNull
     public DragonVariant getDragonVariant() {
@@ -739,8 +744,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return (float) getAttributeValue(URAttributes.DRAGON_GROUND_ROTATION_SPEED);
     }
 
-    public float getMaxAccelerationDuration() {
-        return (float) (getAttributeValue(URAttributes.DRAGON_ACCELERATION_DURATION) * getMovementSpeedModifier());
+    public int getMaxAccelerationDuration() {
+        return (int) (getAttributeValue(URAttributes.DRAGON_ACCELERATION_DURATION) * getMovementSpeedModifier());
     }
 
     public float getCooldownModifier() {
@@ -758,7 +763,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public float getAccelerationModifier() {
-        return getAccelerationDuration() / getMaxAccelerationDuration();
+        return 1;
     }
 
     @Override
@@ -770,6 +775,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (xBodyRotO.size() >= maxXBodyRotSamples) xBodyRotO.removeFirst();
 
         super.tick();
+        tickAcceleration();
+
         if (!level().isClientSide()) {
             if (getOwner() != null && getCurrentOrder() == Order.FOLLOW) {
                 if (distanceTo(getOwner()) > getWanderRadius().radius) {
@@ -820,6 +827,14 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             if (equipment != null) equipment.tick();
         }
         syncAnimations();
+    }
+
+    public void tickAcceleration() {
+        tickAccelerationUncontrolled();
+    }
+
+    public void tickAccelerationUncontrolled() {
+        setAccelerationDuration(getMaxAccelerationDuration());
     }
 
     protected void syncAnimations() {
@@ -1134,11 +1149,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
-        if (yaw < 0) yaw += 360;
-        float dYaw = Math.abs(Mth.wrapDegrees(getYRot()) - yaw);
-        float dPitch = Math.abs(getXRot() - pitch);
-        return dPitch < pitchTolerance
-                && dYaw % 360 < yawTolerance;
+        return Math.abs(Mth.degreesDifference(getViewXRot(1), pitch)) < pitchTolerance
+                && Math.abs(Mth.degreesDifference(getViewYRot(1), yaw)) < yawTolerance;
+    }
+
+    public boolean isRotatedTowardsDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
+        return Math.abs(Mth.degreesDifference(getXRot(), pitch)) < pitchTolerance
+                && Math.abs(Mth.degreesDifference(getYRot(), yaw)) < yawTolerance;
     }
 
     public int getBaseTamingProgress() {
@@ -1250,6 +1267,11 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Nullable
     public DragonAnimationProcessor<? extends URDragonEntity> getAnimationProcessor() {
         return processor;
+    }
+
+    @Override
+    public boolean fudgePositionAfterSizeChange(EntityDimensions previousDimensions) { //todo unfudge that for flying dragons
+        return super.fudgePositionAfterSizeChange(previousDimensions);
     }
 
     /// Makes dragons dance to jukebox

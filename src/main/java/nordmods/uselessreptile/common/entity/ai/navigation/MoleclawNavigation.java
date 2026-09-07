@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.entity.ai.navigation;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.Node;
-import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.Moleclaw;
 
 public class MoleclawNavigation extends DragonNavigation {
@@ -21,10 +20,10 @@ public class MoleclawNavigation extends DragonNavigation {
         super.followThePath();
     }
 
-    protected boolean shouldTargetNextNodeInDirection(Vec3 currentPos) {
-        if (path == null) return false;
-        return super.shouldTargetNextNodeInDirection(currentPos);
-    }
+//    protected boolean shouldTargetNextNodeInDirection(Vec3 currentPos) {
+//        if (path == null) return false;
+//        return super.shouldTargetNextNodeInDirection(currentPos);
+//    }
 
     @Override
     protected void trimPath() {

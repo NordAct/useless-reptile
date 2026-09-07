@@ -55,7 +55,7 @@ public record ControllerState(int controllerOrdinal, List<PlayingAnimation> play
 
             Set<String> shouldPlay = new HashSet<>();
             for (PlayingAnimation playingAnimation : controllerState.playingAnimations()) {
-                if (!playingAnimation.finished()) shouldPlay.add(playingAnimation.name());
+                if (controller.singleAnimation || !playingAnimation.finished()) shouldPlay.add(playingAnimation.name());
                 PlayingAnimation.applyPlayingAnimation(controller, playingAnimation);
             }
 

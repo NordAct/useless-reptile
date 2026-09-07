@@ -45,12 +45,17 @@ public class DragonLookControl extends LookControl {
         if (lockRotation) return;
         if (lookAtCooldown > 0) {
             --lookAtCooldown;
-            getYRotD().ifPresent(yaw -> {
+            entity.setLookYaw(getYRotD());
+            entity.getLookYaw().ifPresent(yaw -> {
                 float pitch = getXRotD().orElse(0f);
                 entity.yHeadRot = rotateTowards(entity.yHeadRot, yaw, yMaxRotSpeed);
                 entity.setXRot(rotateTowards(entity.getXRot(), pitch, xMaxRotAngle));
             });
-        } else entity.yHeadRot = rotateTowards(entity.yHeadRot, entity.yBodyRot, yMaxRotSpeed);
+        } else {
+            entity.yHeadRot = rotateTowards(entity.yHeadRot, entity.yBodyRot, yMaxRotSpeed);
+            entity.setXRot(0);
+            entity.setLookYaw(Optional.empty());
+        }
 
         if (!entity.getNavigation().isDone())
             entity.yHeadRot = Mth.rotateIfNecessary(entity.yHeadRot, entity.yBodyRot, yMaxRotSpeed);
@@ -66,7 +71,17 @@ public class DragonLookControl extends LookControl {
     }
 
     @Override
-    public Optional<Float> getYRotD() {
+    public void setLookAt(final @NonNull Entity target) {
+        if (entity.getSensing().hasLineOfSight(target)) super.setLookAt(target);
+    }
+
+    @Override
+    public void setLookAt(double x, double y, double z) {
+        this.setLookAt(x, y, z, this.mob.getMaxHeadYRot(), this.mob.getMaxHeadXRot());
+    }
+
+    @Override
+    public @NonNull Optional<Float> getYRotD() {
         return super.getYRotD();
     }
 }
