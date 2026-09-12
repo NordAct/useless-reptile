@@ -1367,6 +1367,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             ItemStack stack = player.getMainHandItem();
             if (!stack.is(URItems.FLUTE)) stack = player.getOffhandItem();
             if (!stack.is(URItems.FLUTE)) return false;
+            if (stack.get(URItemComponents.FLUTE_CONFIGURATION).dragon() != getType()) return false;
 
             FluteItem.FluteMode mode = FluteItem.getFluteMode(stack);
             if (mode == null) return false;
