@@ -663,6 +663,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         super.stopRiding();
     }
 
+    @Override
+    public boolean causeFallDamage (double fallDistance, float damageModifier, @NonNull DamageSource damageSource) {
+        if (this instanceof HeadMountDragon && getVehicle() instanceof HeadMountDragonOwner) return false;
+        else return super.causeFallDamage(fallDistance, damageModifier, damageSource);
+    }
+
     protected boolean isInteractableItem(ItemStack itemStack) {
         return itemStack.is(Items.POTION)
                 || itemStack.is(Items.STICK)
