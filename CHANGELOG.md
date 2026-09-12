@@ -1,1 +1,2 @@
-- Fixed crash caused by riding Swamp Wyvern with Dual Saddle while controlling rider was absent
+- Fix fall damage being applied to Magmamuncher when player which it rides also takes fall damage
+- 26.3 port
