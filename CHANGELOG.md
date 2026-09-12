@@ -1,2 +1,3 @@
 - Fix fall damage being applied to Magmamuncher when player which it rides also takes fall damage
+- Fixed all tamed dragons responding to flute even if it was binded to other species
 - 26.3 port
