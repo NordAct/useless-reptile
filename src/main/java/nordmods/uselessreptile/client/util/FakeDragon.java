@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.client.util.ClientModelManager;
+import nordmods.biscuit_roll.client.resource_managers.ClientModelManager;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
@@ -23,7 +23,6 @@ import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.init.URRegistries;
 import nordmods.uselessreptile.common.util.SimpleAnimationController;
 
-import java.util.Collection;
 import java.util.List;
 
 public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
@@ -54,7 +53,7 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 

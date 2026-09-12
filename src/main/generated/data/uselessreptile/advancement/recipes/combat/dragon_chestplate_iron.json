@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:dragon_chestplate_iron"
+        "recipes": "uselessreptile:dragon_chestplate_iron"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

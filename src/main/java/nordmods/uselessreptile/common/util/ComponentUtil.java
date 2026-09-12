@@ -2,7 +2,6 @@ package nordmods.uselessreptile.common.util;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -26,7 +25,7 @@ public class ComponentUtil {
     }
 
     public static void addHidden(Consumer<Component> textConsumer, Collection<Component> components, ChatFormatting... formats) {
-        if (!InputConstants.isKeyDown(Minecraft.getInstance().getWindow(), InputConstants.KEY_LSHIFT)) textConsumer.accept(Component.translatable("tooltip.uselessreptile.hidden").withStyle(ChatFormatting.DARK_GRAY));
+        if (!InputConstants.isKeyDown(InputConstants.KEY_LSHIFT)) textConsumer.accept(Component.translatable("tooltip.uselessreptile.hidden").withStyle(ChatFormatting.DARK_GRAY));
         else for (Component text : components) textConsumer.accept(((MutableComponent) text).withStyle(formats));
     }
 }

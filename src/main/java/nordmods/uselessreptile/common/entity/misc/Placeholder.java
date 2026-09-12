@@ -60,7 +60,7 @@ public class Placeholder extends Entity {
 
     @Override
     public @NonNull PushReaction getPistonPushReaction() {
-        return PushReaction.IGNORE;
+        return PushReaction.IGNORE_ENTITY;
     }
 
     @Override

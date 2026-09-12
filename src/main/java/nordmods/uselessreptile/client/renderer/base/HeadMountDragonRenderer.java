@@ -11,7 +11,6 @@ import nordmods.uselessreptile.client.init.URStateDataTypes;
 import nordmods.uselessreptile.client.renderer.layers.HeadMountDragonRenderLayer;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import org.jspecify.annotations.NonNull;
 
 public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMountDragon> extends URDragonEntityRenderer<T> {
     public HeadMountDragonRenderer(EntityRendererProvider.Context renderManager) {
@@ -26,12 +25,12 @@ public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMou
     }
 
     @Override
-    public boolean shouldRender(T entity, @NonNull Frustum frustum, double d, double e, double f) {
+    public boolean shouldRender(T entity, Frustum culler, double camX, double camY, double camZ, float partialTicks) {
         if (entity.getVehicle() instanceof Player player
                 && (HeadMountDragonRenderLayer.ON_HEAD.contains(entity.getUUID())
                 || (player == Minecraft.getInstance().player && Minecraft.getInstance().options.getCameraType().isFirstPerson())))
             return false;
-        return super.shouldRender(entity, frustum, d, e, f);
+        return super.shouldRender(entity, culler, camX, camY, camZ, partialTicks);
     }
 
     @Override
@@ -39,7 +38,7 @@ public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMou
         if (state.getStateData(URStateDataTypes.DRAGON_IS_RIDING_PLAYER, false)) {
             if (state.isUpsideDown) {
                 poseStack.translate(0, (state.boundingBoxHeight + 0.1f) / scale, 0);
-                poseStack.mulPose(Axis.ZP.rotationDegrees(180f));
+                poseStack.rotate(Axis.ZP.rotationDegrees(180f));
             }
         } else super.setupRotations(state, poseStack, bodyYaw, scale);
     }

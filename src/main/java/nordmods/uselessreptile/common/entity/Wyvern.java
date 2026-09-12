@@ -28,8 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -49,7 +49,6 @@ import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.joml.Vector3f;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity, ShooterDragon {
@@ -155,7 +154,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 

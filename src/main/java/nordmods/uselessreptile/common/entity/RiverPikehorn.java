@@ -40,7 +40,6 @@ import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDragon, GathererDragon {
@@ -95,7 +94,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 

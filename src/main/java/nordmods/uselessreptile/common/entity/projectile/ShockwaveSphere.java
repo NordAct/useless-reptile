@@ -28,7 +28,6 @@ import nordmods.uselessreptile.common.init.URTags;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -49,7 +48,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
     public ShockwaveSphere(EntityType<? extends Projectile> entityType, Level world) {
         super(entityType, world);
         setNoGravity(true);
-        setInvulnerable(true);
+        setPermanentlyInvulnerable(true);
         setYRot(new Random().nextInt(360));
     }
 
@@ -192,7 +191,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return List.of();
     }
 }

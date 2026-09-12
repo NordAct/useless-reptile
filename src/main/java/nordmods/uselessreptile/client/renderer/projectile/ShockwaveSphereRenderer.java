@@ -49,18 +49,18 @@ public class ShockwaveSphereRenderer extends BREntityRenderer<ShockwaveSphere, S
     public void submit(ShockwaveSpereEntityRenderState state, PoseStack matrixStack, @NonNull SubmitNodeCollector commandQueue, @NonNull CameraRenderState cameraRenderState) {
 
         matrixStack.pushPose();
-        matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha / 2f * 180f));
+        matrixStack.rotate(Axis.YP.rotationDegrees(state.alpha / 2f * 180f));
         matrixStack.scale(state.radius);
         submitBRModel(state.copyWithStuff(Mth.clamp(state.alpha, 0, 1), state.radius), matrixStack, commandQueue, cameraRenderState);
         matrixStack.popPose();
 
         matrixStack.pushPose();
-        matrixStack.mulPose(Axis.YP.rotationDegrees(-state.alpha / 1.5f * 180f));
+        matrixStack.rotate(Axis.YP.rotationDegrees(-state.alpha / 1.5f * 180f));
         submitBRModel(state.copyWithStuff(state.alpha/1.5f, state.radius), matrixStack, commandQueue, cameraRenderState);
         matrixStack.popPose();
 
         matrixStack.pushPose();
-        matrixStack.mulPose(Axis.YP.rotationDegrees(state.alpha * 180f));
+        matrixStack.rotate(Axis.YP.rotationDegrees(state.alpha * 180f));
         submitBRModel(state.copyWithStuff(state.alpha/2f, state.radius/1.5f), matrixStack, commandQueue, cameraRenderState);
         matrixStack.popPose();
     }
@@ -84,7 +84,7 @@ public class ShockwaveSphereRenderer extends BREntityRenderer<ShockwaveSphere, S
 
     @Override
     public RenderType getRenderType(BRState state, Identifier texture) {
-        return RenderTypes.entityTranslucentEmissive(texture, true);
+        return RenderTypes.entityTranslucentEmissive(texture);
     }
 
     @Override

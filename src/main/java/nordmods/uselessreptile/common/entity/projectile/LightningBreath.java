@@ -128,7 +128,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
 
             if (getOwner() instanceof URDragonEntity dragon && !dragon.canBreakBlocks()) return;
 
-            Iterable<BlockPos> blocks = BlockPos.withinManhattan(blockPosition(), 2, 1, 2);
+            Iterable<BlockPos> blocks = BlockPos.withinClippedManhattan(blockPosition(), 2, 1, 2);
             float harnessLimit = 3;
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {

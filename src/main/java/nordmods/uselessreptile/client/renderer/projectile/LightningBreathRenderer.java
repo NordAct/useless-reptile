@@ -196,7 +196,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
     }
 
     @Override
-    public boolean shouldRender(LightningBreath entity, Frustum culler, double camX, double camY, double camZ) {
+    public boolean shouldRender(LightningBreath entity, Frustum culler, double camX, double camY, double camZ, float partialTick) {
         return true;
     }
 

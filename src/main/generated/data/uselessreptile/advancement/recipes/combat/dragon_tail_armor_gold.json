@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:dragon_tail_armor_gold"
+        "recipes": "uselessreptile:dragon_tail_armor_gold"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

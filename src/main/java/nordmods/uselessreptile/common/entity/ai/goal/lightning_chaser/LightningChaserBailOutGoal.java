@@ -1,13 +1,13 @@
 package nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser;
 
-import nordmods.uselessreptile.common.entity.LightningChaser;
-
-import java.util.EnumSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.entity.LightningChaser;
+
+import java.util.EnumSet;
 
 public class LightningChaserBailOutGoal extends Goal {
     private final LightningChaser entity;
@@ -58,7 +58,7 @@ public class LightningChaserBailOutGoal extends Goal {
             pos = BlockPos.containing(entity.calculateViewVector(0, entity.getYRot()).scale(dist).add(entity.position()));
             int x = SectionPos.blockToSectionCoord(pos.getX());
             int z = SectionPos.blockToSectionCoord(pos.getZ());
-            if (entity.level().getChunk(x, z, ChunkStatus.SURFACE, false) != null) break;
+            if (entity.level().getChunk(x, z, ChunkStatus.TERRAIN, false) != null) break;
             dist -= 16;
         } while (true);
         pointOfInterest = new BlockPos(pos.getX(), 256, pos.getX());

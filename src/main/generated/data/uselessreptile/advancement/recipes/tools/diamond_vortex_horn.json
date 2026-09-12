@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:diamond_vortex_horn"
+        "recipes": "uselessreptile:diamond_vortex_horn"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

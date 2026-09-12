@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:leather"
+        "recipes": "uselessreptile:leather"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

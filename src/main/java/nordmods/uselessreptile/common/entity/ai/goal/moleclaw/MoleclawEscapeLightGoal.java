@@ -46,7 +46,7 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
         }
         if (darkestSpot == null)  return false;
 
-        if (distance < 0.5 && Moleclaw.getLightAtPos(mob.blockPosition(), mob) == Moleclaw.getLightAtPos(new BlockPos(darkestSpot), mob)) {
+        if (distance < 0.5 && Moleclaw.getLightAtPos(mob.blockPosition(), mob) == Moleclaw.getLightAtPos(new BlockPos(darkestSpot.getX(), darkestSpot.getY(), darkestSpot.getZ()), mob)) {
             for (int i = 30; i > 0; i--) {
                 Vec3 vec3d = DefaultRandomPos.getPos(this.mob, 10, 3);
                 Vec3i vec3i = vec3d != null ? new Vec3i((int) vec3d.x, (int) vec3d.y, (int) vec3d.z) : null;

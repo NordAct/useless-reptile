@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:dual_saddle"
+        "recipes": "uselessreptile:dual_saddle"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

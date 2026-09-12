@@ -22,7 +22,7 @@ public class RiverPikehornFishRenderLayer extends ItemRenderLayer {
         ItemStackRenderState stackRenderState = this.getItemStackRenderState(state);
         if (stackRenderState != null) {
             poseStack.scale(0.5f, 0.5f, 0.5f);
-            poseStack.mulPose(Axis.ZP.rotationDegrees(-45f));
+            poseStack.rotate(Axis.ZP.rotationDegrees(-45f));
         }
     }
 

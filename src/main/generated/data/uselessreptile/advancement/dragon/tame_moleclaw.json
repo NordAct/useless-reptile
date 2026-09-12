@@ -3,15 +3,13 @@
   "criteria": {
     "entity_tamed": {
       "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "minecraft:entity_type": "uselessreptile:moleclaw"
-            }
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "uselessreptile:moleclaw"
           }
-        ]
+        }
       },
       "trigger": "minecraft:tame_animal"
     }

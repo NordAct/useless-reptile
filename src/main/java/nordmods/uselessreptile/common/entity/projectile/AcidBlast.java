@@ -16,7 +16,6 @@ import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.util.SimpleAnimationController;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, ProjectileDamageHelper {
@@ -27,7 +26,7 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
             return 0;
         }
     };
-    private final Collection<BRAnimationController> controllers = List.of(controller);
+    private final List<BRAnimationController> controllers = List.of(controller);
     public AcidBlast(EntityType<? extends AcidBlast> entityType, Level world) {
         super(entityType, world);
         lifeLimit = 200;
@@ -102,7 +101,7 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 }

@@ -3,15 +3,13 @@
   "criteria": {
     "tame": {
       "conditions": {
-        "entity": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "minecraft:entity_type": "#uselessreptile:dragon"
-            }
+        "entity": {
+          "type": "minecraft:entity_properties",
+          "entity": "this",
+          "predicate": {
+            "minecraft:entity_type": "#uselessreptile:dragon"
           }
-        ]
+        }
       },
       "trigger": "minecraft:tame_animal"
     }

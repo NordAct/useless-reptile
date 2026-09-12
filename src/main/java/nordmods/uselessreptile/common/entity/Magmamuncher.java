@@ -51,7 +51,6 @@ import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
 import java.util.List;
 
 public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
@@ -98,7 +97,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     }
 
     @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
+    public List<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 

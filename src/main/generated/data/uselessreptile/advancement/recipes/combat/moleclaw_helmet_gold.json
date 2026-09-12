@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:moleclaw_helmet_gold"
+        "recipes": "uselessreptile:moleclaw_helmet_gold"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

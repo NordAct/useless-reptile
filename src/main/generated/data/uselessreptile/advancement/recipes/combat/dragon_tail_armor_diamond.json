@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:dragon_tail_armor_diamond"
+        "recipes": "uselessreptile:dragon_tail_armor_diamond"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

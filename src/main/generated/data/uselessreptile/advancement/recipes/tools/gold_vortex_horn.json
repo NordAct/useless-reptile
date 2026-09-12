@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "uselessreptile:gold_vortex_horn"
+        "recipes": "uselessreptile:gold_vortex_horn"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

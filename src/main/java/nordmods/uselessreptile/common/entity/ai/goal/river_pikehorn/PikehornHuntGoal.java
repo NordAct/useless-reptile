@@ -1,7 +1,8 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.random.Weighted;
+import net.minecraft.core.Direction;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.RandomPos;
@@ -9,8 +10,6 @@ import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -150,18 +149,15 @@ public class PikehornHuntGoal extends Goal {
     }
 
     private boolean biomeHasFish(BlockPos blockPos) {
-        Level world = entity.level();
-        Biome biome = world.getBiome(blockPos).value();
-        List<Weighted<MobSpawnSettings.SpawnerData>> entries = biome.getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
-        return !entries.isEmpty();
+        return !entity.level().environmentAttributes().getValue(EnvironmentAttributes.NATURAL_MOB_SPAWNS, blockPos).getMobsToSpawn(MobCategory.WATER_AMBIENT).isEmpty();
     }
 
     //check if spot is above water
     private boolean aboveWater(BlockPos blockPos) {
-        BlockPos pos = new BlockPos(blockPos);
+        BlockPos.MutableBlockPos pos = blockPos.mutable();
         Level world = entity.level();
 
-        while (world.getBlockState(pos).is(Blocks.AIR) && pos.getY() > -64) pos = pos.below();
+        while (world.getBlockState(pos).is(Blocks.AIR) && pos.getY() > -64) pos.move(Direction.DOWN);
         return world.getBlockState(pos).is(Blocks.WATER);
     }
 
@@ -184,10 +180,10 @@ public class PikehornHuntGoal extends Goal {
     //adjusting to water height so the spot is always above water, but not too high
     private BlockPos adjustToWater(BlockPos blockPos) {
         if (!aboveWater(blockPos)) return blockPos;
-        BlockPos pos = new BlockPos(blockPos);
+        BlockPos.MutableBlockPos pos = blockPos.mutable();
         Level world = entity.level();
 
-        while (!world.getBlockState(pos).is(Blocks.WATER) && pos.getY() > -64) pos = pos.below();
+        while (!world.getBlockState(pos).is(Blocks.WATER) && pos.getY() > -64) pos.move(Direction.DOWN);
         return pos.above(3);
     }
 
