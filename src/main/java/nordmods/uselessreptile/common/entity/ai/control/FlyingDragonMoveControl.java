@@ -53,7 +53,8 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
         float speed = getMovementSpeed(accelerationModifier);
 
         if (!isRotatedTowards) {
-            entity.getLookControl().setLookAt(wantedX, entity.isFlying() ? wantedY : wantedY + entity.getEyeHeight(), wantedZ);
+            entity.getBodyRotationControl().setRotationTarget(wantedX, wantedZ);
+            operation = Operation.WAIT;
         }
 
         switch (operation) {

@@ -25,6 +25,7 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
+import nordmods.uselessreptile.common.entity.ai.control.WrappedDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -170,11 +171,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
         zza = 0;
         if (isMoveForwardPressed()) zza = 1;
         if (isMoveBackPressed()) zza = -1;
-
-
-
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
-
         setRotation(rider);
         if (!isFlying()) {
             double landSpeed = zza * getAttributeValue(Attributes.MOVEMENT_SPEED);
@@ -349,7 +346,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     @Override
     protected @NonNull BodyRotationControl createBodyControl() {
-        return new FlyingDragonBodyRotationControl<>(this);
+        return new WrappedDragonBodyRotationControl<>(new FlyingDragonBodyRotationControl<>(this));
     }
 
     @Override

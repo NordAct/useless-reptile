@@ -69,9 +69,7 @@ import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
-import nordmods.uselessreptile.common.entity.ai.control.DragonBodyRotationControl;
-import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
-import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
+import nordmods.uselessreptile.common.entity.ai.control.*;
 import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
@@ -158,7 +156,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         navigation = new DragonNavigation(this, world);
-        lookControl = new DragonLookControl(this);
+        lookControl = new WrappedDragonLookControl<>(new DragonLookControl<>(this));
         moveControl = new LandDragonMoveControl<>(this);
     }
 
@@ -183,7 +181,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         builder.define(WANDER_RADIUS, WanderRadius.MEDIUM);
         builder.define(CONTROLLER_STATES, List.of());
         builder.define(EQUIPMENT_CONTROLLER_STATES, Map.of());
-        builder.define(LOOK_YAW, Optional.empty());
+        builder.define(LOOK_TARGET_YAW, Optional.empty());
+        builder.define(SERVER_BODY_YAW, yBodyRot);
+        builder.define(SERVER_HEAD_YAW, yHeadRot);
+        builder.define(SERVER_HEAD_PITCH, getXRot());
     }
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -199,7 +200,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public static final EntityDataAccessor<WanderRadius> WANDER_RADIUS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.WANDER_RADIUS);
     public static final EntityDataAccessor<List<ControllerState>> CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.CONTROLLER_STATES);
     public static final EntityDataAccessor<Map<EquipmentSlot, List<ControllerState>>> EQUIPMENT_CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.EQUIPMENT_CONTROLLER_STATES);
-    public static final EntityDataAccessor<Optional<Float>> LOOK_YAW = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.OPTIONAL_FLOAT);
+    public static final EntityDataAccessor<Optional<Float>> LOOK_TARGET_YAW = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.OPTIONAL_FLOAT);
+    public static final EntityDataAccessor<Float> SERVER_BODY_YAW = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> SERVER_HEAD_YAW = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Float> SERVER_HEAD_PITCH = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
 
     public int getAccelerationDuration() {return entityData.get(ACCELERATION_DURATION);}
     public void setAccelerationDuration(int state) {entityData.set(ACCELERATION_DURATION, state);}
@@ -250,8 +254,18 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public String getBoundedInstrumentSound() {return  entityData.get(BOUNDED_INSTRUMENT_SOUND);}
     public void setBoundedInstrumentSound(String state) {entityData.set(BOUNDED_INSTRUMENT_SOUND, state);}
 
-    public Optional<Float> getLookYaw() {return entityData.get(LOOK_YAW);}
-    public void setLookYaw(Optional<Float> state) {entityData.set(LOOK_YAW, state);}
+    public Optional<Float> getLookTargetYaw() {return entityData.get(LOOK_TARGET_YAW);}
+    public void setLookTargetYaw(Optional<Float> state) {entityData.set(LOOK_TARGET_YAW, state);}
+
+    public float getServerBodyYaw() {return entityData.get(SERVER_BODY_YAW);}
+    public void setServerBodyYaw(float state) {entityData.set(SERVER_BODY_YAW, state);}
+
+    public float getServerHeadYaw() {return entityData.get(SERVER_HEAD_YAW);}
+    public void setServerHeadYaw(float state) {entityData.set(SERVER_HEAD_YAW, state);}
+
+    public float getServerHeadPitch() {return entityData.get(SERVER_HEAD_PITCH);}
+    public void setServerHeadPitch(float state) {entityData.set(SERVER_HEAD_PITCH, state);}
+
 
     @NonNull
     public DragonVariant getDragonVariant() {
@@ -741,9 +755,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return (int) (getGroundRotationSpeed() * getMovementSpeedModifier());
     }
 
+    public int getHeadPitchSpeed() {
+        return 10;
+    }
+
     @Override
     protected @NonNull BodyRotationControl createBodyControl() {
-        return new DragonBodyRotationControl<>(this);
+        return new WrappedDragonBodyRotationControl<>(new DragonBodyRotationControl<>(this));
     }
 
     public float getGroundRotationSpeed() {
@@ -1017,8 +1035,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public @NonNull DragonLookControl getLookControl() {
-        return (DragonLookControl) lookControl;
+    public @NonNull WrappedDragonLookControl<? extends URDragonEntity> getLookControl() {
+        return (WrappedDragonLookControl<?>) lookControl;
     }
 
     @Override
@@ -1278,6 +1296,16 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     public boolean fudgePositionAfterSizeChange(EntityDimensions previousDimensions) { //todo unfudge that for flying dragons
         return super.fudgePositionAfterSizeChange(previousDimensions);
+    }
+
+    public WrappedDragonBodyRotationControl<?> getBodyRotationControl() {
+        return (WrappedDragonBodyRotationControl<?>) bodyRotationControl;
+    }
+
+    @Override
+    protected void tickHeadTurn(float yBodyRotT) {
+        getLookControl().getLookControl().tick();
+        super.tickHeadTurn(yBodyRotT);
     }
 
     /// Makes dragons dance to jukebox

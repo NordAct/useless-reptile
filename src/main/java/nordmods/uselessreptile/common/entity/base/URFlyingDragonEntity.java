@@ -20,6 +20,7 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
+import nordmods.uselessreptile.common.entity.ai.control.WrappedDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -236,7 +237,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
 
     @Override
     protected @NonNull BodyRotationControl createBodyControl() {
-        return new FlyingDragonBodyRotationControl<>(this);
+        return new WrappedDragonBodyRotationControl<>(new FlyingDragonBodyRotationControl<>(this));
     }
 
     @Override

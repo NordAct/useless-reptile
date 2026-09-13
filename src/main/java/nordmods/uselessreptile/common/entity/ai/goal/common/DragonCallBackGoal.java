@@ -58,6 +58,11 @@ public class DragonCallBackGoal extends Goal {
     }
 
     @Override
+    public boolean requiresUpdateEveryTick() {
+        return true;
+    }
+
+    @Override
     public void tick() {
         entity.setSprinting(true);
         double distance = entity.distanceToSqr(owner);
@@ -76,7 +81,7 @@ public class DragonCallBackGoal extends Goal {
                     && (distance > entity.getWanderRadius().radius * entity.getWanderRadius().radius * 4 || distance > (proximityRange * 4) && forceTeleportCountdown <= 0)) entity.tryToTeleportToOwner();
         }
 
-        entity.lookAt(owner, entity.getMaxHeadYRot(), entity.getMaxHeadXRot());
+        entity.getLookControl().setLookAt(owner);
 
         prevDistance = distance;
     }

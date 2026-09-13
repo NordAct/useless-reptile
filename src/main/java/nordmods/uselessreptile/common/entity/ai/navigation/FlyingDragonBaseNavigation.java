@@ -2,7 +2,6 @@ package nordmods.uselessreptile.common.entity.ai.navigation;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.navigation.FlyingPathNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathType;
@@ -48,13 +47,6 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
             if (!path.isDone()) {
                 currentTarget = Vec3.atBottomCenterOf(getTargetPos());
                 getMoveControl().setWantedPosition(currentTarget.x, currentTarget.y, currentTarget.z, 1);
-
-                float destinationYaw = (float) (Mth.atan2(currentTarget.x - entity.getX(), currentTarget.z - entity.getZ()) * Mth.RAD_TO_DEG) - 90.0F;
-                boolean isRotatedTowards = (entity.getTarget() != null && entity.hasLineOfSight(entity.getTarget()))
-                        || entity.isRotatedTowardsDirection(entity.getXRot(), destinationYaw, 90, entity.getHeadRotSpeed() * 2);
-
-                if (!isRotatedTowards)
-                    entity.getLookControl().setLookAt(currentTarget.x, entity.isFlying() ? currentTarget.y : currentTarget.y + entity.getEyeHeight(), currentTarget.z);
             }
             lastStuckCheck = tick;
         }

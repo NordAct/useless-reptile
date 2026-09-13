@@ -48,7 +48,8 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
         float speed = getMovementSpeed(accelerationModifier);
 
         if (!isRotatedTowards) {
-            entity.getLookControl().setLookAt(wantedX, wantedY + entity.getEyeHeight(), wantedZ);
+            entity.getBodyRotationControl().setRotationTarget(wantedX, wantedZ);
+            operation = Operation.WAIT;
         }
 
         switch (operation) {

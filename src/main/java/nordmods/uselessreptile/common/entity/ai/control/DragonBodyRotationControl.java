@@ -1,35 +1,38 @@
 package nordmods.uselessreptile.common.entity.ai.control;
 
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 
-public class DragonBodyRotationControl<T extends URDragonEntity> extends BodyRotationControl {
-    protected final T dragon;
-    public DragonBodyRotationControl(T mob) {
-        super(mob);
-        dragon = mob;
+public class DragonBodyRotationControl<T extends URDragonEntity> extends DragonRotationControl<T> {
+    public DragonBodyRotationControl(T dragon) {
+        super(dragon);
     }
 
     @Override
-    public void clientTick() {
+    public void tick() {
+        if (lockRotation) return;
         dragon.yHeadRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getMaxHeadYRot());
-        if (dragon.hasControllingPassenger()) {
-            if (!(dragon instanceof URRideableDragonEntity rideableDragon) || !rideableDragon.freeLook())
-                dragon.setYRot(dragon.yBodyRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getHeadRotSpeed()));
-        } else {
-            if (!dragon.isOrderedToSit() && (dragon.isMoving() || dragon.getLookYaw().isEmpty() || Math.abs(Mth.degreesDifference(dragon.getLookYaw().get(), dragon.yBodyRot)) > dragon.getMaxHeadYRot()))
-                dragon.setYRot(dragon.yBodyRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getHeadRotSpeed()));
-        }
-
-
+        dragon.setYRot(dragon.yBodyRot = dragon.getServerBodyYaw());
         dragon.yBodyRotChange = Mth.degreesDifference(dragon.yBodyRotO, dragon.yBodyRot);
 
         if (!dragon.level().isClientSide()) {
             if (dragon.yBodyRotChange < 0) dragon.setTurningState(URDragonEntity.TurningState.LEFT);
             else if (dragon.yBodyRotChange > 0) dragon.setTurningState(URDragonEntity.TurningState.RIGHT);
             else dragon.setTurningState(URDragonEntity.TurningState.NONE);
+
+            if (rotationCooldown > 0) {
+                --rotationCooldown;
+                dragon.setServerBodyYaw(Mth.rotateIfNecessary(getYRotD().orElse(dragon.yBodyRot), dragon.yBodyRot, dragon.getHeadRotSpeed()));
+            }
         }
+    }
+
+    public boolean canHeadReachTarget() {
+        return rotationCooldown > 0
+                || dragon.getLookTargetYaw().isPresent() && Math.abs(Mth.degreesDifference(dragon.getLookTargetYaw().orElse(dragon.yHeadRot), dragon.yBodyRot)) <= dragon.getMaxHeadYRot();
+    }
+
+    public boolean canBeRotatedOutsideMoveController() {
+        return dragon.getNavigation().isDone() && dragon.getTarget() == null && !dragon.isOrderedToSit();
     }
 }

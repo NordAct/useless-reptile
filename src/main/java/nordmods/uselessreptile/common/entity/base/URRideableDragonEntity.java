@@ -251,7 +251,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         if (level() instanceof ServerLevel) {
             boolean hasRider = hasControllingPassenger();
             updateRiderBonus(hasRider);
-            getLookControl().setLockRotation(hasRider);
+            //getLookControl().setLockRotation(hasRider);
             if (hasRider) setHomePoint(blockPosition());
             else updateInputs(false, false, false, false, false, false, false, false);
         }
@@ -363,8 +363,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     protected void setRotation(Player rider) {
-        yHeadRot = rider.yHeadRot;
-        setXRot(Mth.clamp(rider.getXRot(), -getMaxHeadXRot(), getMaxHeadXRot()));
+        Vec3 targetRot = rider.getHeadLookAngle().add(getX(), getEyeY(), getZ());
+        getLookControl().setLookAt(targetRot);
+        if (!freeLook()) getBodyRotationControl().setRotationTarget(targetRot);
     }
 
     public int vortexHornCapacity() {
