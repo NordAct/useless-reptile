@@ -48,7 +48,6 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
         controllers.forEach(c -> c.update(state));
         state.setStateData(StateDataTypes.ANIMATION_ADJUSTMENT, this::adjustAnimation);
         model.applyAnimations(state);
-        model.updateLocators();
         controllers.forEach(c -> c.triggerAnimationEffects(model, state));
         postAnimation();
     }
