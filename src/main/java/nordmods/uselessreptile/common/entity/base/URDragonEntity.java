@@ -183,8 +183,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         builder.define(EQUIPMENT_CONTROLLER_STATES, Map.of());
         builder.define(LOOK_TARGET_YAW, Optional.empty());
         builder.define(SERVER_BODY_YAW, yBodyRot);
-        builder.define(SERVER_HEAD_YAW, yHeadRot);
-        builder.define(SERVER_HEAD_PITCH, getXRot());
     }
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -202,8 +200,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public static final EntityDataAccessor<Map<EquipmentSlot, List<ControllerState>>> EQUIPMENT_CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.EQUIPMENT_CONTROLLER_STATES);
     public static final EntityDataAccessor<Optional<Float>> LOOK_TARGET_YAW = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.OPTIONAL_FLOAT);
     public static final EntityDataAccessor<Float> SERVER_BODY_YAW = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Float> SERVER_HEAD_YAW = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Float> SERVER_HEAD_PITCH = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
 
     public int getAccelerationDuration() {return entityData.get(ACCELERATION_DURATION);}
     public void setAccelerationDuration(int state) {entityData.set(ACCELERATION_DURATION, state);}
@@ -259,13 +255,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public float getServerBodyYaw() {return entityData.get(SERVER_BODY_YAW);}
     public void setServerBodyYaw(float state) {entityData.set(SERVER_BODY_YAW, state);}
-
-    public float getServerHeadYaw() {return entityData.get(SERVER_HEAD_YAW);}
-    public void setServerHeadYaw(float state) {entityData.set(SERVER_HEAD_YAW, state);}
-
-    public float getServerHeadPitch() {return entityData.get(SERVER_HEAD_PITCH);}
-    public void setServerHeadPitch(float state) {entityData.set(SERVER_HEAD_PITCH, state);}
-
 
     @NonNull
     public DragonVariant getDragonVariant() {
@@ -1300,12 +1289,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public WrappedDragonBodyRotationControl<?> getBodyRotationControl() {
         return (WrappedDragonBodyRotationControl<?>) bodyRotationControl;
-    }
-
-    @Override
-    protected void tickHeadTurn(float yBodyRotT) {
-        getLookControl().getLookControl().tick();
-        super.tickHeadTurn(yBodyRotT);
     }
 
     /// Makes dragons dance to jukebox

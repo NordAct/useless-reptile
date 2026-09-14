@@ -28,7 +28,9 @@ public class WrappedDragonLookControl<T extends URDragonEntity> extends LookCont
     }
 
     @Override
-    public void tick() {}
+    public void tick() {
+        dragonLookControl.tick();
+    }
 
     public void setLockRotation(boolean state) {
         dragonLookControl.setLockRotation(state);

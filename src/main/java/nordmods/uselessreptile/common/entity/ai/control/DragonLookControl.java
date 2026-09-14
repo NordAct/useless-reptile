@@ -10,25 +10,20 @@ public class DragonLookControl<T extends URDragonEntity> extends DragonRotationC
     }
 
     @Override
-    public void tick() { //todo fix head rot being choppy. Probably because game already tries to sync it
+    public void tick() {
         if (lockRotation) return;
 
-        dragon.yHeadRot = dragon.getServerHeadYaw();
-        dragon.setXRot(dragon.getServerHeadPitch());
-
-        if (!dragon.level().isClientSide()) {
-            if (rotationCooldown > 0) {
-                --rotationCooldown;
-                Optional<Float> targetYaw = getYRotD();
-                dragon.setLookTargetYaw(targetYaw);
-                targetYaw.ifPresent(yaw -> dragon.setServerHeadYaw(rotateTowards(dragon.yHeadRot, yaw, dragon.getControllingPassenger() != null ? dragon.getMaxHeadYRot() : dragon.getHeadRotSpeed())));
-                getXRotD().ifPresent(pitch -> dragon.setServerHeadPitch(rotateTowards(dragon.getXRot(), pitch, dragon.getControllingPassenger() != null ? dragon.getMaxHeadXRot() : dragon.getHeadPitchSpeed())));
-                dragon.needsSync = true;
-            } else {
-                dragon.setLookTargetYaw(Optional.empty());
-                dragon.setServerHeadYaw(rotateTowards(dragon.yHeadRot, dragon.yBodyRot, dragon.getHeadRotSpeed()));
-                dragon.setServerHeadPitch(rotateTowards(dragon.getXRot(), 0, dragon.getHeadPitchSpeed()));
-            }
+        if (rotationCooldown > 0) {
+            --rotationCooldown;
+            Optional<Float> targetYaw = getYRotD();
+            dragon.setLookTargetYaw(targetYaw);
+            targetYaw.ifPresent(yaw -> dragon.yHeadRot = rotateTowards(dragon.yHeadRot, yaw, dragon.getControllingPassenger() != null ? dragon.getMaxHeadYRot() : dragon.getHeadRotSpeed()));
+            getXRotD().ifPresent(pitch -> dragon.setXRot(rotateTowards(dragon.getXRot(), pitch, dragon.getControllingPassenger() != null ? dragon.getMaxHeadXRot() : dragon.getHeadPitchSpeed())));
+            dragon.needsSync = true;
+        } else {
+            dragon.setLookTargetYaw(Optional.empty());
+            dragon.yHeadRot = rotateTowards(dragon.yHeadRot, dragon.yBodyRot, dragon.getHeadRotSpeed());
+            dragon.setXRot(rotateTowards(dragon.getXRot(), 0, dragon.getHeadPitchSpeed()));
         }
     }
 

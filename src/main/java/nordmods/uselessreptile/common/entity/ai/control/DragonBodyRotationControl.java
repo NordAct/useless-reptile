@@ -11,9 +11,9 @@ public class DragonBodyRotationControl<T extends URDragonEntity> extends DragonR
     @Override
     public void tick() {
         if (lockRotation) return;
-        dragon.yHeadRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getMaxHeadYRot());
         dragon.setYRot(dragon.yBodyRot = dragon.getServerBodyYaw());
         dragon.yBodyRotChange = Mth.degreesDifference(dragon.yBodyRotO, dragon.yBodyRot);
+        dragon.yHeadRot = Mth.rotateIfNecessary(dragon.yHeadRot, dragon.yBodyRot, dragon.getMaxHeadYRot());
 
         if (!dragon.level().isClientSide()) {
             if (dragon.yBodyRotChange < 0) dragon.setTurningState(URDragonEntity.TurningState.LEFT);
@@ -22,7 +22,7 @@ public class DragonBodyRotationControl<T extends URDragonEntity> extends DragonR
 
             if (rotationCooldown > 0) {
                 --rotationCooldown;
-                dragon.setServerBodyYaw(Mth.rotateIfNecessary(getYRotD().orElse(dragon.yBodyRot), dragon.yBodyRot, dragon.getHeadRotSpeed()));
+                getYRotD().ifPresent(yaw -> dragon.setServerBodyYaw(Mth.rotateIfNecessary(yaw, dragon.yBodyRot, dragon.getHeadRotSpeed())));
             }
         }
     }

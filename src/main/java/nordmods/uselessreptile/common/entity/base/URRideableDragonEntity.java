@@ -363,8 +363,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     protected void setRotation(Player rider) {
-        Vec3 targetRot = rider.getHeadLookAngle().add(getX(), getEyeY(), getZ());
+        Vec3 targetRot = calculateViewVector(Math.clamp(rider.getXRot(), -89.9f, 89.9f), rider.yHeadRot).multiply(10000, 10000, 10000).add(rider.getX(), getEyeY(), rider.getZ());
         getLookControl().setLookAt(targetRot);
+        setXRot(Mth.clamp(rider.getXRot(), -getMaxHeadXRot(), getMaxHeadXRot()));
         if (!freeLook()) getBodyRotationControl().setRotationTarget(targetRot);
     }
 
