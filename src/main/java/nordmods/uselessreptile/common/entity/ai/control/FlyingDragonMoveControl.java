@@ -43,7 +43,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
 
         boolean navigationDone = entity.getNavigation().isDone();
         boolean isRotatedTowards = entity.getNavigation().isDone()
-                || (entity.getTarget() != null && entity.hasLineOfSight(entity.getTarget()))
+                || (entity.getTarget() != null && entity.hasLineOfSight(entity.getTarget()) && entity.getLookControl().isLookingAtTarget())
                 || entity.isRotatedTowardsDirection(entity.getXRot(), destinationYaw, 90, entity.getHeadRotSpeed() * 2);
 
         if (Double.isNaN(entity.getDeltaMovement().y)) entity.setDeltaMovement(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z);
@@ -54,7 +54,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
 
         if (!isRotatedTowards) {
             entity.getBodyRotationControl().setRotationTarget(wantedX, wantedZ);
-            operation = Operation.WAIT;
+            if (!entity.isFlying()) operation = Operation.WAIT;
         }
 
         switch (operation) {

@@ -8,7 +8,7 @@ import java.util.EnumSet;
 
 public class DragonLookAtEntityGoal extends LookAtPlayerGoal {
     public DragonLookAtEntityGoal(URDragonEntity mob, Class<? extends LivingEntity> lookAtType, float lookDistance) {
-        super(mob, lookAtType, lookDistance, 1);
+        super(mob, lookAtType, lookDistance);
         this.setFlags(EnumSet.of(Flag.LOOK));
     }
 

@@ -68,7 +68,7 @@ public abstract class DragonRotationControl<T extends URDragonEntity>  implement
         this.wantedX = x;
         this.wantedY = y;
         this.wantedZ = z;
-        this.rotationCooldown = 4;
+        this.rotationCooldown = 2;
     }
 
     public T getDragon() {

@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -123,16 +124,16 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
             if (flyUpWindow > 0) flyUpWindow--;
         }
         checkForceFlight();
-//
-//        if (Minecraft.getInstance().player != null) {
-//            Minecraft.getInstance().player.sendSystemMessage(Component.literal((getY() - yo) + ""));
-//        }
     }
 
     private void updateNavigation() {
         PathNavigation current = navigation;
         navigation = isFlying() ? airNavigation : landNavigation;
-        current.stop();
+        if (navigation != current) {
+            navigation.moveTo(current.getPath(), 1);
+            navigation.recomputePath();
+            current.stop();
+        }
     }
 
     @Override
@@ -271,7 +272,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public boolean isFlapping() {return isFlying();}
 
     public void startToFly() {
-        jumpFromGround();
+        if (onGround()) jumpFromGround();
         if (level() instanceof ServerLevel world) {
             setAccelerationDuration(getAccelerationDuration() / 10);
             setFlying(true);
@@ -358,5 +359,11 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public float getAccelerationModifier() {
         if (isFlying()) return Math.clamp(getAccelerationDuration() / (float) getMaxAccelerationDuration(), 0, 1.5f);
         return super.getAccelerationModifier();
+    }
+
+    @Override
+    public boolean fudgePositionAfterSizeChange(EntityDimensions previousDimensions) {
+        if (isFlying()) return true;
+        return super.fudgePositionAfterSizeChange(previousDimensions);
     }
 }

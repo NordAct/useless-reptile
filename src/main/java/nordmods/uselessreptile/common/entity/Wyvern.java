@@ -104,7 +104,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         goalSelector.addGoal(9, new DragonWanderAroundGoal(this));
         goalSelector.addGoal(9, new FlyingDragonFlyAroundGoal<>(this, 30));
         goalSelector.addGoal(10, new DragonLookAtEntityGoal(this, LivingEntity.class, 16));
-        //goalSelector.addGoal(10, new DragonLookAroundGoal(this));
+        goalSelector.addGoal(10, new DragonLookAroundGoal(this));
         goalSelector.addGoal(11, new DragonLookAtPathTartetGoal(this));
         targetSelector.addGoal(6, new NonTameRandomTargetGoal<>(this, Chicken.class, true, null));
         targetSelector.addGoal(5, new OwnerHurtTargetGoal(this));

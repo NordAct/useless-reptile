@@ -56,8 +56,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
     protected void checkFlight(boolean shouldFly) {
         if (!entity.isFlying() && shouldFly){
-            entity.push(0, 0.1, 0);
-            entity.startToFly();
+            entity.forceFlightNextTick();
         }
     }
 

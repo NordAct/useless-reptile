@@ -1282,11 +1282,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return processor;
     }
 
-    @Override
-    public boolean fudgePositionAfterSizeChange(EntityDimensions previousDimensions) { //todo unfudge that for flying dragons
-        return super.fudgePositionAfterSizeChange(previousDimensions);
-    }
-
     public WrappedDragonBodyRotationControl<?> getBodyRotationControl() {
         return (WrappedDragonBodyRotationControl<?>) bodyRotationControl;
     }

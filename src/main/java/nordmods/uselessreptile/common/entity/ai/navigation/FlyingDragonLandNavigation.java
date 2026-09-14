@@ -25,18 +25,15 @@ public class FlyingDragonLandNavigation<T extends URDragonEntity & FlyingDragon>
         super.tick();
 
         BlockPos target = getTargetPos();
-        if (!isDone() && target != null) {
+        if (isInProgress() && target != null) {
             double yDiffNode = path.getNextNode().asVec3().y() - entity.getY();
             double yDiffTarget = target.getY() - entity.getY();
             double xDiffTarget = entity.getX() - target.getX();
             xDiffTarget *= xDiffTarget;
             double zDiffTarget = entity.getZ() - target.getZ();
             zDiffTarget *= zDiffTarget;
-            boolean shouldFlyUp =  yDiffTarget > 3 && Math.sqrt(xDiffTarget + zDiffTarget) < 16
-                    || yDiffTarget > 8
-                    || Math.sqrt(xDiffTarget + zDiffTarget) > 64
-                    || path != null && path.isDone();
-            if ((tick > 20 || yDiffNode > entity.maxUpStep()) && entity.horizontalCollision || shouldFlyUp && !entity.hasTargetInWater()) checkFlight(shouldFlyUp);
+            boolean shouldFlyUp = (target.getY() - path.getEndNode().y) > entity.maxUpStep() || yDiffNode > entity.maxUpStep() || yDiffTarget > 8 || Math.sqrt(xDiffTarget + zDiffTarget) > entity.getWanderRadius().radius;
+            if ((path.getNextNodeIndex() > 0 || (tick - lastStuckCheck > 50)) && !entity.hasTargetInWater()) checkFlight(shouldFlyUp);
             followThePath();
             moveOrStop(target);
         }

@@ -40,7 +40,7 @@ public class LandDragonMoveControl <T extends URDragonEntity> extends MoveContro
 
         boolean navigationDone = entity.getNavigation().isDone();
         boolean isRotatedTowards = entity.getNavigation().isDone()
-                || (entity.getTarget() != null && entity.hasLineOfSight(entity.getTarget()))
+                || (entity.getTarget() != null && entity.hasLineOfSight(entity.getTarget()) && entity.getLookControl().isLookingAtTarget())
                 || entity.isRotatedTowardsDirection(entity.getXRot(), destinationYaw, 90, entity.getHeadRotSpeed() * 2);
 
         float accelerationModifier = Math.max(entity.getAccelerationModifier() , 0.25f);

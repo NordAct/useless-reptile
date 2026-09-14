@@ -7,6 +7,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -115,7 +116,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     public void startToFly() {
-        jumpFromGround();
+        if (onGround()) jumpFromGround();
         if (level() instanceof ServerLevel world) {
             setAccelerationDuration(getAccelerationDuration() / 10);
             setFlying(true);
@@ -143,7 +144,11 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     private void updateNavigation() {
         PathNavigation current = navigation;
         navigation = isFlying() ? airNavigation : landNavigation;
-        current.stop();
+        if (navigation != current) {
+            navigation.moveTo(current.getPath(), 1);
+            navigation.recomputePath();
+            current.stop();
+        }
     }
 
     @Override
@@ -249,5 +254,11 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     public float getAccelerationModifier() {
         if (isFlying()) return Math.clamp(getAccelerationDuration() / (float) getMaxAccelerationDuration(), 0, 1.5f);
         return super.getAccelerationModifier();
+    }
+
+    @Override
+    public boolean fudgePositionAfterSizeChange(EntityDimensions previousDimensions) {
+        if (isFlying()) return true;
+        return super.fudgePositionAfterSizeChange(previousDimensions);
     }
 }

@@ -21,7 +21,9 @@ public class DragonLookAtPathTartetGoal extends Goal {
 
     @Override
     public void tick() {
-        Vec3 pos = Vec3.atCenterOf(dragon.getNavigation().getTargetPos());
-        dragon.getLookControl().setLookAt(pos.x, dragon.getEyeY(), pos.z);
+        if (dragon.getNavigation().getTargetPos() != null) {
+            Vec3 pos = Vec3.atCenterOf(dragon.getNavigation().getTargetPos());
+            dragon.getLookControl().setLookAt(pos.x, dragon.getEyeY(), pos.z);
+        }
     }
 }
