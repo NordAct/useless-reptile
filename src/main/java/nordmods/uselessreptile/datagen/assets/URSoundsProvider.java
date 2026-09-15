@@ -261,7 +261,7 @@ public class URSoundsProvider extends FabricSoundsProvider {
         );
         exporter.add(URSoundEvent.MAGMAMUNCHER_DEATH,
                 SoundTypeBuilder.of()
-                        .subtitle("subtitles.uselessreptile.river_pikehorn.death")
+                        .subtitle("subtitles.uselessreptile.magmamuncher.death")
                         .sound(SoundTypeBuilder.RegistrationBuilder.ofFile(UselessReptile.id("magmamuncher/death")))
         );
         exporter.add(URSoundEvent.MAGMAMUNCHER_BITE,
