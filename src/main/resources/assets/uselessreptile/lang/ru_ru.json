@@ -101,6 +101,9 @@
   "subtitles.uselessreptile.lightning_chaser.death": "Ловец молний умирает",
   "subtitles.uselessreptile.shockwave.hit": "Электрический треск",
   "subtitles.uselessreptile.shockwave": "Электрическая вспышка",
+  "subtitles.uselessreptile.magmamuncher.hurt": "Магмаед ранен",
+  "subtitles.uselessreptile.magmamuncher.ambient": "Магмаед скрипит",
+  "subtitles.uselessreptile.magmamuncher.death": "Магмаед умирает",
 
   "other.uselessreptile.none": "Нет",
   "other.uselessreptile.sound_respond": "%1$s теперь будет откликаться на следующий звук: %2$s",
