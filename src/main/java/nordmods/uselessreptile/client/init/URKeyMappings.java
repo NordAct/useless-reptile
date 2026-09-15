@@ -13,7 +13,7 @@ public class URKeyMappings {
     public static final KeyMapping PRIMARY_ATTACK_KEY = new KeyMapping("key.uselessreptile.primaryAttackKey", InputConstants.KEY_G, CATEGORY);
     public static final KeyMapping SECONDARY_ATTACK_KEY = new KeyMapping("key.uselessreptile.secondaryAttackKey", InputConstants.KEY_V, CATEGORY);
     public static final KeyMapping FLY_DOWN_KEY = new KeyMapping("key.uselessreptile.flyDownKey", InputConstants.KEY_LCONTROL, CATEGORY);
-    public static final KeyMapping FREE_LOOK_KEY = new KeyMapping("key.uselessreptile.freeLookKey", InputConstants.KEY_V, CATEGORY);
+    public static final KeyMapping FREE_LOOK_KEY = new KeyMapping("key.uselessreptile.freeLookKey", InputConstants.KEY_Z, CATEGORY);
 
     public static void init() {
         KeyMappingHelper.registerKeyMapping(FLY_DOWN_KEY);
