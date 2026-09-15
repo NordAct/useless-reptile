@@ -97,6 +97,9 @@
   "subtitles.uselessreptile.lightning_chaser.death": "Lightning Chaser dies",
   "subtitles.uselessreptile.shockwave.hit": "Electric crack",
   "subtitles.uselessreptile.shockwave": "Electric burst",
+  "subtitles.uselessreptile.magmamuncher.hurt": "Magmamuncher hurts",
+  "subtitles.uselessreptile.magmamuncher.ambient": "Magmamuncher squeaks",
+  "subtitles.uselessreptile.magmamuncher.death": "Magmamuncher dies",
 
   "other.uselessreptile.none": "None",
   "other.uselessreptile.sound_respond": "%1$s will now respond to the following sound: %2$s",
