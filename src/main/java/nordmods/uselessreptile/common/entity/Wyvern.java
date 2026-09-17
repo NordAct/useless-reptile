@@ -76,8 +76,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         super(entityType, world);
         xpReward = 20;
 
-        pitchLimitGround = 80;
-        pitchLimitAir = 45;
         ticksUntilHeal = 200;
         sprintSpeedModifier = 1.2f;
         maxXBodyRotSamples = 5;
@@ -92,7 +90,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    protected void registerGoals() { //todo do not forget to uncomment goal and fix random look chance on DragonLookAtEntityGoal
+    protected void registerGoals() {
         goalSelector.addGoal(1, new RideableDragonLockLookGoal(this));
         goalSelector.addGoal(1, new FloatGoal(this));
         goalSelector.addGoal(2, new FlyingDragonCallBackGoal<>(this));
@@ -205,6 +203,13 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
             shoulderArmRight.setScale(0.75f, 0.75f);
             shoulderArmLeft.setScale(0.75f, 0.75f);
         }
+        if (isFlying() && isMoving() && !isMovingBackwards()) {
+            setYawTargetLimit((int) Math.min(120 + Math.abs(getXRot()/ 1.5f), 180));
+            setPitchTargetLimit(90);
+        } else {
+            setYawTargetLimit(90);
+            setPitchTargetLimit(70);
+        }
     }
 
     @Override
@@ -306,15 +311,5 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     @Override
     public @Nullable DragonAnimationProcessor<Wyvern> createServerAnimationProcessor() {
         return new MultipartDragonAnimationProcessor<>(this);
-    }
-
-    @Override
-    public int getMaxHeadYRot() {
-        return isFlying() && isMoving() && !isMovingBackwards() ? 120 : 90;
-    }
-
-    @Override
-    public int getMaxHeadXRot() {
-        return isFlying() && isMoving() && !isMovingBackwards() ? 90 : 70;
     }
 }

@@ -31,7 +31,6 @@ import org.jspecify.annotations.NonNull;
 
 public abstract class URFlyingDragonEntity extends URDragonEntity implements FlyingDragon {
     protected final int maxInAirTimer = 600;
-    protected float pitchLimitAir = 90;
     private int glideTimer = 100;
     private boolean forceFlight = false;
     private final FlyingDragonLandNavigation<URFlyingDragonEntity> landNavigation;
@@ -99,12 +98,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     public float getFlyingRotationSpeed() {
         return (float) getAttributeValue(URAttributes.DRAGON_FLYING_ROTATION_SPEED);
-    }
-
-    @Override
-    public int getMaxHeadXRot() {
-        if (isFlying() && isMoving() && !isMovingBackwards()) return (int) pitchLimitAir;
-        return (int) pitchLimitGround;
     }
 
     @Override

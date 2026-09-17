@@ -90,8 +90,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     public LightningChaser(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         xpReward = 20;
-        pitchLimitGround = 70;
-        pitchLimitAir = 45;
         ticksUntilHeal = 500;
     }
 
@@ -378,11 +376,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
                 .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK))
                 .findFirst()
                 .ifPresent(DragonAbilityHolder::use);
-    }
-
-    @Override
-    public int getMaxHeadYRot() {
-        return 70;
     }
 
     public void triggerShockwave() { //todo remove

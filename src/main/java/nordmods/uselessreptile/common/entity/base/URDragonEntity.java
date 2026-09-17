@@ -91,7 +91,10 @@ import java.util.function.BiConsumer;
 
 public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner {
     public static final int TRANSITION_TICKS = 10;
-    protected float pitchLimitGround = 90;
+    private int pitchLimit = 90;
+    private int yawLimit = 75;
+    private int pitchTargetLimit = 90;
+    private int yawTargetLimit = 75;
     protected int eatFromInventoryTimer = 20;
     protected int ticksUntilHeal = -1;
     protected float sprintSpeedModifier = 1.1f;
@@ -790,6 +793,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         super.tick();
         tickAcceleration();
 
+        pitchLimit = (int) Mth.approach(pitchLimit, pitchTargetLimit, 2);
+        yawLimit = (int) Mth.approach(yawLimit, yawTargetLimit, 2);
+
         if (!level().isClientSide()) {
             if (getOwner() != null && getCurrentOrder() == Order.FOLLOW) {
                 if (distanceTo(getOwner()) > getWanderRadius().radius) {
@@ -1284,6 +1290,24 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public WrappedDragonBodyRotationControl<?> getBodyRotationControl() {
         return (WrappedDragonBodyRotationControl<?>) bodyRotationControl;
+    }
+
+    public void setPitchTargetLimit(int pitchTargetLimit) {
+        this.pitchTargetLimit = pitchTargetLimit;
+    }
+
+    public void setYawTargetLimit(int yawTargetLimit) {
+        this.yawTargetLimit = yawTargetLimit;
+    }
+
+    @Override
+    public int getMaxHeadYRot() {
+        return yawLimit;
+    }
+
+    @Override
+    public int getMaxHeadXRot() {
+        return pitchLimit;
     }
 
     /// Makes dragons dance to jukebox

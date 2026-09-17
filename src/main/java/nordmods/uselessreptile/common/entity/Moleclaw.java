@@ -53,7 +53,6 @@ public class Moleclaw extends URRideableDragonEntity {
         xpReward = 20;
         navigation = new MoleclawNavigation(this, world);
 
-        pitchLimitGround = 50;
         ticksUntilHeal = 400;
     }
 
