@@ -10,7 +10,7 @@ public class PikehornCallBackGoal extends FlyingDragonCallBackGoal<RiverPikehorn
 
     @Override
     public boolean canUse() {
-        if (entity.isHunting()) return false;
+        if (mob.isHunting()) return false;
         return super.canUse();
     }
 }

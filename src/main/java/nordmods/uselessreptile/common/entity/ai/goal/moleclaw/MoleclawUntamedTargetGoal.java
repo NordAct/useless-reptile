@@ -5,7 +5,6 @@ import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import nordmods.uselessreptile.common.entity.Moleclaw;
 
 public class MoleclawUntamedTargetGoal<T extends LivingEntity>  extends NonTameRandomTargetGoal<T> {
-
     private final Moleclaw mob;
     public MoleclawUntamedTargetGoal(Moleclaw tameable, Class targetClass) {
         super(tameable, targetClass, true, null);

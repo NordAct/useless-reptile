@@ -8,29 +8,29 @@ import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import java.util.EnumSet;
 
 public class PikehornAttackGoal extends Goal {
-    private final RiverPikehorn entity;
+    private final RiverPikehorn mob;
     private LivingEntity target;
     private final double maxSearchDistance;
 
-    public PikehornAttackGoal(RiverPikehorn entity, double maxSearchDistance) {
-        this.entity = entity;
+    public PikehornAttackGoal(RiverPikehorn mob, double maxSearchDistance) {
+        this.mob = mob;
         this.maxSearchDistance = maxSearchDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     @Override
     public void start() {
-        target = entity.getTarget();
+        target = mob.getTarget();
     }
 
     @Override
     public boolean canUse() {
-        if (!entity.canAttack(entity.getTarget())) {
-            entity.setTarget(null);
+        if (!mob.canAttack(mob.getTarget())) {
+            mob.setTarget(null);
             return false;
         }
-        target = entity.getTarget();
-        return target != null && (entity.distanceToSqr(target) < maxSearchDistance / (entity.isTame() ? 1 : 8));
+        target = mob.getTarget();
+        return target != null && (mob.distanceToSqr(target) < maxSearchDistance / (mob.isTame() ? 1 : 8));
     }
 
     @Override
@@ -39,14 +39,14 @@ public class PikehornAttackGoal extends Goal {
         if (!target.isAlive()) {
             return false;
         }
-        return !entity.getNavigation().isDone() || canUse();
+        return !mob.getNavigation().isDone() || canUse();
     }
 
     @Override
     public void stop() {
         target = null;
-        entity.setTarget(null);
-        entity.getNavigation().stop();
+        mob.setTarget(null);
+        mob.getNavigation().stop();
     }
 
     @Override
@@ -60,11 +60,11 @@ public class PikehornAttackGoal extends Goal {
             stop();
             return;
         }
-        entity.setSprinting(true);
-        entity.getNavigation().moveTo(target, 1);
+        mob.setSprinting(true);
+        mob.getNavigation().moveTo(target, 1);
 
-        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0) || !entity.getPrimaryAttackBox().intersects(target.getBoundingBox())) return;
+        if (mob.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0) || !mob.getPrimaryAttackBox().intersects(target.getBoundingBox())) return;
 
-        entity.attackMelee(target);
+        mob.attackMelee(target);
     }
 }

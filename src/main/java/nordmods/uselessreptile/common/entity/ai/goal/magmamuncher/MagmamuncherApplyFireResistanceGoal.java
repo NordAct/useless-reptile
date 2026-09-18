@@ -10,11 +10,12 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.entity.Magmamuncher;
 import nordmods.uselessreptile.common.entity.ai.goal.common.DragonConsumeItemFromInventoryGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromInventoryGoal {
-    public MagmamuncherApplyFireResistanceGoal(URDragonEntity dragon) {
+public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromInventoryGoal<Magmamuncher> {
+    public MagmamuncherApplyFireResistanceGoal(Magmamuncher dragon) {
         super(dragon);
     }
 
@@ -25,32 +26,32 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
 
     @Override
     protected void beforeItemConsumed(ItemStack stack) {
-        if (dragon.getOwner() == dragon.getVehicle() && dragon.getOwner() != null) {
-            dragon.getOwner().addEffect(
+        if (mob.getOwner() == mob.getVehicle() && mob.getOwner() != null) {
+            mob.getOwner().addEffect(
                     new MobEffectInstance(
                             MobEffects.FIRE_RESISTANCE,
-                            (int) (dragon.level().fuelValues().burnDuration(stack) * URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier)
+                            (int) (mob.level().fuelValues().burnDuration(stack) * URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier)
                     )
             );
-            URDragonEntity.SoundInfo info = dragon.getSoundInfo("apply_fire_resistance");
-            if (info != null) dragon.level().playSound(dragon, dragon.getX(), dragon.getY(), dragon.getZ(), SoundEvent.createVariableRangeEvent(info.id()), dragon.getSoundSource(), info.volume(), dragon.getRandom().triangle(info.pitch(), info.pitchDeviation()));
+            URDragonEntity.SoundInfo info = mob.getSoundInfo("apply_fire_resistance");
+            if (info != null) mob.level().playSound(mob, mob.getX(), mob.getY(), mob.getZ(), SoundEvent.createVariableRangeEvent(info.id()), mob.getSoundSource(), info.volume(), mob.getRandom().triangle(info.pitch(), info.pitchDeviation()));
             ClientboundLevelParticlesPacket packet = new ClientboundLevelParticlesPacket(
                     ParticleTypes.FLAME,
                     false,
                     false,
-                    dragon.getX(),
-                    dragon.getY(),
-                    dragon.getZ(),
+                    mob.getX(),
+                    mob.getY(),
+                    mob.getZ(),
                     0.5f,
                     0.5f,
                     0.5f,
                     0,
                     10
             );
-            if (dragon.getOwner() instanceof ServerPlayer player) {
+            if (mob.getOwner() instanceof ServerPlayer player) {
                 URDragonEntity.grantTriggerableAdvancement(player, UselessReptile.id("dragon/magmamuncher_apply_fire_resistance"));
             }
-            dragon.level().getServer().getPlayerList().broadcastAll(packet);
+            mob.level().getServer().getPlayerList().broadcastAll(packet);
         }
     }
 
@@ -60,15 +61,15 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
     }
 
     private boolean isOwnerOnFire() {
-        return dragon.getOwner() != null
-                && dragon.getOwner() == dragon.getVehicle()
-                && dragon.getOwner().getLastDamageSource() != null
-                && dragon.getOwner().getLastDamageSource().is(DamageTypeTags.IS_FIRE)
-                && !dragon.getOwner().hasEffect(MobEffects.FIRE_RESISTANCE);
+        return mob.getOwner() != null
+                && mob.getOwner() == mob.getVehicle()
+                && mob.getOwner().getLastDamageSource() != null
+                && mob.getOwner().getLastDamageSource().is(DamageTypeTags.IS_FIRE)
+                && !mob.getOwner().hasEffect(MobEffects.FIRE_RESISTANCE);
     }
 
     @Override
     protected boolean isConsumableItem(ItemStack stack) {
-        return dragon.level().fuelValues().isFuel(stack);
+        return mob.level().fuelValues().isFuel(stack);
     }
 }

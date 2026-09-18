@@ -6,24 +6,24 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
 
-public class DragonLookAtPathTartetGoal extends Goal {
-    private final URDragonEntity dragon;
+public class DragonLookAtPathTartetGoal<T extends URDragonEntity> extends Goal {
+    protected final T mob;
 
-    public DragonLookAtPathTartetGoal(URDragonEntity dragon) {
-        this.dragon = dragon;
+    public DragonLookAtPathTartetGoal(T mob) {
+        this.mob = mob;
         this.setFlags(EnumSet.of(Flag.LOOK));
     }
 
     @Override
     public boolean canUse() {
-        return !dragon.getNavigation().isDone() && !dragon.shouldFollow && dragon.getTarget() == null;
+        return !mob.getNavigation().isDone() && !mob.shouldFollow && mob.getTarget() == null;
     }
 
     @Override
     public void tick() {
-        if (dragon.getNavigation().getTargetPos() != null) {
-            Vec3 pos = Vec3.atCenterOf(dragon.getNavigation().getTargetPos());
-            dragon.getLookControl().setLookAt(pos.x, dragon.getEyeY(), pos.z);
+        if (mob.getNavigation().getTargetPos() != null) {
+            Vec3 pos = Vec3.atCenterOf(mob.getNavigation().getTargetPos());
+            mob.getLookControl().setLookAt(pos.x, mob.getEyeY(), pos.z);
         }
     }
 }

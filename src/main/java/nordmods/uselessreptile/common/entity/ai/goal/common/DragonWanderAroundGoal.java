@@ -4,13 +4,12 @@ import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class DragonWanderAroundGoal extends WaterAvoidingRandomStrollGoal {
+public class DragonWanderAroundGoal<T extends URDragonEntity> extends WaterAvoidingRandomStrollGoal {
+    protected final T mob;
 
-    final URDragonEntity mob;
-
-    public DragonWanderAroundGoal(URDragonEntity entity) {
-        super(entity, 1);
-        this.mob = entity;
+    public DragonWanderAroundGoal(T mob) {
+        super(mob, 1);
+        this.mob = mob;
     }
 
     @Override

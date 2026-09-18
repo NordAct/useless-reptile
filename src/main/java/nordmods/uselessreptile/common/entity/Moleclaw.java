@@ -66,17 +66,17 @@ public class Moleclaw extends URRideableDragonEntity {
     protected void registerGoals() {
         goalSelector.addGoal(1, new FloatGoal(this));
         goalSelector.addGoal(2, new MoleclawEscapeLightGoal(this));
-        goalSelector.addGoal(2, new DragonCallBackGoal(this));
+        goalSelector.addGoal(2, new DragonCallBackGoal<>(this));
         goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
-        goalSelector.addGoal(4, new DragonEatFromInventoryGoal(this));
+        goalSelector.addGoal(4, new DragonEatFromInventoryGoal<>(this));
         goalSelector.addGoal(8, new MoleclawAttackGoal(this, 512));
-        goalSelector.addGoal(9, new DragonReturnToHomePoint(this));
-        goalSelector.addGoal(10, new DragonWanderAroundGoal(this));
-        goalSelector.addGoal(11, new DragonLookAroundGoal(this));
+        goalSelector.addGoal(9, new DragonReturnToHomePoint<>(this));
+        goalSelector.addGoal(10, new DragonWanderAroundGoal<>(this));
+        goalSelector.addGoal(11, new DragonLookAroundGoal<>(this));
         targetSelector.addGoal(5, new MoleclawUntamedTargetGoal<>(this, Player.class));
         targetSelector.addGoal(5, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(6, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(4, new DragonRevengeGoal(this));
+        targetSelector.addGoal(4, new DragonRevengeGoal<>(this));
     }
 
     @Override

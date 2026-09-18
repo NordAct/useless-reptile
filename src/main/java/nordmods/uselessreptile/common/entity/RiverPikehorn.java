@@ -225,11 +225,11 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         goalSelector.addGoal(5, new PikehornAttackGoal(this, 4096 * 2));
         goalSelector.addGoal(6, new PikehornHuntGoal(this));
         goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 30));
-        goalSelector.addGoal(8, new DragonReturnToHomePoint(this));
-        goalSelector.addGoal(9, new DragonWanderAroundGoal(this));
+        goalSelector.addGoal(8, new DragonReturnToHomePoint<>(this));
+        goalSelector.addGoal(9, new DragonWanderAroundGoal<>(this));
         goalSelector.addGoal(9, new FlyingDragonFlyAroundGoal<>(this, 30));
-        goalSelector.addGoal(10, new DragonLookAroundGoal(this));
-        targetSelector.addGoal(3, (new DragonRevengeGoal(this)).setAlertOthers());
+        goalSelector.addGoal(10, new DragonLookAroundGoal<>(this));
+        targetSelector.addGoal(3, (new DragonRevengeGoal<>(this)).setAlertOthers());
         targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(5, new OwnerHurtByTargetGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));

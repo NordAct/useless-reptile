@@ -5,13 +5,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.Node;
 import nordmods.uselessreptile.common.entity.Moleclaw;
 
-public class MoleclawNavigation extends DragonNavigation {
-
-    private final Moleclaw entity;
-
+public class MoleclawNavigation extends LandDragonNavigation<Moleclaw> {
     public MoleclawNavigation(Moleclaw mobEntity, Level world) {
         super(mobEntity, world);
-        this.entity = mobEntity;
     }
 
     @Override
@@ -20,20 +16,15 @@ public class MoleclawNavigation extends DragonNavigation {
         super.followThePath();
     }
 
-//    protected boolean shouldTargetNextNodeInDirection(Vec3 currentPos) {
-//        if (path == null) return false;
-//        return super.shouldTargetNextNodeInDirection(currentPos);
-//    }
-
     @Override
     protected void trimPath() {
         if (path == null) return;
 
         super.trimPath();
-        if (!entity.isPanicking() && !entity.hasLightProtection()) {
+        if (!mob.isPanicking() && !mob.hasLightProtection()) {
             for (int i = 0; i < this.path.getNodeCount(); ++i) {
                 Node pathNode = this.path.getNode(i);
-                if (entity.isTooBrightAtPos(new BlockPos(pathNode.x, pathNode.y, pathNode.z))) {
+                if (mob.isTooBrightAtPos(new BlockPos(pathNode.x, pathNode.y, pathNode.z))) {
                     this.path.truncateNodes(i);
                     return;
                 }

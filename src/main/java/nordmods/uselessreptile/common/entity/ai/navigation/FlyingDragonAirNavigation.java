@@ -10,8 +10,8 @@ import org.jspecify.annotations.NonNull;
 
 public class FlyingDragonAirNavigation<T extends URDragonEntity & FlyingDragon> extends FlyingDragonBaseNavigation<T>{
 
-    public FlyingDragonAirNavigation(T entity, Level world) {
-        super(entity, world);
+    public FlyingDragonAirNavigation(T mob, Level world) {
+        super(mob, world);
     }
 
     @Override
@@ -22,14 +22,14 @@ public class FlyingDragonAirNavigation<T extends URDragonEntity & FlyingDragon> 
 
     @Override
     public void tick() {
-        if (entity.hasControllingPassenger() || entity.isPassenger()) return;
+        if (mob.hasControllingPassenger() || mob.isPassenger()) return;
 
         super.tick();
 
         BlockPos target = getTargetPos();
         if (!isDone() && target != null) {
-            if (entity.horizontalCollision) {
-                double yDiffNode = path.getNextNode().asVec3().y() - entity.getY();
+            if (mob.horizontalCollision) {
+                double yDiffNode = path.getNextNode().asVec3().y() - mob.getY();
                 if (yDiffNode < 0) getMoveControl().forceFlyDown();
                 if (yDiffNode > 0) getMoveControl().forceFlyUp();
             }

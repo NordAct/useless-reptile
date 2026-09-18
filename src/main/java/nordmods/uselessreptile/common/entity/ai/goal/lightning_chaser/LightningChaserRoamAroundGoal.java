@@ -9,20 +9,20 @@ import nordmods.uselessreptile.common.entity.LightningChaser;
 import java.util.EnumSet;
 
 public class LightningChaserRoamAroundGoal extends Goal {
-    private final LightningChaser entity;
+    private final LightningChaser mob;
     private BlockPos spot;
     private BlockPos pointPos;
     private int currentPoint = 0;
 
-    public LightningChaserRoamAroundGoal(LightningChaser entity) {
-        this.entity = entity;
+    public LightningChaserRoamAroundGoal(LightningChaser mob) {
+        this.mob = mob;
         setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
     }
 
     @Override
     public boolean canUse() {
-        if (entity.isTame()) return false;
-        return (entity.isChallenger() || entity.level().isThundering()) && !entity.getShouldBailOut() && !entity.hasSurrendered() && entity.getTarget() == null;
+        if (mob.isTame()) return false;
+        return (mob.isChallenger() || mob.level().isThundering()) && !mob.getShouldBailOut() && !mob.hasSurrendered() && mob.getTarget() == null;
     }
 
     @Override
@@ -32,13 +32,13 @@ public class LightningChaserRoamAroundGoal extends Goal {
     }
 
     private BlockPos getRoamingSpot() {
-        BlockPos pos = entity.getHomePoint();
-        return new BlockPos(pos.getX(), entity.level().getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()) + 40, pos.getZ());
+        BlockPos pos = mob.getHomePoint();
+        return new BlockPos(pos.getX(), mob.level().getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()) + 40, pos.getZ());
     }
 
     @Override
     public void tick() {
-        if (entity.distanceToSqr(pointPos.getCenter()) < entity.getBbWidth() * entity.getBbWidth() * 4) {
+        if (mob.distanceToSqr(pointPos.getCenter()) < mob.getBbWidth() * mob.getBbWidth() * 4) {
             pointPos = new BlockPos((int) (spot.getX() + Math.sin(Math.PI / 8 * currentPoint) * 32),
                     spot.getY(),
                     (int) (spot.getZ() + Math.cos(Math.PI / 8 * currentPoint) * 32));
@@ -46,6 +46,6 @@ public class LightningChaserRoamAroundGoal extends Goal {
             else currentPoint = 0;
         }
         Vec3 vec3d = pointPos.getCenter();
-        entity.getNavigation().moveTo(vec3d.x, vec3d.y, vec3d.z, 1);
+        mob.getNavigation().moveTo(vec3d.x, vec3d.y, vec3d.z, 1);
     }
 }

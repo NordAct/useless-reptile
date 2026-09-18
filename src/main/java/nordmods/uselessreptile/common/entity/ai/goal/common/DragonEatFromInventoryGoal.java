@@ -5,37 +5,37 @@ import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class DragonEatFromInventoryGoal extends DragonConsumeItemFromInventoryGoal{
-    public DragonEatFromInventoryGoal(URDragonEntity dragon) {
-        super(dragon);
+public class DragonEatFromInventoryGoal<T extends URDragonEntity> extends DragonConsumeItemFromInventoryGoal<T>{
+    public DragonEatFromInventoryGoal(T mob) {
+        super(mob);
     }
 
     @Override
     public void tick() {
-        dragon.tickEatFromInventoryTimer();
+        mob.tickEatFromInventoryTimer();
         super.tick();
     }
 
     @Override
     public boolean canUse() {
-        if (!dragon.isTame()) return false;
-        return dragon.getHealth() < dragon.getMaxHealth();
+        if (!mob.isTame()) return false;
+        return mob.getHealth() < mob.getMaxHealth();
     }
 
     @Override
     protected void beforeItemConsumed(ItemStack stack) {
-        dragon.heal(dragon.getFoodItem(stack).healingAmount());
-        if (dragon.getOwner() instanceof ServerPlayer serverPlayer)
+        mob.heal(mob.getFoodItem(stack).healingAmount());
+        if (mob.getOwner() instanceof ServerPlayer serverPlayer)
             URDragonEntity.grantTriggerableAdvancement(serverPlayer, UselessReptile.id("dragon/eat_from_inventory"));
     }
 
     @Override
     protected boolean canConsume() {
-        return dragon.getEatFromInventoryTimer() == 0;
+        return mob.getEatFromInventoryTimer() == 0;
     }
 
     @Override
     protected boolean isConsumableItem(ItemStack stack) {
-        return dragon.getFoodItem(stack) != null;
+        return mob.getFoodItem(stack) != null;
     }
 }

@@ -10,8 +10,8 @@ import org.jspecify.annotations.Nullable;
 import java.util.Optional;
 
 public class FlyingDragonFlyDownGoal<T extends URDragonEntity & FlyingDragon> extends FlyingDragonFlyAroundGoal<T> {
-    public FlyingDragonFlyDownGoal(T entity, int range) {
-        super(entity, range);
+    public FlyingDragonFlyDownGoal(T mob, int range) {
+        super(mob, range);
     }
 
     @Override

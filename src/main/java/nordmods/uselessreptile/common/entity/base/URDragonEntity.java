@@ -70,7 +70,7 @@ import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
 import nordmods.uselessreptile.common.entity.ai.control.*;
-import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
+import nordmods.uselessreptile.common.entity.ai.navigation.LandDragonNavigation;
 import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
@@ -158,7 +158,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
-        navigation = new DragonNavigation(this, world);
+        navigation = new LandDragonNavigation(this, world);
         lookControl = new WrappedDragonLookControl<>(new DragonLookControl<>(this));
         moveControl = new LandDragonMoveControl<>(this);
     }

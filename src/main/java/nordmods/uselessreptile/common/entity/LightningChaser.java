@@ -106,21 +106,21 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(1, new RideableDragonLockLookGoal(this));
+        goalSelector.addGoal(1, new RideableDragonLockLookGoal<>(this));
         goalSelector.addGoal(1, new FloatGoal(this));
         goalSelector.addGoal(2, new FlyingDragonCallBackGoal<>(this));
         goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
-        goalSelector.addGoal(4, new DragonEatFromInventoryGoal(this));
+        goalSelector.addGoal(4, new DragonEatFromInventoryGoal<>(this));
         goalSelector.addGoal(5, new LightningChaserAttackGoal(this));
         goalSelector.addGoal(6, new LightningChaserRoamAroundGoal(this));
         goalSelector.addGoal(6, new LightningChaserBailOutGoal(this));
         goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 60));
-        goalSelector.addGoal(8, new DragonReturnToHomePoint(this));
-        goalSelector.addGoal(9, new DragonWanderAroundGoal(this));
+        goalSelector.addGoal(8, new DragonReturnToHomePoint<>(this));
+        goalSelector.addGoal(9, new DragonWanderAroundGoal<>(this));
         goalSelector.addGoal(9, new FlyingDragonFlyAroundGoal<>(this, 30));
         goalSelector.addGoal(10, new FlyingDragonLookAtEntityGoal<>(this, LivingEntity.class, 16));
         goalSelector.addGoal(10, new FlyingDragonLookAroundGoal<>(this));
-        goalSelector.addGoal(11, new DragonLookAtPathTartetGoal(this));
+        goalSelector.addGoal(11, new DragonLookAtPathTartetGoal<>(this));
         targetSelector.addGoal(1, new LightningChaserRevengeGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(2, new NonTameRandomTargetGoal<>(this, Player.class, true, null));

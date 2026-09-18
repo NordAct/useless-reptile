@@ -8,11 +8,11 @@ import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.PathfindingContext;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.Magmamuncher;
 import org.jspecify.annotations.NonNull;
 
-public class MagmamuncherNavigation extends DragonNavigation {
-    public MagmamuncherNavigation(URDragonEntity mobEntity, Level world) {
+public class MagmamuncherNavigation extends LandDragonNavigation<Magmamuncher> {
+    public MagmamuncherNavigation(Magmamuncher mobEntity, Level world) {
         super(mobEntity, world);
     }
 

@@ -4,13 +4,11 @@ import nordmods.uselessreptile.common.entity.ai.goal.common.DragonCallBackGoal;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class FlyingDragonCallBackGoal<T extends URDragonEntity & FlyingDragon> extends DragonCallBackGoal {
-    protected final T entity;
+public class FlyingDragonCallBackGoal<T extends URDragonEntity & FlyingDragon> extends DragonCallBackGoal<T> {
     protected int ticksToStop;
 
-    public FlyingDragonCallBackGoal(T entity) {
-        super(entity);
-        this.entity = entity;
+    public FlyingDragonCallBackGoal(T mob) {
+        super(mob);
     }
 
     @Override
@@ -20,16 +18,16 @@ public class FlyingDragonCallBackGoal<T extends URDragonEntity & FlyingDragon> e
     }
 
     protected void checkProximity(double currentDistance) {
-        if (!entity.isFlying() && owner.onGround()) {
+        if (!mob.isFlying() && owner.onGround()) {
             ticksToStop = 0;
             super.checkProximity(currentDistance);
             return;
         }
         if (currentDistance < proximityRange) {
-            if (entity.isFlying()) {
-                if (ticksToStop > 10) entity.shouldFollow = false;
+            if (mob.isFlying()) {
+                if (ticksToStop > 10) mob.shouldFollow = false;
                 else ticksToStop++;
-            } else entity.shouldFollow = false;
+            } else mob.shouldFollow = false;
         } else ticksToStop = 0;
     }
 }

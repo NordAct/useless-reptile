@@ -22,6 +22,7 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.control.WrappedDragonBodyRotationControl;
+import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -139,7 +140,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         navigation = isFlying() ? airNavigation : landNavigation;
         if (navigation != current) {
             navigation.moveTo(current.getPath(), 1);
-            navigation.recomputePath();
+            ((DragonNavigation)navigation).scheduleRecomputation();
             current.stop();
         }
     }

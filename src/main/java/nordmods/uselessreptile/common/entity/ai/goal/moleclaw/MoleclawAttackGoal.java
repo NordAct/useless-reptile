@@ -9,47 +9,47 @@ import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import java.util.EnumSet;
 
 public class MoleclawAttackGoal extends Goal {
-    private final Moleclaw entity;
+    private final Moleclaw mob;
     private LivingEntity target;
     private final double maxSearchDistance;
     private int notMovingTimer = 0;
     private int nextStrongAttackTimer = 60;
 
-    public MoleclawAttackGoal(Moleclaw entity, double maxSearchDistance) {
-        this.entity = entity;
+    public MoleclawAttackGoal(Moleclaw mob, double maxSearchDistance) {
+        this.mob = mob;
         this.maxSearchDistance = maxSearchDistance;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
     }
 
     @Override
     public void start() {
-        target = entity.getTarget();
+        target = mob.getTarget();
     }
 
     @Override
     public boolean canUse() {
-        if (entity.hasControllingPassenger()) return false;
-        if (!entity.canAttack(entity.getTarget())) {
-            entity.setTarget(null);
+        if (mob.hasControllingPassenger()) return false;
+        if (!mob.canAttack(mob.getTarget())) {
+            mob.setTarget(null);
             return false;
         }
-        target = entity.getTarget();
+        target = mob.getTarget();
         if (target == null) return false;
-        boolean tooBright = entity.isTooBrightAtPos(target.blockPosition());
-        return !tooBright && (entity.distanceToSqr(target) < maxSearchDistance);
+        boolean tooBright = mob.isTooBrightAtPos(target.blockPosition());
+        return !tooBright && (mob.distanceToSqr(target) < maxSearchDistance);
     }
 
     @Override
     public boolean canContinueToUse() {
         if (target == null) return false;
         if (!target.isAlive()) return false;
-        return !entity.getNavigation().isDone() || canUse();
+        return !mob.getNavigation().isDone() || canUse();
     }
 
     @Override
     public void stop() {
         target = null;
-        entity.getNavigation().stop();
+        mob.getNavigation().stop();
     }
 
     @Override
@@ -59,22 +59,22 @@ public class MoleclawAttackGoal extends Goal {
 
     @Override
     public void tick() {
-        entity.setSprinting(true);
-        entity.getNavigation().moveTo(target, 1);
+        mob.setSprinting(true);
+        mob.getNavigation().moveTo(target, 1);
 
-        if (!entity.isMoving()) notMovingTimer++;
+        if (!mob.isMoving()) notMovingTimer++;
         else notMovingTimer = 0;
-        if (notMovingTimer >= nextStrongAttackTimer && entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY) && a.getCooldown() <= 0)) {
+        if (notMovingTimer >= nextStrongAttackTimer && mob.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY) && a.getCooldown() <= 0)) {
             int any = 0;
-            for (VoxelShape ignored : entity.level().getBlockCollisions(null, entity.getPrimaryAttackBox())) any++;
+            for (VoxelShape ignored : mob.level().getBlockCollisions(null, mob.getPrimaryAttackBox())) any++;
             if (any > 0) {
-                entity.scheduleStrongAttack();
-                nextStrongAttackTimer = entity.getRandom().nextInt(21) + 40;
+                mob.scheduleStrongAttack();
+                nextStrongAttackTimer = mob.getRandom().nextInt(21) + 40;
             }
         }
 
-        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return;
-        boolean doesCollide = entity.getSecondaryAttackBox().intersects(target.getBoundingBox());
-        if (doesCollide) entity.scheduleNormalAttack();
+        if (mob.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return;
+        boolean doesCollide = mob.getSecondaryAttackBox().intersects(target.getBoundingBox());
+        if (doesCollide) mob.scheduleNormalAttack();
     }
 }

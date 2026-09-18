@@ -10,7 +10,6 @@ import nordmods.uselessreptile.common.entity.Moleclaw;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 
 public class MoleclawEscapeLightGoal extends PanicGoal {
-
     private final Moleclaw mob;
     private int timer = 0;
     private int nextStrongAttackTimer = 60;

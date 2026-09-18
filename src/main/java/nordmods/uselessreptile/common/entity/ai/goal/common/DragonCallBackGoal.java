@@ -7,8 +7,8 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
 
-public class DragonCallBackGoal extends Goal {
-    protected final URDragonEntity entity;
+public class DragonCallBackGoal<T extends URDragonEntity> extends Goal {
+    protected final T mob;
     protected LivingEntity owner;
     protected int updateCountdownTicks;
     protected double proximityRange;
@@ -17,8 +17,8 @@ public class DragonCallBackGoal extends Goal {
 
     public static final int MAX_CALL_DISTANCE = 512;
 
-    public DragonCallBackGoal(URDragonEntity entity) {
-        this.entity = entity;
+    public DragonCallBackGoal(T mob) {
+        this.mob = mob;
         setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
@@ -27,21 +27,21 @@ public class DragonCallBackGoal extends Goal {
         updateCountdownTicks = 0;
         forceTeleportCountdown = adjustedTickDelay(100);
         prevDistance = 0;
-        proximityRange = entity.getBbWidth() * 2.0f * (entity.getBbWidth() * 2.0f);
-        owner = entity.getOwner();
-        entity.setTarget(null);
+        proximityRange = mob.getBbWidth() * 2.0f * (mob.getBbWidth() * 2.0f);
+        owner = mob.getOwner();
+        mob.setTarget(null);
     }
 
     @Override
     public boolean canUse() {
-        if (!entity.isTame()) return false;
-        if (entity.isLeashed() || entity.isOrderedToSit()) return false;
-        if (!entity.shouldFollow) return false;
-        if (entity.getTarget() != null) return false;
-        LivingEntity player = entity.getOwner();
+        if (!mob.isTame()) return false;
+        if (mob.isLeashed() || mob.isOrderedToSit()) return false;
+        if (!mob.shouldFollow) return false;
+        if (mob.getTarget() != null) return false;
+        LivingEntity player = mob.getOwner();
         if (player == null) return false;
-        double distance = entity.distanceToSqr(player);
-        if (distance < entity.getWanderRadius().radius * 0.3f) return false;
+        double distance = mob.distanceToSqr(player);
+        if (distance < mob.getWanderRadius().radius * 0.3f) return false;
         return distance < MAX_CALL_DISTANCE * MAX_CALL_DISTANCE;
     }
 
@@ -52,9 +52,9 @@ public class DragonCallBackGoal extends Goal {
 
     @Override
     public void stop() {
-        entity.shouldFollow = false;
+        mob.shouldFollow = false;
         owner = null;
-        entity.getNavigation().stop();
+        mob.getNavigation().stop();
     }
 
     @Override
@@ -64,29 +64,29 @@ public class DragonCallBackGoal extends Goal {
 
     @Override
     public void tick() {
-        entity.setSprinting(true);
-        double distance = entity.distanceToSqr(owner);
+        mob.setSprinting(true);
+        double distance = mob.distanceToSqr(owner);
         if (distance >= prevDistance) forceTeleportCountdown--;
         else forceTeleportCountdown = adjustedTickDelay(100);
 
-        if (entity.isOrderedToSit()) entity.shouldFollow = false;
+        if (mob.isOrderedToSit()) mob.shouldFollow = false;
 
         checkProximity(distance);
 
         if (--updateCountdownTicks <= 0) {
             updateCountdownTicks = adjustedTickDelay(10);
-            entity.getNavigation().moveTo(owner, 1);
-            entity.setHomePoint(owner.blockPosition());
+            mob.getNavigation().moveTo(owner, 1);
+            mob.setHomePoint(owner.blockPosition());
             if (URConfig.getConfig().allowDragonTeleport
-                    && (distance > entity.getWanderRadius().radius * entity.getWanderRadius().radius * 4 || distance > (proximityRange * 4) && forceTeleportCountdown <= 0)) entity.tryToTeleportToOwner();
+                    && (distance > mob.getWanderRadius().radius * mob.getWanderRadius().radius * 4 || distance > (proximityRange * 4) && forceTeleportCountdown <= 0)) mob.tryToTeleportToOwner();
         }
 
-        entity.getLookControl().setLookAt(owner);
+        mob.getLookControl().setLookAt(owner);
 
         prevDistance = distance;
     }
 
     protected void checkProximity(double currentDistance) {
-        if (currentDistance < proximityRange) entity.shouldFollow = false;
+        if (currentDistance < proximityRange) mob.shouldFollow = false;
     }
 }

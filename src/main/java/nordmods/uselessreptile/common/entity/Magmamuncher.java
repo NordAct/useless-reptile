@@ -162,16 +162,16 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
-        goalSelector.addGoal(1, new DragonCallBackGoal(this));
+        goalSelector.addGoal(1, new DragonCallBackGoal<>(this));
         goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(3, new MagmamuncherApplyFireResistanceGoal(this));
-        goalSelector.addGoal(4, new DragonEatFromInventoryGoal(this));
+        goalSelector.addGoal(4, new DragonEatFromInventoryGoal<>(this));
         goalSelector.addGoal(5, new MagmamuncherAttackGoal(this, 4096));
         goalSelector.addGoal(6, new MagmamuncherEatMagmaGoal(this));
-        goalSelector.addGoal(7, new DragonReturnToHomePoint(this));
-        goalSelector.addGoal(8, new DragonWanderAroundGoal(this));
-        goalSelector.addGoal(9, new DragonLookAroundGoal(this));
-        targetSelector.addGoal(1, new DragonRevengeGoal(this));
+        goalSelector.addGoal(7, new DragonReturnToHomePoint<>(this));
+        goalSelector.addGoal(8, new DragonWanderAroundGoal<>(this));
+        goalSelector.addGoal(9, new DragonLookAroundGoal<>(this));
+        targetSelector.addGoal(1, new DragonRevengeGoal<>(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
