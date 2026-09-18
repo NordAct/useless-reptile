@@ -420,6 +420,14 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         return new DragonAbilityHolder(new NoopAbility(), this);
     }
 
+    public DragonAbilityHolder getPrimaryRiderAbility() {
+        return primaryRiderAbility;
+    }
+
+    public DragonAbilityHolder getSecondaryRiderAbility() {
+        return secondaryRiderAbility;
+    }
+
     /// Rider's attacks
     public enum AttackType implements StringRepresentable {
         PRIMARY("primary"),

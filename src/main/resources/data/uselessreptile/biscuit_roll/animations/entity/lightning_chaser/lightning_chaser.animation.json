@@ -52,9 +52,9 @@
 						"-(query.head_y_rotation-query.body_y_rotation)/5"
 					],
 					"position": [
-						"-math.sin((query.head_y_rotation-query.body_y_rotation)*1.6)*0.2",
-						"0.6481-math.abs(query.head_y_rotation-query.body_y_rotation)/16*0.2",
-						"2.646-math.abs(query.head_y_rotation-query.body_y_rotation)/16*0.4"
+						"-(query.head_y_rotation-query.body_y_rotation)/(6*16)",
+						"-0.1519+math.abs(query.head_y_rotation-query.body_y_rotation)/(10*16)",
+						"1.446+math.abs(query.head_y_rotation-query.body_y_rotation)/(10*16)"
 					]
 				},
 				"tail1": {
@@ -940,9 +940,9 @@
 						"-(query.head_y_rotation-query.body_y_rotation)/6"
 					],
 					"position": [
-						"-(query.head_y_rotation-query.body_y_rotation)/16*0.02",
-						"0.64806-math.abs(query.head_y_rotation-query.body_y_rotation)/16*0.2",
-						"2.64602-math.abs(query.head_y_rotation-query.body_y_rotation)/16*0.4"
+						"-(query.head_y_rotation-query.body_y_rotation)/(7*16)",
+						"-0.1519+math.abs(query.head_y_rotation-query.body_y_rotation)/(10*16)",
+						"1.746+math.abs(query.head_y_rotation-query.body_y_rotation)/(10*16)"
 					]
 				},
 				"tail1": {
@@ -1866,18 +1866,11 @@
 						"-math.cos(query.anim_time*360/2)*1.2-(query.head_y_rotation-query.body_y_rotation)/6",
 						"-math.cos(query.anim_time*360/2)*1.2-(query.head_y_rotation-query.body_y_rotation)/6"
 					],
-					"position": {
-						"0.0": [
-							"-(query.head_y_rotation-query.body_y_rotation)/(5*16)",
-							"0.64806+math.abs(query.head_y_rotation-query.body_y_rotation)/(10*16)",
-							"2.64602+math.abs(query.head_y_rotation-query.body_y_rotation)/(10*16)"
-						],
-						"1.125": [
-							"-(query.head_y_rotation-query.body_y_rotation)/16*0.02",
-							"0.64806-math.abs(query.head_y_rotation-query.body_y_rotation)/16*0.2",
-							"2.64602-math.abs(query.head_y_rotation-query.body_y_rotation)/16*0.4"
-						]
-					}
+					"position": [
+						"-(query.head_y_rotation-query.body_y_rotation)/(7*16)",
+						"-0.1519+math.abs(query.head_y_rotation-query.body_y_rotation)/(10*16)",
+						"1.446+math.abs(query.head_y_rotation-query.body_y_rotation)/(10*16)"
+					]
 				},
 				"tail1": {
 					"rotation": ["35-math.sin(query.anim_time*360)*1", "-math.cos(query.anim_time*360/2)*1+query.yaw_speed", 0],

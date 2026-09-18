@@ -38,6 +38,7 @@
       }
     ],
     "cooldown_time_seconds": 1.5,
+    "icon": "minecraft:item/iron_sword",
     "set_on_fire": false,
     "trigger_time_seconds": 0.0
   },
@@ -124,6 +125,7 @@
     "conditions": [],
     "cooldown_time_seconds": 5.0,
     "damage_scaling": 1.0,
+    "icon": "minecraft:item/crossbow_arrow",
     "max_age": 10,
     "max_length": 50,
     "multipart_box_name": "head",
@@ -153,6 +155,7 @@
     ],
     "cooldown_time_seconds": 20.0,
     "damage_scaling": 1.0,
+    "icon": "uselessreptile:mob_effect/shock",
     "max_radius": 40.0,
     "power": 1.0,
     "projectile_entity_nbt": {},

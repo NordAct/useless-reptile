@@ -20,5 +20,6 @@ public class UselessReptileClient implements ClientModInitializer {
         URRenderPipelines.init();
         URKeyMappings.init();
         URClientPayloadHandlers.init();
+        URHudElements.init();
     }
 }

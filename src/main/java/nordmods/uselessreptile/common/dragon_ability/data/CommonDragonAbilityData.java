@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.dragon_ability.data;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public record CommonDragonAbilityData(
+        Optional<Identifier> icon,
         float cooldownTimeSeconds,
         boolean blockOtherAbilitiesIfActive,
         List<ConditionedAnimation> animations,
@@ -22,6 +24,7 @@ public record CommonDragonAbilityData(
         Optional<URRideableDragonEntity.AttackType> attackType
 ) {
     public static final MapCodec<CommonDragonAbilityData> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+            Identifier.CODEC.optionalFieldOf("icon").forGetter(CommonDragonAbilityData::icon),
             ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("cooldown_time_seconds").forGetter(CommonDragonAbilityData::cooldownTimeSeconds),
             Codec.BOOL.fieldOf("block_other_abilities_if_active").forGetter(CommonDragonAbilityData::blockOtherAbilitiesIfActive),
             ConditionedAnimation.CODEC.listOf().fieldOf("animations").forGetter(CommonDragonAbilityData::animations),

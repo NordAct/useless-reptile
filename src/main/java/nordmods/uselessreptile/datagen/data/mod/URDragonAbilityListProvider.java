@@ -3,6 +3,7 @@ package nordmods.uselessreptile.datagen.data.mod;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_ability.*;
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
+//todo ability icons
 public class URDragonAbilityListProvider extends URAbstractDataProvider<List<DragonAbility>> {
     public URDragonAbilityListProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         super(output, registryLookupFuture, DragonAbility.CODEC.listOf(), "uselessreptile/abilities");
@@ -29,6 +31,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.of(Identifier.fromNamespaceAndPath("minecraft", "item/iron_sword")),
                                        1.5f,
                                        true,
                                        List.of(
@@ -132,6 +135,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         ),
                         new ShotAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.of(Identifier.fromNamespaceAndPath("minecraft", "item/bow")),
                                         4f,
                                         true,
                                         List.of(
@@ -217,6 +221,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.of(Identifier.fromNamespaceAndPath("minecraft", "item/iron_sword")),
                                         1.75f,
                                         true,
                                         List.of(
@@ -245,6 +250,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         ),
                         new BlockBreakingMeleeAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.of(Identifier.fromNamespaceAndPath("minecraft", "item/mace")),
                                         3f,
                                         true,
                                         List.of(
@@ -290,6 +296,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.empty(),
                                         1,
                                         true,
                                         List.of(
@@ -323,6 +330,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.empty(),
                                         1.5f,
                                         true,
                                         List.of(
@@ -356,6 +364,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.of(Identifier.fromNamespaceAndPath("minecraft", "item/iron_sword")),
                                         1.5f,
                                         true,
                                         List.of(
@@ -390,6 +399,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         ),
                         new LightningBreathAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.of(Identifier.fromNamespaceAndPath("minecraft", "item/crossbow_arrow")),
                                         5f,
                                         true,
                                         List.of(
@@ -471,6 +481,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         ),
                         new ShockwaveAttackAbility(
                                 new CommonDragonAbilityData(
+                                        Optional.of(UselessReptile.id("mob_effect/shock")),
                                         20f,
                                         true,
                                         List.of(

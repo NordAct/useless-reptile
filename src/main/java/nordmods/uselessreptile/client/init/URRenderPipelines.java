@@ -15,5 +15,12 @@ public class URRenderPipelines {
                     .build()
     );
 
+    public static final RenderPipeline GUI_DRAGON_ABILITY = RenderPipelines.register(
+            RenderPipeline
+                    .builder(RenderPipelines.GUI_TEXTURED_SNIPPET)
+                    .withLocation(UselessReptile.id("pipeline/gui_dragon_ability"))
+                    .build()
+    );
+
     public static void init() {}
 }
