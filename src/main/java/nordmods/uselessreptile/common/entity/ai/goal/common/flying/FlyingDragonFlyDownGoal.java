@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.entity.ai.goal.common;
+package nordmods.uselessreptile.common.entity.ai.goal.common.flying;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;

@@ -41,6 +41,7 @@ import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
+import nordmods.uselessreptile.common.entity.ai.goal.common.flying.*;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserBailOutGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRevengeGoal;
@@ -91,6 +92,8 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         super(entityType, world);
         xpReward = 20;
         ticksUntilHeal = 500;
+        setYawTargetLimit(90);
+        setPitchTargetLimit(90);
     }
 
     @Override
@@ -103,6 +106,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
     @Override
     protected void registerGoals() {
+        goalSelector.addGoal(1, new RideableDragonLockLookGoal(this));
         goalSelector.addGoal(1, new FloatGoal(this));
         goalSelector.addGoal(2, new FlyingDragonCallBackGoal<>(this));
         goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
@@ -113,8 +117,10 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 60));
         goalSelector.addGoal(8, new DragonReturnToHomePoint(this));
         goalSelector.addGoal(9, new DragonWanderAroundGoal(this));
-        goalSelector.addGoal(10, new FlyingDragonFlyAroundGoal<>(this, 30));
-        goalSelector.addGoal(11, new DragonLookAroundGoal(this));
+        goalSelector.addGoal(9, new FlyingDragonFlyAroundGoal<>(this, 30));
+        goalSelector.addGoal(10, new FlyingDragonLookAtEntityGoal<>(this, LivingEntity.class, 16));
+        goalSelector.addGoal(10, new FlyingDragonLookAroundGoal<>(this));
+        goalSelector.addGoal(11, new DragonLookAtPathTartetGoal(this));
         targetSelector.addGoal(1, new LightningChaserRevengeGoal(this));
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(2, new NonTameRandomTargetGoal<>(this, Player.class, true, null));

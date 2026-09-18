@@ -71,7 +71,7 @@ public class WyvernAttackGoal extends Goal {
                 entity.shoot();
         }
 
-        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return;
-        if (doesCollide) entity.meleeAttack();
+        if (doesCollide && entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0))
+            entity.meleeAttack();
     }
 }

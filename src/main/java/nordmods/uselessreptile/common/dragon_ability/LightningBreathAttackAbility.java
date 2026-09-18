@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
@@ -46,12 +47,24 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
         URDragonEntity entity = holder.getEntity();
         float pitch = entity.getXRot();
         float yaw =  entity.getYHeadRot();
+        Vec3 pos = getPos(entity);
+
+        if (entity.getControllingPassenger() == null && anchorPoint != AnchorPoint.EYES) {
+            Vec3 rot = new Vec3(
+                    entity.getLookControl().getWantedX(),
+                    entity.getLookControl().getWantedY(),
+                    entity.getLookControl().getWantedZ()
+            ).subtract(pos).normalize();
+            Vec2 rad = rot.rotation();
+            pitch = rad.x;
+            yaw = rad.y;
+        }
 
         LightningBreath.createBeam(
                 entity,
                 pitch,
                 yaw,
-                getPos(entity),
+                pos,
                 maxLength,
                 maxAge,
                 damageScaling,

@@ -7,13 +7,13 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
 
-public class DragonLookAroundGoal extends Goal {
-    protected final URDragonEntity mob;
+public class DragonLookAroundGoal<T extends URDragonEntity> extends Goal {
+    protected final T mob;
     protected int lookTimer;
     protected float x;
     protected float z;
 
-    public DragonLookAroundGoal(URDragonEntity mob) {
+    public DragonLookAroundGoal(T mob) {
         this.mob = mob;
         setFlags(EnumSet.of(Flag.LOOK));
     }

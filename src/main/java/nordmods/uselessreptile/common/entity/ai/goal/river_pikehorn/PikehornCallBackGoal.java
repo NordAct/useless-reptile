@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
-import nordmods.uselessreptile.common.entity.ai.goal.common.FlyingDragonCallBackGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonCallBackGoal;
 
 public class PikehornCallBackGoal extends FlyingDragonCallBackGoal<RiverPikehorn> {
     public PikehornCallBackGoal(RiverPikehorn entity) {

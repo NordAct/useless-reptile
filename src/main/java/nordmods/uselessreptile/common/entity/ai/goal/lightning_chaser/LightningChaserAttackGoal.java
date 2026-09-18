@@ -76,9 +76,11 @@ public class LightningChaserAttackGoal extends Goal {
         boolean canDamage = !target.isInvulnerableTo((ServerLevel) target.level(), entity.damageSources().source(DamageTypes.LIGHTNING_BOLT, entity)) && canSee;
         double desiredY = target.getY() + (canDamage ? 2 : 0) + target.getBbHeight();
         if (entity.onGround() && !entity.getSensing().hasLineOfSight(target) && canDamage) entity.forceFlightNextTick();
+        entity.getLookControl().setLookAt(target);
+        if (entity.getNavigation().isDone() && canSee) {
+            entity.getBodyRotationControl().setRotationTarget(target);
+        }
 
-        if (entity.getNavigation().isDone())
-            entity.getLookControl().setLookAt(target);
         if (distance < MIN_DISTANCE_SQUARED && canDamage) { //too close
             entity.getNavigation().stop();
             entity.getMoveControl().moveBack();
@@ -121,7 +123,7 @@ public class LightningChaserAttackGoal extends Goal {
     }
 
     private boolean tryMeleeAttack() {
-        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return false;
+        if (entity.getAvailableAbilities().stream().noneMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return false;
         if (entity.isFlying()) return false;
         boolean doesCollide = entity.getPrimaryAttackBox().intersects(target.getBoundingBox());
         if (!doesCollide) return false;
@@ -131,7 +133,7 @@ public class LightningChaserAttackGoal extends Goal {
     }
 
     private boolean tryRangedAttack() {
-        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK) && a.getCooldown() <= 0)) return false;
+        if (entity.getAvailableAbilities().stream().noneMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK) && a.getCooldown() <= 0)) return false;
         if (!entity.getLookControl().isLookingAtTarget()) return false;
         double distance = entity.distanceToSqr(target);
         if (distance > MAX_DISTANCE_SQUARED || distance < MIN_DISTANCE_SQUARED) return false;
@@ -141,7 +143,7 @@ public class LightningChaserAttackGoal extends Goal {
     }
 
     private boolean tryShockwaveAttack() { //todo redo attack goals
-        if (entity.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.SHOCKWAVE_ATTACK) && a.getCooldown() <= 0)) return false;
+        if (entity.getAvailableAbilities().stream().noneMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.SHOCKWAVE_ATTACK) && a.getCooldown() <= 0)) return false;
         if (!entity.isFlying()) return false;
         //double attackDistance = ShockwaveSphere.MAX_RADIUS * ShockwaveSphere.MAX_RADIUS * 0.49;
         double attackDistance = 40 * 40 * 0.49;

@@ -1,5 +1,6 @@
-package nordmods.uselessreptile.common.entity.ai.goal.common;
+package nordmods.uselessreptile.common.entity.ai.goal.common.flying;
 
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonCallBackGoal;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
