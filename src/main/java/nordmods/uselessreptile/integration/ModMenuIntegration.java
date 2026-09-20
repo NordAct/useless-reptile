@@ -20,6 +20,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import nordmods.uselessreptile.client.config.URClientConfig;
+import nordmods.uselessreptile.client.gui.DragonAbilityElement;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -315,7 +316,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .name(Component.translatable("config.uselessreptile.option.allowDragonTeleport"))
                 .description(OptionDescription.createBuilder()
                         .text(Component.translatable("config.uselessreptile.option.allowDragonTeleport.@Tooltip")).build())
-                .binding(config.allowDragonTeleport,
+                .binding(defaults.allowDragonTeleport,
                         () -> config.allowDragonTeleport,
                         val -> config.allowDragonTeleport = val)
                 .customController(BooleanController::new)
@@ -324,7 +325,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .name(Component.translatable("config.uselessreptile.option.dragonMadness"))
                 .description(OptionDescription.createBuilder()
                         .text(Component.translatable("config.uselessreptile.option.dragonMadness.@Tooltip")).build())
-                .binding(config.dragonMadness,
+                .binding(defaults.dragonMadness,
                         () -> config.dragonMadness,
                         val -> config.dragonMadness = val)
                 .customController(BooleanController::new)
@@ -333,7 +334,7 @@ public class ModMenuIntegration implements ModMenuApi {
                 .name(Component.translatable("config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier"))
                 .description(OptionDescription.createBuilder()
                         .text(Component.translatable("config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier.@Tooltip")).build())
-                .binding(config.magmamuncherFireResistanceTimeMultiplier,
+                .binding(defaults.magmamuncherFireResistanceTimeMultiplier,
                         () -> config.magmamuncherFireResistanceTimeMultiplier,
                         val -> config.magmamuncherFireResistanceTimeMultiplier = val)
                 .customController(opt -> new FloatFieldController(opt, 0, Float.MAX_VALUE))
@@ -395,6 +396,10 @@ public class ModMenuIntegration implements ModMenuApi {
                 .name(Component.translatable("config.uselessreptile.group.dragonAppearance"))
                 .description(OptionDescription.createBuilder()
                         .text(Component.translatable("config.uselessreptile.group.dragonAppearance.@Tooltip")).build());
+        OptionGroup.Builder guiGroup = OptionGroup.createBuilder()
+                .name(Component.translatable("config.uselessreptile.group.gui"))
+                .description(OptionDescription.createBuilder()
+                        .text(Component.translatable("config.uselessreptile.group.gui.@Tooltip")).build());
 
 
         Option<Float> cameraDistanceOffset = Option.<Float>createBuilder()
@@ -520,6 +525,51 @@ public class ModMenuIntegration implements ModMenuApi {
                 .customController(opt -> new EnumController<>(opt, URClientConfig.PassengerVisibility.class))
                 .build();
 
+        Option<Integer> primaryAbilityIconOffsetX = Option.<Integer>createBuilder()
+                .name(Component.translatable("config.uselessreptile.option.primaryAbilityIconOffsetX"))
+                .binding(clientDefaults.primaryAbilityIconOffsetX,
+                        () -> clientConfig.primaryAbilityIconOffsetX,
+                        val -> clientConfig.primaryAbilityIconOffsetX = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> primaryAbilityIconOffsetY = Option.<Integer>createBuilder()
+                .name(Component.translatable("config.uselessreptile.option.primaryAbilityIconOffsetY"))
+                .binding(clientDefaults.primaryAbilityIconOffsetY,
+                        () -> clientConfig.primaryAbilityIconOffsetY,
+                        val -> clientConfig.primaryAbilityIconOffsetY = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> secondaryAbilityIconOffsetX = Option.<Integer>createBuilder()
+                .name(Component.translatable("config.uselessreptile.option.secondaryAbilityIconOffsetX"))
+                .binding(clientDefaults.secondaryAbilityIconOffsetX,
+                        () -> clientConfig.secondaryAbilityIconOffsetX,
+                        val -> clientConfig.secondaryAbilityIconOffsetX = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<Integer> secondaryAbilityIconOffsetY = Option.<Integer>createBuilder()
+                .name(Component.translatable("config.uselessreptile.option.secondaryAbilityIconOffsetY"))
+                .binding(clientDefaults.secondaryAbilityIconOffsetY,
+                        () -> clientConfig.secondaryAbilityIconOffsetY,
+                        val -> clientConfig.secondaryAbilityIconOffsetY = val)
+                .customController(IntegerFieldController::new)
+                .build();
+        Option<DragonAbilityElement.AbilityIconOffsetPreset> abilityIconOffsetsPreset = Option.<DragonAbilityElement.AbilityIconOffsetPreset>createBuilder()
+                .name(Component.translatable("config.uselessreptile.option.abilityIconOffsetsPreset"))
+                .description(OptionDescription.createBuilder()
+                        .text(Component.translatable("config.uselessreptile.option.primaryAbilityIconOffsetX.@Tooltip")).build())
+                .binding(clientDefaults.abilityIconOffsetsPreset,
+                        () -> clientConfig.abilityIconOffsetsPreset,
+                        val -> clientConfig.abilityIconOffsetsPreset = val)
+                .customController(opt -> new EnumController<>(opt, DragonAbilityElement.AbilityIconOffsetPreset.class))
+                .addListener((option, _) -> {
+                    boolean custom = option.pendingValue() == DragonAbilityElement.AbilityIconOffsetPreset.CUSTOM;
+                    primaryAbilityIconOffsetX.setAvailable(custom);
+                    primaryAbilityIconOffsetY.setAvailable(custom);
+                    secondaryAbilityIconOffsetX.setAvailable(custom);
+                    secondaryAbilityIconOffsetY.setAvailable(custom);
+                })
+                .build();
+
         cameraGroup.option(cameraDistanceOffset);
         cameraGroup.option(cameraVerticalOffset);
         cameraGroup.option(cameraHorizontalOffset);
@@ -536,8 +586,15 @@ public class ModMenuIntegration implements ModMenuApi {
         dragonAppearanceGroup.option(renderPassengers);
         dragonAppearanceGroup.option(attackBoxesInDebug);
 
+        guiGroup.option(abilityIconOffsetsPreset);
+        guiGroup.option(primaryAbilityIconOffsetX);
+        guiGroup.option(primaryAbilityIconOffsetY);
+        guiGroup.option(secondaryAbilityIconOffsetX);
+        guiGroup.option(secondaryAbilityIconOffsetY);
+
         clientCategory.group(cameraGroup.build());
         clientCategory.group(dragonAppearanceGroup.build());
+        clientCategory.group(guiGroup.build());
 
         return clientCategory.build();
     }

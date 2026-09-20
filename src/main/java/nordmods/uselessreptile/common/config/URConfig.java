@@ -16,7 +16,7 @@ public class URConfig {
             .build();
 
     //COMMON
-    @SerialEntry(comment = "IN WORLD SPAWN \nNatural spawn means dragon can spawn randomly in same manner as any other normal mob if conditions are met")
+    @SerialEntry(comment = "Note: you can edit this config in game by installing Mod Menu and opening config menu in it \nIN WORLD SPAWN \nNatural spawn means dragon can spawn randomly in same manner as any other normal mob if conditions are met")
     public boolean naturalWyvernSpawn = true;
     @SerialEntry
     public boolean naturalMoleclawSpawn = true;

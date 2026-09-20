@@ -72,8 +72,8 @@
   "entity.uselessreptile.magmamuncher": "Магмаед",
 
   "key.category.uselessreptile.main": "Useless Reptile - Управление",
-  "key.uselessreptile.primaryAttackKey": "Основная атака",
-  "key.uselessreptile.secondaryAttackKey": "Вторичная атака",
+  "key.uselessreptile.primaryAbilityKey": "Основная способность",
+  "key.uselessreptile.secondaryAbilityKey": "Вторичная способность",
   "key.uselessreptile.flyDownKey": "Лететь вниз",
   "key.uselessreptile.flyUpKey": "Лететь вверх",
   "key.uselessreptile.freeLookKey": "Свободный обзор",
@@ -169,6 +169,11 @@
   "config.uselessreptile.option.magmamuncherMaxGroupSize": "Максимальный размер группы магмаедов",
   "config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier": "Множитель времени огнестойкости от магмаеда",
   "config.uselessreptile.option.enableCameraRoll": "Включить горизонтальный наклон камеры",
+  "config.uselessreptile.option.primaryAbilityIconOffsetX": "Сдвиг иконки основной способности по оси X",
+  "config.uselessreptile.option.primaryAbilityIconOffsetY": "Сдвиг иконки основной способности по оси Y",
+  "config.uselessreptile.option.secondaryAbilityIconOffsetX": "Сдвиг иконки вторичной способности по оси X",
+  "config.uselessreptile.option.secondaryAbilityIconOffsetY": "Сдвиг иконки вторичной способности по оси Y",
+  "config.uselessreptile.option.abilityIconOffsetsPreset": "Преднастройка сдвигов иконок способностей",
 
   "config.uselessreptile.requires_restart.@Tooltip" : "\nИзменение данной опции требует перезапуска игры",
   "config.uselessreptile.group.mobCategories.@Tooltip": "Вместимость категорий сущностей, добавленных данным модом",
@@ -216,6 +221,8 @@
   "config.uselessreptile.option.upDownCameraPitchThreshold.@Tooltip": "Определяет минимальное отклонение угла наклона камеры для активации ввода вверх/вниз",
   "config.uselessreptile.option.magmamuncherFireResistanceTimeMultiplier.@Tooltip": "Определяет насколько долго будет длиться огнестойкость при поедании магмаедом топливных предметов. \nУстановка этого значения на 0 отключает эту способность",
   "config.uselessreptile.option.enableCameraRoll.@Tooltip": "Добавляет горизонтальный наклон камере при езде на драконе. Отключите эту настройку, если вас укачивает от наклона",
+  "config.uselessreptile.option.primaryAbilityIconOffsetX.@Tooltip": "Допустимые значения: \n§3RIGHT §f(правая сторона хотбара), \n§3RIGHT_WITH_OFFHAND_OFFSET §f(правая сторона хотбара со сдвигом для слота второй руки), \n§3LEFT §f(левая сторона хотбара), \n§3LEFT_WITH_OFFHAND_OFFSET §f(левая сторона хотбара со сдвигом для слота второй руки), \n§3CUSTOM §f(применяет значения из списка ниже)",
+
 
   "effect.uselessreptile.acid": "Кислота",
   "effect.uselessreptile.shock": "Шок",

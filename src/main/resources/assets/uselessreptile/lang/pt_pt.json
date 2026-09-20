@@ -36,8 +36,8 @@
     "entity.uselessreptile.river_pikehorn": "Lúciochifre do rio",
 
     "key.category.uselessreptile": "Controles de réptil inútil",
-    "key.uselessreptile.primaryAttackKey": "Ataque primario",
-    "key.uselessreptile.secondaryAttackKey": "Ataque secundário",
+    "key.uselessreptile.primaryAbilityKey": "Ataque primario",
+    "key.uselessreptile.secondaryAbilityKey": "Ataque secundário",
     "key.uselessreptile.flyDownKey": "Voar para baixo",
     "key.uselessreptile.flyUpKey": "Voar para cima",
     "subtitles.uselessreptile.wyvern.hurt": "Serpe do pântano machucada",

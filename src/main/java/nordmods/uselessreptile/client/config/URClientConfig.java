@@ -5,6 +5,7 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.client.gui.DragonAbilityElement;
 
 public class URClientConfig {
     public static final ConfigClassHandler<URClientConfig> CONFIG = ConfigClassHandler.createBuilder(URClientConfig.class)
@@ -15,7 +16,7 @@ public class URClientConfig {
                     .build())
             .build();
 
-    @SerialEntry(comment = "CAMERA SETTINGS")
+    @SerialEntry(comment = "Note: you can edit this config in game by installing Mod Menu and opening config menu in it \nCAMERA SETTINGS")
     public float cameraDistanceOffset = 2;
     @SerialEntry
     public float cameraVerticalOffset = 0;
@@ -33,6 +34,7 @@ public class URClientConfig {
     public boolean upDownCameraControl = false;
     @SerialEntry
     public float upDownCameraPitchThreshold = 30;
+
     @SerialEntry(comment = "DRAGON APPEARANCE")
     public boolean disableNamedEntityModels = false;
     @SerialEntry
@@ -43,6 +45,17 @@ public class URClientConfig {
     public PassengerVisibility renderPassengers = PassengerVisibility.ALL;
     @SerialEntry(comment = "displays area in which dragon can deal damage for melee attacks")
     public boolean attackBoxesInDebug = false;
+
+    @SerialEntry(comment = "GUI (I highly recommend editing this one via in-game config screen)\npossible values: RIGHT, RIGHT_WITH_OFFHAND_OFFSET, LEFT, LEFT_WITH_OFFHAND_OFFSET, CUSTOM (values below will be used instead)")
+    public DragonAbilityElement.AbilityIconOffsetPreset abilityIconOffsetsPreset = DragonAbilityElement.AbilityIconOffsetPreset.RIGHT;
+    @SerialEntry
+    public int primaryAbilityIconOffsetX = DragonAbilityElement.AbilityIconOffsetPreset.RIGHT.getPrimaryAbilityIconOffsetX();
+    @SerialEntry
+    public int primaryAbilityIconOffsetY = DragonAbilityElement.AbilityIconOffsetPreset.RIGHT.getPrimaryAbilityIconOffsetY();
+    @SerialEntry
+    public int secondaryAbilityIconOffsetX = DragonAbilityElement.AbilityIconOffsetPreset.RIGHT.getSecondaryAbilityIconOffsetX();
+    @SerialEntry
+    public int secondaryAbilityIconOffsetY = DragonAbilityElement.AbilityIconOffsetPreset.RIGHT.getSecondaryAbilityIconOffsetY();
 
 
     public static URClientConfig getConfig() {

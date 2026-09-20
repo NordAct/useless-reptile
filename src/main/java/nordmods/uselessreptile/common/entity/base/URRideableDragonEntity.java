@@ -303,8 +303,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                     || (URClientConfig.getConfig().upDownCameraControl
                         && hasVerticalInput()
                         && player.getXRot() > URClientConfig.getConfig().upDownCameraPitchThreshold);
-            boolean isSecondaryAttackPressed = URKeyMappings.SECONDARY_ATTACK_KEY.isDown();
-            boolean isPrimaryAttackPressed = URKeyMappings.PRIMARY_ATTACK_KEY.isDown();
+            boolean isSecondaryAttackPressed = URKeyMappings.SECONDARY_ABILITY_KEY.isDown();
+            boolean isPrimaryAttackPressed = URKeyMappings.PRIMARY_ABILITY_KEY.isDown();
             boolean freeLook = URKeyMappings.FREE_LOOK_KEY.isDown();
 
             if (isSprintPressed != isSprintPressed()

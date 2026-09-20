@@ -45,8 +45,8 @@
   "entity.uselessreptile.lightning_chaser": "Người Săn Sét",
 
   "key.category.uselessreptile": "Điều khiển Bò sát vô dụng",
-  "key.uselessreptile.primaryAttackKey": "Tấn công chính",
-  "key.uselessreptile.secondaryAttackKey": "Tấn công phụ",
+  "key.uselessreptile.primaryAbilityKey": "Tấn công chính",
+  "key.uselessreptile.secondaryAbilityKey": "Tấn công phụ",
   "key.uselessreptile.flyDownKey": "Bay xuống",
   "key.uselessreptile.flyUpKey": "Bay lên",
 
