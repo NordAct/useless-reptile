@@ -6,7 +6,7 @@ import net.minecraft.gizmos.Gizmos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.client.config.URClientConfig;
-import nordmods.uselessreptile.common.dragon_ability.MeleeAttackAbility;
+import nordmods.uselessreptile.common.dragon_ability.type.MeleeAttackAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.spongepowered.asm.mixin.Mixin;

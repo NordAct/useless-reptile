@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.dragon_ability;
+package nordmods.uselessreptile.common.dragon_ability.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -12,8 +12,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
-import nordmods.uselessreptile.common.dragon_ability.data.UseCondition;
+import nordmods.uselessreptile.common.dragon_ability.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.UseCondition;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;

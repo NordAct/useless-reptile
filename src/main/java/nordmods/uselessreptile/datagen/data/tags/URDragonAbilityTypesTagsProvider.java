@@ -3,7 +3,7 @@ package nordmods.uselessreptile.datagen.data.tags;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
-import nordmods.uselessreptile.common.dragon_ability.DragonAbilityType;
+import nordmods.uselessreptile.common.dragon_ability.type.DragonAbilityType;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 import nordmods.uselessreptile.common.init.URTags;

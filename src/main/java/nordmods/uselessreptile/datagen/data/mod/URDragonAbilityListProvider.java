@@ -6,7 +6,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_ability.*;
-import nordmods.uselessreptile.common.dragon_ability.data.*;
+import nordmods.uselessreptile.common.dragon_ability.type.*;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.*;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
@@ -38,11 +39,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                        List.of("attack.melee1", "attack.melee2", "attack.melee3"),
                                                        true,
                                                        List.of(
-                                                               new FlyingMovementUseCondition(
-                                                                       Optional.of(false),
-                                                                       Optional.empty(),
-                                                                       Optional.empty()
-                                                               )
+                                                               new FlyingUseCondition(false)
                                                        )
                                                ),
                                                new CommonDragonAbilityData.ConditionedAnimation(
@@ -50,11 +47,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                        List.of("fly.attack"),
                                                        true,
                                                        List.of(
-                                                               new FlyingMovementUseCondition(
-                                                                       Optional.of(true),
-                                                                       Optional.empty(),
-                                                                       Optional.empty()
-                                                               )
+                                                               new FlyingUseCondition(true)
                                                        )
                                                )
                                        ),
@@ -71,11 +64,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                 new Vec3(0, -0.5, 1.75),
                                                 MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
                                                 List.of(
-                                                        new FlyingMovementUseCondition(
-                                                                Optional.of(false),
-                                                                Optional.empty(),
-                                                                Optional.empty()
-                                                        )
+                                                        new FlyingUseCondition(false)
                                                 )
                                         ),
                                         new MeleeAttackAbility.ConditionedAttackBox(
@@ -83,16 +72,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                 new Vec3(0, -1, 1.5),
                                                 MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
                                                 List.of(
-                                                        new FlyingMovementUseCondition(
-                                                                Optional.of(true),
-                                                                Optional.empty(),
-                                                                Optional.empty()
-                                                        ),
-                                                        new MovementUseCondition(
-                                                                Optional.of(false),
-                                                                Optional.empty(),
-                                                                Optional.empty()
-                                                        )
+                                                        new FlyingUseCondition(true),
+                                                        new MovingUseCondition(false, false)
                                                 )
                                         ),
                                         new MeleeAttackAbility.ConditionedAttackBox(
@@ -100,16 +81,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                 new Vec3(0, -1, 1.5),
                                                 MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
                                                 List.of(
-                                                        new FlyingMovementUseCondition(
-                                                                Optional.of(true),
-                                                                Optional.empty(),
-                                                                Optional.empty()
-                                                        ),
-                                                        new MovementUseCondition(
-                                                                Optional.empty(),
-                                                                Optional.of(true),
-                                                                Optional.empty()
-                                                        )
+                                                        new FlyingUseCondition(true),
+                                                        new MovingUseCondition(true, true)
                                                 )
                                         ),
                                         new MeleeAttackAbility.ConditionedAttackBox(
@@ -117,16 +90,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                 new Vec3(0, -1, 1.5),
                                                 MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
                                                 List.of(
-                                                        new FlyingMovementUseCondition(
-                                                                Optional.of(true),
-                                                                Optional.empty(),
-                                                                Optional.empty()
-                                                        ),
-                                                        new MovementUseCondition(
-                                                                Optional.of(true),
-                                                                Optional.of(false),
-                                                                Optional.empty()
-                                                        )
+                                                        new FlyingUseCondition(true),
+                                                        new MovingUseCondition(true, false)
                                                 )
                                         )
                                 )
@@ -142,16 +107,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of("attack.fly.range"),
                                                         true,
                                                         List.of(
-                                                                new FlyingMovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                ),
-                                                                new MovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.of(false),
-                                                                        Optional.empty()
-                                                                )
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(true, false)
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
@@ -159,16 +116,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of("attack.range"),
                                                         true,
                                                         List.of(
-                                                                new FlyingMovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                ),
-                                                                new MovementUseCondition(
-                                                                        Optional.of(false),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                )
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(false, false)
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
@@ -176,16 +125,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of("attack.range"),
                                                         true,
                                                         List.of(
-                                                                new FlyingMovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                ),
-                                                                new MovementUseCondition(
-                                                                        Optional.empty(),
-                                                                        Optional.of(true),
-                                                                        Optional.empty()
-                                                                )
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(true, true)
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
@@ -193,11 +134,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of("attack.range"),
                                                         true,
                                                         List.of(
-                                                                new FlyingMovementUseCondition(
-                                                                        Optional.of(false),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                )
+                                                                new FlyingUseCondition(false)
                                                         )
                                                 )
                                         ),
@@ -374,11 +311,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                 )
                                         ),
                                         List.of(
-                                                new FlyingMovementUseCondition(
-                                                        Optional.of(false),
-                                                        Optional.empty(),
-                                                        Optional.empty()
-                                                )
+                                                new FlyingUseCondition(false)
                                         ),
                                         Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
                                 ),
@@ -406,11 +339,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of("attack.range"),
                                                         true,
                                                         List.of(
-                                                                new FlyingMovementUseCondition(
-                                                                        Optional.of(false),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                )
+                                                                new FlyingUseCondition(false)
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
@@ -418,16 +347,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of("attack.range.fly"),
                                                         true,
                                                         List.of(
-                                                                new FlyingMovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                ),
-                                                                new MovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.of(false),
-                                                                        Optional.empty()
-                                                                )
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(true, false)
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
@@ -435,16 +356,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of("attack.range.fly.idle"),
                                                         true,
                                                         List.of(
-                                                                new FlyingMovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                ),
-                                                                new MovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.of(true),
-                                                                        Optional.empty()
-                                                                )
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(true, true)
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
@@ -452,16 +365,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                         List.of("attack.range.fly.idle"),
                                                         true,
                                                         List.of(
-                                                                new FlyingMovementUseCondition(
-                                                                        Optional.of(true),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                ),
-                                                                new MovementUseCondition(
-                                                                        Optional.of(false),
-                                                                        Optional.empty(),
-                                                                        Optional.empty()
-                                                                )
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(false, false)
                                                         )
                                                 )
                                         ),
@@ -491,11 +396,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                                 )
                                         ),
                                         List.of(
-                                                new FlyingMovementUseCondition(
-                                                        Optional.of(true),
-                                                        Optional.empty(),
-                                                        Optional.empty()
-                                                )
+                                                new FlyingUseCondition(true)
                                         ),
                                         Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
                                 ),

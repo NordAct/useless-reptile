@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.dragon_ability.data;
+package nordmods.uselessreptile.common.dragon_ability.use_condition;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -7,9 +7,7 @@ import nordmods.uselessreptile.common.entity.Moleclaw;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URUseConditionTypes;
 
-public record MoleclawUseCondition(
-       boolean isPanicking
-) implements UseCondition {
+public record MoleclawUseCondition(boolean isPanicking) implements UseCondition {
     public static final MapCodec<MoleclawUseCondition> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Codec.BOOL.fieldOf("is_panicking").forGetter(MoleclawUseCondition::isPanicking)
     ).apply(i, MoleclawUseCondition::new));

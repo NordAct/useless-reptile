@@ -1,8 +1,9 @@
-package nordmods.uselessreptile.common.dragon_ability;
+package nordmods.uselessreptile.common.dragon_ability.type;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.Identifier;
-import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
@@ -10,7 +11,7 @@ import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import java.util.List;
 import java.util.Optional;
 
-public class NoopAbility implements DragonAbility{
+public class NoopAbility implements DragonAbility {
     private final CommonDragonAbilityData commonDragonAbilityData = new CommonDragonAbilityData(
             Optional.of(Identifier.fromNamespaceAndPath("minecraft", "textures/item/barrier.png")),
             0,

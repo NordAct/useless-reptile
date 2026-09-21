@@ -6,7 +6,7 @@ import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.resource_managers.BRAnimationManager;
 import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 

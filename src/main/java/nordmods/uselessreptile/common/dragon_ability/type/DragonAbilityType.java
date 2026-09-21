@@ -1,8 +1,9 @@
-package nordmods.uselessreptile.common.dragon_ability;
+package nordmods.uselessreptile.common.dragon_ability.type;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
 import nordmods.uselessreptile.common.init.URRegistries;
 import org.jspecify.annotations.Nullable;
 

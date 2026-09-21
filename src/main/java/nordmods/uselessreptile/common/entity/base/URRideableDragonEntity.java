@@ -29,7 +29,7 @@ import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
 import nordmods.uselessreptile.client.util.duck.PassengerCameraRollOwner;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
-import nordmods.uselessreptile.common.dragon_ability.NoopAbility;
+import nordmods.uselessreptile.common.dragon_ability.type.NoopAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.animation_processor.EquipmentAnimationProcessor;
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;

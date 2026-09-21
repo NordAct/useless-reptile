@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.dragon_ability;
+package nordmods.uselessreptile.common.dragon_ability.type;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -8,7 +8,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.level.block.state.BlockState;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.dragon_ability.data.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.event.DragonGetBlockMiningLevelEvent;

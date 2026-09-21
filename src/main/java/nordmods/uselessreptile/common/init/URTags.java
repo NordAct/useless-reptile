@@ -10,7 +10,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.dimension.DimensionType;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.dragon_ability.DragonAbilityType;
+import nordmods.uselessreptile.common.dragon_ability.type.DragonAbilityType;
 
 public class URTags {
     public static final TagKey<Block> DRAGON_UNBREAKABLE = register(Registries.BLOCK, "dragon_unbreakable");

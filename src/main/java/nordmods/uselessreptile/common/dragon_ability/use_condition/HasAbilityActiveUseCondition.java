@@ -1,8 +1,8 @@
-package nordmods.uselessreptile.common.dragon_ability.data;
+package nordmods.uselessreptile.common.dragon_ability.use_condition;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import nordmods.uselessreptile.common.dragon_ability.DragonAbilityType;
+import nordmods.uselessreptile.common.dragon_ability.type.DragonAbilityType;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URRegistries;
 import nordmods.uselessreptile.common.init.URUseConditionTypes;

@@ -3,7 +3,8 @@ package nordmods.uselessreptile.common.init;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.dragon_ability.*;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
+import nordmods.uselessreptile.common.dragon_ability.type.*;
 
 public class URDragonAbilityTypes {
     public static final DragonAbilityType<MeleeAttackAbility> MELEE_ATTACK = register("melee_attack", new DragonAbilityType<>(MeleeAttackAbility.MAP_CODEC));

@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.dragon_ability.data;
+package nordmods.uselessreptile.common.dragon_ability.use_condition;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.resources.Identifier;

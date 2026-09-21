@@ -12,7 +12,7 @@
         "can_interrupt_playing_ability_animation": true,
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": false
           }
         ],
@@ -25,7 +25,7 @@
         "can_interrupt_playing_ability_animation": true,
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": true
           }
         ],
@@ -42,7 +42,7 @@
         ],
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": false
           }
         ],
@@ -58,11 +58,12 @@
         ],
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": true
           },
           {
-            "type": "uselessreptile:movement",
+            "type": "uselessreptile:moving",
+            "backwards": false,
             "moving": false
           }
         ],
@@ -78,12 +79,13 @@
         ],
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": true
           },
           {
-            "type": "uselessreptile:movement",
-            "moving_backwards": true
+            "type": "uselessreptile:moving",
+            "backwards": true,
+            "moving": true
           }
         ],
         "height": 5.5,
@@ -98,13 +100,13 @@
         ],
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": true
           },
           {
-            "type": "uselessreptile:movement",
-            "moving": true,
-            "moving_backwards": false
+            "type": "uselessreptile:moving",
+            "backwards": true,
+            "moving": true
           }
         ],
         "height": 4.5,
@@ -138,13 +140,13 @@
         "can_interrupt_playing_ability_animation": true,
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": true
           },
           {
-            "type": "uselessreptile:movement",
-            "moving": true,
-            "moving_backwards": false
+            "type": "uselessreptile:moving",
+            "backwards": true,
+            "moving": true
           }
         ],
         "controller": "attack"
@@ -156,11 +158,12 @@
         "can_interrupt_playing_ability_animation": true,
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": true
           },
           {
-            "type": "uselessreptile:movement",
+            "type": "uselessreptile:moving",
+            "backwards": false,
             "moving": false
           }
         ],
@@ -173,12 +176,13 @@
         "can_interrupt_playing_ability_animation": true,
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": true
           },
           {
-            "type": "uselessreptile:movement",
-            "moving_backwards": true
+            "type": "uselessreptile:moving",
+            "backwards": true,
+            "moving": true
           }
         ],
         "controller": "attack"
@@ -190,7 +194,7 @@
         "can_interrupt_playing_ability_animation": true,
         "conditions": [
           {
-            "type": "uselessreptile:flying_movement",
+            "type": "uselessreptile:flying",
             "flying": false
           }
         ],

@@ -3,11 +3,13 @@ package nordmods.uselessreptile.common.init;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.Identifier;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.dragon_ability.data.*;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.*;
 
 public class URUseConditionTypes {
-    public static final UseConditionType<MovementUseCondition> MOVEMENT = register("movement", new UseConditionType<>(MovementUseCondition.MAP_CODEC));
-    public static final UseConditionType<FlyingMovementUseCondition> FLYING_MOVEMENT = register("flying_movement", new UseConditionType<>(FlyingMovementUseCondition.MAP_CODEC));
+    public static final UseConditionType<MovingUseCondition> MOVING = register("moving", new UseConditionType<>(MovingUseCondition.MAP_CODEC));
+    public static final UseConditionType<TurningStateUseCondition> TURNING_STATE = register("turning_state", new UseConditionType<>(TurningStateUseCondition.MAP_CODEC));
+    public static final UseConditionType<FlyingUseCondition> FLYING = register("flying", new UseConditionType<>(FlyingUseCondition.MAP_CODEC));
+    public static final UseConditionType<TiltStateUseCondition> TILT_STATE = register("tilt_state", new UseConditionType<>(TiltStateUseCondition.MAP_CODEC));
     public static final UseConditionType<RideableUseCondition> RIDEABLE = register("rideable", new UseConditionType<>(RideableUseCondition.MAP_CODEC));
     public static final UseConditionType<HeadMountUseCondition> HEAD_MOUNT = register("head_mount", new UseConditionType<>(HeadMountUseCondition.MAP_CODEC));
     public static final UseConditionType<MoleclawUseCondition> MOLECLAW = register("moleclaw", new UseConditionType<>(MoleclawUseCondition.MAP_CODEC));

@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
-import nordmods.uselessreptile.common.dragon_ability.NoopAbility;
+import nordmods.uselessreptile.common.dragon_ability.type.NoopAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import org.jspecify.annotations.NonNull;
