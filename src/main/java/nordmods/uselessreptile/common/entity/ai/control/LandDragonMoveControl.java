@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class LandDragonMoveControl <T extends URDragonEntity> extends MoveControl {
+public class LandDragonMoveControl <T extends URDragonEntity> extends MoveControl implements URDragonMoveControl{
     private final T entity;
 
     public LandDragonMoveControl(T entity) {

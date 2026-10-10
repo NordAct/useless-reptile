@@ -213,10 +213,6 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         return (float) getAttributeValue(URAttributes.DRAGON_VERTICAL_SPEED);
     }
 
-    @Override
-    public @NonNull FlyingDragonMoveControl<? extends FlyingDragon> getMoveControl() {
-        return (FlyingDragonMoveControl<?>) moveControl;
-    }
 
     public void forceFlightNextTick() {
         forceFlight = true;

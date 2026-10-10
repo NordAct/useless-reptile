@@ -21,9 +21,10 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
     @Override
     public void tick() {
-        checkFlight(mob.isInWater() && mob.getFluidHeight(FluidTags.WATER) > mob.getFluidJumpThreshold() && !mob.hasTargetInWater() || mob.isInLava());
-        mob.setPathfindingMalus(PathType.WATER, !mob.hasTargetInWater() ? 8 : 0);
-        mob.setPathfindingMalus(PathType.WATER_BORDER, !mob.hasTargetInWater() ? 8 : 0);
+        boolean targetInWater = mob.hasTargetInWater();
+        checkFlight(mob.isInWater() && mob.getFluidHeight(FluidTags.WATER) > mob.getFluidJumpThreshold() && !targetInWater || mob.isInLava());
+        mob.setPathfindingMalus(PathType.WATER, targetInWater ? 0 : 8);
+        mob.setPathfindingMalus(PathType.WATER_BORDER, targetInWater ? 0 : 8);
 
         tick++;
 
@@ -64,7 +65,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
     protected void moveOrStop(BlockPos target) {
         double distance = mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
-        maxDistanceToWaypoint = Math.clamp(mob.getBbWidth() / 2, 0, 1) ;
+        maxDistanceToWaypoint = Math.clamp(mob.isFlying() ? mob.getBbWidth() : mob.getBbWidth() / 2, 0, 1) ;
         if (distance <= maxDistanceToWaypoint) stop();
     }
 

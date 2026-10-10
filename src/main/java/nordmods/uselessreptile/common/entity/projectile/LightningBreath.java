@@ -40,6 +40,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
     public float prevAlpha = 0.5f;
     public float damageScaling = 2;
     private float defaultDamage = 16;
+    private int blockBreakPower = 3;
     public final LightningBreathBolt[] lightningBreathBolts = new LightningBreathBolt[3];
 
     public LightningBreath(EntityType<? extends Projectile> entityType, Level world, Entity owner) {
@@ -127,7 +128,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
             if (getOwner() instanceof URDragonEntity dragon && !dragon.canBreakBlocks()) return;
 
             Iterable<BlockPos> blocks = BlockPos.withinManhattan(blockPosition(), 2, 1, 2);
-            float harnessLimit = 3;
+            float harnessLimit = blockBreakPower;
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {
                 BlockState blockState = level().getBlockState(blockPos);
@@ -213,7 +214,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         return damageScaling;
     }
 
-    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos, int maxLength, int maxAge, float damageScaling, int color) {
+    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos, int maxLength, int maxAge, float damageScaling, int color, int blockBreakPower) {
         Vec3 rot = owner.calculateViewVector(pitch, yaw);
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreath firstSegment = null;
@@ -227,6 +228,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
             lightningBreathEntity.setMaxAge(maxAge);
             lightningBreathEntity.setColor(color);
             lightningBreathEntity.damageScaling = damageScaling;
+            lightningBreathEntity.blockBreakPower = blockBreakPower;
             world.addFreshEntity(lightningBreathEntity);
             if (i == 1) firstSegment = lightningBreathEntity;
 

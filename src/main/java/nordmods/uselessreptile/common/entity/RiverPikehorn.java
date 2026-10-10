@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.entity;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -12,47 +13,47 @@ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
+import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonFlyAroundGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonFlyDownGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornCallBackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.RiverPikehornHuntTargetGoal;
 import nordmods.uselessreptile.common.entity.base.GathererDragon;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URFluteModes;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
 public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDragon, GathererDragon {
-    private final int huntCooldown = 1200;
-    private int huntTimer = getRandom().nextInt(huntCooldown);
+    private static final int HUNT_COOLDOWN = 1200;
+    private int huntTimer = getRandom().nextInt(HUNT_COOLDOWN);
     public boolean forceTargetInWater = false;
     private final int eatCooldown = 200;
     private int eatTimer = eatCooldown;
     private boolean isHunting = false;
+    private ItemEntity pickupTarget;
 
     private static final Identifier WATER_SPEED_MODIFIER_BONUS = UselessReptile.id("water_speed_modifier");
 
@@ -70,6 +71,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         xpReward = 5;
         setCanPickUpLoot(true);
         ticksUntilHeal = 400;
+        setYawTargetLimit(25);
     }
 
     public boolean isHunting() {
@@ -222,7 +224,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     protected void registerGoals() {
         goalSelector.addGoal(1, new PikehornCallBackGoal(this));
         goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
-        goalSelector.addGoal(5, new PikehornAttackGoal(this, 4096 * 2));
+        goalSelector.addGoal(5, new DragonAttackGoal(this));
         goalSelector.addGoal(6, new PikehornHuntGoal(this));
         goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 30));
         goalSelector.addGoal(8, new DragonReturnToHomePoint<>(this));
@@ -232,15 +234,8 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         targetSelector.addGoal(3, (new DragonRevengeGoal<>(this)).setAlertOthers());
         targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(5, new OwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(6, new RiverPikehornHuntTargetGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
-    }
-
-    public void attackMelee(LivingEntity target) { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
     }
 
     @Override
@@ -254,12 +249,13 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
             setGuaranteedDrop(EquipmentSlot.OFFHAND);
             take(item, itemStack.getCount());
             item.discard();
+            setPickupTarget(null);
         }
     }
 
     @Override
     public boolean hasTargetInWater() {
-        return super.hasTargetInWater() || forceTargetInWater;
+        return (super.hasTargetInWater() || forceTargetInWater) && getAirSupply() > getMaxAirSupply() * 0.2;
     }
 
     @Override
@@ -292,14 +288,9 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
     public void stopGathering() {
         setHunting(false);
-        huntTimer = huntCooldown + getRandom().nextInt(huntCooldown / 2);
+        huntTimer = HUNT_COOLDOWN + getRandom().nextInt(HUNT_COOLDOWN / 2);
         eatTimer = eatCooldown + getRandom().nextInt(eatCooldown / 2);
         setInAirTimer(getMaxInAirTimer());
-    }
-
-    @Override
-    public @NonNull AABB getPrimaryAttackBox() {
-        return getBoundingBox().inflate(getScale(), 0, getScale());
     }
 
     @Override
@@ -340,5 +331,27 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     @Override
     public List<FluteItem.FluteMode> getPermittedFluteModes() {
         return FLUTE_MODES;
+    }
+
+    @Nullable
+    public ItemEntity getPickupTarget() {
+        return pickupTarget;
+    }
+
+    public void setPickupTarget(@Nullable ItemEntity pickupTarget) {
+        this.pickupTarget = pickupTarget;
+    }
+
+    @Override
+    public boolean hurtServer(@NonNull ServerLevel world, @NonNull DamageSource damageSource, float amount) {
+        if (isHunting() && damageSource.getEntity() != null) {
+            huntTimer = HUNT_COOLDOWN;
+            setHunting(false);
+        }
+        return super.hurtServer(world, damageSource, amount);
+    }
+
+    public boolean isHuntingTarget(LivingEntity entity) { //todo move targets to variant definition
+        return entity instanceof AbstractFish;
     }
 }

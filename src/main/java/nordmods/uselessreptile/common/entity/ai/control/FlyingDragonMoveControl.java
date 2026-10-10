@@ -12,7 +12,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> extends MoveControl {
+public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> extends MoveControl implements URDragonMoveControl{
     private final T entity;
     private boolean forceFlyUp = false;
     private boolean forceFlyDown = false;
@@ -43,7 +43,7 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
 
         boolean navigationDone = entity.getNavigation().isDone();
         boolean isRotatedTowards = entity.getNavigation().isDone()
-                || (entity.getTarget() != null && entity.hasLineOfSight(entity.getTarget()) && entity.getLookControl().isLookingAtTarget())
+                || distanceXZ < entity.getNavigation().getMaxDistanceToWaypoint() * 3
                 || entity.isRotatedTowardsDirection(entity.getXRot(), destinationYaw, 90, entity.getHeadRotSpeed() * 2);
 
         if (Double.isNaN(entity.getDeltaMovement().y)) entity.setDeltaMovement(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z);

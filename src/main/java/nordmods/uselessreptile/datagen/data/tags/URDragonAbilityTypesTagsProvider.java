@@ -30,7 +30,11 @@ public class URDragonAbilityTypesTagsProvider extends FabricTagsProvider<DragonA
                 .addElement(URDragonAbilityTypes.SHOT_ATTACK.getId())
                 .addElement(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK.getId());
 
-        getOrCreateRawBuilder(URTags.DEFENSIVE_ABILITY)
+        getOrCreateRawBuilder(URTags.DEFENCE)
                 .addElement(URDragonAbilityTypes.SHOCKWAVE_ATTACK.getId());
+
+        getOrCreateRawBuilder(URTags.BREAKS_BLOCKS)
+                .addElement(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY.getId())
+                .addElement(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK.getId());
     }
 }

@@ -29,6 +29,7 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
     @Override
     public boolean canUse() {
         if (!this.mob.isFlying()) return false;
+        if (!mob.isTame()) trigger();
         return super.canUse();
     }
     

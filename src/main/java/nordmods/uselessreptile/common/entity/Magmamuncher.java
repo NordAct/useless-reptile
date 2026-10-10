@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -28,16 +27,14 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.phys.AABB;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherApplyFireResistanceGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherEatMagmaGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MagmamuncherNavigation;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
@@ -45,7 +42,6 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
-import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
@@ -166,7 +162,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(3, new MagmamuncherApplyFireResistanceGoal(this));
         goalSelector.addGoal(4, new DragonEatFromInventoryGoal<>(this));
-        goalSelector.addGoal(5, new MagmamuncherAttackGoal(this, 4096));
+        goalSelector.addGoal(5, new DragonAttackGoal(this));
         goalSelector.addGoal(6, new MagmamuncherEatMagmaGoal(this));
         goalSelector.addGoal(7, new DragonReturnToHomePoint<>(this));
         goalSelector.addGoal(8, new DragonWanderAroundGoal<>(this));
@@ -221,14 +217,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         }
     }
 
-    public void attackMelee(LivingEntity target) { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
-    }
-
     public BlockPos getMagmaBlockPos() {
         return entityData.get(MAGMA_POS);
     }
@@ -252,10 +240,5 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     @Override
     public DragonVariantType<? extends DragonVariant> getVariantType() {
         return URDragonVariantTypes.MAGMAMUNCHER;
-    }
-
-    @Override
-    public @NonNull AABB getPrimaryAttackBox() {
-        return getBoundingBox().inflate(getScale(), 0, getScale());
     }
 }

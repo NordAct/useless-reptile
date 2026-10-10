@@ -34,8 +34,9 @@ public class URTags {
     public static final TagKey<DragonAbilityType<?>> ATTACK = register(URResourceKeys.DRAGON_ABILITY_TYPE, "attack");
     public static final TagKey<DragonAbilityType<?>> MELEE_ATTACK = register(URResourceKeys.DRAGON_ABILITY_TYPE, "melee_attack");
     public static final TagKey<DragonAbilityType<?>> RANGED_ATTACK = register(URResourceKeys.DRAGON_ABILITY_TYPE, "ranged_attack");
-    public static final TagKey<DragonAbilityType<?>> SUPPORT_ABILITY = register(URResourceKeys.DRAGON_ABILITY_TYPE, "support_ability");
-    public static final TagKey<DragonAbilityType<?>> DEFENSIVE_ABILITY = register(URResourceKeys.DRAGON_ABILITY_TYPE, "support_ability");
+    public static final TagKey<DragonAbilityType<?>> SUPPORT = register(URResourceKeys.DRAGON_ABILITY_TYPE, "support");
+    public static final TagKey<DragonAbilityType<?>> DEFENCE = register(URResourceKeys.DRAGON_ABILITY_TYPE, "defence");
+    public static final TagKey<DragonAbilityType<?>> BREAKS_BLOCKS = register(URResourceKeys.DRAGON_ABILITY_TYPE, "breaks_blocks");
 
     private static<T> TagKey<T> register(ResourceKey<? extends Registry<T>> registryKey, String id) {
         return TagKey.create(registryKey, UselessReptile.id(id));

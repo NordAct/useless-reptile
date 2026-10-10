@@ -109,10 +109,10 @@ loom {
             getGenerateRunConfig().set(true)
             getRunDirectory().set(getProject().file("build/datagen"))
 
-            getProgramArguments().addAll(
-                    "--username", "Nord_Act",
-                    "-uuid", "ce6764cd-4578-4d6a-8f29-7eb379beb0ef"
-            )
+            //getProgramArguments().addAll(
+            //        "--username", "Nord_Act",
+            //        "-uuid", "ce6764cd-4578-4d6a-8f29-7eb379beb0ef"
+            //)
         }
     }
 }

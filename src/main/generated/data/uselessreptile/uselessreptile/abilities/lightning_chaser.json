@@ -121,6 +121,7 @@
       }
     ],
     "attack_type": "primary",
+    "block_break_power": 3,
     "block_other_abilities_if_active": true,
     "color": 16777215,
     "conditions": [],

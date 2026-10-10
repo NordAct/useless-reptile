@@ -147,7 +147,7 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 ShotAttackAbility.AnchorPoint.MULTIPART_BOX,
                                 Optional.of("head"),
                                 new Vec3(0, -0.25, 1),
-                                5, 3, 5
+                                5, 3, 5, 64
                         )
                 )
         );
@@ -252,6 +252,12 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 List.of(
                                         new MeleeAttackAbility.ConditionedAttackBox(
                                                 1.8f, 0.7f,
+                                                Vec3.ZERO,
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        ),
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                1.8f, 1.4f,
                                                 Vec3.ZERO,
                                                 MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
                                                 List.of()
@@ -380,7 +386,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                                 1,
                                 0x00FFFFFF,
                                 50,
-                                10
+                                10,
+                                3
                         ),
                         new ShockwaveAttackAbility(
                                 new CommonDragonAbilityData(

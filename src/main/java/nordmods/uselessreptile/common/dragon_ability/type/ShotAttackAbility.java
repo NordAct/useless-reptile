@@ -33,6 +33,7 @@ public class ShotAttackAbility extends TriggerableAbility {
     protected final int count;
     protected final float speed;
     protected final float spread;
+    protected final int aiAttackDistance;
 
     public static final MapCodec<ShotAttackAbility> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             CommonDragonAbilityData.MAP_CODEC.forGetter(ShotAttackAbility::getCommonAbilityData),
@@ -44,10 +45,11 @@ public class ShotAttackAbility extends TriggerableAbility {
             Vec3.CODEC.fieldOf("anchor_point_offset").forGetter(c -> c.anchorPointOffset),
             ExtraCodecs.POSITIVE_INT.fieldOf("count").forGetter(c -> c.count),
             ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("speed").forGetter(c -> c.speed),
-            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("spread").forGetter(c -> c.spread)
+            ExtraCodecs.NON_NEGATIVE_FLOAT.fieldOf("spread").forGetter(c -> c.spread),
+            Codec.INT.fieldOf("ai_attack_distance").forGetter(c -> c.aiAttackDistance)
     ).apply(i, ShotAttackAbility::new));
 
-    public ShotAttackAbility(CommonDragonAbilityData commonAbilityData, Data triggerableAbilityData, EntityType<?> projectileEntityType, CompoundTag projectileEntityNbt, AnchorPoint anchorPoint, Optional<String> multipartBoxName, Vec3 anchorPointOffset, int count, float speed, float spread) {
+    public ShotAttackAbility(CommonDragonAbilityData commonAbilityData, Data triggerableAbilityData, EntityType<?> projectileEntityType, CompoundTag projectileEntityNbt, AnchorPoint anchorPoint, Optional<String> multipartBoxName, Vec3 anchorPointOffset, int count, float speed, float spread, int aiAttackDistance) {
         if (anchorPoint == AnchorPoint.MULTIPART_BOX && multipartBoxName.isEmpty())
             throw new IllegalStateException("Multipart box name must be specified for multipart_box anchor point");
 
@@ -60,6 +62,7 @@ public class ShotAttackAbility extends TriggerableAbility {
         this.count = count;
         this.speed = speed;
         this.spread = spread;
+        this.aiAttackDistance = aiAttackDistance;
     }
 
     @Override
@@ -140,7 +143,12 @@ public class ShotAttackAbility extends TriggerableAbility {
 
     @Override
     public boolean canUseUncontrolled(DragonAbilityHolder holder) {
-        return super.canUseUncontrolled(holder) && holder.getEntity().getTarget() != null && holder.getEntity().getLookControl().isLookingAtTarget() && holder.getEntity().hasLineOfSight(holder.getEntity().getTarget());
+        URDragonEntity dragon = holder.getEntity();
+        return super.canUseUncontrolled(holder) && dragon.getTarget() != null && dragon.distanceTo(dragon.getTarget()) < aiAttackDistance && isLookingAtTarget(holder);
+    }
+
+    protected boolean isLookingAtTarget(DragonAbilityHolder holder) {
+        return holder.getEntity().getLookControl().isLookingAtTarget() && holder.getEntity().hasLineOfSight(holder.getEntity().getTarget());
     }
 
     protected Projectile createProjectile(ServerLevel level) {
@@ -148,6 +156,10 @@ public class ShotAttackAbility extends TriggerableAbility {
         if (presumablyProjectile instanceof Projectile projectile) {
             return projectile;
         } else throw new IllegalStateException(getType().getId() + " cannot spawn non Projectile entities");
+    }
+
+    public int getAiAttackDistance() {
+        return aiAttackDistance;
     }
 
     public enum AnchorPoint implements StringRepresentable {

@@ -26,6 +26,17 @@
         "height": 0.7,
         "vertical_box_movement": "none",
         "width": 1.8
+      },
+      {
+        "center_offset": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "conditions": [],
+        "height": 1.4,
+        "vertical_box_movement": "none",
+        "width": 1.8
       }
     ],
     "attack_effects": [],

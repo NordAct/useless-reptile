@@ -19,15 +19,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.gamerules.GameRules;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
-import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawAttackGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
@@ -35,11 +32,11 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
-import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 public class Moleclaw extends URRideableDragonEntity {
     private int panicSoundDelay = 0;
@@ -69,7 +66,7 @@ public class Moleclaw extends URRideableDragonEntity {
         goalSelector.addGoal(2, new DragonCallBackGoal<>(this));
         goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(4, new DragonEatFromInventoryGoal<>(this));
-        goalSelector.addGoal(8, new MoleclawAttackGoal(this, 512));
+        goalSelector.addGoal(8, new DragonAttackGoal(this));
         goalSelector.addGoal(9, new DragonReturnToHomePoint<>(this));
         goalSelector.addGoal(10, new DragonWanderAroundGoal<>(this));
         goalSelector.addGoal(11, new DragonLookAroundGoal<>(this));
@@ -181,35 +178,6 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    public @NonNull AABB getAttackBoundingBox(double range) {
-        return getSecondaryAttackBox();
-    }
-
-    @Override
-    public @NonNull AABB getSecondaryAttackBox() {
-        Vec3 rotationVec = calculateViewVector(0, getYRot());
-        double x = rotationVec.x * 2;
-        double z = rotationVec.z * 2;
-        return new AABB(position().x() + x - 1.5, position().y(), position().z() + z - 1.5,
-                position().x() + x + 1.5, position().y() + getBbHeight(), position().z() + z + 1.5);
-    }
-
-    @Override
-    public @NonNull AABB getPrimaryAttackBox() {
-        double halfWidth = getBbWidth() / 2f;
-        double x = -Math.sin(Math.toRadians(getYRot())) * halfWidth;
-        double y = 0;
-        if (hasControllingPassenger()) {
-            if (getXRot() > 25) y = -1;
-            if (getXRot() < -25) y = 1;
-        } else y = -Math.sin(Math.toRadians(getXRot()));
-        double z = Math.cos(Math.toRadians(getYRot())) * halfWidth;
-        double heightIncrease = hasControllingPassenger() ? 2 : 1;
-        return new AABB(position().x() + x - 1.25, position().y() + y, position().z() + z - 1.25,
-                position().x() + x + 1.25, position().y() + getBbHeight() + heightIncrease + y, position().z() + z + 1.25);
-    }
-
-    @Override
     public String getDefaultVariant() {
         return "black";
     }
@@ -244,22 +212,6 @@ public class Moleclaw extends URRideableDragonEntity {
     public LivingEntity getControllingPassenger() {
         if (isPanicking()) return null;
         return super.getControllingPassenger();
-    }
-
-    public void scheduleNormalAttack() { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
-    }
-
-    public void scheduleStrongAttack() { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
     }
 
     @Override
@@ -307,5 +259,10 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     public DragonVariantType<? extends DragonVariant> getVariantType() {
         return URDragonVariantTypes.MOLECLAW;
+    }
+
+    @Override
+    public boolean canAttack(@Nullable LivingEntity target) {
+        return super.canAttack(target) && !isTooBrightAtPos(target.getOnPos());
     }
 }

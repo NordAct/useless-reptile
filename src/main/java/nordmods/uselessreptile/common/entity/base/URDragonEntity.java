@@ -61,6 +61,7 @@ import nordmods.uselessreptile.common.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
+import nordmods.uselessreptile.common.dragon_ability.type.MeleeAttackAbility;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
@@ -1020,7 +1021,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public boolean hasTargetInWater() {
-        return (navigation.getTargetPos() != null && level().getBlockState(navigation.getTargetPos()).liquid()
+        return (shouldFollow && navigation.getTargetPos() != null && level().getBlockState(navigation.getTargetPos()).liquid()
                     || getTarget() != null && getTarget().isUnderWater())
                 && !isAffectedByFluids();
     }
@@ -1036,13 +1037,11 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     public @NonNull AABB getAttackBoundingBox(double range) {
-        return getPrimaryAttackBox();
-    }
-
-    public @NonNull abstract AABB getPrimaryAttackBox();
-
-    public AABB getSecondaryAttackBox() {
-        return null;
+        return availableAbilities.stream()
+                .filter(a -> a.getAbility() instanceof MeleeAttackAbility)
+                .map(a -> ((MeleeAttackAbility)a.getAbility()).getAttackBox(a))
+                .findFirst()
+                .orElse(super.getAttackBoundingBox(range));
     }
 
     protected static URMobAttributesConfig attributes() {

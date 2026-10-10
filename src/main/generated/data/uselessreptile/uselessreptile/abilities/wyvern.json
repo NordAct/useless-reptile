@@ -126,6 +126,7 @@
   {
     "type": "uselessreptile:shot_attack",
     "active_time_seconds": 0.7,
+    "ai_attack_distance": 64,
     "anchor_point": "multipart_box",
     "anchor_point_offset": [
       0.0,

@@ -22,6 +22,7 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
     private final int color;
     private final int maxLength;
     private final int maxAge;
+    private final int blockBreakPower;
     public static final MapCodec<LightningBreathAttackAbility> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             CommonDragonAbilityData.MAP_CODEC.forGetter(LightningBreathAttackAbility::getCommonAbilityData),
             Data.MAP_CODEC.forGetter(LightningBreathAttackAbility::getTriggerableAbilityData),
@@ -31,15 +32,17 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
             ExtraCodecs.POSITIVE_FLOAT.fieldOf("damage_scaling").forGetter(c -> c.damageScaling),
             Codec.INT.fieldOf("color").forGetter(c -> c.color),
             ExtraCodecs.POSITIVE_INT.fieldOf("max_length").forGetter(c -> c.maxLength),
-            ExtraCodecs.POSITIVE_INT.fieldOf("max_age").forGetter(c -> c.maxAge)
+            ExtraCodecs.POSITIVE_INT.fieldOf("max_age").forGetter(c -> c.maxAge),
+            ExtraCodecs.POSITIVE_INT.fieldOf("block_break_power").forGetter(c -> c.blockBreakPower)
     ).apply(i, LightningBreathAttackAbility::new));
 
-    public LightningBreathAttackAbility(CommonDragonAbilityData commonAbilityData, Data triggerableAbilityData, AnchorPoint anchorPoint, Optional<String> multipartBoxName, Vec3 anchorPointOffset, float damageScaling, int color, int maxLength, int maxAge) {
-        super(commonAbilityData, triggerableAbilityData, UREntities.LIGHTNING_BREATH, new CompoundTag(), anchorPoint, multipartBoxName, anchorPointOffset, 1, 0, 0);
+    public LightningBreathAttackAbility(CommonDragonAbilityData commonAbilityData, Data triggerableAbilityData, AnchorPoint anchorPoint, Optional<String> multipartBoxName, Vec3 anchorPointOffset, float damageScaling, int color, int maxLength, int maxAge, int blockBreakPower) {
+        super(commonAbilityData, triggerableAbilityData, UREntities.LIGHTNING_BREATH, new CompoundTag(), anchorPoint, multipartBoxName, anchorPointOffset, 1, 0, 0, (int)(maxLength * 0.95f));
         this.damageScaling = damageScaling;
         this.color = color;
         this.maxLength = maxLength;
         this.maxAge = maxAge;
+        this.blockBreakPower = blockBreakPower;
     }
 
     @Override
@@ -68,8 +71,14 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
                 maxLength,
                 maxAge,
                 damageScaling,
-                color
+                color,
+                blockBreakPower
         );
+    }
+
+    @Override
+    protected boolean isLookingAtTarget(DragonAbilityHolder holder) {
+        return holder.getEntity().canBreakBlocks() ? holder.getEntity().getLookControl().isLookingAtTarget() : super.isLookingAtTarget(holder);
     }
 
     @Override

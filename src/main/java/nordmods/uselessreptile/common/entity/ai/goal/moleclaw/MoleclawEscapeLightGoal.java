@@ -5,14 +5,14 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.VoxelShape;
 import nordmods.uselessreptile.common.entity.Moleclaw;
-import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
+import nordmods.uselessreptile.common.init.URTags;
 
 public class MoleclawEscapeLightGoal extends PanicGoal {
     private final Moleclaw mob;
     private int timer = 0;
-    private int nextStrongAttackTimer = 60;
+    private int nextStrongAttackTimer = NEXT_BLOCK_BREAKING_ATTACK_AVERAGE;
+    private static final int NEXT_BLOCK_BREAKING_ATTACK_AVERAGE = 80;
 
     public MoleclawEscapeLightGoal(Moleclaw mob) {
         super(mob, 1);
@@ -83,15 +83,14 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
         mob.setSprinting(true);
         timer++;
 
-        if (timer >= nextStrongAttackTimer && mob.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY) && a.getCooldown() <= 0)) {
-            for (VoxelShape shape : mob.level().getBlockCollisions(mob, mob.getSecondaryAttackBox())) {
-                if (!shape.isEmpty()) {
-                    mob.scheduleStrongAttack();
-                    timer = 0;
-                    nextStrongAttackTimer = mob.getRandom().nextInt(21) + 40;
-                    break;
-                }
-            }
+        if (timer >= nextStrongAttackTimer && mob.canBreakBlocks()) {
+            mob.getAvailableAbilities()
+                    .stream()
+                    .filter(a -> a.getAbility().is(URTags.BREAKS_BLOCKS) && a.getCooldown() <= 0)
+                    .findAny().ifPresent(abilityHolder -> {
+                        abilityHolder.use();
+                        nextStrongAttackTimer = mob.getRandom().nextInt(NEXT_BLOCK_BREAKING_ATTACK_AVERAGE / 2) + NEXT_BLOCK_BREAKING_ATTACK_AVERAGE;
+                    });
         }
     }
 }

@@ -27,28 +27,28 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.*;
-import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernAttackGoal;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.animation_processor.MultipartDragonAnimationProcessor;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.*;
+import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URDragonVariantTypes;
+import nordmods.uselessreptile.common.init.URMobEffect;
+import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity {
+public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity { //todo add way to make untamed ones land
     private final URDragonPart head = new URDragonPart(this, "head", 0.5f, 0.5f);
     private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.5f, 0.5f);
     private final URDragonPart neck2 = new URDragonPart(this, "neck2", 0.5f, 0.5f);
@@ -97,7 +97,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         goalSelector.addGoal(2, new FlyingDragonCallBackGoal<>(this));
         goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(4, new DragonEatFromInventoryGoal<>(this));
-        goalSelector.addGoal(5, new WyvernAttackGoal(this, 512));
+        goalSelector.addGoal(5, new DragonAttackGoal(this));
         goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 30));
         goalSelector.addGoal(8, new DragonReturnToHomePoint<>(this));
         goalSelector.addGoal(9, new DragonWanderAroundGoal<>(this));
@@ -134,13 +134,13 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     private void tickBlinkController() {
-        URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
+        URDragonAnimationController<nordmods.uselessreptile.common.entity.base.URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
     private void tickMainController() {
-        URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
+        URDragonAnimationController<nordmods.uselessreptile.common.entity.base.URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (mainController.isPlayingAbilityAnimation(AnimationController.MAIN)) return;
@@ -251,32 +251,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     @Override
     public double getFluidJumpThreshold() {
         return 1;
-    }
-
-    public void shoot() { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.SHOT_ATTACK))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
-    }
-
-    public void meleeAttack() { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
-    }
-
-    @Override
-    public @NonNull AABB getPrimaryAttackBox() {
-        double modifier = isFlying() ? getBbWidth() / 2 : (getBbWidth() + 0.1);
-        double x = -Math.sin(Math.toRadians(getYRot())) * modifier;
-        double z = Math.cos(Math.toRadians(getYRot())) * modifier;
-        double y = isFlying() ? -2 : 0;
-        return new AABB(position().x() + x - getBbWidth() / 1.5, position().y() + y, position().z() + z - getBbWidth() / 1.5,
-                position().x() + x + getBbWidth() / 1.5, position().y() + getBbHeight() + 1, position().z() + z + getBbWidth() / 1.5);
     }
 
     @Override

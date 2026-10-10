@@ -6,6 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Projectile;
@@ -40,7 +41,7 @@ public class ShockwaveAttackAbility extends ShotAttackAbility {
     ).apply(i, ShockwaveAttackAbility::new));
 
     public ShockwaveAttackAbility(CommonDragonAbilityData commonAbilityData, Data triggerableAbilityData, CompoundTag projectileEntityNbt, float maxRadius, float radiusChangeSpeed, float power, float damageScaling, int color) {
-        super(commonAbilityData, triggerableAbilityData, UREntities.SHOCKWAVE_SPHERE, projectileEntityNbt, AnchorPoint.ENTITY_POS, Optional.empty(), Vec3.ZERO, 1, 0, 0);
+        super(commonAbilityData, triggerableAbilityData, UREntities.SHOCKWAVE_SPHERE, projectileEntityNbt, AnchorPoint.ENTITY_POS, Optional.empty(), Vec3.ZERO, 1, 0, 0, (int)(maxRadius * 0.5f));
         this.maxRadius = maxRadius;
         this.radiusChangeSpeed = radiusChangeSpeed;
         this.power = power;
@@ -76,9 +77,8 @@ public class ShockwaveAttackAbility extends ShotAttackAbility {
         if (entity.getLastAttacker() == null && entity.getTarget() == null) return false;
 
         boolean canUse = false;
-        double attackDistance = maxRadius * maxRadius * 0.49;
 
-        List<Entity> projectiles = entity.level().getEntities(entity, new AABB(entity.blockPosition()).inflate(Math.sqrt(attackDistance)), c -> {
+        List<Entity> projectiles = entity.level().getEntities(entity, new AABB(entity.blockPosition()).inflate(aiAttackDistance), c -> {
             if (!(c instanceof Projectile projectile)) return false;
             if (projectile.getOwner() instanceof LivingEntity livingEntity) {
                 if (!entity.canAttack(livingEntity)) return false;
@@ -87,13 +87,16 @@ public class ShockwaveAttackAbility extends ShotAttackAbility {
         });
         if (!projectiles.isEmpty()) canUse = true;
 
-        if (!canUse && entity.getTarget() != null) {
+        if (!canUse && entity.level() instanceof ServerLevel serverLevel && entity.getTarget() != null) {
             LivingEntity target = entity.getTarget();
-            double targetDistance = entity.distanceToSqr(target);
-            boolean isTargetExposed = ServerExplosion.getSeenPercent(entity.position(), target) < 0.1;
-            canUse = attackDistance < targetDistance && isTargetExposed;
+            canUse = !target.isInvulnerableTo(serverLevel, entity.damageSources().source(DamageTypes.LIGHTNING_BOLT, entity)) && ServerExplosion.getSeenPercent(entity.position(), target) < 0.1;
         }
 
         return super.canUseUncontrolled(holder) && canUse;
+    }
+
+    @Override
+    protected boolean isLookingAtTarget(DragonAbilityHolder holder) {
+        return true;
     }
 }

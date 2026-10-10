@@ -5,7 +5,6 @@ import net.minecraft.util.random.Weighted;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.RandomPos;
-import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -15,16 +14,13 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
-import nordmods.uselessreptile.common.init.URDragonAbilityTypes;
 import org.jspecify.annotations.Nullable;
 
-import java.util.EnumSet;
 import java.util.List;
 
 public class PikehornHuntGoal extends Goal {
 
     private final RiverPikehorn mob;
-    private AbstractFish fish;
     private BlockPos huntSpot;
     private boolean closeToSpot = false;
     private int calls;
@@ -32,13 +28,12 @@ public class PikehornHuntGoal extends Goal {
 
     public PikehornHuntGoal(RiverPikehorn entity) {
         this.mob = entity;
-        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK, Flag.JUMP));
     }
 
     @Override
     public boolean canUse() {
         //locating the hunt spot
-        if (!mob.isHunting() || mob.getTarget() != null) return false;
+        if (!mob.isHunting()) return false;
         if (mob.isTame() || startingPos == null) startingPos = mob.getOwner() != null ? mob.getOwner().blockPosition() : mob.getHomePoint();
         if (huntSpot == null) findFishyPlace(50);
         return huntSpot != null && startingPos != null;
@@ -52,7 +47,6 @@ public class PikehornHuntGoal extends Goal {
 
     @Override
     public void stop() {
-        stopHunt();
         mob.forceTargetInWater = false;
     }
 
@@ -61,33 +55,28 @@ public class PikehornHuntGoal extends Goal {
         if (isGoingToDrown()) mob.forceTargetInWater = false;
 
         if (!hasFish() && !tooManyCalls() && mob.forceTargetInWater) {
-            //lookup for dropped fish first
-            AABB box = mob.getBoundingBox().inflate(20);
-            List<ItemEntity> drops = mob.level().getEntitiesOfClass(ItemEntity.class, box.setMinY(box.minY - 20), (item) -> {
-                ItemStack itemStack = item.getItem();
-                return mob.getFoodItem(itemStack) != null && item.isAlive() && !item.hasPickUpDelay();
-            });
+            if (mob.getPickupTarget() != null) {
+                ItemEntity target = mob.getPickupTarget();
+                if (target.isRemoved()) mob.setPickupTarget(null);
+            }
 
-            if (!drops.isEmpty()) mob.getNavigation().moveTo(drops.getFirst(), 1);
-            else {
-                //check if fish is valid
-                if (fish != null && (fish.isDeadOrDying() || fish.isRemoved())) fish = null;
+            if (mob.getPickupTarget() == null) {
+                //lookup for dropped fish first
+                AABB box = mob.getBoundingBox().inflate(20);
+                List<ItemEntity> drops = mob.level().getEntitiesOfClass(ItemEntity.class, box.setMinY(box.minY - 20), (item) -> {
+                    ItemStack itemStack = item.getItem();
+                    return mob.getFoodItem(itemStack) != null && item.isAlive() && !item.hasPickUpDelay();
+                });
 
-                if (fish == null) {
+                if (drops.isEmpty()) {
+                    if (mob.getTarget() != null) return;
+
                     //checking if it's above water
-                    if (aboveWater(huntSpot)) {
+                    if (!aboveWater(huntSpot)) findFishyPlace(30);
+                    else {
                         huntSpot = adjustToWater(huntSpot);
-                        //checking if dragon is close to it or found target
-                        List<AbstractFish> list = mob.level().getEntitiesOfClass(AbstractFish.class,  box.setMinY(box.minY - 30), mob::canAttack);
-                        AbstractFish target = null;
-                        if (!list.isEmpty()) {
-                            target = list.getFirst();
-                            for (AbstractFish entry : list) {
-                                if (mob.distanceToSqr(entry) < mob.distanceToSqr(target)) target = entry;
-                            }
-                        }
-                        if (target != null) fish = target;
-                        if (closeToSpot && target == null) {
+                        //checking if dragon is close to spot
+                        if (closeToSpot) {
                             findFishyPlace(30);
                             closeToSpot = false;
                         } else {
@@ -96,19 +85,13 @@ public class PikehornHuntGoal extends Goal {
                             if (distance < 32) closeToSpot = true;
                             else mob.getNavigation().moveTo(huntSpot.getX(), huntSpot.getY(), huntSpot.getZ(), 1);
                         }
-                    } else findFishyPlace(30);
-
-                } else {
-                    //kill the fish
-                    mob.getLookControl().setLookAt(fish);
-                    mob.getNavigation().moveTo(fish, 1);
-                    if (mob.getAvailableAbilities().stream().anyMatch(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK) && a.getCooldown() <= 0)) return;
-                    if (mob.getPrimaryAttackBox().intersects(fish.getBoundingBox())) mob.attackMelee(fish);
-                }
-            }
+                    }
+                } else mob.setPickupTarget(drops.getFirst());
+            } else mob.getNavigation().moveTo(mob.getPickupTarget(), 1);
         } else {
             if (mob.getAirSupply() >= mob.getMaxAirSupply() * 0.9 && !mob.forceTargetInWater) mob.forceTargetInWater = true;
             //else go back to starting position
+            mob.setTarget(null);
             mob.getNavigation().moveTo(startingPos.getX(), startingPos.getY(), startingPos.getZ(), 1);
             if (mob.forceTargetInWater) {
                 double distance = mob.blockPosition().distSqr(startingPos.above());
@@ -118,7 +101,7 @@ public class PikehornHuntGoal extends Goal {
     }
 
     private boolean hasFish() {
-        return !mob.getMainHandItem().isEmpty();
+        return !mob.getOffhandItem().isEmpty();
     }
 
     @Nullable
@@ -204,6 +187,6 @@ public class PikehornHuntGoal extends Goal {
     }
 
     private boolean isGoingToDrown() {
-        return mob.getAirSupply() < mob.getMaxAirSupply() / 10;
+        return mob.getAirSupply() < mob.getMaxAirSupply() * 0.2;
     }
 }

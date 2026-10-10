@@ -31,13 +31,11 @@ import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -52,7 +50,10 @@ import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.*;
+import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.URDragonVariantTypes;
+import nordmods.uselessreptile.common.init.URGameEvents;
+import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
@@ -374,36 +375,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         addEffect(new MobEffectInstance(MobEffects.RESISTANCE, 400, 1));
         addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, 400, 0));
         lightning.discard();
-    }
-
-    public void triggerShoot() { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
-    }
-
-    public void triggerShockwave() { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.SHOCKWAVE_ATTACK))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
-    }
-
-    public void meleeAttack() { //todo remove
-        getAvailableAbilities()
-                .stream()
-                .filter(a -> a.getAbility().getType().equals(URDragonAbilityTypes.MELEE_ATTACK))
-                .findFirst()
-                .ifPresent(DragonAbilityHolder::use);
-    }
-
-    @Override
-    public @NonNull AABB getPrimaryAttackBox() {
-        Vec3 rotationVec = calculateViewVector(0, getYRot()).scale(2.5);
-        return getBoundingBox().move(rotationVec);
     }
 
     @Override
