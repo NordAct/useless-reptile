@@ -328,8 +328,10 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                                 getId()));
             }
         }
-        if (isPrimaryAttackPressed()) primaryRiderAbility.use();
-        if (isSecondaryAttackPressed()) secondaryRiderAbility.use();
+        if (!level().isClientSide()) {
+            if (isPrimaryAttackPressed()) primaryRiderAbility.use();
+            if (isSecondaryAttackPressed()) secondaryRiderAbility.use();
+        }
         super.tickRidden(rider, movementInput);
     }
 

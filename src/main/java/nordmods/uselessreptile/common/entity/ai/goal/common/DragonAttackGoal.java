@@ -60,7 +60,7 @@ public class DragonAttackGoal extends Goal {
     }
 
     @Override
-    public void tick() { //todo make attack anims synced with client
+    public void tick() {
         tickMovement();
         if (!mob.isMoving()) notMovingTimer++;
 

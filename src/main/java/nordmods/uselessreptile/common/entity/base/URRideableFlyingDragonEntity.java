@@ -353,7 +353,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
 
     @Override
     public boolean fudgePositionAfterSizeChange(EntityDimensions previousDimensions) {
-        if (isFlying()) return true;
+        if (isFlying() && wouldNotSuffocateAtTargetPose(getPose())) return true;
         return super.fudgePositionAfterSizeChange(previousDimensions);
     }
 }

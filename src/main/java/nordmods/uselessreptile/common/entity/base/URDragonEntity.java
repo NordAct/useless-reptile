@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.base;
 
 import eu.pb4.common.protection.api.CommonProtection;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2FloatArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
@@ -187,6 +188,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         builder.define(EQUIPMENT_CONTROLLER_STATES, Map.of());
         builder.define(LOOK_TARGET_YAW, Optional.empty());
         builder.define(SERVER_BODY_YAW, yBodyRot);
+        builder.define(ABILITY_COOLDOWNS, new Int2FloatArrayMap());
     }
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -204,6 +206,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public static final EntityDataAccessor<Map<EquipmentSlot, List<ControllerState>>> EQUIPMENT_CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.EQUIPMENT_CONTROLLER_STATES);
     public static final EntityDataAccessor<Optional<Float>> LOOK_TARGET_YAW = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.OPTIONAL_FLOAT);
     public static final EntityDataAccessor<Float> SERVER_BODY_YAW = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Int2FloatArrayMap> ABILITY_COOLDOWNS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.INT_TO_FLOAT_MAP);
 
     public int getAccelerationDuration() {return entityData.get(ACCELERATION_DURATION);}
     public void setAccelerationDuration(int state) {entityData.set(ACCELERATION_DURATION, state);}
@@ -360,6 +363,16 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                         ControllerState.applyControllerStates(controllerStates, equipment.getAnimationControllers());
                         equipment.cloneAnimationController.copyFrom(this);
                         equipment.markAnimationUpdated();
+                    }
+                });
+            }
+
+            if (ABILITY_COOLDOWNS.equals(data)) {
+                entityData.get(ABILITY_COOLDOWNS).forEach((id, cooldown) -> {
+                    if (abilityHolders.containsKey(id)) {
+                        DragonAbilityHolder holder = abilityHolders.get(id);
+                        if (holder.getCooldown() < cooldown) holder.useUnchecked();
+                        holder.setCooldown(cooldown);
                     }
                 });
             }
@@ -792,6 +805,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (xBodyRotO.size() >= maxXBodyRotSamples) xBodyRotO.removeFirst();
 
         super.tick();
+        needsSync = true;
+
         tickAcceleration();
 
         pitchLimit = (int) Mth.approach(pitchLimit, pitchTargetLimit, 2);
@@ -805,6 +820,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 }
             }
             setMoving(getDeltaMovement().z() != 0 || getDeltaMovement().x() != 0);
+
+            Int2FloatArrayMap abilityCooldowns = new Int2FloatArrayMap();
+            abilityHolders.forEach((id, holder) -> abilityCooldowns.put(id, holder.getCooldown()));
+            entityData.set(ABILITY_COOLDOWNS, abilityCooldowns);
         }
 
         getAbilityHolders().values().forEach(DragonAbilityHolder::tick);
@@ -838,10 +857,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
 
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
-        if (processor != null) {
-            processor.tick();
-            needsSync = true;
-        }
+        if (processor != null) processor.tick();
         for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
             if (equipment != null) equipment.tick();
