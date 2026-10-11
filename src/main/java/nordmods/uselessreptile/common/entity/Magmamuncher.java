@@ -33,7 +33,6 @@ import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
-import nordmods.uselessreptile.common.entity.ai.goal.common.DragonAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherApplyFireResistanceGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherEatMagmaGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MagmamuncherNavigation;
@@ -47,7 +46,7 @@ import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
 public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
-    public static int EAT_MAGMA_COOLDOWN_AVERAGE = 20*50;
+    public static final int EAT_MAGMA_COOLDOWN_AVERAGE = 20*50;
     public int eatMagmaCooldown = 0;
     private int eatingMagmaProgress;
     private static final int MAX_EATING_MAGMA_PROGRESS = 20*5;

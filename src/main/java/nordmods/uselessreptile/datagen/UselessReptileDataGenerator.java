@@ -21,10 +21,10 @@ import nordmods.uselessreptile.datagen.data.tags.*;
 import org.jspecify.annotations.NonNull;
 
 public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
-    public static boolean ENABLE_DATAGEN = true;
+    public static boolean enableDatagen = true;
     @Override
     public void onInitializeDataGenerator(@NonNull FabricDataGenerator fabricDataGenerator) {
-        if (!ENABLE_DATAGEN) return;
+        if (!enableDatagen) return;
 
         final FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
         pack.addProvider(URItemTagsProvider::new);

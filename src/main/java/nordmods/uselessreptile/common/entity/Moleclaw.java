@@ -24,7 +24,6 @@ import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
-import nordmods.uselessreptile.common.entity.ai.goal.common.DragonAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
