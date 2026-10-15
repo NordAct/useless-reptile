@@ -52,7 +52,7 @@ public class PikehornHuntGoal extends Goal {
 
     @Override
     public void tick() {
-        if (isGoingToDrown()) mob.forceTargetInWater = false;
+        if (isGoingToDrown() || hasFish()) mob.forceTargetInWater = false;
 
         if (!hasFish() && !tooManyCalls() && mob.forceTargetInWater) {
             if (mob.getPickupTarget() != null) {
@@ -92,8 +92,9 @@ public class PikehornHuntGoal extends Goal {
             if (mob.getAirSupply() >= mob.getMaxAirSupply() * 0.9 && !mob.forceTargetInWater) mob.forceTargetInWater = true;
             //else go back to starting position
             mob.setTarget(null);
+            if (hasFish()) mob.setInAirTimer(mob.getMaxInAirTimer());
             mob.getNavigation().moveTo(startingPos.getX(), startingPos.getY(), startingPos.getZ(), 1);
-            if (mob.forceTargetInWater) {
+            if (hasFish()) {
                 double distance = mob.blockPosition().distSqr(startingPos.above());
                 if (distance < mob.getBbWidth() * 2.0f * (mob.getBbWidth() * 2.0f)) stopHunt();
             }

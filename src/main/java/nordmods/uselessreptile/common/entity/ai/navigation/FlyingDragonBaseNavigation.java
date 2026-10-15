@@ -65,7 +65,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
     protected void moveOrStop(BlockPos target) {
         double distance = mob.distanceToSqr(target.getX(), target.getY(), target.getZ());
-        maxDistanceToWaypoint = Math.clamp(mob.isFlying() ? mob.getBbWidth() : mob.getBbWidth() / 2, 0, 1) ;
+        maxDistanceToWaypoint = Math.clamp(mob.isFlying() ? mob.getBbWidth() : mob.getBbWidth() / 2, 0, 0.95f);
         if (distance <= maxDistanceToWaypoint) stop();
     }
 

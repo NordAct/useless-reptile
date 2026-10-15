@@ -14,7 +14,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -22,7 +21,6 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
 import nordmods.uselessreptile.common.entity.ai.control.WrappedDragonBodyRotationControl;
-import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -34,15 +32,11 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     protected final int maxInAirTimer = 600;
     private int glideTimer = 100;
     private boolean forceFlight = false;
-    private final FlyingDragonLandNavigation<URFlyingDragonEntity> landNavigation;
-    private final FlyingDragonAirNavigation<URFlyingDragonEntity> airNavigation;
 
     protected URFlyingDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         moveControl = new FlyingDragonMoveControl<>(this);
-        landNavigation = new FlyingDragonLandNavigation<>(this, level());
-        airNavigation = new FlyingDragonAirNavigation<>(this, level());
-        navigation = landNavigation;
+        navigation = new FlyingDragonLandNavigation<>(this, level());
     }
 
     @Override
@@ -136,13 +130,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     private void updateNavigation() {
-        PathNavigation current = navigation;
-        navigation = isFlying() ? airNavigation : landNavigation;
-        if (navigation != current) {
-            navigation.moveTo(current.getPath(), 1);
-            ((DragonNavigation)navigation).scheduleRecomputation();
-            current.stop();
-        }
+        navigation = isFlying() ? new FlyingDragonAirNavigation<>(this, level()) : new FlyingDragonLandNavigation<>(this, level());
     }
 
     @Override

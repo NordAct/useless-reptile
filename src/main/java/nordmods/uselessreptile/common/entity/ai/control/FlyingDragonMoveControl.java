@@ -43,8 +43,8 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
 
         boolean navigationDone = entity.getNavigation().isDone();
         boolean isRotatedTowards = entity.getNavigation().isDone()
-                || distanceXZ < entity.getNavigation().getMaxDistanceToWaypoint() * 3
-                || entity.isRotatedTowardsDirection(entity.getXRot(), destinationYaw, 90, entity.getHeadRotSpeed() * 2);
+                || distanceXZ < entity.getNavigation().getMaxDistanceToWaypoint() * 3 && entity.isMoving()
+                || entity.isRotatedTowardsDirection(entity.getXRot(), destinationYaw, 90, entity.getHeadRotSpeed());
 
         if (Double.isNaN(entity.getDeltaMovement().y)) entity.setDeltaMovement(entity.getDeltaMovement().x, 0, entity.getDeltaMovement().z);
         float accelerationModifier = Math.max(entity.getAccelerationModifier() , 0.25f);
@@ -102,12 +102,8 @@ public class FlyingDragonMoveControl<T extends URDragonEntity & FlyingDragon> ex
                 if (forceFlyDown) flyDown(verticalAccelerationModifier);
             } else if (!navigationDone && (Math.abs(diffY) > 9.999999747378752E-6D || Math.abs(distanceXZ) > 9.999999747378752E-6D)) {
                 entity.setYya(0);
-
-                if ((!entity.isInWater() || entity.hasTargetInWater())) {
-                    double divergence = Math.clamp(Math.max(0, (distanceXZ - (entity.getBbWidth() < 2 ? 0 : 4)) * 0.5), 0, 3);
-                    if (diffY > divergence) flyUp(verticalAccelerationModifier);
-                    if (diffY < -divergence) flyDown(verticalAccelerationModifier);
-                } else flyUp(verticalAccelerationModifier);
+                if (diffY > 0) flyUp(verticalAccelerationModifier);
+                if (diffY < -0) flyDown(verticalAccelerationModifier);
             }
         }
         forceFlyUp = false;

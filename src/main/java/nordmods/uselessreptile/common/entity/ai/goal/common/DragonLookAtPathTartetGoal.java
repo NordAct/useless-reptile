@@ -16,7 +16,7 @@ public class DragonLookAtPathTartetGoal<T extends URDragonEntity> extends Goal {
 
     @Override
     public boolean canUse() {
-        return !mob.getNavigation().isDone() && !mob.shouldFollow && mob.getTarget() == null;
+        return !mob.getNavigation().isDone() && !mob.shouldFollow && (mob.getTarget() == null || mob.getSensing().hasLineOfSight(mob.getTarget()));
     }
 
     @Override
