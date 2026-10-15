@@ -94,7 +94,7 @@ public class URDragonModelProvider extends URAbstractDataProvider<DragonModelDat
         sounds.add(new DragonModelData.Sound("idle", URSoundEvent.PIKEHORN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.PIKEHORN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("death", URSoundEvent.PIKEHORN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        addEntry(UREntities.RIVER_PIKEHORN, variant, Optional.of(sounds), true, animatedTexture);
+        addEntry(UREntities.RIVER_PIKEHORN, variant, Optional.of(sounds), false, animatedTexture);
     }
 
     protected void addLightningChaser(String variant, boolean animatedTexture) {

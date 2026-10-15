@@ -19,7 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
@@ -33,7 +32,6 @@ import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHunt
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.RiverPikehornHuntTargetGoal;
 import nordmods.uselessreptile.common.entity.base.GathererDragon;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
@@ -71,7 +69,8 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         xpReward = 5;
         setCanPickUpLoot(true);
         ticksUntilHeal = 400;
-        setYawTargetLimit(25);
+        setYawTargetLimit(45);
+        setPitchTargetLimit(45);
     }
 
     public boolean isHunting() {
@@ -81,38 +80,20 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         isHunting = state;
     }
 
-    //todo reconsider structure and make it cleaner
     public void tickAnimations() {
         if (!level().isClientSide()) return;
         tickBlinkController();
-        tickTurnController();
         tickMainController();
     }
 
     private void tickBlinkController() {
-        URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
+        URDragonAnimationController<nordmods.uselessreptile.common.entity.base.URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
-    private void tickTurnController() {
-        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
-        if (turnController.isPlayingAbilityAnimation(AnimationController.TURN)) return;
-        switch (getTurningState()) {
-            case LEFT -> {
-                if (isFlying() && isMoving() && !isMovingBackwards()) turnController.playAnimation("turn.fly.left");
-                else turnController.playAnimation("turn.left");
-            }
-            case RIGHT -> {
-                if (isFlying() && isMoving() && !isMovingBackwards()) turnController.playAnimation("turn.fly.right");
-                else turnController.playAnimation("turn.right");
-            }
-            default -> turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
-        }
-    }
-
     private void tickMainController() {
-        URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
+        URDragonAnimationController<nordmods.uselessreptile.common.entity.base.URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
         if (mainController.isPlayingAbilityAnimation(AnimationController.MAIN)) return;
@@ -122,13 +103,19 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         }
         if (isFlying()) {
             if (isMoving()) {
-                if (getTiltState() == TiltState.UP) {
-                    mainController.playAnimation("fly.straight.up");
+                if (isMovingBackwards()) {
+                    mainController.playAnimation("fly.back");
                     return;
                 }
                 if (getTiltState() == TiltState.DOWN) {
-                    mainController.playAnimation("fly.dive");
-                    return;
+                    if (getAccelerationModifier() > 0.5f && getXBodyRot(1) > 20) {
+                        mainController.playAnimation("fly.down");
+                        return;
+                    }
+                    if (getAccelerationModifier() > 0.15f && getXBodyRot(1) > 5) {
+                        mainController.playAnimation("fly.glide");
+                        return;
+                    }
                 }
                 if (isFlyGliding()) {
                     mainController.playAnimation("fly.glide");
@@ -149,8 +136,8 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
             mainController.playAnimation("walk");
             return;
         }
-        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(Math.max(animationSpeed, 1)));
-        if (isDancing()) {
+        mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1));
+        if (isDancing() && !isVehicle()) {
             mainController.playAnimation("dance");
             return;
         }

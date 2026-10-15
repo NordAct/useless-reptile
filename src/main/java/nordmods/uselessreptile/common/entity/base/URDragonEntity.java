@@ -836,17 +836,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (this instanceof HeadMountDragon) {
             if (getVehicle() instanceof Player player) {
                 if (!player.isAlive()) stopRiding();
-                getLookControl().setLockRotation(true);
-                if (level().isClientSide()) {
-                    yRotO = getYRot();
-                    setYRot(player.getYRot());
-                    TurningState turnState = TurningState.NONE;
-                    float diff = yRotO - getYRot();
-                    if (diff > 0) turnState = TurningState.LEFT;
-                    if (diff < 0) turnState = TurningState.RIGHT;
-                    setTurningState(turnState);
-                }
-            } else getLookControl().setLockRotation(false);
+                getBodyRotationControl().setRotationTarget(player.getLookAngle().add(player.position()));
+            }
         }
 
         if (!level().isClientSide() && tickCount % 20 == 0) {

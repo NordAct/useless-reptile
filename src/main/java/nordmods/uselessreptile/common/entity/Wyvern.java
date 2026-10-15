@@ -46,7 +46,7 @@ import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-
+//todo they tend to stuck under trees and cause lagfest by this
 public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity { //todo add way to make untamed ones land
     private final URDragonPart head = new URDragonPart(this, "head", 0.5f, 0.5f);
     private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.5f, 0.5f);
