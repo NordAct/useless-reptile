@@ -19,7 +19,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.gamerules.GameRules;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
@@ -27,6 +26,7 @@ import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
+import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
@@ -50,16 +50,19 @@ public class Moleclaw extends URRideableDragonEntity {
         navigation = new MoleclawNavigation(this, world);
 
         ticksUntilHeal = 400;
+        setPitchTargetLimit(45);
+        setYawTargetLimit(45);
     }
 
     @Override
     public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
-        if (data == CURRENT_ORDER) refreshDimensions();
+        if (data == CURRENT_ORDER || data == IS_PANICKING || data == HAS_CONTROLLING_PASSENGER) refreshDimensions();
     }
 
     @Override
     protected void registerGoals() {
+        goalSelector.addGoal(1, new RideableDragonLockLookGoal<>(this));
         goalSelector.addGoal(1, new FloatGoal(this));
         goalSelector.addGoal(2, new MoleclawEscapeLightGoal(this));
         goalSelector.addGoal(2, new DragonCallBackGoal<>(this));
@@ -68,7 +71,9 @@ public class Moleclaw extends URRideableDragonEntity {
         goalSelector.addGoal(8, new DragonAttackGoal(this));
         goalSelector.addGoal(9, new DragonReturnToHomePoint<>(this));
         goalSelector.addGoal(10, new DragonWanderAroundGoal<>(this));
+        goalSelector.addGoal(10, new DragonLookAtEntityGoal<>(this, LivingEntity.class, 16));
         goalSelector.addGoal(11, new DragonLookAroundGoal<>(this));
+        goalSelector.addGoal(12, new DragonLookAtPathTartetGoal<>(this));
         targetSelector.addGoal(5, new MoleclawUntamedTargetGoal<>(this, Player.class));
         targetSelector.addGoal(5, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(6, new OwnerHurtByTargetGoal(this));
@@ -96,11 +101,9 @@ public class Moleclaw extends URRideableDragonEntity {
                 ;
     }
 
-    //todo reconsider structure and make it cleaner
     public void tickAnimations() {
-        if (!level().isClientSide()) return;
+        if (level().isClientSide()) return;
         tickBlinkController();
-        tickTurnController();
         tickMainController();
     }
 
@@ -108,16 +111,6 @@ public class Moleclaw extends URRideableDragonEntity {
         URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
-    }
-
-    private void tickTurnController() {
-        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
-        if (turnController.isPlayingAbilityAnimation(AnimationController.TURN)) return;
-        switch (getTurningState()) {
-            case LEFT -> turnController.playAnimation("turn.left");
-            case RIGHT -> turnController.playAnimation("turn.right");
-            default -> turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
-        }
     }
 
     private void tickMainController() {
@@ -159,8 +152,8 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     protected EntityDimensions getDefaultDimensions(Pose pose) {
         EntityDimensions dimensions;
-        if (isOrderedToSit()) dimensions = STANDING;
-        else dimensions = SITTING;
+        if (isOrderedToSit() && !isPanicking() && !entityData.get(HAS_CONTROLLING_PASSENGER)) dimensions = SITTING;
+        else dimensions = STANDING;
         return dimensions.scale(getAgeScale());
     }
 
@@ -263,5 +256,10 @@ public class Moleclaw extends URRideableDragonEntity {
     @Override
     public boolean canAttack(@Nullable LivingEntity target) {
         return super.canAttack(target) && !isTooBrightAtPos(target.getOnPos());
+    }
+
+    @Override
+    public @Nullable DragonAnimationProcessor<? extends URDragonEntity> createServerAnimationProcessor() {
+        return new DragonAnimationProcessor<>(this);
     }
 }

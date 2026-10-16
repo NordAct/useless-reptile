@@ -61,6 +61,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         builder.define(SECONDARY_ATTACK_PRESSED, false);
         builder.define(PRIMARY_ATTACK_PRESSED, false);
         builder.define(FREE_LOOK, false);
+        builder.define(HAS_CONTROLLING_PASSENGER, false);
     }
 
     public static final EntityDataAccessor<Boolean> MOVE_FORWARD_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -71,6 +72,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     public static final EntityDataAccessor<Boolean> SECONDARY_ATTACK_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> PRIMARY_ATTACK_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> FREE_LOOK = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> HAS_CONTROLLING_PASSENGER = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
 
     public void updateInputs(boolean forward, boolean back, boolean jump, boolean down, boolean isSecondaryAttackPressed, boolean isPrimaryAttackPressed, boolean sprint, boolean freeLook) {
         entityData.set(MOVE_FORWARD_PRESSED, forward);
@@ -251,7 +253,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         if (level() instanceof ServerLevel) {
             boolean hasRider = hasControllingPassenger();
             updateRiderBonus(hasRider);
-            //getLookControl().setLockRotation(hasRider);
+            entityData.set(HAS_CONTROLLING_PASSENGER, hasRider);
             if (hasRider) setHomePoint(blockPosition());
             else updateInputs(false, false, false, false, false, false, false, false);
         }

@@ -27,6 +27,7 @@ import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonFlyAroundGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonFlyDownGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonLookAtEntityGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornCallBackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.RiverPikehornHuntTargetGoal;
@@ -217,7 +218,9 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         goalSelector.addGoal(8, new DragonReturnToHomePoint<>(this));
         goalSelector.addGoal(9, new DragonWanderAroundGoal<>(this));
         goalSelector.addGoal(9, new FlyingDragonFlyAroundGoal<>(this, 30));
+        goalSelector.addGoal(10, new FlyingDragonLookAtEntityGoal<>(this, LivingEntity.class, 16));
         goalSelector.addGoal(10, new DragonLookAroundGoal<>(this));
+        goalSelector.addGoal(11, new DragonLookAtPathTartetGoal<>(this));
         targetSelector.addGoal(3, (new DragonRevengeGoal<>(this)).setAlertOthers());
         targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(5, new OwnerHurtByTargetGoal(this));
