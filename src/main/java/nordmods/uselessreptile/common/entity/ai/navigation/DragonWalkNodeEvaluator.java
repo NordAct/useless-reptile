@@ -12,6 +12,7 @@ public class DragonWalkNodeEvaluator extends WalkNodeEvaluator {
     @Override
     protected boolean isNeighborValid(@Nullable Node neighbor, @NonNull Node current) {
         if (!super.isNeighborValid(neighbor, current)) return false;
+        if (fitsWithinBlock()) return true; //small dragons do pathfind correctly already
         if (neighbor == null) return false;
         double halfWidth = this.mob.getBbWidth() / 2f + 0.4f;
         if (neighbor.y > current.y) { //if going up, check if can do that from current node
@@ -44,5 +45,9 @@ public class DragonWalkNodeEvaluator extends WalkNodeEvaluator {
                 neighbor.z + 0.5 + halfWidth
         );
         return !this.hasCollisions(box);
+    }
+
+    public boolean fitsWithinBlock() {
+        return entityWidth <= 1 && entityHeight <= 1 && entityDepth <= 1;
     }
 }

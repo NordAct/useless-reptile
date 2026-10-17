@@ -22,7 +22,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
     @Override
     public void tick() {
         boolean targetInWater = mob.hasTargetInWater();
-        checkFlight(mob.isInWater() && mob.getFluidHeight(FluidTags.WATER) > mob.getFluidJumpThreshold() && !targetInWater || mob.isInLava());
+        if (mob.isInWater() && mob.getFluidHeight(FluidTags.WATER) > mob.getFluidJumpThreshold() && !targetInWater || mob.isInLava()) tryFly();
         mob.setPathfindingMalus(PathType.WATER, targetInWater ? 0 : 8);
         mob.setPathfindingMalus(PathType.WATER_BORDER, targetInWater ? 0 : 8);
 
@@ -47,6 +47,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
 
         if (bl || (mob.isFlying() || mob.level().noCollision(mob.getBoundingBox().inflate(0.5f, 0, 0.5f))) && canCutCorner(path.getNextNode().type) && shouldTargetNextNodeInDirection(vec3d)) {
             path.advance();
+            onPathAdvanced();
             if (!path.isDone()) {
                 currentTarget = Vec3.atBottomCenterOf(getTargetPos());
                 getMoveControl().setWantedPosition(currentTarget.x, currentTarget.y, currentTarget.z, 1);
@@ -57,8 +58,8 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
         if (currentTarget.distanceTo(getTargetPos().getCenter()) > mob.position().distanceTo(getTargetPos().getCenter())) recomputePath();
     }
 
-    protected void checkFlight(boolean shouldFly) {
-        if (!mob.isFlying() && shouldFly){
+    protected void tryFly() {
+        if (!mob.isFlying()){
             mob.forceFlightNextTick();
         }
     }
@@ -77,5 +78,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
     public void scheduleRecomputation() {
         hasDelayedRecomputation = true;
     }
+
+    protected void onPathAdvanced() {}
 }
 

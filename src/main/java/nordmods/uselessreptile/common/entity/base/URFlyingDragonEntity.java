@@ -104,7 +104,12 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     public void startToFly() {
-        if (onGround()) jumpFromGround();
+        if (onGround()) {
+            jumpFromGround();
+            addDeltaMovement(new Vec3(0, 0.1, 0));
+        } else {
+            setYya(0);
+        }
         if (level() instanceof ServerLevel world) {
             setAccelerationDuration(getAccelerationDuration() / 10);
             setFlying(true);

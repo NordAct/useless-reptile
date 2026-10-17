@@ -66,8 +66,8 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     private final URDragonPart shoulderArmLeft = new URDragonPart(this, "shoulder_arm_left", 2f, 1f);
     private final URDragonPart shoulderArmRight = new URDragonPart(this, "shoulder_arm_right", 2f, 1f);
     private final URDragonPart[] parts = new URDragonPart[]{head, neck1, neck2, neck3, neck4, neck5, front, back, tail1, tail2, tail3, tail4, tail5, wingLeft, wingRight, shoulderArmLeft, shoulderArmRight};
-    private static final EntityDimensions FLYING_IDLE = EntityDimensions.scalable(2.95f, 2.95f).withEyeHeight(2.9f);
-    private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(2.95f, 1).withEyeHeight(0.9f);
+    private static final EntityDimensions FLYING_IDLE = EntityDimensions.scalable(1.8f, 2.95f).withEyeHeight(2.9f);
+    private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(1.8f, 1).withEyeHeight(0.9f);
     private static final EntityDimensions ON_GROUND = EntityDimensions.scalable(1.8f, 2.95f).withEyeHeight(2.9f);
 
     public static final float BASE_GROUND_SPEED = 0.2f;
