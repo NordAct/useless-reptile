@@ -46,7 +46,7 @@ import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
-//todo they tend to stuck under trees and cause lagfest by this
+
 public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity { //todo add way to make untamed ones land
     private final URDragonPart head = new URDragonPart(this, "head", 0.5f, 0.5f);
     private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.5f, 0.5f);
@@ -104,7 +104,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         goalSelector.addGoal(10, new FlyingDragonLookAtEntityGoal<>(this, LivingEntity.class, 16));
         goalSelector.addGoal(10, new FlyingDragonLookAroundGoal<>(this));
         goalSelector.addGoal(11, new DragonLookAtPathTartetGoal<>(this));
-        targetSelector.addGoal(6, new NonTameRandomTargetGoal<>(this, Chicken.class, true, null));
+        targetSelector.addGoal(6, new DragonNonTameRandomTargetGoal<>(this, Chicken.class, true, null));
         targetSelector.addGoal(5, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(4, new DragonRevengeGoal<>(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(5, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
@@ -285,5 +285,11 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     @Override
     public @Nullable DragonAnimationProcessor<Wyvern> createServerAnimationProcessor() {
         return new MultipartDragonAnimationProcessor<>(this);
+    }
+
+    @Override
+    public boolean canGrief() {
+        if (!super.canGrief()) return false;
+        return isTame() ? URConfig.getConfig().wyvernGriefing.canTamedGrief() : URConfig.getConfig().wyvernGriefing.canUntamedGiref();
     }
 }

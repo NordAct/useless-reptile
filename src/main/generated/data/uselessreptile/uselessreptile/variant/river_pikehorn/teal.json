@@ -7,6 +7,9 @@
   "food_items": {
     "#minecraft:fishes": 3
   },
+  "hunt_targets": [
+    "#uselessreptile:river_pikehorn_hunt_target"
+  ],
   "name": "teal",
   "spawn_conditions": "uselessreptile:river_pikehorn/default",
   "taming_items": [

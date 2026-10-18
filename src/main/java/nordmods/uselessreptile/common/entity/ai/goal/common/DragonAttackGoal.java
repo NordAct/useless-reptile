@@ -97,7 +97,7 @@ public class DragonAttackGoal extends Goal {
         }
 
 
-        if (notMovingTimer > 60 && mob.canBreakBlocks()) {
+        if (notMovingTimer > 60 && mob.canGrief()) {
             holder = mob.getAvailableAbilities()
                     .stream()
                     .filter(a -> a.getAbility().is(URTags.BREAKS_BLOCKS) && a.getCooldown() <= 0)

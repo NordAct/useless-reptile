@@ -28,7 +28,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.gameevent.*;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
@@ -470,10 +469,9 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     }
 
     @Override
-    public boolean canBreakBlocks() {
-        if (!(level() instanceof ServerLevel world)) return false;
-        boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().lightningChaserGriefing.canTamedBreak() : URConfig.getConfig().lightningChaserGriefing.canUntamedBreak();
-        return shouldBreakBlocks && world.getGameRules().get(GameRules.MOB_GRIEFING);
+    public boolean canGrief() {
+        if (!super.canGrief()) return false;
+        return isTame() ? URConfig.getConfig().lightningChaserGriefing.canTamedGrief() : URConfig.getConfig().lightningChaserGriefing.canUntamedGiref();
     }
 
     @Override

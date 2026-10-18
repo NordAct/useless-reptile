@@ -27,7 +27,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        if (!mob.canBreakBlocks()) return false;
+        if (!mob.canGrief()) return false;
 
         if (mob.isPassenger() || mob.isOrderedToSit() || mob.getTarget() != null) return false;
 

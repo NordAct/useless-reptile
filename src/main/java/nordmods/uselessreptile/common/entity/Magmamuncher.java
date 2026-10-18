@@ -14,7 +14,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
@@ -22,7 +21,6 @@ import net.minecraft.world.entity.monster.MagmaCube;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -170,7 +168,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
         targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
         if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
-        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MagmaCube.class, true));
+        targetSelector.addGoal(5, new DragonNonTameRandomTargetGoal<>(this, MagmaCube.class, true));
     }
 
     @Override
@@ -225,10 +223,9 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     }
 
     @Override
-    public boolean canBreakBlocks() {
-        if (!(level() instanceof ServerLevel world)) return false;
-        boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().magmamuncherGriefing.canTamedBreak() : URConfig.getConfig().magmamuncherGriefing.canUntamedBreak();
-        return shouldBreakBlocks &&  world.getGameRules().get(GameRules.MOB_GRIEFING);
+    public boolean canGrief() {
+        if (!super.canGrief()) return false;
+        return isTame() ? URConfig.getConfig().magmamuncherGriefing.canTamedGrief() : URConfig.getConfig().magmamuncherGriefing.canUntamedGiref();
     }
 
     @Override

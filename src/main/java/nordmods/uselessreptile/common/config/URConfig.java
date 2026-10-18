@@ -60,6 +60,10 @@ public class URConfig {
     @SerialEntry(comment = "BEHAVIOUR \nPossible values for griefing: ALL, TAMED, DISABLED")
     public DragonGriefing moleclawGriefing = DragonGriefing.ALL;
     @SerialEntry
+    public DragonGriefing wyvernGriefing = DragonGriefing.ALL;
+    @SerialEntry
+    public DragonGriefing riverPikehornGriefing = DragonGriefing.ALL;
+    @SerialEntry
     public DragonGriefing lightningChaserGriefing = DragonGriefing.ALL;
     @SerialEntry
     public DragonGriefing magmamuncherGriefing = DragonGriefing.ALL;
@@ -81,20 +85,20 @@ public class URConfig {
         TAMED(false, true),
         DISABLED(false, false);
 
-        private final boolean untamedBreaking;
-        private final boolean tamedBreaking;
+        private final boolean untamedGriefing;
+        private final boolean tamedGriefing;
 
-        DragonGriefing(boolean untamedBreaking, boolean tamedBreaking) {
-            this.untamedBreaking = untamedBreaking;
-            this.tamedBreaking = tamedBreaking;
+        DragonGriefing(boolean untamedGriefing, boolean tamedGriefing) {
+            this.untamedGriefing = untamedGriefing;
+            this.tamedGriefing = tamedGriefing;
         }
 
-        public boolean canUntamedBreak() {
-            return untamedBreaking;
+        public boolean canUntamedGiref() {
+            return untamedGriefing;
         }
 
-        public boolean canTamedBreak() {
-            return tamedBreaking;
+        public boolean canTamedGrief() {
+            return tamedGriefing;
         }
     }
 

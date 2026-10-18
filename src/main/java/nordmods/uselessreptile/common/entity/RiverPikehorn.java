@@ -1,8 +1,11 @@
 package nordmods.uselessreptile.common.entity;
 
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -13,7 +16,6 @@ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.animal.fish.AbstractFish;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -24,12 +26,13 @@ import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
+import nordmods.uselessreptile.common.dragon_variant.type.RiverPikehornVariant;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonFlyAroundGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonFlyDownGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.FlyingDragonLookAtEntityGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornCallBackGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.PikehornHuntGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.RiverPikehornCallBackGoal;
+import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.RiverPikehornHuntGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn.RiverPikehornHuntTargetGoal;
 import nordmods.uselessreptile.common.entity.base.GathererDragon;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
@@ -210,10 +213,10 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
     @Override
     protected void registerGoals() {
-        goalSelector.addGoal(1, new PikehornCallBackGoal(this));
+        goalSelector.addGoal(1, new RiverPikehornCallBackGoal(this));
         goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(5, new DragonAttackGoal(this));
-        goalSelector.addGoal(6, new PikehornHuntGoal(this));
+        goalSelector.addGoal(6, new RiverPikehornHuntGoal(this));
         goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 30));
         goalSelector.addGoal(8, new DragonReturnToHomePoint<>(this));
         goalSelector.addGoal(9, new DragonWanderAroundGoal<>(this));
@@ -341,7 +344,16 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         return super.hurtServer(world, damageSource, amount);
     }
 
-    public boolean isHuntingTarget(LivingEntity entity) { //todo move targets to variant definition
-        return entity instanceof AbstractFish;
+    public boolean isHuntingTarget(LivingEntity entity) {
+        return ((RiverPikehornVariant)getDragonVariant()).huntTargets().stream().anyMatch(entry -> {
+            if (entry.tag()) return entity.is(TagKey.create(Registries.ENTITY_TYPE, entry.id()));
+            else return entity.is(ResourceKey.create(Registries.ENTITY_TYPE, entry.id()));
+        });
+    }
+
+    @Override
+    public boolean canGrief() {
+        if (!super.canGrief()) return false;
+        return isTame() ? URConfig.getConfig().riverPikehornGriefing.canTamedGrief() : URConfig.getConfig().riverPikehornGriefing.canUntamedGiref();
     }
 }

@@ -30,6 +30,7 @@ public class URTags {
 
     public static final TagKey<EntityType<?>> DRAGON_IMMUNE = register(Registries.ENTITY_TYPE, "dragon_immune");
     public static final TagKey<EntityType<?>> DRAGON = register(Registries.ENTITY_TYPE, "dragon");
+    public static final TagKey<EntityType<?>> RIVER_PIKEHORN_HUNT_TARGET = register(Registries.ENTITY_TYPE, "river_pikehorn_hunt_target");
 
     public static final TagKey<DragonAbilityType<?>> ATTACK = register(URResourceKeys.DRAGON_ABILITY_TYPE, "attack");
     public static final TagKey<DragonAbilityType<?>> MELEE_ATTACK = register(URResourceKeys.DRAGON_ABILITY_TYPE, "melee_attack");

@@ -36,7 +36,7 @@ public class BlockBreakingMeleeAttackAbility extends MeleeAttackAbility{
     public void trigger(DragonAbilityHolder holder) {
         super.trigger(holder);
         URDragonEntity entity = holder.getEntity();
-        if (!entity.canBreakBlocks()) return;
+        if (!entity.canGrief()) return;
 
         Iterable<BlockPos> blocks = BlockPos.betweenClosed(getAttackBox(holder));
         float maxMiningLevel = (float) entity.getAttributeValue(URAttributes.DRAGON_MINING_LEVEL);

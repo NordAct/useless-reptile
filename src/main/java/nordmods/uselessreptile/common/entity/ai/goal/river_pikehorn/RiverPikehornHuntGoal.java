@@ -1,15 +1,11 @@
 package nordmods.uselessreptile.common.entity.ai.goal.river_pikehorn;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.random.Weighted;
-import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.ai.util.RandomPos;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
-import net.minecraft.world.level.biome.MobSpawnSettings;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -18,7 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
-public class PikehornHuntGoal extends Goal {
+public class RiverPikehornHuntGoal extends Goal {
 
     private final RiverPikehorn mob;
     private BlockPos huntSpot;
@@ -26,13 +22,14 @@ public class PikehornHuntGoal extends Goal {
     private int calls;
     private BlockPos startingPos;
 
-    public PikehornHuntGoal(RiverPikehorn entity) {
+    public RiverPikehornHuntGoal(RiverPikehorn entity) {
         this.mob = entity;
     }
 
     @Override
     public boolean canUse() {
         //locating the hunt spot
+        if (!mob.canGrief()) return false;
         if (!mob.isHunting()) return false;
         if (mob.isTame() || startingPos == null) startingPos = mob.getOwner() != null ? mob.getOwner().blockPosition() : mob.getHomePoint();
         if (huntSpot == null) findFishyPlace(50);
@@ -134,13 +131,6 @@ public class PikehornHuntGoal extends Goal {
         return liquidAdjustment(div);
     }
 
-    private boolean biomeHasFish(BlockPos blockPos) {
-        Level world = mob.level();
-        Biome biome = world.getBiome(blockPos).value();
-        List<Weighted<MobSpawnSettings.SpawnerData>> entries = biome.getMobSettings().getMobs(MobCategory.WATER_AMBIENT).unwrap();
-        return !entries.isEmpty();
-    }
-
     //check if spot is above water
     private boolean aboveWater(BlockPos blockPos) {
         BlockPos pos = new BlockPos(blockPos);
@@ -156,7 +146,7 @@ public class PikehornHuntGoal extends Goal {
         for (int i = 0; i < 20; i++) {
             BlockPos newSpot = findRandomAirSpot(radius);
             //make sure spot is in the biome that has fish and not too far from initial spot
-            if (newSpot != null && biomeHasFish(newSpot) && newSpot.distSqr(startingPos) < 4096) {
+            if (newSpot != null && newSpot.distSqr(startingPos) < 4096) {
                 huntSpot = newSpot;
                 spotFound = true;
                 break;

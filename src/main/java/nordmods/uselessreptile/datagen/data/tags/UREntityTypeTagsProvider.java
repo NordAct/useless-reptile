@@ -27,5 +27,10 @@ public class UREntityTypeTagsProvider extends FabricTagsProvider<EntityType<?>>{
                 .addElement(EntityType.getKey(UREntities.MOLECLAW))
                 .addElement(EntityType.getKey(UREntities.LIGHTNING_CHASER))
                 .addElement(EntityType.getKey(UREntities.RIVER_PIKEHORN));
+
+        getOrCreateRawBuilder(URTags.RIVER_PIKEHORN_HUNT_TARGET)
+                .addElement(EntityType.getKey(EntityType.TROPICAL_FISH))
+                .addElement(EntityType.getKey(EntityType.COD))
+                .addElement(EntityType.getKey(EntityType.SALMON));
     }
 }

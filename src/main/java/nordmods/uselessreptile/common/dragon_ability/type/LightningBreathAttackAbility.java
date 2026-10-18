@@ -78,7 +78,7 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
 
     @Override
     protected boolean isLookingAtTarget(DragonAbilityHolder holder) {
-        return holder.getEntity().canBreakBlocks() ? holder.getEntity().getLookControl().isLookingAtTarget() : super.isLookingAtTarget(holder);
+        return holder.getEntity().canGrief() ? holder.getEntity().getLookControl().isLookingAtTarget() : super.isLookingAtTarget(holder);
     }
 
     @Override

@@ -13,6 +13,7 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.*;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URRegistries;
+import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.datagen.data.URAbstractDataProvider;
 import org.jspecify.annotations.NonNull;
 
@@ -172,7 +173,7 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 ),
                 UselessReptile.id("river_pikehorn")
         );
-        addEntry(getId(id, name), new RiverPikehornVariant(variant));
+        addEntry(getId(id, name), new RiverPikehornVariant(variant, List.of(new ExtraCodecs.TagOrElementLocation(URTags.RIVER_PIKEHORN_HUNT_TARGET.location(), true))));
     }
 
     protected void addLightningChaser(String name) {

@@ -79,7 +79,7 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
     public void tick() {
         mob.setSprinting(true);
 
-        if (mob.canBreakBlocks()) {
+        if (mob.canGrief()) {
             mob.getAvailableAbilities()
                     .stream()
                     .filter(a -> a.getAbility().is(URTags.BREAKS_BLOCKS) && a.getCooldown() <= 0)

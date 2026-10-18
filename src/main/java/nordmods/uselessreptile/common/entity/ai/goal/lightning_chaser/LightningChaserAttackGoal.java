@@ -46,7 +46,7 @@ public class LightningChaserAttackGoal extends DragonAttackGoal { //todo test it
         }
 
         boolean hasRangeAttack = shotAttackAbility.isPresent();
-        boolean canUseRangedAttack = hasRangeAttack && (mob.canBreakBlocks() && shotAttackAbility.get().is(URTags.BREAKS_BLOCKS) || mob.hasLineOfSight(target));
+        boolean canUseRangedAttack = hasRangeAttack && (mob.canGrief() && shotAttackAbility.get().is(URTags.BREAKS_BLOCKS) || mob.hasLineOfSight(target));
         double desiredY = target.getY() + (canUseRangedAttack ? 2 : 0) + target.getBbHeight();
         if (mob.onGround() && !mob.getSensing().hasLineOfSight(target) && hasRangeAttack) mob.forceFlightNextTick();
         mob.getLookControl().setLookAt(target);

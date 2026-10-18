@@ -303,6 +303,24 @@ public class ModMenuIntegration implements ModMenuApi {
                         val -> config.magmamuncherGriefing = val)
                 .customController(opt -> new EnumController<>(opt, URConfig.DragonGriefing.class))
                 .build();
+        Option<URConfig.DragonGriefing> riverPikehornGriefing = Option.<URConfig.DragonGriefing>createBuilder()
+                .name(Component.translatable("config.uselessreptile.option.riverPikehornGriefing"))
+                .description(OptionDescription.createBuilder()
+                        .text(Component.translatable("config.uselessreptile.option.allowDragonGriefing.@Tooltip")).build())
+                .binding(defaults.riverPikehornGriefing,
+                        () -> config.riverPikehornGriefing,
+                        val -> config.riverPikehornGriefing = val)
+                .customController(opt -> new EnumController<>(opt, URConfig.DragonGriefing.class))
+                .build();
+        Option<URConfig.DragonGriefing> wyvernGriefing = Option.<URConfig.DragonGriefing>createBuilder()
+                .name(Component.translatable("config.uselessreptile.option.wyvernGriefing"))
+                .description(OptionDescription.createBuilder()
+                        .text(Component.translatable("config.uselessreptile.option.allowDragonGriefing.@Tooltip")).build())
+                .binding(defaults.wyvernGriefing,
+                        () -> config.wyvernGriefing,
+                        val -> config.wyvernGriefing = val)
+                .customController(opt -> new EnumController<>(opt, URConfig.DragonGriefing.class))
+                .build();
         Option<Integer> blockDropChance = Option.<Integer>createBuilder()
                 .name(Component.translatable("config.uselessreptile.option.blockDropChance"))
                 .description(OptionDescription.createBuilder()
@@ -366,6 +384,8 @@ public class ModMenuIntegration implements ModMenuApi {
         dragonBehaviourGroup.option(moleclawGriefing);
         dragonBehaviourGroup.option(lightningChaserGriefing);
         dragonBehaviourGroup.option(magmamuncherGriefing);
+        dragonBehaviourGroup.option(riverPikehornGriefing);
+        dragonBehaviourGroup.option(wyvernGriefing);
         dragonBehaviourGroup.option(blockDropChance);
         dragonBehaviourGroup.option(allowDragonTeleport);
         dragonBehaviourGroup.option(dragonMadness);

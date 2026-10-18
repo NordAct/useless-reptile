@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.*;
@@ -18,7 +17,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.gamerules.GameRules;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
@@ -163,10 +161,9 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    public boolean canBreakBlocks() {
-        if (!(level() instanceof ServerLevel world)) return false;
-        boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().moleclawGriefing.canTamedBreak() : URConfig.getConfig().moleclawGriefing.canUntamedBreak();
-        return shouldBreakBlocks &&  world.getGameRules().get(GameRules.MOB_GRIEFING);
+    public boolean canGrief() {
+        if (!super.canGrief()) return false;
+        return isTame() ? URConfig.getConfig().moleclawGriefing.canTamedGrief() : URConfig.getConfig().moleclawGriefing.canUntamedGiref();
     }
 
     @Override

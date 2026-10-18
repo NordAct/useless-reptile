@@ -48,6 +48,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.*;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
@@ -1069,8 +1070,9 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return blockState.is(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(level(), blockPos, nameAndId, rider);
     }
 
-    public boolean canBreakBlocks() {
-        return false;
+    public boolean canGrief() {
+        if (!(level() instanceof ServerLevel world)) return false;
+        return world.getGameRules().get(GameRules.MOB_GRIEFING);
     }
 
     @Override
