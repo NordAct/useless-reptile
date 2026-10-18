@@ -25,7 +25,6 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
@@ -49,6 +48,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     private int eatingMagmaProgress;
     private static final int MAX_EATING_MAGMA_PROGRESS = 20*5;
     public static final float DISTANCE_TO_EAT = 1.25f;
+    public static final float DISTANCE_TO_EAT_SQUARED = DISTANCE_TO_EAT * DISTANCE_TO_EAT;
     public static final ResourceKey<LootTable> MAGMA_EATEN_TABLE = ResourceKey.create(Registries.LOOT_TABLE, UselessReptile.id("entities/magmamuncher_from_magma"));
 
     public static final float BASE_GROUND_SPEED = 0.2f;
@@ -59,6 +59,8 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         setPathfindingMalus(PathType.FIRE, 0);
         setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, 0);
         navigation = new MagmamuncherNavigation(this, level());
+        setYawTargetLimit(20);
+        setPitchTargetLimit(20);
     }
 
     @Override
@@ -71,11 +73,9 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         return "netherrack";
     }
 
-    //todo reconsider structure and make it cleaner
     public void tickAnimations() {
         if (!level().isClientSide()) return;
         tickBlinkController();
-        tickTurnController();
         tickMainController();
     }
 
@@ -83,22 +83,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
         if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
-    }
-
-    private void tickTurnController() {
-        URDragonAnimationController<URDragonEntity> turnController = getAnimationController(AnimationController.TURN);
-        if (turnController.isPlayingAbilityAnimation(AnimationController.TURN)) return;
-        switch (getTurningState()) {
-            case LEFT -> {
-                if (isMoving()) turnController.playAnimation("turn.walk.left");
-                else turnController.playAnimation("turn.left");
-            }
-            case RIGHT -> {
-                if (isMoving()) turnController.playAnimation("turn.walk.right");
-                else turnController.playAnimation("turn.right");
-            }
-            default -> turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
-        }
     }
 
     private void tickMainController() {
@@ -196,7 +180,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
             BlockPos pos = getMagmaBlockPos();
             if (!level().isClientSide() &&
                     (level().getBlockState(pos).getBlock() != Blocks.MAGMA_BLOCK
-                            || pos.getCenter().distanceToSqr(position()) >= DISTANCE_TO_EAT * DISTANCE_TO_EAT)) {
+                            || pos.getCenter().distanceToSqr(position()) >= DISTANCE_TO_EAT_SQUARED)) {
                 setEatingMagma(false);
             } else if (!level().isClientSide() && ++eatingMagmaProgress >= MAX_EATING_MAGMA_PROGRESS) {
                 setEatingMagma(false);

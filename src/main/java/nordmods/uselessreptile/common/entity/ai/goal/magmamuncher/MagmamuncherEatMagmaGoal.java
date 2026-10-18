@@ -69,7 +69,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
 
         BlockPos targetPos = mob.getMagmaBlockPos();
         double dist = targetPos.getCenter().distanceToSqr(mob.position());
-        if (dist < Magmamuncher.DISTANCE_TO_EAT * Magmamuncher.DISTANCE_TO_EAT && mob.getLookControl().isLookingAtTarget()) {
+        if (dist < Magmamuncher.DISTANCE_TO_EAT_SQUARED && mob.getLookControl().isLookingAtTarget()) {
             mob.setEatingMagma(true);
         }
         targetPos = targetPos.relative(offset);
@@ -81,7 +81,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
         mob.getNavigation().moveTo(targetPos.getX(), targetPos.getY(), targetPos.getZ(), 1);
         if (mob.getNavigation().isDone()) {
             //bandaid fix for a dumbass not getting close enough to eat its magma
-            if (dist > Magmamuncher.DISTANCE_TO_EAT * Magmamuncher.DISTANCE_TO_EAT && dist < 3) {
+            if (dist > Magmamuncher.DISTANCE_TO_EAT_SQUARED && dist < 3) {
                 mob.push(targetPos.getCenter().subtract(mob.position()).normalize().scale(0.1));
                 return;
             } else if (mob.getNavigation().getTargetPos() != null && mob.getNavigation().getTargetPos().getY() < mob.getMagmaBlockPos().getY()) {
