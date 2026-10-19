@@ -71,8 +71,6 @@ public class URConfig {
     public int blockDropChance = 100;
     @SerialEntry(comment = "allows dragon to teleport to owner whenever it tries to follow")
     public boolean allowDragonTeleport = true;
-    @SerialEntry
-    public boolean dragonMadness = false;
     @SerialEntry(comment = "Defines for how long fire resistance from Magmamuncher consuming fuel item will last.\n Setting value to 0 will disable this feature")
     public float magmamuncherFireResistanceTimeMultiplier = 0.09375f;
 

@@ -1,9 +1,13 @@
 {
   "type": "uselessreptile:wyvern",
   "abilities": "uselessreptile:wyvern",
+  "attacks_owner_target": true,
   "base_taming_progress": -1,
+  "defends_owner": false,
   "dragon_model": "uselessreptile:wyvern/jeb_",
   "equipment": "uselessreptile:wyvern",
   "name": "jeb_",
+  "tamed_targets": [],
+  "untamed_targets": [],
   "variant_name_key": "variant.uselessreptile.wyvern.jeb_"
 }

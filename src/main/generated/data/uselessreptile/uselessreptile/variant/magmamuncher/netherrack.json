@@ -1,7 +1,9 @@
 {
   "type": "uselessreptile:magmamuncher",
   "abilities": "uselessreptile:magmamuncher",
+  "attacks_owner_target": true,
   "base_taming_progress": 12,
+  "defends_owner": true,
   "dragon_model": "uselessreptile:magmamuncher/netherrack",
   "equipment": "uselessreptile:empty",
   "food_items": {
@@ -10,6 +12,9 @@
   },
   "name": "netherrack",
   "spawn_conditions": "uselessreptile:magmamuncher/default",
+  "tamed_targets": [
+    "minecraft:magma_cube"
+  ],
   "taming_items": [
     {
       "item": "minecraft:blaze_rod",
@@ -18,6 +23,9 @@
         3
       ]
     }
+  ],
+  "untamed_targets": [
+    "minecraft:magma_cube"
   ],
   "variant_name_key": "variant.uselessreptile.magmamuncher.netherrack"
 }

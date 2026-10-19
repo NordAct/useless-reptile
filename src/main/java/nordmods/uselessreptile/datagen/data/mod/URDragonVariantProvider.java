@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
@@ -42,7 +43,11 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 -1,
                 Optional.empty(),
                 Optional.empty(),
-                UselessReptile.id("wyvern")
+                UselessReptile.id("wyvern"),
+                List.of(),
+                List.of(),
+                true,
+                false
         );
         addEntry(UselessReptile.id("jeb_"), new WyvernVariant(jeb_));
 
@@ -106,7 +111,13 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
                         )
                 ),
-                UselessReptile.id("wyvern")
+                UselessReptile.id("wyvern"),
+                List.of(
+                        new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.CHICKEN), false)
+                ),
+                List.of(),
+                true,
+                false
         );
         addEntry(getId(id, name), new WyvernVariant(variant));
     }
@@ -136,7 +147,13 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
                         )
                 ),
-                UselessReptile.id("moleclaw")
+                UselessReptile.id("moleclaw"),
+                List.of(
+                        new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.PLAYER), false)
+                ),
+                List.of(),
+                true,
+                true
         );
         addEntry(getId(id, name), new MoleclawVariant(variant));
     }
@@ -171,7 +188,11 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
                         )
                 ),
-                UselessReptile.id("river_pikehorn")
+                UselessReptile.id("river_pikehorn"),
+                List.of(),
+                List.of(),
+                true,
+                true
         );
         addEntry(getId(id, name), new RiverPikehornVariant(variant, List.of(new ExtraCodecs.TagOrElementLocation(URTags.RIVER_PIKEHORN_HUNT_TARGET.location(), true))));
     }
@@ -193,7 +214,11 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
                         )
                 ),
-                UselessReptile.id("lightning_chaser")
+                UselessReptile.id("lightning_chaser"),
+                List.of(),
+                List.of(),
+                true,
+                false
         );
         addEntry(getId(id, name), new LightningChaserVariant(variant));
     }
@@ -224,7 +249,15 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                                 new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
                         )
                 ),
-                UselessReptile.id("magmamuncher")
+                UselessReptile.id("magmamuncher"),
+                List.of(
+                        new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
+                ),
+                List.of(
+                        new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
+                ),
+                true,
+                true
         );
         addEntry(getId(id, name), new MagmamuncherVariant(variant));
     }

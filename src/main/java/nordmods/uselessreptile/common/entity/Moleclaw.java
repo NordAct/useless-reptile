@@ -11,9 +11,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
@@ -22,7 +19,6 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawEscapeLightGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.moleclaw.MoleclawUntamedTargetGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MoleclawNavigation;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -72,10 +68,11 @@ public class Moleclaw extends URRideableDragonEntity {
         goalSelector.addGoal(10, new DragonLookAtEntityGoal<>(this, LivingEntity.class, 16));
         goalSelector.addGoal(11, new DragonLookAroundGoal<>(this));
         goalSelector.addGoal(12, new DragonLookAtPathTartetGoal<>(this));
-        targetSelector.addGoal(5, new MoleclawUntamedTargetGoal<>(this, Player.class));
-        targetSelector.addGoal(5, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(6, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(4, new DragonRevengeGoal<>(this));
+        targetSelector.addGoal(1, new DragonRevengeGoal<>(this));
+        targetSelector.addGoal(2, new DragonOwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DragonOwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(4, new DragonNonTameRandomTargetGoal(this, true));
+        targetSelector.addGoal(4, new DragonTameRandomTargetGoal(this, true));
     }
 
     @Override

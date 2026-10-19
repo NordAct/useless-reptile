@@ -1,7 +1,9 @@
 {
   "type": "uselessreptile:lightning_chaser",
   "abilities": "uselessreptile:lightning_chaser",
+  "attacks_owner_target": true,
   "base_taming_progress": 3,
+  "defends_owner": false,
   "dragon_model": "uselessreptile:lightning_chaser/blue",
   "equipment": "uselessreptile:lightning_chaser",
   "food_items": {
@@ -9,5 +11,7 @@
   },
   "name": "blue",
   "spawn_conditions": "uselessreptile:lightning_chaser/blue",
+  "tamed_targets": [],
+  "untamed_targets": [],
   "variant_name_key": "variant.uselessreptile.lightning_chaser.blue"
 }

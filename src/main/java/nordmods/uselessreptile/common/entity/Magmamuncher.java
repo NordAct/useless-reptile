@@ -14,11 +14,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
-import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.monster.MagmaCube;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.PathType;
@@ -149,10 +144,10 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         goalSelector.addGoal(8, new DragonWanderAroundGoal<>(this));
         goalSelector.addGoal(9, new DragonLookAroundGoal<>(this));
         targetSelector.addGoal(1, new DragonRevengeGoal<>(this));
-        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
-        if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
-        targetSelector.addGoal(5, new DragonNonTameRandomTargetGoal<>(this, MagmaCube.class, true));
+        targetSelector.addGoal(2, new DragonOwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DragonOwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(4, new DragonNonTameRandomTargetGoal(this, true));
+        targetSelector.addGoal(4, new DragonTameRandomTargetGoal(this, true));
     }
 
     @Override

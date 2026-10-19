@@ -1,7 +1,9 @@
 {
   "type": "uselessreptile:moleclaw",
   "abilities": "uselessreptile:moleclaw",
+  "attacks_owner_target": true,
   "base_taming_progress": 64,
+  "defends_owner": true,
   "dragon_model": "uselessreptile:moleclaw/albino",
   "equipment": "uselessreptile:moleclaw",
   "food_items": {
@@ -9,6 +11,7 @@
   },
   "name": "albino",
   "spawn_conditions": "uselessreptile:moleclaw/rare",
+  "tamed_targets": [],
   "taming_items": [
     {
       "item": "minecraft:beetroot",
@@ -17,6 +20,9 @@
         2
       ]
     }
+  ],
+  "untamed_targets": [
+    "minecraft:player"
   ],
   "variant_name_key": "variant.uselessreptile.moleclaw.albino"
 }

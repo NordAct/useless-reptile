@@ -1,7 +1,9 @@
 {
   "type": "uselessreptile:river_pikehorn",
   "abilities": "uselessreptile:river_pikehorn",
+  "attacks_owner_target": true,
   "base_taming_progress": 8,
+  "defends_owner": true,
   "dragon_model": "uselessreptile:river_pikehorn/purple",
   "equipment": "uselessreptile:empty",
   "food_items": {
@@ -12,6 +14,7 @@
   ],
   "name": "purple",
   "spawn_conditions": "uselessreptile:river_pikehorn/default",
+  "tamed_targets": [],
   "taming_items": [
     {
       "item": "minecraft:tropical_fish_bucket",
@@ -28,5 +31,6 @@
       ]
     }
   ],
+  "untamed_targets": [],
   "variant_name_key": "variant.uselessreptile.river_pikehorn.purple"
 }

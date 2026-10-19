@@ -1,7 +1,9 @@
 {
   "type": "uselessreptile:wyvern",
   "abilities": "uselessreptile:wyvern",
+  "attacks_owner_target": true,
   "base_taming_progress": 256,
+  "defends_owner": false,
   "dragon_model": "uselessreptile:wyvern/brown",
   "equipment": "uselessreptile:wyvern",
   "food_items": {
@@ -11,6 +13,7 @@
   },
   "name": "brown",
   "spawn_conditions": "uselessreptile:wyvern/default",
+  "tamed_targets": [],
   "taming_items": [
     {
       "item": "minecraft:chicken",
@@ -35,6 +38,9 @@
         1
       ]
     }
+  ],
+  "untamed_targets": [
+    "minecraft:chicken"
   ],
   "variant_name_key": "variant.uselessreptile.wyvern.brown"
 }

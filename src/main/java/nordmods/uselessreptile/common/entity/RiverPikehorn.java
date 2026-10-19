@@ -13,11 +13,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
-import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -224,11 +220,12 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         goalSelector.addGoal(10, new FlyingDragonLookAtEntityGoal<>(this, LivingEntity.class, 16));
         goalSelector.addGoal(10, new DragonLookAroundGoal<>(this));
         goalSelector.addGoal(11, new DragonLookAtPathTartetGoal<>(this));
-        targetSelector.addGoal(3, (new DragonRevengeGoal<>(this)).setAlertOthers());
-        targetSelector.addGoal(4, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(5, new OwnerHurtByTargetGoal(this));
-        targetSelector.addGoal(6, new RiverPikehornHuntTargetGoal(this));
-        if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
+        targetSelector.addGoal(1, new DragonRevengeGoal<>(this).setAlertOthers());
+        targetSelector.addGoal(2, new DragonOwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DragonOwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(4, new DragonNonTameRandomTargetGoal(this, true));
+        targetSelector.addGoal(4, new DragonTameRandomTargetGoal(this, true));
+        targetSelector.addGoal(5, new RiverPikehornHuntTargetGoal(this));
     }
 
     @Override
