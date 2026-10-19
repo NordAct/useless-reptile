@@ -5,6 +5,8 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
@@ -12,6 +14,7 @@ import net.minecraft.util.Util;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import nordmods.uselessreptile.common.init.URResourceKeys;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +40,7 @@ public record DragonSpawnConditions(
                     pair -> IntStream.of(pair.getFirst(), pair.getSecond())
             ).stable();
 
-    public static final Codec<DragonSpawnConditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+    public static final Codec<DragonSpawnConditions> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(DragonSpawnConditions::weight),
             ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("allowed_biomes").forGetter(DragonSpawnConditions::allowedBiomes),
             ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_biomes").forGetter(DragonSpawnConditions::bannedBiomes),
@@ -96,6 +99,8 @@ public record DragonSpawnConditions(
                 allowedOrBannedSpawnReasons
         );
     }));
+
+    public static final Codec<Holder<List<DragonSpawnConditions>>> CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_SPAWN_CONDITIONS, DIRECT_CODEC.listOf());
 
     public record LightLevelRestriction(Optional<IntRange> blockLightLevel, Optional<IntRange> skyLightLevel) {
         public static final Codec<LightLevelRestriction> CODEC = RecordCodecBuilder.create(instance -> instance.group(

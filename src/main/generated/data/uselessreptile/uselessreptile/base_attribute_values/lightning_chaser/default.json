@@ -1,0 +1,13 @@
+{
+  "minecraft:armor": 6.0,
+  "minecraft:armor_toughness": 6.0,
+  "minecraft:attack_damage": 12.0,
+  "minecraft:attack_knockback": 0.3,
+  "minecraft:flying_speed": 0.9,
+  "minecraft:max_health": 70.0,
+  "minecraft:movement_speed": 0.25,
+  "uselessreptile:dragon.acceleration_duration": 800.0,
+  "uselessreptile:dragon.flying_rotation_speed": 7.0,
+  "uselessreptile:dragon.ground_rotation_speed": 98.0,
+  "uselessreptile:dragon.vertical_speed": 0.3
+}

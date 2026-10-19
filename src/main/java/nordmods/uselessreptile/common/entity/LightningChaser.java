@@ -17,7 +17,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
@@ -191,21 +190,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         mainController.playAnimation("idle");
     }
 
-    public static AttributeSupplier.Builder createLightningChaserAttributes() {
-        return createDragonAttributes()
-                .add(Attributes.ATTACK_DAMAGE, attributes().lightningChaserDamage)
-                .add(Attributes.ATTACK_KNOCKBACK, attributes().lightningChaserKnockback)
-                .add(Attributes.MAX_HEALTH, attributes().lightningChaserHealth)
-                .add(Attributes.ARMOR, attributes().lightningChaserArmor)
-                .add(Attributes.ARMOR_TOUGHNESS, attributes().lightningChaserArmorToughness)
-                .add(Attributes.MOVEMENT_SPEED, attributes().lightningChaserGroundSpeed)
-                .add(Attributes.FLYING_SPEED, attributes().lightningChaserFlyingSpeed)
-                .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().lightningChaserVerticalSpeed)
-                .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().lightningChaserBaseAccelerationDuration)
-                .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().lightningChaserRotationSpeedGround)
-                .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().lightningChaserRotationSpeedAir);
-    }
-
     @Override
     protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
@@ -297,11 +281,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
             dimensions = ON_GROUND;
         }
         return dimensions.scale(getAgeScale());
-    }
-
-    @Override
-    protected float getBaseGroundSpeed() {
-        return BASE_GROUND_SPEED;
     }
 
     @Override

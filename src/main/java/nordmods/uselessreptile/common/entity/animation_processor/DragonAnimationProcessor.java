@@ -13,7 +13,6 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.common.asset_cache.EquipmentAssetCache;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
-import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
@@ -84,7 +83,7 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
                             itemStack,
                             itemId,
                             equipmentAssetCache,
-                            animatable.getDragonEquipment().get(itemId),
+                            animatable.getDragonEquipment().get(itemStack.typeHolder()),
                             dragonId,
                             animatable.getName().getString(),
                             animatable.getVariant(),
@@ -165,7 +164,7 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
     ) {
         //model
         if (assetCache.getModelLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(variant, animatable.level().registryAccess()).modelData().model();
+            Identifier id = variant.common().dragonModelData().value().modelData().model();
             if (ServerModelManager.instance().hasModel(id)) {
                 assetCache.setModelLocationCache(id);
             } else {
@@ -181,7 +180,7 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
 
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(variant, animatable.level().registryAccess()).modelData().animation();
+            Identifier id = variant.common().dragonModelData().value().modelData().animation();
             if (ServerAnimationManager.instance().hasAnimations(id)) {
                 assetCache.setAnimationLocationCache(id);
             } else {

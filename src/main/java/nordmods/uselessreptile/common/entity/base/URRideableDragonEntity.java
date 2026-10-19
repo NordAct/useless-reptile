@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -29,8 +28,8 @@ import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
 import nordmods.uselessreptile.client.util.duck.PassengerCameraRollOwner;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
-import nordmods.uselessreptile.common.dragon_ability.type.NoopAbility;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
+import nordmods.uselessreptile.common.dragon_ability.type.NoopAbility;
 import nordmods.uselessreptile.common.entity.animation_processor.EquipmentAnimationProcessor;
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
 import nordmods.uselessreptile.common.entity.misc.Placeholder;
@@ -388,9 +387,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     public int getMaxPassengerCount() {
         ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
-        Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
-        if (saddle.isEmpty() || !getDragonEquipment().containsKey(id)) return 0;
-        return getDragonEquipment().get(id).maxPassengers().orElse(0);
+        if (saddle.isEmpty() || !getDragonEquipment().containsKey(saddle.typeHolder())) return 0;
+        return getDragonEquipment().get(saddle.typeHolder()).maxPassengers().orElse(0);
     }
 
     @Override

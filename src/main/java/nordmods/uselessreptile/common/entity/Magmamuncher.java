@@ -10,8 +10,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.level.Level;
@@ -31,7 +29,6 @@ import nordmods.uselessreptile.common.entity.ai.navigation.MagmamuncherNavigatio
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
@@ -56,11 +53,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         navigation = new MagmamuncherNavigation(this, level());
         setYawTargetLimit(20);
         setPitchTargetLimit(20);
-    }
-
-    @Override
-    protected float getBaseGroundSpeed() {
-        return BASE_GROUND_SPEED;
     }
 
     @Override
@@ -107,17 +99,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
             return;
         }
         mainController.playAnimation("idle");
-    }
-
-    public static AttributeSupplier.Builder createMagmamuncherAttributes() {
-        return createDragonAttributes()
-                .add(Attributes.ATTACK_DAMAGE, attributes().magmamuncherDamage)
-                .add(Attributes.ATTACK_KNOCKBACK, attributes().magmamuncherKnockback)
-                .add(Attributes.MAX_HEALTH, attributes().magmamuncherHealth)
-                .add(Attributes.ARMOR, attributes().magmamuncherArmor)
-                .add(Attributes.ARMOR_TOUGHNESS, attributes().magmamuncherArmorToughness)
-                .add(Attributes.MOVEMENT_SPEED, attributes().magmamuncherGroundSpeed)
-                .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().magmamuncherRotationSpeedGround);
     }
 
     @Override

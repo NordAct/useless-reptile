@@ -1,7 +1,8 @@
 {
   "type": "uselessreptile:river_pikehorn",
-  "abilities": "uselessreptile:river_pikehorn",
+  "abilities": "uselessreptile:river_pikehorn/default",
   "attacks_owner_target": true,
+  "base_attribute_values": "uselessreptile:river_pikehorn/default",
   "base_taming_progress": 8,
   "defends_owner": true,
   "dragon_model": "uselessreptile:river_pikehorn/dark_teal",

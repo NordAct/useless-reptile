@@ -149,7 +149,6 @@ public class FakeDragon implements AssetCahceOwner, BRAnimatedObject {
                 dragonId,
                 Component.translatable(getDragonVariant().getType().getTranslationKey()).getString(),
                 getDragonVariant().common().name(),
-                URDragonEntityRenderer.getDefaultTexture(dragonId),
                 MODEL_PROVIDER.getDefaultModel(dragonId),
                 MODEL_PROVIDER.getDefaultAnimation(dragonId)
         );

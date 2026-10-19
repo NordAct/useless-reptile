@@ -8,7 +8,6 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -33,7 +32,10 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Inventory;
@@ -115,11 +117,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public boolean shouldFollow = false;
     protected Component defaultDisplayName;
     public static final Map<DragonVariant, Map<String, SoundInfo>> SOUND_INFO_HOLDER = new HashMap<>();
-    public static final Identifier VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
     public static final Identifier SPEED_MODIFIER_BONUS = UselessReptile.id("speed_modifier");
     private DragonVariant dragonVariant;
     private boolean invalidVariant;
-    private Map<Identifier, EquipmentModelData.Equipment> dragonEquipment;
+    private Map<Holder<Item>, EquipmentModelData.Equipment> dragonEquipment;
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
     private final URDragonAnimationController<URDragonEntity> mainController = new URDragonAnimationController<>(this, true);
@@ -276,7 +277,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return dragonVariant;
     }
 
-    public Map<Identifier, EquipmentModelData.Equipment> getDragonEquipment() {
+    public Map<Holder<Item>, EquipmentModelData.Equipment> getDragonEquipment() {
         if (dragonEquipment == null) {
             dragonEquipment = DragonVariantUtil.getEquipmentModelDataMap(getDragonVariant(), level().registryAccess());
         }
@@ -342,7 +343,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         super.onSyncedDataUpdated(data);
         if (VARIANT.equals(data)) {
             clearVariant();
-            updateVariantModifiers();
+            updateVariantAttributes();
             updateInventory();
             updateAbilities();
         }
@@ -384,12 +385,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         abilityHolders.clear();
         CommonDragonVariantData variant = getDragonVariant().common();
 
-        registryAccess().lookupOrThrow(URResourceKeys.DRAGON_ABILITIES).get(variant.abilities()).ifPresentOrElse(
-                ref -> {
-                    for (int i = 0; i < ref.value().size(); i++) abilityHolders.put(i, ref.value().get(i).createAbilityHolder(this));
-                },
-                () -> UselessReptile.LOGGER.error("Couldn't find abilities list {} for variant {} ({})", variant.abilities(), getVariant(), getDragonId())
-        );
+        List<DragonAbility> abilities = variant.abilities().value();
+        for (int i = 0; i < abilities.size(); i++) {
+            abilityHolders.put(i, abilities.get(i).createAbilityHolder(this));
+        }
     }
 
     private void updateInventory() {
@@ -406,34 +405,20 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         dragonEquipment = null;
     }
 
-    private void updateVariantModifiers() {
-        AttributeMap container = getAttributes();
-        registryAccess().lookupOrThrow(Registries.ATTRIBUTE).listElements().forEach(entityAttributeReference -> {
-            if (container.hasAttribute(entityAttributeReference))
-                container.getInstance(entityAttributeReference).removeModifier(VARIANT_BONUS_MODIFIER);
-        });
-
+    private void updateVariantAttributes() {
         CommonDragonVariantData variant = getDragonVariant().common();
         if (variant == null) {
-            UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}). No variant attribute modifiers will be applied", getVariant(), getDragonId());
+            UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}). No variant attribute base values will be applied", getVariant(), getDragonId());
             return;
         }
 
-        variant.variantAttributeModifiers().ifPresent(id -> {
-            List<AttributeModifier> modifiers = registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT_ATTRIBUTE_MODIFIERS).getValue(id);
-            if (modifiers != null) modifiers.forEach(entityAttributeModifier -> {
-                Attribute attribute = registryAccess().lookupOrThrow(Registries.ATTRIBUTE).getValue(entityAttributeModifier.id());
-                if (attribute != null) {
-                    AttributeInstance entityAttributeInstance = getAttribute(
-                            registryAccess()
-                                    .lookupOrThrow(Registries.ATTRIBUTE)
-                                    .get(entityAttributeModifier.id()).get()
-                    );
-                    if (entityAttributeInstance != null && !entityAttributeInstance.hasModifier(VARIANT_BONUS_MODIFIER))
-                        entityAttributeInstance.addTransientModifier(new AttributeModifier(VARIANT_BONUS_MODIFIER, entityAttributeModifier.amount(), entityAttributeModifier.operation()));
-
-                }
-            });
+        variant.baseAttributeValues().value().forEach((attribute, baseValue) -> {
+            AttributeInstance entityAttributeInstance = getAttribute(attribute);
+            if (entityAttributeInstance == null) {
+                UselessReptile.LOGGER.error("Couldn't find attribute instance for {}. Skipping", attribute.unwrapKey().orElseThrow().identifier());
+                return;
+            }
+            entityAttributeInstance.setBaseValue(baseValue);
         });
     }
 
@@ -457,26 +442,24 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     private SoundInfo createSoundInfo(String name) {
-        DragonModelData model = DragonVariantUtil.getDragonModelData(getDragonVariant(), level().registryAccess());
-        if (model != null) {
-            if (model.sounds().isPresent()) {
-                DragonModelData.Sound sound = model.sounds().get().stream()
-                        .filter(s -> s.name().equals(name))
-                        .findFirst()
-                        .orElse(null);
+        DragonModelData model = getDragonVariant().common().dragonModelData().value();
+        if (model.sounds().isPresent()) {
+            DragonModelData.Sound sound = model.sounds().get().stream()
+                    .filter(s -> s.name().equals(name))
+                    .findFirst()
+                    .orElse(null);
 
-                if (sound != null) return new SoundInfo(
-                        sound.id(),
-                        sound.volume().orElse(1f),
-                        sound.pitch().orElse(1f),
-                        sound.pitchDeviation().orElse(0.125f)
-                );
-                else {
-                    UselessReptile.LOGGER.warn("Sound {} is not defined for {} ({}) of variant {}.", name, getName().getString(), getDragonId(), getVariant());
-                }
-            } else {
-                UselessReptile.LOGGER.warn("Could not find sound {} for {} ({}) of variant {} as no sounds are defined.", name, getName().getString(), getDragonId(), getVariant());
+            if (sound != null) return new SoundInfo(
+                    sound.id(),
+                    sound.volume().orElse(1f),
+                    sound.pitch().orElse(1f),
+                    sound.pitchDeviation().orElse(0.125f)
+            );
+            else {
+                UselessReptile.LOGGER.warn("Sound {} is not defined for {} ({}) of variant {}.", name, getName().getString(), getDragonId(), getVariant());
             }
+        } else {
+            UselessReptile.LOGGER.warn("Could not find sound {} for {} ({}) of variant {} as no sounds are defined.", name, getName().getString(), getDragonId(), getVariant());
         }
         return null;
     }
@@ -490,17 +473,17 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
-    protected static AttributeSupplier.Builder createDragonAttributes() {
+    public static AttributeSupplier.Builder createDragonAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.STEP_HEIGHT, 1)
                 .add(Attributes.ATTACK_DAMAGE)
                 .add(Attributes.ATTACK_KNOCKBACK)
-                .add(Attributes.MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, 1024) //if health is higher than 20, dragon will not spawn with full health otherwise
                 .add(Attributes.ARMOR)
                 .add(Attributes.ARMOR_TOUGHNESS)
                 .add(Attributes.MOVEMENT_SPEED)
                 .add(Attributes.FLYING_SPEED)
-                .add(Attributes.FOLLOW_RANGE, 160)
+                .add(Attributes.FOLLOW_RANGE, 32)
                 .add(Attributes.JUMP_STRENGTH)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION)
@@ -776,7 +759,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public int getMaxAccelerationDuration() {
-        return (int) (getAttributeValue(URAttributes.DRAGON_ACCELERATION_DURATION) * getMovementSpeedModifier());
+        return Math.max((int) (getAttributeValue(URAttributes.DRAGON_ACCELERATION_DURATION) * getMovementSpeedModifier()), 1);
     }
 
     public float getCooldownModifier() {
@@ -788,7 +771,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public float getMovementSpeedModifier() {
-        double baseSpeed = getBaseGroundSpeed();
+        double baseSpeed = getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
         double speed = getAttributeValue(Attributes.MOVEMENT_SPEED);
         return (float) (speed / baseSpeed);
     }
@@ -899,8 +882,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         float speed = (float) getAttributeValue(Attributes.MOVEMENT_SPEED);
         setSpeed(speed * speedModifier);
     }
-
-    protected abstract float getBaseGroundSpeed();
 
     @Override
     public boolean removeWhenFarAway(double distanceSquared) {
@@ -1199,23 +1180,23 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public final boolean isSaddle(ItemStack itemStack) {
-        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.SADDLE;
+        if (!(getDragonEquipment().containsKey(itemStack.typeHolder()))) return false;
+        return getDragonEquipment().get(itemStack.typeHolder()).slot() == DragonInventory.Slot.SADDLE;
     }
 
     public final boolean isHelmet(ItemStack itemStack) {
-        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.HELMET;
+        if (!(getDragonEquipment().containsKey(itemStack.typeHolder()))) return false;
+        return getDragonEquipment().get(itemStack.typeHolder()).slot() == DragonInventory.Slot.HELMET;
     }
 
     public final boolean isChestplate(ItemStack itemStack) {
-        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.CHESTPLATE;
+        if (!(getDragonEquipment().containsKey(itemStack.typeHolder()))) return false;
+        return getDragonEquipment().get(itemStack.typeHolder()).slot() == DragonInventory.Slot.CHESTPLATE;
     }
 
     public final boolean isTailArmor(ItemStack itemStack) {
-        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.TAIL_ARMOR;
+        if (!(getDragonEquipment().containsKey(itemStack.typeHolder()))) return false;
+        return getDragonEquipment().get(itemStack.typeHolder()).slot() == DragonInventory.Slot.TAIL_ARMOR;
     }
 
     public boolean isBanner(ItemStack itemStack) {

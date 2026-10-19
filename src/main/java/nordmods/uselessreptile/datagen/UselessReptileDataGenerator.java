@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
+import nordmods.uselessreptile.common.init.URResourceKeys;
 import nordmods.uselessreptile.datagen.assets.URModelProvider;
 import nordmods.uselessreptile.datagen.assets.URSoundsProvider;
 import nordmods.uselessreptile.datagen.data.URAdvancementProvider;
@@ -43,11 +44,12 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URBlockLootTableProvider::new);
         pack.addProvider(URChestLootTableProvider::new);
 
+        pack.addProvider(URDragonBaseAttributeValues::new);
         pack.addProvider(UREquipmentProvider::new);
         pack.addProvider(URDragonVariantProvider::new);
         pack.addProvider(URSpawnConditionsProvider::new);
         pack.addProvider(URDragonModelProvider::new);
-        pack.addProvider(URDragonAbilityListProvider::new);
+        pack.addProvider(URDragonAbilitiesProvider::new);
 
         pack.addProvider(URModelProvider::new);
         pack.addProvider(URSoundsProvider::new);
@@ -60,6 +62,12 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
 
     @Override
     public void buildRegistry(@NonNull RegistrySetBuilder registryBuilder) {
+        registryBuilder.add(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, URDragonBaseAttributeValues::register);
+        registryBuilder.add(URResourceKeys.DRAGON_SPAWN_CONDITIONS, URSpawnConditionsProvider::register);
+        registryBuilder.add(URResourceKeys.DRAGON_MODEL, URDragonModelProvider::register);
+        registryBuilder.add(URResourceKeys.DRAGON_ABILITIES, URDragonAbilitiesProvider::register);
+        registryBuilder.add(URResourceKeys.DRAGON_EQUIPMENT, UREquipmentProvider::register);
+        registryBuilder.add(URResourceKeys.DRAGON_VARIANT, URDragonVariantProvider::register);
         registryBuilder.add(Registries.PROCESSOR_LIST, URProcessorsListProvider::register);
         registryBuilder.add(Registries.TEMPLATE_POOL, URTemplatePoolProvider::register);
         registryBuilder.add(Registries.STRUCTURE, URStructureProvider::register);

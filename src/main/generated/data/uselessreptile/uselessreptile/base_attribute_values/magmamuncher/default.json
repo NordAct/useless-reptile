@@ -1,0 +1,9 @@
+{
+  "minecraft:armor": 2.0,
+  "minecraft:armor_toughness": 0.0,
+  "minecraft:attack_damage": 4.0,
+  "minecraft:attack_knockback": 0.2,
+  "minecraft:max_health": 16.0,
+  "minecraft:movement_speed": 0.2,
+  "uselessreptile:dragon.ground_rotation_speed": 20.0
+}

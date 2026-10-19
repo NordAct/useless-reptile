@@ -2,7 +2,6 @@ package nordmods.uselessreptile.client.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -30,10 +29,8 @@ import nordmods.uselessreptile.common.asset_cache.AssetCache;
 import nordmods.uselessreptile.common.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.common.asset_cache.EquipmentAssetCache;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
-import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
-import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
@@ -42,10 +39,6 @@ import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelP
 import nordmods.uselessreptile.common.init.URStateDataTypes;
 import org.jspecify.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends BREntityRenderer<T, LivingEntityRenderState> {
     private final DragonEquipmentRenderer equipmentRenderer = new DragonEquipmentRenderer();
     private final DragonSaddleRenderer saddleRenderer = new DragonSaddleRenderer();
@@ -53,7 +46,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         super(renderManager, new URDragonEntityModelProvider());
         addRenderLayer(new URGlowingLayer(this, 1));
     }
-    private static final Map<Identifier, Identifier> DEFAULT_TEXTURES = new HashMap<>();
+    private static final Identifier DEFAULT_TEXTURE = Identifier.withDefaultNamespace("missingno");
 
     @Override
     protected float getShadowRadius(LivingEntityRenderState state) {
@@ -79,7 +72,6 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                     dragonId,
                     animatable.getName().getString(),
                     animatable.getVariant(),
-                    getDefaultTexture(dragonId),
                     getModelProvider().getDefaultModel(dragonId),
                     getModelProvider().getDefaultAnimation(dragonId)
             );
@@ -102,7 +94,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                             itemStack,
                             itemId,
                             equipmentAssetCache,
-                            animatable.getDragonEquipment().get(itemId),
+                            animatable.getDragonEquipment().get(itemStack.typeHolder()),
                             dragonId,
                             animatable.getName().getString(),
                             animatable.getVariant(),
@@ -147,13 +139,12 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
             Identifier dragonId,
             String dragonName,
             String variantName,
-            Identifier defaultTexture,
             Identifier defaultModel,
             Identifier defaultAnimation
     ) {
         //texture
         if (assetCache.getTextureLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().texture();
+            Identifier id = variant.common().dragonModelData().value().modelData().texture();
             if (ResourceUtil.doesResourceExist(id)) {
                 assetCache.setTextureLocationCache(id);
             } else {
@@ -162,13 +153,13 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                         dragonId,
                         variantName
                 );
-                assetCache.setTextureLocationCache(defaultTexture);
+                assetCache.setTextureLocationCache(DEFAULT_TEXTURE);
             }
         }
 
         //model
         if (assetCache.getModelLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().model();
+            Identifier id = variant.common().dragonModelData().value().modelData().model();
             if (ClientModelManager.instance().hasModel(id)) {
                 assetCache.setModelLocationCache(id);
             } else {
@@ -184,7 +175,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().animation();
+            Identifier id = variant.common().dragonModelData().value().modelData().animation();
             if (ClientAnimationManager.instance().hasAnimations(id)) {
                 assetCache.setAnimationLocationCache(id);
             } else {
@@ -200,7 +191,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //render type
         if (assetCache.getRenderTypeProviderCache() == null) {
-            ModelData modelData = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData();
+            ModelData modelData = variant.common().dragonModelData().value().modelData();
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider;
             if (modelData.translucent()) renderTypeProvider = ((_, texture) -> RenderTypes.entityTranslucent(texture)); //all translucent models can't have culling
             else renderTypeProvider = modelData.cull() ? ((_, texture) -> RenderTypes.entityCutoutCull(texture)) : ((_, texture) -> RenderTypes.entityCutout(texture));
@@ -306,16 +297,8 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
     @Override
     public Identifier getTextureId(BRState renderState) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(renderState.getStateData(URStateDataTypes.DRAGON_ID));
+        if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_TEXTURE;
         return renderState.getStateData(URStateDataTypes.ASSET_CACHE).getTextureLocationCache();
-    }
-
-    public static Identifier getDefaultTexture(Identifier entity) {
-        return DEFAULT_TEXTURES.computeIfAbsent(entity, (id) -> {
-            List<DragonVariant> available = DragonVariant.getSameType(DragonVariantType.fromId(id),Minecraft.getInstance().level.registryAccess());
-            if (available.isEmpty()) return null;
-            return DragonVariantUtil.getDragonModelData(available.getFirst(), Minecraft.getInstance().level.registryAccess()).modelData().texture();
-        });
     }
 
     @Override

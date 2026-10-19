@@ -10,7 +10,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -34,7 +33,6 @@ import nordmods.uselessreptile.common.entity.base.GathererDragon;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URFluteModes;
 import nordmods.uselessreptile.common.item.FluteItem;
@@ -185,26 +183,6 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
         } else instance.removeModifier(WATER_SPEED_MODIFIER_BONUS);
 
         super.updateMovementModifiers();
-    }
-
-    @Override
-    protected float getBaseGroundSpeed() {
-        return BASE_GROUND_SPEED;
-    }
-
-    public static AttributeSupplier.Builder createPikehornAttributes() {
-        return createDragonAttributes()
-                .add(Attributes.ATTACK_DAMAGE, attributes().riverPikehornDamage)
-                .add(Attributes.ATTACK_KNOCKBACK, attributes().riverPikehornKnockback )
-                .add(Attributes.MAX_HEALTH, attributes().riverPikehornHealth)
-                .add(Attributes.ARMOR, attributes().riverPikehornArmor)
-                .add(Attributes.ARMOR_TOUGHNESS, attributes().riverPikehornArmorToughness)
-                .add(Attributes.MOVEMENT_SPEED, attributes().riverPikehornGroundSpeed)
-                .add(Attributes.FLYING_SPEED, attributes().riverPikehornFlyingSpeed)
-                .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().riverPikehornVerticalSpeed)
-                .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().riverPikehornBaseAccelerationDuration)
-                .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().riverPikehornRotationSpeedGround)
-                .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().riverPikehornRotationSpeedAir);
     }
 
     @Override

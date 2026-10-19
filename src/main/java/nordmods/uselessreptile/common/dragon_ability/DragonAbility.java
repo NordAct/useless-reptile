@@ -3,15 +3,21 @@ package nordmods.uselessreptile.common.dragon_ability;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.TypedInstance;
+import net.minecraft.resources.RegistryFileCodec;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_ability.type.DragonAbilityType;
 import nordmods.uselessreptile.common.dragon_ability.use_condition.UseCondition;
-import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URRegistries;
+import nordmods.uselessreptile.common.init.URResourceKeys;
+
+import java.util.List;
 
 public interface DragonAbility extends TypedInstance<DragonAbilityType<?>> {
-    Codec<DragonAbility> CODEC = URRegistries.ABILITY_TYPE.byNameCodec()
+    Codec<DragonAbility> DIRECT_CODEC = URRegistries.ABILITY_TYPE.byNameCodec()
             .dispatch("type", DragonAbility::getType, DragonAbilityType::codec);
+
+    public static final Codec<Holder<List<DragonAbility>>> CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_ABILITIES, DIRECT_CODEC.listOf());
 
     DragonAbilityType<?> getType();
     CommonDragonAbilityData getCommonAbilityData();

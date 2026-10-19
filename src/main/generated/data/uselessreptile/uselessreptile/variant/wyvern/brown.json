@@ -1,11 +1,12 @@
 {
   "type": "uselessreptile:wyvern",
-  "abilities": "uselessreptile:wyvern",
+  "abilities": "uselessreptile:wyvern/default",
   "attacks_owner_target": true,
+  "base_attribute_values": "uselessreptile:wyvern/default",
   "base_taming_progress": 256,
   "defends_owner": false,
   "dragon_model": "uselessreptile:wyvern/brown",
-  "equipment": "uselessreptile:wyvern",
+  "equipment": "uselessreptile:wyvern/default",
   "food_items": {
     "#minecraft:meat": 2,
     "minecraft:chicken": 4,

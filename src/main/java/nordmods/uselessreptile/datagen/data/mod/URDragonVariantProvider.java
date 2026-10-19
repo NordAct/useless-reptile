@@ -1,9 +1,12 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EntityType;
@@ -12,10 +15,8 @@ import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.*;
-import nordmods.uselessreptile.common.init.URDragonVariantTypes;
-import nordmods.uselessreptile.common.init.URRegistries;
+import nordmods.uselessreptile.common.init.URResourceKeys;
 import nordmods.uselessreptile.common.init.URTags;
-import nordmods.uselessreptile.datagen.data.URAbstractDataProvider;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -23,67 +24,95 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 @SuppressWarnings("deprecation")
-public class URDragonVariantProvider extends URAbstractDataProvider<DragonVariant> {
+public class URDragonVariantProvider extends FabricDynamicRegistryProvider {
+    public static final ResourceKey<DragonVariant> WYVERN_JEB = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("wyvern/jeb_"));
+    public static final ResourceKey<DragonVariant> WYVERN_GREEN = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("wyvern/green"));
+    public static final ResourceKey<DragonVariant> WYVERN_BROWN = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("wyvern/brown"));
+
+    public static final ResourceKey<DragonVariant> RIVER_PIKEHORN_GREEN = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("river_pikehorn/green"));
+    public static final ResourceKey<DragonVariant> RIVER_PIKEHORN_BLUE = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("river_pikehorn/blue"));
+    public static final ResourceKey<DragonVariant> RIVER_PIKEHORN_PURPLE = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("river_pikehorn/purple"));
+    public static final ResourceKey<DragonVariant> RIVER_PIKEHORN_TEAL = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("river_pikehorn/teal"));
+    public static final ResourceKey<DragonVariant> RIVER_PIKEHORN_DARK_GREEN = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("river_pikehorn/dark_green"));
+    public static final ResourceKey<DragonVariant> RIVER_PIKEHORN_DARK_BLUE = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("river_pikehorn/dark_blue"));
+    public static final ResourceKey<DragonVariant> RIVER_PIKEHORN_DARK_PURPLE = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("river_pikehorn/dark_purple"));
+    public static final ResourceKey<DragonVariant> RIVER_PIKEHORN_DARK_TEAL = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("river_pikehorn/dark_teal"));
+
+    public static final ResourceKey<DragonVariant> LIGHTNING_CHASER_GREY = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("lightning_chaser/grey"));
+    public static final ResourceKey<DragonVariant> LIGHTNING_CHASER_BLUE = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("lightning_chaser/blue"));
+    public static final ResourceKey<DragonVariant> LIGHTNING_CHASER_BROWN = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("lightning_chaser/brown"));
+    public static final ResourceKey<DragonVariant> LIGHTNING_CHASER_PURPLE = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("lightning_chaser/purple"));
+
+    public static final ResourceKey<DragonVariant> MOLECLAW_BLACK = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("moleclaw/black"));
+    public static final ResourceKey<DragonVariant> MOLECLAW_GREY = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("moleclaw/grey"));
+    public static final ResourceKey<DragonVariant> MOLECLAW_BROWN = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("moleclaw/brown"));
+    public static final ResourceKey<DragonVariant> MOLECLAW_ALBINO = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("moleclaw/albino"));
+
+    public static final ResourceKey<DragonVariant> MAGMAMUNCHER_NETHERRACK = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("magmamuncher/netherrack"));
+    public static final ResourceKey<DragonVariant> MAGMAMUNCHER_MAGMA = ResourceKey.create(URResourceKeys.DRAGON_VARIANT, UselessReptile.id("magmamuncher/magma"));
 
     public URDragonVariantProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
-        super(output, registryLookupFuture, DragonVariant.CODEC, "uselessreptile/variant");
+        super(output, registryLookupFuture);
+    }
+    @Override
+    protected void configure(HolderLookup.@NonNull Provider provider, @NonNull Entries entries) {
+        entries.addAll(provider.lookupOrThrow(URResourceKeys.DRAGON_VARIANT));
     }
 
-    public void addEntries(HolderLookup.Provider provider) {
-        addWyvern("green");
-        addWyvern("brown");
+    public static void register(BootstrapContext<DragonVariant> bootstrapContext) {
+        bootstrapContext.register(WYVERN_GREEN, makeWyvern(bootstrapContext, "green"));
+        bootstrapContext.register(WYVERN_BROWN, makeWyvern(bootstrapContext, "brown"));
         CommonDragonVariantData jeb_ = new CommonDragonVariantData(
                 "jeb_",
                 "variant.uselessreptile.wyvern.jeb_",
                 Optional.empty(),
-                UselessReptile.id("wyvern/jeb_"),
-                UselessReptile.id("wyvern"),
-                Optional.empty(),
-                Optional.empty(),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(URDragonModelProvider.WYVERN_JEB),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.WYVERN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.CANNOT_SPAWN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.WYVERN),
                 -1,
                 List.of(),
                 List.of(),
-                UselessReptile.id("wyvern"),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.WYVERN),
                 List.of(),
                 List.of(),
                 true,
                 false
         );
-        addEntry(UselessReptile.id("jeb_"), new WyvernVariant(jeb_));
+        bootstrapContext.register(WYVERN_JEB, new WyvernVariant(jeb_));
 
-        addMoleclaw("black", false);
-        addMoleclaw("brown", false);
-        addMoleclaw("grey", false);
-        addMoleclaw("albino", true);
+        bootstrapContext.register(MOLECLAW_BLACK, makeMoleclaw(bootstrapContext , "black", false));
+        bootstrapContext.register(MOLECLAW_BROWN, makeMoleclaw(bootstrapContext , "brown", false));
+        bootstrapContext.register(MOLECLAW_GREY, makeMoleclaw(bootstrapContext , "grey", false));
+        bootstrapContext.register(MOLECLAW_ALBINO, makeMoleclaw(bootstrapContext , "albino", true));
 
-        addLightningChaser("blue");
-        addLightningChaser("grey");
-        addLightningChaser("brown");
-        addLightningChaser("purple");
+        bootstrapContext.register(LIGHTNING_CHASER_BLUE, makeLightningChaser(bootstrapContext, "blue"));
+        bootstrapContext.register(LIGHTNING_CHASER_GREY, makeLightningChaser(bootstrapContext, "grey"));
+        bootstrapContext.register(LIGHTNING_CHASER_BROWN, makeLightningChaser(bootstrapContext, "brown"));
+        bootstrapContext.register(LIGHTNING_CHASER_PURPLE, makeLightningChaser(bootstrapContext, "purple"));
 
-        addRiverPikehorn("green");
-        addRiverPikehorn("dark_green");
-        addRiverPikehorn("blue");
-        addRiverPikehorn("dark_blue");
-        addRiverPikehorn("purple");
-        addRiverPikehorn("dark_purple");
-        addRiverPikehorn("teal");
-        addRiverPikehorn("dark_teal");
+        bootstrapContext.register(RIVER_PIKEHORN_GREEN, makeRiverPikehorn(bootstrapContext, "green"));
+        bootstrapContext.register(RIVER_PIKEHORN_DARK_GREEN, makeRiverPikehorn(bootstrapContext, "dark_green"));
+        bootstrapContext.register(RIVER_PIKEHORN_BLUE, makeRiverPikehorn(bootstrapContext, "blue"));
+        bootstrapContext.register(RIVER_PIKEHORN_DARK_BLUE, makeRiverPikehorn(bootstrapContext, "dark_blue"));
+        bootstrapContext.register(RIVER_PIKEHORN_PURPLE, makeRiverPikehorn(bootstrapContext, "purple"));
+        bootstrapContext.register(RIVER_PIKEHORN_DARK_PURPLE, makeRiverPikehorn(bootstrapContext, "dark_purple"));
+        bootstrapContext.register(RIVER_PIKEHORN_TEAL, makeRiverPikehorn(bootstrapContext, "teal"));
+        bootstrapContext.register(RIVER_PIKEHORN_DARK_TEAL, makeRiverPikehorn(bootstrapContext, "dark_teal"));
 
-        addMagmamuncher("netherrack");
-        addMagmamuncher("magma");
+        bootstrapContext.register(MAGMAMUNCHER_NETHERRACK, addMagmamuncher(bootstrapContext, "netherrack"));
+        bootstrapContext.register(MAGMAMUNCHER_MAGMA, addMagmamuncher(bootstrapContext, "magma"));
     }
 
-    protected void addWyvern(String name) {
-        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.WYVERN);
+    protected static DragonVariant makeWyvern(BootstrapContext<DragonVariant> bootstrapContext, String name) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.wyvern." + name,
                 Optional.empty(),
-                UselessReptile.id("wyvern/" + name),
-                UselessReptile.id("wyvern"),
-                Optional.of(UselessReptile.id("wyvern/default")),
-                Optional.empty(),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("wyvern/" + name))),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.WYVERN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.WYVERN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.WYVERN),
                 256,
                 List.of(
                         new CommonDragonVariantData.TamingItem(
@@ -107,7 +136,7 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                         new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
                         new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
                 ),
-                UselessReptile.id("wyvern"),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.WYVERN),
                 List.of(
                         new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.CHICKEN), false)
                 ),
@@ -115,19 +144,18 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 true,
                 false
         );
-        addEntry(getId(id, name), new WyvernVariant(variant));
+        return new WyvernVariant(variant);
     }
 
-    protected void addMoleclaw(String name, boolean rare) {
-        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.MOLECLAW);
+    protected static DragonVariant makeMoleclaw(BootstrapContext<DragonVariant> bootstrapContext, String name, boolean rare) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.moleclaw." + name,
                 Optional.empty(),
-                UselessReptile.id("moleclaw/" + name),
-                UselessReptile.id("moleclaw"),
-                Optional.of(UselessReptile.id("moleclaw/" + (rare ? "rare" : "default"))),
-                Optional.empty(),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("moleclaw/" + name))),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.MOLECLAW),
+                rare ? bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.MOLECLAW_RARE) : bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.MOLECLAW),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.MOLECLAW),
                 64,
                 List.of(
                         new CommonDragonVariantData.TamingItem(
@@ -139,7 +167,7 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 List.of(
                         new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
                 ),
-                UselessReptile.id("moleclaw"),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.MOLECLAW),
                 List.of(
                         new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.PLAYER), false)
                 ),
@@ -147,19 +175,18 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 true,
                 true
         );
-        addEntry(getId(id, name), new MoleclawVariant(variant));
+        return new MoleclawVariant(variant);
     }
 
-    protected void addRiverPikehorn(String name) {
-        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.RIVER_PIKEHORN);
+    protected static DragonVariant makeRiverPikehorn(BootstrapContext<DragonVariant> bootstrapContext, String name) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.river_pikehorn." + name,
                 Optional.empty(),
-                UselessReptile.id("river_pikehorn/" + name),
-                UselessReptile.id("empty"),
-                Optional.of(UselessReptile.id("river_pikehorn/default")),
-                Optional.empty(),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("river_pikehorn/" + name))),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.EMPTY),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.RIVER_PIKEHORN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.RIVER_PIKEHORN),
                 8,
                 List.of(
                         new CommonDragonVariantData.TamingItem(
@@ -176,49 +203,47 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 List.of(
                         new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
                 ),
-                UselessReptile.id("river_pikehorn"),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.RIVER_PIKEHORN),
                 List.of(),
                 List.of(),
                 true,
                 true
         );
-        addEntry(getId(id, name), new RiverPikehornVariant(variant, List.of(new ExtraCodecs.TagOrElementLocation(URTags.RIVER_PIKEHORN_HUNT_TARGET.location(), true))));
+        return new RiverPikehornVariant(variant, List.of(new ExtraCodecs.TagOrElementLocation(URTags.RIVER_PIKEHORN_HUNT_TARGET.location(), true)));
     }
 
-    protected void addLightningChaser(String name) {
-        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.LIGHTNING_CHASER);
+    protected static DragonVariant makeLightningChaser(BootstrapContext<DragonVariant> bootstrapContext, String name) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.lightning_chaser." + name,
                 Optional.empty(),
-                UselessReptile.id("lightning_chaser/" + name),
-                UselessReptile.id("lightning_chaser"),
-                Optional.of(UselessReptile.id("lightning_chaser/" + name)),
-                Optional.empty(),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("lightning_chaser/" + name))),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.LIGHTNING_CHASER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_SPAWN_CONDITIONS, UselessReptile.id("lightning_chaser/" + name))),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.LIGHTNING_CHASER),
                 3,
                 List.of(),
                 List.of(
                         new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
                 ),
-                UselessReptile.id("lightning_chaser"),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.LIGHTNING_CHASER),
                 List.of(),
                 List.of(),
                 true,
                 false
         );
-        addEntry(getId(id, name), new LightningChaserVariant(variant));
+        return new LightningChaserVariant(variant);
     }
 
-    protected void addMagmamuncher(String name) {
-        Identifier id = URRegistries.VARIANT_TYPE.getKey(URDragonVariantTypes.MAGMAMUNCHER);
+    protected static DragonVariant addMagmamuncher(BootstrapContext<DragonVariant> bootstrapContext,String name) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.magmamuncher." + name,
                 Optional.empty(),
-                UselessReptile.id("magmamuncher/" + name),
-                UselessReptile.id("empty"),
-                Optional.of(UselessReptile.id("magmamuncher/default")),
-                Optional.empty(),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("magmamuncher/" + name))),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.EMPTY),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.MAGMAMUNCHER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.MAGMAMUNCHER),
                 12,
                 List.of(
                         new CommonDragonVariantData.TamingItem(
@@ -231,7 +256,7 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                         new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4, Optional.empty()),
                         new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
                 ),
-                UselessReptile.id("magmamuncher"),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.MAGMAMUNCHER),
                 List.of(
                         new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
                 ),
@@ -241,7 +266,7 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 true,
                 true
         );
-        addEntry(getId(id, name), new MagmamuncherVariant(variant));
+        return new MagmamuncherVariant(variant);
     }
 
     protected Identifier getId(Identifier dragonId, String name) {

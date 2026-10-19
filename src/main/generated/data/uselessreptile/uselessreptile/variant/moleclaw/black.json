@@ -1,11 +1,12 @@
 {
   "type": "uselessreptile:moleclaw",
-  "abilities": "uselessreptile:moleclaw",
+  "abilities": "uselessreptile:moleclaw/default",
   "attacks_owner_target": true,
+  "base_attribute_values": "uselessreptile:moleclaw/default",
   "base_taming_progress": 64,
   "defends_owner": true,
   "dragon_model": "uselessreptile:moleclaw/black",
-  "equipment": "uselessreptile:moleclaw",
+  "equipment": "uselessreptile:moleclaw/default",
   "food_items": {
     "#c:foods/vegetable": 2
   },

@@ -10,6 +10,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.entity.*;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.Placeholder;
 import nordmods.uselessreptile.common.entity.projectile.AcidBlast;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
@@ -39,11 +40,11 @@ public class UREntities {
 
 
     public static void init(){
-        FabricDefaultAttributeRegistry.register(WYVERN, Wyvern.createWyvernAttributes());
-        FabricDefaultAttributeRegistry.register(MOLECLAW, Moleclaw.createMoleclawAttributes());
-        FabricDefaultAttributeRegistry.register(RIVER_PIKEHORN, RiverPikehorn.createPikehornAttributes());
-        FabricDefaultAttributeRegistry.register(LIGHTNING_CHASER, LightningChaser.createLightningChaserAttributes());
-        FabricDefaultAttributeRegistry.register(MAGMAMUNCHER, Magmamuncher.createMagmamuncherAttributes());
+        FabricDefaultAttributeRegistry.register(WYVERN, URDragonEntity.createDragonAttributes());
+        FabricDefaultAttributeRegistry.register(MOLECLAW, URDragonEntity.createDragonAttributes());
+        FabricDefaultAttributeRegistry.register(RIVER_PIKEHORN, URDragonEntity.createDragonAttributes());
+        FabricDefaultAttributeRegistry.register(LIGHTNING_CHASER, URDragonEntity.createDragonAttributes());
+        FabricDefaultAttributeRegistry.register(MAGMAMUNCHER, URDragonEntity.createDragonAttributes());
     }
 
     private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> builder) {

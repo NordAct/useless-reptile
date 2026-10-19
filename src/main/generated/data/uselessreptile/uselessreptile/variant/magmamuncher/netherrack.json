@@ -1,7 +1,8 @@
 {
   "type": "uselessreptile:magmamuncher",
-  "abilities": "uselessreptile:magmamuncher",
+  "abilities": "uselessreptile:magmamuncher/default",
   "attacks_owner_target": true,
+  "base_attribute_values": "uselessreptile:magmamuncher/default",
   "base_taming_progress": 12,
   "defends_owner": true,
   "dragon_model": "uselessreptile:magmamuncher/netherrack",

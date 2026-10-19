@@ -4,17 +4,21 @@ import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Util;
+import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
+import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
+import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
+import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
+import nordmods.uselessreptile.common.init.URResourceKeys;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
@@ -22,37 +26,39 @@ import java.util.stream.IntStream;
 //TODO:
 //  effect immunities
 //  damage immunities
-//  potentially move all attributes to variant file
 
 public record CommonDragonVariantData(
         String name,
         String variantNameKey,
         Optional<String> displayNameKey,
-        Identifier dragonModelData,
-        Identifier dragonEquipment,
-        Optional<Identifier> spawnConditions,
-        Optional<Identifier> variantAttributeModifiers,
+        Holder<DragonModelData> dragonModelData,
+        Holder<EquipmentModelData> dragonEquipment,
+        Holder<List<DragonSpawnConditions>> spawnConditions,
+        Holder<Map<Holder<Attribute>, Float>> baseAttributeValues,
         int baseTamingProgress,
         List<TamingItem> tamingItems,
         List<FoodItem> foodItems,
-        Identifier abilities,
+        Holder<List<DragonAbility>> abilities,
         List<ExtraCodecs.TagOrElementLocation> untamedTargets,
         List<ExtraCodecs.TagOrElementLocation> tamedTargets,
         boolean attacksOwnerTarget,
         boolean defendsOwner
 ) {
+    public static final Codec<Map<Holder<Attribute>, Float>> BASE_ATTRIBUTE_VALUES_DIRECT_CODEC = Codec.unboundedMap(Attribute.CODEC, Codec.FLOAT);
+    public static final Codec<Holder<Map<Holder<Attribute>, Float>>> BASE_ATTRIBUTE_VALUES_CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, BASE_ATTRIBUTE_VALUES_DIRECT_CODEC);
+
     public static final Codec<CommonDragonVariantData> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.STRING.fieldOf("name").forGetter(CommonDragonVariantData::name),
             Codec.STRING.fieldOf("variant_name_key").forGetter(CommonDragonVariantData::variantNameKey),
             Codec.STRING.optionalFieldOf("display_name_key").forGetter(CommonDragonVariantData::displayNameKey),
-            Identifier.CODEC.fieldOf("dragon_model").forGetter(CommonDragonVariantData::dragonModelData),
-            Identifier.CODEC.fieldOf("equipment").forGetter(CommonDragonVariantData::dragonEquipment),
-            Identifier.CODEC.optionalFieldOf("spawn_conditions").forGetter(CommonDragonVariantData::spawnConditions),
-            Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(CommonDragonVariantData::variantAttributeModifiers),
+            DragonModelData.CODEC.fieldOf("dragon_model").forGetter(CommonDragonVariantData::dragonModelData),
+            EquipmentModelData.CODEC.fieldOf("equipment").forGetter(CommonDragonVariantData::dragonEquipment),
+            DragonSpawnConditions.CODEC.fieldOf("spawn_conditions").forGetter(CommonDragonVariantData::spawnConditions),
+            BASE_ATTRIBUTE_VALUES_CODEC.fieldOf("base_attribute_values").forGetter(CommonDragonVariantData::baseAttributeValues),
             Codec.INT.fieldOf("base_taming_progress").forGetter(CommonDragonVariantData::baseTamingProgress),
             TamingItem.LIST_CODEC.fieldOf("taming_items").forGetter(CommonDragonVariantData::tamingItems),
             FoodItem.LIST_CODEC.fieldOf("food_items").forGetter(CommonDragonVariantData::foodItems),
-            Identifier.CODEC.fieldOf("abilities").forGetter(CommonDragonVariantData::abilities),
+            DragonAbility.CODEC.fieldOf("abilities").forGetter(CommonDragonVariantData::abilities),
             ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().fieldOf("untamed_targets").forGetter(CommonDragonVariantData::untamedTargets),
             ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().fieldOf("tamed_targets").forGetter(CommonDragonVariantData::tamedTargets),
             Codec.BOOL.fieldOf("attacks_owner_target").forGetter(CommonDragonVariantData::attacksOwnerTarget),
@@ -63,14 +69,14 @@ public record CommonDragonVariantData(
             Codec.STRING.fieldOf("name").forGetter(CommonDragonVariantData::name),
             Codec.STRING.fieldOf("variant_name_key").forGetter(CommonDragonVariantData::variantNameKey),
             Codec.STRING.optionalFieldOf("display_name_key").forGetter(CommonDragonVariantData::displayNameKey),
-            Identifier.CODEC.fieldOf("dragon_model").forGetter(CommonDragonVariantData::dragonModelData),
-            Identifier.CODEC.fieldOf("equipment").forGetter(CommonDragonVariantData::dragonEquipment),
-            Identifier.CODEC.optionalFieldOf("spawn_conditions").forGetter(CommonDragonVariantData::spawnConditions),
-            Identifier.CODEC.optionalFieldOf("attribute_modifiers").forGetter(CommonDragonVariantData::variantAttributeModifiers),
+            DragonModelData.CODEC.fieldOf("dragon_model").forGetter(CommonDragonVariantData::dragonModelData),
+            EquipmentModelData.CODEC.fieldOf("equipment").forGetter(CommonDragonVariantData::dragonEquipment),
+            DragonSpawnConditions.CODEC.fieldOf("spawn_conditions").forGetter(CommonDragonVariantData::spawnConditions),
+            BASE_ATTRIBUTE_VALUES_CODEC.fieldOf("base_attribute_values").forGetter(CommonDragonVariantData::baseAttributeValues),
             Codec.INT.fieldOf("base_taming_progress").forGetter(CommonDragonVariantData::baseTamingProgress),
             TamingItem.LIST_CODEC.fieldOf("taming_items").forGetter(CommonDragonVariantData::tamingItems),
             FoodItem.LIST_CODEC.fieldOf("food_items").forGetter(CommonDragonVariantData::foodItems),
-            Identifier.CODEC.fieldOf("abilities").forGetter(CommonDragonVariantData::abilities),
+            DragonAbility.CODEC.fieldOf("abilities").forGetter(CommonDragonVariantData::abilities),
             ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().fieldOf("untamed_targets").forGetter(CommonDragonVariantData::untamedTargets),
             ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().fieldOf("tamed_targets").forGetter(CommonDragonVariantData::tamedTargets),
             Codec.BOOL.fieldOf("attacks_owner_target").forGetter(CommonDragonVariantData::attacksOwnerTarget),
@@ -78,7 +84,7 @@ public record CommonDragonVariantData(
     ).apply(instance, CommonDragonVariantData::new));
 
     @ApiStatus.Internal //idk where else to put it
-    public static final ConcurrentHashMap<Item, Set<Component>> EQUIPMENT_INFO_MAP = new ConcurrentHashMap<>();
+    public static final ConcurrentHashMap<Holder<Item>, Set<Component>> EQUIPMENT_INFO_MAP = new ConcurrentHashMap<>();
 
     public record TamingItem(ExtraCodecs.TagOrElementLocation item, Pair<Integer, Integer> tamingProgressIncrease, Optional<Integer> priority) {
         private static final Codec<Pair<Integer, Integer>> PAIR_CODEC = Codec.pair(

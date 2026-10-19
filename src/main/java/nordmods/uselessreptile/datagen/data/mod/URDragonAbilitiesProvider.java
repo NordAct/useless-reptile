@@ -1,32 +1,48 @@
 package nordmods.uselessreptile.datagen.data.mod;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.common.dragon_ability.*;
+import nordmods.uselessreptile.common.dragon_ability.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
 import nordmods.uselessreptile.common.dragon_ability.type.*;
-import nordmods.uselessreptile.common.dragon_ability.use_condition.*;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.FlyingUseCondition;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.MoleclawUseCondition;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.MovingUseCondition;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.RideableUseCondition;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.datagen.data.URAbstractDataProvider;
+import nordmods.uselessreptile.common.init.URResourceKeys;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class URDragonAbilityListProvider extends URAbstractDataProvider<List<DragonAbility>> {
-    public URDragonAbilityListProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
-        super(output, registryLookupFuture, DragonAbility.CODEC.listOf(), "uselessreptile/abilities");
+public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
+    public static final ResourceKey<List<DragonAbility>> WYVERN = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("wyvern/default"));
+    public static final ResourceKey<List<DragonAbility>> RIVER_PIKEHORN = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("river_pikehorn/default"));
+    public static final ResourceKey<List<DragonAbility>> LIGHTNING_CHASER = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("lightning_chaser/default"));
+    public static final ResourceKey<List<DragonAbility>> MOLECLAW = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("moleclaw/default"));
+    public static final ResourceKey<List<DragonAbility>> MAGMAMUNCHER = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("magmamuncher/default"));
+    public URDragonAbilitiesProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+        super(output, registryLookupFuture);
     }
 
     @Override
-    public void addEntries(HolderLookup.Provider provider) {
-        addEntry(
-                UselessReptile.id("wyvern"),
+    protected void configure(HolderLookup.@NonNull Provider provider, @NonNull Entries entries) {
+        entries.addAll(provider.lookupOrThrow(URResourceKeys.DRAGON_ABILITIES));
+    }
+
+    public static void register(BootstrapContext<List<DragonAbility>> bootstrapContext) {
+        bootstrapContext.register(
+                WYVERN,
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -151,8 +167,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         )
                 )
         );
-        addEntry(
-                UselessReptile.id("moleclaw"),
+        bootstrapContext.register(
+                MOLECLAW,
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -226,8 +242,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         )
                 )
         );
-        addEntry(
-                UselessReptile.id("river_pikehorn"),
+        bootstrapContext.register(
+                RIVER_PIKEHORN,
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -266,8 +282,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         )
                 )
         );
-        addEntry(
-                UselessReptile.id("magmamuncher"),
+        bootstrapContext.register(
+                MAGMAMUNCHER,
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(
@@ -300,8 +316,8 @@ public class URDragonAbilityListProvider extends URAbstractDataProvider<List<Dra
                         )
                 )
         );
-        addEntry(
-                UselessReptile.id("lightning_chaser"),
+        bootstrapContext.register(
+                LIGHTNING_CHASER,
                 List.of(
                         new MeleeAttackAbility(
                                 new CommonDragonAbilityData(

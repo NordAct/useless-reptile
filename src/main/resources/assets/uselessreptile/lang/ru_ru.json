@@ -118,13 +118,8 @@
   "config.uselessreptile.group.dragonAppearance": "Внешний вид драконов",
   "config.uselessreptile.group.groupSize" : "Размер групп драконов",
   "config.uselessreptile.group.globalMultipliers" : "Глобальные множители",
-  "config.uselessreptile.group.wyvernAttributes" : "Атрибуты болотной виверны",
-  "config.uselessreptile.group.moleclawAttributes" : "Атрибуты кротолапа",
-  "config.uselessreptile.group.riverPikehornAttributes" : "Атрибуты речного пикорога",
-  "config.uselessreptile.group.lightningChaserAttributes" : "Атрибуты ловца молний",
   "config.uselessreptile.group.mobCategories": "Категории сущностей",
   "config.uselessreptile.group.inWorldSpawn": "Появление драконов в мире",
-  "config.uselessreptile.group.magmamuncherAttributes": "Атрибуты магмаеда",
 
   "config.uselessreptile.option.blockDropChance": "Шанс выпадения блоков",
   "config.uselessreptile.option.cameraDistanceOffset": "Сдвиг расстояния до камеры",
@@ -183,7 +178,6 @@
   "config.uselessreptile.group.dragonAppearance.@Tooltip": "Настройки для изменения внешнего вида драконов",
   "config.uselessreptile.group.groupSize.@Tooltip" : "Определяет размеры групп драконов, если они появляются естественно. Минимальный размер группы должен быть всегда равен или меньше, чем максимальный размер.",
   "config.uselessreptile.group.globalMultipliers.@Tooltip" : "Множители для базовых значений конкретных атрибутов для ВСЕХ драконов",
-  "config.uselessreptile.group.dragonAttributes.@Tooltip" : "Базовые значения атрибутов драконов. Учтите, что атрибуты в ванильной игре ограничены определенным диапазоном (это может быть изменено другими модами): \n§6Урон: §c[0;2048] \n§6Отдача: §c[0;5] \n§6Здоровье: §c[1;1024] \n§6Броня: §c[0;30] \n§6AТвердость брони: §c[0;20]  \n§Скорость на земле, в полете и по вертикали: §c[0;1024] \n§6Скорость поворота: §c[0;180] \n§6Перезарядка атаки: §c[0;2048] \n§6Время разгона: §c[0;2048] \n§fПерезарядки атак и время разгона измеряются в тиках, скорости поворота - в градусах. Скорости перемещения измеряются в метеоритах размером с корги",
 
   "config.uselessreptile.option.blockDropChance.@Tooltip": "Определяет процент блоков, который будет выпадать после некоторых атак драконов, которые могут разрущать блоки",
   "config.uselessreptile.option.allowDragonGriefing.@Tooltip": "Определяет, могут ли драконы разрушать блоки или делать другие вещи, которые можно классифицировать как \"грифинг\". \nДопустимые значения: \n§3ALL §f(все могут ломать), \n§3TAMED §f(только прирученные могут), \n§3NONE §f(никто не может ломать)",

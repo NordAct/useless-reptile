@@ -14,8 +14,6 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.player.Player;
@@ -36,7 +34,6 @@ import nordmods.uselessreptile.common.entity.animation_processor.MultipartDragon
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URMobEffect;
 import nordmods.uselessreptile.common.init.URPotions;
@@ -106,22 +103,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         targetSelector.addGoal(3, new DragonOwnerHurtByTargetGoal(this));
         targetSelector.addGoal(4, new DragonNonTameRandomTargetGoal(this, true));
         targetSelector.addGoal(4, new DragonTameRandomTargetGoal(this, true));
-    }
-
-    public static AttributeSupplier.Builder createWyvernAttributes() {
-        return createDragonAttributes()
-                .add(Attributes.ATTACK_DAMAGE, attributes().wyvernDamage)
-                .add(Attributes.ATTACK_KNOCKBACK, attributes().wyvernKnockback)
-                .add(Attributes.MAX_HEALTH, attributes().wyvernHealth)
-                .add(Attributes.ARMOR, attributes().wyvernArmor)
-                .add(Attributes.ARMOR_TOUGHNESS, attributes().wyvernArmorToughness)
-                .add(Attributes.MOVEMENT_SPEED, attributes().wyvernGroundSpeed)
-                .add(Attributes.FLYING_SPEED, attributes().wyvernFlyingSpeed)
-                .add(Attributes.JUMP_STRENGTH, 0.42 * 1.5)
-                .add(URAttributes.DRAGON_VERTICAL_SPEED, attributes().wyvernVerticalSpeed)
-                .add(URAttributes.DRAGON_ACCELERATION_DURATION, attributes().wyvernBaseAccelerationDuration)
-                .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().wyvernRotationSpeedGround)
-                .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED, attributes().wyvernRotationSpeedAir);
     }
 
     public void tickAnimations() {
@@ -208,11 +189,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
             setYawTargetLimit(90);
             setPitchTargetLimit(70);
         }
-    }
-
-    @Override
-    protected float getBaseGroundSpeed() {
-        return BASE_GROUND_SPEED;
     }
 
     @Override

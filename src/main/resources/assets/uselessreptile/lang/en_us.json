@@ -118,13 +118,8 @@
   "config.uselessreptile.group.dragonAppearance" : "Dragon Appearance",
   "config.uselessreptile.group.groupSize" : "Dragon Group Sizes",
   "config.uselessreptile.group.globalMultipliers" : "Global Multipliers",
-  "config.uselessreptile.group.wyvernAttributes" : "Swamp Wyvern Attributes",
-  "config.uselessreptile.group.moleclawAttributes" : "Moleclaw Attributes",
-  "config.uselessreptile.group.riverPikehornAttributes" : "River Pikehorn Attributes",
-  "config.uselessreptile.group.lightningChaserAttributes" : "Lightning Chaser Attributes",
   "config.uselessreptile.group.mobCategories": "Mob Categories",
   "config.uselessreptile.group.inWorldSpawn": "In-World Spawn",
-  "config.uselessreptile.group.magmamuncherAttributes": "Magmamuncher Attributes",
 
   "config.uselessreptile.option.blockDropChance": "Block Drop Chance",
   "config.uselessreptile.option.cameraDistanceOffset": "Distance to Camera Offset",
@@ -183,7 +178,6 @@
   "config.uselessreptile.group.dragonAppearance.@Tooltip" : "Options to change how dragons look",
   "config.uselessreptile.group.groupSize.@Tooltip" : "Defines group sizes of dragons when they spawn naturally. Minimal group size always must be equal or less than maximum one.",
   "config.uselessreptile.group.globalMultipliers.@Tooltip" : "Multipliers for specific base attribute of ALL dragons",
-  "config.uselessreptile.group.dragonAttributes.@Tooltip" : "Base dragon attributes. Note that in vanilla game attribute values are limited by certain range (this can be changed by other mods): \n§6Damage: §c[0;2048] \n§6Knockback: §c[0;5] \n§6Health: §c[1;1024] \n§6Armor: §c[0;30] \n§6Armor toughness: §c[0;20] \n§6Ground, flying and vertical speed: §c[0;1024] \n§6Rotation speeds: §c[0;180] \n§6Attack cooldowns: §c[0;2048] \n§6Acceleration duration: §c[0;2048 \n§fAttack cooldowns and acceleration duration are measured in ticks, rotation speeds - in degrees. Movement speed is measured in corgi-sized meteors",
   "config.uselessreptile.group.inWorldSpawn.@Tooltip": "Allows to configure whenever certain dragons can appear in world",
 
   "config.uselessreptile.option.blockDropChance.@Tooltip": "Defines percentage of blocks that will be dropped after some of block-breaking dragon attacks",

@@ -7,8 +7,6 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.level.Level;
@@ -24,7 +22,6 @@ import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimation
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
@@ -84,18 +81,6 @@ public class Moleclaw extends URRideableDragonEntity {
     public boolean isPanicking() {return entityData.get(IS_PANICKING);}
     public void setIsPanicking (boolean state) {entityData.set(IS_PANICKING, state);}
 
-    public static AttributeSupplier.Builder createMoleclawAttributes() {
-        return createDragonAttributes()
-                .add(Attributes.ATTACK_DAMAGE, attributes().moleclawDamage)
-                .add(Attributes.ATTACK_KNOCKBACK, attributes().moleclawKnockback)
-                .add(Attributes.MAX_HEALTH, attributes().moleclawHealth)
-                .add(Attributes.ARMOR, attributes().moleclawArmor)
-                .add(Attributes.ARMOR_TOUGHNESS, attributes().moleclawArmorToughness)
-                .add(Attributes.MOVEMENT_SPEED, attributes().moleclawGroundSpeed)
-                .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().moleclawRotationSpeedGround)
-                ;
-    }
-
     public void tickAnimations() {
         if (level().isClientSide()) return;
         tickBlinkController();
@@ -150,11 +135,6 @@ public class Moleclaw extends URRideableDragonEntity {
         if (isOrderedToSit() && !isPanicking() && !entityData.get(HAS_CONTROLLING_PASSENGER)) dimensions = SITTING;
         else dimensions = STANDING;
         return dimensions.scale(getAgeScale());
-    }
-
-    @Override
-    protected float getBaseGroundSpeed() {
-        return BASE_GROUND_SPEED;
     }
 
     @Override
