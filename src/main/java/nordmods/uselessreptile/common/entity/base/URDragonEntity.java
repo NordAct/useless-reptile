@@ -981,7 +981,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public CommonDragonVariantData.@Nullable TamingItem getTamingItem(ItemStack itemStack) { //todo remove taming items for dragons that cannot be tamed with food
         DragonVariant variant = getDragonVariant();
         if (!isInvalidVariant()) {
-            return variant.common().tamingItems().orElse(List.of()).stream()
+            return variant.common().tamingItems().stream()
                     .filter(item -> {
                         ExtraCodecs.TagOrElementLocation entryId = item.item();
                         if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
@@ -996,7 +996,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public CommonDragonVariantData.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
         DragonVariant variant = getDragonVariant();
         if (!isInvalidVariant()) {
-            return variant.common().foodItems().orElse(List.of()).stream()
+            return variant.common().foodItems().stream()
                     .filter(item -> {
                         ExtraCodecs.TagOrElementLocation entryId = item.item();
                         if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));

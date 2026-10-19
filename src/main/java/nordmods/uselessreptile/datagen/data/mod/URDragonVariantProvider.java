@@ -41,8 +41,8 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 Optional.empty(),
                 Optional.empty(),
                 -1,
-                Optional.empty(),
-                Optional.empty(),
+                List.of(),
+                List.of(),
                 UselessReptile.id("wyvern"),
                 List.of(),
                 List.of(),
@@ -85,31 +85,27 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 Optional.of(UselessReptile.id("wyvern/default")),
                 Optional.empty(),
                 256,
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.TamingItem(
-                                        new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(2, 4),
-                                        Optional.of(1)
-                                ),
-                                new CommonDragonVariantData.TamingItem(
-                                        new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(2, 4),
-                                        Optional.of(1)
-                                ),
-                                new CommonDragonVariantData.TamingItem(
-                                        new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true),
-                                        new com.mojang.datafixers.util.Pair<>(1, 1),
-                                        Optional.empty()
-                                )
+                List.of(
+                        new CommonDragonVariantData.TamingItem(
+                                new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false),
+                                new com.mojang.datafixers.util.Pair<>(2, 4),
+                                Optional.of(1)
+                        ),
+                        new CommonDragonVariantData.TamingItem(
+                                new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false),
+                                new com.mojang.datafixers.util.Pair<>(2, 4),
+                                Optional.of(1)
+                        ),
+                        new CommonDragonVariantData.TamingItem(
+                                new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true),
+                                new com.mojang.datafixers.util.Pair<>(1, 1),
+                                Optional.empty()
                         )
                 ),
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
-                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
-                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
-                        )
+                List.of(
+                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
+                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
+                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
                 ),
                 UselessReptile.id("wyvern"),
                 List.of(
@@ -133,19 +129,15 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 Optional.of(UselessReptile.id("moleclaw/" + (rare ? "rare" : "default"))),
                 Optional.empty(),
                 64,
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.TamingItem(
-                                        new ExtraCodecs.TagOrElementLocation(Items.BEETROOT.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(1, 2),
-                                        Optional.empty()
-                                )
+                List.of(
+                        new CommonDragonVariantData.TamingItem(
+                                new ExtraCodecs.TagOrElementLocation(Items.BEETROOT.builtInRegistryHolder().key().identifier(), false),
+                                new com.mojang.datafixers.util.Pair<>(1, 2),
+                                Optional.empty()
                         )
                 ),
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
-                        )
+                List.of(
+                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
                 ),
                 UselessReptile.id("moleclaw"),
                 List.of(
@@ -169,24 +161,20 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 Optional.of(UselessReptile.id("river_pikehorn/default")),
                 Optional.empty(),
                 8,
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.TamingItem(
-                                        new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH_BUCKET.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(8, 8),
-                                        Optional.empty()
-                                ),
-                                new CommonDragonVariantData.TamingItem(
-                                        new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(1, 2),
-                                        Optional.empty()
-                                )
+                List.of(
+                        new CommonDragonVariantData.TamingItem(
+                                new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH_BUCKET.builtInRegistryHolder().key().identifier(), false),
+                                new com.mojang.datafixers.util.Pair<>(8, 8),
+                                Optional.empty()
+                        ),
+                        new CommonDragonVariantData.TamingItem(
+                                new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH.builtInRegistryHolder().key().identifier(), false),
+                                new com.mojang.datafixers.util.Pair<>(1, 2),
+                                Optional.empty()
                         )
                 ),
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
-                        )
+                List.of(
+                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
                 ),
                 UselessReptile.id("river_pikehorn"),
                 List.of(),
@@ -208,11 +196,9 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 Optional.of(UselessReptile.id("lightning_chaser/" + name)),
                 Optional.empty(),
                 3,
-                Optional.empty(),
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
-                        )
+                List.of(),
+                List.of(
+                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
                 ),
                 UselessReptile.id("lightning_chaser"),
                 List.of(),
@@ -234,20 +220,16 @@ public class URDragonVariantProvider extends URAbstractDataProvider<DragonVarian
                 Optional.of(UselessReptile.id("magmamuncher/default")),
                 Optional.empty(),
                 12,
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.TamingItem(
-                                        new ExtraCodecs.TagOrElementLocation(Items.BLAZE_ROD.builtInRegistryHolder().key().identifier(), false),
-                                        new com.mojang.datafixers.util.Pair<>(1, 3),
-                                        Optional.empty()
-                                )
+                List.of(
+                        new CommonDragonVariantData.TamingItem(
+                                new ExtraCodecs.TagOrElementLocation(Items.BLAZE_ROD.builtInRegistryHolder().key().identifier(), false),
+                                new com.mojang.datafixers.util.Pair<>(1, 3),
+                                Optional.empty()
                         )
                 ),
-                Optional.of(
-                        List.of(
-                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4, Optional.empty()),
-                                new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
-                        )
+                List.of(
+                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4, Optional.empty()),
+                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
                 ),
                 UselessReptile.id("magmamuncher"),
                 List.of(

@@ -12,6 +12,7 @@
   "name": "blue",
   "spawn_conditions": "uselessreptile:lightning_chaser/blue",
   "tamed_targets": [],
+  "taming_items": [],
   "untamed_targets": [],
   "variant_name_key": "variant.uselessreptile.lightning_chaser.blue"
 }

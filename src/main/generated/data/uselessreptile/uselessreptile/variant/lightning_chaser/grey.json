@@ -12,6 +12,7 @@
   "name": "grey",
   "spawn_conditions": "uselessreptile:lightning_chaser/grey",
   "tamed_targets": [],
+  "taming_items": [],
   "untamed_targets": [],
   "variant_name_key": "variant.uselessreptile.lightning_chaser.grey"
 }
