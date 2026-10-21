@@ -263,7 +263,7 @@ public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntit
     public void startToFly() {
         if (onGround()) {
             jumpFromGround();
-            addDeltaMovement(new Vec3(0, 0.1, 0));
+            addDeltaMovement(new Vec3(0, getBbHeight() * 0.1, 0));
         } else {
             setYya(0);
         }

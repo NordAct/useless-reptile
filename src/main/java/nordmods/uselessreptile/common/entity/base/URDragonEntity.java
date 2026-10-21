@@ -124,7 +124,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
     private final URDragonAnimationController<URDragonEntity> mainController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<URDragonEntity> turnController = new URDragonAnimationController<>(this, true);
     private final URDragonAnimationController<URDragonEntity> attackController = new URDragonAnimationController<>(this, false) {
         @Override
         public float getDefaultTransitionTime() {
@@ -139,7 +138,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     };
     private final Map<AnimationController, BRAnimationController> controllers = Map.of(
             AnimationController.MAIN , mainController,
-            AnimationController.TURN , turnController,
             AnimationController.ATTACK , attackController,
             AnimationController.BLINK , blinkController
     );
@@ -1425,7 +1423,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public enum AnimationController implements StringRepresentable {
         MAIN("main"),
-        TURN("turn"),
         ATTACK("attack"),
         BLINK("blink")
         ;

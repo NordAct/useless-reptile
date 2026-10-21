@@ -20,13 +20,13 @@ import nordmods.uselessreptile.common.util.URMobCategory;
 
 public class UREntities {
     public static final EntityType<Wyvern> WYVERN =
-            register("wyvern", getBuilder(URMobCategory.DRAGON.mobCategory, Wyvern::new, 1.8f, 2.95f));
+            register("wyvern", getBuilder(URMobCategory.DRAGON.mobCategory, Wyvern::new, 1.8f, 2.95f).clientTrackingRange(32));
     public static final EntityType<Moleclaw> MOLECLAW =
-            register("moleclaw", getBuilder(URMobCategory.UNDERGROUND_DRAGON.mobCategory, Moleclaw::new, 2, 2.9f));
+            register("moleclaw", getBuilder(URMobCategory.UNDERGROUND_DRAGON.mobCategory, Moleclaw::new, 2, 2.9f).clientTrackingRange(32));
     public static final EntityType<RiverPikehorn> RIVER_PIKEHORN =
             register("river_pikehorn", getBuilder(URMobCategory.SMALL_DRAGON.mobCategory, RiverPikehorn::new, 0.8f, 0.7f));
     public static final EntityType<LightningChaser> LIGHTNING_CHASER =
-            register("lightning_chaser", getBuilder(URMobCategory.DRAGON.mobCategory, LightningChaser::new, 2.95f, 2.95f));
+            register("lightning_chaser", getBuilder(URMobCategory.DRAGON.mobCategory, LightningChaser::new, 2.95f, 2.95f).clientTrackingRange(32));
     public static final EntityType<AcidBlast> ACID_BLAST =
             register("acid_blast", getBuilder(MobCategory.MISC, AcidBlast::new, 0.5f, 0.5f, true, false));
     public static final EntityType<ShockwaveSphere> SHOCKWAVE_SPHERE =
