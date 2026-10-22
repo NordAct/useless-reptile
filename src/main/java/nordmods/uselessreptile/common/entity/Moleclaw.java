@@ -30,8 +30,6 @@ import org.jspecify.annotations.Nullable;
 
 public class Moleclaw extends URRideableDragonEntity {
     private int panicSoundDelay = 0;
-
-    public static final float BASE_GROUND_SPEED = 0.25f;
     private static final EntityDimensions SITTING = EntityDimensions.scalable(2, 2.175f);
     private static final EntityDimensions STANDING = EntityDimensions.scalable(2, 2.9f);
 

@@ -43,8 +43,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     public static final float DISTANCE_TO_EAT_SQUARED = DISTANCE_TO_EAT * DISTANCE_TO_EAT;
     public static final ResourceKey<LootTable> MAGMA_EATEN_TABLE = ResourceKey.create(Registries.LOOT_TABLE, UselessReptile.id("entities/magmamuncher_from_magma"));
 
-    public static final float BASE_GROUND_SPEED = 0.2f;
-
     public Magmamuncher(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         sprintSpeedModifier = 1.3f;

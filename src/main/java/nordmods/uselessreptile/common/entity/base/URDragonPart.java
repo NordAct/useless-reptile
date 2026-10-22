@@ -96,15 +96,16 @@ public class URDragonPart extends EntityPart {
         float widthDiff = widthMod - destinationWidth;
         float heightDiff = heightMod - destinationHeight;
 
+        float transitionSpeed = getBoxSizeTransitionSpeed();
         if (widthDiff != 0) {
-            if (widthDiff > getOwner().getWidthModTransSpeed()) widthMod -= getOwner().getWidthModTransSpeed();
-            else if (widthDiff < -getOwner().getWidthModTransSpeed()) widthMod += getOwner().getWidthModTransSpeed();
+            if (widthDiff > transitionSpeed) widthMod -= transitionSpeed;
+            else if (widthDiff < -transitionSpeed) widthMod += transitionSpeed;
             else widthMod = destinationWidth;
         }
 
         if (heightDiff != 0) {
-            if (heightDiff > getOwner().getHeightModTransSpeed()) heightMod -= getOwner().getHeightModTransSpeed();
-            else if (heightDiff < -getOwner().getHeightModTransSpeed()) heightMod += getOwner().getHeightModTransSpeed();
+            if (heightDiff > transitionSpeed) heightMod -= transitionSpeed;
+            else if (heightDiff < -transitionSpeed) heightMod += transitionSpeed;
             else heightMod = destinationHeight;
         }
 
@@ -114,6 +115,10 @@ public class URDragonPart extends EntityPart {
         this.heightMod = heightMod;
         this.widthMod = widthMod;
         if (destinationWidth != getBbWidth() || destinationHeight != getBbHeight()) refreshDimensions();
+    }
+
+    public float getBoxSizeTransitionSpeed() {
+        return (float) (0.3 * getOwner().getScale());
     }
 
     @SuppressWarnings("SuspiciousNameCombination")

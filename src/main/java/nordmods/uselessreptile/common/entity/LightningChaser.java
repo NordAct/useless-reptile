@@ -80,9 +80,8 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     private final URDragonPart[] parts = new URDragonPart[]{head, neck1, neck2, neck3, front, back, tail1, tail2, tail3, tail4, wingLeft, wingRight, shoulderArmLeft, shoulderArmRight, fingersLeft, fingersRight};
     protected final DynamicGameEventListener<LightningStrikeEventListener> lightningStrikeEventHandler = new DynamicGameEventListener<>(new LightningStrikeEventListener
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
-    public static final float BASE_GROUND_SPEED = 0.25f;
-    private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(2.95f, 1).withEyeHeight(0.9f);
-    private static final EntityDimensions ON_GROUND = EntityDimensions.scalable(2.95f, 2.95f).withEyeHeight(2.9f);
+    private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(2.5f, 1).withEyeHeight(0.9f);
+    private static final EntityDimensions ON_GROUND = EntityDimensions.scalable(2.5f, 2.95f).withEyeHeight(2.9f);
 
     public LightningChaser(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);

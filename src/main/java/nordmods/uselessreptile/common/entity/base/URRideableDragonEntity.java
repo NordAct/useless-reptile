@@ -338,9 +338,9 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     @Override
     public void updateEquipment() {
-        super.updateEquipment();
         ItemStack saddle = getInventory().getItem(0);
         setItemSlot(EquipmentSlot.SADDLE, saddle);
+        super.updateEquipment();
     }
 
     public boolean hasSaddle() {

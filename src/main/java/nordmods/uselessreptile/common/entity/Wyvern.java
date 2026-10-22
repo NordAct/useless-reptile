@@ -64,8 +64,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(1.8f, 1).withEyeHeight(0.9f);
     private static final EntityDimensions ON_GROUND = EntityDimensions.scalable(1.8f, 2.95f).withEyeHeight(2.9f);
 
-    public static final float BASE_GROUND_SPEED = 0.2f;
-
     public Wyvern(EntityType<? extends URRideableFlyingDragonEntity> entityType, Level world) {
         super(entityType, world);
         xpReward = 20;
@@ -239,11 +237,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     @Override
     public DragonVariantType<? extends DragonVariant> getVariantType() {
         return URDragonVariantTypes.WYVERN;
-    }
-
-    @Override
-    public float getHeightModTransSpeed() {
-        return (float) (0.13 * getScale());
     }
 
     @Override

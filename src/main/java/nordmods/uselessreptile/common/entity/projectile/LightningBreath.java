@@ -239,6 +239,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
                 BlockState blockState = world.getBlockState(pos);
                 return blockState.is(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS) || blockState.getDestroySpeed(world, pos) == 0;
             }) || !world.getEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
+                if (lightningBreathEntity.getOwner() != null && lightningBreathEntity.getOwner() == entity) return false;
                 LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof OwnableEntity tameable ? tameable.getOwner() : null;
                 if (entity instanceof OwnableEntity tameable && tameable.getOwner() != null && tameable.getOwner() == ownerOwner)
                     return false;

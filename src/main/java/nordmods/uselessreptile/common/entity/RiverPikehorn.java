@@ -50,10 +50,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     private int eatTimer = eatCooldown;
     private boolean isHunting = false;
     private ItemEntity pickupTarget;
-
     private static final Identifier WATER_SPEED_MODIFIER_BONUS = UselessReptile.id("water_speed_modifier");
-
-    public static final float BASE_GROUND_SPEED = 0.2f;
     public static final List<FluteItem.FluteMode> FLUTE_MODES = List.of(
             URFluteModes.CALL,
             URFluteModes.TARGET,

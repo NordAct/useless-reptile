@@ -728,18 +728,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
     }
 
-    public float getWidthModTransSpeed() {
-        return 0.22f * getScale();
-    }
-    public float getHeightModTransSpeed() {
-        return (float) (0.3 * getScale());
-    }
-    public float getMountedOffsetTransSpeed() {
-        return (float) (0.125 * getScale());
-    }
-
     @Override
-    public int getHeadRotSpeed() { //todo fix inheritors
+    public int getHeadRotSpeed() {
         return (int) (getGroundRotationSpeed() * getMovementSpeedModifier());
     }
 
