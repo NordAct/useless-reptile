@@ -20,7 +20,6 @@ public class RiverPikehornHuntGoal extends Goal {
     private BlockPos huntSpot;
     private boolean closeToSpot = false;
     private int calls;
-    private BlockPos startingPos;
 
     public RiverPikehornHuntGoal(RiverPikehorn entity) {
         this.mob = entity;
@@ -31,9 +30,8 @@ public class RiverPikehornHuntGoal extends Goal {
         //locating the hunt spot
         if (!mob.canGrief()) return false;
         if (!mob.isHunting()) return false;
-        if (mob.isTame() || startingPos == null) startingPos = mob.getOwner() != null ? mob.getOwner().blockPosition() : mob.getHomePoint();
         if (huntSpot == null) findFishyPlace(50);
-        return huntSpot != null && startingPos != null;
+        return huntSpot != null;
     }
 
     @Override
@@ -90,6 +88,7 @@ public class RiverPikehornHuntGoal extends Goal {
             //else go back to starting position
             mob.setTarget(null);
             if (hasFish()) mob.setInAirTimer(mob.getMaxInAirTimer());
+            BlockPos startingPos = getStartingPos();
             mob.getNavigation().moveTo(startingPos.getX(), startingPos.getY(), startingPos.getZ(), 1);
             if (hasFish()) {
                 double distance = mob.blockPosition().distSqr(startingPos.above());
@@ -146,7 +145,7 @@ public class RiverPikehornHuntGoal extends Goal {
         for (int i = 0; i < 20; i++) {
             BlockPos newSpot = findRandomAirSpot(radius);
             //make sure spot is in the biome that has fish and not too far from initial spot
-            if (newSpot != null && newSpot.distSqr(startingPos) < 4096) {
+            if (newSpot != null && newSpot.distSqr(getStartingPos()) < 4096) {
                 huntSpot = newSpot;
                 spotFound = true;
                 break;
@@ -172,12 +171,14 @@ public class RiverPikehornHuntGoal extends Goal {
     }
 
     private void stopHunt() {
-        startingPos = null;
-
         mob.stopGathering();
     }
 
     private boolean isGoingToDrown() {
         return mob.getAirSupply() < mob.getMaxAirSupply() * 0.2;
+    }
+
+    public BlockPos getStartingPos() {
+        return mob.getOwner() != null ? mob.getOwner().blockPosition() : mob.getHomePoint();
     }
 }
