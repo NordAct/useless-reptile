@@ -27,7 +27,6 @@ public class PikehornHuntGoal extends Goal {
     private BlockPos huntSpot;
     private boolean closeToSpot = false;
     private int calls;
-    private BlockPos startingPos;
 
     public PikehornHuntGoal(RiverPikehorn entity) {
         this.entity = entity;
@@ -38,9 +37,8 @@ public class PikehornHuntGoal extends Goal {
     public boolean canUse() {
         //locating the hunt spot
         if (!entity.isHunting() || entity.getTarget() != null) return false;
-        if (entity.isTame() || startingPos == null) startingPos = entity.getOwner() != null ? entity.getOwner().blockPosition() : entity.getHomePoint();
         if (huntSpot == null) findFishyPlace(50);
-        return huntSpot != null && startingPos != null;
+        return huntSpot != null;
     }
 
     @Override
@@ -108,6 +106,7 @@ public class PikehornHuntGoal extends Goal {
         } else {
             if (entity.getAirSupply() >= entity.getMaxAirSupply() * 0.9 && !entity.forceTargetInWater) entity.forceTargetInWater = true;
             //else go back to starting position
+            BlockPos startingPos = getStartingPos();
             entity.getNavigation().moveTo(startingPos.getX(), startingPos.getY(), startingPos.getZ(), 1);
             if (entity.forceTargetInWater) {
                 double distance = entity.blockPosition().distSqr(startingPos.above());
@@ -117,7 +116,7 @@ public class PikehornHuntGoal extends Goal {
     }
 
     private boolean hasFish() {
-        return !entity.getMainHandItem().isEmpty();
+        return !entity.getOffhandItem().isEmpty();
     }
 
     @Nullable
@@ -171,7 +170,7 @@ public class PikehornHuntGoal extends Goal {
         for (int i = 0; i < 20; i++) {
             BlockPos newSpot = findRandomAirSpot(radius);
             //make sure spot is in the biome that has fish and not too far from initial spot
-            if (newSpot != null && biomeHasFish(newSpot) && newSpot.distSqr(startingPos) < 4096) {
+            if (newSpot != null && biomeHasFish(newSpot) && newSpot.distSqr(getStartingPos()) < 4096) {
                 huntSpot = newSpot;
                 spotFound = true;
                 break;
@@ -197,12 +196,14 @@ public class PikehornHuntGoal extends Goal {
     }
 
     private void stopHunt() {
-        startingPos = null;
-
         entity.stopGathering();
     }
 
     private boolean isGoingToDrown() {
         return entity.getAirSupply() < entity.getMaxAirSupply() / 10;
+    }
+
+    private BlockPos getStartingPos() {
+        return entity.isTame() && entity.getOwner() != null ? entity.getOwner().blockPosition() : entity.getHomePoint();
     }
 }
