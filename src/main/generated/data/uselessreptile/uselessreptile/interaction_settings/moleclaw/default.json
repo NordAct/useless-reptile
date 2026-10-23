@@ -1,0 +1,18 @@
+{
+  "base_taming_progress": 64,
+  "custom_item_interactions": [],
+  "damage_type_immunities": [],
+  "effect_immunities": [],
+  "food_items": {
+    "#c:foods/vegetable": 2
+  },
+  "taming_items": [
+    {
+      "item": "minecraft:beetroot",
+      "taming_progress_increase": [
+        1,
+        2
+      ]
+    }
+  ]
+}

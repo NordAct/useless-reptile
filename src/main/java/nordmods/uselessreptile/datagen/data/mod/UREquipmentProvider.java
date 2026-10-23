@@ -18,7 +18,6 @@ import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 import org.jspecify.annotations.NonNull;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -30,8 +29,9 @@ public class UREquipmentProvider extends FabricDynamicRegistryProvider {
     public static final ResourceKey<EquipmentModelData> WYVERN = ResourceKey.create(URResourceKeys.DRAGON_EQUIPMENT, UselessReptile.id("wyvern/default"));
     public static final ResourceKey<EquipmentModelData> LIGHTNING_CHASER = ResourceKey.create(URResourceKeys.DRAGON_EQUIPMENT, UselessReptile.id("lightning_chaser/default"));
     public static final ResourceKey<EquipmentModelData> MOLECLAW = ResourceKey.create(URResourceKeys.DRAGON_EQUIPMENT, UselessReptile.id("moleclaw/default"));
+    public static final ResourceKey<EquipmentModelData> MAGMAMUNCHER = ResourceKey.create(URResourceKeys.DRAGON_EQUIPMENT, UselessReptile.id("magmamuncher/default"));
+    public static final ResourceKey<EquipmentModelData> RIVER_PIKEHORN = ResourceKey.create(URResourceKeys.DRAGON_EQUIPMENT, UselessReptile.id("river_pikehorn/default"));
     public static final ResourceKey<EquipmentModelData> EMPTY = ResourceKey.create(URResourceKeys.DRAGON_EQUIPMENT, UselessReptile.id("empty"));
-    protected static final Map<ResourceKey<EquipmentModelData>, EquipmentModelData> HOLDER = new HashMap<>();
     public UREquipmentProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
         super(output, registryLookupFuture);
     }
@@ -43,6 +43,8 @@ public class UREquipmentProvider extends FabricDynamicRegistryProvider {
 
     public static void register(BootstrapContext<EquipmentModelData> bootstrapContext) {
         bootstrapContext.register(EMPTY, new EquipmentModelData(Optional.empty(), Map.of()));
+        bootstrapContext.register(MAGMAMUNCHER, new EquipmentModelData(Optional.empty(), Map.of()));
+        bootstrapContext.register(RIVER_PIKEHORN, new EquipmentModelData(Optional.empty(), Map.of()));
 
         EquipmentModelData.Builder builder = EquipmentModelData.builder();
         addSaddle(builder, UREntities.WYVERN, Items.SADDLE, List.of("spikes_front"), 1);

@@ -1,37 +1,15 @@
 {
   "type": "uselessreptile:river_pikehorn",
   "abilities": "uselessreptile:river_pikehorn/default",
-  "attacks_owner_target": true,
   "base_attribute_values": "uselessreptile:river_pikehorn/default",
-  "base_taming_progress": 8,
-  "defends_owner": true,
   "dragon_model": "uselessreptile:river_pikehorn/dark_teal",
-  "equipment": "uselessreptile:empty",
-  "food_items": {
-    "#minecraft:fishes": 3
-  },
+  "equipment": "uselessreptile:river_pikehorn/default",
   "hunt_targets": [
     "#uselessreptile:river_pikehorn_hunt_target"
   ],
+  "interaction_settings": "uselessreptile:river_pikehorn/default",
   "name": "dark_teal",
   "spawn_conditions": "uselessreptile:river_pikehorn/default",
-  "tamed_targets": [],
-  "taming_items": [
-    {
-      "item": "minecraft:tropical_fish_bucket",
-      "taming_progress_increase": [
-        8,
-        8
-      ]
-    },
-    {
-      "item": "minecraft:tropical_fish",
-      "taming_progress_increase": [
-        1,
-        2
-      ]
-    }
-  ],
-  "untamed_targets": [],
+  "targeting_settings": "uselessreptile:river_pikehorn/default",
   "variant_name_key": "variant.uselessreptile.river_pikehorn.dark_teal"
 }

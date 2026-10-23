@@ -185,7 +185,7 @@ public class Moleclaw extends URRideableDragonEntity {
 
     @Override
     public float getWalkTargetValue(@NonNull BlockPos pos, @NonNull LevelReader world) {
-        return -world.getPathfindingCostFromLightLevels(pos);
+        return hasLightProtection() ? super.getWalkTargetValue(pos, world) : -world.getPathfindingCostFromLightLevels(pos);
     }
 
     private void playPanicSound() {

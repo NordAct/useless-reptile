@@ -18,8 +18,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
-import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.InteractionSettings;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.dragon_variant.type.RiverPikehornVariant;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
@@ -148,7 +148,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
 
             ItemStack itemStack = getOffhandItem();
             if (!itemStack.isEmpty() && --eatTimer <= 0) {
-                CommonDragonVariantData.FoodItem foodItem = getFoodItem(itemStack);
+                InteractionSettings.FoodItem foodItem = getFoodItem(itemStack);
                 if (foodItem != null) {
                     heal(foodItem.healingAmount());
                     setItemSlot(EquipmentSlot.OFFHAND, consumeGivenItem(this, itemStack, SoundEvents.GENERIC_EAT.value(), null));

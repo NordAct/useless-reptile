@@ -1,0 +1,40 @@
+{
+  "base_taming_progress": 256,
+  "custom_item_interactions": [],
+  "damage_type_immunities": [],
+  "effect_immunities": [
+    "minecraft:poison",
+    "minecraft:hunger",
+    "uselessreptile:acid"
+  ],
+  "food_items": {
+    "#minecraft:meat": 2,
+    "minecraft:chicken": 4,
+    "minecraft:cooked_chicken": 4
+  },
+  "taming_items": [
+    {
+      "item": "minecraft:chicken",
+      "priority": 1,
+      "taming_progress_increase": [
+        2,
+        4
+      ]
+    },
+    {
+      "item": "minecraft:cooked_chicken",
+      "priority": 1,
+      "taming_progress_increase": [
+        2,
+        4
+      ]
+    },
+    {
+      "item": "#minecraft:meat",
+      "taming_progress_increase": [
+        1,
+        1
+      ]
+    }
+  ]
+}

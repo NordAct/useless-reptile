@@ -1,32 +1,12 @@
 {
   "type": "uselessreptile:magmamuncher",
   "abilities": "uselessreptile:magmamuncher/default",
-  "attacks_owner_target": true,
   "base_attribute_values": "uselessreptile:magmamuncher/default",
-  "base_taming_progress": 12,
-  "defends_owner": true,
   "dragon_model": "uselessreptile:magmamuncher/magma",
-  "equipment": "uselessreptile:empty",
-  "food_items": {
-    "minecraft:magma_block": 4,
-    "minecraft:magma_cream": 2
-  },
+  "equipment": "uselessreptile:magmamuncher/default",
+  "interaction_settings": "uselessreptile:magmamuncher/default",
   "name": "magma",
   "spawn_conditions": "uselessreptile:magmamuncher/default",
-  "tamed_targets": [
-    "minecraft:magma_cube"
-  ],
-  "taming_items": [
-    {
-      "item": "minecraft:blaze_rod",
-      "taming_progress_increase": [
-        1,
-        3
-      ]
-    }
-  ],
-  "untamed_targets": [
-    "minecraft:magma_cube"
-  ],
+  "targeting_settings": "uselessreptile:magmamuncher/default",
   "variant_name_key": "variant.uselessreptile.magmamuncher.magma"
 }

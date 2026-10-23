@@ -1,29 +1,12 @@
 {
   "type": "uselessreptile:moleclaw",
   "abilities": "uselessreptile:moleclaw/default",
-  "attacks_owner_target": true,
   "base_attribute_values": "uselessreptile:moleclaw/default",
-  "base_taming_progress": 64,
-  "defends_owner": true,
   "dragon_model": "uselessreptile:moleclaw/grey",
   "equipment": "uselessreptile:moleclaw/default",
-  "food_items": {
-    "#c:foods/vegetable": 2
-  },
+  "interaction_settings": "uselessreptile:moleclaw/default",
   "name": "grey",
   "spawn_conditions": "uselessreptile:moleclaw/default",
-  "tamed_targets": [],
-  "taming_items": [
-    {
-      "item": "minecraft:beetroot",
-      "taming_progress_increase": [
-        1,
-        2
-      ]
-    }
-  ],
-  "untamed_targets": [
-    "minecraft:player"
-  ],
+  "targeting_settings": "uselessreptile:moleclaw/default",
   "variant_name_key": "variant.uselessreptile.moleclaw.grey"
 }

@@ -11,7 +11,6 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -224,12 +223,6 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         boolean playRoar = !isTame() && isFlying() && level().isThundering() && !getShouldBailOut() && !hasSurrendered();
         SoundInfo soundInfo = getSoundInfo(playRoar ? "roar" : "idle");
         if (soundInfo != null) playSound(SoundEvent.createVariableRangeEvent(soundInfo.id()), soundInfo.volume(), getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()));
-    }
-
-    @Override
-    public boolean isInvulnerableTo(@NonNull ServerLevel world, @NonNull DamageSource damageSource) {
-        if (damageSource.is(DamageTypes.LIGHTNING_BOLT)) return true;
-        else return super.isInvulnerableTo(world, damageSource);
     }
 
     @Override

@@ -1,9 +1,5 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
@@ -15,14 +11,7 @@ public class DragonNonTameRandomTargetGoal extends NearestAttackableTargetGoal<L
     public DragonNonTameRandomTargetGoal(URDragonEntity mob, boolean mustSee,  TargetingConditions.@Nullable Selector selector) {
         super(mob, LivingEntity.class, 10, mustSee, false, (target, level) -> {
             if (selector != null && !selector.test(target, level)) return false;
-            for (ExtraCodecs.TagOrElementLocation entry : mob.getDragonVariant().common().untamedTargets()) {
-                if (entry.tag()) {
-                    if (target.is(TagKey.create(Registries.ENTITY_TYPE, entry.id()))) return true;
-                } else {
-                    if (target.is(ResourceKey.create(Registries.ENTITY_TYPE, entry.id()))) return true;
-                }
-            }
-            return false;
+            return mob.getDragonVariant().common().targetingSettings().value().canTargetUntamed(target);
         });
         this.mob = mob;
     }

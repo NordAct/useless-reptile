@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
@@ -8,9 +7,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffect;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -38,7 +34,6 @@ import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
-import nordmods.uselessreptile.common.init.URMobEffect;
 import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
@@ -165,12 +160,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
             return;
         }
         mainController.playAnimation("idle");
-    }
-
-    @Override
-    public boolean canBeAffected(MobEffectInstance effect) {
-        Holder<MobEffect> type = effect.getEffect();
-        return !(type == URMobEffect.ACID || type == MobEffects.POISON || type == MobEffects.HUNGER);
     }
 
     @Override

@@ -8,7 +8,6 @@ import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.PlainTextContents;
@@ -25,11 +24,14 @@ import net.minecraft.server.players.NameAndId;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
-import net.minecraft.util.*;
+import net.minecraft.util.ByIdMap;
+import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -69,6 +71,7 @@ import nordmods.uselessreptile.common.dragon_ability.type.MeleeAttackAbility;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
+import nordmods.uselessreptile.common.dragon_variant.InteractionSettings;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
@@ -593,8 +596,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
+        for (InteractionSettings.CustomItemInteraction customItemInteraction : getDragonVariant().common().interactionSettings().value().customItemInteractions()) {
+            if (customItemInteraction.tryExecute(this, player, itemStack)) return InteractionResult.SUCCESS;
+        }
+
         if (isTameable()) {
-            CommonDragonVariantData.TamingItem tamingItem = getTamingItem(itemStack);
+            InteractionSettings.TamingItem tamingItem = getTamingItem(itemStack);
             if (tamingItem != null) {
                 consumeGivenItem(player, itemStack, SoundEvents.GENERIC_EAT.value(), hand);
                 if (player.isCreative()) setTamingProgress(0);
@@ -612,7 +619,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
         if (isTame()) {
             if (getHealth() != getMaxHealth()) {
-                CommonDragonVariantData.FoodItem foodItem = getFoodItem(itemStack);
+                InteractionSettings.FoodItem foodItem = getFoodItem(itemStack);
                 if (foodItem != null) {
                     consumeGivenItem(player, itemStack, SoundEvents.GENERIC_EAT.value(), hand);
                     heal(foodItem.healingAmount());
@@ -944,34 +951,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return getTamingItem(stack) != null;
     }
 
-    public CommonDragonVariantData.@Nullable TamingItem getTamingItem(ItemStack itemStack) { //todo remove taming items for dragons that cannot be tamed with food
-        DragonVariant variant = getDragonVariant();
-        if (!isInvalidVariant()) {
-            return variant.common().tamingItems().stream()
-                    .filter(item -> {
-                        ExtraCodecs.TagOrElementLocation entryId = item.item();
-                        if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
-                        return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().identifier());
-                    })
-                    .max(Comparator.comparingInt(item -> item.priority().orElse(Integer.MIN_VALUE)))
-                    .orElse(null);
-        }
-        return null;
+    public InteractionSettings.@Nullable TamingItem getTamingItem(ItemStack itemStack) {
+        return getDragonVariant().common().interactionSettings().value().getTamingItem(itemStack);
     }
 
-    public CommonDragonVariantData.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
-        DragonVariant variant = getDragonVariant();
-        if (!isInvalidVariant()) {
-            return variant.common().foodItems().stream()
-                    .filter(item -> {
-                        ExtraCodecs.TagOrElementLocation entryId = item.item();
-                        if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
-                        return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().identifier());
-                    })
-                    .max(Comparator.comparingInt(item -> item.priority().orElse(Integer.MIN_VALUE)))
-                    .orElse(null);
-        }
-        return null;
+    public InteractionSettings.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
+        return getDragonVariant().common().interactionSettings().value().getFoodItem(itemStack);
     }
 
     public void tickEatFromInventoryTimer() {
@@ -1123,7 +1108,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     public boolean isInvulnerableTo(@NonNull ServerLevel world, @NonNull DamageSource damageSource) {
         if (this instanceof HeadMountDragon && getVehicle() instanceof Player && damageSource.is(DamageTypes.IN_WALL)) return true;
-        return super.isInvulnerableTo(world, damageSource);
+        if (super.isInvulnerableTo(world, damageSource)) return true;
+        return getDragonVariant().common().interactionSettings().value().isImmuneToDamage(damageSource.typeHolder());
     }
 
     public DragonInventory getInventory() {
@@ -1157,7 +1143,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}), base value of taming progress will be set to -1", getVariant(), getDragonId());
             return -1;
         }
-        return variant.common().baseTamingProgress();
+        return variant.common().interactionSettings().value().baseTamingProgress();
     }
 
     public boolean isTameable() {
@@ -1282,6 +1268,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     public int getMaxHeadXRot() {
         return pitchLimit;
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effect) {
+        if (!super.canBeAffected(effect)) return false;
+        return !getDragonVariant().common().interactionSettings().value().isImmuneToEffect(effect.getEffect());
     }
 
     /// Makes dragons dance to jukebox

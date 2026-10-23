@@ -12,6 +12,6 @@ public class DragonOwnerHurtTargetGoal extends OwnerHurtTargetGoal {
 
     @Override
     public boolean canUse() {
-        return mob.getDragonVariant().common().attacksOwnerTarget() && super.canUse();
+        return mob.getDragonVariant().common().targetingSettings().value().attacksOwnerTarget() && super.canUse();
     }
 }

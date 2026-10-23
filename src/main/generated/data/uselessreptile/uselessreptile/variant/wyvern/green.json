@@ -1,47 +1,12 @@
 {
   "type": "uselessreptile:wyvern",
   "abilities": "uselessreptile:wyvern/default",
-  "attacks_owner_target": true,
   "base_attribute_values": "uselessreptile:wyvern/default",
-  "base_taming_progress": 256,
-  "defends_owner": false,
   "dragon_model": "uselessreptile:wyvern/green",
   "equipment": "uselessreptile:wyvern/default",
-  "food_items": {
-    "#minecraft:meat": 2,
-    "minecraft:chicken": 4,
-    "minecraft:cooked_chicken": 4
-  },
+  "interaction_settings": "uselessreptile:wyvern/default",
   "name": "green",
   "spawn_conditions": "uselessreptile:wyvern/default",
-  "tamed_targets": [],
-  "taming_items": [
-    {
-      "item": "minecraft:chicken",
-      "priority": 1,
-      "taming_progress_increase": [
-        2,
-        4
-      ]
-    },
-    {
-      "item": "minecraft:cooked_chicken",
-      "priority": 1,
-      "taming_progress_increase": [
-        2,
-        4
-      ]
-    },
-    {
-      "item": "#minecraft:meat",
-      "taming_progress_increase": [
-        1,
-        1
-      ]
-    }
-  ],
-  "untamed_targets": [
-    "minecraft:chicken"
-  ],
+  "targeting_settings": "uselessreptile:wyvern/default",
   "variant_name_key": "variant.uselessreptile.wyvern.green"
 }

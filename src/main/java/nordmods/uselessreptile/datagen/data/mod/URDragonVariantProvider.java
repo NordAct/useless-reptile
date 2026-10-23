@@ -2,18 +2,15 @@ package nordmods.uselessreptile.datagen.data.mod;
 
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
-import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
 import nordmods.uselessreptile.common.dragon_variant.type.*;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 import nordmods.uselessreptile.common.init.URTags;
@@ -60,211 +57,109 @@ public class URDragonVariantProvider extends FabricDynamicRegistryProvider {
     }
 
     public static void register(BootstrapContext<DragonVariant> bootstrapContext) {
-        bootstrapContext.register(WYVERN_GREEN, makeWyvern(bootstrapContext, "green"));
-        bootstrapContext.register(WYVERN_BROWN, makeWyvern(bootstrapContext, "brown"));
-        CommonDragonVariantData jeb_ = new CommonDragonVariantData(
-                "jeb_",
-                "variant.uselessreptile.wyvern.jeb_",
-                Optional.empty(),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(URDragonModelProvider.WYVERN_JEB),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.WYVERN),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.CANNOT_SPAWN),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.WYVERN),
-                -1,
-                List.of(),
-                List.of(),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.WYVERN),
-                List.of(),
-                List.of(),
-                true,
-                false
-        );
-        bootstrapContext.register(WYVERN_JEB, new WyvernVariant(jeb_));
+        bootstrapContext.register(WYVERN_GREEN, makeWyvern(bootstrapContext, "green", URSpawnConditionsProvider.WYVERN));
+        bootstrapContext.register(WYVERN_BROWN, makeWyvern(bootstrapContext, "brown", URSpawnConditionsProvider.WYVERN));
+        bootstrapContext.register(WYVERN_JEB, makeWyvern(bootstrapContext, "jeb_", URSpawnConditionsProvider.CANNOT_SPAWN));
 
-        bootstrapContext.register(MOLECLAW_BLACK, makeMoleclaw(bootstrapContext , "black", false));
-        bootstrapContext.register(MOLECLAW_BROWN, makeMoleclaw(bootstrapContext , "brown", false));
-        bootstrapContext.register(MOLECLAW_GREY, makeMoleclaw(bootstrapContext , "grey", false));
-        bootstrapContext.register(MOLECLAW_ALBINO, makeMoleclaw(bootstrapContext , "albino", true));
+        bootstrapContext.register(MOLECLAW_BLACK, makeMoleclaw(bootstrapContext , "black", URSpawnConditionsProvider.MOLECLAW));
+        bootstrapContext.register(MOLECLAW_BROWN, makeMoleclaw(bootstrapContext , "brown", URSpawnConditionsProvider.MOLECLAW));
+        bootstrapContext.register(MOLECLAW_GREY, makeMoleclaw(bootstrapContext , "grey", URSpawnConditionsProvider.MOLECLAW));
+        bootstrapContext.register(MOLECLAW_ALBINO, makeMoleclaw(bootstrapContext , "albino", URSpawnConditionsProvider.MOLECLAW_RARE));
 
-        bootstrapContext.register(LIGHTNING_CHASER_BLUE, makeLightningChaser(bootstrapContext, "blue"));
-        bootstrapContext.register(LIGHTNING_CHASER_GREY, makeLightningChaser(bootstrapContext, "grey"));
-        bootstrapContext.register(LIGHTNING_CHASER_BROWN, makeLightningChaser(bootstrapContext, "brown"));
-        bootstrapContext.register(LIGHTNING_CHASER_PURPLE, makeLightningChaser(bootstrapContext, "purple"));
+        bootstrapContext.register(LIGHTNING_CHASER_BLUE, makeLightningChaser(bootstrapContext, "blue", URSpawnConditionsProvider.LIGHTNING_CHASER_BLUE));
+        bootstrapContext.register(LIGHTNING_CHASER_GREY, makeLightningChaser(bootstrapContext, "grey", URSpawnConditionsProvider.LIGHTNING_CHASER_GREY));
+        bootstrapContext.register(LIGHTNING_CHASER_BROWN, makeLightningChaser(bootstrapContext, "brown", URSpawnConditionsProvider.LIGHTNING_CHASER_BROWN));
+        bootstrapContext.register(LIGHTNING_CHASER_PURPLE, makeLightningChaser(bootstrapContext, "purple", URSpawnConditionsProvider.LIGHTNING_CHASER_PURPLE));
 
-        bootstrapContext.register(RIVER_PIKEHORN_GREEN, makeRiverPikehorn(bootstrapContext, "green"));
-        bootstrapContext.register(RIVER_PIKEHORN_DARK_GREEN, makeRiverPikehorn(bootstrapContext, "dark_green"));
-        bootstrapContext.register(RIVER_PIKEHORN_BLUE, makeRiverPikehorn(bootstrapContext, "blue"));
-        bootstrapContext.register(RIVER_PIKEHORN_DARK_BLUE, makeRiverPikehorn(bootstrapContext, "dark_blue"));
-        bootstrapContext.register(RIVER_PIKEHORN_PURPLE, makeRiverPikehorn(bootstrapContext, "purple"));
-        bootstrapContext.register(RIVER_PIKEHORN_DARK_PURPLE, makeRiverPikehorn(bootstrapContext, "dark_purple"));
-        bootstrapContext.register(RIVER_PIKEHORN_TEAL, makeRiverPikehorn(bootstrapContext, "teal"));
-        bootstrapContext.register(RIVER_PIKEHORN_DARK_TEAL, makeRiverPikehorn(bootstrapContext, "dark_teal"));
+        bootstrapContext.register(RIVER_PIKEHORN_GREEN, makeRiverPikehorn(bootstrapContext, "green", URSpawnConditionsProvider.RIVER_PIKEHORN));
+        bootstrapContext.register(RIVER_PIKEHORN_DARK_GREEN, makeRiverPikehorn(bootstrapContext, "dark_green", URSpawnConditionsProvider.RIVER_PIKEHORN));
+        bootstrapContext.register(RIVER_PIKEHORN_BLUE, makeRiverPikehorn(bootstrapContext, "blue", URSpawnConditionsProvider.RIVER_PIKEHORN));
+        bootstrapContext.register(RIVER_PIKEHORN_DARK_BLUE, makeRiverPikehorn(bootstrapContext, "dark_blue", URSpawnConditionsProvider.RIVER_PIKEHORN));
+        bootstrapContext.register(RIVER_PIKEHORN_PURPLE, makeRiverPikehorn(bootstrapContext, "purple", URSpawnConditionsProvider.RIVER_PIKEHORN));
+        bootstrapContext.register(RIVER_PIKEHORN_DARK_PURPLE, makeRiverPikehorn(bootstrapContext, "dark_purple", URSpawnConditionsProvider.RIVER_PIKEHORN));
+        bootstrapContext.register(RIVER_PIKEHORN_TEAL, makeRiverPikehorn(bootstrapContext, "teal", URSpawnConditionsProvider.RIVER_PIKEHORN));
+        bootstrapContext.register(RIVER_PIKEHORN_DARK_TEAL, makeRiverPikehorn(bootstrapContext, "dark_teal", URSpawnConditionsProvider.RIVER_PIKEHORN));
 
-        bootstrapContext.register(MAGMAMUNCHER_NETHERRACK, addMagmamuncher(bootstrapContext, "netherrack"));
-        bootstrapContext.register(MAGMAMUNCHER_MAGMA, addMagmamuncher(bootstrapContext, "magma"));
+        bootstrapContext.register(MAGMAMUNCHER_NETHERRACK, addMagmamuncher(bootstrapContext, "netherrack", URSpawnConditionsProvider.MAGMAMUNCHER));
+        bootstrapContext.register(MAGMAMUNCHER_MAGMA, addMagmamuncher(bootstrapContext, "magma", URSpawnConditionsProvider.MAGMAMUNCHER));
     }
 
-    protected static DragonVariant makeWyvern(BootstrapContext<DragonVariant> bootstrapContext, String name) {
+    protected static DragonVariant makeWyvern(BootstrapContext<DragonVariant> bootstrapContext, String name, ResourceKey<List<DragonSpawnConditions>> spawnConditions) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.wyvern." + name,
                 Optional.empty(),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("wyvern/" + name))),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.WYVERN),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.WYVERN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.WYVERN),
-                256,
-                List.of(
-                        new CommonDragonVariantData.TamingItem(
-                                new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false),
-                                new com.mojang.datafixers.util.Pair<>(2, 4),
-                                Optional.of(1)
-                        ),
-                        new CommonDragonVariantData.TamingItem(
-                                new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false),
-                                new com.mojang.datafixers.util.Pair<>(2, 4),
-                                Optional.of(1)
-                        ),
-                        new CommonDragonVariantData.TamingItem(
-                                new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true),
-                                new com.mojang.datafixers.util.Pair<>(1, 1),
-                                Optional.empty()
-                        )
-                ),
-                List.of(
-                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
-                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.COOKED_CHICKEN.builtInRegistryHolder().key().identifier(), false), 4, Optional.of(1)),
-                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 2, Optional.empty())
-                ),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.WYVERN),
-                List.of(
-                        new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.CHICKEN), false)
-                ),
-                List.of(),
-                true,
-                false
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.WYVERN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.WYVERN)
         );
         return new WyvernVariant(variant);
     }
 
-    protected static DragonVariant makeMoleclaw(BootstrapContext<DragonVariant> bootstrapContext, String name, boolean rare) {
+    protected static DragonVariant makeMoleclaw(BootstrapContext<DragonVariant> bootstrapContext, String name, ResourceKey<List<DragonSpawnConditions>> spawnConditions) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.moleclaw." + name,
                 Optional.empty(),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("moleclaw/" + name))),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.MOLECLAW),
-                rare ? bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.MOLECLAW_RARE) : bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.MOLECLAW),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.MOLECLAW),
-                64,
-                List.of(
-                        new CommonDragonVariantData.TamingItem(
-                                new ExtraCodecs.TagOrElementLocation(Items.BEETROOT.builtInRegistryHolder().key().identifier(), false),
-                                new com.mojang.datafixers.util.Pair<>(1, 2),
-                                Optional.empty()
-                        )
-                ),
-                List.of(
-                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ConventionalItemTags.VEGETABLE_FOODS.location(), true), 2, Optional.empty())
-                ),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.MOLECLAW),
-                List.of(
-                        new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.PLAYER), false)
-                ),
-                List.of(),
-                true,
-                true
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.MOLECLAW),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.MOLECLAW)
         );
         return new MoleclawVariant(variant);
     }
 
-    protected static DragonVariant makeRiverPikehorn(BootstrapContext<DragonVariant> bootstrapContext, String name) {
+    protected static DragonVariant makeRiverPikehorn(BootstrapContext<DragonVariant> bootstrapContext, String name, ResourceKey<List<DragonSpawnConditions>> spawnConditions) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.river_pikehorn." + name,
                 Optional.empty(),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("river_pikehorn/" + name))),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.EMPTY),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.RIVER_PIKEHORN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.RIVER_PIKEHORN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.RIVER_PIKEHORN),
-                8,
-                List.of(
-                        new CommonDragonVariantData.TamingItem(
-                                new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH_BUCKET.builtInRegistryHolder().key().identifier(), false),
-                                new com.mojang.datafixers.util.Pair<>(8, 8),
-                                Optional.empty()
-                        ),
-                        new CommonDragonVariantData.TamingItem(
-                                new ExtraCodecs.TagOrElementLocation(Items.TROPICAL_FISH.builtInRegistryHolder().key().identifier(), false),
-                                new com.mojang.datafixers.util.Pair<>(1, 2),
-                                Optional.empty()
-                        )
-                ),
-                List.of(
-                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.FISHES.location(), true), 3, Optional.empty())
-                ),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.RIVER_PIKEHORN),
-                List.of(),
-                List.of(),
-                true,
-                true
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.RIVER_PIKEHORN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.RIVER_PIKEHORN)
         );
         return new RiverPikehornVariant(variant, List.of(new ExtraCodecs.TagOrElementLocation(URTags.RIVER_PIKEHORN_HUNT_TARGET.location(), true)));
     }
 
-    protected static DragonVariant makeLightningChaser(BootstrapContext<DragonVariant> bootstrapContext, String name) {
+    protected static DragonVariant makeLightningChaser(BootstrapContext<DragonVariant> bootstrapContext, String name, ResourceKey<List<DragonSpawnConditions>> spawnConditions) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.lightning_chaser." + name,
                 Optional.empty(),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("lightning_chaser/" + name))),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.LIGHTNING_CHASER),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_SPAWN_CONDITIONS, UselessReptile.id("lightning_chaser/" + name))),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.LIGHTNING_CHASER),
-                3,
-                List.of(),
-                List.of(
-                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(ItemTags.MEAT.location(), true), 3, Optional.empty())
-                ),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.LIGHTNING_CHASER),
-                List.of(),
-                List.of(),
-                true,
-                false
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.LIGHTNING_CHASER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.LIGHTNING_CHASER)
         );
         return new LightningChaserVariant(variant);
     }
 
-    protected static DragonVariant addMagmamuncher(BootstrapContext<DragonVariant> bootstrapContext,String name) {
+    protected static DragonVariant addMagmamuncher(BootstrapContext<DragonVariant> bootstrapContext,String name, ResourceKey<List<DragonSpawnConditions>> spawnConditions) {
         CommonDragonVariantData variant = new CommonDragonVariantData(
                 name,
                 "variant.uselessreptile.magmamuncher." + name,
                 Optional.empty(),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("magmamuncher/" + name))),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.EMPTY),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(URSpawnConditionsProvider.MAGMAMUNCHER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.MAGMAMUNCHER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.MAGMAMUNCHER),
-                12,
-                List.of(
-                        new CommonDragonVariantData.TamingItem(
-                                new ExtraCodecs.TagOrElementLocation(Items.BLAZE_ROD.builtInRegistryHolder().key().identifier(), false),
-                                new com.mojang.datafixers.util.Pair<>(1, 3),
-                                Optional.empty()
-                        )
-                ),
-                List.of(
-                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_BLOCK.builtInRegistryHolder().key().identifier(), false), 4, Optional.empty()),
-                        new CommonDragonVariantData.FoodItem(new ExtraCodecs.TagOrElementLocation(Items.MAGMA_CREAM.builtInRegistryHolder().key().identifier(), false), 2, Optional.empty())
-                ),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.MAGMAMUNCHER),
-                List.of(
-                        new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
-                ),
-                List.of(
-                        new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
-                ),
-                true,
-                true
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.MAGMAMUNCHER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.MAGMAMUNCHER)
         );
         return new MagmamuncherVariant(variant);
     }

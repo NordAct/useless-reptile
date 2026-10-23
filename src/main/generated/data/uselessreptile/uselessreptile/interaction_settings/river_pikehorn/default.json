@@ -1,0 +1,25 @@
+{
+  "base_taming_progress": 8,
+  "custom_item_interactions": [],
+  "damage_type_immunities": [],
+  "effect_immunities": [],
+  "food_items": {
+    "#minecraft:fishes": 3
+  },
+  "taming_items": [
+    {
+      "item": "minecraft:tropical_fish_bucket",
+      "taming_progress_increase": [
+        8,
+        8
+      ]
+    },
+    {
+      "item": "minecraft:tropical_fish",
+      "taming_progress_increase": [
+        1,
+        2
+      ]
+    }
+  ]
+}

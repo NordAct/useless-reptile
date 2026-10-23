@@ -1,0 +1,14 @@
+{
+  "base_taming_progress": 3,
+  "custom_item_interactions": [],
+  "damage_type_immunities": [
+    "#minecraft:is_lightning"
+  ],
+  "effect_immunities": [
+    "uselessreptile:shock"
+  ],
+  "food_items": {
+    "#minecraft:meat": 3
+  },
+  "taming_items": []
+}

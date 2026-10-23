@@ -45,6 +45,8 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URChestLootTableProvider::new);
 
         pack.addProvider(URDragonBaseAttributeValues::new);
+        pack.addProvider(URDragonTargetingSettings::new);
+        pack.addProvider(URDragonInteractionSettings::new);
         pack.addProvider(UREquipmentProvider::new);
         pack.addProvider(URDragonVariantProvider::new);
         pack.addProvider(URSpawnConditionsProvider::new);
@@ -63,11 +65,14 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
     @Override
     public void buildRegistry(@NonNull RegistrySetBuilder registryBuilder) {
         registryBuilder.add(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, URDragonBaseAttributeValues::register);
+        registryBuilder.add(URResourceKeys.DRAGON_TARGETING_SETTINGS, URDragonTargetingSettings::register);
+        registryBuilder.add(URResourceKeys.DRAGON_INTERACTION_SETTINGS, URDragonInteractionSettings::register);
         registryBuilder.add(URResourceKeys.DRAGON_SPAWN_CONDITIONS, URSpawnConditionsProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_MODEL, URDragonModelProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_ABILITIES, URDragonAbilitiesProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_EQUIPMENT, UREquipmentProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_VARIANT, URDragonVariantProvider::register);
+        //todo remove structures
         registryBuilder.add(Registries.PROCESSOR_LIST, URProcessorsListProvider::register);
         registryBuilder.add(Registries.TEMPLATE_POOL, URTemplatePoolProvider::register);
         registryBuilder.add(Registries.STRUCTURE, URStructureProvider::register);

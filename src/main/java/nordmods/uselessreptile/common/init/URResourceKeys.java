@@ -11,6 +11,8 @@ import nordmods.uselessreptile.common.dragon_ability.type.DragonAbilityType;
 import nordmods.uselessreptile.common.dragon_ability.use_condition.UseConditionType;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
+import nordmods.uselessreptile.common.dragon_variant.InteractionSettings;
+import nordmods.uselessreptile.common.dragon_variant.TargetingSettings;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnConditions;
@@ -32,7 +34,8 @@ public class URResourceKeys {
     public static final ResourceKey<Registry<Map<Holder<Attribute>, Float>>> DRAGON_BASE_ATTRIBUTE_VALUES = ResourceKey.createRegistryKey(UselessReptile.id("base_attribute_values"));
     public static final ResourceKey<Registry<UseConditionType<?>>> USE_CONDITION_TYPE = ResourceKey.createRegistryKey(UselessReptile.id("use_condition_type"));
     public static final ResourceKey<Registry<FluteItem.FluteMode>> FLUTE_MODE = ResourceKey.createRegistryKey(UselessReptile.id("flute_mode"));
-
+    public static final ResourceKey<Registry<TargetingSettings>> DRAGON_TARGETING_SETTINGS = ResourceKey.createRegistryKey(UselessReptile.id("targeting_settings"));
+    public static final ResourceKey<Registry<InteractionSettings>> DRAGON_INTERACTION_SETTINGS = ResourceKey.createRegistryKey(UselessReptile.id("interaction_settings"));
 
     public static void init() {
         DynamicRegistries.registerSynced(DRAGON_MODEL, DragonModelData.DIRECT_CODEC);
@@ -40,7 +43,9 @@ public class URResourceKeys {
         DynamicRegistries.registerSynced(DRAGON_EQUIPMENT, EquipmentModelData.DIRECT_CODEC);
         DynamicRegistries.registerSynced(DRAGON_SPAWN_CONDITIONS, DragonSpawnConditions.DIRECT_CODEC.listOf());
         DynamicRegistries.registerSynced(DRAGON_BASE_ATTRIBUTE_VALUES, CommonDragonVariantData.BASE_ATTRIBUTE_VALUES_DIRECT_CODEC);
-        DynamicRegistries.registerSynced(DRAGON_VARIANT, DragonVariant.CODEC);
         DynamicRegistries.registerSynced(DRAGON_ABILITIES, DragonAbility.DIRECT_CODEC.listOf());
+        DynamicRegistries.registerSynced(DRAGON_TARGETING_SETTINGS, TargetingSettings.DIRECT_CODEC);
+        DynamicRegistries.registerSynced(DRAGON_INTERACTION_SETTINGS, InteractionSettings.DIRECT_CODEC);
+        DynamicRegistries.registerSynced(DRAGON_VARIANT, DragonVariant.CODEC);
     }
 }

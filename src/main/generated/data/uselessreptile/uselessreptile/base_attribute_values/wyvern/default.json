@@ -4,6 +4,7 @@
   "minecraft:attack_damage": 9.0,
   "minecraft:attack_knockback": 0.3,
   "minecraft:flying_speed": 0.7,
+  "minecraft:jump_strength": 0.63,
   "minecraft:max_health": 50.0,
   "minecraft:movement_speed": 0.2,
   "uselessreptile:dragon.acceleration_duration": 400.0,
