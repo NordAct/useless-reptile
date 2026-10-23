@@ -1,2 +1,3 @@
 - Fix River Pikehorns keeping hunting even when they already caught fish
 - Fix possible crash that may occur during River Pikehorn hunting when it attemts to return from it
+- (26.1) Updated multipart entity library for some performance improvements
