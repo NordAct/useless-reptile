@@ -3,6 +3,7 @@ package nordmods.uselessreptile.common.entity;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
@@ -16,6 +17,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +31,7 @@ import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.*;
+import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernGoAfterFoodGoal;
 import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.animation_processor.MultipartDragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
@@ -41,7 +44,7 @@ import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity { //todo add way to make untamed ones land
+public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity {
     private final URDragonPart head = new URDragonPart(this, "head", 0.5f, 0.5f);
     private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.5f, 0.5f);
     private final URDragonPart neck2 = new URDragonPart(this, "neck2", 0.5f, 0.5f);
@@ -89,6 +92,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
         goalSelector.addGoal(3, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(4, new DragonEatFromInventoryGoal<>(this));
         goalSelector.addGoal(5, new DragonAttackGoal(this));
+        goalSelector.addGoal(6, new WyvernGoAfterFoodGoal(this));
         goalSelector.addGoal(7, new FlyingDragonFlyDownGoal<>(this, 30));
         goalSelector.addGoal(8, new DragonReturnToHomePoint<>(this));
         goalSelector.addGoal(9, new DragonWanderAroundGoal<>(this));
@@ -258,5 +262,16 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     public boolean canGrief() {
         if (!super.canGrief()) return false;
         return isTame() ? URConfig.getConfig().wyvernGriefing.canTamedGrief() : URConfig.getConfig().wyvernGriefing.canUntamedGiref();
+    }
+
+    @Override
+    public void setTame(boolean isTame, boolean includeSideEffects) {
+        super.setTame(isTame, includeSideEffects);
+        setCanPickUpLoot(!isTame);
+    }
+
+    @Override
+    protected void pickUpItem(@NonNull ServerLevel level, ItemEntity entity) {
+        if (isFood(entity.getItem())) consumeGivenItem(entity.getOwner() instanceof LivingEntity livingEntity ? livingEntity : null, entity.getItem(), SoundEvents.GENERIC_EAT.value(), null);
     }
 }

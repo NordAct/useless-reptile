@@ -36,6 +36,6 @@ public class DragonEatFromInventoryGoal<T extends URDragonEntity> extends Dragon
 
     @Override
     protected boolean isConsumableItem(ItemStack stack) {
-        return mob.getFoodItem(stack) != null;
+        return mob.isFood(stack);
     }
 }

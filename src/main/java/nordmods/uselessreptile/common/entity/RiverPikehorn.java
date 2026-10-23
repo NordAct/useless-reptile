@@ -206,7 +206,7 @@ public class RiverPikehorn extends URFlyingDragonEntity implements HeadMountDrag
     @Override
     protected void pickUpItem(@NonNull ServerLevel world, @NonNull ItemEntity item) {
         if (isOwnerClose()) return;
-        if (getItemBySlot(EquipmentSlot.OFFHAND).isEmpty() && getFoodItem(item.getItem()) != null
+        if (getItemBySlot(EquipmentSlot.OFFHAND).isEmpty() && isFood(item.getItem())
                 || getItemBySlot(EquipmentSlot.OFFHAND).is(item.getItem().getItem()) && item.getItem().getComponents().equals(getItemBySlot(EquipmentSlot.OFFHAND).getComponents())) {
             onItemPickup(item);
             ItemStack itemStack = item.getItem();

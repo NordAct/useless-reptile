@@ -367,7 +367,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         ItemStack itemStack = player.getItemInHand(hand);
 
         if (isTameable()) {
-            if (hasSurrendered() && !getShouldBailOut() && getTamingProgress() <= 0 || player.isCreative() && getFoodItem(itemStack) != null) {
+            if (hasSurrendered() && !getShouldBailOut() && getTamingProgress() <= 0 || player.isCreative() && (isFood(itemStack) || isTamingItem(itemStack))) {
                 tame(player);
                 setPersistenceRequired();
                 setSurrendered(false);

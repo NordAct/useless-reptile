@@ -706,7 +706,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return itemStack.is(Items.POTION)
                 || itemStack.is(Items.STICK)
                 || isInstrument(itemStack)
-                || getFoodItem(itemStack) != null
+                || isFood(itemStack)
                 || itemStack.is(URItems.VARIANT_CHANGING_ORB);
     }
 
@@ -719,13 +719,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         Holder<Instrument> instrument = itemStack.getComponents().get(DataComponents.INSTRUMENT).instrument();
         boolean translatable = instrument.value().description().getContents() instanceof TranslatableContents;
         return translatable ? ((TranslatableContents) instrument.value().description().getContents()).getKey() : ((PlainTextContents)instrument.value().description().getContents()).text();
-    }
-
-    public void playSound(@NonNull SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) {
-            if (level().isClientSide()) level().playLocalSound(getX(), getY(),getZ(), sound, getSoundSource(), volume, pitch,true);
-            else level().playSound(null, getX(), getY(),getZ(), sound,  getSoundSource(), volume, pitch);
-        }
     }
 
     @Override
@@ -944,7 +937,11 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     public boolean isFood(@NonNull ItemStack stack) {
-        return false;
+        return getFoodItem(stack) != null;
+    }
+
+    public boolean isTamingItem(@NonNull ItemStack stack) {
+        return getTamingItem(stack) != null;
     }
 
     public CommonDragonVariantData.@Nullable TamingItem getTamingItem(ItemStack itemStack) { //todo remove taming items for dragons that cannot be tamed with food
