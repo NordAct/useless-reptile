@@ -5,7 +5,7 @@ import net.minecraft.resources.Identifier;
 import nordmods.uselessreptile.UselessReptile;
 
 public class ResourceUtil {
-    public static boolean isResourceReloadFinished;
+    public static boolean isResourceReloadFinished = true;
 
     //note: very resource intense, try to avoid repetitive calls
     //note 2: does not recognize models and animations sent by server. Use Biscuit Roll's built-in checkers instead

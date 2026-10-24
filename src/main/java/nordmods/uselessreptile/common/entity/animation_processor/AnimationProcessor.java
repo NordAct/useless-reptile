@@ -4,6 +4,7 @@ import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
 import libs.gg.moonflower.pinwheel.api.geometry.GeometryCompileException;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.resource_managers.BRModelManager;
@@ -24,6 +25,9 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     protected final BRState state = new BRState.Impl(new HashMap<>());
     @Nullable
     private BRModel model;
+    //in case if this runs on client too to avoid concurrent modification of animations during rendering
+    private final CloneAnimationController cloneController = new CloneAnimationController();
+    private final List<BRAnimationController> cloneControllerList = List.of(cloneController);
     public AnimationProcessor(T animatable) {
         this.animatable = animatable;
     }
@@ -42,6 +46,9 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     }
 
     public void tick() {
+        if (isClient()) {
+            cloneController.copyFrom(animatable);
+        }
         updateBRState();
         BRModel model = getModel();
         Collection<BRAnimationController> controllers = state.getStateData(StateDataTypes.CONTROLLERS);
@@ -53,7 +60,7 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     }
 
     public List<BRAnimationController> getAnimationControllers() {
-        return animatable.getAnimationControllers();
+        return isClient() ? cloneControllerList : animatable.getAnimationControllers();
     }
 
     @NonNull
@@ -78,6 +85,8 @@ public abstract class AnimationProcessor<T extends BRAnimatedObject> {
     public abstract BRModelProvider getModelProvider();
 
     public abstract float getAnimationTime();
+
+    public abstract boolean isClient();
 
     public void adjustAnimation(BRState state, BRModel model){}
 

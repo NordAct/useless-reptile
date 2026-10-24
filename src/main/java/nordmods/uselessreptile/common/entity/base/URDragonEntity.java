@@ -144,7 +144,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             AnimationController.ATTACK , attackController,
             AnimationController.BLINK , blinkController
     );
-    private final List<BRAnimationController> controllerList = List.copyOf(controllers.values());
+    private final LinkedList<BRAnimationController> controllerList = new LinkedList<>(List.of(mainController, attackController, blinkController));
     private final Int2ObjectOpenHashMap<DragonAbilityHolder> abilityHolders = new Int2ObjectOpenHashMap<>();
     private List<DragonAbilityHolder> availableAbilities = List.of();
     private static final List<FluteItem.FluteMode> FLUTE_MODES = List.of(

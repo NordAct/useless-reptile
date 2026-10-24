@@ -48,7 +48,7 @@ public class UREquipmentProvider extends FabricDynamicRegistryProvider {
 
         EquipmentModelData.Builder builder = EquipmentModelData.builder();
         addSaddle(builder, UREntities.WYVERN, Items.SADDLE, List.of("spikes_front"), 1);
-        addSaddle(builder, UREntities.WYVERN, URItems.DUAL_SADDLE, List.of("spikes_front"), 1);
+        addSaddle(builder, UREntities.WYVERN, URItems.DUAL_SADDLE, List.of("spikes_front", "spikes_back"), 2);
         bootstrapContext.register(WYVERN, builder.build());
 
         builder = EquipmentModelData.builder();

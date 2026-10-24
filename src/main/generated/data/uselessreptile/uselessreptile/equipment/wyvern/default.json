@@ -15,9 +15,10 @@
     },
     "uselessreptile:dual_saddle": {
       "hid_bones": [
-        "spikes_front"
+        "spikes_front",
+        "spikes_back"
       ],
-      "max_passengers": 1,
+      "max_passengers": 2,
       "model_data": {
         "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/dual_saddle.animation.json",
         "cull": false,

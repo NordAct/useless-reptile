@@ -23,24 +23,17 @@ import nordmods.uselessreptile.common.init.URStateDataTypes;
 
 import java.util.List;
 
-public class DragonAnimationProcessor<T extends URDragonEntity> extends AnimationProcessor<T> {
+public class DragonAnimationProcessor<T extends URDragonEntity> extends EntityAnimationProcessor<T> {
     private static final URDragonEntityModelProvider MODEL_PROVIDER = new URDragonEntityModelProvider();
     private final CloneAnimationController cloneController = new CloneAnimationController();
     private final List<BRAnimationController> cloneControllerList = List.of(cloneController);
-    private final boolean isClient;
     public DragonAnimationProcessor(T animatable) {
         super(animatable);
-        isClient = animatable.level().isClientSide();
     }
 
     @Override
     public URDragonEntityModelProvider getModelProvider() {
         return MODEL_PROVIDER;
-    }
-
-    @Override
-    public float getAnimationTime() {
-        return animatable.tickCount / 20f;
     }
 
     @Override
@@ -55,7 +48,7 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
         Identifier dragonId = animatable.getDragonId();
         state.setStateData(URStateDataTypes.DRAGON_ID, dragonId);
         //renderer is responsible for filling asset caches on client
-        if (!isClient) {
+        if (!isClient()) {
             fillDragonCache(
                     animatable.getAssetCache(),
                     animatable.getDragonVariant(),
@@ -207,15 +200,9 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends Animatio
 
     @Override
     public void tick() {
-        if (isClient) {
-            cloneController.copyFrom(animatable);
+        if (isClient()) {
             if (animatable.getAssetCache().getModelLocationCache() == null) return;
         }
         super.tick();
-    }
-
-    @Override
-    public List<BRAnimationController> getAnimationControllers() {
-        return isClient ? cloneControllerList : super.getAnimationControllers();
     }
 }
