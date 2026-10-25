@@ -5,8 +5,10 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
+import nordmods.biscuit_roll.common.animation.BREntityWithAnimationProcessor;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
+import nordmods.biscuit_roll.common.animation.processor.AnimationProcessor;
 import nordmods.biscuit_roll.common.resource_managers.ServerAnimationManager;
 import nordmods.biscuit_roll.common.resource_managers.ServerModelManager;
 import nordmods.uselessreptile.UselessReptile;
@@ -23,7 +25,7 @@ import nordmods.uselessreptile.common.init.URStateDataTypes;
 
 import java.util.List;
 
-public class DragonAnimationProcessor<T extends URDragonEntity> extends EntityAnimationProcessor<T> {
+public class DragonAnimationProcessor<T extends URDragonEntity & BREntityWithAnimationProcessor<T>> extends AnimationProcessor<T> {
     private static final URDragonEntityModelProvider MODEL_PROVIDER = new URDragonEntityModelProvider();
     private final CloneAnimationController cloneController = new CloneAnimationController();
     private final List<BRAnimationController> cloneControllerList = List.of(cloneController);
@@ -204,5 +206,10 @@ public class DragonAnimationProcessor<T extends URDragonEntity> extends EntityAn
             if (animatable.getAssetCache().getModelLocationCache() == null) return;
         }
         super.tick();
+    }
+
+    @Override
+    public boolean processModel() {
+        return true;
     }
 }

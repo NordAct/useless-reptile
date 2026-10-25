@@ -12,6 +12,7 @@ import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.LightLayer;
+import nordmods.biscuit_roll.common.animation.processor.AnimationProcessor;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
@@ -28,10 +29,11 @@ import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public class Moleclaw extends URRideableDragonEntity {
+public class Moleclaw extends URRideableDragonEntity<Moleclaw> {
     private int panicSoundDelay = 0;
     private static final EntityDimensions SITTING = EntityDimensions.scalable(2, 2.175f);
     private static final EntityDimensions STANDING = EntityDimensions.scalable(2, 2.9f);
+    private final AnimationProcessor<Moleclaw> processor = new DragonAnimationProcessor<>(this);
 
     public Moleclaw(EntityType<? extends URRideableDragonEntity> entityType, Level world) {
         super(entityType, world);
@@ -231,7 +233,7 @@ public class Moleclaw extends URRideableDragonEntity {
     }
 
     @Override
-    public @Nullable DragonAnimationProcessor<? extends URDragonEntity> createServerAnimationProcessor() {
-        return new DragonAnimationProcessor<>(this);
+    public AnimationProcessor<Moleclaw> getAnimationProcessor() {
+        return processor;
     }
 }

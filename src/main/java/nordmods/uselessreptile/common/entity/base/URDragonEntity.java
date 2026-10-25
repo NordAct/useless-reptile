@@ -79,8 +79,6 @@ import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
 import nordmods.uselessreptile.common.entity.ai.control.*;
 import nordmods.uselessreptile.common.entity.ai.navigation.LandDragonNavigation;
-import nordmods.uselessreptile.common.entity.animation_processor.ControllerState;
-import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
@@ -144,7 +142,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             AnimationController.ATTACK , attackController,
             AnimationController.BLINK , blinkController
     );
-    private final LinkedList<BRAnimationController> controllerList = new LinkedList<>(List.of(mainController, attackController, blinkController));
+    protected final LinkedList<BRAnimationController> controllerList = new LinkedList<>(List.of(mainController, attackController, blinkController));
     private final Int2ObjectOpenHashMap<DragonAbilityHolder> abilityHolders = new Int2ObjectOpenHashMap<>();
     private List<DragonAbilityHolder> availableAbilities = List.of();
     private static final List<FluteItem.FluteMode> FLUTE_MODES = List.of(
@@ -159,7 +157,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public float xBodyRot = 0;
     private final LinkedList<Float> xBodyRotO = new LinkedList<>();
     protected int maxXBodyRotSamples = 10;
-    private final DragonAnimationProcessor<? extends URDragonEntity> processor = createServerAnimationProcessor();
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -169,7 +166,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    public final List<BRAnimationController> getAnimationControllers() {
+    public final LinkedList<BRAnimationController> getAnimationControllers() {
         return controllerList;
     }
 
@@ -187,8 +184,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         builder.define(CURRENT_ORDER, Order.FOLLOW);
         builder.define(PREVIOUS_ORDER, Order.SIT);
         builder.define(WANDER_RADIUS, WanderRadius.MEDIUM);
-        builder.define(CONTROLLER_STATES, List.of());
-        builder.define(EQUIPMENT_CONTROLLER_STATES, Map.of());
         builder.define(LOOK_TARGET_YAW, Optional.empty());
         builder.define(SERVER_BODY_YAW, yBodyRot);
         builder.define(ABILITY_COOLDOWNS, new Int2FloatArrayMap());
@@ -205,8 +200,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public static final EntityDataAccessor<Order> CURRENT_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
     public static final EntityDataAccessor<Order> PREVIOUS_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
     public static final EntityDataAccessor<WanderRadius> WANDER_RADIUS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.WANDER_RADIUS);
-    public static final EntityDataAccessor<List<ControllerState>> CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.CONTROLLER_STATES);
-    public static final EntityDataAccessor<Map<EquipmentSlot, List<ControllerState>>> EQUIPMENT_CONTROLLER_STATES = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.EQUIPMENT_CONTROLLER_STATES);
     public static final EntityDataAccessor<Optional<Float>> LOOK_TARGET_YAW = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.OPTIONAL_FLOAT);
     public static final EntityDataAccessor<Float> SERVER_BODY_YAW = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Int2FloatArrayMap> ABILITY_COOLDOWNS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.INT_TO_FLOAT_MAP);
@@ -349,27 +342,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             updateAbilities();
         }
         if (level().isClientSide()) {
-            if (CONTROLLER_STATES.equals(data)) {
-                ControllerState.applyControllerStates(
-                        entityData.get(CONTROLLER_STATES),
-                        getAnimationControllers()
-                );
-                for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-                    DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
-                    if (equipment != null && equipment.getAnimationProcessor() == null) equipment.updateAnimations();
-                }
-            }
-            if (EQUIPMENT_CONTROLLER_STATES.equals(data)) {
-                entityData.get(EQUIPMENT_CONTROLLER_STATES).forEach((equipmentSlot, controllerStates) -> {
-                    DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
-                    if (equipment != null) {
-                        ControllerState.applyControllerStates(controllerStates, equipment.getAnimationControllers());
-                        equipment.cloneAnimationController.copyFrom(this);
-                        equipment.markAnimationUpdated();
-                    }
-                });
-            }
-
             if (ABILITY_COOLDOWNS.equals(data)) {
                 entityData.get(ABILITY_COOLDOWNS).forEach((id, cooldown) -> {
                     if (abilityHolders.containsKey(id)) {
@@ -777,7 +749,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (xBodyRotO.size() >= maxXBodyRotSamples) xBodyRotO.removeFirst();
 
         super.tick();
-        needsSync = true;
 
         tickAcceleration();
 
@@ -820,12 +791,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
 
         availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
-        if (processor != null) processor.tick();
         for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
             if (equipment != null) equipment.tick();
         }
-        syncAnimations();
     }
 
     public void tickAcceleration() {
@@ -834,18 +803,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public void tickAccelerationUncontrolled() {
         setAccelerationDuration(getMaxAccelerationDuration());
-    }
-
-    protected void syncAnimations() {
-        if (processor != null && !level().isClientSide()) {
-            entityData.set(CONTROLLER_STATES, ControllerState.collectControllerStates(getAnimationControllers()));
-            Map<EquipmentSlot, List<ControllerState>> equipmentControllerStates = new HashMap<>();
-            for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-                DragonEquipment equipment = getAssetCache().getEquipment(equipmentSlot);
-                if (equipment != null && equipment.getAnimationProcessor() != null) equipmentControllerStates.put(equipmentSlot, ControllerState.collectControllerStates(equipment.getAnimationControllers()));
-            }
-            entityData.set(EQUIPMENT_CONTROLLER_STATES, equipmentControllerStates);
-        }
     }
 
     @Override
@@ -1234,18 +1191,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             else sum += Mth.lerp(tickDelta, xBodyRotO.get(i), xBodyRot);
         }
         return sum / maxXBodyRotSamples;
-    }
-
-    /// @return creates server animation processor for dragon
-    @Nullable
-    public DragonAnimationProcessor<? extends URDragonEntity> createServerAnimationProcessor() {
-        return null;
-    }
-
-    /// @return server animation processor for dragon. If it exists, entity will be animated serverside and send transformed bones back to client
-    @Nullable
-    public DragonAnimationProcessor<? extends URDragonEntity> getAnimationProcessor() {
-        return processor;
     }
 
     public WrappedDragonBodyRotationControl<?> getBodyRotationControl() {

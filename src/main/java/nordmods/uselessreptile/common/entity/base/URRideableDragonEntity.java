@@ -23,6 +23,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import nordmods.biscuit_roll.common.animation.BRAnimationProcessorOwner;
+import nordmods.biscuit_roll.common.animation.BREntityWithAnimationProcessor;
+import nordmods.biscuit_roll.common.animation.processor.ControllerState;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
@@ -31,16 +34,20 @@ import nordmods.uselessreptile.common.config.URMobAttributesConfig;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_ability.type.NoopAbility;
 import nordmods.uselessreptile.common.entity.animation_processor.EquipmentAnimationProcessor;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
 import nordmods.uselessreptile.common.entity.misc.Placeholder;
+import nordmods.uselessreptile.common.init.URAttachments;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.jspecify.annotations.NonNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
+public abstract class URRideableDragonEntity<T extends URRideableDragonEntity<T>> extends URDragonEntity implements HasCustomInventoryScreen, BREntityWithAnimationProcessor<T> {
     public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
     private DragonAbilityHolder primaryRiderAbility = createNoopHolder();
     private DragonAbilityHolder secondaryRiderAbility = createNoopHolder();
@@ -290,6 +297,17 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
+    public void updateControllerStates() {
+        BREntityWithAnimationProcessor.super.updateControllerStates();
+        Map<EquipmentSlot, List<ControllerState>> equipmentControllerStates = new HashMap<>();
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            DragonEquipment equipment = getAssetCache().getEquipment(equipmentSlot);
+            if (equipment instanceof BRAnimationProcessorOwner<?>) equipmentControllerStates.put(equipmentSlot, ControllerState.collectControllerStates(equipment.getAnimationControllers()));
+        }
+        setAttached(URAttachments.EQUIPMENT_CONTROLLER_STATES, equipmentControllerStates);
+    }
+
+    @Override
     protected void tickRidden(@NonNull Player rider, @NonNull Vec3 movementInput) {
         updateRiderAbilities();
         if (level().isClientSide() && getControllingPassenger() instanceof LocalPlayer player) {
@@ -365,6 +383,11 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         }
     }
 
+    @Override
+    public boolean isClient() {
+        return BREntityWithAnimationProcessor.super.isClient();
+    }
+
     protected void setRotation(Player rider) {
         Vec3 targetRot = calculateViewVector(Math.clamp(rider.getXRot(), -89.9f, 89.9f), rider.yHeadRot).multiply(10000, 10000, 10000).add(rider.getX(), getEyeY(), rider.getZ());
         getLookControl().setLookAt(targetRot);
@@ -428,6 +451,19 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     public DragonAbilityHolder getSecondaryRiderAbility() {
         return secondaryRiderAbility;
+    }
+
+    @Override
+    public void onAnimationControllersUpdated() {
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            DragonEquipment equipment = getAssetCache().getEquipment(equipmentSlot);
+            if (equipment != null && !(equipment instanceof BRAnimationProcessorOwner<?>)) equipment.updateAnimations();
+        }
+    }
+
+    @Override
+    public boolean tickAnimationProcessorOnClient() {
+        return true;
     }
 
     /// Rider's attacks

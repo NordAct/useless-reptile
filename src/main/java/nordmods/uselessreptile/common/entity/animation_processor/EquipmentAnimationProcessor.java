@@ -1,6 +1,8 @@
 package nordmods.uselessreptile.common.entity.animation_processor;
 
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import nordmods.biscuit_roll.common.animation.BRAnimationProcessorOwner;
+import nordmods.biscuit_roll.common.animation.processor.AnimationProcessor;
 import nordmods.biscuit_roll.common.model.BRModelProvider;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.common.asset_cache.EquipmentAssetCache;
@@ -8,9 +10,9 @@ import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.model_provider.DragonEquipmentModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
 
-public class EquipmentAnimationProcessor extends AnimationProcessor<DragonEquipment> {
+public class EquipmentAnimationProcessor<T extends DragonEquipment & BRAnimationProcessorOwner<T>> extends AnimationProcessor<T> {
     private static final DragonEquipmentModelProvider MODEL_PROVIDER = new DragonEquipmentModelProvider();
-    public EquipmentAnimationProcessor(DragonEquipment animatable) {
+    public EquipmentAnimationProcessor(T animatable) {
         super(animatable);
     }
 
@@ -37,7 +39,7 @@ public class EquipmentAnimationProcessor extends AnimationProcessor<DragonEquipm
     }
 
     @Override
-    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, DragonEquipment animatable, float tickDelta) {
+    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T animatable, float tickDelta) {
         builder.setQuery("body_x_rotation", animatable.ownerState.getStateData(URStateDataTypes.BODY_X_ROTATION, 0f));
         builder.setQuery("head_x_rotation", animatable.ownerState.getStateData(URStateDataTypes.HEAD_X_ROTATION, 0f));
         builder.setQuery("body_y_rotation", animatable.ownerState.getStateData(URStateDataTypes.BODY_Y_ROTATION, 0f));
@@ -55,5 +57,10 @@ public class EquipmentAnimationProcessor extends AnimationProcessor<DragonEquipm
             if (animatable.getAssetCache().getModelLocationCache() == null) return;
         }
         super.tick();
+    }
+
+    @Override
+    public boolean processModel() {
+        return true;
     }
 }

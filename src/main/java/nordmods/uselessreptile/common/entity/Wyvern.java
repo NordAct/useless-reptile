@@ -20,6 +20,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
+import nordmods.biscuit_roll.common.animation.processor.AnimationProcessor;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.config.URConfig;
@@ -28,7 +29,6 @@ import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.common.flying.*;
 import nordmods.uselessreptile.common.entity.ai.goal.wyvern.WyvernGoAfterFoodGoal;
-import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.animation_processor.MultipartDragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
@@ -37,9 +37,8 @@ import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
-import org.jspecify.annotations.Nullable;
 
-public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEntity {
+public class Wyvern extends URRideableFlyingDragonEntity<Wyvern> implements MultipartEntity {
     private final URDragonPart head = new URDragonPart(this, "head", 0.5f, 0.5f);
     private final URDragonPart neck1 = new URDragonPart(this, "neck1", 0.5f, 0.5f);
     private final URDragonPart neck2 = new URDragonPart(this, "neck2", 0.5f, 0.5f);
@@ -61,6 +60,7 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     private static final EntityDimensions FLYING_IDLE = EntityDimensions.scalable(1.8f, 2.95f).withEyeHeight(2.9f);
     private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(1.8f, 1).withEyeHeight(0.9f);
     private static final EntityDimensions ON_GROUND = EntityDimensions.scalable(1.8f, 2.95f).withEyeHeight(2.9f);
+    private final MultipartDragonAnimationProcessor<Wyvern> processor = new MultipartDragonAnimationProcessor<>(this);
 
     public Wyvern(EntityType<? extends URRideableFlyingDragonEntity> entityType, Level world) {
         super(entityType, world);
@@ -164,8 +164,8 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
 
     @Override
     public void tick() {
-        tickAnimations();
         super.tick();
+        tickAnimations();
         if (isFlying()) {
             shoulderArmRight.setScale(1, 1);
             shoulderArmLeft.setScale(1, 1);
@@ -243,11 +243,6 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     }
 
     @Override
-    public @Nullable DragonAnimationProcessor<Wyvern> createServerAnimationProcessor() {
-        return new MultipartDragonAnimationProcessor<>(this);
-    }
-
-    @Override
     public boolean canGrief() {
         if (!super.canGrief()) return false;
         return isTame() ? URConfig.getConfig().wyvernGriefing.canTamedGrief() : URConfig.getConfig().wyvernGriefing.canUntamedGiref();
@@ -262,5 +257,10 @@ public class Wyvern extends URRideableFlyingDragonEntity implements MultipartEnt
     @Override
     protected void pickUpItem(@NonNull ServerLevel level, ItemEntity entity) {
         if (isFood(entity.getItem())) consumeGivenItem(entity.getOwner() instanceof LivingEntity livingEntity ? livingEntity : null, entity.getItem(), SoundEvents.GENERIC_EAT.value(), null);
+    }
+
+    @Override
+    public AnimationProcessor<Wyvern> getAnimationProcessor() {
+        return processor;
     }
 }

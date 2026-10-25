@@ -1,5 +1,6 @@
 package nordmods.uselessreptile.common.dragon_ability.holder;
 
+import nordmods.biscuit_roll.common.animation.BRAnimationProcessorOwner;
 import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jetbrains.annotations.ApiStatus;
@@ -41,7 +42,7 @@ public class DragonAbilityHolder {
     @ApiStatus.Internal
     public void useUnchecked() {
         setCooldown(ability.getMaxCooldown());
-        if (getEntity().getAnimationProcessor() == null || !getEntity().level().isClientSide()) //if there's processor, animations are sever authoritative anyway
+        if (!(getEntity() instanceof BRAnimationProcessorOwner<?>) || !getEntity().level().isClientSide()) //if there's processor, animations are sever authoritative anyway
             ability.getCommonAbilityData().animations().forEach(a -> a.tryPlay(entity));
         entity.onAbilityActivated(ability);
     }

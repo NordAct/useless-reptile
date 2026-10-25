@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.animation_processor;
 
 import com.mojang.math.Axis;
 import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
+import nordmods.biscuit_roll.common.animation.BREntityWithAnimationProcessor;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
@@ -9,7 +10,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
-public class MultipartDragonAnimationProcessor<T extends URDragonEntity & MultipartEntity> extends DragonAnimationProcessor<T> {
+public class MultipartDragonAnimationProcessor<T extends URDragonEntity & MultipartEntity & BREntityWithAnimationProcessor<T>> extends DragonAnimationProcessor<T> {
     public MultipartDragonAnimationProcessor(T animatable) {
         super(animatable);
     }

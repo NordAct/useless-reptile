@@ -34,7 +34,7 @@ import nordmods.uselessreptile.common.network.c2s.RequestLiftoffPayload;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import org.jspecify.annotations.NonNull;
 
-public abstract class URRideableFlyingDragonEntity extends URRideableDragonEntity implements FlyingDragon {
+public abstract class URRideableFlyingDragonEntity<T extends URRideableFlyingDragonEntity<T>> extends URRideableDragonEntity<T> implements FlyingDragon {
     protected final int maxInAirTimer = 600;
     private int flyUpWindow;
     private boolean jumpWasPressed;

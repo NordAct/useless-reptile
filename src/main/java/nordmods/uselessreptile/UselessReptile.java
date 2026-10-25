@@ -41,6 +41,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
         URBlockEntityTypes.init();
         UREntityDataSerializers.init();
         URDamageTypes.init();
+        URAttachments.init();
     }
 
     @Override

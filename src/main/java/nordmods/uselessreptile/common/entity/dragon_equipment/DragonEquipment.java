@@ -3,17 +3,18 @@ package nordmods.uselessreptile.common.entity.dragon_equipment;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.BRAnimationProcessorOwner;
 import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.biscuit_roll.common.animation.controller.CloneAnimationController;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.common.asset_cache.AssetCahceOwner;
 import nordmods.uselessreptile.common.asset_cache.EquipmentAssetCache;
-import nordmods.uselessreptile.common.entity.animation_processor.EquipmentAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -24,9 +25,9 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
     private final EquipmentAssetCache assetCache;
     protected final EquipmentAnimationController equipmentAnimationController;
     public final CloneAnimationController cloneAnimationController = new CloneAnimationController();
-    private final List<BRAnimationController> controllers;
+    private final LinkedList<BRAnimationController> controllers;
     @Nullable
-    private final EquipmentAnimationProcessor processor;
+
     public final EquipmentSlot equipmentSlot;
     private boolean firstAnimationUpdate = true;
 
@@ -40,33 +41,16 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
         this.assetCache = assetCache;
         this.equipmentAnimationController = new EquipmentAnimationController(this);
         this.equipmentSlot = equipmentSlot;
-        this.controllers = List.of(equipmentAnimationController, cloneAnimationController);
-        this.processor = createServerAnimationProcessor();
-        if (processor != null) {
-            processor.getAssetCache().setModelLocationCache(assetCache.getModelLocationCache());
-            processor.getAssetCache().setAnimationLocationCache(assetCache.getAnimationLocationCache());
-        }
+        this.controllers = new LinkedList<>(List.of(equipmentAnimationController, cloneAnimationController));
     }
 
     @Override
-    public List<BRAnimationController> getAnimationControllers() {
+    public LinkedList<BRAnimationController> getAnimationControllers() {
         return controllers;
     }
 
     public void tick() {
-        if (owner.getAnimationProcessor() != null && !owner.level().isClientSide()) updateAnimations();
-        if (processor != null && owner.getAnimationProcessor() != null) {
-            processor.tick();
-        }
-    }
-
-    public EquipmentAnimationProcessor createServerAnimationProcessor() {
-        return null;
-    }
-
-    @Nullable
-    public EquipmentAnimationProcessor getAnimationProcessor() {
-        return processor;
+        updateAnimations();
     }
 
     public void updateAnimations() {
@@ -98,5 +82,9 @@ public class DragonEquipment implements BRAnimatedObject, AssetCahceOwner {
 
     public void markAnimationUpdated() {
         firstAnimationUpdate = false;
+    }
+
+    public boolean ownerHasAnimationProcessor() {
+        return owner instanceof BRAnimationProcessorOwner<?>;
     }
 }

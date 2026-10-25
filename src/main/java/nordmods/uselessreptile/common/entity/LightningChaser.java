@@ -27,6 +27,7 @@ import net.minecraft.world.level.gameevent.*;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import nordmods.biscuit_roll.common.animation.processor.AnimationProcessor;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.primitive_multipart_entities.common.entity.MultipartEntity;
 import nordmods.uselessreptile.UselessReptile;
@@ -38,7 +39,6 @@ import nordmods.uselessreptile.common.entity.ai.goal.common.flying.*;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserBailOutGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser.LightningChaserRoamAroundGoal;
-import nordmods.uselessreptile.common.entity.animation_processor.DragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.animation_processor.MultipartDragonAnimationProcessor;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
@@ -55,7 +55,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 
-public class LightningChaser extends URRideableFlyingDragonEntity implements MultipartEntity {
+public class LightningChaser extends URRideableFlyingDragonEntity<LightningChaser> implements MultipartEntity {
     private int bailOutTimer = 6000;
     private boolean shouldBailOut = false;
     private boolean isChallenger = false;
@@ -81,6 +81,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
             (new EntityPositionSource(this, getEyeHeight()), URGameEvents.LIGHTNING_STRIKE_FAR.value().notificationRadius()));
     private static final EntityDimensions FLYING_FORWARD = EntityDimensions.scalable(2.5f, 1).withEyeHeight(0.9f);
     private static final EntityDimensions ON_GROUND = EntityDimensions.scalable(2.5f, 2.95f).withEyeHeight(2.9f);
+    private final AnimationProcessor<LightningChaser> processor = new MultipartDragonAnimationProcessor<>(this);
 
     public LightningChaser(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -227,8 +228,8 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
 
     @Override
     public void tick() {
-        tickAnimations();
         super.tick();
+        tickAnimations();
         updateThunderstormBonus();
 
         if (!level().isClientSide() && !shouldBailOut) {
@@ -401,6 +402,11 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
         return super.canAttack(target);
     }
 
+    @Override
+    public AnimationProcessor<LightningChaser> getAnimationProcessor() {
+        return processor;
+    }
+
     protected class LightningStrikeEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -461,10 +467,5 @@ public class LightningChaser extends URRideableFlyingDragonEntity implements Mul
     @Override
     public EntityPart[] getParts() {
         return parts;
-    }
-
-    @Override
-    public @Nullable DragonAnimationProcessor<? extends URDragonEntity> createServerAnimationProcessor() {
-        return new MultipartDragonAnimationProcessor<>(this);
     }
 }

@@ -2,24 +2,24 @@ package nordmods.uselessreptile.common.util;
 
 import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.sounds.SoundEvent;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
+import nordmods.biscuit_roll.common.animation.BRAnimationProcessorOwner;
+import nordmods.biscuit_roll.common.animation.controller.SideAwareAnimationController;
 import nordmods.biscuit_roll.common.model.BRModel;
-import nordmods.biscuit_roll.common.resource_managers.BRAnimationManager;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.common.dragon_ability.CommonDragonAbilityData;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class URDragonAnimationController<E extends URDragonEntity> extends BRAnimationController {
+public class URDragonAnimationController<E extends URDragonEntity> extends SideAwareAnimationController {
     private final E dragon;
     public URDragonAnimationController(E dragon, boolean singleAnimation) {
-        super(singleAnimation);
+        super(singleAnimation, () -> dragon.level().isClientSide());
         this.dragon = dragon;
     }
 
     @Override
     protected void onSoundEffect(AnimationData.SoundEffect soundEffect, BRModel model, BRState state) {
-        if (dragon.getAnimationProcessor() != null && dragon.level().isClientSide()) return;
+        if (dragon instanceof BRAnimationProcessorOwner<?> && isClient()) return;
         URDragonEntity.SoundInfo soundInfo = dragon.getSoundInfo(soundEffect.effect());
         if (soundInfo != null)
             dragon.playSound(
@@ -56,10 +56,5 @@ public class URDragonAnimationController<E extends URDragonEntity> extends BRAni
             }
         }
         return false;
-    }
-
-    @Override
-    public AnimationData getAnimationData(String animation) {
-        return this.animationFile == null ? null : BRAnimationManager.getAnimationManager(dragon.level().isClientSide()).getAnimation(this.animationFile, animation);
     }
 }

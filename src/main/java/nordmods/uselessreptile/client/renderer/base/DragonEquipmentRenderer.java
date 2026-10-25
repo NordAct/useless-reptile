@@ -47,16 +47,13 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
 
     @Override
     public void extractRenderState(DragonEquipment animatable, BRState.Impl state, float tickDelta) {
-        animatable.getAnimationControllers().forEach(controller -> updateControllerVariables(controller.getEnvironment().edit(), animatable, tickDelta));
+        super.extractRenderState(animatable, state, tickDelta);
         state.setStateData(URStateDataTypes.DRAGON_ID, animatable.ownerState.getStateData(URStateDataTypes.DRAGON_ID));
         state.setStateData(URStateDataTypes.ASSET_CACHE, animatable.getAssetCache());
         state.setStateData(ClientStateDataTypes.OUTLINE_COLOR, animatable.ownerState.getStateData(ClientStateDataTypes.OUTLINE_COLOR));
         state.setStateData(ClientStateDataTypes.LIGHT, animatable.ownerState.getStateData(ClientStateDataTypes.LIGHT));
         state.setStateData(StateDataTypes.TICK_DELTA, tickDelta);
-        state.setStateData(StateDataTypes.CONTROLLERS, animatable.getAnimationControllers());
-        state.setStateData(StateDataTypes.ANIMATION_TIME, animatable.ownerState.getStateData(StateDataTypes.ANIMATION_TIME));
-        state.setStateData(StateDataTypes.MODEL_PROVIDER, getModelProvider());
-        if (animatable.owner.getAnimationProcessor() == null) animatable.updateAnimations();
+        if (!animatable.ownerHasAnimationProcessor()) animatable.updateAnimations();
     }
 
     public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, DragonEquipment animatable, float tickDelta) {
@@ -77,6 +74,11 @@ public class DragonEquipmentRenderer extends BRObjectRenderer<DragonEquipment, B
     @Override
     public BRState.Impl createRenderState() {
         return new BRState.Impl(new HashMap<>());
+    }
+
+    @Override
+    public float getAnimationTime(DragonEquipment object, BRState.Impl state, float tickDelta) {
+        return object.ownerState.getStateData(StateDataTypes.ANIMATION_TIME, 0f);
     }
 
     @Override
