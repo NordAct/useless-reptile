@@ -20,7 +20,7 @@ public abstract class EntityMixin {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null) return;
 
-        if (player.getVehicle() instanceof URRideableDragonEntity) Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
+        if (player.getVehicle() instanceof URRideableDragonEntity<?>) Minecraft.getInstance().options.setCameraType(CameraType.THIRD_PERSON_BACK);
     }
 }
 

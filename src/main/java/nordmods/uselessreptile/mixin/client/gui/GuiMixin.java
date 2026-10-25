@@ -36,7 +36,7 @@ public abstract class GuiMixin {
     /// Renders crosshair in third person
     @WrapOperation(method = "extractCrosshair", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/CameraType;isFirstPerson()Z"))
     private boolean render(CameraType instance, Operation<Boolean> original) {
-        if (URClientConfig.getConfig().enableCrosshair && Minecraft.getInstance().player.getVehicle() instanceof URRideableDragonEntity) return true;
+        if (URClientConfig.getConfig().enableCrosshair && Minecraft.getInstance().player.getVehicle() instanceof URRideableDragonEntity<?>) return true;
         return original.call(instance);
     }
 

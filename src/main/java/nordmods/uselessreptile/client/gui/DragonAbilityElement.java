@@ -18,7 +18,7 @@ public class DragonAbilityElement implements HudElement {
 
     @Override
     public void extractRenderState(@NonNull GuiGraphicsExtractor graphics, @NonNull DeltaTracker deltaTracker) {
-        if (Minecraft.getInstance().player == null || !(Minecraft.getInstance().player.getVehicle() instanceof URRideableDragonEntity dragon)) return;
+        if (Minecraft.getInstance().player == null || !(Minecraft.getInstance().player.getVehicle() instanceof URRideableDragonEntity<?> dragon && dragon.getOwner() == Minecraft.getInstance().player.getVehicle())) return;
 
         DragonAbilityHolder primary = dragon.getPrimaryRiderAbility();
         DragonAbilityHolder secondary = dragon.getSecondaryRiderAbility();

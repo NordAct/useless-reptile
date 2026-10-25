@@ -57,7 +57,7 @@ public abstract class CameraMixin {
     )
     private void offsetCameraDistance(float partialTicks, CallbackInfo ci) {
         if (!URClientConfig.getConfig().enableCameraOffset) return;
-        if (this.entity.getVehicle() instanceof URRideableDragonEntity dragonEntity) {
+        if (this.entity.getVehicle() instanceof URRideableDragonEntity<?> dragonEntity) {
             float scale = entity instanceof LivingEntity livingEntity ? livingEntity.getScale() : 1;
 
             float distanceToCameraOffset = -URClientConfig.getConfig().cameraDistanceOffset * dragonEntity.getScale() * scale;
@@ -93,8 +93,8 @@ public abstract class CameraMixin {
     @ModifyArg(method = "setRotation", at = @At(value = "INVOKE", target = "Lorg/joml/Quaternionf;rotationYXZ(FFF)Lorg/joml/Quaternionf;"), index = 2)
     private float addCameraRoll(float angleZ) {
         if (!URClientConfig.getConfig().enableCameraRoll) return angleZ;
-        if (entity.getVehicle() instanceof URRideableDragonEntity) {
-            angleZ += zPassengerRotLerped;
+        if (entity.getVehicle() instanceof URRideableDragonEntity<?>) {
+            if (Float.isFinite(zPassengerRotLerped)) angleZ += zPassengerRotLerped;
         }
         return angleZ;
     }
@@ -107,7 +107,7 @@ public abstract class CameraMixin {
             )
     )
     private void computeCameraRoll(float partialTicks, CallbackInfo ci) {
-        if (entity instanceof PassengerCameraRollOwner passengerCameraRollOwner && entity.getVehicle() instanceof URRideableDragonEntity) {
+        if (entity instanceof PassengerCameraRollOwner passengerCameraRollOwner && entity.getVehicle() instanceof URRideableDragonEntity<?>) {
             zPassengerRotLerped = passengerCameraRollOwner.useless_reptile$getZRot(partialTicks);
         } else zPassengerRotLerped = 0;
     }

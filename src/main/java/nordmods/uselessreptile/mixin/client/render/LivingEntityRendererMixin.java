@@ -44,7 +44,7 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, S extend
 
     @Inject(method = "extractRenderState(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/client/renderer/entity/state/LivingEntityRenderState;F)V", at = @At("TAIL"))
     private void checkForHeadMountDragon(T livingEntity, S livingEntityRenderState, float f, CallbackInfo ci) {
-        if (livingEntity.getVehicle() instanceof URRideableDragonEntity) {
+        if (livingEntity.getVehicle() instanceof URRideableDragonEntity<?>) {
             livingEntityRenderState.useless_reptile$setRidingDragon(true);
             livingEntityRenderState.useless_reptile$setUUID(livingEntity.getUUID());
         } else livingEntityRenderState.useless_reptile$setRidingDragon(false);
