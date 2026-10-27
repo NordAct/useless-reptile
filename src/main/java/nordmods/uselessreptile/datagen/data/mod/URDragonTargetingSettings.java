@@ -54,8 +54,12 @@ public class URDragonTargetingSettings extends FabricDynamicRegistryProvider {
         bootstrapContext.register(
                 MAGMAMUNCHER,
                 new TargetingSettings(
-                        List.of(),
-                        List.of(),
+                        List.of(
+                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
+                        ),
+                        List.of(
+                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
+                        ),
                         true,
                         true
                 )

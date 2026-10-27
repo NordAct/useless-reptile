@@ -1,6 +1,10 @@
 {
   "attacks_owner_target": true,
   "defends_owner": true,
-  "tamed_targets": [],
-  "untamed_targets": []
+  "tamed_targets": [
+    "minecraft:magma_cube"
+  ],
+  "untamed_targets": [
+    "minecraft:magma_cube"
+  ]
 }
