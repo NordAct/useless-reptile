@@ -1,22 +1,13 @@
 {
   "type": "uselessreptile:wyvern",
   "name": "Ender",
-  "equipment": "uselessreptile:wyvern",
-  "dragon_model": "example:ender",
-  "spawn_conditions": "example:ender",
+  "variant_name_key": "variant.example.wyvern.ender",
   "display_name_key": "entity.example.wyvern.ender",
-  "base_taming_progress": 12,
-  "taming_items": {
-    "minecraft:shulker_shell": [1, 3]
-  },
-  "food_items": {
-    "minecraft:chorus_fruit": 1,
-    "minecraft:beef": 8,
-    "minecraft:cooked_beef": 8,
-    "minecraft:porkchop": 8,
-    "minecraft:cooked_porkchop": 8,
-    "minecraft:chicken": 4,
-    "minecraft:cooked_chicken": 4
-  },
-  "variant_name_key": "variant.example.wyvern.ender"
+  "abilities": "example:ender",
+  "base_attribute_values": "uselessreptile:wyvern/default",
+  "dragon_model": "example:ender",
+  "equipment": "uselessreptile:wyvern/default",
+  "interaction_settings": "example:ender",
+  "spawn_conditions": "example:ender",
+  "targeting_settings": "example:ender"
 }

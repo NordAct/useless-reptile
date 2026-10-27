@@ -1,0 +1,44 @@
+{
+  "custom_item_interactions": [
+    {
+      "stack": {
+        "id": "minecraft:glass_bottle",
+        "count": 1
+      },
+      "tame": true,
+      "owner_only": true,
+      "consume": true,
+      "commands": [
+        {
+          "executor": "player",
+          "command": "give @s minecraft:dragon_breath"
+        },
+        {
+          "command": "playsound minecraft:item.bottle.fill_dragonbreath neutral @p ~ ~ ~",
+          "executor": "entity"
+        }
+      ]
+    }
+  ],
+  "damage_type_immunities": [
+    "minecraft:magic"
+  ],
+  "effect_immunities": [
+    "minecraft:poison",
+    "minecraft:hunger",
+    "minecraft:instant_damage"
+  ],
+  "base_taming_progress": 12,
+  "taming_items": {
+    "minecraft:shulker_shell": [1, 3]
+  },
+  "food_items": {
+    "minecraft:chorus_fruit": 1,
+    "minecraft:beef": 8,
+    "minecraft:cooked_beef": 8,
+    "minecraft:porkchop": 8,
+    "minecraft:cooked_porkchop": 8,
+    "minecraft:chicken": 4,
+    "minecraft:cooked_chicken": 4
+  }
+}

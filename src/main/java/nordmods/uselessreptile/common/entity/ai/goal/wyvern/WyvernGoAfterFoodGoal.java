@@ -35,7 +35,7 @@ public class WyvernGoAfterFoodGoal extends Goal {
         AABB box = mob.getBoundingBox().inflate(20);
         List<ItemEntity> drops = mob.level().getEntitiesOfClass(ItemEntity.class, box.setMinY(box.minY - 20), (item) -> {
             ItemStack itemStack = item.getItem();
-            return mob.isFood(itemStack) && item.isAlive() && !item.hasPickUpDelay() && mob.getSensing().hasLineOfSight(item);
+            return mob.isFoodItem(itemStack) && item.isAlive() && !item.hasPickUpDelay() && mob.getSensing().hasLineOfSight(item);
         });
         if (drops.isEmpty()) return null;
         return drops.getFirst();

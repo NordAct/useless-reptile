@@ -32,7 +32,10 @@
 								"down": {"uv": [28, 150], "uv_size": [13, -15]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"front": [0, 43, -3]
+					}
 				},
 				{
 					"name": "spikes_front",
@@ -66,7 +69,10 @@
 								"down": {"uv": [179, 161], "uv_size": [21, -5]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"wing_left": [13, 43.075, 5]
+					}
 				},
 				{
 					"name": "wing_wart_left",
@@ -177,7 +183,10 @@
 								"down": {"uv": [137, 153], "uv_size": [28, -3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"shoulder_arm_left": [35.8, 43.6, 10.3]
+					}
 				},
 				{
 					"name": "membrane_shoulder_arm_left",
@@ -396,7 +405,10 @@
 								"down": {"uv": [200, 161], "uv_size": [-21, -5]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"wing_right": [-13, 43.075, 5]
+					}
 				},
 				{
 					"name": "wing_wart_right",
@@ -507,7 +519,10 @@
 								"down": {"uv": [165, 153], "uv_size": [-28, -3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"shoulder_arm_right": [-35.8, 43.6, 10.3]
+					}
 				},
 				{
 					"name": "membrane_shoulder_arm_right",
@@ -734,7 +749,10 @@
 								"west": {"uv": [57, 108], "uv_size": [-9, 3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"neck1": [0, 43, -14]
+					}
 				},
 				{
 					"name": "neck2",
@@ -761,7 +779,10 @@
 								"west": {"uv": [56, 108], "uv_size": [-9, 3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"neck2": [0, 43, -21]
+					}
 				},
 				{
 					"name": "neck3",
@@ -788,7 +809,10 @@
 								"west": {"uv": [53, 98], "uv_size": [-9, 3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"neck3": [0, 43, -28]
+					}
 				},
 				{
 					"name": "neck4",
@@ -815,7 +839,10 @@
 								"west": {"uv": [58, 108], "uv_size": [-9, 3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"neck4": [0, 43, -34]
+					}
 				},
 				{
 					"name": "neck5",
@@ -842,7 +869,10 @@
 								"west": {"uv": [58, 108], "uv_size": [-9, 3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"neck5": [0, 43, -41]
+					}
 				},
 				{
 					"name": "head",
@@ -1145,7 +1175,11 @@
 								"down": {"uv": [214, 224], "uv_size": [3, -8]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"shooting_point": [0, 43, -50],
+						"head": [0, 43, -50]
+					}
 				},
 				{
 					"name": "blink",
@@ -1273,7 +1307,10 @@
 								"down": {"uv": [81, 149], "uv_size": [11, -14]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"back": [0, 43, 10]
+					}
 				},
 				{
 					"name": "spikes_back",
@@ -1315,7 +1352,10 @@
 								"west": {"uv": [60, 102], "uv_size": [-12, 7]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"tail1": [0, 43, 22]
+					}
 				},
 				{
 					"name": "tail2",
@@ -1342,7 +1382,10 @@
 								"west": {"uv": [59, 108], "uv_size": [-12, 3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"tail2": [0, 43, 33]
+					}
 				},
 				{
 					"name": "tail3",
@@ -1369,7 +1412,10 @@
 								"west": {"uv": [58, 102], "uv_size": [-12, 3]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"tail3": [0, 43, 44]
+					}
 				},
 				{
 					"name": "tail4",
@@ -1396,16 +1442,14 @@
 								"west": {"uv": [59, 102], "uv_size": [-12, 3]}
 							}
 						}
-					]
-				},
-				{
-					"name": "Ttail5",
-					"parent": "tail4",
-					"pivot": [0, 44, 60]
+					],
+					"locators": {
+						"tail4": [0, 43, 55]
+					}
 				},
 				{
 					"name": "tail5",
-					"parent": "Ttail5",
+					"parent": "tail4",
 					"pivot": [0, 44, 60],
 					"cubes": [
 						{
@@ -1468,7 +1512,10 @@
 								"down": {"uv": [77, 247], "uv_size": [-2, -11]}
 							}
 						}
-					]
+					],
+					"locators": {
+						"tail5": [0, 43, 66]
+					}
 				},
 				{
 					"name": "leg_left",

@@ -10,22 +10,23 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.permissions.LevelBasedPermissionSet;
+import net.minecraft.stats.Stats;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.util.Util;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.URResourceKeys;
+import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public record InteractionSettings(
@@ -93,14 +94,14 @@ public record InteractionSettings(
     }
 
     public record CustomItemInteraction(
-            ItemStack stack,
+            ItemStackTemplate stack,
             List<CustomItemInteraction.Command> commands,
             boolean tame,
             boolean ownerOnly,
             boolean consume
     ) {
         public static final Codec<CustomItemInteraction> CODEC = RecordCodecBuilder.create(i -> i.group(
-                ItemStack.CODEC.fieldOf("stack").forGetter(CustomItemInteraction::stack),
+                ItemStackTemplate.CODEC.fieldOf("stack").forGetter(CustomItemInteraction::stack),
                 CustomItemInteraction.Command.CODEC.listOf().fieldOf("commands").forGetter(CustomItemInteraction::commands),
                 Codec.BOOL.fieldOf("tame").forGetter(CustomItemInteraction::tame),
                 Codec.BOOL.fieldOf("owner_only").forGetter(CustomItemInteraction::ownerOnly),
@@ -109,19 +110,22 @@ public record InteractionSettings(
 
         public static final Codec<List<CustomItemInteraction>> LIST_CODEC = CODEC.listOf();
 
-        public boolean tryExecute(URDragonEntity dragon, Player player, ItemStack stackInHand) {
+        public boolean tryExecute(URDragonEntity dragon, Player player, ItemStack stackInHand, @NonNull InteractionHand hand) {
             if (dragon.isTame() != tame || ownerOnly && dragon.isTame() && dragon.getOwner() != player) return false;
-            if (stackInHand.count() >= stack.count() && ItemStack.isSameItemSameComponents(stackInHand, stack)) {
+            if (stackInHand.count() >= stack.count() && stackInHand.is(stack.item().value()) && Objects.equals(stackInHand.getComponentsPatch(), stack.components())) {
                 if (!dragon.level().isClientSide()) {
                     commands.forEach(command -> command.execute(dragon, player, dragon.level().getServer()));
                 }
-                if (consume) stackInHand.consume(stack.count(), player);
+                if (consume) {
+                    dragon.consumeGivenItem(player, stackInHand, null, hand, stack.count());
+                    player.awardStat(Stats.ITEM_USED.get(stackInHand.getItem()));
+                }
                 return true;
             }
             return false;
         }
 
-        private record Command(
+        public record Command(
                 String command,
                 CustomItemInteraction.Executor executor
         ) {

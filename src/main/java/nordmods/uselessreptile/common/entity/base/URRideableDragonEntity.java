@@ -139,13 +139,16 @@ public abstract class URRideableDragonEntity<T extends URRideableDragonEntity<T>
 
     @Override
     public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (isTame() && !isInteractableItem(itemStack) && !player.isShiftKeyDown() && !level().isClientSide()) {
-            if (hasSaddle() && player.startRiding(this)) {
-                return InteractionResult.SUCCESS;
+        InteractionResult result = super.mobInteract(player, hand);
+        if (result == InteractionResult.PASS) {
+            ItemStack itemStack = player.getItemInHand(hand);
+            if (isTame() && !isInteractableItem(itemStack) && !player.isShiftKeyDown() && !level().isClientSide()) {
+                if (hasSaddle() && player.startRiding(this)) {
+                    return InteractionResult.SUCCESS;
+                }
             }
         }
-        return super.mobInteract(player, hand);
+        return result;
     }
 
     @Override

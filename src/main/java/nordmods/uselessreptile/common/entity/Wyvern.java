@@ -1,12 +1,8 @@
 package nordmods.uselessreptile.common.entity;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -14,11 +10,6 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
 import net.minecraft.world.entity.item.ItemEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.Level;
 import nordmods.biscuit_roll.common.animation.processor.AnimationProcessor;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
@@ -34,7 +25,6 @@ import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
-import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.util.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
@@ -183,24 +173,6 @@ public class Wyvern extends URRideableFlyingDragonEntity<Wyvern> implements Mult
     }
 
     @Override
-    public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (isTame()) {
-            if (itemStack.getItem() == Items.GLASS_BOTTLE && isOwnedBy(player)) {
-                Item bottle = itemStack.getItem();
-                ItemStack potion = new ItemStack(Items.POTION);
-                potion.set(DataComponents.POTION_CONTENTS, new PotionContents(URPotions.ACID));
-                player.awardStat(Stats.ITEM_USED.get(bottle));
-                level().playPlayerSound(SoundEvents.BOTTLE_FILL, player.getSoundSource(), 1.0F, 1.0F);
-                consumeGivenItem(player, itemStack, SoundEvents.BOTTLE_FILL, hand);
-                player.addItem(potion);
-                return InteractionResult.SUCCESS;
-            }
-        }
-        return super.mobInteract(player, hand);
-    }
-
-    @Override
     protected EntityDimensions getDefaultDimensions(Pose pose) {
         EntityDimensions dimensions;
         if (isFlying()) {
@@ -256,7 +228,7 @@ public class Wyvern extends URRideableFlyingDragonEntity<Wyvern> implements Mult
 
     @Override
     protected void pickUpItem(@NonNull ServerLevel level, ItemEntity entity) {
-        if (isFood(entity.getItem())) consumeGivenItem(entity.getOwner() instanceof LivingEntity livingEntity ? livingEntity : null, entity.getItem(), SoundEvents.GENERIC_EAT.value(), null);
+        if (isFoodItem(entity.getItem())) consumeGivenItem(entity.getOwner() instanceof LivingEntity livingEntity ? livingEntity : null, entity.getItem(), SoundEvents.GENERIC_EAT.value(), null);
     }
 
     @Override

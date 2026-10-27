@@ -94,6 +94,9 @@ sourceSets {
 loom {
     accessWidenerPath = file("src/main/resources/uselessreptile.accesswidener")
     runs {
+        configureEach {
+            getJvmArguments().add("-Dfabric.log.debug.level=off")
+        }
         client {
             client()
 

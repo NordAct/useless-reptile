@@ -569,7 +569,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         ItemStack itemStack = player.getItemInHand(hand);
 
         for (InteractionSettings.CustomItemInteraction customItemInteraction : getDragonVariant().common().interactionSettings().value().customItemInteractions()) {
-            if (customItemInteraction.tryExecute(this, player, itemStack)) return InteractionResult.SUCCESS;
+            if (customItemInteraction.tryExecute(this, player, itemStack, hand)) return InteractionResult.SUCCESS;
         }
 
         if (isTameable()) {
@@ -645,7 +645,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 return InteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.PASS;
+        return super.mobInteract(player, hand);
     }
 
     @Override
@@ -685,7 +685,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return itemStack.is(Items.POTION)
                 || itemStack.is(Items.STICK)
                 || isInstrument(itemStack)
-                || isFood(itemStack)
+                || isFoodItem(itemStack)
                 || itemStack.is(URItems.VARIANT_CHANGING_ORB);
     }
 
@@ -901,11 +901,15 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     public boolean isFood(@NonNull ItemStack stack) {
-        return getFoodItem(stack) != null;
-    }
+        return false;
+    }//food is not used for breeding
 
     public boolean isTamingItem(@NonNull ItemStack stack) {
         return getTamingItem(stack) != null;
+    }
+
+    public boolean isFoodItem(@NonNull ItemStack stack) {
+        return getFoodItem(stack) != null;
     }
 
     public InteractionSettings.@Nullable TamingItem getTamingItem(ItemStack itemStack) {
@@ -1022,6 +1026,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound, @Nullable InteractionHand hand) {
+        return consumeGivenItem(offering, itemStack, sound, hand, 1);
+    }
+
+    public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound, @Nullable InteractionHand hand, int amount) {
         ItemStack original = itemStack.copy();
         if (itemStack.getComponents().has(DataComponents.CONSUMABLE))
             itemStack.getComponents().get(DataComponents.CONSUMABLE).onConsume(level(), this, itemStack);

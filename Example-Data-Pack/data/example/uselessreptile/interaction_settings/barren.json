@@ -1,0 +1,42 @@
+{
+  "custom_item_interactions": [],
+  "damage_type_immunities": [
+    "#minecraft:is_fire"
+  ],
+  "effect_immunities": [
+    "minecraft:poison",
+    "minecraft:hunger"
+  ],
+  "base_taming_progress": 130,
+  "taming_items": [
+    {
+      "item": "minecraft:beef",
+      "taming_progress_increase": [1, 2]
+    },
+    {
+      "item": "minecraft:cooked_beef",
+      "taming_progress_increase": {
+        "min": 1,
+        "max": 1
+      }
+    }
+  ],
+  "food_items": [
+    {
+      "item": "minecraft:beef",
+      "healing_amount": 8
+    },
+    {
+      "item": "minecraft:cooked_beef",
+      "healing_amount": 8
+    },
+    {
+      "item": "minecraft:porkchop",
+      "healing_amount": 8
+    },
+    {
+      "item": "minecraft:cooked_porkchop",
+      "healing_amount": 8
+    }
+  ]
+}

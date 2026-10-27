@@ -1,6 +1,25 @@
 {
   "base_taming_progress": 256,
-  "custom_item_interactions": [],
+  "custom_item_interactions": [
+    {
+      "commands": [
+        {
+          "command": "give @s minecraft:potion[minecraft:potion_contents={potion:\"uselessreptile:acid\"}]",
+          "executor": "player"
+        },
+        {
+          "command": "playsound minecraft:item.bottle.fill neutral @p ~ ~ ~",
+          "executor": "entity"
+        }
+      ],
+      "consume": true,
+      "owner_only": true,
+      "stack": {
+        "id": "minecraft:glass_bottle"
+      },
+      "tame": true
+    }
+  ],
   "damage_type_immunities": [],
   "effect_immunities": [
     "minecraft:poison",

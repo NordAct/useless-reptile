@@ -8,9 +8,7 @@
         "animation": "uselessreptile:biscuit_roll/animations/entity/wyvern/saddle.animation.json"
       },
       "slot": "saddle",
-      "passenger_positions": [
-        [0, 0, 0]
-      ]
+      "max_passengers": 1
     },
     "uselessreptile:dual_saddle": {
       "hid_bones": [
@@ -22,10 +20,7 @@
         "model": "example:biscuit_roll/models/wyvern/barren_dual_saddle.json",
         "texture": "example:textures/wyvern/dual_saddle_barren.png"
       },
-      "passenger_positions": [
-        [0, 0, 0],
-        [0, 0, -0.8125]
-      ],
+      "max_passengers": 2,
       "slot": "saddle"
     }
   }
