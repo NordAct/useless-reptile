@@ -207,7 +207,7 @@
     "conditions": [],
     "cooldown_time_seconds": 5.0,
     "count": 1,
-    "icon": "example:ability/fireball",
+    "icon": "example:fireball",
     "multipart_box_name": "head",
     "projectile_entity_nbt": {
       "ExplosionPower": 3

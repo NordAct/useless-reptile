@@ -21,12 +21,11 @@
     }
   ],
   "damage_type_immunities": [
-    "minecraft:magic"
+    "minecraft:indirect_magic"
   ],
   "effect_immunities": [
     "minecraft:poison",
-    "minecraft:hunger",
-    "minecraft:instant_damage"
+    "minecraft:hunger"
   ],
   "base_taming_progress": 12,
   "taming_items": {

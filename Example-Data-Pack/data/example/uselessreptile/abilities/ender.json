@@ -207,7 +207,7 @@
     "conditions": [],
     "cooldown_time_seconds": 5.0,
     "count": 1,
-    "icon": "example:ability/dragon_fireball",
+    "icon": "example:dragon_fireball",
     "multipart_box_name": "head",
     "projectile_entity_nbt": {},
     "projectile_entity_type": "minecraft:dragon_fireball",
