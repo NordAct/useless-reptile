@@ -22,7 +22,7 @@ public record CommonDragonAbilityData(
         boolean blockOtherAbilitiesIfActive,
         List<ConditionedAnimation> animations,
         List<UseCondition> conditions,
-        Optional<URRideableDragonEntity.AttackType> attackType
+        Optional<URRideableDragonEntity.AbilityType> abilityType
 ) {
     public static final MapCodec<CommonDragonAbilityData> MAP_CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
             Identifier.CODEC.optionalFieldOf("icon").forGetter(CommonDragonAbilityData::icon),
@@ -30,7 +30,7 @@ public record CommonDragonAbilityData(
             Codec.BOOL.fieldOf("block_other_abilities_if_active").forGetter(CommonDragonAbilityData::blockOtherAbilitiesIfActive),
             ConditionedAnimation.CODEC.listOf().fieldOf("animations").forGetter(CommonDragonAbilityData::animations),
             UseCondition.CODEC.listOf().fieldOf("conditions").forGetter(CommonDragonAbilityData::conditions),
-            StringRepresentable.fromEnum(URRideableDragonEntity.AttackType::values).optionalFieldOf("attack_type").forGetter(CommonDragonAbilityData::attackType)
+            StringRepresentable.fromEnum(URRideableDragonEntity.AbilityType::values).optionalFieldOf("ability_type").forGetter(CommonDragonAbilityData::abilityType)
     ).apply(i, CommonDragonAbilityData::new));
     public static final Codec<CommonDragonAbilityData> CODEC = MAP_CODEC.codec();
 

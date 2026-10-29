@@ -1,10 +1,7 @@
 {
   "custom_item_interactions": [
     {
-      "stack": {
-        "id": "minecraft:glass_bottle",
-        "count": 1
-      },
+      "item": "minecraft:glass_bottle",
       "tame": true,
       "owner_only": true,
       "consume": true,

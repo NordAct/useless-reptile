@@ -1,6 +1,7 @@
 [
   {
     "type": "uselessreptile:melee_attack",
+    "ability_type": "secondary",
     "active_time_seconds": 1.0,
     "animations": [
       {
@@ -11,7 +12,7 @@
         ],
         "can_interrupt_playing_ability_animation": true,
         "conditions": [],
-        "controller": "attack"
+        "controller": "ability"
       }
     ],
     "aoe": false,
@@ -29,7 +30,6 @@
       }
     ],
     "attack_effects": [],
-    "attack_type": "secondary",
     "block_other_abilities_if_active": true,
     "conditions": [
       {
@@ -43,7 +43,8 @@
     "trigger_time_seconds": 0.0
   },
   {
-    "type": "uselessreptile:lightning_breath_attack",
+    "type": "uselessreptile:lightning_breath",
+    "ability_type": "primary",
     "active_time_seconds": 1.0,
     "anchor_point": "multipart_box",
     "anchor_point_offset": [
@@ -63,7 +64,7 @@
             "flying": false
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       },
       {
         "animations": [
@@ -81,7 +82,7 @@
             "moving": true
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       },
       {
         "animations": [
@@ -99,7 +100,7 @@
             "moving": true
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       },
       {
         "animations": [
@@ -117,10 +118,9 @@
             "moving": false
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       }
     ],
-    "attack_type": "primary",
     "block_break_power": 3,
     "block_other_abilities_if_active": true,
     "color": 16777215,
@@ -134,7 +134,8 @@
     "trigger_time_seconds": 0.35
   },
   {
-    "type": "uselessreptile:shockwave_attack",
+    "type": "uselessreptile:shockwave",
+    "ability_type": "secondary",
     "active_time_seconds": 1.13,
     "animations": [
       {
@@ -146,7 +147,6 @@
         "controller": "main"
       }
     ],
-    "attack_type": "secondary",
     "block_other_abilities_if_active": true,
     "color": 16777215,
     "conditions": [

@@ -59,6 +59,7 @@ public class Wyvern extends URRideableFlyingDragonEntity<Wyvern> implements Mult
         ticksUntilHeal = 200;
         sprintSpeedModifier = 1.2f;
         maxXBodyRotSamples = 5;
+        setCanPickUpLoot(true);
     }
 
     @Override

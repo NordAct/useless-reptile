@@ -51,7 +51,7 @@ public class ShockwaveAttackAbility extends ShotAttackAbility {
 
     @Override
     public DragonAbilityType<?> getType() {
-        return URDragonAbilityTypes.SHOCKWAVE_ATTACK;
+        return URDragonAbilityTypes.SHOCKWAVE;
     }
 
     @Override

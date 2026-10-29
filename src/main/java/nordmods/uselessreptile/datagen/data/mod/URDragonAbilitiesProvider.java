@@ -51,7 +51,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                        true,
                                        List.of(
                                                new CommonDragonAbilityData.ConditionedAnimation(
-                                                       URDragonEntity.AnimationController.ATTACK,
+                                                       URDragonEntity.AnimationController.ABILITY,
                                                        List.of("attack.melee1", "attack.melee2", "attack.melee3"),
                                                        true,
                                                        List.of(
@@ -68,7 +68,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                )
                                        ),
                                         List.of(),
-                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
+                                        Optional.of(URRideableDragonEntity.AbilityType.SECONDARY)
                                 ),
                                 new TriggerableAbility.Data(0, 0.71f),
                                 false,
@@ -119,7 +119,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         true,
                                         List.of(
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.fly.range"),
                                                         true,
                                                         List.of(
@@ -128,7 +128,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.range"),
                                                         true,
                                                         List.of(
@@ -137,7 +137,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.range"),
                                                         true,
                                                         List.of(
@@ -146,7 +146,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.range"),
                                                         true,
                                                         List.of(
@@ -155,7 +155,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                 )
                                         ),
                                         List.of(),
-                                        Optional.of(URRideableDragonEntity.AttackType.PRIMARY)
+                                        Optional.of(URRideableDragonEntity.AbilityType.PRIMARY)
                                 ),
                                 new TriggerableAbility.Data(0, 0.7f),
                                 UREntities.ACID_BLAST,
@@ -177,14 +177,14 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         true,
                                         List.of(
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.normal1", "attack.normal2"),
                                                         true,
                                                         List.of()
                                                 )
                                         ),
                                         List.of(),
-                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
+                                        Optional.of(URRideableDragonEntity.AbilityType.SECONDARY)
                                 ),
                                 new TriggerableAbility.Data(0.5f, 1.6f),
                                 true,
@@ -206,20 +206,20 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         true,
                                         List.of(
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.strong"),
                                                         true,
                                                         List.of(new MoleclawUseCondition(false))
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.strong.panic"),
                                                         true,
                                                         List.of(new MoleclawUseCondition(true))
                                                 )
                                         ),
                                         List.of(),
-                                        Optional.of(URRideableDragonEntity.AttackType.PRIMARY)
+                                        Optional.of(URRideableDragonEntity.AbilityType.PRIMARY)
                                 ),
                                 new TriggerableAbility.Data(0.5f, 1.6f),
                                 true,
@@ -252,7 +252,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         true,
                                         List.of(
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack1", "attack2", "attack3"),
                                                         true,
                                                         List.of()
@@ -292,7 +292,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         true,
                                         List.of(
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack1", "attack2", "attack3"),
                                                         true,
                                                         List.of()
@@ -326,7 +326,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         true,
                                         List.of(
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.melee1", "attack.melee2", "attack.melee3"),
                                                         true,
                                                         List.of()
@@ -335,7 +335,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         List.of(
                                                 new FlyingUseCondition(false)
                                         ),
-                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
+                                        Optional.of(URRideableDragonEntity.AbilityType.SECONDARY)
                                 ),
                                 new TriggerableAbility.Data(0, 1),
                                 false,
@@ -357,7 +357,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         true,
                                         List.of(
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.range"),
                                                         true,
                                                         List.of(
@@ -365,7 +365,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.range.fly"),
                                                         true,
                                                         List.of(
@@ -374,7 +374,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.range.fly.idle"),
                                                         true,
                                                         List.of(
@@ -383,7 +383,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                         )
                                                 ),
                                                 new CommonDragonAbilityData.ConditionedAnimation(
-                                                        URDragonEntity.AnimationController.ATTACK,
+                                                        URDragonEntity.AnimationController.ABILITY,
                                                         List.of("attack.range.fly.idle"),
                                                         true,
                                                         List.of(
@@ -393,7 +393,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                                 )
                                         ),
                                         List.of(),
-                                        Optional.of(URRideableDragonEntity.AttackType.PRIMARY)
+                                        Optional.of(URRideableDragonEntity.AbilityType.PRIMARY)
                                 ),
                                 new TriggerableAbility.Data(0.35f, 1),
                                 ShotAttackAbility.AnchorPoint.MULTIPART_BOX,
@@ -421,7 +421,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                         List.of(
                                                 new FlyingUseCondition(true)
                                         ),
-                                        Optional.of(URRideableDragonEntity.AttackType.SECONDARY)
+                                        Optional.of(URRideableDragonEntity.AbilityType.SECONDARY)
                                 ),
                                 new TriggerableAbility.Data(0.5f, 1.13f),
                                 new CompoundTag(),

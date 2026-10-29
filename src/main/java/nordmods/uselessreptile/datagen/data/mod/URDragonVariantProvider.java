@@ -92,9 +92,9 @@ public class URDragonVariantProvider extends FabricDynamicRegistryProvider {
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("wyvern/" + name))),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.WYVERN),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.WYVERN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValuesProvider.WYVERN),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.WYVERN),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.WYVERN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettingsProvider.WYVERN),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.WYVERN)
         );
         return new WyvernVariant(variant);
@@ -108,9 +108,9 @@ public class URDragonVariantProvider extends FabricDynamicRegistryProvider {
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("moleclaw/" + name))),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.MOLECLAW),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.MOLECLAW),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValuesProvider.MOLECLAW),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.MOLECLAW),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.MOLECLAW),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettingsProvider.MOLECLAW),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.MOLECLAW)
         );
         return new MoleclawVariant(variant);
@@ -124,9 +124,9 @@ public class URDragonVariantProvider extends FabricDynamicRegistryProvider {
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("river_pikehorn/" + name))),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.RIVER_PIKEHORN),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.RIVER_PIKEHORN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValuesProvider.RIVER_PIKEHORN),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.RIVER_PIKEHORN),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.RIVER_PIKEHORN),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettingsProvider.RIVER_PIKEHORN),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.RIVER_PIKEHORN)
         );
         return new RiverPikehornVariant(variant, List.of(new ExtraCodecs.TagOrElementLocation(URTags.RIVER_PIKEHORN_HUNT_TARGET.location(), true)));
@@ -140,9 +140,9 @@ public class URDragonVariantProvider extends FabricDynamicRegistryProvider {
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("lightning_chaser/" + name))),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.LIGHTNING_CHASER),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.LIGHTNING_CHASER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValuesProvider.LIGHTNING_CHASER),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.LIGHTNING_CHASER),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.LIGHTNING_CHASER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettingsProvider.LIGHTNING_CHASER),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.LIGHTNING_CHASER)
         );
         return new LightningChaserVariant(variant);
@@ -156,9 +156,9 @@ public class URDragonVariantProvider extends FabricDynamicRegistryProvider {
                 bootstrapContext.lookup(URResourceKeys.DRAGON_MODEL).getOrThrow(ResourceKey.create(URResourceKeys.DRAGON_MODEL, UselessReptile.id("magmamuncher/" + name))),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_EQUIPMENT).getOrThrow(UREquipmentProvider.MAGMAMUNCHER),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getOrThrow(spawnConditions),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValues.MAGMAMUNCHER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES).getOrThrow(URDragonBaseAttributeValuesProvider.MAGMAMUNCHER),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_ABILITIES).getOrThrow(URDragonAbilitiesProvider.MAGMAMUNCHER),
-                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettings.MAGMAMUNCHER),
+                bootstrapContext.lookup(URResourceKeys.DRAGON_INTERACTION_SETTINGS).getOrThrow(URDragonInteractionSettingsProvider.MAGMAMUNCHER),
                 bootstrapContext.lookup(URResourceKeys.DRAGON_TARGETING_SETTINGS).getOrThrow(URDragonTargetingSettings.MAGMAMUNCHER)
         );
         return new MagmamuncherVariant(variant);

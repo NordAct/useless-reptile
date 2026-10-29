@@ -13,10 +13,8 @@
         }
       ],
       "consume": true,
+      "item": "minecraft:glass_bottle",
       "owner_only": true,
-      "stack": {
-        "id": "minecraft:glass_bottle"
-      },
       "tame": true
     }
   ],

@@ -18,14 +18,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class URDragonBaseAttributeValues extends FabricDynamicRegistryProvider {
+public class URDragonBaseAttributeValuesProvider extends FabricDynamicRegistryProvider {
     public static final ResourceKey<Map<Holder<Attribute>, Float>> WYVERN = ResourceKey.create(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, UselessReptile.id("wyvern/default"));
     public static final ResourceKey<Map<Holder<Attribute>, Float>> RIVER_PIKEHORN = ResourceKey.create(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, UselessReptile.id("river_pikehorn/default"));
     public static final ResourceKey<Map<Holder<Attribute>, Float>> LIGHTNING_CHASER = ResourceKey.create(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, UselessReptile.id("lightning_chaser/default"));
     public static final ResourceKey<Map<Holder<Attribute>, Float>> MOLECLAW = ResourceKey.create(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, UselessReptile.id("moleclaw/default"));
     public static final ResourceKey<Map<Holder<Attribute>, Float>> MAGMAMUNCHER = ResourceKey.create(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, UselessReptile.id("magmamuncher/default"));
 
-    public URDragonBaseAttributeValues(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public URDragonBaseAttributeValuesProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 

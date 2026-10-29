@@ -28,14 +28,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-public class URDragonInteractionSettings extends FabricDynamicRegistryProvider {
+public class URDragonInteractionSettingsProvider extends FabricDynamicRegistryProvider {
     public static final ResourceKey<InteractionSettings> WYVERN = ResourceKey.create(URResourceKeys.DRAGON_INTERACTION_SETTINGS, UselessReptile.id("wyvern/default"));
     public static final ResourceKey<InteractionSettings> RIVER_PIKEHORN = ResourceKey.create(URResourceKeys.DRAGON_INTERACTION_SETTINGS, UselessReptile.id("river_pikehorn/default"));
     public static final ResourceKey<InteractionSettings> LIGHTNING_CHASER = ResourceKey.create(URResourceKeys.DRAGON_INTERACTION_SETTINGS, UselessReptile.id("lightning_chaser/default"));
     public static final ResourceKey<InteractionSettings> MOLECLAW = ResourceKey.create(URResourceKeys.DRAGON_INTERACTION_SETTINGS, UselessReptile.id("moleclaw/default"));
     public static final ResourceKey<InteractionSettings> MAGMAMUNCHER = ResourceKey.create(URResourceKeys.DRAGON_INTERACTION_SETTINGS, UselessReptile.id("magmamuncher/default"));
 
-    public URDragonInteractionSettings(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
+    public URDragonInteractionSettingsProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registriesFuture) {
         super(output, registriesFuture);
     }
 
@@ -74,7 +74,9 @@ public class URDragonInteractionSettings extends FabricDynamicRegistryProvider {
                         ),
                         List.of(
                                 new InteractionSettings.CustomItemInteraction(
-                                        new ItemStackTemplate(Items.GLASS_BOTTLE),
+                                        new ExtraCodecs.TagOrElementLocation(Items.GLASS_BOTTLE.builtInRegistryHolder().key().identifier(), false),
+                                        1,
+                                        DataComponentPatch.EMPTY,
                                         List.of(
                                                 new InteractionSettings.CustomItemInteraction.Command(
                                                         "give @s " + potion.typeHolder().getRegisteredName() + "[minecraft:potion_contents={potion:\"uselessreptile:acid\"}]",

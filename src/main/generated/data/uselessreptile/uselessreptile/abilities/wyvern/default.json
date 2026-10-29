@@ -1,6 +1,7 @@
 [
   {
     "type": "uselessreptile:melee_attack",
+    "ability_type": "secondary",
     "active_time_seconds": 0.71,
     "animations": [
       {
@@ -16,7 +17,7 @@
             "flying": false
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       },
       {
         "animations": [
@@ -115,7 +116,6 @@
       }
     ],
     "attack_effects": [],
-    "attack_type": "secondary",
     "block_other_abilities_if_active": true,
     "conditions": [],
     "cooldown_time_seconds": 1.5,
@@ -125,6 +125,7 @@
   },
   {
     "type": "uselessreptile:shot_attack",
+    "ability_type": "primary",
     "active_time_seconds": 0.7,
     "ai_attack_distance": 64,
     "anchor_point": "multipart_box",
@@ -150,7 +151,7 @@
             "moving": true
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       },
       {
         "animations": [
@@ -168,7 +169,7 @@
             "moving": false
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       },
       {
         "animations": [
@@ -186,7 +187,7 @@
             "moving": true
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       },
       {
         "animations": [
@@ -199,10 +200,9 @@
             "flying": false
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       }
     ],
-    "attack_type": "primary",
     "block_other_abilities_if_active": true,
     "conditions": [],
     "cooldown_time_seconds": 4.0,

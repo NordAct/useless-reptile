@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -125,7 +126,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
     private final URDragonAnimationController<URDragonEntity> mainController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<URDragonEntity> attackController = new URDragonAnimationController<>(this, false) {
+    private final URDragonAnimationController<URDragonEntity> abilityController = new URDragonAnimationController<>(this, false) {
         @Override
         public float getDefaultTransitionTime() {
             return 0;
@@ -139,10 +140,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     };
     private final Map<AnimationController, BRAnimationController> controllers = Map.of(
             AnimationController.MAIN , mainController,
-            AnimationController.ATTACK , attackController,
+            AnimationController.ABILITY, abilityController,
             AnimationController.BLINK , blinkController
     );
-    protected final LinkedList<BRAnimationController> controllerList = new LinkedList<>(List.of(mainController, attackController, blinkController));
+    protected final LinkedList<BRAnimationController> controllerList = new LinkedList<>(List.of(mainController, abilityController, blinkController));
     private final Int2ObjectOpenHashMap<DragonAbilityHolder> abilityHolders = new Int2ObjectOpenHashMap<>();
     private List<DragonAbilityHolder> availableAbilities = List.of();
     private static final List<FluteItem.FluteMode> FLUTE_MODES = List.of(
@@ -157,6 +158,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public float xBodyRot = 0;
     private final LinkedList<Float> xBodyRotO = new LinkedList<>();
     protected int maxXBodyRotSamples = 10;
+    private static final Vec3i ITEM_PICKUP_REACH = new Vec3i(1, 1, 1);
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -1229,6 +1231,11 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return !getDragonVariant().common().interactionSettings().value().isImmuneToEffect(effect.getEffect());
     }
 
+    @Override
+    protected Vec3i getPickupReach() {
+        return ITEM_PICKUP_REACH;
+    }
+
     /// Makes dragons dance to jukebox
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
@@ -1355,7 +1362,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public enum AnimationController implements StringRepresentable {
         MAIN("main"),
-        ATTACK("attack"),
+        ABILITY("ability"),
         BLINK("blink")
         ;
 

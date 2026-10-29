@@ -58,7 +58,7 @@ public class BlockBreakingMeleeAttackAbility extends MeleeAttackAbility{
 
     @Override
     public DragonAbilityType<?> getType() {
-        return URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY;
+        return URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK;
     }
 
     @Override

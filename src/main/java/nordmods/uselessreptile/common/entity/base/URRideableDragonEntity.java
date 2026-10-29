@@ -104,29 +104,29 @@ public abstract class URRideableDragonEntity<T extends URRideableDragonEntity<T>
         List<DragonAbilityHolder> available = getAvailableAbilities();
         primaryRiderAbility = available.stream()
                 .filter(
-                        a -> a.getAbility().getCommonAbilityData().attackType().isPresent() &&
-                        a.getAbility().getCommonAbilityData().attackType().get() == AttackType.PRIMARY &&
+                        a -> a.getAbility().getCommonAbilityData().abilityType().isPresent() &&
+                        a.getAbility().getCommonAbilityData().abilityType().get() == AbilityType.PRIMARY &&
                         a.getCooldown() <= 0
                 )
                 .findFirst()
                 .orElse(available.stream()
                         .filter(
-                                a -> a.getAbility().getCommonAbilityData().attackType().isPresent() &&
-                                a.getAbility().getCommonAbilityData().attackType().get() == AttackType.PRIMARY
+                                a -> a.getAbility().getCommonAbilityData().abilityType().isPresent() &&
+                                a.getAbility().getCommonAbilityData().abilityType().get() == AbilityType.PRIMARY
                         )
                         .findFirst()
                         .orElseGet(this::createNoopHolder)
                 );
         secondaryRiderAbility = available.stream()
                 .filter(
-                        a -> a.getAbility().getCommonAbilityData().attackType().isPresent() &&
-                                a.getAbility().getCommonAbilityData().attackType().get() == AttackType.SECONDARY &&
+                        a -> a.getAbility().getCommonAbilityData().abilityType().isPresent() &&
+                                a.getAbility().getCommonAbilityData().abilityType().get() == AbilityType.SECONDARY &&
                                 a.getCooldown() <= 0
                 ).findFirst()
                 .orElse(available.stream()
                         .filter(
-                                a -> a.getAbility().getCommonAbilityData().attackType().isPresent() &&
-                                        a.getAbility().getCommonAbilityData().attackType().get() == AttackType.SECONDARY
+                                a -> a.getAbility().getCommonAbilityData().abilityType().isPresent() &&
+                                        a.getAbility().getCommonAbilityData().abilityType().get() == AbilityType.SECONDARY
                         ).findFirst()
                         .orElseGet(this::createNoopHolder)
                 );
@@ -470,13 +470,13 @@ public abstract class URRideableDragonEntity<T extends URRideableDragonEntity<T>
     }
 
     /// Rider's attacks
-    public enum AttackType implements StringRepresentable {
+    public enum AbilityType implements StringRepresentable {
         PRIMARY("primary"),
         SECONDARY("secondary")
         ;
         private final String name;
 
-        AttackType(String name) {
+        AbilityType(String name) {
             this.name = name;
         }
 

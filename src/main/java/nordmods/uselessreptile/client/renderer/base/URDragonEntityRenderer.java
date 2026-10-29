@@ -1,7 +1,9 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
@@ -37,9 +39,16 @@ import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelProvider;
 import nordmods.uselessreptile.common.init.URStateDataTypes;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.jspecify.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends BREntityRenderer<T, LivingEntityRenderState> {
+    public static final Map<UUID, Vector3f> HEAD_POS = new HashMap<>();
     private final DragonEquipmentRenderer equipmentRenderer = new DragonEquipmentRenderer();
     private final DragonSaddleRenderer saddleRenderer = new DragonSaddleRenderer();
     public URDragonEntityRenderer(EntityRendererProvider.Context renderManager) {
@@ -61,6 +70,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
         renderState.setStateData(URStateDataTypes.HEAD_Y_ROTATION, -animatable.getViewYRot(tickDelta));
         renderState.setStateData(URStateDataTypes.YAW_SPEED, -animatable.getYBodyRotChange(tickDelta));
         super.extractRenderState(animatable, renderState, tickDelta);
+        renderState.setStateData(URStateDataTypes.DRAGON_UUID, animatable.getUUID());
         DragonAssetCache assetCache = animatable.getAssetCache();
         renderState.setStateData(URStateDataTypes.ASSET_CACHE, assetCache);
         Identifier dragonId = animatable.getDragonId();
@@ -285,6 +295,14 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                 DragonEquipmentRenderer usedRenderer = equipment instanceof SaddleEquipment ? saddleRenderer : equipmentRenderer;
                 usedRenderer.submitObjectOrdered(equipment, poseStack, submitNodeCollector, cameraRenderState, state.getStateData(StateDataTypes.TICK_DELTA), 1);
             }
+        }
+        LocatorTransformation locatorTransformation = getModel(state).getLocatorTransformation("breath");
+        if (locatorTransformation != null) {
+            Vector4f vec = locatorTransformation.matrix().transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0F));
+            Vector3f pos = new Vector3f(vec.x, vec.y, vec.z).rotate(Axis.YN.rotationDegrees(state.bodyRot + 180)).add((float) state.x, (float) state.y, (float) state.z);
+            HEAD_POS.put(state.getStateData(URStateDataTypes.DRAGON_UUID), new Vector3f(pos.x, pos.y, pos.z));
+        } else {
+            HEAD_POS.remove(state.getStateData(URStateDataTypes.DRAGON_UUID));
         }
     }
 

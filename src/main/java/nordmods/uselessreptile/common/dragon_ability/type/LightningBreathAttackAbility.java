@@ -33,7 +33,7 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
             Codec.INT.fieldOf("color").forGetter(c -> c.color),
             ExtraCodecs.POSITIVE_INT.fieldOf("max_length").forGetter(c -> c.maxLength),
             ExtraCodecs.POSITIVE_INT.fieldOf("max_age").forGetter(c -> c.maxAge),
-            ExtraCodecs.POSITIVE_INT.fieldOf("block_break_power").forGetter(c -> c.blockBreakPower)
+            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("block_break_power").forGetter(c -> c.blockBreakPower)
     ).apply(i, LightningBreathAttackAbility::new));
 
     public LightningBreathAttackAbility(CommonDragonAbilityData commonAbilityData, Data triggerableAbilityData, AnchorPoint anchorPoint, Optional<String> multipartBoxName, Vec3 anchorPointOffset, float damageScaling, int color, int maxLength, int maxAge, int blockBreakPower) {
@@ -83,6 +83,6 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
 
     @Override
     public DragonAbilityType<?> getType() {
-        return URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK;
+        return URDragonAbilityTypes.LIGHTNING_BREATH;
     }
 }

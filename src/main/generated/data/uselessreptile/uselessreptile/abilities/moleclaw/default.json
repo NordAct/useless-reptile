@@ -1,6 +1,7 @@
 [
   {
     "type": "uselessreptile:melee_attack",
+    "ability_type": "secondary",
     "active_time_seconds": 1.6,
     "animations": [
       {
@@ -10,7 +11,7 @@
         ],
         "can_interrupt_playing_ability_animation": true,
         "conditions": [],
-        "controller": "attack"
+        "controller": "ability"
       }
     ],
     "aoe": true,
@@ -28,7 +29,6 @@
       }
     ],
     "attack_effects": [],
-    "attack_type": "secondary",
     "block_other_abilities_if_active": true,
     "conditions": [],
     "cooldown_time_seconds": 1.75,
@@ -38,6 +38,7 @@
   },
   {
     "type": "uselessreptile:block_breaking_melee_attack",
+    "ability_type": "primary",
     "active_time_seconds": 1.6,
     "animations": [
       {
@@ -51,7 +52,7 @@
             "is_panicking": false
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       },
       {
         "animations": [
@@ -64,7 +65,7 @@
             "is_panicking": true
           }
         ],
-        "controller": "attack"
+        "controller": "ability"
       }
     ],
     "aoe": true,
@@ -103,7 +104,6 @@
       }
     ],
     "attack_effects": [],
-    "attack_type": "primary",
     "block_other_abilities_if_active": true,
     "conditions": [],
     "cooldown_time_seconds": 3.0,

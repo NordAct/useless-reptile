@@ -44,9 +44,9 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URBlockLootTableProvider::new);
         pack.addProvider(URChestLootTableProvider::new);
 
-        pack.addProvider(URDragonBaseAttributeValues::new);
+        pack.addProvider(URDragonBaseAttributeValuesProvider::new);
         pack.addProvider(URDragonTargetingSettings::new);
-        pack.addProvider(URDragonInteractionSettings::new);
+        pack.addProvider(URDragonInteractionSettingsProvider::new);
         pack.addProvider(UREquipmentProvider::new);
         pack.addProvider(URDragonVariantProvider::new);
         pack.addProvider(URSpawnConditionsProvider::new);
@@ -64,9 +64,9 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
 
     @Override
     public void buildRegistry(@NonNull RegistrySetBuilder registryBuilder) {
-        registryBuilder.add(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, URDragonBaseAttributeValues::register);
+        registryBuilder.add(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, URDragonBaseAttributeValuesProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_TARGETING_SETTINGS, URDragonTargetingSettings::register);
-        registryBuilder.add(URResourceKeys.DRAGON_INTERACTION_SETTINGS, URDragonInteractionSettings::register);
+        registryBuilder.add(URResourceKeys.DRAGON_INTERACTION_SETTINGS, URDragonInteractionSettingsProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_SPAWN_CONDITIONS, URSpawnConditionsProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_MODEL, URDragonModelProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_ABILITIES, URDragonAbilitiesProvider::register);

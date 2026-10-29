@@ -24,17 +24,17 @@ public class URDragonAbilityTypesTagsProvider extends FabricTagsProvider<DragonA
 
         getOrCreateRawBuilder(URTags.MELEE_ATTACK)
                 .addElement(URDragonAbilityTypes.MELEE_ATTACK.getId())
-                .addElement(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY.getId());
+                .addElement(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK.getId());
 
         getOrCreateRawBuilder(URTags.RANGED_ATTACK)
                 .addElement(URDragonAbilityTypes.SHOT_ATTACK.getId())
-                .addElement(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK.getId());
+                .addElement(URDragonAbilityTypes.LIGHTNING_BREATH.getId());
 
         getOrCreateRawBuilder(URTags.DEFENCE)
-                .addElement(URDragonAbilityTypes.SHOCKWAVE_ATTACK.getId());
+                .addElement(URDragonAbilityTypes.SHOCKWAVE.getId());
 
         getOrCreateRawBuilder(URTags.BREAKS_BLOCKS)
-                .addElement(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK_ABILITY.getId())
-                .addElement(URDragonAbilityTypes.LIGHTNING_BREATH_ATTACK.getId());
+                .addElement(URDragonAbilityTypes.BLOCK_BREAKING_MELEE_ATTACK.getId())
+                .addElement(URDragonAbilityTypes.LIGHTNING_BREATH.getId());
     }
 }

@@ -22,7 +22,6 @@ public abstract class HeadMountDragonRenderer<T extends URDragonEntity & HeadMou
     public void extractRenderState(T animatable, LivingEntityRenderState renderState, float tickDelta) {
         super.extractRenderState(animatable, renderState, tickDelta);
         renderState.setStateData(URStateDataTypes.DRAGON_IS_RIDING_PLAYER, animatable.getVehicle() instanceof Player);
-        renderState.setStateData(URStateDataTypes.DRAGON_UUID, animatable.getUUID());
     }
 
     @Override
