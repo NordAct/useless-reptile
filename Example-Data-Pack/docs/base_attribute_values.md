@@ -1,8 +1,7 @@
 # Base Attribute Valise Definition
-Represents itself as map, where key - id of attribute, and value is attribute value. I.e.
-
 Examples can be found [here](/Example-Data-Pack/data/example/uselessreptile/base_attribute_values) (Example Pack) and [here](/src/main/generated/data/uselessreptile/uselessreptile/base_attribute_values) (Mod Files)
 
+Represents itself as map, where key - id of attribute, and value is attribute value. I.e.
 ```json
 {
   "minecraft:armor": 4.0,
