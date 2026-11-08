@@ -221,7 +221,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity<LightningChase
     }
 
     public void playAmbientSound() {
-        boolean playRoar = !isTame() && isFlying() && level().isThundering() && !getShouldBailOut() && !hasSurrendered();
+        boolean playRoar = !isTame() && isFlying() && !getShouldBailOut() && !hasSurrendered();
         SoundInfo soundInfo = getSoundInfo(playRoar ? "roar" : "idle");
         if (soundInfo != null) playSound(SoundEvent.createVariableRangeEvent(soundInfo.id()), soundInfo.volume(), getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()));
     }

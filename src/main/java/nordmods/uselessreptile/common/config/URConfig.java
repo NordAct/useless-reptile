@@ -5,6 +5,7 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 
 public class URConfig {
     public static final ConfigClassHandler<URConfig> CONFIG = ConfigClassHandler.createBuilder(URConfig.class)
@@ -30,7 +31,7 @@ public class URConfig {
     @SerialEntry(comment = "Defines a chance of Lightning Chaser spawning near player during thunderstorms each 30 seconds (1200 ticks)")
     public int lightningChaserThunderstormSpawnChance = 10;
     @SerialEntry(comment = "Amount of time (in ticks) that must pass before Lightning Chaser can attempt to spawn near the same player")
-    public int lightningChaserThunderstormSpawnTimerCooldown = 24000;
+    public int lightningChaserThunderstormSpawnTimerCooldown = LightningChaserSpawnTimer.DEFAULT_SPAWN_COOLDOWN;
     @SerialEntry(comment = "MOB CATEGORIES CAPACITIES")
     public int dragonCategoryCapacity = 2;
     @SerialEntry

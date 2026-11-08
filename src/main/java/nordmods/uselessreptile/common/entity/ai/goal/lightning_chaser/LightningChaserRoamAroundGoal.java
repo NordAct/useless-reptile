@@ -16,7 +16,7 @@ public class LightningChaserRoamAroundGoal extends Goal {
 
     public LightningChaserRoamAroundGoal(LightningChaser mob) {
         this.mob = mob;
-        setFlags(EnumSet.of(Flag.LOOK, Flag.MOVE));
+        setFlags(EnumSet.of(Flag.MOVE));
     }
 
     @Override

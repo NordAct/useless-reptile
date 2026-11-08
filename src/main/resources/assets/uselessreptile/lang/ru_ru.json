@@ -317,5 +317,13 @@
   "button.uselessreptile.cancel": "Отменить",
 
   "gui.uselessreptile.dragon_display_name": "Отображаемое название: %s",
-  "gui.uselessreptile.dragon_variant_name": "Вариант: %s"
+  "gui.uselessreptile.dragon_variant_name": "Вариант: %s",
+
+  "command.uselessreptile.triggerlightningchaser.success": "Ловец молний был вызван над %s",
+  "command.uselessreptile.triggerlightningchaser.fail": "Не удалось вызвать ловца молний",
+  "command.uselessreptile.list_variants": "Доступные варианты на %s для %s с причинами для спавна",
+  "command.uselessreptile.list_variants.none": "Нет",
+  "command.uselessreptile.list_variants.any_reason": "любые причины",
+  "command.uselessreptile.list_variants.summon": "Нажмите, чтобы призвать вариант",
+  "command.uselessreptile.invalid_dragon_id": "Некорректный или неподдерживаемый id дракона: %s"
 }

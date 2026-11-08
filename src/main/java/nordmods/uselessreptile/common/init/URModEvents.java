@@ -6,9 +6,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.tag.convention.v2.ConventionalItemTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -25,7 +27,6 @@ import nordmods.uselessreptile.common.event.DragonGetBlockMiningLevelEvent;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 
 public class URModEvents {
-
     public static void init() {
         spawnLightningChaser();
         getDefaultBlockMiningLevelForDragon();
@@ -37,46 +38,52 @@ public class URModEvents {
     private static void spawnLightningChaser() {
         //Lightning Chaser spawn event
         ServerTickEvents.START_LEVEL_TICK.register(level -> {
-            if (level.isThundering()) {
-                if (!level.getGameRules().get(GameRules.SPAWN_MOBS)) return;
-                if (level.useless_reptile$getTimer() > 0) {
-                    level.useless_reptile$setTimer(level.useless_reptile$getTimer() - 1);
+            if (!level.getGameRules().get(GameRules.SPAWN_MOBS)) return;
+            if (!level.isThundering()) return;
+            if (level.useless_reptile$getTimer() > 0) {
+                level.useless_reptile$setTimer(level.useless_reptile$getTimer() - 1);
+                return;
+            }
+            if (URConfig.getConfig().lightningChaserThunderstormSpawnChance < level.getRandom().nextFloat() * 100) return;
+            for (ServerPlayer player : level.players()) {
+                if (player.useless_reptile$getTimer() > 0) continue;
+                if (!level.canSeeSky(player.blockPosition())) continue;
+                if (placeLightningChaser(level, player)) {
+                    break;
+                } else {
+                    level.useless_reptile$setTimer();
                     return;
                 }
-                for (ServerPlayer player : level.players()) {
-                    if (player.getY() < 62) continue;
-                    if (player.useless_reptile$getTimer() > 0) continue;
-                    if (URConfig.getConfig().lightningChaserThunderstormSpawnChance >= player.getRandom().nextFloat() * 100) {
-                        double cos = Math.cos(Math.toRadians(player.getYHeadRot() + 180)); //Lightning Chaser will always spawn behind the player
-                        double sin = Math.sin(Math.toRadians(player.getYHeadRot() + 180));
-                        BlockPos pos = player.blockPosition();
-                        BlockPos spawnPos = new BlockPos((int) (pos.getX() + sin * 128),
-                                level.getHeight(Heightmap.Types.WORLD_SURFACE, (int) (pos.getX() + sin * 128), (int) (pos.getZ() + cos * 128)) + 16,
-                                (int) (pos.getZ() + cos * 128));
-                        while (!level.getBlockState(spawnPos).isAir()) spawnPos = spawnPos.above();
-                        if (DragonSpawnUtil.getAvailableVariants(level, spawnPos, URDragonVariantTypes.LIGHTNING_CHASER, EntitySpawnReason.EVENT).findFirst().isEmpty()) {
-                            level.useless_reptile$setTimer(1200);
-                            return;
-                        }
-                        LightningChaser lightningChaser = UREntities.LIGHTNING_CHASER.spawn(level, spawnPos, EntitySpawnReason.EVENT);
-                        if (lightningChaser != null) {
-                            lightningChaser.setFlying(true);
-                            lightningChaser.setHomePoint(new BlockPos(pos.getX(),
-                                    level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()),
-                                    pos.getZ()));
-                            URDragonEntity.SoundInfo soundInfo = lightningChaser.getSoundInfo("roar");
-                            if (soundInfo != null)
-                                URNetworkHelper.playSound(lightningChaser, SoundEvent.createVariableRangeEvent(soundInfo.id()), lightningChaser.getSoundSource(), soundInfo.volume(), lightningChaser.getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()), 1);
-                        }
-                        player.useless_reptile$setTimer(URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown);
-                        break;
-                    }
-                }
-                level.useless_reptile$setTimer(1200);
             }
+            level.useless_reptile$setTimer();
         });
     }
 
+    public static boolean placeLightningChaser(ServerLevel level, ServerPlayer player) {
+        double rot = Math.toRadians(Mth.wrapDegrees(-player.getYHeadRot()) + 180); //Lightning Chaser will always spawn behind the player
+        double cos = Math.cos(rot);
+        double sin = Math.sin(rot);
+        BlockPos pos = player.blockPosition();
+        BlockPos spawnPos = new BlockPos((int) (pos.getX() + sin * 128),
+                level.getHeight(Heightmap.Types.WORLD_SURFACE, (int) (pos.getX() + sin * 128), (int) (pos.getZ() + cos * 128)) + 16,
+                (int) (pos.getZ() + cos * 128));
+        while (!level.getBlockState(spawnPos).isAir()) spawnPos = spawnPos.above();
+        if (DragonSpawnUtil.getAvailableVariants(level, spawnPos, URDragonVariantTypes.LIGHTNING_CHASER, EntitySpawnReason.EVENT).findFirst().isEmpty()) {
+            return false;
+        }
+        LightningChaser lightningChaser = UREntities.LIGHTNING_CHASER.spawn(level, spawnPos, EntitySpawnReason.EVENT);
+        if (lightningChaser != null) {
+            lightningChaser.setFlying(true);
+            lightningChaser.setHomePoint(new BlockPos(pos.getX(),
+                    level.getHeight(Heightmap.Types.WORLD_SURFACE, pos.getX(), pos.getZ()),
+                    pos.getZ()));
+            URDragonEntity.SoundInfo soundInfo = lightningChaser.getSoundInfo("roar");
+            if (soundInfo != null)
+                URNetworkHelper.playSound(lightningChaser, SoundEvent.createVariableRangeEvent(soundInfo.id()), lightningChaser.getSoundSource(), soundInfo.volume(), lightningChaser.getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()), 1);
+        }
+        player.useless_reptile$setTimer(URConfig.getConfig().lightningChaserThunderstormSpawnTimerCooldown);
+        return true;
+    }
 
     public static void getDefaultBlockMiningLevelForDragon() {
         DragonGetBlockMiningLevelEvent.EVENT.register(blockState -> {

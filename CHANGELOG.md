@@ -44,8 +44,16 @@ Also in general this update is very big from side of reworking mod's internals, 
 - Added griefing config options for all dragons
   - Removed "Dragon Madness" config options since it's functionality is now redundant. You can make dragons target players using datapack instead
   - Removed most of the mob attribute config options since their functionality is now redundant. You can change base attribute values of dragons with datapack instead
-  - Updated animations and models for all dragons and saddles if they got them
+  - Griefing options affect targeting behavior that is not caused by player, River Pikehorn's hunting and some projectiles destructive behavior. If projectiles not from the mod cause land destruction, they are not affected by this option
+
+- Updated animations and models for all dragons and saddles if they got them
 
 - River Pikehorns no longer will hunt Pufferfish by default. They still may pick it up and eat if it's lying around as item. Foolish creatures
 - Untamed Swamp Wyverns will now head straight towards food item lying on ground if they spot any. No more completely pointless chicken killing
   - You also can use this to make Swamp Wyvern land if you're done waiting for it to land
+  - Dropped by you food will not add to taming progress. You still have to feed it from your hands
+
+- Fixed Lightning Chaser not always spawning behind player
+- Lightning Chaser spawn event now checks for visible sky instead of world height that was hardcoded to y > 63
+- Added command `/uselessreptile triggerligtningchaser` to trigger its spawn manually (in same way it happens during thunderstorm)
+- Added command `/uselessreptile listvariants` that lets you see all available for spawn variants for specific position in world

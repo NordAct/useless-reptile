@@ -316,5 +316,13 @@
   "button.uselessreptile.cancel": "Cancel",
 
   "gui.uselessreptile.dragon_display_name": "Display Name: %s",
-  "gui.uselessreptile.dragon_variant_name": "Variant: %s"
+  "gui.uselessreptile.dragon_variant_name": "Variant: %s",
+
+  "command.uselessreptile.triggerlightningchaser.success": "Summoned challenger Lightning Chaser over %s",
+  "command.uselessreptile.triggerlightningchaser.fail": "Could not summon challenger Lightning Chaser",
+  "command.uselessreptile.list_variants": "Available variants at %s for %s with spawn reasons",
+  "command.uselessreptile.list_variants.none": "None",
+  "command.uselessreptile.list_variants.any_reason": "any reason",
+  "command.uselessreptile.list_variants.summon": "Click to summon this variant",
+  "command.uselessreptile.invalid_dragon_id": "Invalid or unsupported dragon id: %s"
 }
