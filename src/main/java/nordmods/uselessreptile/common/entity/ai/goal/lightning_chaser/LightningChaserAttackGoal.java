@@ -13,7 +13,7 @@ import nordmods.uselessreptile.common.init.URTags;
 
 import java.util.Optional;
 
-public class LightningChaserAttackGoal extends DragonAttackGoal { //todo test it in combat properly
+public class LightningChaserAttackGoal extends DragonAttackGoal {
     private final LightningChaser mob;
 
     public LightningChaserAttackGoal(LightningChaser mob) {
@@ -31,7 +31,7 @@ public class LightningChaserAttackGoal extends DragonAttackGoal { //todo test it
     protected void tickMovement() {
         mob.setSprinting(true);
 
-        double distance = mob.distanceToSqr(target);
+        double distance = mob.distanceTo(target);
         double yDiff = target.getY() - mob.getY();
         if (yDiff > mob.getBbHeight() && !mob.isFlying()) mob.startToFly();
         Optional<ShotAttackAbility> shotAttackAbility = mob.getAvailableAbilities().stream()
@@ -50,8 +50,8 @@ public class LightningChaserAttackGoal extends DragonAttackGoal { //todo test it
         double desiredY = target.getY() + (canUseRangedAttack ? 2 : 0) + target.getBbHeight();
         if (mob.onGround() && !mob.getSensing().hasLineOfSight(target) && hasRangeAttack) mob.forceFlightNextTick();
         mob.getLookControl().setLookAt(target);
-        double minAttackDistance = hasRangeAttack ? shotAttackAbility.get().getAiAttackDistance() * 0.3 : 0;
-        double maxAttackDistance = hasRangeAttack ? shotAttackAbility.get().getAiAttackDistance() * 0.9 : 0;
+        double minAttackDistance = hasRangeAttack ? shotAttackAbility.get().getAiAttackDistance() * 0.6 : 0;
+        double maxAttackDistance = hasRangeAttack ? shotAttackAbility.get().getAiAttackDistance() : 0;
 
         if (canUseRangedAttack && distance < minAttackDistance) { //too close
             mob.getNavigation().stop();
@@ -69,6 +69,7 @@ public class LightningChaserAttackGoal extends DragonAttackGoal { //todo test it
                 }
             }
         } else if (canUseRangedAttack && distance < maxAttackDistance) { //within range
+            mob.getNavigation().stop();
             if (!mob.getLookControl().canLookAtTarget()) {
                 double distanceXZ = Math.pow(target.getX() - mob.getX(), 2) * Math.pow(target.getZ() - mob.getZ(), 2);
                 double divergence = Math.max(0, (distanceXZ - maxAttackDistance / 8f) * 0.25);

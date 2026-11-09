@@ -399,7 +399,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                 ShotAttackAbility.AnchorPoint.MULTIPART_BOX,
                                 Optional.of("head"),
                                 Vec3.ZERO,
-                                1,
+                                2,
                                 0x00FFFFFF,
                                 50,
                                 10,

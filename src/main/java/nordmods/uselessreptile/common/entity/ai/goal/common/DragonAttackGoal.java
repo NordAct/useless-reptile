@@ -17,6 +17,8 @@ public class DragonAttackGoal extends Goal {
     protected LivingEntity target;
     protected final double maxSearchDistance;
     protected int notMovingTimer = 0;
+    protected int forceStopTimer = FORCE_STOP_MAX_TIME;
+    protected final static int FORCE_STOP_MAX_TIME = 200;
 
     public DragonAttackGoal(URDragonEntity mob) {
         this.mob = mob;
@@ -26,7 +28,7 @@ public class DragonAttackGoal extends Goal {
 
     @Override
     public void start() {
-        target = mob.getTarget();
+        forceStopTimer = FORCE_STOP_MAX_TIME;
     }
 
     @Override
@@ -36,14 +38,16 @@ public class DragonAttackGoal extends Goal {
             mob.setTarget(null);
             return false;
         }
-        target = mob.getTarget();
-        return target != null && (mob.distanceToSqr(target) < maxSearchDistance);
+        return (target = mob.getTarget()) != null;
     }
 
     @Override
     public boolean canContinueToUse() {
         if (target == null) return false;
         if (!target.isAlive() || target.isRemoved()) return false;
+        if (mob.distanceToSqr(target) > maxSearchDistance) {
+            if (--forceStopTimer <= 0) return false;
+        } else forceStopTimer = FORCE_STOP_MAX_TIME;
         return super.canContinueToUse();
     }
 

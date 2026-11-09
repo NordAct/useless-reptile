@@ -173,6 +173,10 @@ public class LightningChaser extends URRideableFlyingDragonEntity<LightningChase
             mainController.playAnimation("fly.idle");
             return;
         }
+        if (hasSurrendered()) {
+            mainController.playAnimation("surrender");
+            return;
+        }
         if (isOrderedToSit() && !isDancing()) {
             mainController.playAnimation("sit");
             return;

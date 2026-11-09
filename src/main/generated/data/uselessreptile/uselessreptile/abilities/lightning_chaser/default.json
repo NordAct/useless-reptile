@@ -126,7 +126,7 @@
     "color": 16777215,
     "conditions": [],
     "cooldown_time_seconds": 5.0,
-    "damage_scaling": 1.0,
+    "damage_scaling": 2.0,
     "icon": "uselessreptile:ability/lightning_bolt_shot",
     "max_age": 10,
     "max_length": 50,

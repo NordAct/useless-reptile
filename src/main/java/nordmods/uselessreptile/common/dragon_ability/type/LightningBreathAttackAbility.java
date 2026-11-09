@@ -37,7 +37,7 @@ public class LightningBreathAttackAbility extends ShotAttackAbility {
     ).apply(i, LightningBreathAttackAbility::new));
 
     public LightningBreathAttackAbility(CommonDragonAbilityData commonAbilityData, Data triggerableAbilityData, AnchorPoint anchorPoint, Optional<String> multipartBoxName, Vec3 anchorPointOffset, float damageScaling, int color, int maxLength, int maxAge, int blockBreakPower) {
-        super(commonAbilityData, triggerableAbilityData, UREntities.LIGHTNING_BREATH, new CompoundTag(), anchorPoint, multipartBoxName, anchorPointOffset, 1, 0, 0, (int)(maxLength * 0.95f));
+        super(commonAbilityData, triggerableAbilityData, UREntities.LIGHTNING_BREATH, new CompoundTag(), anchorPoint, multipartBoxName, anchorPointOffset, 1, 0, 0, maxLength);
         this.damageScaling = damageScaling;
         this.color = color;
         this.maxLength = maxLength;
