@@ -88,7 +88,7 @@ import nordmods.uselessreptile.common.init.*;
 import nordmods.uselessreptile.common.item.FluteItem;
 import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
-import nordmods.uselessreptile.common.util.URDragonAnimationController;
+import nordmods.uselessreptile.common.entity.misc.URDragonAnimationController;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;

@@ -11,7 +11,7 @@ import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_ability.use_condition.UseCondition;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import nordmods.uselessreptile.common.util.URDragonAnimationController;
+import nordmods.uselessreptile.common.entity.misc.URDragonAnimationController;
 
 import java.util.List;
 import java.util.Optional;

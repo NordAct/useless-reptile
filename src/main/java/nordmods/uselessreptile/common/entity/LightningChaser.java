@@ -49,7 +49,7 @@ import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URGameEvents;
 import nordmods.uselessreptile.common.init.URSoundEvent;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
-import nordmods.uselessreptile.common.util.URDragonAnimationController;
+import nordmods.uselessreptile.common.entity.misc.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 

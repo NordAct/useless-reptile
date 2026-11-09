@@ -1,4 +1,4 @@
-package nordmods.uselessreptile.common.util;
+package nordmods.uselessreptile.common.entity.misc;
 
 import libs.gg.moonflower.pinwheel.api.animation.AnimationData;
 import net.minecraft.sounds.SoundEvent;

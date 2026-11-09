@@ -22,7 +22,7 @@ import nordmods.uselessreptile.client.renderer.base.URDragonEntityRenderer;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.init.URRegistries;
-import nordmods.uselessreptile.common.util.SimpleAnimationController;
+import nordmods.uselessreptile.common.entity.misc.SimpleAnimationController;
 
 import java.util.List;
 

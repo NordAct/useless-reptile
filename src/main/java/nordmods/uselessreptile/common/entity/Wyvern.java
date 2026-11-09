@@ -25,7 +25,7 @@ import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.entity.base.URRideableFlyingDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
-import nordmods.uselessreptile.common.util.URDragonAnimationController;
+import nordmods.uselessreptile.common.entity.misc.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
 public class Wyvern extends URRideableFlyingDragonEntity<Wyvern> implements MultipartEntity {

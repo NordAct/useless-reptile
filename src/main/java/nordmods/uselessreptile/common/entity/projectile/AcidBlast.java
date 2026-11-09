@@ -13,7 +13,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.uselessreptile.common.init.*;
-import nordmods.uselessreptile.common.util.SimpleAnimationController;
+import nordmods.uselessreptile.common.entity.misc.SimpleAnimationController;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
