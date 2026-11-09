@@ -728,7 +728,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         float mod = 1;
         if (hasEffect(MobEffects.SLOWNESS)) mod *= (float) (1 + 0.1 * (getEffect(MobEffects.SLOWNESS).getAmplifier() + 1));
         if (hasEffect(MobEffects.SPEED)) mod *= (float) (1 - 0.1 * Mth.clamp(getEffect(MobEffects.SPEED).getAmplifier() + 1, 1, 9));
-        if (hasEffect(URMobEffect.SHOCK)) mod /= 2;
+        if (hasEffect(URMobEffects.SHOCK)) mod /= 2;
         return mod;
     }
 

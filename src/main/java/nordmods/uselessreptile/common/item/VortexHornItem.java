@@ -30,7 +30,7 @@ import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.base.URDragonPart;
 import nordmods.uselessreptile.common.init.URItemComponents;
-import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.common.init.URSoundEvents;
 import nordmods.uselessreptile.common.item.component.URDragonDataStorageComponent;
 import nordmods.uselessreptile.common.item.component.VortexHornCapacityComponent;
 import nordmods.uselessreptile.common.util.ComponentUtil;
@@ -55,7 +55,7 @@ public class VortexHornItem extends InstrumentItem {
         if (entity instanceof URDragonEntity dragon && dragon.getOwner() == user && !user.isShiftKeyDown()) {
             if (tryCollectDragon(stack, user, dragon, hand, true)) {
                 user.releaseUsingItem();
-                user.makeSound(URSoundEvent.VORTEX_HORN_SUCK_IN);
+                user.makeSound(URSoundEvents.VORTEX_HORN_SUCK_IN);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -97,7 +97,7 @@ public class VortexHornItem extends InstrumentItem {
 
             if (tryCreateDragon(stack, user, world, hand, pos)) {
                 user.releaseUsingItem();
-                user.makeSound(URSoundEvent.VORTEX_HORN_SPIT_OUT);
+                user.makeSound(URSoundEvents.VORTEX_HORN_SPIT_OUT);
                 return InteractionResult.SUCCESS;
             }
         }
@@ -152,7 +152,7 @@ public class VortexHornItem extends InstrumentItem {
             URDragonDataStorageComponent dataComponent = stack.get(URItemComponents.DRAGON_STORAGE);
             if (dataComponent != null && getCurrentCapacity(stack) > 0) {
                 for (int i = 0; i < dataComponent.entityData().size(); i++) tryCreateDragon(stack, user, world, hand, user.blockPosition());
-                user.makeSound(URSoundEvent.VORTEX_HORN_SPIT_OUT);
+                user.makeSound(URSoundEvents.VORTEX_HORN_SPIT_OUT);
                 return true;
             }
         } else {
@@ -161,7 +161,7 @@ public class VortexHornItem extends InstrumentItem {
                 if (dragon.isOrderedToSit()) continue;
                 if (!tryCollectDragon(stack, user, dragon, hand, false)) break;
             }
-            user.makeSound(URSoundEvent.VORTEX_HORN_SUCK_IN);
+            user.makeSound(URSoundEvents.VORTEX_HORN_SUCK_IN);
             return true;
         }
         return false;

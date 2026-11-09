@@ -47,7 +47,7 @@ import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
 import nordmods.uselessreptile.common.init.URGameEvents;
-import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.common.init.URSoundEvents;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import nordmods.uselessreptile.common.entity.misc.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
@@ -330,7 +330,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity<LightningChase
             setInAirTimer(getMaxInAirTimer());
             if (damageSource.getEntity() != null) setHomePoint(damageSource.getEntity().blockPosition());
             else setHomePoint(blockPosition());
-            URNetworkHelper.playSound(this, URSoundEvent.LIGHTNING_CHASER_SURRENDER, getSoundSource(), 1, 1,1);
+            URNetworkHelper.playSound(this, URSoundEvents.LIGHTNING_CHASER_SURRENDER, getSoundSource(), 1, 1,1);
             if (isChallenger) bailOutTimer = 6000;
         }
         return toReturn;
@@ -429,7 +429,7 @@ public class LightningChaser extends URRideableFlyingDragonEntity<LightningChase
                 if (target != null) {
                     if (!canAttack(target)) return false;
                     setTarget(target);
-                    URNetworkHelper.playSound(LightningChaser.this, URSoundEvent.LIGHTNING_CHASER_ACCEPT_CHALLENGE, getSoundSource(), 1, 1,1);
+                    URNetworkHelper.playSound(LightningChaser.this, URSoundEvents.LIGHTNING_CHASER_ACCEPT_CHALLENGE, getSoundSource(), 1, 1,1);
                     return true;
                 }
             }

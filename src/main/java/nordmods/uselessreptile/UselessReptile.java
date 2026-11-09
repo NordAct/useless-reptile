@@ -27,12 +27,12 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
         URDragonAbilityTypes.init();
         URAttributes.init();
         URResourceKeys.init();
-        URSoundEvent.init();
+        URSoundEvents.init();
         UREntities.init();
         URItemComponents.init();
         URItems.init();
         URSpawns.init();
-        URMobEffect.init();
+        URMobEffects.init();
         URPotions.init();
         URGameEvents.init();
         URModEvents.init();

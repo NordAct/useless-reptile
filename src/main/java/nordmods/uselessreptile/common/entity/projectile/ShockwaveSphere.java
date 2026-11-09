@@ -22,8 +22,8 @@ import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URMobEffect;
-import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.common.init.URMobEffects;
+import nordmods.uselessreptile.common.init.URSoundEvents;
 import nordmods.uselessreptile.common.init.URTags;
 import org.jspecify.annotations.NonNull;
 
@@ -121,12 +121,12 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
         float exposure = ServerExplosion.getSeenPercent(getEyePosition(), target);
 
         if (exposure > 0) {
-            target.playSound(URSoundEvent.SHOCKWAVE_HIT, 1, 1 / exposure);
+            target.playSound(URSoundEvents.SHOCKWAVE_HIT, 1, 1 / exposure);
             Vec3 vec3d = target.position().subtract(getEyePosition());
             double lengthMod = currentRadius / vec3d.length();
             target.addDeltaMovement(vec3d.normalize().scale(power * lengthMod * exposure));
             if (target instanceof LivingEntity livingEntity && livingEntity.level() instanceof ServerLevel world) {
-                livingEntity.addEffect(new MobEffectInstance(URMobEffect.SHOCK, (int) (100 * Mth.clamp(lengthMod, 1, 2) * exposure), 0, false, false), getOwner());
+                livingEntity.addEffect(new MobEffectInstance(URMobEffects.SHOCK, (int) (100 * Mth.clamp(lengthMod, 1, 2) * exposure), 0, false, false), getOwner());
                 livingEntity.hurtServer(world, damageSources().source(DamageTypes.LIGHTNING_BOLT, getOwner()), (float) (getResultingDamage() * Mth.clamp(lengthMod, 1, 2)));
             }
         }
@@ -149,7 +149,7 @@ public class ShockwaveSphere extends Projectile implements ProjectileDamageHelpe
 
     private void tryPlaySpawnSound() {
         if (!spawnSoundPlayed) {
-            playSound(URSoundEvent.SHOCKWAVE, 1, 1);
+            playSound(URSoundEvents.SHOCKWAVE, 1, 1);
             spawnSoundPlayed = true;
         }
     }

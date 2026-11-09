@@ -20,7 +20,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.PotionContents;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.InteractionSettings;
-import nordmods.uselessreptile.common.init.URMobEffect;
+import nordmods.uselessreptile.common.init.URMobEffects;
 import nordmods.uselessreptile.common.init.URPotions;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 
@@ -95,7 +95,7 @@ public class URDragonInteractionSettingsProvider extends FabricDynamicRegistryPr
                         List.of(
                                 new ExtraCodecs.TagOrElementLocation(MobEffects.POISON.unwrapKey().orElseThrow().identifier(), false),
                                 new ExtraCodecs.TagOrElementLocation(MobEffects.HUNGER.unwrapKey().orElseThrow().identifier(), false),
-                                new ExtraCodecs.TagOrElementLocation(URMobEffect.ACID.unwrapKey().orElseThrow().identifier(), false)
+                                new ExtraCodecs.TagOrElementLocation(URMobEffects.ACID.unwrapKey().orElseThrow().identifier(), false)
                         ),
                         List.of()
                 )
@@ -153,7 +153,7 @@ public class URDragonInteractionSettingsProvider extends FabricDynamicRegistryPr
                         ),
                         List.of(),
                         List.of(
-                                new ExtraCodecs.TagOrElementLocation(URMobEffect.SHOCK.unwrapKey().orElseThrow().identifier(), false)
+                                new ExtraCodecs.TagOrElementLocation(URMobEffects.SHOCK.unwrapKey().orElseThrow().identifier(), false)
                         ),
                         List.of(
                                 new ExtraCodecs.TagOrElementLocation(DamageTypeTags.IS_LIGHTNING.location(), true)

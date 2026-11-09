@@ -24,8 +24,8 @@ import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URMobEffect;
-import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.common.init.URMobEffects;
+import nordmods.uselessreptile.common.init.URSoundEvents;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPayload;
 import org.joml.Vector3f;
@@ -101,7 +101,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         DamageSource source = damageSources().source(DamageTypes.LIGHTNING_BOLT, getOwner());
         if (target instanceof LivingEntity livingEntity && livingEntity.isInvulnerableTo(serverWorld, source)) return;
         if (target.hurtServer(serverWorld, source, getResultingDamage())) {
-            target.playSound(URSoundEvent.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
+            target.playSound(URSoundEvents.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
             boolean wasOnFireBefore = target.isOnFire();
             LightningBolt fakeLightningSoNoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityType.LIGHTNING_BOLT, serverWorld);
             target.thunderHit(serverWorld, fakeLightningSoNoNullPointerExceptionWouldHappenIHope);
@@ -110,7 +110,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
                 target.setSharedFlagOnFire(false);
             }
             if (target instanceof LivingEntity livingEntity)
-                livingEntity.addEffect(new MobEffectInstance(URMobEffect.SHOCK, 400, 0, false, false), getOwner());
+                livingEntity.addEffect(new MobEffectInstance(URMobEffects.SHOCK, 400, 0, false, false), getOwner());
         }
     }
 
@@ -177,7 +177,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
 
     private void tryPlaySpawnSound() {
         if (!spawnSoundPlayed) {
-            playSound(URSoundEvent.SHOCKWAVE, 0.25f, 1);
+            playSound(URSoundEvents.SHOCKWAVE, 0.25f, 1);
             spawnSoundPlayed = true;
         }
     }

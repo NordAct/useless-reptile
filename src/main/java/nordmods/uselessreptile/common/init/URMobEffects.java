@@ -11,7 +11,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.mob_effect.AcidMobEffect;
 
-public class URMobEffect {
+public class URMobEffects {
 
     public static final Holder<MobEffect> ACID = Registry.registerForHolder(BuiltInRegistries.MOB_EFFECT,
             UselessReptile.id("acid"),

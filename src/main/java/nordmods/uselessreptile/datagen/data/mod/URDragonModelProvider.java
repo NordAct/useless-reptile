@@ -14,7 +14,7 @@ import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
 import nordmods.uselessreptile.common.init.UREntities;
 import nordmods.uselessreptile.common.init.URResourceKeys;
-import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.common.init.URSoundEvents;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
@@ -92,63 +92,63 @@ public class URDragonModelProvider extends FabricDynamicRegistryProvider {
 
     protected static DragonModelData makeWyvern(String variant, boolean animatedTexture) {
         List<DragonModelData.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModelData.Sound("step", URSoundEvent.WYVERN_STEP.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("woosh", URSoundEvent.DRAGON_WOOSH.location(), Optional.of(2f), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("step", URSoundEvents.WYVERN_STEP.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("woosh", URSoundEvents.DRAGON_WOOSH.location(), Optional.of(2f), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("flap", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.of(3f), Optional.of(0.7f), Optional.empty()));
         sounds.add(new DragonModelData.Sound("shoot", SoundEvents.ENDER_DRAGON_SHOOT.location(), Optional.of(2f), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("bite", URSoundEvent.WYVERN_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("idle", URSoundEvent.WYVERN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.WYVERN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("death", URSoundEvent.WYVERN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("bite", URSoundEvents.WYVERN_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("idle", URSoundEvents.WYVERN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("hurt", URSoundEvents.WYVERN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("death", URSoundEvents.WYVERN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         return makeModel(UREntities.WYVERN, variant, Optional.of(sounds), true, animatedTexture);
     }
 
     protected static DragonModelData makeMoleclaw(String variant, boolean animatedTexture) {
         List<DragonModelData.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModelData.Sound("step", URSoundEvent.DRAGON_STEP.location(), Optional.empty(), Optional.of(0.7f), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("attack_strong", URSoundEvent.MOLECLAW_STRONG_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("attack", URSoundEvent.MOLECLAW_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("idle", URSoundEvent.MOLECLAW_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.MOLECLAW_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("death", URSoundEvent.MOLECLAW_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("panic", URSoundEvent.MOLECLAW_PANICKING.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("step", URSoundEvents.DRAGON_STEP.location(), Optional.empty(), Optional.of(0.7f), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("attack_strong", URSoundEvents.MOLECLAW_STRONG_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("attack", URSoundEvents.MOLECLAW_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("idle", URSoundEvents.MOLECLAW_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("hurt", URSoundEvents.MOLECLAW_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("death", URSoundEvents.MOLECLAW_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("panic", URSoundEvents.MOLECLAW_PANICKING.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         return makeModel(UREntities.MOLECLAW, variant, Optional.of(sounds), false, animatedTexture);
     }
 
     protected static DragonModelData makeRiverPikehorn(String variant, boolean animatedTexture) {
         List<DragonModelData.Sound> sounds = new ArrayList<>();
         sounds.add(new DragonModelData.Sound("step", SoundEvents.CHICKEN_STEP.value().location(), Optional.of(0.5f), Optional.of(0.8f), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("woosh", URSoundEvent.DRAGON_WOOSH.location(), Optional.of(0.7f), Optional.of(1.2f), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("woosh", URSoundEvents.DRAGON_WOOSH.location(), Optional.of(0.7f), Optional.of(1.2f), Optional.empty()));
         sounds.add(new DragonModelData.Sound("flap", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.empty(), Optional.of(1.2f), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("attack", URSoundEvent.PIKEHORN_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("idle", URSoundEvent.PIKEHORN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.PIKEHORN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("death", URSoundEvent.PIKEHORN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("attack", URSoundEvents.PIKEHORN_ATTACK.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("idle", URSoundEvents.PIKEHORN_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("hurt", URSoundEvents.PIKEHORN_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("death", URSoundEvents.PIKEHORN_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         return makeModel(UREntities.RIVER_PIKEHORN, variant, Optional.of(sounds), false, animatedTexture);
     }
 
     protected static DragonModelData makeLightningChaser(String variant, boolean animatedTexture) {
         List<DragonModelData.Sound> sounds = new ArrayList<>();
-        sounds.add(new DragonModelData.Sound("step", URSoundEvent.DRAGON_STEP.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("woosh", URSoundEvent.DRAGON_WOOSH.location(), Optional.of(2f), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("step", URSoundEvents.DRAGON_STEP.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("woosh", URSoundEvents.DRAGON_WOOSH.location(), Optional.of(2f), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("flap", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.of(3f), Optional.of(0.6f), Optional.empty()));
         sounds.add(new DragonModelData.Sound("flap_heavy", SoundEvents.ENDER_DRAGON_FLAP.location(), Optional.of(3f), Optional.of(0.5f), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("bite", URSoundEvent.LIGHTNING_CHASER_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("idle", URSoundEvent.LIGHTNING_CHASER_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("roar", URSoundEvent.LIGHTNING_CHASER_DISTANT_ROAR.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("accept_challenge", URSoundEvent.LIGHTNING_CHASER_ACCEPT_CHALLENGE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.LIGHTNING_CHASER_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("death", URSoundEvent.LIGHTNING_CHASER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("bite", URSoundEvents.LIGHTNING_CHASER_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("idle", URSoundEvents.LIGHTNING_CHASER_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("roar", URSoundEvents.LIGHTNING_CHASER_DISTANT_ROAR.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("accept_challenge", URSoundEvents.LIGHTNING_CHASER_ACCEPT_CHALLENGE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("hurt", URSoundEvents.LIGHTNING_CHASER_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("death", URSoundEvents.LIGHTNING_CHASER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         return makeModel(UREntities.LIGHTNING_CHASER, variant, Optional.of(sounds), true, animatedTexture);
     }
 
     protected static DragonModelData makeMagmamuncher(String variant, boolean animatedTexture) {
         List<DragonModelData.Sound> sounds = new ArrayList<>();
         sounds.add(new DragonModelData.Sound("step", SoundEvents.NETHERRACK_STEP.location(), Optional.of(0.25f), Optional.of(0.8f), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("bite", URSoundEvent.MAGMAMUNCHER_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("idle", URSoundEvent.MAGMAMUNCHER_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("hurt", URSoundEvent.MAGMAMUNCHER_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
-        sounds.add(new DragonModelData.Sound("death", URSoundEvent.MAGMAMUNCHER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("bite", URSoundEvents.MAGMAMUNCHER_BITE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("idle", URSoundEvents.MAGMAMUNCHER_AMBIENT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("hurt", URSoundEvents.MAGMAMUNCHER_HURT.location(), Optional.empty(), Optional.empty(), Optional.empty()));
+        sounds.add(new DragonModelData.Sound("death", URSoundEvents.MAGMAMUNCHER_DEATH.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         sounds.add(new DragonModelData.Sound("apply_fire_resistance", SoundEvents.FIRECHARGE_USE.location(), Optional.empty(), Optional.empty(), Optional.empty()));
         return makeModel(UREntities.MAGMAMUNCHER, variant, Optional.of(sounds), true, animatedTexture);
     }

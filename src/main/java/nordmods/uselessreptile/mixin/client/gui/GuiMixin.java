@@ -15,7 +15,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URRenderPipelines;
 import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
-import nordmods.uselessreptile.common.init.URMobEffect;
+import nordmods.uselessreptile.common.init.URMobEffects;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -44,15 +44,15 @@ public abstract class GuiMixin {
     @Inject(method = "extractEffects", at = @At(value = "INVOKE", target = "Ljava/util/Collection;isEmpty()Z"))
     private void yeetShockEffect(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
         List<MobEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));
-        copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffect().equals(URMobEffect.SHOCK));
+        copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffect().equals(URMobEffects.SHOCK));
         localRef.set(copy);
     }
 
     /// Renders shock effect overlay
     @Inject(method = "extractCameraOverlays", at = @At("TAIL"))
     private void renderShockOverlay(GuiGraphicsExtractor context, DeltaTracker tickCounter, CallbackInfo ci) {
-        if (minecraft.player.hasEffect(URMobEffect.SHOCK)) {
-            float strength = Mth.clamp(minecraft.player.getEffect(URMobEffect.SHOCK).getDuration()/100f, 0f, 1f);
+        if (minecraft.player.hasEffect(URMobEffects.SHOCK)) {
+            float strength = Mth.clamp(minecraft.player.getEffect(URMobEffects.SHOCK).getDuration()/100f, 0f, 1f);
             renderShockOverlay(context, strength, tickCounter.getGameTimeDeltaPartialTick(false));
             prevStrength = strength;
         } else prevStrength = 1f;

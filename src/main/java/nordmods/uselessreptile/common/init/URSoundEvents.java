@@ -5,7 +5,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;
 import nordmods.uselessreptile.UselessReptile;
 
-public class URSoundEvent {
+public class URSoundEvents {
     public static final SoundEvent DRAGON_WOOSH = register("dragon.woosh");
     public static final SoundEvent DRAGON_STEP = register("dragon.step");
     public static final SoundEvent WYVERN_STEP = register("wyvern.step");
