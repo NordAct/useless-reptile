@@ -19,16 +19,16 @@
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute/sit_down"
+          "model": "uselessreptile:item/flute/stand_up"
         },
-        "when": "uselessreptile:sit_down"
+        "when": "uselessreptile:stand_up"
       },
       {
         "model": {
           "type": "minecraft:model",
-          "model": "uselessreptile:item/flute/stand_up"
+          "model": "uselessreptile:item/flute/sit_down"
         },
-        "when": "uselessreptile:stand_up"
+        "when": "uselessreptile:sit_down"
       },
       {
         "model": {

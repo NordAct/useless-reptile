@@ -3,7 +3,6 @@ package nordmods.uselessreptile.datagen;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 import net.minecraft.core.RegistrySetBuilder;
-import net.minecraft.core.registries.Registries;
 import nordmods.uselessreptile.common.init.URResourceKeys;
 import nordmods.uselessreptile.datagen.assets.URModelProvider;
 import nordmods.uselessreptile.datagen.assets.URSoundsProvider;
@@ -14,10 +13,6 @@ import nordmods.uselessreptile.datagen.data.loot.URBlockLootTableProvider;
 import nordmods.uselessreptile.datagen.data.loot.URChestLootTableProvider;
 import nordmods.uselessreptile.datagen.data.loot.UREntityLootTableProvider;
 import nordmods.uselessreptile.datagen.data.mod.*;
-import nordmods.uselessreptile.datagen.data.structure.URProcessorsListProvider;
-import nordmods.uselessreptile.datagen.data.structure.URStructureProvider;
-import nordmods.uselessreptile.datagen.data.structure.URStructureSetProvider;
-import nordmods.uselessreptile.datagen.data.structure.URTemplatePoolProvider;
 import nordmods.uselessreptile.datagen.data.tags.*;
 import org.jspecify.annotations.NonNull;
 
@@ -56,10 +51,10 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(URModelProvider::new);
         pack.addProvider(URSoundsProvider::new);
 
-        pack.addProvider(URProcessorsListProvider::new);
-        pack.addProvider(URTemplatePoolProvider::new);
-        pack.addProvider(URStructureProvider::new);
-        pack.addProvider(URStructureSetProvider::new);
+//        pack.addProvider(URProcessorsListProvider::new);
+//        pack.addProvider(URTemplatePoolProvider::new);
+//        pack.addProvider(URStructureProvider::new);
+//        pack.addProvider(URStructureSetProvider::new);
     }
 
     @Override
@@ -72,10 +67,10 @@ public class UselessReptileDataGenerator implements DataGeneratorEntrypoint {
         registryBuilder.add(URResourceKeys.DRAGON_ABILITIES, URDragonAbilitiesProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_EQUIPMENT, UREquipmentProvider::register);
         registryBuilder.add(URResourceKeys.DRAGON_VARIANT, URDragonVariantProvider::register);
-        //todo remove structures
-        registryBuilder.add(Registries.PROCESSOR_LIST, URProcessorsListProvider::register);
-        registryBuilder.add(Registries.TEMPLATE_POOL, URTemplatePoolProvider::register);
-        registryBuilder.add(Registries.STRUCTURE, URStructureProvider::register);
-        registryBuilder.add(Registries.STRUCTURE_SET, URStructureSetProvider::register);
+
+//        registryBuilder.add(Registries.PROCESSOR_LIST, URProcessorsListProvider::register);
+//        registryBuilder.add(Registries.TEMPLATE_POOL, URTemplatePoolProvider::register);
+//        registryBuilder.add(Registries.STRUCTURE, URStructureProvider::register);
+//        registryBuilder.add(Registries.STRUCTURE_SET, URStructureSetProvider::register);
     }
 }
