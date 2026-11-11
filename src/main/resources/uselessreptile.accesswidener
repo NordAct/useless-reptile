@@ -16,3 +16,6 @@ accessible field net/minecraft/world/item/crafting/ShapedRecipe result Lnet/mine
 # Pathfinding
 accessible method net/minecraft/world/level/pathfinder/WalkNodeEvaluator hasCollisions (Lnet/minecraft/world/phys/AABB;)Z
 accessible method net/minecraft/world/entity/ai/navigation/PathNavigation shouldTargetNextNodeInDirection (Lnet/minecraft/world/phys/Vec3;)Z
+# Pack verification
+accessible field net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase pack Lnet/minecraft/server/packs/repository/Pack;
+accessible field net/minecraft/client/gui/screens/packs/TransferableSelectionList screen Lnet/minecraft/client/gui/screens/packs/PackSelectionScreen;

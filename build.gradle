@@ -4,7 +4,7 @@ plugins {
     id "me.modmuss50.mod-publish-plugin" version "2.2.0"
 }
 
-version = project.mod_version + "-" + project.minecraft_version
+version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
 
 repositories {

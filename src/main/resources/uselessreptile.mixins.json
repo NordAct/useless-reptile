@@ -27,6 +27,8 @@
     "client.gui.GuiMixin",
     "client.gui.ItemMixin",
     "client.gui.MinecraftMixin",
+    "client.pack.PackSelectionScreenMixin",
+    "client.pack.PackEntryMixin",
     "client.render.AvatarRendererMixin",
     "client.render.AvatarRenderStateMixin",
     "client.render.LivingEntityMixin",
