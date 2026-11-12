@@ -317,11 +317,12 @@
 
   "gui.uselessreptile.dragon_display_name": "Display Name: %s",
   "gui.uselessreptile.dragon_variant_name": "Variant: %s",
-  "gui.uselessreptile.pack_mod_version_mismatch": "%s requires Useless Reptile version %s, but currently version %s is installed",
+  "gui.uselessreptile.pack_mod_version_mismatch": "%s requires Useless Reptile version %s, but currently version %s is installed. This pack may fail to load correctly",
   "gui.uselessreptile.version_range": "from %s to %s",
   "gui.uselessreptile.version_range_below": "below %s",
   "gui.uselessreptile.version_range_above": "above %s",
   "gui.uselessreptile.version_inclusive": "%s (inclusive)",
+  "gui.uselessreptile.mod_version_incompatible": "Not compatible with installed mods",
 
   "command.uselessreptile.triggerlightningchaser.success": "Summoned challenger Lightning Chaser over %s",
   "command.uselessreptile.triggerlightningchaser.fail": "Could not summon challenger Lightning Chaser",

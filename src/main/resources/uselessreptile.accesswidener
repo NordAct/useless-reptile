@@ -18,4 +18,3 @@ accessible method net/minecraft/world/level/pathfinder/WalkNodeEvaluator hasColl
 accessible method net/minecraft/world/entity/ai/navigation/PathNavigation shouldTargetNextNodeInDirection (Lnet/minecraft/world/phys/Vec3;)Z
 # Pack verification
 accessible field net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase pack Lnet/minecraft/server/packs/repository/Pack;
-accessible field net/minecraft/client/gui/screens/packs/TransferableSelectionList screen Lnet/minecraft/client/gui/screens/packs/PackSelectionScreen;

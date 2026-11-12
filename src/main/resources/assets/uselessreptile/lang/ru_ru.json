@@ -318,6 +318,12 @@
 
   "gui.uselessreptile.dragon_display_name": "Отображаемое название: %s",
   "gui.uselessreptile.dragon_variant_name": "Вариант: %s",
+  "gui.uselessreptile.pack_mod_version_mismatch": "%s требует Useless Reptile версии %s, но в данный момент установлена %s. Этот набор может не загрузиться корректно",
+  "gui.uselessreptile.version_range": "от %s до %s",
+  "gui.uselessreptile.version_range_below": "ниже %s",
+  "gui.uselessreptile.version_range_above": "выше %s",
+  "gui.uselessreptile.version_inclusive": "%s (включительно)",
+  "gui.uselessreptile.mod_version_incompatible": "Несовместим с установленными модами",
 
   "command.uselessreptile.triggerlightningchaser.success": "Ловец молний был вызван над %s",
   "command.uselessreptile.triggerlightningchaser.fail": "Не удалось вызвать ловца молний",

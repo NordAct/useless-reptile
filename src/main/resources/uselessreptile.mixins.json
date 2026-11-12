@@ -14,6 +14,7 @@
     "common.misc.ItemStackMixin",
     "common.misc.LightningBoltMixin",
     "common.misc.MobCategoryMixin",
+    "common.pack.PackMixin",
     "common.misc.ServerPlayerMixin"
   ],
   "client": [
@@ -27,7 +28,6 @@
     "client.gui.GuiMixin",
     "client.gui.ItemMixin",
     "client.gui.MinecraftMixin",
-    "client.pack.PackSelectionScreenMixin",
     "client.pack.PackEntryMixin",
     "client.render.AvatarRendererMixin",
     "client.render.AvatarRenderStateMixin",

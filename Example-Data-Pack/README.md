@@ -15,6 +15,15 @@ List of directories and what they do:
 
 Each directory represents dynamic registry. Thus stuff in it can only be added or changed in them only when world is loaded (you have to restart it for changes to be applied). 
 
+Additionally, packs can specify supported mod version range by creating `uselessreptile.json` file in pack root:
+```java
+{
+    "mod_version": "x.y.z"
+}
+```
+Where `mod_version` is supported mod version range. Uses Fabric Loader's version schematic, more information on how to use it can be found here: https://docs.fabricmc.net/develop/loader/fabric-mod-json#semantic-versioning \
+Mod version range specification is supported for both data and resource packs
+
 Example data pack adds following:
 - Variants (by actual names):
   - Swamp Wyvern: `Barren Brown`, `Barren Orange`, `Ender`
