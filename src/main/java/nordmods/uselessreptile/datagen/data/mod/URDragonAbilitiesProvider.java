@@ -228,7 +228,7 @@ public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
                                 List.of(
                                         new MeleeAttackAbility.ConditionedAttackBox(
                                                 2.5f, 3.5f,
-                                                new Vec3(0, 0, 1.5),
+                                                new Vec3(0, 0.5, 1.5),
                                                 MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.SMOOTH,
                                                 List.of(new RideableUseCondition(false))
                                         ),

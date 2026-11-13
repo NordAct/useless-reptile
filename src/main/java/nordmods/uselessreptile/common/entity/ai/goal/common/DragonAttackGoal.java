@@ -18,7 +18,7 @@ public class DragonAttackGoal extends Goal {
     protected final double maxSearchDistance;
     protected int notMovingTimer = 0;
     protected int forceStopTimer = FORCE_STOP_MAX_TIME;
-    protected final static int FORCE_STOP_MAX_TIME = 200;
+    protected final static int FORCE_STOP_MAX_TIME = 20 * 60;
 
     public DragonAttackGoal(URDragonEntity mob) {
         this.mob = mob;
@@ -45,7 +45,7 @@ public class DragonAttackGoal extends Goal {
     public boolean canContinueToUse() {
         if (target == null) return false;
         if (!target.isAlive() || target.isRemoved()) return false;
-        if (mob.distanceToSqr(target) > maxSearchDistance) {
+        if (mob.getLastAttacker() != target && mob.distanceToSqr(target) > maxSearchDistance) {
             if (--forceStopTimer <= 0) return false;
         } else forceStopTimer = FORCE_STOP_MAX_TIME;
         return super.canContinueToUse();
@@ -89,22 +89,19 @@ public class DragonAttackGoal extends Goal {
 
         holder = mob.getAvailableAbilities()
                 .stream()
-                .filter(a -> a.getCooldown() <= 0)
+                .filter(a -> a.getAbility() instanceof MeleeAttackAbility && a.getAbility().canBeUsed(a) && a.getCooldown() <= 0)
                 .findAny();
         if (holder.isPresent()) {
             DragonAbilityHolder dragonAbilityHolder = holder.get();
-            if (dragonAbilityHolder.getAbility() instanceof MeleeAttackAbility meleeAttackAbility) {
-                double attackDistance = meleeAttackAbility.getAttackBox(dragonAbilityHolder).getCenter().distanceToSqr(mob.position());
-                double distance = mob.distanceToSqr(target);
-                if (attackDistance > distance && mob.getMoveControl() instanceof URDragonMoveControl control) control.moveBack();
-            }
+            double attackDistance = ((MeleeAttackAbility)dragonAbilityHolder.getAbility()).getAttackBox(dragonAbilityHolder).getCenter().distanceToSqr(mob.position());
+            double distance = mob.distanceToSqr(target);
+            if (attackDistance > distance && mob.getMoveControl() instanceof URDragonMoveControl control) control.moveBack();
         }
-
 
         if (notMovingTimer > 60 && mob.canGrief()) {
             holder = mob.getAvailableAbilities()
                     .stream()
-                    .filter(a -> a.getAbility().is(URTags.BREAKS_BLOCKS) && a.getCooldown() <= 0)
+                    .filter(a -> a.getAbility().is(URTags.BREAKS_BLOCKS) && a.getAbility().canUse(a))
                     .findAny();
 
             if (holder.isPresent()) {
@@ -118,6 +115,10 @@ public class DragonAttackGoal extends Goal {
     protected void tickMovement() {
         mob.setSprinting(true);
         mob.getNavigation().moveTo(target, 1);
-        mob.getLookControl().setLookAt(target);
+        if (!mob.getNavigation().isDone()) mob.getLookControl().setLookAt(target);
+        else {
+            mob.getLookControl().setLookAt(target.getX(), target.getEyeY(), target.getZ());
+            mob.getBodyRotationControl().setRotationTarget(target.getX(), target.getZ());
+        }
     }
 }

@@ -37,7 +37,7 @@ public class FlyingDragonLandNavigation<T extends URDragonEntity & FlyingDragon>
             xDiffTarget *= xDiffTarget;
             double zDiffTarget = mob.getZ() - target.getZ();
             zDiffTarget *= zDiffTarget;
-            boolean shouldFlyUp = target.distChessboard(path.getEndNode().asBlockPos()) > 2 || yDiffNode > mob.maxUpStep() || yDiffTarget > mob.maxUpStep() * 4 || Math.sqrt(xDiffTarget + zDiffTarget) > mob.getWanderRadius().radius;
+            boolean shouldFlyUp = path.getEndNode() != null && target.distChessboard(path.getEndNode().asBlockPos()) > 2 || yDiffNode > mob.maxUpStep() || yDiffTarget > mob.maxUpStep() * 4 || Math.sqrt(xDiffTarget + zDiffTarget) > mob.getWanderRadius().radius;
             if (shouldFlyUp) {
                 if (((DragonWalkNodeEvaluator)nodeEvaluator).fitsWithinBlock()) tryFly();
                 else  {

@@ -99,12 +99,13 @@ public class URDragonBaseAttributeValuesProvider extends FabricDynamicRegistryPr
                 MOLECLAW,
                 Util.make(() -> {
                     Map<Holder<Attribute>, Float> map = new HashMap<>();
-                    map.put(Attributes.ATTACK_DAMAGE, 8f);
+                    map.put(Attributes.ATTACK_DAMAGE, 10f);
                     map.put(Attributes.ATTACK_KNOCKBACK, 0.5f);
                     map.put(Attributes.MAX_HEALTH, 80f);
                     map.put(Attributes.ARMOR, 8f);
                     map.put(Attributes.ARMOR_TOUGHNESS, 4f);
                     map.put(Attributes.MOVEMENT_SPEED, 0.25f);
+                    map.put(Attributes.KNOCKBACK_RESISTANCE, 0.85f);
                     map.put(URAttributes.DRAGON_GROUND_ROTATION_SPEED, 6f);
                     map.put(URAttributes.DRAGON_MINING_LEVEL, 0f);
                     return map;

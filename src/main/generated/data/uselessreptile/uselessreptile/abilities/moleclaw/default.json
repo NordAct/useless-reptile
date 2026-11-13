@@ -73,7 +73,7 @@
       {
         "center_offset": [
           0.0,
-          0.0,
+          0.5,
           1.5
         ],
         "conditions": [

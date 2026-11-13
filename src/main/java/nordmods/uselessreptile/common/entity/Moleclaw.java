@@ -229,7 +229,7 @@ public class Moleclaw extends URRideableDragonEntity<Moleclaw> {
 
     @Override
     public boolean canAttack(@Nullable LivingEntity target) {
-        return super.canAttack(target) && !isTooBrightAtPos(target.getOnPos());
+        return super.canAttack(target) && !isPanicking() && !isTooBrightAtPos(target.getOnPos());
     }
 
     @Override

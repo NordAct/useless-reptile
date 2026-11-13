@@ -39,21 +39,39 @@ public class BlockBreakingMeleeAttackAbility extends MeleeAttackAbility{
         if (!entity.canGrief()) return;
 
         Iterable<BlockPos> blocks = BlockPos.betweenClosed(getAttackBox(holder));
-        float maxMiningLevel = (float) entity.getAttributeValue(URAttributes.DRAGON_MINING_LEVEL);
-        if (entity.hasEffect(MobEffects.STRENGTH)) maxMiningLevel += entity.getEffect(MobEffects.STRENGTH).getAmplifier() + 1;
-        if (entity.hasEffect(MobEffects.WEAKNESS)) maxMiningLevel -= entity.getEffect(MobEffects.WEAKNESS).getAmplifier() + 1;
+        int maxMiningLevel = getMaxMiningLevel(holder);
         for (BlockPos blockPos : blocks) {
             if (entity.isBlockProtected(blockPos)) continue;
 
             BlockState blockState = entity.level().getBlockState(blockPos);
             if (blockState.getBlock().defaultDestroyTime() < 0) continue;
 
-            float miningLevel = DragonGetBlockMiningLevelEvent.EVENT.invoker().getMiningLevel(blockState);
-            if (!blockState.isAir() && miningLevel <= maxMiningLevel) {
+            if (isBlockBreakable(blockState, maxMiningLevel)) {
                 boolean shouldDrop = entity.getRandom().nextDouble() * 100 <= URConfig.getConfig().blockDropChance;
                 entity.level().destroyBlock(blockPos, shouldDrop, entity);
             }
         }
+    }
+
+    @Override
+    public boolean isTargetInRange(DragonAbilityHolder holder) {
+        if (super.isTargetInRange(holder)) return true;
+        if (holder.getEntity().isMoving()) return false;
+        int dragonMiningLevel = getMaxMiningLevel(holder);
+        return holder.getEntity().level().getBlockStates(getAttackBox(holder)).anyMatch(state -> isBlockBreakable(state, dragonMiningLevel));
+    }
+
+    protected boolean isBlockBreakable(BlockState blockState, int maxMiningLevel) {
+        float miningLevel = DragonGetBlockMiningLevelEvent.EVENT.invoker().getMiningLevel(blockState);
+        return !blockState.isAir() && miningLevel <= maxMiningLevel;
+    }
+
+    protected int getMaxMiningLevel(DragonAbilityHolder holder) {
+        URDragonEntity entity = holder.getEntity();
+        int maxMiningLevel = (int) entity.getAttributeValue(URAttributes.DRAGON_MINING_LEVEL);
+        if (entity.hasEffect(MobEffects.STRENGTH)) maxMiningLevel += entity.getEffect(MobEffects.STRENGTH).getAmplifier() + 1;
+        if (entity.hasEffect(MobEffects.WEAKNESS)) maxMiningLevel -= entity.getEffect(MobEffects.WEAKNESS).getAmplifier() + 1;
+        return maxMiningLevel;
     }
 
     @Override
