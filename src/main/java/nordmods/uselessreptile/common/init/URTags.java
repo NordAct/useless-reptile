@@ -25,6 +25,7 @@ public class URTags {
 
     public static final TagKey<Item> PROTECTS_MOLECLAW_FROM_LIGHT = register(Registries.ITEM, "protects_moleclaw_from_light");
     public static final TagKey<Item> VORTEX_HORNS = register(Registries.ITEM, "vortex_horns");
+    public static final TagKey<Item> DISPLAYS_DRAGON_INFO_ON_USE = register(Registries.ITEM, "displays_dragon_info_on_use");
 
     public static final TagKey<DimensionType> DEPLETED_MAGMA_REGENERATES = register(Registries.DIMENSION_TYPE, "depleted_magma_regenerates");
 

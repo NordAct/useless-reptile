@@ -8,6 +8,6 @@
   "minecraft:movement_speed": 0.25,
   "uselessreptile:dragon.acceleration_duration": 800.0,
   "uselessreptile:dragon.flying_rotation_speed": 7.0,
-  "uselessreptile:dragon.ground_rotation_speed": 98.0,
+  "uselessreptile:dragon.ground_rotation_speed": 8.0,
   "uselessreptile:dragon.vertical_speed": 0.3
 }

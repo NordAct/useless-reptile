@@ -1056,7 +1056,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    protected @NonNull Component getTypeName() {
+    public @NonNull Component getTypeName() {
         if (defaultDisplayName == null) {
             DragonVariant variant = getDragonVariant();
             if (!isInvalidVariant() && variant.common().displayNameKey().isPresent()) defaultDisplayName = Component.translatable(variant.common().displayNameKey().get());
@@ -1114,7 +1114,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public boolean isTameable() {
-        return !isTame() && getTamingProgress() >= 0;
+        return !isTame() && getBaseTamingProgress() >= 0 && getTamingProgress() >= 0;
     }
 
     public final boolean isSaddle(ItemStack itemStack) {

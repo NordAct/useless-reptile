@@ -273,8 +273,11 @@
   "attribute.name.dragon.vertical_speed": "Вертикальная скорость",
   "attribute.name.moleclaw.mining_level": "Уровень добычи",
 
-  "config.jade.plugin_uselessreptile.dragon_variant": "Вариант дракона",
-  "variant.uselessreptile": "Вариант дракона: %s",
+  "config.jade.plugin_uselessreptile.dragon_info": "Информация о драконе",
+  "variant.uselessreptile": "Вариант: %s",
+  "variant.uselessreptile.taming_progress": "Прогресс приручения: %s",
+  "variant.uselessreptile.untameable": "Невозможно приручить",
+  "variant.uselessreptile.tamed": "Приручен",
   "variant.uselessreptile.wyvern.brown": "Коричневый",
   "variant.uselessreptile.wyvern.green": "Зеленый",
   "variant.uselessreptile.wyvern.jeb_": "jeb_",

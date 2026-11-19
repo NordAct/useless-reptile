@@ -59,3 +59,5 @@ Also in general this update is very big from side of reworking mod's internals, 
 - Added command `/uselessreptile listvariants` that lets you see all available for spawn variants for specific position in world
 - A lot of improvements were made to combat ai and dragon pathfinding. If it feels different, it's because it is
 - Added `uselessreptile:dragon_placeholder` block for assisting with spawning dragons that have issues with being spawned via placing structure directly. Can be only placed via setblock command currently
+- Added taming progress tooltip to Jade integration. If dragon is untameable, tooltip will say it's untameable instead
+- Added ability to use spyglass to see general information on dragon. Provides same information as Jade integration and additionally works way further than player's reach distance

@@ -71,7 +71,7 @@ public class URDragonBaseAttributeValuesProvider extends FabricDynamicRegistryPr
                     map.put(Attributes.MOVEMENT_SPEED, 0.25f);
                     map.put(Attributes.FLYING_SPEED, 0.9f);
                     map.put(URAttributes.DRAGON_ACCELERATION_DURATION, 800f);
-                    map.put(URAttributes.DRAGON_GROUND_ROTATION_SPEED, 98f);
+                    map.put(URAttributes.DRAGON_GROUND_ROTATION_SPEED, 8f);
                     map.put(URAttributes.DRAGON_FLYING_ROTATION_SPEED, 7f);
                     map.put(URAttributes.DRAGON_VERTICAL_SPEED, 0.3f);
                     return map;
