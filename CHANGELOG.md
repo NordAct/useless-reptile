@@ -42,12 +42,12 @@ Also in general this update is very big from side of reworking mod's internals, 
   - Camera will also tilt depending on roll of bone passenger position locator belongs to. This behavior can be disabled in client config
 
 - Added griefing config options for all dragons
-  - Removed "Dragon Madness" config options since it's functionality is now redundant. You can make dragons target players using datapack instead
-  - Removed most of the mob attribute config options since their functionality is now redundant. You can change base attribute values of dragons with datapack instead
   - Griefing options affect targeting behavior that is not caused by player, River Pikehorn's hunting and some projectiles destructive behavior. If projectiles not from the mod cause land destruction, they are not affected by this option
 
+- Removed "Dragon Madness" config options since it's functionality is now redundant. You can make dragons target players using datapack instead
+- Removed most of the mob attribute config options since their functionality is now redundant. You can change base attribute values of dragons with datapack instead
 - Updated animations and models for all dragons and saddles if they got them
-
+- Added support for supported mod version range specification for resource and data packs
 - River Pikehorns no longer will hunt Pufferfish by default. They still may pick it up and eat if it's lying around as item. Foolish creatures
 - Untamed Swamp Wyverns will now head straight towards food item lying on ground if they spot any. No more completely pointless chicken killing
   - You also can use this to make Swamp Wyvern land if you're done waiting for it to land
@@ -57,3 +57,5 @@ Also in general this update is very big from side of reworking mod's internals, 
 - Lightning Chaser spawn event now checks for visible sky instead of world height that was hardcoded to y > 63
 - Added command `/uselessreptile triggerligtningchaser` to trigger its spawn manually (in same way it happens during thunderstorm)
 - Added command `/uselessreptile listvariants` that lets you see all available for spawn variants for specific position in world
+- A lot of improvements were made to combat ai and dragon pathfinding. If it feels different, it's because it is
+- Added `uselessreptile:dragon_placeholder` block for assisting with spawning dragons that have issues with being spawned via placing structure directly. Can be only placed via setblock command currently
