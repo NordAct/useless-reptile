@@ -61,3 +61,4 @@ Also in general this update is very big from side of reworking mod's internals, 
 - Added `uselessreptile:dragon_placeholder` block for assisting with spawning dragons that have issues with being spawned via placing structure directly. Can be only placed via setblock command currently
 - Added taming progress tooltip to Jade integration. If dragon is untameable, tooltip will say it's untameable instead
 - Added ability to use spyglass to see general information on dragon. Provides same information as Jade integration and additionally works way further than player's reach distance
+- Added copper dragon armor set
