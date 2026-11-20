@@ -2,12 +2,12 @@
 Useless Reptile is a Fabric mod that aimed to bring some dragons into your world that you can tame (or kill).
 **Warning:** mod is Work-in-Progress and a lot of stuff may change in the future updates.
 
-The following description is relevant for mod version 0.13.x\
+The following description is relevant for mod version 0.15.x\
 To report issue with mod, either do that on [Discord Server](https://discord.gg/JjYE4vEf3s) or [GitHub Issues](https://github.com/NordAct/useless-reptile/issues) page
 
 Minecraft version support:
 - 26.1
-- Latest Minecraft Version
+- Latest Minecraft Release Version
 
 Versions between 26.1 and latest are automatically discontinued when new game version is released. Everything below 26.1 is also not supported\
 *If you ask for backport, I'll steal your kneecaps*
@@ -41,12 +41,12 @@ Some mod versions for 1.19.2 may require [AzureLib](https://modrinth.com/mod/azu
 
 
 - **Magmamuncher** - can be found in The Nether near lava lakes. To tame you have to give it 4-12 Blaze Rods. From time to time will attempt to dig up Magma Blocks, turning those into Depleted Magma blocks and sometimes digging up coal in process. Depleted Magma can turn back into magma over time if placed in either The Nether or near lava. \
- Dragon itself can be put on head similarly to River Pikehorn. When on head, if it has any furnace fuel items in inventory, it can consume those to apply Fire Resistance effect on its owner if they manage to catch on fire. \
- Dragon has only melee attacks with chance to set target on fire. Immune to fire.
+  Dragon itself can be put on head similarly to River Pikehorn. When on head, if it has any furnace fuel items in inventory, it can consume those to apply Fire Resistance effect on its owner if they manage to catch on fire. \
+  Dragon has only melee attacks with chance to set target on fire. Immune to fire.
 
 ### Items
 - **Vortex Horn** - upgraded version of Goat Horn that can be used to store your dragons inside it
-- **Flute** - special item, that allows you to give out commands on distance to your dragons
+- **Flute** - special item, that allows you versatile control over your dragons on distance
 - **Wyvern Skin** - initially supposed to be a crafting material for *something*, but currently can only be used to get 2 Leather
 - **Dual Saddle** - upgraded version of normal saddle. Can be equipped on Swamp Wyvern and used to ride with another player together
 - **Variant Changing Orb** - utility item, obtainable only via Creative Mode or commands. Allows to easily change any dragon variant
@@ -57,6 +57,7 @@ Some mod versions for 1.19.2 may require [AzureLib](https://modrinth.com/mod/azu
 - You can give normal potions to your dragon while crouching.
 - To open dragon's inventory, crouch and right-click on dragon with something that is not stick, potion or goat horn.
 - Rideable dragons can equip **banners** and display them as long as saddle is presented.
+- Using Spyglass lets you see name of dragon's variant and current taming progress (or if you even can tame it)
 
 ### Command menu
 Once you open inventory, you can notice several buttons on the left. This is dragon's command menu. Each button does the following:
@@ -81,6 +82,11 @@ You can read more about those features and see examples here:
 - [Example Resource Pack](https://github.com/NordAct/useless-reptile/tree/26.1/Example-Resource-Pack)
 
 *Note: if you need to see example packs for another game version, change branch to one with name that matches your game version*
+
+### Chat Commands
+Mod comes with few commands that were manually made to assist in debugging
+- `/uselessreptile triggerligtningchaser` - triggers event that summons Lightning Chaser
+- `/uselessreptile listvariants` - lets you see all available for spawn variants for specific position in world
 
 ## FAQ
 **Q:** I found a bug! How can I report it?\
