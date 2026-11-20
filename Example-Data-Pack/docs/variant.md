@@ -12,7 +12,7 @@ All fields must be specified unless stated otherwise
   - `uselessreptile:lightning_chaser`
   - `uselessreptile:magmamuncher`
 - `name` - dragon's variant name as it'll be stored in entity NBT data. Generally recommended to use only lowercase letters with no spaces for it to avoid any possible issues, but on practice all characters are accepted. Each name must be unique for specified type to avoid any possible collision
-- `variant_name_key` - translation key for variant name. Used to display variant name in Jade integration and Variant Changing Orb item
+- `variant_name_key` - translation key for variant name. Used to display variant name in Jade integration, Variant Changing Orb item and when using Spyglass
 - `display_name_key` - optional, translation key for dragon's display name. Replaces default displayed entity name if present
 - `dragon_model` - location of `dragon_model` file. Defines variant's appearance. [See documentation](./dragon_model.md)
 - `equipment` - location of `equipment` file. Defines what equipment variant can have. [See documentation](./equipment.md)
