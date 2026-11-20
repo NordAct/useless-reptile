@@ -32,5 +32,8 @@ public class URBiomeTagsProvider extends FabricTagsProvider<Biome>{
 
         getOrCreateRawBuilder(URTags.MAGMAMUNCHER_SPAWN_BLACKLIST)
                 .addOptionalTag(ConventionalBiomeTags.NO_DEFAULT_MONSTERS.location());
+
+        getOrCreateRawBuilder(URTags.HAS_LIGHTNING_CHASER_NEST_DESERT)
+                .addOptionalTag(ConventionalBiomeTags.IS_DRY.location());
     }
 }

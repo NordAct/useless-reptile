@@ -5,6 +5,7 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
 import net.fabricmc.loader.api.FabricLoader;
 import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.util.duck.LightningChaserSpawnTimer;
 
 public class URConfig {
     public static final ConfigClassHandler<URConfig> CONFIG = ConfigClassHandler.createBuilder(URConfig.class)
@@ -16,7 +17,7 @@ public class URConfig {
             .build();
 
     //COMMON
-    @SerialEntry(comment = "IN WORLD SPAWN \nNatural spawn means dragon can spawn randomly in same manner as any other normal mob if conditions are met")
+    @SerialEntry(comment = "Note: you can edit this config in game by installing Mod Menu and opening config menu in it \nIN WORLD SPAWN \nNatural spawn means dragon can spawn randomly in same manner as any other normal mob if conditions are met")
     public boolean naturalWyvernSpawn = true;
     @SerialEntry
     public boolean naturalMoleclawSpawn = true;
@@ -30,7 +31,7 @@ public class URConfig {
     @SerialEntry(comment = "Defines a chance of Lightning Chaser spawning near player during thunderstorms each 30 seconds (1200 ticks)")
     public int lightningChaserThunderstormSpawnChance = 10;
     @SerialEntry(comment = "Amount of time (in ticks) that must pass before Lightning Chaser can attempt to spawn near the same player")
-    public int lightningChaserThunderstormSpawnTimerCooldown = 24000;
+    public int lightningChaserThunderstormSpawnTimerCooldown = LightningChaserSpawnTimer.DEFAULT_SPAWN_COOLDOWN;
     @SerialEntry(comment = "MOB CATEGORIES CAPACITIES")
     public int dragonCategoryCapacity = 2;
     @SerialEntry
@@ -60,6 +61,10 @@ public class URConfig {
     @SerialEntry(comment = "BEHAVIOUR \nPossible values for griefing: ALL, TAMED, DISABLED")
     public DragonGriefing moleclawGriefing = DragonGriefing.ALL;
     @SerialEntry
+    public DragonGriefing wyvernGriefing = DragonGriefing.ALL;
+    @SerialEntry
+    public DragonGriefing riverPikehornGriefing = DragonGriefing.ALL;
+    @SerialEntry
     public DragonGriefing lightningChaserGriefing = DragonGriefing.ALL;
     @SerialEntry
     public DragonGriefing magmamuncherGriefing = DragonGriefing.ALL;
@@ -67,8 +72,6 @@ public class URConfig {
     public int blockDropChance = 100;
     @SerialEntry(comment = "allows dragon to teleport to owner whenever it tries to follow")
     public boolean allowDragonTeleport = true;
-    @SerialEntry
-    public boolean dragonMadness = false;
     @SerialEntry(comment = "Defines for how long fire resistance from Magmamuncher consuming fuel item will last.\n Setting value to 0 will disable this feature")
     public float magmamuncherFireResistanceTimeMultiplier = 0.09375f;
 
@@ -81,20 +84,20 @@ public class URConfig {
         TAMED(false, true),
         DISABLED(false, false);
 
-        private final boolean untamedBreaking;
-        private final boolean tamedBreaking;
+        private final boolean untamedGriefing;
+        private final boolean tamedGriefing;
 
-        DragonGriefing(boolean untamedBreaking, boolean tamedBreaking) {
-            this.untamedBreaking = untamedBreaking;
-            this.tamedBreaking = tamedBreaking;
+        DragonGriefing(boolean untamedGriefing, boolean tamedGriefing) {
+            this.untamedGriefing = untamedGriefing;
+            this.tamedGriefing = tamedGriefing;
         }
 
-        public boolean canUntamedBreak() {
-            return untamedBreaking;
+        public boolean canUntamedGiref() {
+            return untamedGriefing;
         }
 
-        public boolean canTamedBreak() {
-            return tamedBreaking;
+        public boolean canTamedGrief() {
+            return tamedGriefing;
         }
     }
 

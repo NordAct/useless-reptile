@@ -25,7 +25,7 @@ public class URDragonMenu extends AbstractContainerMenu {
         if (inventory.hasSaddle) {
             addSlot(new DragonEquipmentSlot(inventory, DragonInventory.SADDLE_INDEX, EDGE_OFFSET, SLOT_SIDE) {
                 public boolean mayPickup(@NonNull Player playerEntity) {
-                    return !(playerEntity.getVehicle() instanceof URRideableDragonEntity);
+                    return !(playerEntity.getVehicle() instanceof URRideableDragonEntity<?>);
                 }
             });
             addSlot(new DragonEquipmentSlot(inventory, DragonInventory.BANNER_INDEX, EDGE_OFFSET, SLOT_SIDE *2));

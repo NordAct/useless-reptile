@@ -2,12 +2,13 @@ package nordmods.uselessreptile.common.entity.base;
 
 import eu.pb4.common.protection.api.CommonProtection;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.ints.Int2FloatArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.Vec3i;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.PlainTextContents;
@@ -24,17 +25,21 @@ import net.minecraft.server.players.NameAndId;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.ByIdMap;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.*;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.attributes.*;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -48,6 +53,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.*;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.level.storage.ValueInput;
@@ -55,45 +61,47 @@ import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
+import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.asset_cache.AssetCahceOwner;
-import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
+import nordmods.uselessreptile.common.asset_cache.AssetCahceOwner;
+import nordmods.uselessreptile.common.asset_cache.DragonAssetCache;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
+import nordmods.uselessreptile.common.dragon_ability.type.MeleeAttackAbility;
 import nordmods.uselessreptile.common.dragon_variant.CommonDragonVariantData;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
+import nordmods.uselessreptile.common.dragon_variant.InteractionSettings;
 import nordmods.uselessreptile.common.dragon_variant.model.DragonModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.spawn.DragonSpawnUtil;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.RiverPikehorn;
-import nordmods.uselessreptile.common.entity.ai.control.DragonLookControl;
-import nordmods.uselessreptile.common.entity.ai.control.LandDragonMoveControl;
-import nordmods.uselessreptile.common.entity.ai.navigation.DragonNavigation;
+import nordmods.uselessreptile.common.entity.ai.control.*;
+import nordmods.uselessreptile.common.entity.ai.navigation.LandDragonNavigation;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.entity.misc.ShootingPoint;
 import nordmods.uselessreptile.common.event.DragonOnItemConsumedEvent;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
 import nordmods.uselessreptile.common.init.*;
-import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.item.FluteItem;
+import nordmods.uselessreptile.common.item.VortexHornItem;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
+import nordmods.uselessreptile.common.entity.misc.URDragonAnimationController;
 import nordmods.uselessreptile.common.util.duck.HeadMountDragonOwner;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public abstract class URDragonEntity extends TamableAnimal implements BRAnimatedObject, MenuProvider, AssetCahceOwner {
     public static final int TRANSITION_TICKS = 10;
-    protected float pitchLimitGround = 90;
-    protected int primaryAttackDuration = 20;
-    protected int secondaryAttackDuration = 20;
-    protected int specialAttackDuration = 20;
+    private int pitchLimit = 90;
+    private int yawLimit = 75;
+    private int pitchTargetLimit = 90;
+    private int yawTargetLimit = 75;
     protected int eatFromInventoryTimer = 20;
     protected int ticksUntilHeal = -1;
     protected float sprintSpeedModifier = 1.1f;
@@ -111,86 +119,95 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public boolean shouldFollow = false;
     protected Component defaultDisplayName;
     public static final Map<DragonVariant, Map<String, SoundInfo>> SOUND_INFO_HOLDER = new HashMap<>();
-    public static final Identifier VARIANT_BONUS_MODIFIER = UselessReptile.id("variant_bonus");
     public static final Identifier SPEED_MODIFIER_BONUS = UselessReptile.id("speed_modifier");
     private DragonVariant dragonVariant;
     private boolean invalidVariant;
-    private Map<Identifier, EquipmentModelData.Equipment> dragonEquipment;
+    private Map<Holder<Item>, EquipmentModelData.Equipment> dragonEquipment;
     //asset location caching so mod doesn't have to make stupid amount of checks if file even exists each frame
     private final DragonAssetCache assetCache = new DragonAssetCache();
+    private final URDragonAnimationController<URDragonEntity> mainController = new URDragonAnimationController<>(this, true);
+    private final URDragonAnimationController<URDragonEntity> abilityController = new URDragonAnimationController<>(this, false) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final URDragonAnimationController<URDragonEntity> blinkController = new URDragonAnimationController<>(this, true) {
+        @Override
+        public float getDefaultTransitionTime() {
+            return 0;
+        }
+    };
+    private final Map<AnimationController, BRAnimationController> controllers = Map.of(
+            AnimationController.MAIN , mainController,
+            AnimationController.ABILITY, abilityController,
+            AnimationController.BLINK , blinkController
+    );
+    protected final LinkedList<BRAnimationController> controllerList = new LinkedList<>(List.of(mainController, abilityController, blinkController));
+    private final Int2ObjectOpenHashMap<DragonAbilityHolder> abilityHolders = new Int2ObjectOpenHashMap<>();
+    private List<DragonAbilityHolder> availableAbilities = List.of();
     private static final List<FluteItem.FluteMode> FLUTE_MODES = List.of(
             URFluteModes.CALL,
             URFluteModes.SIT_DOWN,
             URFluteModes.STAND_UP,
             URFluteModes.TARGET
     );
+    public float yBodyRotChange = 0;
+    private final LinkedList<Float> yBodyRotChangeO = new LinkedList<>();
+    protected int maxYBodyRotChangeSamples = 10;
+    public float xBodyRot = 0;
+    private final LinkedList<Float> xBodyRotO = new LinkedList<>();
+    protected int maxXBodyRotSamples = 10;
+    private static final Vec3i ITEM_PICKUP_REACH = new Vec3i(1, 1, 1);
 
     protected URDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
-        navigation = new DragonNavigation(this, world);
-        lookControl = new DragonLookControl(this);
+        navigation = new LandDragonNavigation(this, world);
+        lookControl = new WrappedDragonLookControl<>(new DragonLookControl<>(this));
         moveControl = new LandDragonMoveControl<>(this);
+    }
+
+    @Override
+    public final LinkedList<BRAnimationController> getAnimationControllers() {
+        return controllerList;
     }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
         builder.define(MOVING_BACKWARDS, false);
+        builder.define(MOVING, false);
         builder.define(DANCING, false);
-        builder.define(TURNING_STATE, (byte)0);//1 - left, 2 - right, 0 - straight
-        builder.define(ROTATION_PROGRESS, (byte)0);
+        builder.define(TURNING_STATE, TurningState.NONE);
         builder.define(TAMING_PROGRESS, 1);
-        builder.define(ATTACK_TYPE, 1);
-        builder.define(MOUNTED_OFFSET, 0.35f);
-        builder.define(HEIGHT_MODIFIER, 1f);
-        builder.define(WIDTH_MODIFIER, 1f);
-        builder.define(SECONDARY_ATTACK_COOLDOWN, 0);
-        builder.define(PRIMARY_ATTACK_COOLDOWN, 0);
-        builder.define(SPECIAL_ATTACK_COOLDOWN, 0);
         builder.define(ACCELERATION_DURATION, 0);
         builder.define(BOUNDED_INSTRUMENT_SOUND, "");
         builder.define(VARIANT, "");
         builder.define(CURRENT_ORDER, Order.FOLLOW);
         builder.define(PREVIOUS_ORDER, Order.SIT);
         builder.define(WANDER_RADIUS, WanderRadius.MEDIUM);
+        builder.define(LOOK_TARGET_YAW, Optional.empty());
+        builder.define(SERVER_BODY_YAW, yBodyRot);
+        builder.define(ABILITY_COOLDOWNS, new Int2FloatArrayMap());
     }
 
     public static final EntityDataAccessor<Boolean> MOVING_BACKWARDS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> MOVING = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> DANCING = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Byte> TURNING_STATE = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BYTE);
-    public static final EntityDataAccessor<Byte> ROTATION_PROGRESS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.BYTE);
+    public static final EntityDataAccessor<TurningState> TURNING_STATE = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.TURNING_STATE);
     public static final EntityDataAccessor<Integer> TAMING_PROGRESS = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Float> MOUNTED_OFFSET = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Float> HEIGHT_MODIFIER = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Float> WIDTH_MODIFIER = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<Integer> SECONDARY_ATTACK_COOLDOWN = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer> PRIMARY_ATTACK_COOLDOWN = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer> SPECIAL_ATTACK_COOLDOWN = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Integer> ACCELERATION_DURATION = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
-    public static final EntityDataAccessor<Integer> ATTACK_TYPE = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<String> BOUNDED_INSTRUMENT_SOUND = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<String> VARIANT = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.STRING);
     public static final EntityDataAccessor<Order> CURRENT_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
     public static final EntityDataAccessor<Order> PREVIOUS_ORDER = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.ORDER);
     public static final EntityDataAccessor<WanderRadius> WANDER_RADIUS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.WANDER_RADIUS);
-
-    public boolean isSecondaryAttack() {return getSecondaryAttackCooldown() > getMaxSecondaryAttackCooldown() - secondaryAttackDuration;} //old melee
-    public int getSecondaryAttackCooldown() {return  entityData.get(SECONDARY_ATTACK_COOLDOWN);}
-    public void setSecondaryAttackCooldown(int state) {entityData.set(SECONDARY_ATTACK_COOLDOWN, state);}
-
-    public boolean isPrimaryAttack() {return getPrimaryAttackCooldown() > getMaxPrimaryAttackCooldown() - primaryAttackDuration;} //old range
-    public void setPrimaryAttackCooldown(int state) {entityData.set(PRIMARY_ATTACK_COOLDOWN, state);}
-    public int getPrimaryAttackCooldown() {return  entityData.get(PRIMARY_ATTACK_COOLDOWN);}
-
-    public boolean isSpecialAttack() {return getSpecialAttackCooldown() > getMaxSpecialAttackCooldown() - specialAttackDuration;}
-    public void setSpecialAttackCooldown(int state) {entityData.set(SPECIAL_ATTACK_COOLDOWN, state);}
-    public int getSpecialAttackCooldown() {return  entityData.get(SPECIAL_ATTACK_COOLDOWN);}
+    public static final EntityDataAccessor<Optional<Float>> LOOK_TARGET_YAW = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.OPTIONAL_FLOAT);
+    public static final EntityDataAccessor<Float> SERVER_BODY_YAW = SynchedEntityData.defineId(URDragonEntity.class, EntityDataSerializers.FLOAT);
+    public static final EntityDataAccessor<Int2FloatArrayMap> ABILITY_COOLDOWNS = SynchedEntityData.defineId(URDragonEntity.class, UREntityDataSerializers.INT_TO_FLOAT_MAP);
 
     public int getAccelerationDuration() {return entityData.get(ACCELERATION_DURATION);}
     public void setAccelerationDuration(int state) {entityData.set(ACCELERATION_DURATION, state);}
-
-    public int getAttackType() {return entityData.get(ATTACK_TYPE);}
-    public void setAttackType(int state) {entityData.set(ATTACK_TYPE, state);}
 
     public boolean isMovingBackwards() {return entityData.get(MOVING_BACKWARDS);}
     public void setMovingBackwards(boolean state) {entityData.set(MOVING_BACKWARDS, state);}
@@ -198,7 +215,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public boolean isDancing() {return entityData.get(DANCING);}
     public void setDancing(boolean state) {entityData.set(DANCING, state);}
 
-    public boolean isMoving() {return getDeltaMovement().z() != 0 || getDeltaMovement().x() != 0;}
+    public boolean isMoving() {return entityData.get(MOVING);}
+    public void setMoving(boolean state) {entityData.set(MOVING, state);}
 
     @Override
     public boolean isOrderedToSit() {
@@ -228,27 +246,20 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public String getVariant() {return entityData.get(VARIANT);}
     public void setVariant(String state) {entityData.set(VARIANT, state);}
 
-    public byte getTurningState() {return entityData.get(TURNING_STATE);}
-    public void setTurningState(byte state) {entityData.set(TURNING_STATE, state);}
-
-    public byte getRotationProgress() {return entityData.get(ROTATION_PROGRESS);}
-    public float getNormalizedRotationProgress() {return (float)getRotationProgress()/(float)TRANSITION_TICKS;}
-    public void setRotationProgress(byte state) {entityData.set(ROTATION_PROGRESS, state);}
+    public TurningState getTurningState() {return entityData.get(TURNING_STATE);}
+    public void setTurningState(TurningState state) {entityData.set(TURNING_STATE, state);}
 
     public int getTamingProgress() {return entityData.get(TAMING_PROGRESS);}
     public void setTamingProgress(int state) {entityData.set(TAMING_PROGRESS, state);}
 
-    public float getMountedOffset() {return entityData.get(MOUNTED_OFFSET);}
-    public void setMountedOffset(float state) {entityData.set(MOUNTED_OFFSET, state);}
-
-    public float getHeightMod() {return entityData.get(HEIGHT_MODIFIER);}
-    public void setHeightMod(float state) {entityData.set(HEIGHT_MODIFIER, state);}
-
-    public float getWidthMod() {return entityData.get(WIDTH_MODIFIER);}
-    public void setWidthMod(float state) {entityData.set(WIDTH_MODIFIER, state);}
-
     public String getBoundedInstrumentSound() {return  entityData.get(BOUNDED_INSTRUMENT_SOUND);}
     public void setBoundedInstrumentSound(String state) {entityData.set(BOUNDED_INSTRUMENT_SOUND, state);}
+
+    public Optional<Float> getLookTargetYaw() {return entityData.get(LOOK_TARGET_YAW);}
+    public void setLookTargetYaw(Optional<Float> state) {entityData.set(LOOK_TARGET_YAW, state);}
+
+    public float getServerBodyYaw() {return entityData.get(SERVER_BODY_YAW);}
+    public void setServerBodyYaw(float state) {entityData.set(SERVER_BODY_YAW, state);}
 
     @NonNull
     public DragonVariant getDragonVariant() {
@@ -262,7 +273,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return dragonVariant;
     }
 
-    public Map<Identifier, EquipmentModelData.Equipment> getDragonEquipment() {
+    public Map<Holder<Item>, EquipmentModelData.Equipment> getDragonEquipment() {
         if (dragonEquipment == null) {
             dragonEquipment = DragonVariantUtil.getEquipmentModelDataMap(getDragonVariant(), level().registryAccess());
         }
@@ -327,14 +338,38 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
         super.onSyncedDataUpdated(data);
         if (VARIANT.equals(data)) {
-            removeVariantModifiers();
-            applyVariantModifiers();
             clearVariant();
-
-            DragonInventory newInventory = createInventory();
-            if (inventory != null) inventory.forEach(newInventory::addItem);
-            inventory = newInventory;
+            updateVariantAttributes();
+            updateInventory();
+            updateAbilities();
         }
+        if (level().isClientSide()) {
+            if (ABILITY_COOLDOWNS.equals(data)) {
+                entityData.get(ABILITY_COOLDOWNS).forEach((id, cooldown) -> {
+                    if (abilityHolders.containsKey(id)) {
+                        DragonAbilityHolder holder = abilityHolders.get(id);
+                        if (holder.getCooldown() < cooldown) holder.useUnchecked();
+                        holder.setCooldown(cooldown);
+                    }
+                });
+            }
+        }
+    }
+
+    protected void updateAbilities() {
+        abilityHolders.clear();
+        CommonDragonVariantData variant = getDragonVariant().common();
+
+        List<DragonAbility> abilities = variant.abilities().value();
+        for (int i = 0; i < abilities.size(); i++) {
+            abilityHolders.put(i, abilities.get(i).createAbilityHolder(this));
+        }
+    }
+
+    private void updateInventory() {
+        DragonInventory newInventory = createInventory();
+        if (inventory != null) inventory.forEach(newInventory::addItem);
+        inventory = newInventory;
     }
 
     public void clearVariant() {
@@ -345,36 +380,20 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         dragonEquipment = null;
     }
 
-    private void applyVariantModifiers() {
+    private void updateVariantAttributes() {
         CommonDragonVariantData variant = getDragonVariant().common();
         if (variant == null) {
-            UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}). No variant attribute modifiers will be applied", getVariant(), getDragonId());
+            UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}). No variant attribute base values will be applied", getVariant(), getDragonId());
             return;
         }
 
-        variant.variantAttributeModifiers().ifPresent(id -> {
-            List<AttributeModifier> modifiers = registryAccess().lookupOrThrow(URResourceKeys.DRAGON_VARIANT_ATTRIBUTE_MODIFIERS).getValue(id);
-            if (modifiers != null) modifiers.forEach(entityAttributeModifier -> {
-                Attribute attribute = registryAccess().lookupOrThrow(Registries.ATTRIBUTE).getValue(entityAttributeModifier.id());
-                if (attribute != null) {
-                    AttributeInstance entityAttributeInstance = getAttribute(
-                            registryAccess()
-                                    .lookupOrThrow(Registries.ATTRIBUTE)
-                                    .get(entityAttributeModifier.id()).get()
-                    );
-                    if (entityAttributeInstance != null && !entityAttributeInstance.hasModifier(VARIANT_BONUS_MODIFIER))
-                        entityAttributeInstance.addTransientModifier(new AttributeModifier(VARIANT_BONUS_MODIFIER, entityAttributeModifier.amount(), entityAttributeModifier.operation()));
-
-                }
-            });
-        });
-    }
-
-    private void removeVariantModifiers() {
-        AttributeMap container = getAttributes();
-        registryAccess().lookupOrThrow(Registries.ATTRIBUTE).listElements().forEach(entityAttributeReference -> {
-            if (container.hasAttribute(entityAttributeReference))
-                container.getInstance(entityAttributeReference).removeModifier(VARIANT_BONUS_MODIFIER);
+        variant.baseAttributeValues().value().forEach((attribute, baseValue) -> {
+            AttributeInstance entityAttributeInstance = getAttribute(attribute);
+            if (entityAttributeInstance == null) {
+                UselessReptile.LOGGER.error("Couldn't find attribute instance for {}. Skipping", attribute.unwrapKey().orElseThrow().identifier());
+                return;
+            }
+            entityAttributeInstance.setBaseValue(baseValue);
         });
     }
 
@@ -398,26 +417,24 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     private SoundInfo createSoundInfo(String name) {
-        DragonModelData model = DragonVariantUtil.getDragonModelData(getDragonVariant(), level().registryAccess());
-        if (model != null) {
-            if (model.sounds().isPresent()) {
-                DragonModelData.Sound sound = model.sounds().get().stream()
-                        .filter(s -> s.name().equals(name))
-                        .findFirst()
-                        .orElse(null);
+        DragonModelData model = getDragonVariant().common().dragonModelData().value();
+        if (model.sounds().isPresent()) {
+            DragonModelData.Sound sound = model.sounds().get().stream()
+                    .filter(s -> s.name().equals(name))
+                    .findFirst()
+                    .orElse(null);
 
-                if (sound != null) return new SoundInfo(
-                        sound.id(),
-                        sound.volume().orElse(1f),
-                        sound.pitch().orElse(1f),
-                        sound.pitchDeviation().orElse(0.125f)
-                );
-                else {
-                    UselessReptile.LOGGER.warn("Sound {} is not defined for {} ({}) of variant {}.", name, getName().getString(), getDragonId(), getVariant());
-                }
-            } else {
-                UselessReptile.LOGGER.warn("Could not find sound {} for {} ({}) of variant {} as no sounds are defined.", name, getName().getString(), getDragonId(), getVariant());
+            if (sound != null) return new SoundInfo(
+                    sound.id(),
+                    sound.volume().orElse(1f),
+                    sound.pitch().orElse(1f),
+                    sound.pitchDeviation().orElse(0.125f)
+            );
+            else {
+                UselessReptile.LOGGER.warn("Sound {} is not defined for {} ({}) of variant {}.", name, getName().getString(), getDragonId(), getVariant());
             }
+        } else {
+            UselessReptile.LOGGER.warn("Could not find sound {} for {} ({}) of variant {} as no sounds are defined.", name, getName().getString(), getDragonId(), getVariant());
         }
         return null;
     }
@@ -431,25 +448,23 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return super.finalizeSpawn(world, difficulty, spawnReason, entityData);
     }
 
-    protected static AttributeSupplier.Builder createDragonAttributes() {
+    public static AttributeSupplier.Builder createDragonAttributes() {
         return TamableAnimal.createMobAttributes()
                 .add(Attributes.STEP_HEIGHT, 1)
                 .add(Attributes.ATTACK_DAMAGE)
                 .add(Attributes.ATTACK_KNOCKBACK)
-                .add(Attributes.MAX_HEALTH)
+                .add(Attributes.MAX_HEALTH, 1024) //if health is higher than 20, dragon will not spawn with full health otherwise
                 .add(Attributes.ARMOR)
                 .add(Attributes.ARMOR_TOUGHNESS)
                 .add(Attributes.MOVEMENT_SPEED)
                 .add(Attributes.FLYING_SPEED)
-                .add(Attributes.FOLLOW_RANGE, 160)
+                .add(Attributes.FOLLOW_RANGE, 32)
                 .add(Attributes.JUMP_STRENGTH)
                 .add(URAttributes.DRAGON_VERTICAL_SPEED)
                 .add(URAttributes.DRAGON_ACCELERATION_DURATION)
                 .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED)
                 .add(URAttributes.DRAGON_FLYING_ROTATION_SPEED)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN)
-                .add(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN)
-                .add(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN);
+                .add(URAttributes.DRAGON_MINING_LEVEL);
 
     }
 
@@ -538,11 +553,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         super.onEquipItem(slot, oldStack, newStack);
     }
 
-    @Override
-    public @NonNull EntityDimensions getDefaultDimensions(@NonNull Pose pose) {
-        return super.getDefaultDimensions(pose).scale(getWidthMod()/getScale(), getHeightMod()/getScale());
-    }
-
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, @NonNull Inventory inv, @NonNull Player player) {
@@ -560,8 +570,12 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
         ItemStack itemStack = player.getItemInHand(hand);
 
+        for (InteractionSettings.CustomItemInteraction customItemInteraction : getDragonVariant().common().interactionSettings().value().customItemInteractions()) {
+            if (customItemInteraction.tryExecute(this, player, itemStack, hand)) return InteractionResult.SUCCESS;
+        }
+
         if (isTameable()) {
-            CommonDragonVariantData.TamingItem tamingItem = getTamingItem(itemStack);
+            InteractionSettings.TamingItem tamingItem = getTamingItem(itemStack);
             if (tamingItem != null) {
                 consumeGivenItem(player, itemStack, SoundEvents.GENERIC_EAT.value(), hand);
                 if (player.isCreative()) setTamingProgress(0);
@@ -579,7 +593,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
         if (isTame()) {
             if (getHealth() != getMaxHealth()) {
-                CommonDragonVariantData.FoodItem foodItem = getFoodItem(itemStack);
+                InteractionSettings.FoodItem foodItem = getFoodItem(itemStack);
                 if (foodItem != null) {
                     consumeGivenItem(player, itemStack, SoundEvents.GENERIC_EAT.value(), hand);
                     heal(foodItem.healingAmount());
@@ -633,7 +647,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
                 return InteractionResult.SUCCESS;
             }
         }
-        return InteractionResult.PASS;
+        return super.mobInteract(player, hand);
     }
 
     @Override
@@ -673,7 +687,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return itemStack.is(Items.POTION)
                 || itemStack.is(Items.STICK)
                 || isInstrument(itemStack)
-                || getFoodItem(itemStack) != null
+                || isFoodItem(itemStack)
                 || itemStack.is(URItems.VARIANT_CHANGING_ORB);
     }
 
@@ -688,159 +702,76 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return translatable ? ((TranslatableContents) instrument.value().description().getContents()).getKey() : ((PlainTextContents)instrument.value().description().getContents()).text();
     }
 
-    public void playSound(@NonNull SoundEvent sound, float volume, float pitch) {
-        if (!isSilent()) level().playLocalSound(getX(), getY(),getZ(), sound, SoundSource.NEUTRAL, volume, pitch,true);
+    @Override
+    public int getHeadRotSpeed() {
+        return (int) (getGroundRotationSpeed() * getMovementSpeedModifier());
     }
 
-    public float getWidthModTransSpeed() {
-        return 0.22f * getScale();
-    }
-    public float getHeightModTransSpeed() {
-        return (float) (0.3 * getScale());
-    }
-    public float getMountedOffsetTransSpeed() {
-        return (float) (0.125 * getScale());
+    public int getHeadPitchSpeed() {
+        return 10;
     }
 
     @Override
-    public void setRot(float yaw, float pitch) {
-        float currentYaw = getYRot() % 360;
-        float destinationYaw = yaw % 360;
-        //т.к. у игрока поворот измеряется от -180 до 180, а у других энтити от 0 до 360, то приведенная ниже дичь необходима
-        //due player having rotation from -180 to 180 while all other entities have it from 0 to 360, this check is necessary
-        if (destinationYaw < 0) destinationYaw += 360;
-        float yawDiff = (currentYaw - destinationYaw) % 360;
-        if (yawDiff != 0) {
-            if (yawDiff > 180) yawDiff -= 360;
-            else if (yawDiff < -180) yawDiff +=360;
-
-            if (yawDiff < -getRotationSpeed()) {
-                currentYaw += getRotationSpeed();
-                if (!level().isClientSide()) setTurningState((byte)2);
-            }
-            else if (yawDiff > getRotationSpeed()) {
-                currentYaw -= getRotationSpeed();
-                if (!level().isClientSide()) setTurningState((byte)1);
-            }
-            else {
-                currentYaw = destinationYaw;
-                if (!level().isClientSide() && isMoving()) setTurningState((byte)0);
-            }
-        } else {
-            if (!level().isClientSide()) setTurningState((byte)0);
-        }
-        yRotO = yBodyRot = getYRot();
-        super.setRot(currentYaw, Mth.clamp(pitch, -getPitchLimit(), getPitchLimit()));
-        yHeadRot = currentYaw;
-    }
-
-    protected void setHitboxModifiers(float destinationHeight, float destinationWidth, float destinationMountedOffset) {
-        destinationHeight *= getScale();
-        destinationWidth *= getScale();
-        destinationMountedOffset *= getScale();
-
-        float widthMod = getWidthMod();
-        float heightMod = getHeightMod();
-        float mountedOffset = getMountedOffset();
-        float widthDiff = widthMod - destinationWidth;
-        float heightDiff = heightMod - destinationHeight;
-        float mountedOffsetDiff = mountedOffset - destinationMountedOffset;
-
-        if (widthDiff != 0) {
-            if (widthDiff > getWidthModTransSpeed()) widthMod -= getWidthModTransSpeed();
-            else if (widthDiff < -getWidthModTransSpeed()) widthMod += getWidthModTransSpeed();
-            else widthMod = destinationWidth;
-        }
-
-        if (heightDiff != 0) {
-            if (heightDiff > getHeightModTransSpeed()) heightMod -= getHeightModTransSpeed();
-            else if (heightDiff < -getHeightModTransSpeed()) heightMod += getHeightModTransSpeed();
-            else heightMod = destinationHeight;
-        }
-
-        if (mountedOffsetDiff != 0) {
-            if (mountedOffsetDiff > getMountedOffsetTransSpeed()) mountedOffset -= getHeightModTransSpeed();
-            else if (mountedOffsetDiff < -getHeightModTransSpeed()) mountedOffset += getHeightModTransSpeed();
-            else mountedOffset = destinationMountedOffset;
-        }
-
-        setMountedOffset(mountedOffset);
-        setHeightMod(heightMod);
-        setWidthMod(widthMod);
-
-        refreshDimensions();
-    }
-
-    //because rotation is called twice within one tick... somehow
-    public float getRotationSpeed() {
-        return getGroundRotationSpeed() * getMovementSpeedModifier() / 2f;
+    protected @NonNull BodyRotationControl createBodyControl() {
+        return new WrappedDragonBodyRotationControl<>(new DragonBodyRotationControl<>(this));
     }
 
     public float getGroundRotationSpeed() {
         return (float) getAttributeValue(URAttributes.DRAGON_GROUND_ROTATION_SPEED);
     }
 
-    public float getPitchLimit() {
-        return pitchLimitGround;
+    public int getMaxAccelerationDuration() {
+        return Math.max((int) (getAttributeValue(URAttributes.DRAGON_ACCELERATION_DURATION) * getMovementSpeedModifier()), 1);
     }
 
-    public float getMaxAccelerationDuration() {
-        return (float) (getAttributeValue(URAttributes.DRAGON_ACCELERATION_DURATION) * getMovementSpeedModifier());
-    }
-
-    protected float getCooldownModifier() {
+    public float getCooldownModifier() {
         float mod = 1;
         if (hasEffect(MobEffects.SLOWNESS)) mod *= (float) (1 + 0.1 * (getEffect(MobEffects.SLOWNESS).getAmplifier() + 1));
         if (hasEffect(MobEffects.SPEED)) mod *= (float) (1 - 0.1 * Mth.clamp(getEffect(MobEffects.SPEED).getAmplifier() + 1, 1, 9));
-        if (hasEffect(URMobEffect.SHOCK)) mod /= 2;
+        if (hasEffect(URMobEffects.SHOCK)) mod /= 2;
         return mod;
     }
 
-    protected float getMovementSpeedModifier() {
-        double baseSpeed = getBaseGroundSpeed();
+    public float getMovementSpeedModifier() {
+        double baseSpeed = getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
         double speed = getAttributeValue(Attributes.MOVEMENT_SPEED);
         return (float) (speed / baseSpeed);
     }
 
-    public int getMaxSecondaryAttackCooldown() {
-        return (int) (getAttributeValue(URAttributes.DRAGON_SECONDARY_ATTACK_COOLDOWN) * getCooldownModifier());
-    }
-    public int getMaxPrimaryAttackCooldown() {
-        return (int) (getAttributeValue(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN) * getCooldownModifier());
-    }
-    public int getMaxSpecialAttackCooldown() {
-        return (int) (getAttributeValue(URAttributes.DRAGON_SPECIAL_ATTACK_COOLDOWN) * getCooldownModifier());
+    public float getAccelerationModifier() {
+        return 1;
     }
 
     @Override
     public void tick() {
-        super.tick();
-        if (!level().isClientSide()) {
-            updateRotationProgress();
+        yBodyRotChangeO.addLast(yBodyRotChange);
+        if (yBodyRotChangeO.size() >= maxYBodyRotChangeSamples) yBodyRotChangeO.removeFirst();
 
+        xBodyRotO.addLast(xBodyRot);
+        if (xBodyRotO.size() >= maxXBodyRotSamples) xBodyRotO.removeFirst();
+
+        super.tick();
+
+        tickAcceleration();
+
+        pitchLimit = (int) Mth.approach(pitchLimit, pitchTargetLimit, 2);
+        yawLimit = (int) Mth.approach(yawLimit, yawTargetLimit, 2);
+
+        if (!level().isClientSide()) {
             if (getOwner() != null && getCurrentOrder() == Order.FOLLOW) {
                 if (distanceTo(getOwner()) > getWanderRadius().radius) {
                     shouldFollow = true;
                     setHomePoint(getOwner().blockPosition());
                 }
             }
+            setMoving(getDeltaMovement().z() != 0 || getDeltaMovement().x() != 0);
+
+            Int2FloatArrayMap abilityCooldowns = new Int2FloatArrayMap();
+            abilityHolders.forEach((id, holder) -> abilityCooldowns.put(id, holder.getCooldown()));
+            entityData.set(ABILITY_COOLDOWNS, abilityCooldowns);
         }
 
-        if (this instanceof ShooterDragon shooterDragon) {
-            shooterDragon.setShootingPoint(
-                    new ShootingPoint(
-                            shooterDragon.getShootingPointAnchor(),
-                            calculateViewVector(
-                                    shooterDragon.getShootingPointDesiredPitch(),
-                                    shooterDragon.getShootingPointDesiredYaw()
-                            ).toVector3f()
-                    )
-            );
-        }
-
-        if (getSecondaryAttackCooldown() > 0) setSecondaryAttackCooldown(getSecondaryAttackCooldown() - 1);
-        if (getPrimaryAttackCooldown() > 0) setPrimaryAttackCooldown(getPrimaryAttackCooldown() - 1);
-        if (getSpecialAttackCooldown() > 0) setSpecialAttackCooldown(getSpecialAttackCooldown() - 1);
+        getAbilityHolders().values().forEach(DragonAbilityHolder::tick);
 
         if (ticksUntilHeal > -1 && --healTimer <= 0) {
             heal(1);
@@ -850,17 +781,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         if (this instanceof HeadMountDragon) {
             if (getVehicle() instanceof Player player) {
                 if (!player.isAlive()) stopRiding();
-                getLookControl().setLockRotation(true);
-                if (level().isClientSide()) {
-                    yRotO = getYRot();
-                    setYRot(player.getYRot());
-                    byte turnState = 0;
-                    float diff = yRotO - getYRot();
-                    if (diff > 0) turnState = 1;
-                    if (diff < 0) turnState = 2;
-                    setTurningState(turnState);
-                }
-            } else getLookControl().setLockRotation(false);
+                getBodyRotationControl().setRotationTarget(player.getLookAngle().add(player.position()));
+            }
         }
 
         if (!level().isClientSide() && tickCount % 20 == 0) {
@@ -869,6 +791,20 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             if (jukeboxReachable) updateJukeboxPos(jukeboxPos, true);
             else updateJukeboxPos(null, false);
         }
+
+        availableAbilities = abilityHolders.values().stream().filter(a -> a.getAbility().canBeUsed(a)).toList();
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            DragonEquipment equipment = assetCache.getEquipment(equipmentSlot);
+            if (equipment != null) equipment.tick();
+        }
+    }
+
+    public void tickAcceleration() {
+        tickAccelerationUncontrolled();
+    }
+
+    public void tickAccelerationUncontrolled() {
+        setAccelerationDuration(getMaxAccelerationDuration());
     }
 
     @Override
@@ -893,8 +829,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         float speed = (float) getAttributeValue(Attributes.MOVEMENT_SPEED);
         setSpeed(speed * speedModifier);
     }
-
-    protected abstract float getBaseGroundSpeed();
 
     @Override
     public boolean removeWhenFarAway(double distanceSquared) {
@@ -934,7 +868,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     @Override
     protected SoundEvent getDeathSound() {
-        SoundInfo soundInfo = getSoundInfo("death");
+        SoundInfo soundInfo = getSoundInfo("death");  //don't ask about this either
         if (soundInfo != null) playSound(SoundEvent.createVariableRangeEvent(soundInfo.id()), soundInfo.volume(), getRandom().triangle(soundInfo.pitch(), soundInfo.pitchDeviation()));
         return null;
     }
@@ -954,11 +888,6 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    protected @NonNull Vec3 getPassengerAttachmentPoint(@NonNull Entity passenger, @NonNull EntityDimensions dimensions, float scaleFactor) {
-        return new Vec3(0, getMountedOffset(), 0);
-    }
-
-    @Override
     protected void dropEquipment(@NonNull ServerLevel world) {
         super.dropEquipment(world);
         if (inventory != null) {
@@ -975,36 +904,22 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     public boolean isFood(@NonNull ItemStack stack) {
         return false;
+    }//food is not used for breeding
+
+    public boolean isTamingItem(@NonNull ItemStack stack) {
+        return getTamingItem(stack) != null;
     }
 
-    public CommonDragonVariantData.@Nullable TamingItem getTamingItem(ItemStack itemStack) {
-        DragonVariant variant = getDragonVariant();
-        if (!isInvalidVariant()) {
-            return variant.common().tamingItems().orElse(List.of()).stream()
-                    .filter(item -> {
-                        ExtraCodecs.TagOrElementLocation entryId = item.item();
-                        if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
-                        return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().identifier());
-                    })
-                    .max(Comparator.comparingInt(item -> item.priority().orElse(Integer.MIN_VALUE)))
-                    .orElse(null);
-        }
-        return null;
+    public boolean isFoodItem(@NonNull ItemStack stack) {
+        return getFoodItem(stack) != null;
     }
 
-    public CommonDragonVariantData.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
-        DragonVariant variant = getDragonVariant();
-        if (!isInvalidVariant()) {
-            return variant.common().foodItems().orElse(List.of()).stream()
-                    .filter(item -> {
-                        ExtraCodecs.TagOrElementLocation entryId = item.item();
-                        if (entryId.tag()) return itemStack.is(TagKey.create(Registries.ITEM, entryId.id()));
-                        return entryId.id().equals(itemStack.getItem().builtInRegistryHolder().key().identifier());
-                    })
-                    .max(Comparator.comparingInt(item -> item.priority().orElse(Integer.MIN_VALUE)))
-                    .orElse(null);
-        }
-        return null;
+    public InteractionSettings.@Nullable TamingItem getTamingItem(ItemStack itemStack) {
+        return getDragonVariant().common().interactionSettings().value().getTamingItem(itemStack);
+    }
+
+    public InteractionSettings.@Nullable FoodItem getFoodItem(ItemStack itemStack) {
+        return getDragonVariant().common().interactionSettings().value().getFoodItem(itemStack);
     }
 
     public void tickEatFromInventoryTimer() {
@@ -1028,65 +943,27 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public boolean hasTargetInWater() {
-        return (navigation.getTargetPos() != null && level().getBlockState(navigation.getTargetPos()).liquid()
+        return (shouldFollow && navigation.getTargetPos() != null && level().getBlockState(navigation.getTargetPos()).liquid()
                     || getTarget() != null && getTarget().isUnderWater())
                 && !isAffectedByFluids();
-    }
-
-    @Override
-    public int getHeadRotSpeed() {
-        return (int) getRotationSpeed();
     }
 
     public final Identifier getDragonId() {
         return EntityType.getKey(getType());
     }
 
-    private void updateRotationProgress() {
-        switch (getTurningState()) {
-            case 1 -> {
-                if (getRotationProgress() < TRANSITION_TICKS) setRotationProgress((byte) (getRotationProgress() + 1));
-            }
-            case 2 -> {
-                if (getRotationProgress() > -TRANSITION_TICKS) setRotationProgress((byte) (getRotationProgress() - 1));
-            }
-            default -> {
-                if (getRotationProgress() != 0) {
-                    if (getRotationProgress() > 0) setRotationProgress((byte) (getRotationProgress() - 1));
-                    else setRotationProgress((byte) (getRotationProgress() + 1));
-                }
-            }
-        }
-    }
-
-    public float getYawWithAdjustment() {
-        float yaw = getYRot();
-        if (!hasControllingPassenger() && getTarget() != null) {
-            float targetYaw = getLookControl().getYRotD().orElse(0f);
-            float difference = Math.clamp((yaw - targetYaw) % 360, -getRotationSpeed(), getRotationSpeed());
-            return yaw + difference; //making it easier for dum-dum to aim on its own
-        }
-        return (yaw - getNormalizedRotationProgress() * getYawProgressLimit()) % 360;
-    }
-
-    public float getYawProgressLimit() {
-        return 0;
-    }
-
     @Override
-    public @NonNull DragonLookControl getLookControl() {
-        return (DragonLookControl) lookControl;
+    public @NonNull WrappedDragonLookControl<? extends URDragonEntity> getLookControl() {
+        return (WrappedDragonLookControl<?>) lookControl;
     }
 
     @Override
     public @NonNull AABB getAttackBoundingBox(double range) {
-        return getPrimaryAttackBox();
-    }
-
-    public @NonNull abstract AABB getPrimaryAttackBox();
-
-    public AABB getSecondaryAttackBox() {
-        return null;
+        return availableAbilities.stream()
+                .filter(a -> a.getAbility() instanceof MeleeAttackAbility)
+                .map(a -> ((MeleeAttackAbility)a.getAbility()).getAttackBox(a))
+                .findFirst()
+                .orElse(super.getAttackBoundingBox(range));
     }
 
     protected static URMobAttributesConfig attributes() {
@@ -1101,14 +978,15 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
     public final boolean isBlockProtected(BlockPos blockPos) {
         BlockState blockState = level().getBlockState(blockPos);
-        Player rider = getOwner() instanceof URRideableDragonEntity dragon && dragon.hasControllingPassenger() ?
+        Player rider = getOwner() instanceof URRideableDragonEntity<?> dragon && dragon.hasControllingPassenger() ?
                 (Player) getControllingPassenger() : null;
         NameAndId nameAndId = rider != null ? rider.nameAndId() : CommonProtection.UNKNOWN;
         return blockState.is(URTags.DRAGON_UNBREAKABLE) || !CommonProtection.canBreakBlock(level(), blockPos, nameAndId, rider);
     }
 
-    public boolean canBreakBlocks() {
-        return false;
+    public boolean canGrief() {
+        if (!(level() instanceof ServerLevel world)) return false;
+        return world.getGameRules().get(GameRules.MOB_GRIEFING);
     }
 
     @Override
@@ -1150,6 +1028,10 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound, @Nullable InteractionHand hand) {
+        return consumeGivenItem(offering, itemStack, sound, hand, 1);
+    }
+
+    public ItemStack consumeGivenItem(@Nullable LivingEntity offering, ItemStack itemStack, @Nullable SoundEvent sound, @Nullable InteractionHand hand, int amount) {
         ItemStack original = itemStack.copy();
         if (itemStack.getComponents().has(DataComponents.CONSUMABLE))
             itemStack.getComponents().get(DataComponents.CONSUMABLE).onConsume(level(), this, itemStack);
@@ -1174,7 +1056,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     @Override
-    protected @NonNull Component getTypeName() {
+    public @NonNull Component getTypeName() {
         if (defaultDisplayName == null) {
             DragonVariant variant = getDragonVariant();
             if (!isInvalidVariant() && variant.common().displayNameKey().isPresent()) defaultDisplayName = Component.translatable(variant.common().displayNameKey().get());
@@ -1193,7 +1075,8 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     @Override
     public boolean isInvulnerableTo(@NonNull ServerLevel world, @NonNull DamageSource damageSource) {
         if (this instanceof HeadMountDragon && getVehicle() instanceof Player && damageSource.is(DamageTypes.IN_WALL)) return true;
-        return super.isInvulnerableTo(world, damageSource);
+        if (super.isInvulnerableTo(world, damageSource)) return true;
+        return getDragonVariant().common().interactionSettings().value().isImmuneToDamage(damageSource.typeHolder());
     }
 
     public DragonInventory getInventory() {
@@ -1212,11 +1095,13 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
     }
 
     public boolean isLookingAtDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
-        if (yaw < 0) yaw += 360;
-        float dYaw = Math.abs(Mth.wrapDegrees((this instanceof ShooterDragon shooterDragon ? shooterDragon.getShootingPointYaw() : getYRot()) - yaw));
-        float dPitch = Math.abs((this instanceof ShooterDragon shooterDragon ? shooterDragon.getShootingPointPitch() : getXRot()) - pitch);
-        return dPitch < pitchTolerance
-                && dYaw % 360 < yawTolerance;
+        return Math.abs(Mth.degreesDifference(getViewXRot(1), pitch)) < pitchTolerance
+                && Math.abs(Mth.degreesDifference(getViewYRot(1), yaw)) < yawTolerance;
+    }
+
+    public boolean isRotatedTowardsDirection(float pitch, float yaw, float pitchTolerance, float yawTolerance) {
+        return Math.abs(Mth.degreesDifference(getXRot(), pitch)) < pitchTolerance
+                && Math.abs(Mth.degreesDifference(getYRot(), yaw)) < yawTolerance;
     }
 
     public int getBaseTamingProgress() {
@@ -1225,31 +1110,31 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
             UselessReptile.LOGGER.error("Couldn't find any info on variant {} ({}), base value of taming progress will be set to -1", getVariant(), getDragonId());
             return -1;
         }
-        return variant.common().baseTamingProgress();
+        return variant.common().interactionSettings().value().baseTamingProgress();
     }
 
     public boolean isTameable() {
-        return !isTame() && getTamingProgress() >= 0;
+        return !isTame() && getBaseTamingProgress() >= 0 && getTamingProgress() >= 0;
     }
 
     public final boolean isSaddle(ItemStack itemStack) {
-        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.SADDLE;
+        if (!(getDragonEquipment().containsKey(itemStack.typeHolder()))) return false;
+        return getDragonEquipment().get(itemStack.typeHolder()).slot() == DragonInventory.Slot.SADDLE;
     }
 
     public final boolean isHelmet(ItemStack itemStack) {
-        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.HELMET;
+        if (!(getDragonEquipment().containsKey(itemStack.typeHolder()))) return false;
+        return getDragonEquipment().get(itemStack.typeHolder()).slot() == DragonInventory.Slot.HELMET;
     }
 
     public final boolean isChestplate(ItemStack itemStack) {
-        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.CHESTPLATE;
+        if (!(getDragonEquipment().containsKey(itemStack.typeHolder()))) return false;
+        return getDragonEquipment().get(itemStack.typeHolder()).slot() == DragonInventory.Slot.CHESTPLATE;
     }
 
     public final boolean isTailArmor(ItemStack itemStack) {
-        if (!(getDragonEquipment().containsKey(BuiltInRegistries.ITEM.getKey(itemStack.getItem())))) return false;
-        return getDragonEquipment().get(BuiltInRegistries.ITEM.getKey(itemStack.getItem())).slot() == DragonInventory.Slot.TAIL_ARMOR;
+        if (!(getDragonEquipment().containsKey(itemStack.typeHolder()))) return false;
+        return getDragonEquipment().get(itemStack.typeHolder()).slot() == DragonInventory.Slot.TAIL_ARMOR;
     }
 
     public boolean isBanner(ItemStack itemStack) {
@@ -1286,6 +1171,72 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         return FLUTE_MODES;
     }
 
+    public final URDragonAnimationController<URDragonEntity> getAnimationController(AnimationController controller) {
+        return (URDragonAnimationController<URDragonEntity>) controllers.get(controller);
+    }
+
+    public Int2ObjectOpenHashMap<DragonAbilityHolder> getAbilityHolders() {
+        return abilityHolders;
+    }
+
+    public List<DragonAbilityHolder> getAvailableAbilities() {
+        return availableAbilities;
+    }
+
+    public void onAbilityActivated(DragonAbility ability) {}
+
+    public float getYBodyRotChange(float tickDelta) {
+        float sum = 0;
+        for (int i = 0; i < yBodyRotChangeO.size(); i++) {
+            if (i != yBodyRotChangeO.size() - 1) sum += Mth.lerp(tickDelta, yBodyRotChangeO.get(i), yBodyRotChangeO.get(i + 1));
+            else sum += Mth.lerp(tickDelta, yBodyRotChangeO.get(i), yBodyRotChange);
+        }
+        return sum / maxYBodyRotChangeSamples;
+    }
+
+    public float getXBodyRot(float tickDelta) {
+        float sum = 0;
+        for (int i = 0; i < xBodyRotO.size(); i++) {
+            if (i != xBodyRotO.size() - 1) sum += Mth.lerp(tickDelta, xBodyRotO.get(i), xBodyRotO.get(i + 1));
+            else sum += Mth.lerp(tickDelta, xBodyRotO.get(i), xBodyRot);
+        }
+        return sum / maxXBodyRotSamples;
+    }
+
+    public WrappedDragonBodyRotationControl<?> getBodyRotationControl() {
+        return (WrappedDragonBodyRotationControl<?>) bodyRotationControl;
+    }
+
+    public void setPitchTargetLimit(int pitchTargetLimit) {
+        this.pitchTargetLimit = pitchTargetLimit;
+    }
+
+    public void setYawTargetLimit(int yawTargetLimit) {
+        this.yawTargetLimit = yawTargetLimit;
+    }
+
+    @Override
+    public int getMaxHeadYRot() {
+        return yawLimit;
+    }
+
+    @Override
+    public int getMaxHeadXRot() {
+        return pitchLimit;
+    }
+
+    @Override
+    public boolean canBeAffected(MobEffectInstance effect) {
+        if (!super.canBeAffected(effect)) return false;
+        return !getDragonVariant().common().interactionSettings().value().isImmuneToEffect(effect.getEffect());
+    }
+
+    @Override
+    protected Vec3i getPickupReach() {
+        return ITEM_PICKUP_REACH;
+    }
+
+    /// Makes dragons dance to jukebox
     protected class JukeboxEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -1313,6 +1264,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
     }
 
+    /// Calls dragon upon using instrument. It's called "HornUsedEventListener" because initially it was used only for goat horns
     protected class HornUsedEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -1348,6 +1300,7 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
         }
     }
 
+    /// Handles flute commands
     protected class FluteUsedEventListener implements GameEventListener {
         private final PositionSource positionSource;
         private final int range;
@@ -1404,6 +1357,46 @@ public abstract class URDragonEntity extends TamableAnimal implements BRAnimated
 
         WanderRadius(int radius) {
             this.radius = radius;
+        }
+    }
+
+    public enum AnimationController implements StringRepresentable {
+        MAIN("main"),
+        ABILITY("ability"),
+        BLINK("blink")
+        ;
+
+        private final String name;
+
+        public static final StreamCodec<ByteBuf, AnimationController> STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
+
+        AnimationController(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public @NonNull String getSerializedName() {
+            return name;
+        }
+    }
+
+    public enum TurningState implements StringRepresentable {
+        NONE("none"),
+        LEFT("left"),
+        RIGHT("right")
+        ;
+
+        private final String name;
+
+        public static final StreamCodec<ByteBuf, TurningState> STREAM_CODEC = ByteBufCodecs.idMapper(ByIdMap.continuous(Enum::ordinal, values(), ByIdMap.OutOfBoundsStrategy.ZERO), Enum::ordinal);
+
+        TurningState(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public @NonNull String getSerializedName() {
+            return name;
         }
     }
 }

@@ -1,51 +1,61 @@
 package nordmods.uselessreptile.client.renderer.base;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
+import com.mojang.math.Axis;
+import libs.gg.moonflower.molangcompiler.api.MolangEnvironmentBuilder;
+import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import nordmods.biscuit_roll.client.internal.BRModelSubmitStorage;
 import nordmods.biscuit_roll.client.renderer.BREntityRenderer;
+import nordmods.biscuit_roll.client.resource_managers.ClientAnimationManager;
+import nordmods.biscuit_roll.client.resource_managers.ClientModelManager;
+import nordmods.biscuit_roll.client.util.TextureAtlasSpriteUtil;
 import nordmods.biscuit_roll.common.model.BRModel;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.asset_cache.AssetCache;
-import nordmods.uselessreptile.client.asset_cache.DragonAssetCache;
-import nordmods.uselessreptile.client.asset_cache.EquipmentAssetCache;
-import nordmods.uselessreptile.client.dragon_equipment.DragonEquipment;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
-import nordmods.uselessreptile.client.model_provider.URDragonEntityModelProvider;
+import nordmods.uselessreptile.client.init.URAtlases;
 import nordmods.uselessreptile.client.renderer.layers.URGlowingLayer;
 import nordmods.uselessreptile.client.util.ResourceUtil;
+import nordmods.uselessreptile.common.asset_cache.AssetCache;
+import nordmods.uselessreptile.common.asset_cache.DragonAssetCache;
+import nordmods.uselessreptile.common.asset_cache.EquipmentAssetCache;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
-import nordmods.uselessreptile.common.dragon_variant.DragonVariantUtil;
 import nordmods.uselessreptile.common.dragon_variant.model.EquipmentModelData;
 import nordmods.uselessreptile.common.dragon_variant.model.ModelData;
-import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
+import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
+import nordmods.uselessreptile.common.entity.misc.DragonInventory;
+import nordmods.uselessreptile.common.entity.model_provider.URDragonEntityModelProvider;
+import nordmods.uselessreptile.common.init.URStateDataTypes;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
+import org.jspecify.annotations.Nullable;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends BREntityRenderer<T, LivingEntityRenderState> {
+    public static final Map<UUID, Vector3f> HEAD_POS = new HashMap<>();
     private final DragonEquipmentRenderer equipmentRenderer = new DragonEquipmentRenderer();
     private final DragonSaddleRenderer saddleRenderer = new DragonSaddleRenderer();
     public URDragonEntityRenderer(EntityRendererProvider.Context renderManager) {
         super(renderManager, new URDragonEntityModelProvider());
         addRenderLayer(new URGlowingLayer(this, 1));
     }
-    private static final Map<Identifier, Identifier> DEFAULT_TEXTURES = new HashMap<>();
+    private static final Identifier DEFAULT_TEXTURE = Identifier.withDefaultNamespace("missingno");
 
     @Override
     protected float getShadowRadius(LivingEntityRenderState state) {
@@ -54,12 +64,17 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
     @Override
     public void extractRenderState(T animatable, LivingEntityRenderState renderState, float tickDelta) {
+        renderState.setStateData(URStateDataTypes.BODY_X_ROTATION, -animatable.getXBodyRot(tickDelta));
+        renderState.setStateData(URStateDataTypes.BODY_Y_ROTATION, -animatable.getPreciseBodyRotation(tickDelta));
+        renderState.setStateData(URStateDataTypes.HEAD_X_ROTATION, -animatable.getViewXRot(tickDelta));
+        renderState.setStateData(URStateDataTypes.HEAD_Y_ROTATION, -animatable.getViewYRot(tickDelta));
+        renderState.setStateData(URStateDataTypes.YAW_SPEED, -animatable.getYBodyRotChange(tickDelta));
         super.extractRenderState(animatable, renderState, tickDelta);
+        renderState.setStateData(URStateDataTypes.DRAGON_UUID, animatable.getUUID());
         DragonAssetCache assetCache = animatable.getAssetCache();
         renderState.setStateData(URStateDataTypes.ASSET_CACHE, assetCache);
         Identifier dragonId = animatable.getDragonId();
         renderState.setStateData(URStateDataTypes.DRAGON_ID, dragonId);
-
         if (ResourceUtil.isResourceReloadFinished) {
             fillDragonCache(
                     assetCache,
@@ -67,7 +82,6 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                     dragonId,
                     animatable.getName().getString(),
                     animatable.getVariant(),
-                    getDefaultTexture(dragonId),
                     getModelProvider().getDefaultModel(dragonId),
                     getModelProvider().getDefaultAnimation(dragonId)
             );
@@ -85,10 +99,12 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                     EquipmentAssetCache equipmentAssetCache = new EquipmentAssetCache();
                     Identifier itemId = BuiltInRegistries.ITEM.getKey(itemStack.getItem());
                     dragonEquipment = getDragonEquipment(
+                            animatable,
+                            slot,
                             itemStack,
                             itemId,
                             equipmentAssetCache,
-                            animatable.getDragonEquipment().get(itemId),
+                            animatable.getDragonEquipment().get(itemStack.typeHolder()),
                             dragonId,
                             animatable.getName().getString(),
                             animatable.getVariant(),
@@ -98,17 +114,25 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                     );
                     assetCache.setEquipment(slot, dragonEquipment);
                 }
-                dragonEquipment.ownerRenderState = renderState;
+                dragonEquipment.ownerState = renderState;
             }
         }
+    }
 
-        if (animatable instanceof ShooterDragon shooterDragon) renderState.setStateData(URStateDataTypes.DRAGON_SHOOTING_POINT, shooterDragon.getShootingPoint());
+    @Override
+    public void updateControllerVariables(MolangEnvironmentBuilder<?> builder, T entity, float tickDelta) {
+        super.updateControllerVariables(builder, entity, tickDelta);
+        builder.setQuery("body_x_rotation", -entity.getXBodyRot(tickDelta));
+        builder.setQuery("head_x_rotation", -entity.getViewXRot(tickDelta));
+        builder.setQuery("body_y_rotation", -entity.getPreciseBodyRotation(tickDelta));
+        builder.setQuery("head_y_rotation", -entity.getViewYRot(tickDelta));
+        builder.setQuery("yaw_speed", -entity.getYBodyRotChange(tickDelta));
     }
 
     @Override
     public void adjustAnimation(BRState state, BRModel model) {
         if (!ResourceUtil.isResourceReloadFinished) return;
-        model.getRootBones().forEach(animatedBone -> animatedBone.setVisible(true));
+        model.getRootBones().forEach(bone -> bone.setVisible(true));
 
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
@@ -125,14 +149,13 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
             Identifier dragonId,
             String dragonName,
             String variantName,
-            Identifier defaultTexture,
             Identifier defaultModel,
             Identifier defaultAnimation
     ) {
         //texture
         if (assetCache.getTextureLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().texture();
-            if (ResourceUtil.doesExist(id)) {
+            Identifier id = variant.common().dragonModelData().value().modelData().texture();
+            if (ResourceUtil.doesResourceExist(id)) {
                 assetCache.setTextureLocationCache(id);
             } else {
                 UselessReptile.LOGGER.warn("Failed to find texture for {} ({}) of variant {}. Default will be used instead",
@@ -140,17 +163,18 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
                         dragonId,
                         variantName
                 );
-                assetCache.setTextureLocationCache(defaultTexture);
+                assetCache.setTextureLocationCache(DEFAULT_TEXTURE);
             }
         }
 
         //model
         if (assetCache.getModelLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().model();
-            if (ResourceUtil.doesExist(id)) {
+            Identifier id = variant.common().dragonModelData().value().modelData().model();
+            if (ClientModelManager.instance().hasModel(id)) {
                 assetCache.setModelLocationCache(id);
             } else {
-                UselessReptile.LOGGER.warn("Failed to find model for {} ({}) of variant {}. Default will be used instead",
+                UselessReptile.LOGGER.warn("Failed to find model {} for {} ({}) of variant {}. Default will be used instead",
+                        id,
                         dragonName,
                         dragonId,
                         variantName
@@ -161,11 +185,12 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //animation cache
         if (assetCache.getAnimationLocationCache() == null) {
-            Identifier id = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData().animation();
-            if (ResourceUtil.doesExist(id)) {
+            Identifier id = variant.common().dragonModelData().value().modelData().animation();
+            if (ClientAnimationManager.instance().hasAnimations(id)) {
                 assetCache.setAnimationLocationCache(id);
             } else {
-                UselessReptile.LOGGER.warn("Failed to find animation for {} ({}) of variant {}. Default will be used instead",
+                UselessReptile.LOGGER.warn("Failed to find animations {} for {} ({}) of variant {}. Default will be used instead",
+                        id,
                         dragonName,
                         dragonId,
                         variantName
@@ -176,7 +201,7 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //render type
         if (assetCache.getRenderTypeProviderCache() == null) {
-            ModelData modelData = DragonVariantUtil.getDragonModelData(variant, Minecraft.getInstance().level.registryAccess()).modelData();
+            ModelData modelData = variant.common().dragonModelData().value().modelData();
             BRModelSubmitStorage.RenderTypeProvider renderTypeProvider;
             if (modelData.translucent()) renderTypeProvider = ((_, texture) -> RenderTypes.entityTranslucent(texture)); //all translucent models can't have culling
             else renderTypeProvider = modelData.cull() ? ((_, texture) -> RenderTypes.entityCutoutCull(texture)) : ((_, texture) -> RenderTypes.entityCutout(texture));
@@ -185,6 +210,8 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     }
 
     public static DragonEquipment getDragonEquipment(
+            URDragonEntity owner,
+            EquipmentSlot slot,
             ItemStack itemStack,
             Identifier itemId,
             EquipmentAssetCache assetCache,
@@ -199,12 +226,12 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         if (equipment == null) {
             assetCache.setCanRender(false);
-            return new DragonEquipment(itemStack, assetCache, false);
+            return new DragonEquipment(owner, itemStack, assetCache, slot);
         }
 
 
         Identifier id = equipment.modelData().texture();
-        if (ResourceUtil.doesExist(id)) {
+        if (ResourceUtil.doesResourceExist(id)) {
             assetCache.setTextureLocationCache(id);
         } else {
             UselessReptile.LOGGER.warn("Failed to find texture for equipment ({}) for {} ({}) of variant {}",
@@ -219,10 +246,11 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //model
         id = equipment.modelData().model();
-        if (ResourceUtil.doesExist(id)) {
+        if (ClientModelManager.instance().hasModel(id)) {
             assetCache.setModelLocationCache(id);
         } else {
-            UselessReptile.LOGGER.warn("Failed to find model for equipment ({}) for {} ({}) of variant {}",
+            UselessReptile.LOGGER.warn("Failed to find model {} for equipment ({}) for {} ({}) of variant {}",
+                    id,
                     itemId,
                     dragonName,
                     dragonId,
@@ -234,10 +262,11 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         //animation cache
         id = equipment.modelData().animation();
-        if (ResourceUtil.doesExist(id)) {
+        if (ClientAnimationManager.instance().hasAnimations(id)) {
             assetCache.setAnimationLocationCache(id);
         } else {
-            UselessReptile.LOGGER.warn("Failed to find animation for equipment ({}) for {} ({}) of variant {}",
+            UselessReptile.LOGGER.warn("Failed to find animation {} for equipment ({}) for {} ({}) of variant {}",
+                    id,
                     itemId,
                     dragonName,
                     dragonId,
@@ -253,17 +282,27 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
         equipment.hidBones().ifPresent(bones -> assetCache.setHidBones(bones.toArray(new String[0])));
 
-        return new DragonEquipment(itemStack, assetCache, equipment.passengerPositions().isPresent() && !equipment.passengerPositions().get().isEmpty());
+        return equipment.slot().equals(DragonInventory.Slot.SADDLE)
+                ? new SaddleEquipment(owner, itemStack, assetCache, slot)
+                : new DragonEquipment(owner, itemStack, assetCache, slot);
     }
 
     @Override
     public void afterSubmit(LivingEntityRenderState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
         for (EquipmentSlot slot : EquipmentSlot.values()) {
             DragonEquipment equipment = ((DragonAssetCache)state.getStateData(URStateDataTypes.ASSET_CACHE)).getEquipment(slot);
-            if (equipment != null && equipment.getAssetCache().canRender()) {
-                DragonEquipmentRenderer usedRenderer = equipment.isSaddle ? saddleRenderer : equipmentRenderer;
+            if (equipment != null && (!equipment.isFirstAnimationUpdate() || !equipment.ownerHasAnimationProcessor()) && equipment.getAssetCache().canRender()) {
+                DragonEquipmentRenderer usedRenderer = equipment instanceof SaddleEquipment ? saddleRenderer : equipmentRenderer;
                 usedRenderer.submitObjectOrdered(equipment, poseStack, submitNodeCollector, cameraRenderState, state.getStateData(StateDataTypes.TICK_DELTA), 1);
             }
+        }
+        LocatorTransformation locatorTransformation = getModel(state).getLocatorTransformation("breath");
+        if (locatorTransformation != null) {
+            Vector4f vec = locatorTransformation.matrix().transform(new Vector4f(0.0F, 0.0F, 0.0F, 1.0F));
+            Vector3f pos = new Vector3f(vec.x, vec.y, vec.z).rotate(Axis.YN.rotationDegrees(state.bodyRot + 180)).add((float) state.x, (float) state.y, (float) state.z);
+            HEAD_POS.put(state.getStateData(URStateDataTypes.DRAGON_UUID), new Vector3f(pos.x, pos.y, pos.z));
+        } else {
+            HEAD_POS.remove(state.getStateData(URStateDataTypes.DRAGON_UUID));
         }
     }
 
@@ -276,16 +315,8 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
 
     @Override
     public Identifier getTextureId(BRState renderState) {
-        if (!ResourceUtil.isResourceReloadFinished) return getDefaultTexture(renderState.getStateData(URStateDataTypes.DRAGON_ID));
+        if (!ResourceUtil.isResourceReloadFinished) return DEFAULT_TEXTURE;
         return renderState.getStateData(URStateDataTypes.ASSET_CACHE).getTextureLocationCache();
-    }
-
-    public static Identifier getDefaultTexture(Identifier entity) {
-        return DEFAULT_TEXTURES.computeIfAbsent(entity, (id) -> {
-            List<DragonVariant> available = DragonVariant.getSameType(DragonVariantType.fromId(id),Minecraft.getInstance().level.registryAccess());
-            if (available.isEmpty()) return null;
-            return DragonVariantUtil.getDragonModelData(available.getFirst(), Minecraft.getInstance().level.registryAccess()).modelData().texture();
-        });
     }
 
     @Override
@@ -296,5 +327,10 @@ public abstract class URDragonEntityRenderer<T extends URDragonEntity> extends B
     @Override
     public URDragonEntityModelProvider getModelProvider() {
         return (URDragonEntityModelProvider) super.getModelProvider();
+    }
+
+    @Override
+    public @Nullable TextureAtlasSprite getSpriteForTexture(Identifier texture) {
+        return TextureAtlasSpriteUtil.getTextureAtlasSprite(URAtlases.ANIMATED_TEXTURES_ATLAS_MAPPER, texture);
     }
 }

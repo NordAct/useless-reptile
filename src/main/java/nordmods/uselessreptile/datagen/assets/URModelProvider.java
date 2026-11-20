@@ -2,6 +2,7 @@ package nordmods.uselessreptile.datagen.assets;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.chars.CharComparators;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.minecraft.client.data.models.BlockModelGenerators;
@@ -12,7 +13,6 @@ import net.minecraft.client.renderer.block.dispatch.Variant;
 import net.minecraft.client.renderer.item.ItemModel;
 import net.minecraft.client.renderer.item.SelectItemModel;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.util.CurrentFluteModeProperty;
@@ -23,7 +23,6 @@ import nordmods.uselessreptile.common.item.FluteItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -78,18 +77,22 @@ public class URModelProvider extends FabricModelProvider {
         registerVortexHorn(itemModelGenerator, URItems.DIAMOND_VORTEX_HORN);
         registerVortexHorn(itemModelGenerator, URItems.NETHERITE_VORTEX_HORN);
 
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_COPPER, UselessReptile.id("item/armor/dragon/armor_copper_body"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_IRON, UselessReptile.id("item/armor/dragon/armor_iron_body"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_body"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_body"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_CHESTPLATE_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_body"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_COPPER, UselessReptile.id("item/armor/dragon/armor_copper_tail"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_IRON, UselessReptile.id("item/armor/dragon/armor_iron_tail"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_tail"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_tail"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_TAIL_ARMOR_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_tail"));
+        registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_COPPER, UselessReptile.id("item/armor/dragon/armor_copper_head"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_IRON, UselessReptile.id("item/armor/dragon/armor_iron_head"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_head"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_head"));
         registerDragonArmorModel(itemModelGenerator, URItems.DRAGON_HELMET_NETHERITE, UselessReptile.id("item/armor/dragon/armor_netherite_head"));
+        registerDragonArmorModel(itemModelGenerator, URItems.MOLECLAW_HELMET_COPPER, UselessReptile.id("item/armor/dragon/armor_copper_head_moleclaw"));
         registerDragonArmorModel(itemModelGenerator, URItems.MOLECLAW_HELMET_IRON, UselessReptile.id("item/armor/dragon/armor_iron_head_moleclaw"));
         registerDragonArmorModel(itemModelGenerator, URItems.MOLECLAW_HELMET_GOLD, UselessReptile.id("item/armor/dragon/armor_gold_head_moleclaw"));
         registerDragonArmorModel(itemModelGenerator, URItems.MOLECLAW_HELMET_DIAMOND, UselessReptile.id("item/armor/dragon/armor_diamond_head_moleclaw"));
@@ -264,11 +267,15 @@ public class URModelProvider extends FabricModelProvider {
 
     protected void registerFlute(ItemModelGenerators itemModelGenerator, Item item) {
         List<SelectItemModel.SwitchCase<FluteItem.FluteMode>> entries = new ArrayList<>();
-        for (Map.Entry<ResourceKey<FluteItem.FluteMode>, FluteItem.FluteMode> entry : URRegistries.FLUTE_MODE.entrySet()) {
-            String mode = entry.getKey().identifier().getPath();
-            ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModelGenerator.createFlatItemModel(item, "/" + mode, ModelTemplates.FLAT_HANDHELD_ITEM));
-            entries.add(new SelectItemModel.SwitchCase<>(List.of(entry.getValue()), model));
-        }
+        URRegistries.FLUTE_MODE.entrySet().stream()
+                .sorted((a, b ) -> { //that thing couldn't stop shuffling each time I ran datagen
+                    return CharComparators.NATURAL_COMPARATOR.compare(a.getKey().identifier().getPath().charAt(0), b.getKey().identifier().getPath().charAt(0));
+                })
+                .forEach(entry -> {
+                    String mode = entry.getKey().identifier().getPath();
+                    ItemModel.Unbaked model = ItemModelUtils.plainModel(itemModelGenerator.createFlatItemModel(item, "/" + mode, ModelTemplates.FLAT_HANDHELD_ITEM));
+                    entries.add(new SelectItemModel.SwitchCase<>(List.of(entry.getValue()), model));
+                });
 
         itemModelGenerator.itemModelOutput.accept(item, ItemModelUtils.select(new CurrentFluteModeProperty(), entries));
     }

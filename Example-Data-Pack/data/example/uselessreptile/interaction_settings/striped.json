@@ -1,0 +1,27 @@
+{
+  "base_taming_progress": 4,
+  "custom_item_interactions": [],
+  "damage_type_immunities": [],
+  "effect_immunities": [
+    "minecraft:poison"
+  ],
+  "food_items": {
+    "#minecraft:fishes": 3
+  },
+  "taming_items": [
+    {
+      "item": "minecraft:pufferfish_bucket",
+      "taming_progress_increase": [
+        4,
+        4
+      ]
+    },
+    {
+      "item": "minecraft:pufferfish",
+      "taming_progress_increase": [
+        1,
+        2
+      ]
+    }
+  ]
+}

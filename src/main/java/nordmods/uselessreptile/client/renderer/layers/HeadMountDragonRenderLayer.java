@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.entity.state.AvatarRenderState;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.common.init.URStateDataTypes;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.client.util.duck.HeadMountDragonRenderState;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;

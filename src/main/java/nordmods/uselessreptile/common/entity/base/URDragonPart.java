@@ -6,6 +6,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -19,26 +20,28 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class URDragonPart extends EntityPart {
-    public final URDragonEntity owner;
+    public final String name;
     private float heightMod = 1;
     private float widthMod = 1;
-    private final float damageMultiplier;
 
-    public URDragonPart(URDragonEntity owner) {
-        this(owner, 1);
+    public URDragonPart(URDragonEntity owner, String name) {
+        this(owner, name, 1, 1);
     }
 
-    public URDragonPart(URDragonEntity owner, float damageMultiplier) {
-        super(owner, 1, 1);
-        this.owner = owner;
-        this.damageMultiplier = damageMultiplier;
+    public URDragonPart(URDragonEntity owner, String name, float width, float height) {
+        super(owner, width, height);
+        this.name = name;
         refreshDimensions();
+    }
+
+    public URDragonEntity getOwner() {
+        return (URDragonEntity) owner;
     }
 
     @Nullable
     public static URDragonEntity getPartParent(Player user) {
         HitResult hitResult = ProjectileUtil.getHitResultOnViewVector(user, entity -> entity instanceof URDragonPart, user.entityInteractionRange());
-        if (hitResult.getType() == HitResult.Type.ENTITY && ((EntityHitResult)hitResult).getEntity() instanceof URDragonPart part) return part.owner;
+        if (hitResult.getType() == HitResult.Type.ENTITY && ((EntityHitResult)hitResult).getEntity() instanceof URDragonPart part) return part.getOwner();
         return null;
     }
 
@@ -60,14 +63,14 @@ public class URDragonPart extends EntityPart {
     public boolean checkInvulnerability(ServerLevel world, DamageSource damageSource) {
         boolean riderOwner = false;
         if (damageSource.getEntity() instanceof Player player)
-            riderOwner = player.getVehicle() == owner && owner.getOwner() == player;
-        return riderOwner || owner.isInvulnerableTo(world, damageSource);
+            riderOwner = player.getVehicle() == getOwner() && getOwner().getOwner() == player;
+        return riderOwner || getOwner().isInvulnerableTo(world, damageSource);
     }
 
     @Override
     public boolean hurtServer(ServerLevel world, DamageSource source, float amount) {
         if (checkInvulnerability(world, source)) return false;
-        return super.hurtServer(world, source, amount * damageMultiplier);
+        return super.hurtServer(world, source, amount);
     }
 
     @Override
@@ -77,31 +80,32 @@ public class URDragonPart extends EntityPart {
 
     @Override
     public boolean isPickable() {
-        return owner.isPickable();
+        return getOwner().isPickable();
     }
 
     @Override
     protected @NonNull Component getTypeName() {
-        return owner.getTypeName();
+        return getOwner().getTypeName();
     }
 
     public void setScale(float destinationHeight, float destinationWidth) {
-        destinationWidth *= owner.getScale();
-        destinationHeight *= owner.getScale();
+        destinationWidth *= getOwner().getScale();
+        destinationHeight *= getOwner().getScale();
         float widthMod = getWidthMod();
         float heightMod = getHeightMod();
         float widthDiff = widthMod - destinationWidth;
         float heightDiff = heightMod - destinationHeight;
 
+        float transitionSpeed = getBoxSizeTransitionSpeed();
         if (widthDiff != 0) {
-            if (widthDiff > owner.getWidthModTransSpeed()) widthMod -= owner.getWidthModTransSpeed();
-            else if (widthDiff < -owner.getWidthModTransSpeed()) widthMod += owner.getWidthModTransSpeed();
+            if (widthDiff > transitionSpeed) widthMod -= transitionSpeed;
+            else if (widthDiff < -transitionSpeed) widthMod += transitionSpeed;
             else widthMod = destinationWidth;
         }
 
         if (heightDiff != 0) {
-            if (heightDiff > owner.getHeightModTransSpeed()) heightMod -= owner.getHeightModTransSpeed();
-            else if (heightDiff < -owner.getHeightModTransSpeed()) heightMod += owner.getHeightModTransSpeed();
+            if (heightDiff > transitionSpeed) heightMod -= transitionSpeed;
+            else if (heightDiff < -transitionSpeed) heightMod += transitionSpeed;
             else heightMod = destinationHeight;
         }
 
@@ -110,7 +114,11 @@ public class URDragonPart extends EntityPart {
 
         this.heightMod = heightMod;
         this.widthMod = widthMod;
-        refreshDimensions();
+        if (destinationWidth != getBbWidth() || destinationHeight != getBbHeight()) refreshDimensions();
+    }
+
+    public float getBoxSizeTransitionSpeed() {
+        return (float) (0.3 * getOwner().getScale());
     }
 
     @SuppressWarnings("SuspiciousNameCombination")
@@ -118,11 +126,22 @@ public class URDragonPart extends EntityPart {
         setScale(scale.x, scale.y);
     }
 
+    @Override
     public void setRelativePos(double x, double y, double z) {
-        setRelativePos(x * owner.getScale(), y * owner.getScale(), z * owner.getScale(), 0, owner.getYRot());
+        setRelativePos(x * getOwner().getScale(), y * getOwner().getScale(), z * getOwner().getScale(), 0, getOwner().getYRot());
     }
 
     public void setRelativePos(Vector3f vector3f) {
         setRelativePos(vector3f.x, vector3f.y, vector3f.z);
+    }
+
+    @Override
+    public boolean isPassengerOfSameVehicle(Entity other) {
+        return owner.isPassengerOfSameVehicle(other);
+    }
+
+    @Override
+    public boolean canCollideWith(Entity entity) {
+        return entity != owner && owner.canCollideWith(entity);
     }
 }

@@ -54,11 +54,9 @@ public class DragonSpawnUtil {
                 || spawnReason == EntitySpawnReason.CHUNK_GENERATION
                 || spawnReason == EntitySpawnReason.BREEDING;
 
-        RegistryAccess registryManager = entity.level().registryAccess();
-
         List<Tuple<String, Integer>> variants = new ArrayList<>();
         variantStream.forEach(variant -> {
-            registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get()).forEach(conditions -> {
+            variant.common().spawnConditions().value().forEach(conditions -> {
                 if (checkConditions(conditions, world, pos, entity.getDragonVariant().getType(), spawnReason)) variants.add(new Tuple<>(variant.common().name(), conditions.weight()));
             });
         });
@@ -86,17 +84,15 @@ public class DragonSpawnUtil {
     public static Stream<DragonVariant> getAvailableVariants(LevelAccessor world, BlockPos pos, DragonVariantType<? extends DragonVariant> type , EntitySpawnReason spawnReason) {
         RegistryAccess registryManager = world.registryAccess();
         return registryManager.lookupOrThrow(URResourceKeys.DRAGON_VARIANT).stream()
-                .filter(varinat -> varinat.getType().equals(type))
                 .filter(variant -> {
-                    if (variant.common().spawnConditions().isPresent()) {
-                        List<DragonSpawnConditions> conditionsList = registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get());
-                        if (conditionsList == null) return false;
-                        for (DragonSpawnConditions conditions : conditionsList) if (conditions.weight() > 0) return true;
-                    }
+                    if (!variant.getType().equals(type)) return false;
+                    List<DragonSpawnConditions> conditionsList = variant.common().spawnConditions().value();
+                    if (conditionsList.isEmpty()) return false;
+                    for (DragonSpawnConditions conditions : conditionsList) if (conditions.weight() > 0) return true;
                     return false;
                 })
                 .filter(variant -> {
-                    for (DragonSpawnConditions conditions : registryManager.lookupOrThrow(URResourceKeys.DRAGON_SPAWN_CONDITIONS).getValue(variant.common().spawnConditions().get())) {
+                    for (DragonSpawnConditions conditions : variant.common().spawnConditions().value()) {
                         if (checkConditions(conditions, world, pos, type, spawnReason)) return true;
                     }
                     return false;
@@ -104,6 +100,14 @@ public class DragonSpawnUtil {
     }
 
     private static boolean checkConditions(DragonSpawnConditions conditions, LevelAccessor world, BlockPos pos, DragonVariantType<? extends DragonVariant> type, EntitySpawnReason spawnReason) {
+        if (conditions.allowedOrBannedSpawnReasons().isPresent()) {
+            if (conditions.allowedOrBannedSpawnReasons().get().left().isPresent()
+                && !conditions.allowedOrBannedSpawnReasons().get().left().get().contains(spawnReason)) return false;
+
+            if (conditions.allowedOrBannedSpawnReasons().get().right().isPresent()
+                    && conditions.allowedOrBannedSpawnReasons().get().right().get().contains(spawnReason)) return false;
+        }
+
         //altitude check
         if (conditions.altitudeRestriction().isPresent()) {
             DragonSpawnConditions.IntRange restriction = conditions.altitudeRestriction().get();

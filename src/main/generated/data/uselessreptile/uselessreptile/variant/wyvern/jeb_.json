@@ -1,0 +1,12 @@
+{
+  "type": "uselessreptile:wyvern",
+  "abilities": "uselessreptile:wyvern/default",
+  "base_attribute_values": "uselessreptile:wyvern/default",
+  "dragon_model": "uselessreptile:wyvern/jeb_",
+  "equipment": "uselessreptile:wyvern/default",
+  "interaction_settings": "uselessreptile:wyvern/default",
+  "name": "jeb_",
+  "spawn_conditions": "uselessreptile:cannot_spawn",
+  "targeting_settings": "uselessreptile:wyvern/default",
+  "variant_name_key": "variant.uselessreptile.wyvern.jeb_"
+}

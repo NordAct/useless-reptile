@@ -6,11 +6,11 @@ import net.minecraft.world.item.ItemStack;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
 
-public abstract class DragonConsumeItemFromInventoryGoal extends Goal {
-    protected final URDragonEntity dragon;
+public abstract class DragonConsumeItemFromInventoryGoal<T extends URDragonEntity> extends Goal {
+    protected final T mob;
 
-    public DragonConsumeItemFromInventoryGoal(URDragonEntity dragon) {
-        this.dragon = dragon;
+    public DragonConsumeItemFromInventoryGoal(T mob) {
+        this.mob = mob;
     }
 
     @Override
@@ -21,11 +21,11 @@ public abstract class DragonConsumeItemFromInventoryGoal extends Goal {
     @Override
     public void tick() {
         if (canConsume()) {
-            for (int i = DragonInventory.INVENTORY_START_INDEX; i <= dragon.getInventory().getContainerSize(); i++) {
-                ItemStack itemStack = dragon.getStackFromSlot(i);
+            for (int i = DragonInventory.INVENTORY_START_INDEX; i <= mob.getInventory().getContainerSize(); i++) {
+                ItemStack itemStack = mob.getStackFromSlot(i);
                 if (isConsumableItem(itemStack)) {
                     beforeItemConsumed(itemStack);
-                    dragon.consumeGivenItem(dragon, itemStack, SoundEvents.GENERIC_EAT.value(), null);
+                    mob.consumeGivenItem(mob, itemStack, SoundEvents.GENERIC_EAT.value(), null);
                     break;
                 }
             }

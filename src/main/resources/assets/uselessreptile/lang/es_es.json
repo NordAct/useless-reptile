@@ -71,8 +71,8 @@
     "entity.uselessreptile.magmamuncher": "Devorador de Magma",
 
     "key.category.uselessreptile.main": "Controles de Useless Reptile",
-    "key.uselessreptile.primaryAttackKey": "Ataque Primario",
-    "key.uselessreptile.secondaryAttackKey": "Ataque Secundario",
+    "key.uselessreptile.primaryAbilityKey": "Ataque Primario",
+    "key.uselessreptile.secondaryAbilityKey": "Ataque Secundario",
     "key.uselessreptile.flyDownKey": "Volar Hacia Abajo",
     "key.uselessreptile.flyUpKey": "Volar Hacia Arriba",
     "key.uselessreptile.freeLookKey": "Vista Libre",

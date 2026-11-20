@@ -25,7 +25,7 @@ public abstract class LivingEntityMixin extends Entity{
     @Inject(method = "stopRiding", at = @At("HEAD"))
     private void setFirstPersonPerspective(CallbackInfo ci) {
         if (!URClientConfig.getConfig().autoThirdPerson) return;
-        if (!(getVehicle() instanceof URRideableDragonEntity) || !((Object)this instanceof Player player && player.isLocalPlayer())) return;
+        if (!(getVehicle() instanceof URRideableDragonEntity<?>) || !((Object)this instanceof Player player && player.isLocalPlayer())) return;
 
         Options gameOptions = Minecraft.getInstance().options;
         gameOptions.setCameraType(CameraType.FIRST_PERSON);

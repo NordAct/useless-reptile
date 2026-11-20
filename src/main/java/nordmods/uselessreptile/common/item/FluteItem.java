@@ -61,7 +61,7 @@ public class FluteItem extends Item {
             FluteConfigurationComponent component = new FluteConfigurationComponent(dragonEntity.getType(), dragonEntity.getPermittedFluteModes().getFirst(), dragonEntity.getPermittedFluteModes());
             player.getItemInHand(type).set(URItemComponents.FLUTE_CONFIGURATION, component);
             if (player.isLocalPlayer()) {
-                player.sendOverlayMessage(Component.translatable("tooltip.uselessreptile.flute_listener", getFluteConfig(itemStack).dragon().getDescription()));
+                player.sendOverlayMessage(Component.translatable("tooltip.uselessreptile.flute_listener", component.dragon().getDescription()));
             }
             return InteractionResult.SUCCESS;
         }

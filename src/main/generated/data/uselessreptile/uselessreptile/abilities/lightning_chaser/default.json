@@ -1,0 +1,167 @@
+[
+  {
+    "type": "uselessreptile:melee_attack",
+    "ability_type": "secondary",
+    "active_time_seconds": 1.0,
+    "animations": [
+      {
+        "animations": [
+          "attack.melee1",
+          "attack.melee2",
+          "attack.melee3"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [],
+        "controller": "ability"
+      }
+    ],
+    "aoe": false,
+    "attack_box": [
+      {
+        "center_offset": [
+          0.0,
+          -0.1,
+          2.5
+        ],
+        "conditions": [],
+        "height": 3.0,
+        "vertical_box_movement": "none",
+        "width": 3.0
+      }
+    ],
+    "attack_effects": [],
+    "block_other_abilities_if_active": true,
+    "conditions": [
+      {
+        "type": "uselessreptile:flying",
+        "flying": false
+      }
+    ],
+    "cooldown_time_seconds": 1.5,
+    "icon": "uselessreptile:ability/lightning_chaser_bite",
+    "set_on_fire": false,
+    "trigger_time_seconds": 0.0
+  },
+  {
+    "type": "uselessreptile:lightning_breath",
+    "ability_type": "primary",
+    "active_time_seconds": 1.0,
+    "anchor_point": "multipart_box",
+    "anchor_point_offset": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "animations": [
+      {
+        "animations": [
+          "attack.range"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:flying",
+            "flying": false
+          }
+        ],
+        "controller": "ability"
+      },
+      {
+        "animations": [
+          "attack.range.fly"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:flying",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:moving",
+            "backwards": true,
+            "moving": true
+          }
+        ],
+        "controller": "ability"
+      },
+      {
+        "animations": [
+          "attack.range.fly.idle"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:flying",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:moving",
+            "backwards": true,
+            "moving": true
+          }
+        ],
+        "controller": "ability"
+      },
+      {
+        "animations": [
+          "attack.range.fly.idle"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:flying",
+            "flying": true
+          },
+          {
+            "type": "uselessreptile:moving",
+            "backwards": false,
+            "moving": false
+          }
+        ],
+        "controller": "ability"
+      }
+    ],
+    "block_break_power": 3,
+    "block_other_abilities_if_active": true,
+    "color": 16777215,
+    "conditions": [],
+    "cooldown_time_seconds": 5.0,
+    "damage_scaling": 2.0,
+    "icon": "uselessreptile:ability/lightning_bolt_shot",
+    "max_age": 10,
+    "max_length": 50,
+    "multipart_box_name": "head",
+    "trigger_time_seconds": 0.35
+  },
+  {
+    "type": "uselessreptile:shockwave",
+    "ability_type": "secondary",
+    "active_time_seconds": 1.13,
+    "animations": [
+      {
+        "animations": [
+          "fly.shockwave"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [],
+        "controller": "main"
+      }
+    ],
+    "block_other_abilities_if_active": true,
+    "color": 16777215,
+    "conditions": [
+      {
+        "type": "uselessreptile:flying",
+        "flying": true
+      }
+    ],
+    "cooldown_time_seconds": 20.0,
+    "damage_scaling": 1.0,
+    "icon": "uselessreptile:ability/shockwave",
+    "max_radius": 40.0,
+    "power": 1.0,
+    "projectile_entity_nbt": {},
+    "radius_change_speed": 0.8,
+    "trigger_time_seconds": 0.5
+  }
+]

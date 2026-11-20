@@ -9,74 +9,39 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.SitWhenOrderedToGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NonTameRandomTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.OwnerHurtTargetGoal;
-import net.minecraft.world.entity.monster.MagmaCube;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
-import net.minecraft.world.phys.AABB;
-import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
-import nordmods.biscuit_roll.common.animation.BRPlayingAnimation;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
 import nordmods.uselessreptile.common.dragon_variant.type.DragonVariantType;
 import nordmods.uselessreptile.common.entity.ai.goal.common.*;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherApplyFireResistanceGoal;
-import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherAttackGoal;
 import nordmods.uselessreptile.common.entity.ai.goal.magmamuncher.MagmamuncherEatMagmaGoal;
 import nordmods.uselessreptile.common.entity.ai.navigation.MagmamuncherNavigation;
 import nordmods.uselessreptile.common.entity.base.HeadMountDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
-import nordmods.uselessreptile.common.init.URAttributes;
 import nordmods.uselessreptile.common.init.URBlocks;
 import nordmods.uselessreptile.common.init.URDragonVariantTypes;
-import nordmods.uselessreptile.common.util.URDragonAnimationController;
+import nordmods.uselessreptile.common.entity.misc.URDragonAnimationController;
 import org.jspecify.annotations.NonNull;
 
-import java.util.Collection;
-import java.util.List;
-
 public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
-    public static int EAT_MAGMA_COOLDOWN_AVERAGE = 20*50;
+    public static final int EAT_MAGMA_COOLDOWN_AVERAGE = 20*50;
     public int eatMagmaCooldown = 0;
     private int eatingMagmaProgress;
     private static final int MAX_EATING_MAGMA_PROGRESS = 20*5;
     public static final float DISTANCE_TO_EAT = 1.25f;
+    public static final float DISTANCE_TO_EAT_SQUARED = DISTANCE_TO_EAT * DISTANCE_TO_EAT;
     public static final ResourceKey<LootTable> MAGMA_EATEN_TABLE = ResourceKey.create(Registries.LOOT_TABLE, UselessReptile.id("entities/magmamuncher_from_magma"));
-    private final URDragonAnimationController<Magmamuncher> mainController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<Magmamuncher> turnController = new URDragonAnimationController<>(this, true);
-    private final URDragonAnimationController<Magmamuncher> attackController = new URDragonAnimationController<>(this, false) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final URDragonAnimationController<Magmamuncher> blinkController = new URDragonAnimationController<>(this, true) {
-        @Override
-        public float getDefaultTransitionTime() {
-            return 0;
-        }
-    };
-    private final List<BRAnimationController> controllers = List.of(mainController, turnController, attackController, blinkController);
-
-    public static final float BASE_GROUND_SPEED = 0.2f;
 
     public Magmamuncher(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -84,11 +49,8 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         setPathfindingMalus(PathType.FIRE, 0);
         setPathfindingMalus(PathType.FIRE_IN_NEIGHBOR, 0);
         navigation = new MagmamuncherNavigation(this, level());
-    }
-
-    @Override
-    protected float getBaseGroundSpeed() {
-        return BASE_GROUND_SPEED;
+        setYawTargetLimit(20);
+        setPitchTargetLimit(20);
     }
 
     @Override
@@ -96,55 +58,23 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         return "netherrack";
     }
 
-    @Override
-    public Collection<BRAnimationController> getAnimationControllers() {
-        return controllers;
-    }
-
-    //todo reconsider structure and make it cleaner
     public void tickAnimations() {
         if (!level().isClientSide()) return;
         tickBlinkController();
-        tickTurnController();
-        tickAttackController();
         tickMainController();
     }
 
     private void tickBlinkController() {
+        URDragonAnimationController<URDragonEntity> blinkController = getAnimationController(AnimationController.BLINK);
+        if (blinkController.isPlayingAbilityAnimation(AnimationController.BLINK)) return;
         if (blinkController.getPlayingAnimations().isEmpty()) blinkController.playAnimation("blink");
     }
 
-    private void tickAttackController() {
-        attackController.getPlayingAnimations().forEach(anim -> anim.setSpeed(1f / getCooldownModifier()));
-        if (isPrimaryAttack()) attackController.playAnimation("attack" + getAttackType());
-    }
-
-    private void tickTurnController() {
-        byte turnState = getTurningState();
-        if (isMoving()) {
-            if (turnState == 1) {
-                turnController.playAnimation("turn.walk.left");
-                return;
-            }
-            if (turnState == 2) {
-                turnController.playAnimation("turn.walk.right");
-                return;
-            }
-        }
-        if (turnState == 1) {
-            turnController.playAnimation("turn.left");
-            return;
-        }
-        if (turnState == 2) {
-            turnController.playAnimation("turn.right");
-            return;
-        }
-        turnController.getPlayingAnimations().forEach(BRPlayingAnimation::stop);
-    }
-
     private void tickMainController() {
+        URDragonAnimationController<URDragonEntity> mainController = getAnimationController(AnimationController.MAIN);
         float animationSpeed = getMovementSpeedModifier();
         mainController.getPlayingAnimations().forEach(anim -> anim.setSpeed(animationSpeed));
+        if (mainController.isPlayingAbilityAnimation(AnimationController.MAIN)) return;
         if (isPassenger()) {
             mainController.playAnimation("sit.head");
             return;
@@ -169,18 +99,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         mainController.playAnimation("idle");
     }
 
-    public static AttributeSupplier.Builder createMagmamuncherAttributes() {
-        return createDragonAttributes()
-                .add(Attributes.ATTACK_DAMAGE, attributes().magmamuncherDamage)
-                .add(Attributes.ATTACK_KNOCKBACK, attributes().magmamuncherKnockback)
-                .add(Attributes.MAX_HEALTH, attributes().magmamuncherHealth)
-                .add(Attributes.ARMOR, attributes().magmamuncherArmor)
-                .add(Attributes.ARMOR_TOUGHNESS, attributes().magmamuncherArmorToughness)
-                .add(Attributes.MOVEMENT_SPEED, attributes().magmamuncherGroundSpeed)
-                .add(URAttributes.DRAGON_GROUND_ROTATION_SPEED, attributes().magmamuncherRotationSpeedGround)
-                .add(URAttributes.DRAGON_PRIMARY_ATTACK_COOLDOWN, attributes().magmamuncherBasePrimaryAttackCooldown);
-    }
-
     @Override
     protected void defineSynchedData(SynchedEntityData.@NonNull Builder builder) {
         super.defineSynchedData(builder);
@@ -195,20 +113,20 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     @Override
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
-        goalSelector.addGoal(1, new DragonCallBackGoal(this));
+        goalSelector.addGoal(1, new DragonCallBackGoal<>(this));
         goalSelector.addGoal(2, new SitWhenOrderedToGoal(this));
         goalSelector.addGoal(3, new MagmamuncherApplyFireResistanceGoal(this));
-        goalSelector.addGoal(4, new DragonEatFromInventoryGoal(this));
-        goalSelector.addGoal(5, new MagmamuncherAttackGoal(this, 4096));
+        goalSelector.addGoal(4, new DragonEatFromInventoryGoal<>(this));
+        goalSelector.addGoal(5, new DragonAttackGoal(this));
         goalSelector.addGoal(6, new MagmamuncherEatMagmaGoal(this));
-        goalSelector.addGoal(7, new DragonReturnToHomePoint(this));
-        goalSelector.addGoal(8, new DragonWanderAroundGoal(this));
-        goalSelector.addGoal(9, new DragonLookAroundGoal(this));
-        targetSelector.addGoal(1, new DragonRevengeGoal(this));
-        targetSelector.addGoal(2, new OwnerHurtTargetGoal(this));
-        targetSelector.addGoal(3, new OwnerHurtByTargetGoal(this));
-        if (URConfig.getConfig().dragonMadness) targetSelector.addGoal(4, new NonTameRandomTargetGoal<>(this, Player.class, true, null));
-        targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, MagmaCube.class, true));
+        goalSelector.addGoal(7, new DragonReturnToHomePoint<>(this));
+        goalSelector.addGoal(8, new DragonWanderAroundGoal<>(this));
+        goalSelector.addGoal(9, new DragonLookAroundGoal<>(this));
+        targetSelector.addGoal(1, new DragonRevengeGoal<>(this));
+        targetSelector.addGoal(2, new DragonOwnerHurtTargetGoal(this));
+        targetSelector.addGoal(3, new DragonOwnerHurtByTargetGoal(this));
+        targetSelector.addGoal(4, new DragonNonTameRandomTargetGoal(this, true));
+        targetSelector.addGoal(4, new DragonTameRandomTargetGoal(this, true));
     }
 
     @Override
@@ -226,8 +144,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     @Override
     public void tick() {
         super.tick();
-        if (getVehicle() instanceof Player) setHitboxModifiers(0.35f, 0.6f, 0);
-        else setHitboxModifiers(0.35f, 0.7f, 0);
         if (eatMagmaCooldown > 0) eatMagmaCooldown--;
         checkIfEatingMagma();
         tickAnimations();
@@ -238,7 +154,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
             BlockPos pos = getMagmaBlockPos();
             if (!level().isClientSide() &&
                     (level().getBlockState(pos).getBlock() != Blocks.MAGMA_BLOCK
-                            || pos.getCenter().distanceToSqr(position()) >= DISTANCE_TO_EAT * DISTANCE_TO_EAT)) {
+                            || pos.getCenter().distanceToSqr(position()) >= DISTANCE_TO_EAT_SQUARED)) {
                 setEatingMagma(false);
             } else if (!level().isClientSide() && ++eatingMagmaProgress >= MAX_EATING_MAGMA_PROGRESS) {
                 setEatingMagma(false);
@@ -256,18 +172,6 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
         }
     }
 
-    public void attackMelee(LivingEntity target) {
-        if (!(level() instanceof ServerLevel world)) return;
-        setPrimaryAttackCooldown(getMaxPrimaryAttackCooldown());
-        setAttackType(random.nextInt(3)+1);
-        AttributeModifier modifier = new AttributeModifier(UselessReptile.id("magma_cube_bonus"), 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL);
-        if (target instanceof MagmaCube) getAttribute(Attributes.ATTACK_DAMAGE).addTransientModifier(modifier);
-        if (doHurtTarget(world, target)) {
-            target.igniteForSeconds((float) (0.75f * getAttributeValue(Attributes.ATTACK_DAMAGE)));
-        }
-        getAttribute(Attributes.ATTACK_DAMAGE).removeModifier(modifier);
-    }
-
     public BlockPos getMagmaBlockPos() {
         return entityData.get(MAGMA_POS);
     }
@@ -277,10 +181,9 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     }
 
     @Override
-    public boolean canBreakBlocks() {
-        if (!(level() instanceof ServerLevel world)) return false;
-        boolean shouldBreakBlocks = isTame() ? URConfig.getConfig().magmamuncherGriefing.canTamedBreak() : URConfig.getConfig().magmamuncherGriefing.canUntamedBreak();
-        return shouldBreakBlocks &&  world.getGameRules().get(GameRules.MOB_GRIEFING);
+    public boolean canGrief() {
+        if (!super.canGrief()) return false;
+        return isTame() ? URConfig.getConfig().magmamuncherGriefing.canTamedGrief() : URConfig.getConfig().magmamuncherGriefing.canUntamedGiref();
     }
 
     @Override
@@ -291,10 +194,5 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
     @Override
     public DragonVariantType<? extends DragonVariant> getVariantType() {
         return URDragonVariantTypes.MAGMAMUNCHER;
-    }
-
-    @Override
-    public @NonNull AABB getPrimaryAttackBox() {
-        return getBoundingBox().inflate(getScale(), 0, getScale());
     }
 }

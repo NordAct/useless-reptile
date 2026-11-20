@@ -5,7 +5,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.EffectsInInventory;
 import net.minecraft.world.effect.MobEffectInstance;
-import nordmods.uselessreptile.common.init.URMobEffect;
+import nordmods.uselessreptile.common.init.URMobEffects;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -21,7 +21,7 @@ public abstract class EffectsInInventoryMixin {
     @Inject(method = "extractEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/AbstractContainerScreen;getFont()Lnet/minecraft/client/gui/Font;"))
     private void yeetShockEffect(GuiGraphicsExtractor guiGraphics, Collection<MobEffectInstance> collection, int i, int j, int k, int l, int m, CallbackInfo ci, @Local LocalRef<Collection<MobEffectInstance>> localRef) {
         List<MobEffectInstance> copy = new ArrayList<>(List.copyOf(localRef.get()));
-        copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffect().equals(URMobEffect.SHOCK));
+        copy.removeIf(statusEffectInstance -> statusEffectInstance.getEffect().equals(URMobEffects.SHOCK));
         localRef.set(copy);
     }
 }

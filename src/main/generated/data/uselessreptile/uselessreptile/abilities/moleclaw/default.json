@@ -1,0 +1,114 @@
+[
+  {
+    "type": "uselessreptile:melee_attack",
+    "ability_type": "secondary",
+    "active_time_seconds": 1.6,
+    "animations": [
+      {
+        "animations": [
+          "attack.normal1",
+          "attack.normal2"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [],
+        "controller": "ability"
+      }
+    ],
+    "aoe": true,
+    "attack_box": [
+      {
+        "center_offset": [
+          0.0,
+          -0.25,
+          2.0
+        ],
+        "conditions": [],
+        "height": 3.5,
+        "vertical_box_movement": "none",
+        "width": 3.0
+      }
+    ],
+    "attack_effects": [],
+    "block_other_abilities_if_active": true,
+    "conditions": [],
+    "cooldown_time_seconds": 1.75,
+    "icon": "uselessreptile:ability/moleclaw_swipe",
+    "set_on_fire": false,
+    "trigger_time_seconds": 0.5
+  },
+  {
+    "type": "uselessreptile:block_breaking_melee_attack",
+    "ability_type": "primary",
+    "active_time_seconds": 1.6,
+    "animations": [
+      {
+        "animations": [
+          "attack.strong"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:moleclaw",
+            "is_panicking": false
+          }
+        ],
+        "controller": "ability"
+      },
+      {
+        "animations": [
+          "attack.strong.panic"
+        ],
+        "can_interrupt_playing_ability_animation": true,
+        "conditions": [
+          {
+            "type": "uselessreptile:moleclaw",
+            "is_panicking": true
+          }
+        ],
+        "controller": "ability"
+      }
+    ],
+    "aoe": true,
+    "attack_box": [
+      {
+        "center_offset": [
+          0.0,
+          0.5,
+          1.5
+        ],
+        "conditions": [
+          {
+            "type": "uselessreptile:rideable",
+            "controlled_by_rider": false
+          }
+        ],
+        "height": 3.5,
+        "vertical_box_movement": "smooth",
+        "width": 2.5
+      },
+      {
+        "center_offset": [
+          0.0,
+          0.25,
+          1.5
+        ],
+        "conditions": [
+          {
+            "type": "uselessreptile:rideable",
+            "controlled_by_rider": true
+          }
+        ],
+        "height": 4.25,
+        "vertical_box_movement": "snapped",
+        "width": 2.5
+      }
+    ],
+    "attack_effects": [],
+    "block_other_abilities_if_active": true,
+    "conditions": [],
+    "cooldown_time_seconds": 3.0,
+    "icon": "uselessreptile:ability/moleclaw_heavy_blow",
+    "set_on_fire": false,
+    "trigger_time_seconds": 0.5
+  }
+]

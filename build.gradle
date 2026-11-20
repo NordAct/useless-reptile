@@ -1,10 +1,10 @@
 plugins {
-    id 'net.fabricmc.fabric-loom' version '1.15-SNAPSHOT'
+    id 'net.fabricmc.fabric-loom' version '1.18-SNAPSHOT'
     id 'maven-publish'
-    id "me.modmuss50.mod-publish-plugin" version "2.0.0"
+    id "me.modmuss50.mod-publish-plugin" version "2.2.0"
 }
 
-version = project.mod_version + "-" + project.minecraft_version
+version = project.mod_version + "+" + project.minecraft_version
 group = project.maven_group
 
 repositories {
@@ -77,6 +77,8 @@ tasks.withType(JavaCompile).configureEach {
 
 java {
     withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
 }
 
 sourceSets {
@@ -92,26 +94,36 @@ sourceSets {
 loom {
     accessWidenerPath = file("src/main/resources/uselessreptile.accesswidener")
     runs {
+        configureEach {
+            getJvmArguments().add("-Dfabric.log.debug.level=off")
+        }
         client {
             client()
-            vmArg '-Dfabric-tag-conventions-v2.missingTagTranslationWarning=VERBOSE'
 
-            name "Data Generation Client"
-            vmArg "-Dfabric-api.datagen"
-            vmArg "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}"
-            vmArg "-Dfabric-api.datagen.modid=uselessreptile"
+            getDisplayName().set("Data Generation Client")
+            getJvmArguments().addAll(
+                    "-Dfabric-tag-conventions-v2.missingTagTranslationWarning=VERBOSE",
+                    "-Dfabric-api.datagen",
+                    "-Dfabric-api.datagen.output-dir=${file("src/main/generated")}",
+                    "-Dfabric-api.datagen.modid=uselessreptile"
+            )
 
-            ideConfigGenerated = true
-            runDir "build/datagen"
 
-            programArgs "--username", "Nord_Act"
-            programArgs "-uuid", "ce6764cd-4578-4d6a-8f29-7eb379beb0ef"
+            getGenerateRunConfig().set(true)
+            getRunDirectory().set(getProject().file("build/datagen"))
+
+            //getProgramArguments().addAll(
+            //        "--username", "Nord_Act",
+            //        "-uuid", "ce6764cd-4578-4d6a-8f29-7eb379beb0ef"
+            //)
         }
     }
 }
 
 fabricApi {
-    configureDataGeneration()
+    configureDataGeneration(){
+        client = true
+    }
 }
 
 publishMods {
@@ -134,6 +146,7 @@ publishMods {
         client = true
         server = true
     }
+
     modrinth {
         projectId = "YE4QRt8F"
         accessToken = providers.environmentVariable("MODRINTH_TOKEN")

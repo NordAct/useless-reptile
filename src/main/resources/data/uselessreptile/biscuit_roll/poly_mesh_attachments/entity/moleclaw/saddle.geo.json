@@ -1,0 +1,12 @@
+{
+	"bb_main": {
+		"locator1_rope_right": [-4.6, 36.42299, -17.26765],
+		"locator2_rope_right": [-4.6, 35.27814, -23.15741],
+		"locator3_rope_right": [-2.6, 36.42299, -17.26765],
+		"locator4_rope_right": [-2.6, 35.27814, -23.15741],
+		"locator1_rope_left": [4.6, 36.42299, -17.26765],
+		"locator2_rope_left": [4.6, 35.27814, -23.15741],
+		"locator3_rope_left": [2.6, 36.42299, -17.26765],
+		"locator4_rope_left": [2.6, 35.27814, -23.15741]
+	}
+}

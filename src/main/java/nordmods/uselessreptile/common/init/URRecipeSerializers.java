@@ -3,7 +3,6 @@ package nordmods.uselessreptile.common.init;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.ShapedRecipe;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.recipe.VortexHornRecipe;
 import nordmods.uselessreptile.common.recipe.VortexHornSmithingRecipe;

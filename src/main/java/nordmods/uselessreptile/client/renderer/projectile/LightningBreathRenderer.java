@@ -14,7 +14,7 @@ import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.renderer.LightningChaserRenderer;
+import nordmods.uselessreptile.client.renderer.base.URDragonEntityRenderer;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
 import org.joml.Random;
@@ -155,7 +155,7 @@ public class LightningBreathRenderer extends EntityRenderer<LightningBreath, Lig
             Random random = new Random();
             LightningBreath.LightningBreathBolt lightningBreathBolt = new LightningBreath.LightningBreathBolt();
             float offset = Math.clamp(state.length / 10f, 1, 4);
-            Vector3f headPos = LightningChaserRenderer.headPos.get(owner.getUUID());
+            Vector3f headPos = URDragonEntityRenderer.HEAD_POS.get(owner.getUUID());
             if (headPos == null) return;
             Vector3f vec3d = entity.getLookAngle().scale(state.length).toVector3f();
             lightningBreathBolt.segments.add(new LightningBreath.LightningBreathBolt.Segment(headPos, vec3d.add(headPos)));

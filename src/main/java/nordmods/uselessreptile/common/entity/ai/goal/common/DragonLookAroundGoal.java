@@ -1,23 +1,21 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
-import nordmods.uselessreptile.common.entity.base.ShooterDragon;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
-
-import java.util.EnumSet;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-public class DragonLookAroundGoal extends Goal {
-    protected final URDragonEntity mob;
+import java.util.EnumSet;
+
+public class DragonLookAroundGoal<T extends URDragonEntity> extends Goal {
+    protected final T mob;
     protected int lookTimer;
     protected float x;
     protected float z;
 
-    public DragonLookAroundGoal(URDragonEntity mob) {
+    public DragonLookAroundGoal(T mob) {
         this.mob = mob;
-        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+        setFlags(EnumSet.of(Flag.LOOK));
     }
 
     @Override
@@ -32,7 +30,7 @@ public class DragonLookAroundGoal extends Goal {
     @Override
     public boolean canUse() {
         if (mob.isDancing()) return false;
-        return mob.getRandom().nextFloat() < 0.02;
+        return mob.getTarget() == null && !mob.shouldFollow && mob.getRandom().nextFloat() < 0.02;
     }
 
     @Override
@@ -43,10 +41,9 @@ public class DragonLookAroundGoal extends Goal {
     @Override
     public void tick() {
         --lookTimer;
-        if (mob instanceof ShooterDragon shooterDragon) {
-            Vector3f point = shooterDragon.getShootingPoint().position();
-            mob.getLookControl().setLookAt(point.x + x, point.y, point.z + z);
-        }
-        else mob.getLookControl().setLookAt(mob.getX() + x, mob.getEyeY(), mob.getZ() + z);
+        Vec3 target = new Vec3(mob.getX() + x, mob.getEyeY(), mob.getZ() + z);
+        mob.getLookControl().setLookAt(target);
+        if (mob.getBodyRotationControl().getBodyRotationControl().canBeRotatedOutsideMoveController() && !mob.getBodyRotationControl().getBodyRotationControl().canHeadReachTarget())
+            mob.getBodyRotationControl().setRotationTarget(target);
     }
 }

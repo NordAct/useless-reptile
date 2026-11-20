@@ -11,7 +11,7 @@ import net.minecraft.world.phys.Vec3;
 import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.biscuit_roll.common.state.StateDataTypes;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.client.init.URClientStateDataTypes;
 
 import java.util.*;
 
@@ -24,11 +24,11 @@ public class DragonPassengerLayer extends nordmods.biscuit_roll.client.renderer.
 
     @Override
     protected void submit(BRState state, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, CameraRenderState cameraRenderState) {
-        List<Boolean> shouldRenderToClient = state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT);
-        List<? super EntityRenderState> renderStates = state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE);
-        List<EntityRenderer<? super Entity, ? super EntityRenderState>> renderers = state.getStateData(URStateDataTypes.PASSENGERS_RENDERERS);
-        List<UUID> uuids = state.getStateData(URStateDataTypes.PASSENGERS_UUID);
-        List<Vec3> attachmentPos = state.getStateData(URStateDataTypes.PASSENGERS_ATTACHMENT_POS);
+        List<Boolean> shouldRenderToClient = state.getStateData(URClientStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT);
+        List<? super EntityRenderState> renderStates = state.getStateData(URClientStateDataTypes.PASSENGERS_RENDER_STATE);
+        List<EntityRenderer<? super Entity, ? super EntityRenderState>> renderers = state.getStateData(URClientStateDataTypes.PASSENGERS_RENDERERS);
+        List<UUID> uuids = state.getStateData(URClientStateDataTypes.PASSENGERS_UUID);
+        List<Vec3> attachmentPos = state.getStateData(URClientStateDataTypes.PASSENGERS_ATTACHMENT_POS);
 
         for (int i = 0; i < shouldRenderToClient.size(); i++) {
             if (!shouldRenderToClient.get(i)) continue;
@@ -64,6 +64,6 @@ public class DragonPassengerLayer extends nordmods.biscuit_roll.client.renderer.
 
     @Override
     public boolean canRender(BRState state) {
-        return !state.getStateData(URStateDataTypes.PASSENGERS_RENDER_STATE).isEmpty();
+        return !state.getStateData(URClientStateDataTypes.PASSENGERS_RENDER_STATE).isEmpty();
     }
 }

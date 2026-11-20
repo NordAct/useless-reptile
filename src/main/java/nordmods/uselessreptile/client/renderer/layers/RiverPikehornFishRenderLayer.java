@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.state.level.CameraRenderState;
 import nordmods.biscuit_roll.client.renderer.BRRenderer;
 import nordmods.biscuit_roll.client.renderer.layer.ItemRenderLayer;
 import nordmods.biscuit_roll.common.state.BRState;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.client.init.URClientStateDataTypes;
 import org.jspecify.annotations.Nullable;
 
 public class RiverPikehornFishRenderLayer extends ItemRenderLayer {
@@ -33,6 +33,6 @@ public class RiverPikehornFishRenderLayer extends ItemRenderLayer {
 
     @Override
     protected @Nullable ItemStackRenderState getItemStackRenderState(BRState state) {
-        return state.getStateData(URStateDataTypes.FISH);
+        return state.getStateData(URClientStateDataTypes.FISH);
     }
 }

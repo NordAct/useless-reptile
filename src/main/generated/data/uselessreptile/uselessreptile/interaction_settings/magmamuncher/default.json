@@ -1,0 +1,21 @@
+{
+  "base_taming_progress": 12,
+  "custom_item_interactions": [],
+  "damage_type_immunities": [
+    "#minecraft:is_fire"
+  ],
+  "effect_immunities": [],
+  "food_items": {
+    "minecraft:magma_block": 4,
+    "minecraft:magma_cream": 2
+  },
+  "taming_items": [
+    {
+      "item": "minecraft:blaze_rod",
+      "taming_progress_increase": [
+        1,
+        3
+      ]
+    }
+  ]
+}

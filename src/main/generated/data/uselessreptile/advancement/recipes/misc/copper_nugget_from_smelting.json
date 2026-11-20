@@ -1,0 +1,65 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_dragon_chestplate_copper": {
+      "conditions": {
+        "items": [
+          {
+            "items": "uselessreptile:dragon_chestplate_copper"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_dragon_helmet_copper": {
+      "conditions": {
+        "items": [
+          {
+            "items": "uselessreptile:dragon_helmet_copper"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_dragon_tail_armor_copper": {
+      "conditions": {
+        "items": [
+          {
+            "items": "uselessreptile:dragon_tail_armor_copper"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_moleclaw_helmet_copper": {
+      "conditions": {
+        "items": [
+          {
+            "items": "uselessreptile:moleclaw_helmet_copper"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "uselessreptile:copper_nugget_from_smelting"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_moleclaw_helmet_copper",
+      "has_dragon_helmet_copper",
+      "has_dragon_chestplate_copper",
+      "has_dragon_tail_armor_copper"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "uselessreptile:copper_nugget_from_smelting"
+    ]
+  }
+}

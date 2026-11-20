@@ -44,8 +44,8 @@
     "entity.uselessreptile.lightning_chaser": "Mennydörgésüldöző",
 
     "key.category.uselessreptile": "Haszontalan Hüllő Irányítás",
-    "key.uselessreptile.primaryAttackKey": "Elsődleges Támadás",
-    "key.uselessreptile.secondaryAttackKey": "Másodlagos Támadás",
+    "key.uselessreptile.primaryAbilityKey": "Elsődleges Támadás",
+    "key.uselessreptile.secondaryAbilityKey": "Másodlagos Támadás",
     "key.uselessreptile.flyDownKey": "Lefele Repülés",
     "key.uselessreptile.flyUpKey": "Felfele Repülés",
 

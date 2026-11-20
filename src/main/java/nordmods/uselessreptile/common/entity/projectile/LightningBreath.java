@@ -24,8 +24,8 @@ import nordmods.primitive_multipart_entities.common.entity.EntityPart;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.init.UREntities;
-import nordmods.uselessreptile.common.init.URMobEffect;
-import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.common.init.URMobEffects;
+import nordmods.uselessreptile.common.init.URSoundEvents;
 import nordmods.uselessreptile.common.init.URTags;
 import nordmods.uselessreptile.common.network.s2c.SyncLightningBreathRotationsPayload;
 import org.joml.Vector3f;
@@ -37,11 +37,10 @@ import java.util.List;
 public class LightningBreath extends Projectile implements ProjectileDamageHelper {
     private boolean spawnSoundPlayed = false;
     private int tickCount;
-    public static final int MAX_AGE_TICKS = 10;
-    public static final int MAX_LENGTH = 50;
     public float prevAlpha = 0.5f;
     public float damageScaling = 2;
     private float defaultDamage = 16;
+    private int blockBreakPower = 3;
     public final LightningBreathBolt[] lightningBreathBolts = new LightningBreathBolt[3];
 
     public LightningBreath(EntityType<? extends Projectile> entityType, Level world, Entity owner) {
@@ -90,7 +89,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(BEAM_LENGTH, 0);
-        builder.define(MAX_AGE, MAX_AGE_TICKS);
+        builder.define(MAX_AGE, 10);
         builder.define(COLOR, 0xFFFFFF);
     }
 
@@ -102,7 +101,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         DamageSource source = damageSources().source(DamageTypes.LIGHTNING_BOLT, getOwner());
         if (target instanceof LivingEntity livingEntity && livingEntity.isInvulnerableTo(serverWorld, source)) return;
         if (target.hurtServer(serverWorld, source, getResultingDamage())) {
-            target.playSound(URSoundEvent.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
+            target.playSound(URSoundEvents.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
             boolean wasOnFireBefore = target.isOnFire();
             LightningBolt fakeLightningSoNoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityType.LIGHTNING_BOLT, serverWorld);
             target.thunderHit(serverWorld, fakeLightningSoNoNullPointerExceptionWouldHappenIHope);
@@ -111,7 +110,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
                 target.setSharedFlagOnFire(false);
             }
             if (target instanceof LivingEntity livingEntity)
-                livingEntity.addEffect(new MobEffectInstance(URMobEffect.SHOCK, 400, 0, false, false), getOwner());
+                livingEntity.addEffect(new MobEffectInstance(URMobEffects.SHOCK, 400, 0, false, false), getOwner());
         }
     }
 
@@ -126,10 +125,10 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
                 onHitEntity(entityHitResult);
             }
 
-            if (getOwner() instanceof URDragonEntity dragon && !dragon.canBreakBlocks()) return;
+            if (getOwner() instanceof URDragonEntity dragon && !dragon.canGrief()) return;
 
             Iterable<BlockPos> blocks = BlockPos.withinManhattan(blockPosition(), 2, 1, 2);
-            float harnessLimit = 3;
+            float harnessLimit = blockBreakPower;
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {
                 BlockState blockState = level().getBlockState(blockPos);
@@ -178,7 +177,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
 
     private void tryPlaySpawnSound() {
         if (!spawnSoundPlayed) {
-            playSound(URSoundEvent.SHOCKWAVE, 0.25f, 1);
+            playSound(URSoundEvents.SHOCKWAVE, 0.25f, 1);
             spawnSoundPlayed = true;
         }
     }
@@ -215,7 +214,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         return damageScaling;
     }
 
-    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos, int maxLength, int maxAge, float damageScaling, int color) {
+    public static void createBeam(@NonNull Entity owner, float pitch, float yaw, Vec3 startPos, int maxLength, int maxAge, float damageScaling, int color, int blockBreakPower) {
         Vec3 rot = owner.calculateViewVector(pitch, yaw);
         ArrayList<Integer> ids = new ArrayList<>();
         LightningBreath firstSegment = null;
@@ -229,6 +228,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
             lightningBreathEntity.setMaxAge(maxAge);
             lightningBreathEntity.setColor(color);
             lightningBreathEntity.damageScaling = damageScaling;
+            lightningBreathEntity.blockBreakPower = blockBreakPower;
             world.addFreshEntity(lightningBreathEntity);
             if (i == 1) firstSegment = lightningBreathEntity;
 
@@ -239,6 +239,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
                 BlockState blockState = world.getBlockState(pos);
                 return blockState.is(URTags.LIGHTNING_BREATH_ALWAYS_BREAKS) || blockState.getDestroySpeed(world, pos) == 0;
             }) || !world.getEntities(lightningBreathEntity, lightningBreathEntity.getBoundingBox(), entity -> {
+                if (lightningBreathEntity.getOwner() != null && lightningBreathEntity.getOwner() == entity) return false;
                 LivingEntity ownerOwner = lightningBreathEntity.getOwner() instanceof OwnableEntity tameable ? tameable.getOwner() : null;
                 if (entity instanceof OwnableEntity tameable && tameable.getOwner() != null && tameable.getOwner() == ownerOwner)
                     return false;

@@ -6,9 +6,15 @@ extendable method net/minecraft/world/entity/Entity isLocalInstanceAuthoritative
 accessible field net/minecraft/world/entity/Entity passengers Lcom/google/common/collect/ImmutableList;
 accessible field net/minecraft/world/entity/Entity vehicle Lnet/minecraft/world/entity/Entity;
 accessible field net/minecraft/world/entity/Entity boardingCooldown I
+accessible field net/minecraft/world/entity/Mob bodyRotationControl Lnet/minecraft/world/entity/ai/control/BodyRotationControl;
 # Datagen (Seriously, why some constructors are private and some aren't?)
 accessible method net/minecraft/data/recipes/ShapedRecipeBuilder <init> (Lnet/minecraft/core/HolderGetter;Lnet/minecraft/data/recipes/RecipeCategory;Lnet/minecraft/world/item/ItemStackTemplate;)V
 accessible method net/minecraft/data/recipes/ShapedRecipeBuilder <init> (Lnet/minecraft/core/HolderGetter;Lnet/minecraft/data/recipes/RecipeCategory;Lnet/minecraft/world/level/ItemLike;I)V
 # Recipes
 accessible field net/minecraft/world/item/crafting/ShapedRecipe pattern Lnet/minecraft/world/item/crafting/ShapedRecipePattern;
 accessible field net/minecraft/world/item/crafting/ShapedRecipe result Lnet/minecraft/world/item/ItemStackTemplate;
+# Pathfinding
+accessible method net/minecraft/world/level/pathfinder/WalkNodeEvaluator hasCollisions (Lnet/minecraft/world/phys/AABB;)Z
+accessible method net/minecraft/world/entity/ai/navigation/PathNavigation shouldTargetNextNodeInDirection (Lnet/minecraft/world/phys/Vec3;)Z
+# Pack verification
+accessible field net/minecraft/client/gui/screens/packs/PackSelectionModel$EntryBase pack Lnet/minecraft/server/packs/repository/Pack;
