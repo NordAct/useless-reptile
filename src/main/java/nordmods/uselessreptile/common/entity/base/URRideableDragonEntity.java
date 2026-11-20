@@ -2,6 +2,7 @@ package nordmods.uselessreptile.common.entity.base;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
@@ -51,6 +52,7 @@ public abstract class URRideableDragonEntity<T extends URRideableDragonEntity<T>
     public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
     private DragonAbilityHolder primaryRiderAbility = createNoopHolder();
     private DragonAbilityHolder secondaryRiderAbility = createNoopHolder();
+    private final Int2ObjectArrayMap<Vec3> prevOffset = new Int2ObjectArrayMap<>();
 
     protected URRideableDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -420,21 +422,24 @@ public abstract class URRideableDragonEntity<T extends URRideableDragonEntity<T>
     @Override
     protected @NonNull Vec3 getPassengerAttachmentPoint(@NonNull Entity passenger, @NonNull EntityDimensions dimensions, float scaleFactor) {
         int ordinal = getPassengers().indexOf(passenger);
-        Vec3 offset = Vec3.ZERO;
+        Vec3 offset = prevOffset.computeIfAbsent(ordinal, _ -> Vec3.ZERO);
 
         if (ordinal > -1) {
             if (getAssetCache().getEquipment(EquipmentSlot.SADDLE) instanceof SaddleEquipment saddleEquipment) {
-                if (saddleEquipment.getAnimationProcessor() instanceof EquipmentAnimationProcessor processor && processor.getModelDirect() != null) {
+                if (saddleEquipment.getAnimationProcessor() instanceof EquipmentAnimationProcessor<?> processor && processor.getModelDirect() != null) {
                     LocatorTransformation transformation = processor.getModelDirect().getLocatorTransformation("passenger" + ordinal);
                     if (transformation != null) {
                         Vector4f v = transformation.matrix().transform(new Vector4f());
-                        offset = new Vec3(-v.x, v.y - getBbHeight(), -v.z);
-                        if (passenger instanceof PassengerCameraRollOwner cameraRollOwner) {
-                            float zRot = transformation.matrix().getEulerAnglesZYX(new Vector3f()).z;
-                            if (Float.isNaN(zRot)) zRot = 0;
-                            else if (zRot < 0) zRot += Mth.PI;
-                            else zRot -= Mth.PI;
-                            cameraRollOwner.useless_reptile$updateZRot(zRot);
+                        if (!Float.isNaN(v.x) && !Float.isNaN(v.y) && !Float.isNaN(v.z)) { //not sure how, but sometimes this can be NaN. In this case, we'll use prev offset value
+                            offset = new Vec3(-v.x, v.y - getBbHeight(), -v.z);
+                            prevOffset.put(ordinal, offset);
+                            if (passenger instanceof PassengerCameraRollOwner cameraRollOwner) {
+                                float zRot = transformation.matrix().getEulerAnglesZYX(new Vector3f()).z;
+                                if (Float.isNaN(zRot)) zRot = 0;
+                                else if (zRot < 0) zRot += Mth.PI;
+                                else zRot -= Mth.PI;
+                                cameraRollOwner.useless_reptile$updateZRot(zRot);
+                            }
                         }
                     }
                 }
