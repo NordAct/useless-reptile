@@ -31,8 +31,8 @@
     "entity.uselessreptile.moleclaw": "Kretoszpon",
 
     "key.category.uselessreptile": "Useless Reptile sterowanie",
-    "key.uselessreptile.primaryAttackKey": "Pierwszorzędny atak",
-    "key.uselessreptile.secondaryAttackKey": "Drugorzędny atak",
+    "key.uselessreptile.primaryAbilityKey": "Pierwszorzędny atak",
+    "key.uselessreptile.secondaryAbilityKey": "Drugorzędny atak",
     "key.uselessreptile.flyDownKey": "Leć w dół",
     "key.uselessreptile.flyUpKey": "Leć w górę",
     "subtitles.uselessreptile.wyvern.hurt": "Bagienna wiwerna otrzymuje obrażenia",

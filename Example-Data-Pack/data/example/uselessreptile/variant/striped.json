@@ -1,16 +1,16 @@
 {
   "type": "uselessreptile:river_pikehorn",
   "name": "striped",
-  "equipment": "uselessreptile:empty",
+  "variant_name_key": "variant.example.river_pikehorn.striped",
+  "abilities": "uselessreptile:river_pikehorn/default",
+  "base_attribute_values": "example:striped",
   "dragon_model": "example:striped",
-  "spawn_conditions": "uselessreptile:river_pikehorn/default",
-  "attribute_modifiers": "example:striped",
-  "base_taming_progress": 1,
-  "food_items": {
-    "#minecraft:fishes": 3
-  },
-  "taming_items": {
-    "minecraft:tropical_fish_bucket": [1, 1]
-  },
-  "variant_name_key": "variant.example.river_pikehorn.striped"
+  "equipment": "uselessreptile:river_pikehorn/default",
+  "hunt_targets": [
+    "#uselessreptile:river_pikehorn_hunt_target",
+    "minecraft:pufferfish"
+  ],
+  "interaction_settings": "example:striped",
+  "spawn_conditions": "example:striped",
+  "targeting_settings": "uselessreptile:river_pikehorn/default"
 }

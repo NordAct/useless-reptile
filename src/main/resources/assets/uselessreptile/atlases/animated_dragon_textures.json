@@ -1,0 +1,9 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:directory",
+      "prefix": "entity/animated_dragon_textures/",
+      "source": "entity/animated_dragon_textures"
+    }
+  ]
+}

@@ -1,8 +1,12 @@
 {
   "type": "uselessreptile:moleclaw",
+  "variant_name_key": "variant.moleclaw.battleworn",
   "name": "Battleworn",
+  "abilities": "uselessreptile:moleclaw/default",
+  "base_attribute_values": "uselessreptile:moleclaw/default",
   "equipment": "example:battleworn",
   "dragon_model": "example:battleworn",
-  "base_taming_progress": -1,
-  "variant_name_key": "variant.moleclaw.battleworn"
+  "interaction_settings": "uselessreptile:moleclaw/default",
+  "spawn_conditions": "uselessreptile:cannot_spawn",
+  "targeting_settings": "uselessreptile:moleclaw/default"
 }

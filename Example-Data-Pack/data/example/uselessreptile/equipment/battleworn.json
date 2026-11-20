@@ -5,7 +5,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_iron.png",
         "model": "example:biscuit_roll/models/moleclaw/helmet.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "helmet"
     },
@@ -13,7 +13,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_iron.png",
         "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "chestplate"
     },
@@ -21,7 +21,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_iron.png",
         "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "tail_armor"
     },
@@ -29,7 +29,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_gold.png",
         "model": "example:biscuit_roll/models/moleclaw/helmet.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "helmet"
     },
@@ -37,7 +37,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_gold.png",
         "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "chestplate"
     },
@@ -45,7 +45,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_gold.png",
         "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "tail_armor"
     },
@@ -53,7 +53,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_diamond.png",
         "model": "example:biscuit_roll/models/moleclaw/helmet.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "helmet"
     },
@@ -61,7 +61,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_diamond.png",
         "model": "example:biscuit_roll/models/moleclaw/chestplate.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "chestplate"
     },
@@ -69,7 +69,7 @@
       "model_data": {
         "texture": "example:textures/moleclaw/armor_diamond.png",
         "model": "example:biscuit_roll/models/moleclaw/tail_armor.json",
-        "animation": "uselessreptile:biscuit_roll/animations/entity/moleclaw/empty.animation.json"
+        "animation": "uselessreptile:biscuit_roll/animations/entity/empty.animation.json"
       },
       "slot": "tail_armor"
     }

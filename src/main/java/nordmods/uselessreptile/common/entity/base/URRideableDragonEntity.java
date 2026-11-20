@@ -2,9 +2,9 @@ package nordmods.uselessreptile.common.entity.base;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import libs.gg.moonflower.pinwheel.api.transform.LocatorTransformation;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -12,6 +12,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.*;
@@ -22,18 +23,34 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import nordmods.biscuit_roll.common.animation.BRAnimationProcessorOwner;
+import nordmods.biscuit_roll.common.animation.BREntityWithAnimationProcessor;
+import nordmods.biscuit_roll.common.animation.processor.ControllerState;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.client.config.URClientConfig;
 import nordmods.uselessreptile.client.init.URKeyMappings;
+import nordmods.uselessreptile.client.util.duck.PassengerCameraRollOwner;
 import nordmods.uselessreptile.common.config.URMobAttributesConfig;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
+import nordmods.uselessreptile.common.dragon_ability.type.NoopAbility;
+import nordmods.uselessreptile.common.entity.animation_processor.EquipmentAnimationProcessor;
+import nordmods.uselessreptile.common.entity.dragon_equipment.DragonEquipment;
+import nordmods.uselessreptile.common.entity.dragon_equipment.SaddleEquipment;
 import nordmods.uselessreptile.common.entity.misc.Placeholder;
+import nordmods.uselessreptile.common.init.URAttachments;
 import nordmods.uselessreptile.common.network.c2s.KeyInputPayload;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 import org.jspecify.annotations.NonNull;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public abstract class URRideableDragonEntity extends URDragonEntity implements HasCustomInventoryScreen {
+public abstract class URRideableDragonEntity<T extends URRideableDragonEntity<T>> extends URDragonEntity implements HasCustomInventoryScreen, BREntityWithAnimationProcessor<T> {
     public static final Identifier RIDER_BONUS = UselessReptile.id("rider_bonus");
+    private DragonAbilityHolder primaryRiderAbility = createNoopHolder();
+    private DragonAbilityHolder secondaryRiderAbility = createNoopHolder();
 
     protected URRideableDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
@@ -50,6 +67,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         builder.define(SECONDARY_ATTACK_PRESSED, false);
         builder.define(PRIMARY_ATTACK_PRESSED, false);
         builder.define(FREE_LOOK, false);
+        builder.define(HAS_CONTROLLING_PASSENGER, false);
     }
 
     public static final EntityDataAccessor<Boolean> MOVE_FORWARD_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
@@ -60,6 +78,7 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     public static final EntityDataAccessor<Boolean> SECONDARY_ATTACK_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> PRIMARY_ATTACK_PRESSED = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> FREE_LOOK = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
+    public static final EntityDataAccessor<Boolean> HAS_CONTROLLING_PASSENGER = SynchedEntityData.defineId(URRideableDragonEntity.class, EntityDataSerializers.BOOLEAN);
 
     public void updateInputs(boolean forward, boolean back, boolean jump, boolean down, boolean isSecondaryAttackPressed, boolean isPrimaryAttackPressed, boolean sprint, boolean freeLook) {
         entityData.set(MOVE_FORWARD_PRESSED, forward);
@@ -81,6 +100,38 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     public boolean isPrimaryAttackPressed() {return entityData.get(PRIMARY_ATTACK_PRESSED);}
     public boolean freeLook() {return entityData.get(FREE_LOOK);}
 
+    protected void updateRiderAbilities() {
+        List<DragonAbilityHolder> available = getAvailableAbilities();
+        primaryRiderAbility = available.stream()
+                .filter(
+                        a -> a.getAbility().getCommonAbilityData().abilityType().isPresent() &&
+                        a.getAbility().getCommonAbilityData().abilityType().get() == AbilityType.PRIMARY &&
+                        a.getCooldown() <= 0
+                )
+                .findFirst()
+                .orElse(available.stream()
+                        .filter(
+                                a -> a.getAbility().getCommonAbilityData().abilityType().isPresent() &&
+                                a.getAbility().getCommonAbilityData().abilityType().get() == AbilityType.PRIMARY
+                        )
+                        .findFirst()
+                        .orElseGet(this::createNoopHolder)
+                );
+        secondaryRiderAbility = available.stream()
+                .filter(
+                        a -> a.getAbility().getCommonAbilityData().abilityType().isPresent() &&
+                                a.getAbility().getCommonAbilityData().abilityType().get() == AbilityType.SECONDARY &&
+                                a.getCooldown() <= 0
+                ).findFirst()
+                .orElse(available.stream()
+                        .filter(
+                                a -> a.getAbility().getCommonAbilityData().abilityType().isPresent() &&
+                                        a.getAbility().getCommonAbilityData().abilityType().get() == AbilityType.SECONDARY
+                        ).findFirst()
+                        .orElseGet(this::createNoopHolder)
+                );
+    }
+
     @Override
     public LivingEntity getControllingPassenger() {
         return getFirstPassenger() instanceof Player player ? player : null;
@@ -88,13 +139,16 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
 
     @Override
     public @NonNull InteractionResult mobInteract(Player player, @NonNull InteractionHand hand) {
-        ItemStack itemStack = player.getItemInHand(hand);
-        if (isTame() && !isInteractableItem(itemStack) && !player.isShiftKeyDown() && !level().isClientSide()) {
-            if (hasSaddle() && player.startRiding(this)) {
-                return InteractionResult.SUCCESS;
+        InteractionResult result = super.mobInteract(player, hand);
+        if (result == InteractionResult.PASS) {
+            ItemStack itemStack = player.getItemInHand(hand);
+            if (isTame() && !isInteractableItem(itemStack) && !player.isShiftKeyDown() && !level().isClientSide()) {
+                if (hasSaddle() && player.startRiding(this)) {
+                    return InteractionResult.SUCCESS;
+                }
             }
         }
-        return super.mobInteract(player, hand);
+        return result;
     }
 
     @Override
@@ -209,11 +263,21 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         if (level() instanceof ServerLevel) {
             boolean hasRider = hasControllingPassenger();
             updateRiderBonus(hasRider);
-            getLookControl().setLockRotation(hasRider);
+            entityData.set(HAS_CONTROLLING_PASSENGER, hasRider);
             if (hasRider) setHomePoint(blockPosition());
             else updateInputs(false, false, false, false, false, false, false, false);
         }
         super.travel(movementInput);
+    }
+
+    @Override
+    public void tickAcceleration() {
+        if (getControllingPassenger() instanceof Player player) tickAccelerationControlled(player);
+        else super.tickAcceleration();
+    }
+
+    public void tickAccelerationControlled(Player rider) {
+        setAccelerationDuration(getMaxAccelerationDuration());
     }
 
     public Vec3 updateMovementInput(Player rider, Vec3 movementInput) {
@@ -226,7 +290,6 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         setMovingBackwards(isMoveBackPressed() || (!isMoveForwardPressed() && !isMoveBackPressed() && isMoving()));
         if (isMovingBackwards()) setSprinting(false);
         setRotation(rider);
-        setXRot(Mth.clamp(rider.getXRot(), -getPitchLimit(), getPitchLimit()));
         if (isJumpPressed() && onGround()) jumpFromGround();
         //adding some extra small number to Y velocity so on client it checks isOnGround() correctly
         return new Vec3(0, movementInput.y  - 0.001, landSpeed);
@@ -238,7 +301,19 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
+    public void updateControllerStates() {
+        BREntityWithAnimationProcessor.super.updateControllerStates();
+        Map<EquipmentSlot, List<ControllerState>> equipmentControllerStates = new HashMap<>();
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            DragonEquipment equipment = getAssetCache().getEquipment(equipmentSlot);
+            if (equipment instanceof BRAnimationProcessorOwner<?>) equipmentControllerStates.put(equipmentSlot, ControllerState.collectControllerStates(equipment.getAnimationControllers()));
+        }
+        setAttached(URAttachments.EQUIPMENT_CONTROLLER_STATES, equipmentControllerStates);
+    }
+
+    @Override
     protected void tickRidden(@NonNull Player rider, @NonNull Vec3 movementInput) {
+        updateRiderAbilities();
         if (level().isClientSide() && getControllingPassenger() instanceof LocalPlayer player) {
             boolean isSprintPressed = player.input.keyPresses.sprint();
             boolean isMoveForwardPressed = player.input.keyPresses.forward();
@@ -251,8 +326,8 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                     || (URClientConfig.getConfig().upDownCameraControl
                         && hasVerticalInput()
                         && player.getXRot() > URClientConfig.getConfig().upDownCameraPitchThreshold);
-            boolean isSecondaryAttackPressed = URKeyMappings.SECONDARY_ATTACK_KEY.isDown();
-            boolean isPrimaryAttackPressed = URKeyMappings.PRIMARY_ATTACK_KEY.isDown();
+            boolean isSecondaryAttackPressed = URKeyMappings.SECONDARY_ABILITY_KEY.isDown();
+            boolean isPrimaryAttackPressed = URKeyMappings.PRIMARY_ABILITY_KEY.isDown();
             boolean freeLook = URKeyMappings.FREE_LOOK_KEY.isDown();
 
             if (isSprintPressed != isSprintPressed()
@@ -276,14 +351,18 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
                                 getId()));
             }
         }
+        if (!level().isClientSide()) {
+            if (isPrimaryAttackPressed()) primaryRiderAbility.use();
+            if (isSecondaryAttackPressed()) secondaryRiderAbility.use();
+        }
         super.tickRidden(rider, movementInput);
     }
 
     @Override
     public void updateEquipment() {
-        super.updateEquipment();
         ItemStack saddle = getInventory().getItem(0);
         setItemSlot(EquipmentSlot.SADDLE, saddle);
+        super.updateEquipment();
     }
 
     public boolean hasSaddle() {
@@ -308,9 +387,16 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
         }
     }
 
+    @Override
+    public boolean isClient() {
+        return BREntityWithAnimationProcessor.super.isClient();
+    }
+
     protected void setRotation(Player rider) {
-        if (freeLook()) setRot(getYRot(), getXRot());
-        else setRot(rider.getYRot(), rider.getXRot());
+        Vec3 targetRot = calculateViewVector(Math.clamp(rider.getXRot(), -89.9f, 89.9f), rider.yHeadRot).multiply(10000, 10000, 10000).add(rider.getX(), getEyeY(), rider.getZ());
+        getLookControl().setLookAt(targetRot);
+        setXRot(Mth.clamp(rider.getXRot(), -getMaxHeadXRot(), getMaxHeadXRot()));
+        if (!freeLook()) getBodyRotationControl().setRotationTarget(targetRot);
     }
 
     public int vortexHornCapacity() {
@@ -322,31 +408,82 @@ public abstract class URRideableDragonEntity extends URDragonEntity implements H
     }
 
     @Override
-    public boolean canBeLeashed() {
+    public boolean canBeLeashed() { //Leads have too much whimsy when they interact with server authoritative mount logic
         return false;
     }
 
     public int getMaxPassengerCount() {
         ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
-        Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
-        if (saddle.isEmpty() || !getDragonEquipment().containsKey(id)) return 0;
-        return getDragonEquipment().get(id).passengerPositions().orElse(List.of()).size();
+        if (saddle.isEmpty() || !getDragonEquipment().containsKey(saddle.typeHolder())) return 0;
+        return getDragonEquipment().get(saddle.typeHolder()).maxPassengers().orElse(0);
     }
 
     @Override
     protected @NonNull Vec3 getPassengerAttachmentPoint(@NonNull Entity passenger, @NonNull EntityDimensions dimensions, float scaleFactor) {
-        int ordinal = getPassengers().size();
+        int ordinal = getPassengers().indexOf(passenger);
         Vec3 offset = Vec3.ZERO;
-        while (--ordinal > -1) {
-            if (getPassengers().get(ordinal) == passenger) break;
-        }
+
         if (ordinal > -1) {
-            ItemStack saddle = getItemBySlot(EquipmentSlot.SADDLE);
-            Identifier id = BuiltInRegistries.ITEM.getKey(saddle.getItem());
-            if (!saddle.isEmpty() && getDragonEquipment().containsKey(id)) {
-                offset = getDragonEquipment().get(id).passengerPositions().orElseThrow().get(ordinal);
+            if (getAssetCache().getEquipment(EquipmentSlot.SADDLE) instanceof SaddleEquipment saddleEquipment) {
+                if (saddleEquipment.getAnimationProcessor() instanceof EquipmentAnimationProcessor processor && processor.getModelDirect() != null) {
+                    LocatorTransformation transformation = processor.getModelDirect().getLocatorTransformation("passenger" + ordinal);
+                    if (transformation != null) {
+                        Vector4f v = transformation.matrix().transform(new Vector4f());
+                        offset = new Vec3(-v.x, v.y - getBbHeight(), -v.z);
+                        if (passenger instanceof PassengerCameraRollOwner cameraRollOwner) {
+                            float zRot = transformation.matrix().getEulerAnglesZYX(new Vector3f()).z;
+                            if (Float.isNaN(zRot)) zRot = 0;
+                            else if (zRot < 0) zRot += Mth.PI;
+                            else zRot -= Mth.PI;
+                            cameraRollOwner.useless_reptile$updateZRot(zRot);
+                        }
+                    }
+                }
             }
         }
-        return super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor).add(offset.yRot(-getYRot() * Mth.DEG_TO_RAD));
+        return super.getPassengerAttachmentPoint(passenger, dimensions, scaleFactor)
+                .add(offset.yRot(-getYRot() * Mth.DEG_TO_RAD));
+    }
+
+    protected DragonAbilityHolder createNoopHolder() {
+        return new DragonAbilityHolder(new NoopAbility(), this);
+    }
+
+    public DragonAbilityHolder getPrimaryRiderAbility() {
+        return primaryRiderAbility;
+    }
+
+    public DragonAbilityHolder getSecondaryRiderAbility() {
+        return secondaryRiderAbility;
+    }
+
+    @Override
+    public void onAnimationControllersUpdated() {
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            DragonEquipment equipment = getAssetCache().getEquipment(equipmentSlot);
+            if (equipment != null && !(equipment instanceof BRAnimationProcessorOwner<?>)) equipment.updateAnimations();
+        }
+    }
+
+    @Override
+    public boolean tickAnimationProcessorOnClient() {
+        return true;
+    }
+
+    /// Rider's attacks
+    public enum AbilityType implements StringRepresentable {
+        PRIMARY("primary"),
+        SECONDARY("secondary")
+        ;
+        private final String name;
+
+        AbilityType(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public String getSerializedName() {
+            return name;
+        }
     }
 }

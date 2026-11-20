@@ -18,7 +18,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.uselessreptile.UselessReptile;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
+import nordmods.uselessreptile.client.init.URClientStateDataTypes;
 import nordmods.uselessreptile.client.util.RenderUtil;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import nordmods.uselessreptile.common.gui.URDragonMenu;
@@ -244,7 +244,7 @@ public class URDragonScreen<T extends AbstractContainerMenu> extends AbstractCon
         EntityRenderer<? super LivingEntity, ?> renderer = RenderUtil.getEntityRenderer(entity);
         LivingEntityRenderState state = (LivingEntityRenderState) renderer.createRenderState(entity, tickDelta);
         state.nameTag = null;
-        state.setStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, state.getStateData(URStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, List.of()).stream().map(_ -> false).toList());
+        state.setStateData(URClientStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, state.getStateData(URClientStateDataTypes.PASSENGERS_SHOULD_RENDER_TO_CLIENT, List.of()).stream().map(_ -> false).toList());
         state.setStateData(ClientStateDataTypes.LIGHT, LightCoordsUtil.FULL_BRIGHT);
 
         Quaternionf rot = new Quaternionf();

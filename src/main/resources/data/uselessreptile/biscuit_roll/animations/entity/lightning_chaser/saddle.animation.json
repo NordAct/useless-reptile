@@ -1,0 +1,32 @@
+{
+	"format_version": "1.8.0",
+	"animations": {
+		"fly.idle": {
+			"loop": true,
+			"bones": {
+				"rider": {
+					"rotation": [52.5, 0, 0],
+					"position": [0, 4.16604, 4.31779]
+				}
+			}
+		},
+		"fly.shockwave": {
+			"loop": true,
+			"bones": {
+				"rider": {
+					"rotation": [52.5, 0, 0],
+					"position": [0, 4.16604, 4.31779]
+				}
+			}
+		},
+		"fly.back": {
+			"loop": true,
+			"bones": {
+				"rider": {
+					"rotation": [52.5, 0, 0],
+					"position": [0, 4.16604, 4.31779]
+				}
+			}
+		}
+	}
+}

@@ -1,49 +1,57 @@
 package nordmods.uselessreptile.common.entity.ai.navigation;
 
+import it.unimi.dsi.fastutil.objects.Object2BooleanMap;
+import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.pathfinder.PathFinder;
-import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.base.FlyingDragon;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 import org.jspecify.annotations.NonNull;
 
 public class FlyingDragonLandNavigation<T extends URDragonEntity & FlyingDragon> extends FlyingDragonBaseNavigation<T> {
-    public FlyingDragonLandNavigation(T entity, Level world) {
-        super(entity, world);
+    public FlyingDragonLandNavigation(T mob, Level world) {
+        super(mob, world);
     }
+    private final Object2BooleanMap<AABB> collisionCache = new Object2BooleanOpenHashMap<>();
 
     @Override
     protected @NonNull PathFinder createPathFinder(int range) {
-        nodeEvaluator = new WalkNodeEvaluator();
+        nodeEvaluator = new DragonWalkNodeEvaluator();
         return new PathFinder(nodeEvaluator, range);
     }
 
     @Override
     public void tick() {
-        if (entity.hasControllingPassenger() || entity.isPassenger() || entity.isOrderedToSit()) return;
+        if (mob.hasControllingPassenger() || mob.isPassenger() || mob.isOrderedToSit()) return;
 
         super.tick();
 
         BlockPos target = getTargetPos();
-        if (!isDone() && target != null) {
-            double yDiffNode = path.getNextNode().asVec3().y() - entity.getY();
-            double yDiffTarget = target.getY() - entity.getY();
-            double xDiffTarget = entity.getX() - target.getX();
+        if (path != null && path.getNodeCount() > 0 && target != null) {
+            double yDiffNode = isInProgress() ? path.getNextNode().asVec3().y() - mob.getY() : 0;
+            double yDiffTarget = target.getY() - mob.getY();
+            double xDiffTarget = mob.getX() - target.getX();
             xDiffTarget *= xDiffTarget;
-            double zDiffTarget = entity.getZ() - target.getZ();
+            double zDiffTarget = mob.getZ() - target.getZ();
             zDiffTarget *= zDiffTarget;
-            boolean shouldFlyUp = jumpCount > 9
-                    || yDiffTarget > 3 && Math.sqrt(xDiffTarget + zDiffTarget) < 16
-                    || yDiffTarget > 8
-                    || Math.sqrt(xDiffTarget + zDiffTarget) > 64
-                    || path != null && path.isDone();
-            if ((tick > 20 || yDiffNode > 0.5f) && entity.horizontalCollision || shouldFlyUp && !entity.hasTargetInWater()) {
-                entity.getJumpControl().jump();
-                startToFly(shouldFlyUp);
+            boolean shouldFlyUp = path.getEndNode() != null && target.distChessboard(path.getEndNode().asBlockPos()) > 2 || yDiffNode > mob.maxUpStep() || yDiffTarget > mob.maxUpStep() * 4 || Math.sqrt(xDiffTarget + zDiffTarget) > mob.getWanderRadius().radius;
+            if (shouldFlyUp) {
+                if (((DragonWalkNodeEvaluator)nodeEvaluator).fitsWithinBlock()) tryFly();
+                else  {
+                    boolean canFlyUp = collisionCache.computeIfAbsent(mob.getBoundingBox().move(new Vec3(0, mob.getBbHeight(), 0)), box -> mob.level().noCollision(mob, (AABB) box));
+                    if (canFlyUp) tryFly();
+                    else {
+                        scheduleRecomputation();
+                    }
+                }
             }
             followThePath();
             moveOrStop(target);
+        } else {
+            collisionCache.clear();
         }
         doStuckDetection(getTempMobPos());
     }

@@ -1,0 +1,440 @@
+package nordmods.uselessreptile.datagen.data.mod;
+
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricDynamicRegistryProvider;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.dragon_ability.CommonDragonAbilityData;
+import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
+import nordmods.uselessreptile.common.dragon_ability.type.*;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.FlyingUseCondition;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.MoleclawUseCondition;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.MovingUseCondition;
+import nordmods.uselessreptile.common.dragon_ability.use_condition.RideableUseCondition;
+import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.base.URRideableDragonEntity;
+import nordmods.uselessreptile.common.init.UREntities;
+import nordmods.uselessreptile.common.init.URResourceKeys;
+import org.jspecify.annotations.NonNull;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+public class URDragonAbilitiesProvider extends FabricDynamicRegistryProvider {
+    public static final ResourceKey<List<DragonAbility>> WYVERN = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("wyvern/default"));
+    public static final ResourceKey<List<DragonAbility>> RIVER_PIKEHORN = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("river_pikehorn/default"));
+    public static final ResourceKey<List<DragonAbility>> LIGHTNING_CHASER = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("lightning_chaser/default"));
+    public static final ResourceKey<List<DragonAbility>> MOLECLAW = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("moleclaw/default"));
+    public static final ResourceKey<List<DragonAbility>> MAGMAMUNCHER = ResourceKey.create(URResourceKeys.DRAGON_ABILITIES, UselessReptile.id("magmamuncher/default"));
+    public URDragonAbilitiesProvider(FabricPackOutput output, CompletableFuture<HolderLookup.Provider> registryLookupFuture) {
+        super(output, registryLookupFuture);
+    }
+
+    @Override
+    protected void configure(HolderLookup.@NonNull Provider provider, @NonNull Entries entries) {
+        entries.addAll(provider.lookupOrThrow(URResourceKeys.DRAGON_ABILITIES));
+    }
+
+    public static void register(BootstrapContext<List<DragonAbility>> bootstrapContext) {
+        bootstrapContext.register(
+                WYVERN,
+                List.of(
+                        new MeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.of(UselessReptile.id("ability/wyvern_bite")),
+                                       1.5f,
+                                       true,
+                                       List.of(
+                                               new CommonDragonAbilityData.ConditionedAnimation(
+                                                       URDragonEntity.AnimationController.ABILITY,
+                                                       List.of("attack.melee1", "attack.melee2", "attack.melee3"),
+                                                       true,
+                                                       List.of(
+                                                               new FlyingUseCondition(false)
+                                                       )
+                                               ),
+                                               new CommonDragonAbilityData.ConditionedAnimation(
+                                                       URDragonEntity.AnimationController.MAIN,
+                                                       List.of("fly.attack"),
+                                                       true,
+                                                       List.of(
+                                                               new FlyingUseCondition(true)
+                                                       )
+                                               )
+                                       ),
+                                        List.of(),
+                                        Optional.of(URRideableDragonEntity.AbilityType.SECONDARY)
+                                ),
+                                new TriggerableAbility.Data(0, 0.71f),
+                                false,
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3, 4,
+                                                new Vec3(0, -0.5, 1.75),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of(
+                                                        new FlyingUseCondition(false)
+                                                )
+                                        ),
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3.5f, 5.5f,
+                                                new Vec3(0, -1, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of(
+                                                        new FlyingUseCondition(true),
+                                                        new MovingUseCondition(false, false)
+                                                )
+                                        ),
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3.5f, 5.5f,
+                                                new Vec3(0, -1, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of(
+                                                        new FlyingUseCondition(true),
+                                                        new MovingUseCondition(true, true)
+                                                )
+                                        ),
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3.5f, 4.5f,
+                                                new Vec3(0, -1, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of(
+                                                        new FlyingUseCondition(true),
+                                                        new MovingUseCondition(true, false)
+                                                )
+                                        )
+                                )
+                        ),
+                        new ShotAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.of(UselessReptile.id("ability/acid_blast")),
+                                        4f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.fly.range"),
+                                                        true,
+                                                        List.of(
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(true, false)
+                                                        )
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.range"),
+                                                        true,
+                                                        List.of(
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(false, false)
+                                                        )
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.range"),
+                                                        true,
+                                                        List.of(
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(true, true)
+                                                        )
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.range"),
+                                                        true,
+                                                        List.of(
+                                                                new FlyingUseCondition(false)
+                                                        )
+                                                )
+                                        ),
+                                        List.of(),
+                                        Optional.of(URRideableDragonEntity.AbilityType.PRIMARY)
+                                ),
+                                new TriggerableAbility.Data(0, 0.7f),
+                                UREntities.ACID_BLAST,
+                                new CompoundTag(),
+                                ShotAttackAbility.AnchorPoint.MULTIPART_BOX,
+                                Optional.of("head"),
+                                new Vec3(0, -0.25, 1),
+                                5, 3, 5, 64
+                        )
+                )
+        );
+        bootstrapContext.register(
+                MOLECLAW,
+                List.of(
+                        new MeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.of(UselessReptile.id("ability/moleclaw_swipe")),
+                                        1.75f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.normal1", "attack.normal2"),
+                                                        true,
+                                                        List.of()
+                                                )
+                                        ),
+                                        List.of(),
+                                        Optional.of(URRideableDragonEntity.AbilityType.SECONDARY)
+                                ),
+                                new TriggerableAbility.Data(0.5f, 1.6f),
+                                true,
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3, 3.5f,
+                                                new Vec3(0, -0.25f, 2),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        )
+                                )
+                        ),
+                        new BlockBreakingMeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.of(UselessReptile.id("ability/moleclaw_heavy_blow")),
+                                        3f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.strong"),
+                                                        true,
+                                                        List.of(new MoleclawUseCondition(false))
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.strong.panic"),
+                                                        true,
+                                                        List.of(new MoleclawUseCondition(true))
+                                                )
+                                        ),
+                                        List.of(),
+                                        Optional.of(URRideableDragonEntity.AbilityType.PRIMARY)
+                                ),
+                                new TriggerableAbility.Data(0.5f, 1.6f),
+                                true,
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                2.5f, 3.5f,
+                                                new Vec3(0, 0.5, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.SMOOTH,
+                                                List.of(new RideableUseCondition(false))
+                                        ),
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                2.5f, 4.25f,
+                                                new Vec3(0, 0.25, 1.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.SNAPPED,
+                                                List.of(new RideableUseCondition(true))
+                                        )
+                                )
+                        )
+                )
+        );
+        bootstrapContext.register(
+                RIVER_PIKEHORN,
+                List.of(
+                        new MeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.empty(),
+                                        1,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack1", "attack2", "attack3"),
+                                                        true,
+                                                        List.of()
+                                                )
+                                        ),
+                                        List.of(),
+                                        Optional.empty()
+                                ),
+                                new TriggerableAbility.Data(0, 0.58f),
+                                false,
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                1.8f, 0.7f,
+                                                Vec3.ZERO,
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        ),
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                1.8f, 1.4f,
+                                                Vec3.ZERO,
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        )
+                                )
+                        )
+                )
+        );
+        bootstrapContext.register(
+                MAGMAMUNCHER,
+                List.of(
+                        new MeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.empty(),
+                                        1.5f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack1", "attack2", "attack3"),
+                                                        true,
+                                                        List.of()
+                                                )
+                                        ),
+                                        List.of(),
+                                        Optional.empty()
+                                ),
+                                new TriggerableAbility.Data(0, 0.75f),
+                                false,
+                                List.of(),
+                                true,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                1.7f, 0.35f,
+                                                Vec3.ZERO,
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        )
+                                )
+                        )
+                )
+        );
+        bootstrapContext.register(
+                LIGHTNING_CHASER,
+                List.of(
+                        new MeleeAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.of(UselessReptile.id("ability/lightning_chaser_bite")),
+                                        1.5f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.melee1", "attack.melee2", "attack.melee3"),
+                                                        true,
+                                                        List.of()
+                                                )
+                                        ),
+                                        List.of(
+                                                new FlyingUseCondition(false)
+                                        ),
+                                        Optional.of(URRideableDragonEntity.AbilityType.SECONDARY)
+                                ),
+                                new TriggerableAbility.Data(0, 1),
+                                false,
+                                List.of(),
+                                false,
+                                List.of(
+                                        new MeleeAttackAbility.ConditionedAttackBox(
+                                                3, 3,
+                                                new Vec3(0, -0.1, 2.5),
+                                                MeleeAttackAbility.ConditionedAttackBox.VerticalAttackBoxMovement.NONE,
+                                                List.of()
+                                        )
+                                )
+                        ),
+                        new LightningBreathAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.of(UselessReptile.id("ability/lightning_bolt_shot")),
+                                        5f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.range"),
+                                                        true,
+                                                        List.of(
+                                                                new FlyingUseCondition(false)
+                                                        )
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.range.fly"),
+                                                        true,
+                                                        List.of(
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(true, false)
+                                                        )
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.range.fly.idle"),
+                                                        true,
+                                                        List.of(
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(true, true)
+                                                        )
+                                                ),
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.ABILITY,
+                                                        List.of("attack.range.fly.idle"),
+                                                        true,
+                                                        List.of(
+                                                                new FlyingUseCondition(true),
+                                                                new MovingUseCondition(false, false)
+                                                        )
+                                                )
+                                        ),
+                                        List.of(),
+                                        Optional.of(URRideableDragonEntity.AbilityType.PRIMARY)
+                                ),
+                                new TriggerableAbility.Data(0.35f, 1),
+                                ShotAttackAbility.AnchorPoint.MULTIPART_BOX,
+                                Optional.of("head"),
+                                Vec3.ZERO,
+                                2,
+                                0x00FFFFFF,
+                                50,
+                                10,
+                                3
+                        ),
+                        new ShockwaveAttackAbility(
+                                new CommonDragonAbilityData(
+                                        Optional.of(UselessReptile.id("ability/shockwave")),
+                                        20f,
+                                        true,
+                                        List.of(
+                                                new CommonDragonAbilityData.ConditionedAnimation(
+                                                        URDragonEntity.AnimationController.MAIN,
+                                                        List.of("fly.shockwave"),
+                                                        true,
+                                                        List.of()
+                                                )
+                                        ),
+                                        List.of(
+                                                new FlyingUseCondition(true)
+                                        ),
+                                        Optional.of(URRideableDragonEntity.AbilityType.SECONDARY)
+                                ),
+                                new TriggerableAbility.Data(0.5f, 1.13f),
+                                new CompoundTag(),
+                                40, 0.8f,
+                                1, 1,
+                                0x00FFFFFF
+                        )
+                )
+        );
+    }
+
+    @Override
+    public @NonNull String getName() {
+        return "Dragon Abilities";
+    }
+}

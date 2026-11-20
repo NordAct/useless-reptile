@@ -7,7 +7,7 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import nordmods.uselessreptile.common.init.URDamageTypes;
-import nordmods.uselessreptile.common.init.URSoundEvent;
+import nordmods.uselessreptile.common.init.URSoundEvents;
 import nordmods.uselessreptile.common.network.URNetworkHelper;
 import org.jspecify.annotations.NonNull;
 
@@ -31,7 +31,7 @@ public class AcidMobEffect extends URMobEffect {
 
         if (entity.hurtServer(world, entity.damageSources().source(URDamageTypes.ACID), amplifier * (1 + armorUnequipped) / 3f)) {
             entity.hurtArmor(entity.damageSources().source(URDamageTypes.ACID), amplifier * (1 + armorUnequipped) * 2);
-            URNetworkHelper.playSound(entity, URSoundEvent.ACID_BURN, SoundSource.AMBIENT, 1, 1, 5);
+            URNetworkHelper.playSound(entity, URSoundEvents.ACID_BURN, SoundSource.AMBIENT, 1, 1, 5);
         }
 
         return true;
@@ -40,6 +40,6 @@ public class AcidMobEffect extends URMobEffect {
     @Override
     public void onEffectStarted(@NonNull LivingEntity entity, int amplifier) {
         super.onEffectStarted(entity, amplifier);
-        URNetworkHelper.playSound(entity, URSoundEvent.ACID_SPLASH, SoundSource.AMBIENT, 1 ,1, 1);
+        URNetworkHelper.playSound(entity, URSoundEvents.ACID_SPLASH, SoundSource.AMBIENT, 1 ,1, 1);
     }
 }

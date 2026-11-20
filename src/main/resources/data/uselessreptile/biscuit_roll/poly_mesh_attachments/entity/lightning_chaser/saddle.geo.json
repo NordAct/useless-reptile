@@ -1,0 +1,12 @@
+{
+	"bb_main": {
+		"locator1_saddle_rope_right": [-1.63255, 33.88852, -13.35974],
+		"locator3_saddle_rope_right": [-3.81071, 33.8885, -13.3597],
+		"locator2_saddle_rope_right": [-0.53, 30.95, -21.04],
+		"locator4_saddle_rope_right": [-2.65, 30.95, -21.04002],
+		"locator1_saddle_rope_left": [1.63255, 33.88852, -13.35974],
+		"locator2_saddle_rope_left": [0.53, 30.95, -21.04],
+		"locator3_saddle_rope_left": [3.81071, 33.8885, -13.3597],
+		"locator4_saddle_rope_left": [2.65, 30.95, -21.04002]
+	}
+}

@@ -3,19 +3,21 @@
   "criteria": {
     "entity_tamed": {
       "conditions": {
-        "entity": {
-          "type": "minecraft:entity_properties",
-          "entity": "this",
-          "predicate": {
-            "minecraft:entity_type": "#uselessreptile:dragon"
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "#uselessreptile:dragon"
+            }
           }
-        }
+        ]
       },
       "trigger": "minecraft:tame_animal"
     },
     "has_the_recipe": {
       "conditions": {
-        "recipes": "uselessreptile:flute1"
+        "recipe": "uselessreptile:flute1"
       },
       "trigger": "minecraft:recipe_unlocked"
     }

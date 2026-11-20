@@ -13,7 +13,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import nordmods.biscuit_roll.common.animation.BRAnimatedObject;
 import nordmods.biscuit_roll.common.animation.controller.BRAnimationController;
 import nordmods.uselessreptile.common.init.*;
-import nordmods.uselessreptile.common.util.SimpleAnimationController;
+import nordmods.uselessreptile.common.entity.misc.SimpleAnimationController;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -52,7 +52,7 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
         if (!target.is(URTags.DRAGON_IMMUNE)) target.hurtServer(world, target.damageSources().source(URDamageTypes.ACID, getOwner()), getResultingDamage());
         spawnEffectCloud();
         super.onHitEntity(entityHitResult);
-        if (target instanceof LivingEntity entity) entity.addEffect(new MobEffectInstance(URMobEffect.ACID, 60, 1));
+        if (target instanceof LivingEntity entity) entity.addEffect(new MobEffectInstance(URMobEffects.ACID, 60, 1));
         discard();
 
     }
@@ -61,12 +61,12 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
         AreaEffectCloud areaEffectCloudEntity = new AreaEffectCloud(level(), getX(), getY(), getZ());
         Entity entity = getOwner();
         if (entity instanceof LivingEntity livingEntity) areaEffectCloudEntity.setOwner(livingEntity);
-        playSound(URSoundEvent.ACID_SPLASH, 1, 1);
+        playSound(URSoundEvents.ACID_SPLASH, 1, 1);
         areaEffectCloudEntity.setRadius(1.0f);
         areaEffectCloudEntity.setDuration(20);
         areaEffectCloudEntity.setWaitTime(0);
         areaEffectCloudEntity.setRadiusPerTick(0.1f);
-        areaEffectCloudEntity.addEffect(new MobEffectInstance(URMobEffect.ACID, 10, 1));
+        areaEffectCloudEntity.addEffect(new MobEffectInstance(URMobEffects.ACID, 10, 1));
         areaEffectCloudEntity.setSilent(true);
         level().addFreshEntity(areaEffectCloudEntity);
     }
@@ -87,7 +87,7 @@ public class AcidBlast extends URMovingProjectile implements BRAnimatedObject, P
 
     @Override
     protected @NonNull SoundEvent getDefaultHitGroundSoundEvent() {
-        return URSoundEvent.ACID_SPLASH;
+        return URSoundEvents.ACID_SPLASH;
     }
 
     @Override

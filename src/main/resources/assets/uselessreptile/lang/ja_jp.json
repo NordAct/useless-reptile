@@ -36,8 +36,8 @@
   "entity.uselessreptile.river_pikehorn": "リバーパイクホーン",
 
   "key.category.uselessreptile": "Useless Reptileコントロール",
-  "key.uselessreptile.primaryAttackKey": "第一攻撃",
-  "key.uselessreptile.secondaryAttackKey": "第二攻撃",
+  "key.uselessreptile.primaryAbilityKey": "第一攻撃",
+  "key.uselessreptile.secondaryAbilityKey": "第二攻撃",
   "key.uselessreptile.flyDownKey": "飛翔下降",
   "key.uselessreptile.flyUpKey": "飛翔上昇",
   "subtitles.uselessreptile.wyvern.hurt": "スワンプワイバーンがダメージを受ける",

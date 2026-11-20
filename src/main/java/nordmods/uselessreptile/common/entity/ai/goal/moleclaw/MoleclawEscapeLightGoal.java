@@ -5,14 +5,12 @@ import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
 import net.minecraft.world.entity.ai.util.DefaultRandomPos;
 import net.minecraft.world.phys.Vec3;
-import net.minecraft.world.phys.shapes.VoxelShape;
+import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.entity.Moleclaw;
+import nordmods.uselessreptile.common.init.URTags;
 
 public class MoleclawEscapeLightGoal extends PanicGoal {
-
     private final Moleclaw mob;
-    private int timer = 0;
-    private int nextStrongAttackTimer = 60;
 
     public MoleclawEscapeLightGoal(Moleclaw mob) {
         super(mob, 1);
@@ -35,7 +33,7 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
             if (vec3i != null) {
                 BlockPos blockPos = new BlockPos(vec3i.getX(), (int) (vec3i.getY() + mob.getEyeHeight(mob.getPose())), vec3i.getZ());
                 BlockPos blockPos1 = new BlockPos(vec3i.getX(), vec3i.getY(), vec3i.getZ());
-                boolean canFit = mob.level().getBlockState(blockPos1.above(1)).isAir() && mob.level().getBlockState(blockPos1.above(2)).isAir();
+                boolean canFit = mob.level().noCollision(mob, mob.getBoundingBox().move(blockPos1.subtract(mob.blockPosition())));
                 double distanceToCurrent = mob.distanceToSqr(vec3d);
                 if (Moleclaw.getLightAtPos(blockPos, mob) <= light && canFit && distanceToCurrent < distance) {
                     darkestSpot = vec3i;
@@ -52,7 +50,7 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
                 Vec3i vec3i = vec3d != null ? new Vec3i((int) vec3d.x, (int) vec3d.y, (int) vec3d.z) : null;
                 if (vec3i != null) {
                     BlockPos blockPos1 = new BlockPos((int) vec3d.x, (int) vec3d.y, (int) vec3d.z);
-                    boolean canFit = mob.level().getBlockState(blockPos1.above(1)).isAir() && mob.level().getBlockState(blockPos1.above(2)).isAir();
+                    boolean canFit = mob.level().noCollision(mob, mob.getBoundingBox().move(blockPos1.subtract(mob.blockPosition())));
                     if (canFit) {
                         darkestSpot = vec3i;
                         break;
@@ -65,7 +63,6 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
         this.posY = darkestSpot.getY();
         this.posZ = darkestSpot.getZ();
         return true;
-
     }
 
     @Override
@@ -81,17 +78,13 @@ public class MoleclawEscapeLightGoal extends PanicGoal {
     @Override
     public void tick() {
         mob.setSprinting(true);
-        timer++;
 
-        if (timer >= nextStrongAttackTimer && mob.getPrimaryAttackCooldown() == 0) {
-            for (VoxelShape shape : mob.level().getBlockCollisions(mob, mob.getSecondaryAttackBox())) {
-                if (!shape.isEmpty()) {
-                    mob.scheduleStrongAttack();
-                    timer = 0;
-                    nextStrongAttackTimer = mob.getRandom().nextInt(21) + 40;
-                    break;
-                }
-            }
+        if (mob.canGrief()) {
+            mob.getAvailableAbilities()
+                    .stream()
+                    .filter(a -> a.getAbility().is(URTags.BREAKS_BLOCKS) && a.getCooldown() <= 0)
+                    .findAny()
+                    .ifPresent(DragonAbilityHolder::use);
         }
     }
 }

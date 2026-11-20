@@ -1,29 +1,21 @@
 package nordmods.uselessreptile.common.entity.ai.goal.magmamuncher;
 
-import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
-import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
+import nordmods.uselessreptile.common.entity.Magmamuncher;
 import nordmods.uselessreptile.common.entity.ai.goal.common.DragonConsumeItemFromInventoryGoal;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
-import java.util.Optional;
-
-public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromInventoryGoal {
-    public MagmamuncherApplyFireResistanceGoal(URDragonEntity dragon) {
+public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromInventoryGoal<Magmamuncher> {
+    public MagmamuncherApplyFireResistanceGoal(Magmamuncher dragon) {
         super(dragon);
     }
 
@@ -34,39 +26,32 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
 
     @Override
     protected void beforeItemConsumed(ItemStack stack) {
-        if (dragon.level() instanceof ServerLevel level && dragon.getOwner() == dragon.getVehicle() && dragon.getOwner() != null) {
-            LootContext lootContext = new LootContext.Builder(
-                    new LootParams.Builder(level)
-                            .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(dragon.blockPosition()))
-                            .withOptionalParameter(LootContextParams.THIS_ENTITY, dragon)
-                            .create(LootContextParamSets.SELECTOR)
-            )
-                    .create(Optional.empty());
-            dragon.getOwner().addEffect(
+        if (mob.getOwner() == mob.getVehicle() && mob.getOwner() != null) {
+            mob.getOwner().addEffect(
                     new MobEffectInstance(
                             MobEffects.FIRE_RESISTANCE,
-                            (int) (stack.get(DataComponents.COOKING_FUEL).burnTime().get(lootContext , 0) * URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier)
+                            (int) (mob.level().fuelValues().burnDuration(stack) * URConfig.getConfig().magmamuncherFireResistanceTimeMultiplier)
                     )
             );
-            URDragonEntity.SoundInfo info = dragon.getSoundInfo("apply_fire_resistance");
-            if (info != null) dragon.level().playSound(dragon, dragon.getX(), dragon.getY(), dragon.getZ(), SoundEvent.createVariableRangeEvent(info.id()), dragon.getSoundSource(), info.volume(), dragon.getRandom().triangle(info.pitch(), info.pitchDeviation()));
+            URDragonEntity.SoundInfo info = mob.getSoundInfo("apply_fire_resistance");
+            if (info != null) mob.level().playSound(mob, mob.getX(), mob.getY(), mob.getZ(), SoundEvent.createVariableRangeEvent(info.id()), mob.getSoundSource(), info.volume(), mob.getRandom().triangle(info.pitch(), info.pitchDeviation()));
             ClientboundLevelParticlesPacket packet = new ClientboundLevelParticlesPacket(
                     ParticleTypes.FLAME,
                     false,
                     false,
-                    dragon.getX(),
-                    dragon.getY(),
-                    dragon.getZ(),
+                    mob.getX(),
+                    mob.getY(),
+                    mob.getZ(),
                     0.5f,
                     0.5f,
                     0.5f,
                     0,
                     10
             );
-            if (dragon.getOwner() instanceof ServerPlayer player) {
+            if (mob.getOwner() instanceof ServerPlayer player) {
                 URDragonEntity.grantTriggerableAdvancement(player, UselessReptile.id("dragon/magmamuncher_apply_fire_resistance"));
             }
-            dragon.level().getServer().getPlayerList().broadcastAll(packet);
+            mob.level().getServer().getPlayerList().broadcastAll(packet);
         }
     }
 
@@ -76,15 +61,15 @@ public class MagmamuncherApplyFireResistanceGoal extends DragonConsumeItemFromIn
     }
 
     private boolean isOwnerOnFire() {
-        return dragon.getOwner() != null
-                && dragon.getOwner() == dragon.getVehicle()
-                && dragon.getOwner().getLastDamageSource() != null
-                && dragon.getOwner().getLastDamageSource().is(DamageTypeTags.IS_FIRE)
-                && !dragon.getOwner().hasEffect(MobEffects.FIRE_RESISTANCE);
+        return mob.getOwner() != null
+                && mob.getOwner() == mob.getVehicle()
+                && mob.getOwner().getLastDamageSource() != null
+                && mob.getOwner().getLastDamageSource().is(DamageTypeTags.IS_FIRE)
+                && !mob.getOwner().hasEffect(MobEffects.FIRE_RESISTANCE);
     }
 
     @Override
     protected boolean isConsumableItem(ItemStack stack) {
-        return stack.get(DataComponents.COOKING_FUEL) != null;
+        return mob.level().fuelValues().isFuel(stack);
     }
 }

@@ -1,12 +1,12 @@
 {
   "type": "uselessreptile:lightning_chaser",
-  "base_taming_progress": 3,
+  "abilities": "uselessreptile:lightning_chaser/default",
+  "base_attribute_values": "uselessreptile:lightning_chaser/default",
   "dragon_model": "uselessreptile:lightning_chaser/grey",
-  "equipment": "uselessreptile:lightning_chaser",
-  "food_items": {
-    "#minecraft:meat": 3
-  },
+  "equipment": "uselessreptile:lightning_chaser/default",
+  "interaction_settings": "uselessreptile:lightning_chaser/default",
   "name": "grey",
   "spawn_conditions": "uselessreptile:lightning_chaser/grey",
+  "targeting_settings": "uselessreptile:lightning_chaser/default",
   "variant_name_key": "variant.uselessreptile.lightning_chaser.grey"
 }

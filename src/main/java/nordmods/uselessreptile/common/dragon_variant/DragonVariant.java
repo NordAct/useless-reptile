@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface DragonVariant {
     Codec<DragonVariant> CODEC = URRegistries.VARIANT_TYPE.byNameCodec()
-            .dispatch("type", DragonVariant::getType, DragonVariantType::codec);
+            .dispatch("type", DragonVariant::getType, DragonVariantType::codec); //todo create client codec
 
     DragonVariantType<?> getType();
 

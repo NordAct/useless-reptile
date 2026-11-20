@@ -1,7 +1,7 @@
 package nordmods.uselessreptile.common.item;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.triggers.CriteriaTriggers;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
@@ -61,7 +61,7 @@ public class FluteItem extends Item {
             FluteConfigurationComponent component = new FluteConfigurationComponent(dragonEntity.getType(), dragonEntity.getPermittedFluteModes().getFirst(), dragonEntity.getPermittedFluteModes());
             player.getItemInHand(type).set(URItemComponents.FLUTE_CONFIGURATION, component);
             if (player.isLocalPlayer()) {
-                player.sendOverlayMessage(Component.translatable("tooltip.uselessreptile.flute_listener", getFluteConfig(itemStack).dragon().getDescription()));
+                player.sendOverlayMessage(Component.translatable("tooltip.uselessreptile.flute_listener", component.dragon().getDescription()));
             }
             return InteractionResult.SUCCESS;
         }

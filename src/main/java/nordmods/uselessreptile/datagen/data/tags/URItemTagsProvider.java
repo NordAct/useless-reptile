@@ -3,6 +3,7 @@ package nordmods.uselessreptile.datagen.data.tags;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.world.item.Items;
 import nordmods.uselessreptile.common.init.URItems;
 import nordmods.uselessreptile.common.init.URTags;
 import org.jspecify.annotations.NonNull;
@@ -30,5 +31,8 @@ public class URItemTagsProvider extends FabricTagsProvider.ItemTagsProvider{
                 .addElement(URItems.GOLD_VORTEX_HORN.builtInRegistryHolder().key().identifier())
                 .addElement(URItems.DIAMOND_VORTEX_HORN.builtInRegistryHolder().key().identifier())
                 .addElement(URItems.NETHERITE_VORTEX_HORN.builtInRegistryHolder().key().identifier());
+
+        getOrCreateRawBuilder(URTags.DISPLAYS_DRAGON_INFO_ON_USE)
+                .addElement(Items.SPYGLASS.builtInRegistryHolder().key().identifier());
     }
 }

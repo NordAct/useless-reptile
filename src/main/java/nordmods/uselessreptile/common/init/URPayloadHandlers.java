@@ -33,7 +33,7 @@ public class URPayloadHandlers {
     private static void handleKeyInput() {
         ServerPlayNetworking.registerGlobalReceiver(KeyInputPayload.PAYLOAD_ID, (packet, context) -> {
             Entity entity = context.player().level().getEntity(packet.id());
-            if (entity instanceof URRideableDragonEntity dragon && dragon.hasControllingPassenger() && context.player().getVehicle() == entity) {
+            if (entity instanceof URRideableDragonEntity<?> dragon && dragon.hasControllingPassenger() && context.player().getVehicle() == entity) {
                 dragon.updateInputs(
                         packet.forward(),
                         packet.back(),

@@ -7,38 +7,36 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.navigation.PathNavigation;
+import net.minecraft.world.entity.ai.control.BodyRotationControl;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
+import nordmods.uselessreptile.common.entity.ai.control.WrappedDragonBodyRotationControl;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonAirNavigation;
 import nordmods.uselessreptile.common.entity.ai.navigation.FlyingDragonLandNavigation;
 import nordmods.uselessreptile.common.init.URAttributes;
+import nordmods.uselessreptile.common.init.UREntityDataSerializers;
 import nordmods.uselessreptile.common.network.s2c.LiftoffParticlesPayload;
 import org.jspecify.annotations.NonNull;
 
 public abstract class URFlyingDragonEntity extends URDragonEntity implements FlyingDragon {
     protected final int maxInAirTimer = 600;
-    protected float pitchLimitAir = 90;
-    protected float tiltProgress;
     private int glideTimer = 100;
     private boolean forceFlight = false;
-    private final FlyingDragonLandNavigation<URFlyingDragonEntity> landNavigation;
-    private final FlyingDragonAirNavigation<URFlyingDragonEntity> airNavigation;
 
     protected URFlyingDragonEntity(EntityType<? extends TamableAnimal> entityType, Level world) {
         super(entityType, world);
         moveControl = new FlyingDragonMoveControl<>(this);
-        landNavigation = new FlyingDragonLandNavigation<>(this, level());
-        airNavigation = new FlyingDragonAirNavigation<>(this, level());
-        navigation = landNavigation;
+        navigation = new FlyingDragonLandNavigation<>(this, level());
     }
 
     @Override
@@ -46,13 +44,13 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         super.defineSynchedData(builder);
         builder.define(FLYING, false);
         builder.define(FLY_GLIDING, false);
-        builder.define(TILT_STATE, (byte)0);//1 - вверх, 2 - вниз, 0 - летит прямо
+        builder.define(TILT_STATE, TiltState.NONE);//1 - вверх, 2 - вниз, 0 - летит прямо
         builder.define(IN_AIR_TIMER, 0);
     }
 
     public static final EntityDataAccessor<Boolean> FLYING = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BOOLEAN);
     public static final EntityDataAccessor<Boolean> FLY_GLIDING = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BOOLEAN);
-    public static final EntityDataAccessor<Byte> TILT_STATE = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.BYTE);
+    public static final EntityDataAccessor<TiltState> TILT_STATE = SynchedEntityData.defineId(URFlyingDragonEntity.class, UREntityDataSerializers.TILT_STATE);
     public static final EntityDataAccessor<Integer> IN_AIR_TIMER = SynchedEntityData.defineId(URFlyingDragonEntity.class, EntityDataSerializers.INT);
 
 
@@ -65,8 +63,14 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     public boolean isFlying() {return entityData.get(FLYING);}
     public void setFlying (boolean state) {entityData.set(FLYING, state);}
 
-    public byte getTiltState() {return entityData.get(TILT_STATE);}
-    public void setTiltState(byte state) {entityData.set(TILT_STATE, state);}
+    public TiltState getTiltState() {return entityData.get(TILT_STATE);}
+    public void setTiltState(TiltState state) {entityData.set(TILT_STATE, state);}
+
+    @Override
+    public void onSyncedDataUpdated(@NonNull EntityDataAccessor<?> data) {
+        super.onSyncedDataUpdated(data);
+        if (FLYING.equals(data)) updateNavigation();
+    }
 
     @Override
     public void addAdditionalSaveData(@NonNull ValueOutput tag) {
@@ -81,9 +85,9 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public float getRotationSpeed() {
-        if (isFlying()) return getFlyingRotationSpeed() * getMovementSpeedModifier() / 2f;
-        return super.getRotationSpeed();
+    public int getHeadRotSpeed() {
+        if (isFlying()) return (int) (getFlyingRotationSpeed() * getMovementSpeedModifier());
+        return super.getHeadRotSpeed();
     }
 
     @Override
@@ -92,13 +96,7 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
-    public float getPitchLimit() {
-        if (isFlying() && isMoving() && !isMovingBackwards()) return pitchLimitAir;
-        return pitchLimitGround;
-    }
-
-    @Override
-    protected float getMovementSpeedModifier() {
+    public float getMovementSpeedModifier() {
         if (!isFlying()) return super.getMovementSpeedModifier();
         double baseSpeed = getAttributeBaseValue(Attributes.FLYING_SPEED);
         double speed = getAttributeBaseValue(Attributes.FLYING_SPEED);
@@ -106,7 +104,12 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     public void startToFly() {
-        jumpFromGround();
+        if (onGround()) {
+            jumpFromGround();
+            addDeltaMovement(new Vec3(0, getBbHeight() * 0.1, 0));
+        } else {
+            setYya(0);
+        }
         if (level() instanceof ServerLevel world) {
             setAccelerationDuration(getAccelerationDuration() / 10);
             setFlying(true);
@@ -121,23 +124,18 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     public void tick() {
         super.tick();
-        updateTiltProgress();
 
         if (!level().isClientSide()) {
             glideTimer--;
-            float accelerationModifier = getAccelerationDuration()/getMaxAccelerationDuration();
+            float accelerationModifier = getAccelerationModifier();
             setFlyGliding(accelerationModifier > 1 || glideTimer < 0 && accelerationModifier > 0.9);
             if (glideTimer < -50 - getRandom().nextInt(100)) glideTimer = 100 + getRandom().nextInt(100);
         }
         checkForceFlight();
-
-        updateNavigation();
     }
 
     private void updateNavigation() {
-        PathNavigation current = navigation;
-        navigation = isFlying() ? airNavigation : landNavigation;
-        if (current != navigation) current.stop();
+        navigation = isFlying() ? new FlyingDragonAirNavigation<>(this, level()) : new FlyingDragonLandNavigation<>(this, level());
     }
 
     @Override
@@ -171,6 +169,27 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     }
 
     @Override
+    public void tickAccelerationUncontrolled() {
+        int accelerationDuration = getAccelerationDuration();
+        if (accelerationDuration < 0) accelerationDuration = 0;
+
+        if ((isMoving() || isMovingBackwards()) && getTurningState() == TurningState.NONE) accelerationDuration++;
+        if (getTiltState() == TiltState.UP && accelerationDuration > getMaxAccelerationDuration() * 0.4)
+            accelerationDuration -= 2;
+        if (getTiltState() == TiltState.DOWN && accelerationDuration < getMaxAccelerationDuration() * 3 && isFlying())
+            accelerationDuration += 2;
+
+        if (isMovingBackwards() && accelerationDuration > getMaxAccelerationDuration() * 0.25)
+            accelerationDuration -= 2;
+        if (getTiltState() != TiltState.DOWN  && accelerationDuration > getMaxAccelerationDuration()) {
+            accelerationDuration -= 2;
+            if (getTiltState() == TiltState.UP ) accelerationDuration -= 2;
+        }
+
+        setAccelerationDuration(accelerationDuration);
+    }
+
+    @Override
     protected int calculateFallDamage(double fallDistance, float damageMultiplier) {
         return 0;
     }
@@ -182,32 +201,11 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
         return getSpeed() *  0.14f;
     }
 
-    private void updateTiltProgress() {
-        switch (getTiltState()) {
-            case 1 -> {
-                if (tiltProgress < TRANSITION_TICKS) tiltProgress++;
-            }
-            case 2 -> {
-                if (tiltProgress > -TRANSITION_TICKS) tiltProgress--;
-            }
-            default -> {
-                if (tiltProgress != 0) {
-                    if (tiltProgress > 0) tiltProgress--;
-                    else  tiltProgress++;
-                }
-            }
-        }
-    }
-
     @Override
     public float getVerticalSpeed() {
         return (float) getAttributeValue(URAttributes.DRAGON_VERTICAL_SPEED);
     }
 
-    @Override
-    public @NonNull FlyingDragonMoveControl<? extends FlyingDragon> getMoveControl() {
-        return (FlyingDragonMoveControl<?>) moveControl;
-    }
 
     public void forceFlightNextTick() {
         forceFlight = true;
@@ -223,5 +221,27 @@ public abstract class URFlyingDragonEntity extends URDragonEntity implements Fly
     @Override
     public boolean shouldFlyDown() {
         return getInAirTimer() >= getMaxInAirTimer();
+    }
+
+    @Override
+    protected @NonNull BodyRotationControl createBodyControl() {
+        return new WrappedDragonBodyRotationControl<>(new FlyingDragonBodyRotationControl<>(this));
+    }
+
+    @Override
+    public int getMaxFallDistance() {
+        return Integer.MAX_VALUE;
+    }
+
+    @Override
+    public float getAccelerationModifier() {
+        if (isFlying()) return Math.clamp(getAccelerationDuration() / (float) getMaxAccelerationDuration(), 0, 1.5f);
+        return super.getAccelerationModifier();
+    }
+
+    @Override
+    public boolean fudgePositionAfterSizeChange(EntityDimensions previousDimensions) {
+        if (isFlying() && wouldNotSuffocateAtTargetPose(getPose())) return true;
+        return super.fudgePositionAfterSizeChange(previousDimensions);
     }
 }

@@ -12,13 +12,13 @@ import nordmods.uselessreptile.common.entity.base.GathererDragon;
 import nordmods.uselessreptile.common.item.FluteItem;
 
 public class URFluteModes {
-    public static final FluteItem.FluteMode CALL = register("call", new FluteItem.FluteMode(URSoundEvent.FLUTE_CALL, dragon -> {
+    public static final FluteItem.FluteMode CALL = register("call", new FluteItem.FluteMode(URSoundEvents.FLUTE_CALL, dragon -> {
         if (!dragon.isOrderedToSit()) dragon.shouldFollow = true;
     }));
-    public static final FluteItem.FluteMode GATHER = register("gather", new FluteItem.FluteMode(URSoundEvent.FLUTE_GATHER, dragon -> {
+    public static final FluteItem.FluteMode GATHER = register("gather", new FluteItem.FluteMode(URSoundEvents.FLUTE_GATHER, dragon -> {
         if (dragon instanceof GathererDragon gathererDragon) gathererDragon.startGathering();
     }));
-    public static final FluteItem.FluteMode TARGET = register("target", new FluteItem.FluteMode(URSoundEvent.FLUTE_TARGET, dragon -> {
+    public static final FluteItem.FluteMode TARGET = register("target", new FluteItem.FluteMode(URSoundEvents.FLUTE_TARGET, dragon -> {
         if (!(dragon.getOwner() instanceof Player player)) return;
 
         int range = URGameEvents.FLUTE_USED.value().notificationRadius();
@@ -32,8 +32,8 @@ public class URFluteModes {
 
         if (hitResult != null) dragon.setTarget((LivingEntity) hitResult.getEntity());
     }));
-    public static final FluteItem.FluteMode SIT_DOWN = register("sit_down", new FluteItem.FluteMode(URSoundEvent.FLUTE_SIT_DOWN, dragon -> dragon.setOrderedToSit(true)));
-    public static final FluteItem.FluteMode STAND_UP = register("stand_up", new FluteItem.FluteMode(URSoundEvent.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(false)));
+    public static final FluteItem.FluteMode SIT_DOWN = register("sit_down", new FluteItem.FluteMode(URSoundEvents.FLUTE_SIT_DOWN, dragon -> dragon.setOrderedToSit(true)));
+    public static final FluteItem.FluteMode STAND_UP = register("stand_up", new FluteItem.FluteMode(URSoundEvents.FLUTE_STAND_UP, dragon -> dragon.setOrderedToSit(false)));
 
     private static FluteItem.FluteMode register(String id, FluteItem.FluteMode fluteMode) {
         return register(UselessReptile.id(id), fluteMode);

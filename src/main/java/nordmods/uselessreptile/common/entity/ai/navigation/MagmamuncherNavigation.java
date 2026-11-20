@@ -7,12 +7,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.PathfindingContext;
-import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
-import nordmods.uselessreptile.common.entity.base.URDragonEntity;
+import nordmods.uselessreptile.common.entity.Magmamuncher;
 import org.jspecify.annotations.NonNull;
 
-public class MagmamuncherNavigation extends DragonNavigation {
-    public MagmamuncherNavigation(URDragonEntity mobEntity, Level world) {
+public class MagmamuncherNavigation extends LandDragonNavigation<Magmamuncher> {
+    public MagmamuncherNavigation(Magmamuncher mobEntity, Level world) {
         super(mobEntity, world);
     }
 
@@ -27,7 +26,7 @@ public class MagmamuncherNavigation extends DragonNavigation {
         return new PathFinder(nodeEvaluator, range);
     }
 
-    public static class MagmamuncherPathNodeMaker extends WalkNodeEvaluator {
+    public static class MagmamuncherPathNodeMaker extends DragonWalkNodeEvaluator {
         @Override
         public @NonNull PathType getPathType(PathfindingContext context, int x, int y, int z) {
             BlockState blockState = context.getBlockState(new BlockPos(x, y, z));

@@ -1,0 +1,22 @@
+package nordmods.uselessreptile.common.init;
+
+import net.minecraft.resources.Identifier;
+import nordmods.biscuit_roll.common.state.StateDataType;
+import nordmods.uselessreptile.UselessReptile;
+import nordmods.uselessreptile.common.asset_cache.AssetCache;
+
+import java.util.UUID;
+
+public class URStateDataTypes {
+    //common dragon data - used for all dragons
+    public static final StateDataType<Identifier> DRAGON_ID = new StateDataType<>(UselessReptile.id("dragon_id"));
+    public static final StateDataType<AssetCache> ASSET_CACHE = new StateDataType<>(UselessReptile.id("asset_cache"));
+    public static final StateDataType<Float> BODY_X_ROTATION = new StateDataType<>(UselessReptile.id("body_x_rotation"));
+    public static final StateDataType<Float> BODY_Y_ROTATION = new StateDataType<>(UselessReptile.id("body_y_rotation"));
+    public static final StateDataType<Float> HEAD_X_ROTATION = new StateDataType<>(UselessReptile.id("head_x_rotation"));
+    public static final StateDataType<Float> HEAD_Y_ROTATION = new StateDataType<>(UselessReptile.id("head_y_rotation"));
+    public static final StateDataType<Float> YAW_SPEED = new StateDataType<>(UselessReptile.id("yaw_speed"));
+    //specific dragon data - used for some dragons
+    public static final StateDataType<UUID> DRAGON_UUID = new StateDataType<>(UselessReptile.id("dragon_uuid"));
+    public static final StateDataType<Boolean> DRAGON_IS_RIDING_PLAYER = new StateDataType<>(UselessReptile.id("dragon_is_riding_player"));
+}

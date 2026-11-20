@@ -1,6 +1,7 @@
 {
   "model_data": {
     "animation": "uselessreptile:biscuit_roll/animations/entity/river_pikehorn/river_pikehorn.animation.json",
+    "cull": false,
     "model": "uselessreptile:biscuit_roll/models/entity/river_pikehorn/river_pikehorn.geo.json",
     "texture": "uselessreptile:textures/entity/river_pikehorn/purple.png"
   },

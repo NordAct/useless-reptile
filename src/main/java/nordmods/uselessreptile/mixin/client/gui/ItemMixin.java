@@ -2,9 +2,7 @@ package nordmods.uselessreptile.mixin.client.gui;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -39,13 +37,13 @@ public abstract class ItemMixin {
         if (context.registries() == null) return;
         Set<Component> info = new HashSet<>();
         info.add(CAN_BE_EQUIPPED);
-        info.addAll(CommonDragonVariantData.EQUIPMENT_INFO_MAP.computeIfAbsent(stack.getItem(), item -> {
+        info.addAll(CommonDragonVariantData.EQUIPMENT_INFO_MAP.computeIfAbsent(stack.typeHolder(), item -> {
             Set<Component> set = new HashSet<>();
             context.registries().lookupOrThrow(URResourceKeys.DRAGON_VARIANT)
                     .listElements().map(Holder.Reference::value)
                     .forEach(dragonVariant -> {
-                        Map<Identifier, EquipmentModelData.Equipment> equipmentMap = DragonVariantUtil.getEquipmentModelDataMap(dragonVariant, context.registries());
-                        if (equipmentMap.containsKey(BuiltInRegistries.ITEM.getKey(item))) addSetEntry(set, dragonVariant, equipmentMap.get(BuiltInRegistries.ITEM.getKey(item)).slot());
+                        Map<Holder<Item>, EquipmentModelData.Equipment> equipmentMap = DragonVariantUtil.getEquipmentModelDataMap(dragonVariant, context.registries());
+                        if (equipmentMap.containsKey(item)) addSetEntry(set, dragonVariant, equipmentMap.get(item).slot());
                     });
             return set;
         }));

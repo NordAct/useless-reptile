@@ -1,0 +1,8 @@
+{
+  "attacks_owner_target": true,
+  "defends_owner": true,
+  "tamed_targets": [],
+  "untamed_targets": [
+    "minecraft:player"
+  ]
+}

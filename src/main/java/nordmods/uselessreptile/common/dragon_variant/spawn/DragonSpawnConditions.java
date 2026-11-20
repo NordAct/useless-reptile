@@ -1,17 +1,23 @@
 package nordmods.uselessreptile.common.dragon_variant.spawn;
 
+import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.Holder;
+import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Util;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
+import nordmods.uselessreptile.common.init.URResourceKeys;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -25,7 +31,8 @@ public record DragonSpawnConditions(
         Optional<IntRange> altitudeRestriction,
         Optional<LightLevelRestriction> lightLevelRestriction,
         Optional<Pair<Integer, Integer>> timePeriod,
-        Optional<Spacing> spacing
+        Optional<Spacing> spacing,
+        Optional<Either<List<EntitySpawnReason>, List<EntitySpawnReason>>> allowedOrBannedSpawnReasons
 ) {
     private static final Codec<Pair<Integer, Integer>> INT_PAIR_CODEC = Codec.INT_STREAM
             .comapFlatMap(
@@ -33,17 +40,67 @@ public record DragonSpawnConditions(
                     pair -> IntStream.of(pair.getFirst(), pair.getSecond())
             ).stable();
 
-    public static final Codec<DragonSpawnConditions> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                    ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(DragonSpawnConditions::weight),
-                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("allowed_biomes").forGetter(DragonSpawnConditions::allowedBiomes),
-                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_biomes").forGetter(DragonSpawnConditions::bannedBiomes),
-                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("allowed_blocks").forGetter(DragonSpawnConditions::allowedBlocks),
-                    ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_blocks").forGetter(DragonSpawnConditions::bannedBlocks),
-                    IntRange.CODEC.optionalFieldOf("altitude").forGetter(DragonSpawnConditions::altitudeRestriction),
-                    LightLevelRestriction.CODEC.optionalFieldOf("light_level").forGetter(DragonSpawnConditions::lightLevelRestriction),
-                    INT_PAIR_CODEC.optionalFieldOf("time_period").forGetter(DragonSpawnConditions::timePeriod),
-                    Spacing.CODEC.optionalFieldOf("spacing").forGetter(DragonSpawnConditions::spacing)
-            ).apply(instance, (DragonSpawnConditions::new)));
+    public static final Codec<DragonSpawnConditions> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
+            ExtraCodecs.NON_NEGATIVE_INT.fieldOf("weight").forGetter(DragonSpawnConditions::weight),
+            ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("allowed_biomes").forGetter(DragonSpawnConditions::allowedBiomes),
+            ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_biomes").forGetter(DragonSpawnConditions::bannedBiomes),
+            ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("allowed_blocks").forGetter(DragonSpawnConditions::allowedBlocks),
+            ExtraCodecs.TAG_OR_ELEMENT_ID.listOf().optionalFieldOf("banned_blocks").forGetter(DragonSpawnConditions::bannedBlocks),
+            IntRange.CODEC.optionalFieldOf("altitude").forGetter(DragonSpawnConditions::altitudeRestriction),
+            LightLevelRestriction.CODEC.optionalFieldOf("light_level").forGetter(DragonSpawnConditions::lightLevelRestriction),
+            INT_PAIR_CODEC.optionalFieldOf("time_period").forGetter(DragonSpawnConditions::timePeriod),
+            Spacing.CODEC.optionalFieldOf("spacing").forGetter(DragonSpawnConditions::spacing),
+            Codec.STRING.listOf().optionalFieldOf("allowed_spawn_reasons").forGetter(c -> {
+                if (c.allowedOrBannedSpawnReasons().isPresent() && c.allowedOrBannedSpawnReasons().get().left().isPresent()) {
+                    return Optional.of(c.allowedOrBannedSpawnReasons().get().left().get().stream().map(EntitySpawnReason::name).toList());
+                }
+                return Optional.empty();
+            }),
+            Codec.STRING.listOf().optionalFieldOf("banned_spawn_reasons").forGetter(c -> {
+                if (c.allowedOrBannedSpawnReasons().isPresent() && c.allowedOrBannedSpawnReasons().get().right().isPresent()) {
+                    return Optional.of(c.allowedOrBannedSpawnReasons().get().right().get().stream().map(EntitySpawnReason::name).toList());
+                }
+                return Optional.empty();
+            })
+    ).apply(instance, (
+            weight,
+            allowedBiomes,
+            bannedBiomes,
+            allowedBlocks,
+            bannedBlocks,
+            altitudeRestriction,
+            lightLevelRestriction,
+            timePeriod,
+            spacing,
+            allowedSpawnReasons,
+            bannedSpawnReasons
+    ) -> {
+        Optional<Either<List<EntitySpawnReason>, List<EntitySpawnReason>>> allowedOrBannedSpawnReasons;
+        if (allowedSpawnReasons.isPresent() && bannedSpawnReasons.isPresent()) {
+            throw new IllegalStateException("Only either allowed or banned spawn reasons can be specified, not both.");
+        }
+        if (allowedSpawnReasons.isPresent()) {
+            allowedOrBannedSpawnReasons = Optional.of(Either.left(allowedSpawnReasons.get().stream().map(EntitySpawnReason::valueOf).toList()));
+        } else if (bannedSpawnReasons.isPresent()) {
+            allowedOrBannedSpawnReasons = Optional.of(Either.right(bannedSpawnReasons.get().stream().map(EntitySpawnReason::valueOf).toList()));
+        } else  {
+            allowedOrBannedSpawnReasons = Optional.empty();
+        }
+        return new DragonSpawnConditions(
+                weight,
+                allowedBiomes,
+                bannedBiomes,
+                allowedBlocks,
+                bannedBlocks,
+                altitudeRestriction,
+                lightLevelRestriction,
+                timePeriod,
+                spacing,
+                allowedOrBannedSpawnReasons
+        );
+    }));
+
+    public static final Codec<Holder<List<DragonSpawnConditions>>> CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_SPAWN_CONDITIONS, DIRECT_CODEC.listOf());
 
     public record LightLevelRestriction(Optional<IntRange> blockLightLevel, Optional<IntRange> skyLightLevel) {
         public static final Codec<LightLevelRestriction> CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -113,6 +170,8 @@ public record DragonSpawnConditions(
         private Integer maxSkyLightLevel;
         private Pair<Integer, Integer> timePeriod;
         private Spacing spacing;
+        List<EntitySpawnReason> allowedSpawnReasons;
+        List<EntitySpawnReason> bannedSpawnReasons;
 
         private Builder() {}
 
@@ -148,7 +207,23 @@ public record DragonSpawnConditions(
             Optional<Pair<Integer, Integer>> timePeriod = Optional.ofNullable(this.timePeriod);
             Optional<Spacing> spacing = Optional.ofNullable(this.spacing);
 
-            return new DragonSpawnConditions(weight, allowedBiomes, bannedBiomes, allowedBlocks, bannedBlocks, altitudeRestriction, lightLevelRestriction, timePeriod, spacing);
+            Optional<Either<List<EntitySpawnReason>, List<EntitySpawnReason>>> allowedOrBannedSpawnReasons;
+            if (allowedSpawnReasons != null) allowedOrBannedSpawnReasons = Optional.of(Either.left(allowedSpawnReasons));
+            else if (bannedSpawnReasons != null) allowedOrBannedSpawnReasons = Optional.of(Either.right(bannedSpawnReasons));
+            else allowedOrBannedSpawnReasons = Optional.empty();
+
+            return new DragonSpawnConditions(
+                    weight,
+                    allowedBiomes,
+                    bannedBiomes,
+                    allowedBlocks,
+                    bannedBlocks,
+                    altitudeRestriction,
+                    lightLevelRestriction,
+                    timePeriod,
+                    spacing,
+                    allowedOrBannedSpawnReasons
+            );
         }
 
         public Builder setWeight(Integer weight) {
@@ -248,6 +323,23 @@ public record DragonSpawnConditions(
 
         public Builder setMaxSkyLightLevel(Integer maxSkyLightLevel) {
             this.maxSkyLightLevel = maxSkyLightLevel;
+            return this;
+        }
+
+        //allowed or banned entity spawn reasons
+        public Builder addAllowedSpawnReasons(EntitySpawnReason... spawnReasons) {
+            if (bannedSpawnReasons != null)
+                throw new  UnsupportedOperationException("Only either allowed or banned spawn reasons can be specified, not both.");
+            if (allowedSpawnReasons == null) allowedSpawnReasons = new ArrayList<>();
+            allowedSpawnReasons.addAll(Arrays.stream(spawnReasons).toList());
+            return this;
+        }
+
+        public Builder addBannedSpawnReasons(EntitySpawnReason... spawnReasons) {
+            if (allowedSpawnReasons != null)
+                throw new  UnsupportedOperationException("Only either allowed or banned spawn reasons can be specified, not both.");
+            if (bannedSpawnReasons == null) bannedSpawnReasons = new ArrayList<>();
+            bannedSpawnReasons.addAll(Arrays.stream(spawnReasons).toList());
             return this;
         }
     }

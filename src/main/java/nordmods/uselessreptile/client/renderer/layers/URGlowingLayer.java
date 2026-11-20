@@ -12,8 +12,8 @@ import nordmods.biscuit_roll.client.renderer.layer.TextureRenderLayer;
 import nordmods.biscuit_roll.client.state.ClientStateDataTypes;
 import nordmods.biscuit_roll.common.state.BRState;
 import nordmods.uselessreptile.client.config.URClientConfig;
-import nordmods.uselessreptile.client.init.URStateDataTypes;
-import nordmods.uselessreptile.client.asset_cache.AssetCache;
+import nordmods.uselessreptile.common.init.URStateDataTypes;
+import nordmods.uselessreptile.common.asset_cache.AssetCache;
 import nordmods.uselessreptile.client.util.ResourceUtil;
 
 public class URGlowingLayer extends TextureRenderLayer {
@@ -50,7 +50,7 @@ public class URGlowingLayer extends TextureRenderLayer {
         AssetCache assetCache = state.getStateData(URStateDataTypes.ASSET_CACHE);
         if (assetCache.hasGlowing() && assetCache.getGlowLayerLocationCache() == null) {
             Identifier id = getGlowingTexture(state);
-            if (!ResourceUtil.doesExist(id, false)) {
+            if (!ResourceUtil.doesResourceExist(id, false)) {
                 assetCache.setHasGlowing(false);
             } else {
                 assetCache.setGlowLayerLocationCache(id);

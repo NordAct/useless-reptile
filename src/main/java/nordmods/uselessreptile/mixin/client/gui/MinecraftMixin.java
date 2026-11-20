@@ -20,7 +20,7 @@ public class MinecraftMixin {
     /// Forces player to open its own inventory if not controlling dragon
     @WrapOperation(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isServerControlledInventory()Z"))
     private boolean openPlayerInventoryAnyway(MultiPlayerGameMode instance, Operation<Boolean> original) {
-        if (player.getVehicle() instanceof URRideableDragonEntity dragon && !dragon.isOwnedBy(player)) {
+        if (player.getVehicle() instanceof URRideableDragonEntity<?> dragon && !dragon.isOwnedBy(player)) {
             return false;
         }
         return original.call(instance);

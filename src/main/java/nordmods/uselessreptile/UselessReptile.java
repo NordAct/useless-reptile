@@ -2,6 +2,8 @@ package nordmods.uselessreptile;
 
 import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.ProblemReporter;
@@ -14,6 +16,7 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
     public static final Logger LOGGER = LogUtils.getLogger();
     public static final ProblemReporter.ScopedCollector ERROR_REPORTER = new ProblemReporter.ScopedCollector(LOGGER);
     public static final String MODID = "uselessreptile";
+    public static final Version MOD_VERSION = FabricLoader.getInstance().getModContainer(UselessReptile.MODID).get().getMetadata().getVersion();
 
     @Override
     public void onInitialize() {
@@ -21,23 +24,28 @@ public class UselessReptile implements ModInitializer, PreLaunchEntrypoint {
 
         URRegistries.init();
         URFluteModes.init();
+        URCommands.init();
+        URUseConditionTypes.init();
         URDragonVariantTypes.init();
+        URDragonAbilityTypes.init();
         URAttributes.init();
         URResourceKeys.init();
-        URSoundEvent.init();
+        URSoundEvents.init();
         UREntities.init();
         URItemComponents.init();
         URItems.init();
         URSpawns.init();
-        URMobEffect.init();
+        URMobEffects.init();
         URPotions.init();
         URGameEvents.init();
         URModEvents.init();
         URPayloads.init();
         URRecipeSerializers.init();
         URBlocks.init();
+        URBlockEntityTypes.init();
         UREntityDataSerializers.init();
         URDamageTypes.init();
+        URAttachments.init();
     }
 
     @Override

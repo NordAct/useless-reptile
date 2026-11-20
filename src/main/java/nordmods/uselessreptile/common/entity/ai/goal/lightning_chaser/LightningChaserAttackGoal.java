@@ -1,160 +1,92 @@
 package nordmods.uselessreptile.common.entity.ai.goal.lightning_chaser;
 
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageTypes;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.level.ServerExplosion;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import nordmods.uselessreptile.common.dragon_ability.type.ShotAttackAbility;
 import nordmods.uselessreptile.common.entity.LightningChaser;
-import nordmods.uselessreptile.common.entity.projectile.LightningBreath;
-import nordmods.uselessreptile.common.entity.projectile.ShockwaveSphere;
+import nordmods.uselessreptile.common.entity.ai.control.FlyingDragonMoveControl;
+import nordmods.uselessreptile.common.entity.ai.goal.common.DragonAttackGoal;
+import nordmods.uselessreptile.common.init.URTags;
 
-import java.util.EnumSet;
-import java.util.List;
+import java.util.Optional;
 
-public class LightningChaserAttackGoal extends Goal {
+public class LightningChaserAttackGoal extends DragonAttackGoal {
+    private final LightningChaser mob;
 
-    private final LightningChaser entity;
-    private LivingEntity target;
-    private int attackCooldown = 20;
-    private static final int MIN_DISTANCE_SQUARED = 80;
-    private static final int MAX_DISTANCE_SQUARED = (int) (LightningBreath.MAX_LENGTH * LightningBreath.MAX_LENGTH * 0.81f);
-
-    public LightningChaserAttackGoal(LightningChaser entity) {
-        this.entity = entity;
-        setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+    public LightningChaserAttackGoal(LightningChaser mob) {
+        super(mob);
+        this.mob = mob;
     }
 
     @Override
     public boolean canUse() {
-        if (entity.hasSurrendered() || entity.getShouldBailOut()) return false;
-
-        if (entity.hasControllingPassenger()) return false;
-        if (!entity.canAttack(entity.getTarget())) return false;
-        target = entity.getTarget();
-        return target != null;
+        if (mob.hasSurrendered() || mob.getShouldBailOut()) return false;
+        return super.canUse();
     }
 
     @Override
-    public boolean canContinueToUse() {
-        if (target == null) return false;
-        if (!target.isAlive()) return false;
-        return canUse();
-    }
+    protected void tickMovement() {
+        mob.setSprinting(true);
 
-    @Override
-    public void stop() {
-        target = null;
-        entity.setTarget(null);
-        entity.getNavigation().stop();
-    }
-
-    @Override
-    public boolean requiresUpdateEveryTick() {
-        return true;
-    }
-
-    @Override
-    public void tick() {
-        if (target == null || target.isRemoved()) {
-            stop();
-            return;
+        double distance = mob.distanceTo(target);
+        double yDiff = target.getY() - mob.getY();
+        if (yDiff > mob.getBbHeight() && !mob.isFlying()) mob.startToFly();
+        Optional<ShotAttackAbility> shotAttackAbility = mob.getAvailableAbilities().stream()
+                .filter(a -> a.getAbility().is(URTags.RANGED_ATTACK) && a.getAbility().is(URTags.BREAKS_BLOCKS) && a.getAbility() instanceof ShotAttackAbility)
+                .map(a -> (ShotAttackAbility)a.getAbility())
+                .findFirst();
+        if (shotAttackAbility.isEmpty()) {
+            shotAttackAbility = mob.getAvailableAbilities().stream()
+                    .filter(a -> a.getAbility().is(URTags.RANGED_ATTACK) && a.getAbility() instanceof ShotAttackAbility)
+                    .map(a -> (ShotAttackAbility)a.getAbility())
+                    .findFirst();
         }
-        entity.setSprinting(true);
 
-        double distance = entity.distanceToSqr(target);
-        double yDiff = target.getY() - entity.getY();
-        if (yDiff > entity.getBbHeight() && !entity.isFlying()) entity.startToFly();
-        boolean canSee = entity.canBreakBlocks() || entity.getSensing().hasLineOfSight(target);
-        boolean canDamage = !target.isInvulnerableTo((ServerLevel) target.level(), entity.damageSources().source(DamageTypes.LIGHTNING_BOLT, entity)) && canSee;
-        double desiredY = target.getY() + (canDamage ? 2 : 0) + target.getBbHeight();
-        if (entity.onGround() && !entity.getSensing().hasLineOfSight(target) && canDamage) entity.forceFlightNextTick();
+        boolean hasRangeAttack = shotAttackAbility.isPresent();
+        boolean canUseRangedAttack = hasRangeAttack && (mob.canGrief() && shotAttackAbility.get().is(URTags.BREAKS_BLOCKS) || mob.hasLineOfSight(target));
+        double desiredY = target.getY() + (canUseRangedAttack ? 2 : 0) + target.getBbHeight();
+        if (mob.onGround() && !mob.getSensing().hasLineOfSight(target) && hasRangeAttack) mob.forceFlightNextTick();
+        mob.getLookControl().setLookAt(target);
+        double minAttackDistance = hasRangeAttack ? shotAttackAbility.get().getAiAttackDistance() * 0.6 : 0;
+        double maxAttackDistance = hasRangeAttack ? shotAttackAbility.get().getAiAttackDistance() : 0;
 
-        if (entity.getNavigation().isDone())
-            entity.getLookControl().setLookAt(target);
-        if (distance < MIN_DISTANCE_SQUARED && canDamage) { //too close
-            entity.getNavigation().stop();
-            entity.getMoveControl().moveBack();
+        if (canUseRangedAttack && distance < minAttackDistance) { //too close
+            mob.getNavigation().stop();
+            getMoveControl().moveBack();
             if (target instanceof Player player && yDiff < player.getAttributeValue(Attributes.ENTITY_INTERACTION_RANGE)
-                    || target instanceof Mob mob && mob.isWithinMeleeAttackRange(entity)
-                    || entity.getLastAttacker() instanceof Mob attacker && attacker.isWithinMeleeAttackRange(entity)) {
-                if (!entity.isFlying()) { //try jump/back off
-                    entity.forceFlightNextTick();
-                    Vec3 vec3d = entity.calculateViewVector(Mth.clamp(-entity.getXRot(), -10, 10), entity.getYRot() - 180);
-                    entity.push(vec3d.scale(2));
+                    || target instanceof Mob mob && mob.isWithinMeleeAttackRange(this.mob)
+                    || mob.getLastAttacker() instanceof Mob attacker && attacker.isWithinMeleeAttackRange(mob)) {
+                if (!mob.isFlying()) { //try jump/back off
+                    mob.forceFlightNextTick();
+                    Vec3 vec3d = mob.calculateViewVector(Mth.clamp(-mob.getXRot(), -10, 10), mob.getYRot() - 180);
+                    mob.push(vec3d.scale(2));
                 } else {
-                    entity.getMoveControl().forceFlyUp();
-                    entity.getMoveControl().moveBack();
+                    getMoveControl().forceFlyUp();
+                    getMoveControl().moveBack();
                 }
             }
-        } else if (distance < MAX_DISTANCE_SQUARED && canDamage) { //within range
-            if (!entity.getLookControl().canLookAtTarget()) {
-                double distanceXZ = Math.pow(target.getX() - entity.getX(), 2) * Math.pow(target.getZ() - entity.getZ(), 2);
-                double divergence = Math.max(0, (distanceXZ - MAX_DISTANCE_SQUARED / 8f) * 0.25);
-                if (distanceXZ < MAX_DISTANCE_SQUARED / 8f) entity.getMoveControl().moveBack();
-                else if (desiredY + divergence < entity.getY() || desiredY - divergence > entity.getY())  entity.getMoveControl().moveBack();
+        } else if (canUseRangedAttack && distance < maxAttackDistance) { //within range
+            mob.getNavigation().stop();
+            if (!mob.getLookControl().canLookAtTarget()) {
+                double distanceXZ = Math.pow(target.getX() - mob.getX(), 2) * Math.pow(target.getZ() - mob.getZ(), 2);
+                double divergence = Math.max(0, (distanceXZ - maxAttackDistance / 8f) * 0.25);
+                if (distanceXZ < maxAttackDistance / 8f) getMoveControl().moveBack();
+                else if (desiredY + divergence < mob.getY() || desiredY - divergence > mob.getY()) getMoveControl().moveBack();
                 else {
-                    if (yDiff > entity.getBbHeight()) entity.getMoveControl().forceFlyUp();
-                    else if (yDiff < -entity.getBbHeight()) entity.getMoveControl().forceFlyDown();
+                    if (yDiff > mob.getBbHeight()) getMoveControl().forceFlyUp();
+                    else if (yDiff < -mob.getBbHeight()) getMoveControl().forceFlyDown();
                 }
             } else {//try compensate momentum
-                if (entity.getDeltaMovement().y > 0) entity.getMoveControl().forceFlyDown();
-                else if (entity.getDeltaMovement().y < 0) entity.getMoveControl().forceFlyUp();
+                if (mob.getDeltaMovement().y > 0) getMoveControl().forceFlyDown();
+                else if (mob.getDeltaMovement().y < 0) getMoveControl().forceFlyUp();
             }
-        } else entity.getNavigation().moveTo(target.getX(), desiredY, target.getZ(), 1); //out of reach/can't be damaged by range attack
-
-        if (--attackCooldown <= 0) {
-            if (tryMeleeAttack()) return;
-            if (canDamage) {
-                if (tryRangedAttack()) return;
-                if (tryShockwaveAttack()) {
-                }
-            }
-        }
+        } else mob.getNavigation().moveTo(target.getX(), desiredY, target.getZ(), 1); //out of reach/can't be damaged by range attack
     }
 
-    private boolean tryMeleeAttack() {
-        if (entity.getSecondaryAttackCooldown() > 0) return false;
-        if (entity.isFlying()) return false;
-        boolean doesCollide = entity.getPrimaryAttackBox().intersects(target.getBoundingBox());
-        if (!doesCollide) return false;
-        entity.meleeAttack();
-        attackCooldown = 30;
-        return true;
-    }
-
-    private boolean tryRangedAttack() {
-        if (entity.getPrimaryAttackCooldown() > 0) return false;
-        if (!entity.getLookControl().isLookingAtTarget()) return false;
-        double distance = entity.distanceToSqr(target);
-        if (distance > MAX_DISTANCE_SQUARED || distance < MIN_DISTANCE_SQUARED) return false;
-        entity.triggerShoot();
-        attackCooldown = 40;
-        return true;
-    }
-
-    private boolean tryShockwaveAttack() {
-        if (entity.getSpecialAttackCooldown() > 0) return false;
-        if (!entity.isFlying()) return false;
-        double attackDistance = ShockwaveSphere.MAX_RADIUS_BLOCKS * ShockwaveSphere.MAX_RADIUS_BLOCKS * 0.49;
-        List<Entity> projectiles = entity.level().getEntities(entity, new AABB(entity.blockPosition()).inflate(attackDistance * 2), c -> c instanceof Projectile projectile && projectile.getOwner() == target && !projectile.getDeltaMovement().equals(Vec3.ZERO));
-        if (!projectiles.isEmpty()) {
-            entity.triggerShockwave();
-            return true;
-        }
-        double distance = entity.distanceToSqr(target);
-        if (attackDistance < distance) return false;
-        if (ServerExplosion.getSeenPercent(entity.position(), target) < 0.1) return false;
-        entity.triggerShockwave();
-        attackCooldown = 40;
-        return true;
+    private FlyingDragonMoveControl<LightningChaser> getMoveControl() {
+        return (FlyingDragonMoveControl<LightningChaser>) mob.getMoveControl();
     }
 }

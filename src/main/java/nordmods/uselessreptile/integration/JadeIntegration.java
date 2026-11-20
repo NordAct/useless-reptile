@@ -29,11 +29,26 @@ public class JadeIntegration implements IWailaPlugin {
                             Component.translatable(dragon.getDragonVariant().common().variantNameKey()).withStyle(ChatFormatting.GOLD)
                     )
             );
+            if (!dragon.isTame()) {
+                if (dragon.isTameable()) {
+                    float progress = (float) (dragon.getBaseTamingProgress() - dragon.getTamingProgress()) * 100f / (float) Math.max(dragon.getBaseTamingProgress(), 1);
+                    ChatFormatting color;
+                    if (progress >= 100) color = ChatFormatting.AQUA;
+                    else if (progress > 66.66667f) color = ChatFormatting.GREEN;
+                    else if (progress > 33.333334f) color = ChatFormatting.YELLOW;
+                    else color = ChatFormatting.RED;
+                    iTooltip.add(Component.translatable("variant.uselessreptile.taming_progress",
+                            Component.literal(String.format("%.1f", progress))
+                                    .withStyle(color)
+                                    .append("%")
+                    ));
+                } else iTooltip.add(Component.translatable("variant.uselessreptile.untameable"));
+            }
         }
 
         @Override
         public Identifier getUid() {
-            return UselessReptile.id("dragon_variant");
+            return UselessReptile.id("dragon_info");
         }
     }
 }
