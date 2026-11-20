@@ -3,8 +3,8 @@ package nordmods.uselessreptile.common.dragon_variant.model;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.Identifier;
-import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.item.Item;
 import nordmods.uselessreptile.common.entity.misc.DragonInventory;
@@ -19,7 +19,7 @@ public record EquipmentModelData(Optional<Identifier> parent, Map<Holder<Item>, 
                     Codec.unboundedMap(Item.CODEC, Equipment.CODEC).fieldOf("equipment").forGetter(EquipmentModelData::equipment))
             .apply(instance, EquipmentModelData::new));
 
-    public static final Codec<Holder<EquipmentModelData>> CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_EQUIPMENT, DIRECT_CODEC);
+    public static final Codec<Holder<EquipmentModelData>> CODEC = RegistryCodecs.holder(URResourceKeys.DRAGON_EQUIPMENT, DIRECT_CODEC);
 
     //TODO
     // tooltip should be scrollable (like pages)

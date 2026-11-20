@@ -6,7 +6,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
@@ -100,7 +100,7 @@ public record DragonSpawnConditions(
         );
     }));
 
-    public static final Codec<Holder<List<DragonSpawnConditions>>> CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_SPAWN_CONDITIONS, DIRECT_CODEC.listOf());
+    public static final Codec<Holder<List<DragonSpawnConditions>>> CODEC = RegistryCodecs.holder(URResourceKeys.DRAGON_SPAWN_CONDITIONS, DIRECT_CODEC.listOf());
 
     public record LightLevelRestriction(Optional<IntRange> blockLightLevel, Optional<IntRange> skyLightLevel) {
         public static final Codec<LightLevelRestriction> CODEC = RecordCodecBuilder.create(instance -> instance.group(

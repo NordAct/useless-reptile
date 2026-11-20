@@ -6,7 +6,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -47,7 +47,7 @@ public record InteractionSettings(
 
     ).apply(i, InteractionSettings::new));
 
-    public static final Codec<Holder<InteractionSettings>> CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_INTERACTION_SETTINGS, DIRECT_CODEC);
+    public static final Codec<Holder<InteractionSettings>> CODEC = RegistryCodecs.holder(URResourceKeys.DRAGON_INTERACTION_SETTINGS, DIRECT_CODEC);
 
     public @Nullable TamingItem getTamingItem(ItemStack itemStack) {
         return tamingItems().stream()

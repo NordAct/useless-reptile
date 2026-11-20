@@ -13,31 +13,35 @@ import org.jspecify.annotations.Nullable;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.stream.Stream;
 
 public class PackUtil {
     private static final String META = UselessReptile.MODID + ".json";
 
     @Nullable
     public static VersionPredicate getModVersionPredicate(Pack pack) {
-        try (PackResources resources = pack.open()){
-            try {
-                IoSupplier<InputStream> supplier = resources.getRootResource(META);
-                if (supplier == null) return null;
+        try (Stream<PackResources> packStream = pack.open()){
+            for (PackResources resources : packStream.toList()){
+                try {
+                    IoSupplier<InputStream> supplier = resources.getRootResource(META);
+                    if (supplier == null) return null;
 
-                try (InputStream stream = supplier.get()) {
-                    JsonObject json = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
-                    String requiredRange = json.get("mod_version").getAsString();
-                    String packId = resources.packId();
-                    try {
-                        return VersionPredicate.parse(requiredRange);
-                    } catch (VersionParsingException e) {
-                        UselessReptile.LOGGER.warn("Invalid version range in pack {}: {}", packId, requiredRange);
-                        return null;
+                    try (InputStream stream = supplier.get()) {
+                        JsonObject json = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+                        String requiredRange = json.get("mod_version").getAsString();
+                        String packId = resources.packId();
+                        try {
+                            return VersionPredicate.parse(requiredRange);
+                        } catch (VersionParsingException e) {
+                            UselessReptile.LOGGER.warn("Invalid version range in pack {}: {}", packId, requiredRange);
+                            return null;
+                        }
                     }
+                } catch (Exception _) {
+                    return null;
                 }
-            } catch (Exception _) {
-                return null;
             }
+            return null;
         }
     }
 

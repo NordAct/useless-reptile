@@ -55,7 +55,7 @@ public abstract class FlyingDragonBaseNavigation<T extends URDragonEntity & Flyi
             lastStuckCheck = tick;
         }
 
-        if (currentTarget.distanceTo(getTargetPos().getCenter()) > mob.position().distanceTo(getTargetPos().getCenter())) recomputePath();
+        if (currentTarget.distanceTo(Vec3.atCenterOf(getTargetPos())) > mob.position().distanceTo(Vec3.atCenterOf(getTargetPos()))) recomputePath();
     }
 
     protected void tryFly() {

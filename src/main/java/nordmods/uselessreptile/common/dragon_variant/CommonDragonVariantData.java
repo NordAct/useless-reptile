@@ -4,8 +4,8 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.RegistryFileCodec;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.item.Item;
 import nordmods.uselessreptile.common.dragon_ability.DragonAbility;
@@ -34,7 +34,7 @@ public record CommonDragonVariantData(
         Holder<TargetingSettings> targetingSettings
 ) {
     public static final Codec<Map<Holder<Attribute>, Float>> BASE_ATTRIBUTE_VALUES_DIRECT_CODEC = Codec.unboundedMap(Attribute.CODEC, Codec.FLOAT);
-    public static final Codec<Holder<Map<Holder<Attribute>, Float>>> BASE_ATTRIBUTE_VALUES_CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, BASE_ATTRIBUTE_VALUES_DIRECT_CODEC);
+    public static final Codec<Holder<Map<Holder<Attribute>, Float>>> BASE_ATTRIBUTE_VALUES_CODEC = RegistryCodecs.holder(URResourceKeys.DRAGON_BASE_ATTRIBUTE_VALUES, BASE_ATTRIBUTE_VALUES_DIRECT_CODEC);
 
     public static final MapCodec<CommonDragonVariantData> MAP_CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.fieldOf("name").forGetter(CommonDragonVariantData::name),

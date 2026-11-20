@@ -56,7 +56,7 @@ public class FlyingDragonFlyAroundGoal<T extends URDragonEntity & FlyingDragon> 
         BlockPos target = findRandomAirSpot();
         if (target != null) {
             startingPos = mob.position();
-            return target.getCenter();
+            return Vec3.atCenterOf(target);
         }
         else return null;
     }

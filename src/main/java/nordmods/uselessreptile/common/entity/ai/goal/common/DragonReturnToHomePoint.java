@@ -1,6 +1,7 @@
 package nordmods.uselessreptile.common.entity.ai.goal.common;
 
 import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.base.URDragonEntity;
 
 import java.util.EnumSet;
@@ -15,12 +16,12 @@ public class DragonReturnToHomePoint<T extends URDragonEntity> extends Goal {
 
     @Override
     public boolean canUse() {
-        return mob.isTame() && mob.distanceToSqr(mob.getHomePoint().getCenter()) > mob.getWanderRadius().radius * mob.getWanderRadius().radius;
+        return mob.isTame() && mob.distanceToSqr(Vec3.atCenterOf(mob.getHomePoint())) > mob.getWanderRadius().radius * mob.getWanderRadius().radius;
     }
 
     @Override
     public boolean canContinueToUse(){
-        return mob.distanceToSqr(mob.getHomePoint().getCenter()) > mob.getWanderRadius().radius * mob.getWanderRadius().radius / 2f;
+        return mob.distanceToSqr(Vec3.atCenterOf(mob.getHomePoint())) > mob.getWanderRadius().radius * mob.getWanderRadius().radius / 2f;
     }
 
     @Override

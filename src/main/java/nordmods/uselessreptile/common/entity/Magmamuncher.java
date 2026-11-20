@@ -18,6 +18,7 @@ import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.config.URConfig;
 import nordmods.uselessreptile.common.dragon_variant.DragonVariant;
@@ -154,7 +155,7 @@ public class Magmamuncher extends URDragonEntity implements HeadMountDragon {
             BlockPos pos = getMagmaBlockPos();
             if (!level().isClientSide() &&
                     (level().getBlockState(pos).getBlock() != Blocks.MAGMA_BLOCK
-                            || pos.getCenter().distanceToSqr(position()) >= DISTANCE_TO_EAT_SQUARED)) {
+                            || Vec3.atCenterOf(pos).distanceToSqr(position()) >= DISTANCE_TO_EAT_SQUARED)) {
                 setEatingMagma(false);
             } else if (!level().isClientSide() && ++eatingMagmaProgress >= MAX_EATING_MAGMA_PROGRESS) {
                 setEatingMagma(false);

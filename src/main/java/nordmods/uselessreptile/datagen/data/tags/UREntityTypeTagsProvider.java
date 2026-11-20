@@ -30,8 +30,8 @@ public class UREntityTypeTagsProvider extends FabricTagsProvider<EntityType<?>>{
                 .addElement(EntityType.getKey(UREntities.RIVER_PIKEHORN));
 
         getOrCreateRawBuilder(URTags.RIVER_PIKEHORN_HUNT_TARGET)
-                .addElement(EntityType.getKey(EntityType.TROPICAL_FISH))
-                .addElement(EntityType.getKey(EntityType.COD))
-                .addElement(EntityType.getKey(EntityType.SALMON));
+                .addElement(EntityType.getKey(EntityTypes.TROPICAL_FISH))
+                .addElement(EntityType.getKey(EntityTypes.COD))
+                .addElement(EntityType.getKey(EntityTypes.SALMON));
     }
 }

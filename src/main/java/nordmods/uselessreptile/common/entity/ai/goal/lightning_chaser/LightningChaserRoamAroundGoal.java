@@ -38,14 +38,14 @@ public class LightningChaserRoamAroundGoal extends Goal {
 
     @Override
     public void tick() {
-        if (mob.distanceToSqr(pointPos.getCenter()) < mob.getBbWidth() * mob.getBbWidth() * 4) {
+        if (mob.distanceToSqr(Vec3.atCenterOf(pointPos)) < mob.getBbWidth() * mob.getBbWidth() * 4) {
             pointPos = new BlockPos((int) (spot.getX() + Math.sin(Math.PI / 8 * currentPoint) * 32),
                     spot.getY(),
                     (int) (spot.getZ() + Math.cos(Math.PI / 8 * currentPoint) * 32));
             if (currentPoint < 16) currentPoint++;
             else currentPoint = 0;
         }
-        Vec3 vec3d = pointPos.getCenter();
+        Vec3 vec3d = Vec3.atCenterOf(pointPos);
         mob.getNavigation().moveTo(vec3d.x, vec3d.y, vec3d.z, 1);
     }
 }

@@ -132,7 +132,7 @@ public class RiverPikehornHuntGoal extends Goal {
 
     //check if spot is above water
     private boolean aboveWater(BlockPos blockPos) {
-        BlockPos pos = new BlockPos(blockPos);
+        BlockPos pos = blockPos.mutable();
         Level world = mob.level();
 
         while (world.getBlockState(pos).is(Blocks.AIR) && pos.getY() > -64) pos = pos.below();
@@ -158,7 +158,7 @@ public class RiverPikehornHuntGoal extends Goal {
     //adjusting to water height so the spot is always above water, but not too high
     private BlockPos adjustToWater(BlockPos blockPos) {
         if (!aboveWater(blockPos)) return blockPos;
-        BlockPos pos = new BlockPos(blockPos);
+        BlockPos pos = blockPos.mutable();
         Level world = mob.level();
 
         while (!world.getBlockState(pos).is(Blocks.WATER) && pos.getY() > -64) pos = pos.below();

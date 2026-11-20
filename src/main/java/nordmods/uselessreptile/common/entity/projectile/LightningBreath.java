@@ -103,7 +103,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
         if (target.hurtServer(serverWorld, source, getResultingDamage())) {
             target.playSound(URSoundEvents.SHOCKWAVE_HIT, 1, random.nextFloat() + 1f);
             boolean wasOnFireBefore = target.isOnFire();
-            LightningBolt fakeLightningSoNoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityType.LIGHTNING_BOLT, serverWorld);
+            LightningBolt fakeLightningSoNoNullPointerExceptionWouldHappenIHope = new LightningBolt(EntityTypes.LIGHTNING_BOLT, serverWorld);
             target.thunderHit(serverWorld, fakeLightningSoNoNullPointerExceptionWouldHappenIHope);
             if (!wasOnFireBefore) {
                 target.setRemainingFireTicks(0);
@@ -127,7 +127,7 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
 
             if (getOwner() instanceof URDragonEntity dragon && !dragon.canGrief()) return;
 
-            Iterable<BlockPos> blocks = BlockPos.withinManhattan(blockPosition(), 2, 1, 2);
+            Iterable<BlockPos> blocks = BlockPos.withinManhattan(blockPosition(), 2);
             float harnessLimit = blockBreakPower;
             List<FallingBlockEntity> fallingBlockEntities = new ArrayList<>();
             for (BlockPos blockPos : blocks) {
@@ -163,9 +163,8 @@ public class LightningBreath extends Projectile implements ProjectileDamageHelpe
             }
 
             sorted.forEach(fallingBlockEntity -> {
-                Vec3 velocity = blockPosition()
-                        .getCenter()
-                        .subtract(fallingBlockEntity.blockPosition().getCenter())
+                Vec3 velocity = Vec3.atCenterOf(blockPosition())
+                        .subtract(Vec3.atCenterOf(fallingBlockEntity.blockPosition()))
                         .add(getRandom().nextFloat() - 0.5f, 1, getRandom().nextFloat() - 0.5f)
                         .normalize()
                         .scale(0.75);

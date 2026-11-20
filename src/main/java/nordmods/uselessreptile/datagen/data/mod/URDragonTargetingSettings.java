@@ -7,6 +7,7 @@ import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import nordmods.uselessreptile.UselessReptile;
 import nordmods.uselessreptile.common.dragon_variant.TargetingSettings;
 import nordmods.uselessreptile.common.init.URResourceKeys;
@@ -35,7 +36,7 @@ public class URDragonTargetingSettings extends FabricDynamicRegistryProvider {
                 WYVERN,
                 new TargetingSettings(
                         List.of(
-                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.CHICKEN), false)
+                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityTypes.CHICKEN), false)
                         ),
                         List.of(),
                         true,
@@ -55,10 +56,10 @@ public class URDragonTargetingSettings extends FabricDynamicRegistryProvider {
                 MAGMAMUNCHER,
                 new TargetingSettings(
                         List.of(
-                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
+                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityTypes.MAGMA_CUBE), false)
                         ),
                         List.of(
-                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.MAGMA_CUBE), false)
+                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityTypes.MAGMA_CUBE), false)
                         ),
                         true,
                         true
@@ -77,7 +78,7 @@ public class URDragonTargetingSettings extends FabricDynamicRegistryProvider {
                 MOLECLAW,
                 new TargetingSettings(
                         List.of(
-                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityType.PLAYER), false)
+                                new ExtraCodecs.TagOrElementLocation(EntityType.getKey(EntityTypes.PLAYER), false)
                         ),
                         List.of(),
                         true,

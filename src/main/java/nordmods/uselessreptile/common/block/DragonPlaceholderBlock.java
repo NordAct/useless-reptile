@@ -1,6 +1,5 @@
 package nordmods.uselessreptile.common.block;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
@@ -17,16 +16,10 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class DragonPlaceholderBlock extends BaseEntityBlock {
-    public static final MapCodec<DragonPlaceholderBlock> CODEC = simpleCodec(DragonPlaceholderBlock::new);
     public static final BooleanProperty CAN_CREATE_DRAGON = BooleanProperty.create("can_create_dragon");
     public DragonPlaceholderBlock(Properties properties) {
         super(properties);
         registerDefaultState(stateDefinition.any().setValue(CAN_CREATE_DRAGON, false));
-    }
-
-    @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

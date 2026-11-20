@@ -58,7 +58,7 @@ public class LightningChaserBailOutGoal extends Goal {
             pos = BlockPos.containing(mob.calculateViewVector(0, mob.getYRot()).scale(dist).add(mob.position()));
             int x = SectionPos.blockToSectionCoord(pos.getX());
             int z = SectionPos.blockToSectionCoord(pos.getZ());
-            if (mob.level().getChunk(x, z, ChunkStatus.SURFACE, false) != null) break;
+            if (mob.level().getChunk(x, z, ChunkStatus.TERRAIN, false) != null) break;
             dist -= 16;
         } while (true);
         pointOfInterest = new BlockPos(pos.getX(), 256, pos.getX());

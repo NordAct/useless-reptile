@@ -3,7 +3,7 @@ package nordmods.uselessreptile.common.dragon_ability;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.TypedInstance;
-import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import nordmods.uselessreptile.common.dragon_ability.holder.DragonAbilityHolder;
 import nordmods.uselessreptile.common.dragon_ability.type.DragonAbilityType;
 import nordmods.uselessreptile.common.dragon_ability.use_condition.UseCondition;
@@ -17,7 +17,7 @@ public interface DragonAbility extends TypedInstance<DragonAbilityType<?>> {
     Codec<DragonAbility> DIRECT_CODEC = URRegistries.ABILITY_TYPE.byNameCodec()
             .dispatch("type", DragonAbility::getType, DragonAbilityType::codec);
 
-    public static final Codec<Holder<List<DragonAbility>>> CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_ABILITIES, DIRECT_CODEC.listOf());
+    Codec<Holder<List<DragonAbility>>> CODEC = RegistryCodecs.holder(URResourceKeys.DRAGON_ABILITIES, DIRECT_CODEC.listOf());
 
     DragonAbilityType<?> getType();
     CommonDragonAbilityData getCommonAbilityData();

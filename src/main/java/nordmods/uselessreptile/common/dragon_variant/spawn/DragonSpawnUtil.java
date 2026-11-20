@@ -7,7 +7,6 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LightLayer;
@@ -54,10 +53,10 @@ public class DragonSpawnUtil {
                 || spawnReason == EntitySpawnReason.CHUNK_GENERATION
                 || spawnReason == EntitySpawnReason.BREEDING;
 
-        List<Tuple<String, Integer>> variants = new ArrayList<>();
+        List<Pair<String, Integer>> variants = new ArrayList<>();
         variantStream.forEach(variant -> {
             variant.common().spawnConditions().value().forEach(conditions -> {
-                if (checkConditions(conditions, world, pos, entity.getDragonVariant().getType(), spawnReason)) variants.add(new Tuple<>(variant.common().name(), conditions.weight()));
+                if (checkConditions(conditions, world, pos, entity.getDragonVariant().getType(), spawnReason)) variants.add(new Pair<>(variant.common().name(), conditions.weight()));
             });
         });
 
@@ -68,16 +67,16 @@ public class DragonSpawnUtil {
         }
 
         int totalWeight = 0;
-        for (Tuple<String, Integer> variant : variants) totalWeight += variant.getB();
+        for (Pair<String, Integer> variant : variants) totalWeight += variant.getSecond();
 
         int roll = entity.getRandom().nextInt(totalWeight);
         int previousBound = 0;
-        for (Tuple<String, Integer> variant : variants) {
-            if (roll >= previousBound && roll < previousBound + variant.getB()) {
-                entity.setVariant(variant.getA());
+        for (Pair<String, Integer> variant : variants) {
+            if (roll >= previousBound && roll < previousBound + variant.getSecond()) {
+                entity.setVariant(variant.getFirst());
                 break;
             }
-            previousBound += variant.getB();
+            previousBound += variant.getSecond();
         }
     }
 

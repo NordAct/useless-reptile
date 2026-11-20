@@ -77,7 +77,7 @@ public class LandDragonNavigation<T extends  URDragonEntity> extends GroundPathN
             lastStuckCheck = tick;
         }
 
-        if (currentTarget.distanceTo(getTargetPos().getCenter()) > mob.position().distanceTo(getTargetPos().getCenter())) recomputePath();
+        if (currentTarget.distanceTo(Vec3.atCenterOf(getTargetPos())) > mob.position().distanceTo(Vec3.atCenterOf(getTargetPos()))) recomputePath();
     }
 
     protected void moveOrStop(BlockPos target) {

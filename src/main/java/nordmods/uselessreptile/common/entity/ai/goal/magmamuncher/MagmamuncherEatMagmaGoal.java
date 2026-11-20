@@ -7,6 +7,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.pathfinder.Path;
 import net.minecraft.world.level.pathfinder.PathType;
+import net.minecraft.world.phys.Vec3;
 import nordmods.uselessreptile.common.entity.Magmamuncher;
 
 import java.util.ArrayList;
@@ -65,10 +66,10 @@ public class MagmamuncherEatMagmaGoal extends Goal {
 
     @Override
     public void tick() {
-        if (mob.isEatingMagma()) mob.lookAt(EntityAnchorArgument.Anchor.EYES, mob.getMagmaBlockPos().getCenter());
+        if (mob.isEatingMagma()) mob.lookAt(EntityAnchorArgument.Anchor.EYES, Vec3.atBottomCenterOf(mob.getMagmaBlockPos()));
 
         BlockPos targetPos = mob.getMagmaBlockPos();
-        double dist = targetPos.getCenter().distanceToSqr(mob.position());
+        double dist = Vec3.atCenterOf(targetPos).distanceToSqr(mob.position());
         if (dist < Magmamuncher.DISTANCE_TO_EAT_SQUARED && mob.getLookControl().isLookingAtTarget()) {
             mob.setEatingMagma(true);
         }
@@ -82,7 +83,7 @@ public class MagmamuncherEatMagmaGoal extends Goal {
         if (mob.getNavigation().isDone()) {
             //bandaid fix for a dumbass not getting close enough to eat its magma
             if (dist > Magmamuncher.DISTANCE_TO_EAT_SQUARED && dist < 3) {
-                mob.push(targetPos.getCenter().subtract(mob.position()).normalize().scale(0.1));
+                mob.push(Vec3.atCenterOf(targetPos).subtract(mob.position()).normalize().scale(0.1));
                 return;
             } else if (mob.getNavigation().getTargetPos() != null && mob.getNavigation().getTargetPos().getY() < mob.getMagmaBlockPos().getY()) {
                 invalidPos.add(mob.getMagmaBlockPos());

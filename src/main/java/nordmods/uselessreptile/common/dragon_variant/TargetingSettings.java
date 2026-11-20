@@ -4,7 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.RegistryFileCodec;
+import net.minecraft.core.registries.codec.RegistryCodecs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ExtraCodecs;
@@ -27,7 +27,7 @@ public record TargetingSettings(
             ).apply(instance, TargetingSettings::new)
     );
 
-    public static final Codec<Holder<TargetingSettings>> CODEC = RegistryFileCodec.create(URResourceKeys.DRAGON_TARGETING_SETTINGS, DIRECT_CODEC);
+    public static final Codec<Holder<TargetingSettings>> CODEC = RegistryCodecs.holder(URResourceKeys.DRAGON_TARGETING_SETTINGS, DIRECT_CODEC);
 
     public boolean canTargetUntamed(LivingEntity target) {
         for (ExtraCodecs.TagOrElementLocation entry : untamedTargets) {
